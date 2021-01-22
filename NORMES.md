@@ -40,7 +40,7 @@ public:
 - Interfaces are prefixed with `I`
 - Abstract classes and structs are prefixed with `A`
 - Enum types and classes are prefixed with `E`
-- Booleans start with `has`/`have` or `is`/`are`
+- When it adds to their description, booleans must start with `has`/`have` or `is`/`are`
 
 ```C++
 // Sample code
