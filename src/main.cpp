@@ -17,7 +17,7 @@ int main ()
     Log::logInitializationStep("logInitializationStep", 50);
 
     Log::log("log");
-    Log::logHelp("logHelp");
+    Log::logTips("logTips");
     Log::logWarning("logWarning");
     Log::logError("logError");
     Log::logInitializationEnd("logInitializationEnd");
