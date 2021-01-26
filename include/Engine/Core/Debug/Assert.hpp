@@ -20,15 +20,8 @@ namespace Engine::Core::Debug
 
 #else /* Not NDEBUG.  */
 
-    #define GPE_assert(expr) \
-        if (expr) {}	    \
-        else                \
-        {                   \
-            Engine::Core::Debug::Log::logError((std::string(FRED("Assertion")) + " in function " + __FUNCTION__ + " " +  __FILE__ + ":" + std::to_string(__LINE__) + "\nExpression \"" + BOLD(#expr) + "\" == false.\n").c_str()); \
-            exit (3);       \
-        }
 
-    #define GPE_assertInfo(expr, msg) \
+    #define GPE_assert(expr, msg) \
         if (expr) {}	    \
         else                \
         {                   \
