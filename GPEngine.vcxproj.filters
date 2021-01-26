@@ -40,5 +40,6 @@
     <None Include="src\Format.inl">
       <Filter>Source Files</Filter>
     </None>
+    <None Include=".clang-format" />
   </ItemGroup>
 </Project>
