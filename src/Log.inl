@@ -216,7 +216,7 @@ void Engine::Core::Debug::Log::setSetting (ELogSetting setting, bool data) noexc
         break;
 
     default:
-        assert(false);
+        logError("No implementation for this ELogSetting parameter");
         break;
     }
 }
@@ -251,7 +251,7 @@ bool Engine::Core::Debug::Log::getSetting	(ELogSetting setting) noexcept
         break;
 
     default:
-        assert(false);
+        logError("No implementation for this ELogSetting parameter");
         break;
     }
 }
