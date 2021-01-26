@@ -68,11 +68,11 @@ void Engine::Core::Debug::Log::logError (const std::string& msg) noexcept
     if(getSettingState(DISPLAY_WITH_COLOR))
     {
         logAddMsg (msgLog);
-        std::cout << msgLog;
+        std::cerr << msgLog;
         msgLog.clear();
 
         msgLog += FRED(BOLD("ERROR: "));
-        std::cout << msgLog;
+        std::cerr << msgLog;
         msgLog.clear();
 
         msgLog += "ERROR: ";
@@ -90,7 +90,7 @@ void Engine::Core::Debug::Log::logError (const std::string& msg) noexcept
     if (getSettingState(PRINT_LOG_FILE_ERROR))
         releaseLogFile = false;
 
-    std::cout << msgLog;
+    std::cerr << msgLog;
     logAddMsg (msgLog);
 }
 
@@ -105,11 +105,11 @@ void Engine::Core::Debug::Log::logWarning (const std::string& msg) noexcept
     if(getSettingState(DISPLAY_WITH_COLOR))
     {
         logAddMsg (msgLog);
-        std::cout << msgLog;
+        std::cerr << msgLog;
         msgLog.clear();
 
         msgLog += FYEL(BOLD("WARNING: "));
-        std::cout << msgLog;
+        std::cerr << msgLog;
         msgLog.clear();
         
         msgLog += "WARNING: ";
@@ -127,12 +127,12 @@ void Engine::Core::Debug::Log::logWarning (const std::string& msg) noexcept
     if (getSettingState(PRINT_LOG_FILE_WARNING))
         releaseLogFile = false;
 
-    std::cout << msgLog;
+    std::cerr << msgLog;
     logAddMsg (msgLog);
 }
 
 inline 
-void Engine::Core::Debug::Log::logHelp (const std::string& msg) noexcept
+void Engine::Core::Debug::Log::logTips (const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: "; 
@@ -145,17 +145,17 @@ void Engine::Core::Debug::Log::logHelp (const std::string& msg) noexcept
         std::cout << msgLog;
         msgLog.clear();
 
-        msgLog += FGRN(BOLD("HELP: "));
+        msgLog += FGRN(BOLD("TIPS: "));
         std::cout << msgLog;
         msgLog.clear();
         
-        msgLog += "HELP: ";
+        msgLog += "TIPS: ";
         logAddMsg (msgLog);
         msgLog.clear();
     }
     else
     {
-        msgLog += "HELP: ";
+        msgLog += "TIPS: ";
     }
 
     msgLog += msg;
