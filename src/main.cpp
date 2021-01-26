@@ -10,7 +10,7 @@ int main ()
 {
     //Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
 
-    Log::init();
+    Log::logFileHeader();
 
     Log::logInitializationStart("logInitializationStart");
 
@@ -22,12 +22,12 @@ int main ()
     Log::logError("logError");
     Log::logInitializationEnd("logInitializationEnd");
 
-    functError("functError");
-    functWarning("functWarning");
+    FUNCT_ERROR("functError");
+    FUNCT_WARNING("functWarning");
 
-    GPE_assert(false, "GPE_assertInfo");
+    GPE_ASSERT(false, "GPE_assertInfo");
 
-    Log::release();
+    Log::closeAndTryToCreateFile();
 
     return 0;
 }
