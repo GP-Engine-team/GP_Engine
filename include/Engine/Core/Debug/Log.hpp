@@ -63,7 +63,7 @@
 
 namespace Engine::Core::Debug
 {
-enum ESetting
+enum ESetting : uint8_t
 {
     DISPLAY_DATE = (1u << 1),           // display date befor message (2)
     DISPLAY_HOUR = (1u << 2),           // display hour befor message (3)
