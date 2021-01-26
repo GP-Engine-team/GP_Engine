@@ -56,14 +56,14 @@
                 Engine::Core::Debug::Log::logError (        \
                 (std::string(__FILE__) +                \
                 ':' + std::to_string(__LINE__) +        \
-                ": function \"" + __FUNCSIG__ + "()" + \
+                ": function \"" + __FUNCSIG__ + \
                 "\" : " + msg).c_str());
 
 #define functWarning(msg)                       \
                 Engine::Core::Debug::Log::logWarning (        \
                 (std::string(__FILE__) +                \
                 ':' + std::to_string(__LINE__) +        \
-                ": function \"" + __FUNCSIG__ + "()" + \
+                ": function \"" + __FUNCSIG__ + \
                 "\" :"  + msg).c_str());
 
 namespace Engine::Core::Debug
@@ -73,7 +73,7 @@ namespace Engine::Core::Debug
         DISPLAY_DATE,             //display date befor message (2)
         DISPLAY_HOUR,             //display hour befor message (3)
         DISPLAY_WITH_COLOR,       //display log with color for each even
-        ALWAY_PRINT_LOG_FILE,     //never destroy log file
+        ALWAYS_PRINT_LOG_FILE,     //never destroy log file
         PRINT_LOG_FILE_WARNING,      //print log file if warning happend
         PRINT_LOG_FILE_ERROR       //print log file if error happend
     };
@@ -87,9 +87,9 @@ namespace Engine::Core::Debug
         static bool displayDate;        // default false
         static bool displayHour;        // default true
         static bool displayWithColor;   // default true
-        static bool printAlwayLogFile;              // default false
-        static bool printLogFileIfWarningHappend;   // default false
-        static bool printLogFileIfErrorHappend;     // default true
+        static bool printAlwaysLogFile;              // default false
+        static bool printLogFileOnWarning;   // default false
+        static bool printLogFileOnError;     // default true
 
         static bool             releaseLogFile;     //true if log file in'st keep
         static std::string      fileLogPath;

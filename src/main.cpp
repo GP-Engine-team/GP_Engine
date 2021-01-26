@@ -5,9 +5,10 @@
 
 using namespace Engine::Core::Debug;
 
+
 int main ()
 {
-    //Log::setSetting(ELogSetting::ALWAY_PRINT_LOG_FILE, true);
+    //Log::setSetting(ELogSetting::ALWAYS_PRINT_LOG_FILE, true);
 
     Log::init();
 
@@ -24,8 +25,7 @@ int main ()
     functError("functError");
     functWarning("functWarning");
 
-    GPE_assert(true);
-    GPE_assertInfo(true, "GPE_assertInfo");
+    GPE_assert(false, "GPE_assertInfo");
 
     Log::release();
 

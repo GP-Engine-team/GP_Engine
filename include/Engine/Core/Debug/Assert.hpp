@@ -16,7 +16,6 @@ namespace Engine::Core::Debug
 #ifdef NDEBUG
 
     #define GPE_assert(expr)
-    #define GPE_assertInfo(expr, msg)
 
 #else /* Not NDEBUG.  */
 

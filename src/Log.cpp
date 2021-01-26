@@ -6,11 +6,11 @@ bool Log::displayDate         (false);
 bool Log::displayHour         (true);
 bool Log::displayWithColor    (true);
 
-bool Log::printAlwayLogFile               (false);           
-bool Log::printLogFileIfWarningHappend    (false);
-bool Log::printLogFileIfErrorHappend      (true); 
+bool Log::printAlwaysLogFile                 (false);           
+bool Log::printLogFileOnWarning             (false);
+bool Log::printLogFileOnError               (true); 
 
-bool Log::releaseLogFile                  (true);
+bool Log::releaseLogFile                    (true);
 std::string  Log::fileLogPath             ((   std::string(LOG_FOLDER) + 
                                                 std::string("log_") + 
                                                 getDateAndTimeStrFileFormat() +

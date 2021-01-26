@@ -10,7 +10,7 @@ void Engine::Core::Debug::Log::release() noexcept
 {
     fileLog.close();
 
-    if (!printAlwayLogFile || releaseLogFile)
+    if (!printAlwaysLogFile || releaseLogFile)
         std::remove(fileLogPath.c_str());
 }
 
@@ -87,7 +87,7 @@ void Engine::Core::Debug::Log::logError (const std::string& msg) noexcept
     msgLog += msg;
     msgLog += "\n";
 
-    if (printLogFileIfErrorHappend)
+    if (printLogFileOnError)
         releaseLogFile = false;
 
     std::cout << msgLog;
@@ -124,7 +124,7 @@ void Engine::Core::Debug::Log::logWarning (const std::string& msg) noexcept
     msgLog += msg;
     msgLog += "\n";
 
-    if (printLogFileIfWarningHappend) 
+    if (printLogFileOnWarning) 
         releaseLogFile = false;
 
     std::cout << msgLog;
@@ -161,7 +161,7 @@ void Engine::Core::Debug::Log::logHelp (const std::string& msg) noexcept
     msgLog += msg;
     msgLog += "\n";
 
-    if (printAlwayLogFile) 
+    if (printAlwaysLogFile) 
         releaseLogFile = false;
 
     std::cout << msgLog;
@@ -203,8 +203,8 @@ void Engine::Core::Debug::Log::setSetting (ELogSetting setting, bool data) noexc
         displayWithColor = data;
         break;
 
-    case ELogSetting::ALWAY_PRINT_LOG_FILE:
-        printAlwayLogFile = data;
+    case ELogSetting::ALWAYS_PRINT_LOG_FILE:
+        printAlwaysLogFile = data;
         break;
 
     case ELogSetting::PRINT_LOG_FILE_WARNING:
@@ -212,7 +212,7 @@ void Engine::Core::Debug::Log::setSetting (ELogSetting setting, bool data) noexc
         break;
 
     case ELogSetting::PRINT_LOG_FILE_ERROR:
-        printLogFileIfErrorHappend = data;
+        printLogFileOnError = data;
         break;
 
     default:
@@ -238,8 +238,8 @@ bool Engine::Core::Debug::Log::getSetting	(ELogSetting setting) noexcept
         return displayWithColor;
         break;
     
-    case ELogSetting::ALWAY_PRINT_LOG_FILE:
-        return printAlwayLogFile;
+    case ELogSetting::ALWAYS_PRINT_LOG_FILE:
+        return printAlwaysLogFile;
         break;
 
     case ELogSetting::PRINT_LOG_FILE_WARNING:
@@ -247,7 +247,7 @@ bool Engine::Core::Debug::Log::getSetting	(ELogSetting setting) noexcept
         break;
 
     case ELogSetting::PRINT_LOG_FILE_ERROR:
-        return printLogFileIfErrorHappend;
+        return printLogFileOnError;
         break;
 
     default:
