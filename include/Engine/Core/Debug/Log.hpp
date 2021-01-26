@@ -68,14 +68,14 @@
 
 namespace Engine::Core::Debug
 {    
-    enum class ELogSetting
+    enum ESetting
     {
-        DISPLAY_DATE,             //display date befor message (2)
-        DISPLAY_HOUR,             //display hour befor message (3)
-        DISPLAY_WITH_COLOR,       //display log with color for each even
-        ALWAYS_PRINT_LOG_FILE,     //never destroy log file
-        PRINT_LOG_FILE_WARNING,      //print log file if warning happend
-        PRINT_LOG_FILE_ERROR       //print log file if error happend
+        DISPLAY_DATE            = (1u << 1), //display date befor message (2)
+        DISPLAY_HOUR            = (1u << 2), //display hour befor message (3)
+        DISPLAY_WITH_COLOR      = (1u << 3), //display log with color for each even
+        ALWAYS_PRINT_LOG_FILE   = (1u << 4), //never destroy log file
+        PRINT_LOG_FILE_WARNING  = (1u << 5), //print log file if warning happend
+        PRINT_LOG_FILE_ERROR    = (1u << 6), //print log file if error happend
     };
 
     class Log
@@ -84,12 +84,8 @@ namespace Engine::Core::Debug
 
         #pragma region static attribut
 
-        static bool displayDate;        // default false
-        static bool displayHour;        // default true
-        static bool displayWithColor;   // default true
-        static bool printAlwaysLogFile;              // default false
-        static bool printLogFileOnWarning;   // default false
-        static bool printLogFileOnError;     // default true
+        //Bitfiled of the setting. By default is set to : DISPLAY_HOUR | DISPLAY_WITH_COLOR | PRINT_LOG_FILE_ERROR
+        static uint8_t settings;
 
         static bool             releaseLogFile;     //true if log file in'st keep
         static std::string      fileLogPath;
@@ -111,7 +107,7 @@ namespace Engine::Core::Debug
         Log (Log&& other) noexcept				= delete;
 
         inline
-        virtual ~Log () noexcept				= delete;
+        ~Log () noexcept				        = delete;
 
         constexpr inline
         Log& operator=(Log const& other) noexcept		= delete;
@@ -174,12 +170,12 @@ namespace Engine::Core::Debug
         void logWarning (const std::string& msg) noexcept;
 
         /**
-         * @brief display message with prefix "Help : " in current stream
+         * @brief display message with prefix "Tips : " in current stream
          * 
          * @param msg 
          */
         static inline 
-        void logHelp (const std::string& msg) noexcept;
+        void logTips (const std::string& msg) noexcept;
 
         /**
          * @brief display message with elem initialized in current stream
@@ -207,24 +203,28 @@ namespace Engine::Core::Debug
         void logInitializationEnd   (const std::string& elem) noexcept;
 
         /**
-         * @brief Set the Setting object
+         * @brief Add the Setting object
          * 
-         * @param setting
-         *         
-         * @param data 
+         * @param flag : use ESetting. For multiple Setting use ESetting::DISPLAY_DATE | ESetting::DISPLAY_HOUR
          */
         static inline
-        void setSetting	(ELogSetting setting, bool data) noexcept;
+        void addSetting	(uint8_t flag) noexcept;
 
         /**
-         * @brief Get the Setting object
-         * 
-         * @param setting 
-         * @return true 
-         * @return false 
+         * @brief Remove the Setting object
+         *
+         * @param flag : use ESetting. For multiple Setting use ESetting::DISPLAY_DATE | ESetting::DISPLAY_HOUR
          */
-        [[nodiscard]] static inline 
-        bool getSetting	(ELogSetting setting) noexcept;
+        static inline
+        void removeSetting(uint8_t flag) noexcept;
+
+        /**
+         * @brief Retrun flag of setting in parameter
+         * @param setting 
+         * @return bool
+        */
+        [[nodiscard]] static inline
+        bool getSettingState(ESetting setting) noexcept;
 
         /**
          * @brief Get the Date And Time Str
