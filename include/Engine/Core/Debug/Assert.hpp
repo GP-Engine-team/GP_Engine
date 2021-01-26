@@ -11,21 +11,24 @@
 #include <string>
 #endif
 
+#include "Engine/Core/Tools/Format.hpp"
+
 namespace Engine::Core::Debug 
 {
 #ifdef NDEBUG
 
-    #define GPE_assert(expr)
+    #define GPE_ASSERT(expr)
 
 #else /* Not NDEBUG.  */
 
 
-    #define GPE_assert(expr, msg) \
+    #define GPE_ASSERT(expr, msg) \
         if (expr) {}	    \
         else                \
         {                   \
-            Engine::Core::Debug::Log::logError((std::string(FRED("Assertion")) + " in function " + __FUNCSIG__ + " " +  __FILE__ + ":" + std::to_string(__LINE__) + "\nExpression \"" + BOLD(#expr) + "\" == false.\n" + msg).c_str()); \
-            exit (3);           \
+            Engine::Core::Debug::Log::logError(Engine::Core::Tools::stringformat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s", FRED("Assertion"), __FUNCSIG__, __FILE__, __LINE__, BOLD(#expr), msg)); \
+            Engine::Core::Debug::Log::closeAndTryToCreateFile();    \
+            exit (3);       \
         }
 
 #endif //NDEBUG
