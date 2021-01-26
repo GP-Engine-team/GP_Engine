@@ -10,7 +10,7 @@ void Engine::Core::Debug::Log::release() noexcept
 {
     fileLog.close();
 
-    if (!printAlwaysLogFile || releaseLogFile)
+    if (!getSettingState(ALWAYS_PRINT_LOG_FILE) || releaseLogFile)
         std::remove(fileLogPath.c_str());
 }
 
@@ -48,8 +48,8 @@ void Engine::Core::Debug::Log::log (const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: "; 
-    msgLog += displayDate ? getDateStr() + " " : "";
-    msgLog += displayHour ? getTimeStr() + " " : "";
+    msgLog += getSettingState(DISPLAY_DATE) ? getDateStr() + " " : "";
+    msgLog += getSettingState(DISPLAY_HOUR) ? getTimeStr() + " " : "";
     msgLog += msg;
     msgLog += "\n";
 
@@ -62,10 +62,10 @@ void Engine::Core::Debug::Log::logError (const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: "; 
-    msgLog += displayDate ? getDateStr() + " " : "";
-    msgLog += displayHour ? getTimeStr() + " " : "";
+    msgLog += getSettingState(DISPLAY_DATE) ? getDateStr() + " " : "";
+    msgLog += getSettingState(DISPLAY_HOUR) ? getTimeStr() + " " : "";
 
-    if(displayWithColor)
+    if(getSettingState(DISPLAY_WITH_COLOR))
     {
         logAddMsg (msgLog);
         std::cout << msgLog;
@@ -87,7 +87,7 @@ void Engine::Core::Debug::Log::logError (const std::string& msg) noexcept
     msgLog += msg;
     msgLog += "\n";
 
-    if (printLogFileOnError)
+    if (getSettingState(PRINT_LOG_FILE_ERROR))
         releaseLogFile = false;
 
     std::cout << msgLog;
@@ -99,10 +99,10 @@ void Engine::Core::Debug::Log::logWarning (const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: "; 
-    msgLog += displayDate ? getDateStr() + " " : "";
-    msgLog += displayHour ? getTimeStr() + " " : "";
+    msgLog += getSettingState(DISPLAY_DATE) ? getDateStr() + " " : "";
+    msgLog += getSettingState(DISPLAY_HOUR) ? getTimeStr() + " " : "";
 
-    if(displayWithColor)
+    if(getSettingState(DISPLAY_WITH_COLOR))
     {
         logAddMsg (msgLog);
         std::cout << msgLog;
@@ -124,7 +124,7 @@ void Engine::Core::Debug::Log::logWarning (const std::string& msg) noexcept
     msgLog += msg;
     msgLog += "\n";
 
-    if (printLogFileOnWarning) 
+    if (getSettingState(PRINT_LOG_FILE_WARNING))
         releaseLogFile = false;
 
     std::cout << msgLog;
@@ -136,10 +136,10 @@ void Engine::Core::Debug::Log::logHelp (const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: "; 
-    msgLog += displayDate ? getDateStr() + " " : "";
-    msgLog += displayHour ? getTimeStr() + " " : "";
+    msgLog += getSettingState(DISPLAY_DATE) ? getDateStr() + " " : "";
+    msgLog += getSettingState(DISPLAY_HOUR) ? getTimeStr() + " " : "";
 
-    if(displayWithColor)
+    if(getSettingState(DISPLAY_WITH_COLOR))
     {
         logAddMsg (msgLog);
         std::cout << msgLog;
@@ -161,7 +161,7 @@ void Engine::Core::Debug::Log::logHelp (const std::string& msg) noexcept
     msgLog += msg;
     msgLog += "\n";
 
-    if (printAlwaysLogFile) 
+    if (getSettingState(ALWAYS_PRINT_LOG_FILE))
         releaseLogFile = false;
 
     std::cout << msgLog;
@@ -186,74 +186,22 @@ void Engine::Core::Debug::Log::logInitializationEnd   (const std::string& elem) 
     log((std::string(elem) + " initialization completed").c_str());
 }
 
-inline 
-void Engine::Core::Debug::Log::setSetting (ELogSetting setting, bool data) noexcept
+inline
+void Engine::Core::Debug::Log::addSetting(uint8_t flag) noexcept
 {
-    switch (setting)
-    {
-    case ELogSetting::DISPLAY_DATE:
-        displayDate = data;
-        break;
-
-    case ELogSetting::DISPLAY_HOUR:
-        displayHour = data;
-        break;
-
-    case ELogSetting::DISPLAY_WITH_COLOR:
-        displayWithColor = data;
-        break;
-
-    case ELogSetting::ALWAYS_PRINT_LOG_FILE:
-        printAlwaysLogFile = data;
-        break;
-
-    case ELogSetting::PRINT_LOG_FILE_WARNING:
-        displayWithColor = data;
-        break;
-
-    case ELogSetting::PRINT_LOG_FILE_ERROR:
-        printLogFileOnError = data;
-        break;
-
-    default:
-        logError("No implementation for this ELogSetting parameter");
-        break;
-    }
+    settings |= flag;
 }
 
 inline
-bool Engine::Core::Debug::Log::getSetting	(ELogSetting setting) noexcept
+void Engine::Core::Debug::Log::removeSetting(uint8_t flag) noexcept
 {
-    switch (setting)
-    {
-    case ELogSetting::DISPLAY_DATE:
-        return displayDate;
-        break;
+    settings &= ~flag;
+}
 
-    case ELogSetting::DISPLAY_HOUR:
-        return displayHour;
-        break;
-
-    case ELogSetting::DISPLAY_WITH_COLOR:
-        return displayWithColor;
-        break;
-    
-    case ELogSetting::ALWAYS_PRINT_LOG_FILE:
-        return printAlwaysLogFile;
-        break;
-
-    case ELogSetting::PRINT_LOG_FILE_WARNING:
-        return displayWithColor;
-        break;
-
-    case ELogSetting::PRINT_LOG_FILE_ERROR:
-        return printLogFileOnError;
-        break;
-
-    default:
-        logError("No implementation for this ELogSetting parameter");
-        break;
-    }
+inline
+bool Engine::Core::Debug::Log::getSettingState(ESetting setting) noexcept
+{
+    return settings & setting;
 }
 
 inline

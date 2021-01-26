@@ -8,7 +8,7 @@ using namespace Engine::Core::Debug;
 
 int main ()
 {
-    //Log::setSetting(ELogSetting::ALWAYS_PRINT_LOG_FILE, true);
+    //Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
 
     Log::init();
 

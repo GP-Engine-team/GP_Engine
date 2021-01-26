@@ -2,13 +2,7 @@
 
 using namespace Engine::Core::Debug;
  
-bool Log::displayDate         (false);
-bool Log::displayHour         (true);
-bool Log::displayWithColor    (true);
-
-bool Log::printAlwaysLogFile                 (false);           
-bool Log::printLogFileOnWarning             (false);
-bool Log::printLogFileOnError               (true); 
+uint8_t Log::settings (DISPLAY_HOUR | DISPLAY_WITH_COLOR | PRINT_LOG_FILE_ERROR);
 
 bool Log::releaseLogFile                    (true);
 std::string  Log::fileLogPath             ((   std::string(LOG_FOLDER) + 
