@@ -13,23 +13,26 @@
 
 #include "Engine/Core/Tools/Format.hpp"
 
-namespace Engine::Core::Debug 
+namespace Engine::Core::Debug
 {
 #ifdef NDEBUG
 
-    #define GPE_ASSERT(expr)
+#define GPE_ASSERT(expr)
 
 #else /* Not NDEBUG.  */
 
+#define GPE_ASSERT(expr, msg)                                                                                          \
+    if (expr)                                                                                                          \
+    {                                                                                                                  \
+    }                                                                                                                  \
+    else                                                                                                               \
+    {                                                                                                                  \
+        Engine::Core::Debug::Log::logError(                                                                            \
+            Engine::Core::Tools::stringformat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s",            \
+                                              FRED("Assertion"), __FUNCSIG__, __FILE__, __LINE__, BOLD(#expr), msg));  \
+        Engine::Core::Debug::Log::closeAndTryToCreateFile();                                                           \
+        exit(3);                                                                                                       \
+    }
 
-    #define GPE_ASSERT(expr, msg) \
-        if (expr) {}	    \
-        else                \
-        {                   \
-            Engine::Core::Debug::Log::logError(Engine::Core::Tools::stringformat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s", FRED("Assertion"), __FUNCSIG__, __FILE__, __LINE__, BOLD(#expr), msg)); \
-            Engine::Core::Debug::Log::closeAndTryToCreateFile();    \
-            exit (3);       \
-        }
-
-#endif //NDEBUG
+#endif // NDEBUG
 } // namespace Engine::Core::Debug

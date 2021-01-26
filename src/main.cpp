@@ -1,14 +1,13 @@
 #include <iostream>
 
-#include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
+#include "Engine/Core/Debug/Log.hpp"
 
 using namespace Engine::Core::Debug;
 
-
-int main ()
+int main()
 {
-    //Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
+    // Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
 
     Log::logFileHeader();
 
