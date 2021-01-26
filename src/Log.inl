@@ -1,13 +1,13 @@
 #include "Engine/Core/Debug/Log.hpp"
 
 inline
-void Engine::Core::Debug::Log::init() noexcept
+void Engine::Core::Debug::Log::logFileHeader() noexcept
 {
     logHeading();
 }
 
 inline 
-void Engine::Core::Debug::Log::release() noexcept
+void Engine::Core::Debug::Log::closeAndTryToCreateFile() noexcept
 {
     fileLog.close();
 

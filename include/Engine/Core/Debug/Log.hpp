@@ -9,9 +9,10 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <cassert>
 #include <ctime> 
 #include <cstdio>
+
+#include "Engine/Core/Tools/Format.hpp"
 
 #ifdef _WIN32
 #define LOG_FOLDER ".\\log\\"
@@ -52,19 +53,13 @@
 #define BCYN(x) "\033[46m" x RST
 #define BWHT(x) "\033[47m" x RST
 
-#define functError(msg)                         \
+#define FUNCT_ERROR(msg)                                    \
                 Engine::Core::Debug::Log::logError (        \
-                (std::string(__FILE__) +                \
-                ':' + std::to_string(__LINE__) +        \
-                ": function \"" + __FUNCSIG__ + \
-                "\" : " + msg).c_str());
+                Engine::Core::Tools::stringformat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
 
-#define functWarning(msg)                       \
-                Engine::Core::Debug::Log::logWarning (        \
-                (std::string(__FILE__) +                \
-                ':' + std::to_string(__LINE__) +        \
-                ": function \"" + __FUNCSIG__ + \
-                "\" :"  + msg).c_str());
+#define FUNCT_WARNING(msg)                                  \
+                Engine::Core::Debug::Log::logWarning (      \
+                Engine::Core::Tools::stringformat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
 
 namespace Engine::Core::Debug
 {    
@@ -100,14 +95,14 @@ namespace Engine::Core::Debug
         constexpr inline
         Log () noexcept 					    = delete;
 
+        inline
+         ~Log() noexcept                        = delete;
+
         constexpr inline
         Log (const Log& other) noexcept			= delete;
 
         constexpr inline
         Log (Log&& other) noexcept				= delete;
-
-        inline
-        ~Log () noexcept				        = delete;
 
         constexpr inline
         Log& operator=(Log const& other) noexcept		= delete;
@@ -119,13 +114,13 @@ namespace Engine::Core::Debug
          * @brief Create log file
          */
         static inline
-        void init() noexcept;
+        void logFileHeader() noexcept;
 
         /**
          * @brief Save log file if error happen else destroy log file
          */
         static inline 
-        void release() noexcept;
+        void closeAndTryToCreateFile() noexcept;
 
         #pragma endregion //!constructor/destructor
 
