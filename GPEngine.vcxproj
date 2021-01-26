@@ -161,12 +161,14 @@
     <ClInclude Include="..\..\env-master\env-master\cygwin64\home\utilisateur\Linux\GameEngine3\include2\GE\Core\Rendering\Window\windowSDL.hpp" />
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp" />
     <ClInclude Include="include\Engine\Core\Debug\Log.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\Format.inl" />
     <None Include="src\Log.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
