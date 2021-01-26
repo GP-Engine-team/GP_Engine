@@ -1,5 +1,6 @@
 #include "Engine/Core/Debug/Log.hpp"
 
+inline
 void Engine::Core::Debug::Log::init() noexcept
 {
     logHeading();
