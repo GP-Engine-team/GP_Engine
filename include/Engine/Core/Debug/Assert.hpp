@@ -25,7 +25,7 @@ namespace Engine::Core::Debug
         if (expr) {}	    \
         else                \
         {                   \
-            Engine::Core::Debug::Log::logError((std::string(FRED("Assertion")) + " in function " + __FUNCTION__ + " " +  __FILE__ + ":" + std::to_string(__LINE__) + "\nExpression \"" + BOLD(#expr) + "\" == false.\n" + msg).c_str()); \
+            Engine::Core::Debug::Log::logError((std::string(FRED("Assertion")) + " in function " + __FUNCSIG__ + " " +  __FILE__ + ":" + std::to_string(__LINE__) + "\nExpression \"" + BOLD(#expr) + "\" == false.\n" + msg).c_str()); \
             exit (3);           \
         }
 

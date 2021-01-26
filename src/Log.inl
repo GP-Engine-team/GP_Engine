@@ -207,11 +207,11 @@ void Engine::Core::Debug::Log::setSetting (ELogSetting setting, bool data) noexc
         printAlwayLogFile = data;
         break;
 
-    case ELogSetting::PRINT_LOG_FILE_WRNG:
+    case ELogSetting::PRINT_LOG_FILE_WARNING:
         displayWithColor = data;
         break;
 
-    case ELogSetting::PRINT_LOG_FILE_ERR:
+    case ELogSetting::PRINT_LOG_FILE_ERROR:
         printLogFileIfErrorHappend = data;
         break;
 
@@ -242,11 +242,11 @@ bool Engine::Core::Debug::Log::getSetting	(ELogSetting setting) noexcept
         return printAlwayLogFile;
         break;
 
-    case ELogSetting::PRINT_LOG_FILE_WRNG:
+    case ELogSetting::PRINT_LOG_FILE_WARNING:
         return displayWithColor;
         break;
 
-    case ELogSetting::PRINT_LOG_FILE_ERR:
+    case ELogSetting::PRINT_LOG_FILE_ERROR:
         return printLogFileIfErrorHappend;
         break;
 

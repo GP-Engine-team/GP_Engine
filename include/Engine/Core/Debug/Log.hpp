@@ -56,14 +56,14 @@
                 Engine::Core::Debug::Log::logError (        \
                 (std::string(__FILE__) +                \
                 ':' + std::to_string(__LINE__) +        \
-                ": function \"" + __FUNCTION__ + "()" + \
+                ": function \"" + __FUNCSIG__ + "()" + \
                 "\" : " + msg).c_str());
 
 #define functWarning(msg)                       \
                 Engine::Core::Debug::Log::logWarning (        \
                 (std::string(__FILE__) +                \
                 ':' + std::to_string(__LINE__) +        \
-                ": function \"" + __FUNCTION__ + "()" + \
+                ": function \"" + __FUNCSIG__ + "()" + \
                 "\" :"  + msg).c_str());
 
 namespace Engine::Core::Debug
@@ -74,8 +74,8 @@ namespace Engine::Core::Debug
         DISPLAY_HOUR,             //display hour befor message (3)
         DISPLAY_WITH_COLOR,       //display log with color for each even
         ALWAY_PRINT_LOG_FILE,     //never destroy log file
-        PRINT_LOG_FILE_WRNG,      //print log file if warning happend
-        PRINT_LOG_FILE_ERR       //print log file if error happend
+        PRINT_LOG_FILE_WARNING,      //print log file if warning happend
+        PRINT_LOG_FILE_ERROR       //print log file if error happend
     };
 
     class Log
