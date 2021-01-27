@@ -1,3 +1,4 @@
 # Fichier au format .clang généré par Visual Studio
 
 BasedOnStyle: Microsoft
+AlwaysBreakTemplateDeclarations: 'Yes'
