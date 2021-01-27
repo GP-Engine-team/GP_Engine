@@ -65,7 +65,7 @@ inline void Engine::Core::Debug::Log::logError(const std::string &msg) noexcept
         std::cerr << msgLog;
         msgLog.clear();
 
-        msgLog += FRED(BOLD("ERROR: "));
+        msgLog += F_RED(BOLD("ERROR: "));
         std::cerr << msgLog;
         msgLog.clear();
 
@@ -101,7 +101,7 @@ inline void Engine::Core::Debug::Log::logWarning(const std::string &msg) noexcep
         std::cerr << msgLog;
         msgLog.clear();
 
-        msgLog += FYEL(BOLD("WARNING: "));
+        msgLog += F_YELLOW(BOLD("WARNING: "));
         std::cerr << msgLog;
         msgLog.clear();
 
@@ -137,7 +137,7 @@ inline void Engine::Core::Debug::Log::logTips(const std::string &msg) noexcept
         std::cout << msgLog;
         msgLog.clear();
 
-        msgLog += FGRN(BOLD("TIPS: "));
+        msgLog += F_GREEN(BOLD("TIPS: "));
         std::cout << msgLog;
         msgLog.clear();
 

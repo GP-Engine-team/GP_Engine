@@ -26,32 +26,32 @@
  *              cout << BOLD(FBLU("I'm blue-bold.")) << endl;
  */
 /* TEXT PROPERTIES */
-#define RST "\033[0m"
-#define BOLD(x) "\033[1m" x RST
-#define ITLC(x) "\033[3m" x RST
-#define UNDL(x) "\033[4m" x RST
-#define INVS(x) "\033[7m" x RST // inverses foreground & background colors
-#define STKTHGH(x) "\033[9m" x RST
+#define RESET "\033[0m"
+#define BOLD(x) "\033[1m" x RESET
+#define ITALIC(x) "\033[3m" x RESET
+#define UNDERLINE(x) "\033[4m" x RESET
+#define INVERSE(x) "\033[7m" x RESET // inverses foreground & background colors
+#define STRIKETHROUGH(x) "\033[9m" x RESET ""
 
 /* FOREGROUND COLOR TEXT */
-#define FBLK(x) "\033[30m" x RST
-#define FRED(x) "\033[31m" x RST
-#define FGRN(x) "\033[32m" x RST
-#define FYEL(x) "\033[33m" x RST
-#define FBLU(x) "\033[34m" x RST
-#define FMAG(x) "\033[35m" x RST
-#define FCYN(x) "\033[36m" x RST
-#define FWHT(x) "\033[37m" x RST
+#define F_BLACK(x) "\033[30m" x RESET
+#define F_RED(x) "\033[31m" x RESET
+#define F_GREEN(x) "\033[32m" x RESET
+#define F_YELLOW(x) "\033[33m" x RESET
+#define F_BLUE(x) "\033[34m" x RESET
+#define F_MAGENTA(x) "\033[35m" x RESET
+#define F_CYAN(x) "\033[36m" x RESET
+#define F_WHITE(x) "\033[37m" x RESET
 
 /* BACKGROUND COLOR TEXT */
-#define BBLK(x) "\033[40m" x RST
-#define BRED(x) "\033[41m" x RST
-#define BGRN(x) "\033[42m" x RST
-#define BYEL(x) "\033[43m" x RST
-#define BBLU(x) "\033[44m" x RST
-#define BMAG(x) "\033[45m" x RST
-#define BCYN(x) "\033[46m" x RST
-#define BWHT(x) "\033[47m" x RST
+#define B_BLACK(x) "\033[40m" x RESET
+#define B_RED(x) "\033[41m" x RESET
+#define B_GREEN(x) "\033[42m" x RESET
+#define B_YELLOW(x) "\033[43m" x RESET
+#define B_BLUE(x) "\033[44m" x RESET
+#define B_MAGENTA(x) "\033[45m" x RESET
+#define B_CYAN(x) "\033[46m" x RESET
+#define B_WHITE(x) "\033[47m" x RESET
 
 #define FUNCT_ERROR(msg)                                                                                               \
     Engine::Core::Debug::Log::logError(                                                                                \
