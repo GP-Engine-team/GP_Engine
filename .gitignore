@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/c++,vs,vscode,rider
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,vs,vscode,rider
 
+# Git mirror setup
+setup_mirror.bat
+
 ### C++ ###
 # Prerequisites
 *.d
