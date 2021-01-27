@@ -436,6 +436,9 @@ OpenCover/
 # Azure Stream Analytics local run output
 ASALocalRun/
 
+# Self-made script
+setup_mirror.bat
+
 # MSBuild Binary and Structured Log
 *.binlog
 
