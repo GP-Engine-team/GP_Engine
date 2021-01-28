@@ -55,11 +55,11 @@
 
 #define FUNCT_ERROR(msg)                                                                                               \
     Engine::Core::Debug::Log::logError(                                                                                \
-        Engine::Core::Tools::stringformat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
+        Engine::Core::Tools::stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
 
 #define FUNCT_WARNING(msg)                                                                                             \
     Engine::Core::Debug::Log::logWarning(                                                                              \
-        Engine::Core::Tools::stringformat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
+        Engine::Core::Tools::stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
 
 namespace Engine::Core::Debug
 {
