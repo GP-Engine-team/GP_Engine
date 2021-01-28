@@ -1,30 +1,30 @@
 [submodule "third_party/glfw"]
-	path = third_party/glfw
+	path = engine/third_party/third_party/glfw
 	url = https://github.com/glfw/glfw.git
 [submodule "third_party/imgui"]
-	path = third_party/imgui
+	path = engine/third_party/third_party/imgui
 	url = https://github.com/ocornut/imgui.git
 [submodule "third_party/openal-soft"]
-	path = third_party/openal-soft
+	path = engine/third_party/third_party/openal-soft
 	url = https://github.com/kcat/openal-soft.git
 [submodule "third_party/freetype"]
-	path = third_party/freetype
+	path = engine/third_party/third_party/freetype
 	url = https://gitlab.freedesktop.org/freetype/freetype.git
 [submodule "third_party/PhysX"]
-	path = third_party/PhysX
+	path = engine/third_party/third_party/PhysX
 	url = https://github.com/NVIDIAGameWorks/PhysX.git
 [submodule "third_party/assimp"]
-	path = third_party/assimp
+	path = engine/third_party/third_party/assimp
 	url = https://github.com/assimp/assimp.git
 [submodule "third_party/tracy"]
-	path = third_party/tracy
+	path = engine/third_party/third_party/tracy
 	url = https://github.com/wolfpld/tracy.git
 [submodule "third_party/serialization"]
-	path = third_party/serialization
+	path = engine/third_party/third_party/serialization
 	url = https://github.com/boostorg/serialization.git
 [submodule "third_party/inih"]
-	path = third_party/inih
+	path = engine/third_party/third_party/inih
 	url = https://github.com/benhoyt/inih.git
 [submodule "third_party/gpm"]
-	path = third_party/gpm
+	path = engine/third_party/third_party/gpm
 	url = https://github.com/GP-Engine-team/gpm.git
