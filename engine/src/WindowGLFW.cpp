@@ -10,7 +10,7 @@ using namespace Engine::Core::Tools;
 using namespace Engine::Core::Debug;
 using namespace std;
 
-void WindowGLFW::initialize(const WindowCreateArg& arg) noexcept
+Window::Window(const WindowCreateArg& arg) noexcept
 {
     Log::logInitializationStart("GLFW window");
 
@@ -46,14 +46,14 @@ void WindowGLFW::initialize(const WindowCreateArg& arg) noexcept
     Log::logInitializationEnd("GLFW window");
 }
 
-void WindowGLFW::release() noexcept
+Window::~Window() noexcept
 {
     glfwDestroyWindow(m_window);
     glfwTerminate();
     Log::log("GLFW window release");
 }
 
-void Engine::Core::Renderering::WindowGLFW::getSize(unsigned short& width, unsigned short& height) const noexcept
+void Engine::Core::Renderering::Window::getSize(unsigned short& width, unsigned short& height) const noexcept
 {
     glfwGetWindowSize(m_window, reinterpret_cast<int*>(&width), reinterpret_cast<int*>(&height));
 }

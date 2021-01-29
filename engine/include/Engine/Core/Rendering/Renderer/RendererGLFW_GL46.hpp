@@ -5,29 +5,30 @@
  */
 #pragma once
 
-#include "Engine/Core/Rendering/Renderer/IRenderer.hpp"
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-
 namespace Engine::Core::Renderering
 {
-class RendererGLFW_GL46 final : public IRenderer
+class Renderer
 {
-public:
-    RendererGLFW_GL46(WindowGLFW& window) noexcept;
+protected:
 
-    ~RendererGLFW_GL46() noexcept;
-
-    RendererGLFW_GL46() noexcept = delete;
-
-    RendererGLFW_GL46(const RendererGLFW_GL46& other) noexcept = delete;
-
-    RendererGLFW_GL46(RendererGLFW_GL46&& other) noexcept = delete;
-
-    RendererGLFW_GL46& operator=(RendererGLFW_GL46 const& other) noexcept = delete;
-
-    RendererGLFW_GL46& operator=(RendererGLFW_GL46&& other) noexcept = delete;
+    class Window* m_pWindow;
 
 public:
-    void swapBuffer() noexcept final;
+    Renderer(class Window& window) noexcept;
+
+    ~Renderer() noexcept;
+
+    Renderer() noexcept = delete;
+
+    Renderer(const Renderer& other) noexcept = delete;
+
+    Renderer(Renderer&& other) noexcept = delete;
+
+    Renderer& operator=(Renderer const& other) noexcept = delete;
+
+    Renderer& operator=(Renderer&& other) noexcept = delete;
+
+public:
+    void swapBuffer() noexcept;
 };
 } // namespace Engine::Core::Renderering

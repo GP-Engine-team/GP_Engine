@@ -5,55 +5,55 @@
  */
 #pragma once
 
-#include "Engine/Core/Rendering/Window/IWindow.hpp"
+#include <string> //std::string
 
 class GLFWwindow;
 
 namespace Engine::Core::Renderering
 {
-class WindowGLFW final : public IWindow
+
+struct WindowCreateArg
+{
+    std::string name = "";
+    unsigned short height = 0;
+    unsigned short width = 0;
+};
+
+class Window
 {
 protected:
     GLFWwindow* m_window = nullptr;
 
-protected:
-    void initialize(const WindowCreateArg& arg) noexcept final;
-    void release() noexcept final;
-
 public:
-    inline WindowGLFW(const WindowCreateArg& arg) noexcept : IWindow()
-    {
-        initialize(arg);
-    }
 
-    inline ~WindowGLFW() noexcept
-    {
-        release();
-    }
+    Window(const WindowCreateArg& arg) noexcept;
 
-    WindowGLFW() noexcept = delete;
+    ~Window() noexcept;
 
-    WindowGLFW(const WindowGLFW& other) noexcept = delete;
+    Window() noexcept = delete;
 
-    WindowGLFW(WindowGLFW&& other) noexcept = delete;
+    Window(const Window& other) noexcept = delete;
 
-    WindowGLFW& operator=(const WindowGLFW& other) noexcept = delete;
+    Window(Window&& other) noexcept = delete;
 
-    WindowGLFW& operator=(WindowGLFW&& other) noexcept = delete;
+    Window& operator=(const Window& other) noexcept = delete;
+
+    Window& operator=(Window&& other) noexcept = delete;
 
     /**
      * @brief return GLFWwindow pointer with generic forme that allow user to ealsy use another lib
      * @return void*
      */
-    [[nodiscard]] inline const void* get() const noexcept final;
+    [[nodiscard]] inline const void* get() const noexcept;
 
-    [[nodiscard]] inline void* get() noexcept final;
+    [[nodiscard]] inline void* get() noexcept;
 
     /**
      * @brief Get the glfw current window
      * @return
      */
-    [[nodiscard]] constexpr inline const GLFWwindow* const getGLFWWindow() const noexcept;
+    [[nodiscard]] constexpr inline const GLFWwindow* getGLFWWindow() const noexcept;
+    [[nodiscard]] constexpr inline GLFWwindow* getGLFWWindow() noexcept;
 
     /**
      * @brief return the size of the window
@@ -61,7 +61,7 @@ public:
      * @param height
      * @return
      */
-    void getSize(unsigned short& width, unsigned short& height) const noexcept final;
+    void getSize(unsigned short& width, unsigned short& height) const noexcept;
 };
 
 } // namespace Engine::Core::Renderering

@@ -1,10 +1,10 @@
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 
-#include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
-#include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Format.hpp"
 
 using namespace Engine::Core::Renderering;
@@ -111,7 +111,8 @@ inline void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint i
     Log::logError(stringFormat("%d: %s of %s severity, raised from %s: %s\n", id, _type, _severity, _source, msg));
 }
 
-RendererGLFW_GL46::RendererGLFW_GL46(WindowGLFW& window) noexcept : IRenderer(reinterpret_cast<IWindow&>(window))
+Renderer::Renderer(Window& window) noexcept 
+    : m_pWindow {reinterpret_cast<Window*>(&window)}
 {
     Log::logInitializationStart("GLFW / OpenGL 4.6 Renderer");
 
@@ -151,13 +152,13 @@ RendererGLFW_GL46::RendererGLFW_GL46(WindowGLFW& window) noexcept : IRenderer(re
     Log::log(stringFormat("GL_VERSION = %s", glGetString(GL_VERSION)));
 }
 
-RendererGLFW_GL46::~RendererGLFW_GL46() noexcept
+Renderer::~Renderer() noexcept
 {
     Log::log("GLFW / OpenGL 4.6 renderer release");
 }
 
-void RendererGLFW_GL46::swapBuffer() noexcept
+void Renderer::swapBuffer() noexcept
 {
     // Present frame
-    glfwSwapBuffers(reinterpret_cast<GLFWwindow*>(m_pWindow->get()));
+    glfwSwapBuffers(m_pWindow->getGLFWWindow());
 }
