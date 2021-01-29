@@ -19,15 +19,15 @@ struct WindowCreateArg
 
 class IWindow
 {
-  protected:
-    virtual void initialize(const WindowCreateArg &arg) noexcept = 0;
+protected:
+    virtual void initialize(const WindowCreateArg& arg) noexcept = 0;
 
     virtual void release() noexcept = 0;
 
-  public:
-    inline virtual const void *get() const noexcept = 0;
-    inline virtual void *get() noexcept = 0;
+public:
+    inline virtual const void* get() const noexcept = 0;
+    inline virtual void* get() noexcept = 0;
 
-    inline virtual void getSize(unsigned short &width, unsigned short &height) const noexcept = 0;
+    inline virtual void getSize(unsigned short& width, unsigned short& height) const noexcept = 0;
 };
 } // namespace Engine::Core::Renderering

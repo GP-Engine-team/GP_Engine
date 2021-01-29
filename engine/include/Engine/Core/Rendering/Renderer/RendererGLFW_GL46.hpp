@@ -5,8 +5,8 @@
  */
 #pragma once
 
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/Rendering/Renderer/IRenderer.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 
 namespace Engine::Core::Renderering
 {

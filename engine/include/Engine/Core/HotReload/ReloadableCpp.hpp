@@ -124,7 +124,8 @@ class ReloadableCpp
      * @param processName The name of the process (e.g. the function name)
      * @return Returns a pointer to the process (e.g. the function)
      */
-    template <class C_FUNCTION_TYPE> C_FUNCTION_TYPE *getProcess(const std::string &processName)
+    template <class C_FUNCTION_TYPE>
+    C_FUNCTION_TYPE *getProcess(const std::string &processName)
     {
         return (C_FUNCTION_TYPE *)processes[processName];
     }
