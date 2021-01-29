@@ -13,15 +13,15 @@ namespace Engine::Core::Renderering
 {
 class WindowGLFW final : public IWindow
 {
-  protected:
-    GLFWwindow *m_window = nullptr;
+protected:
+    GLFWwindow* m_window = nullptr;
 
-  protected:
-    void initialize(const WindowCreateArg &arg) noexcept final;
+protected:
+    void initialize(const WindowCreateArg& arg) noexcept final;
     void release() noexcept final;
 
-  public:
-    inline WindowGLFW(const WindowCreateArg &arg) noexcept : IWindow()
+public:
+    inline WindowGLFW(const WindowCreateArg& arg) noexcept : IWindow()
     {
         initialize(arg);
     }
@@ -33,27 +33,27 @@ class WindowGLFW final : public IWindow
 
     WindowGLFW() noexcept = delete;
 
-    WindowGLFW(const WindowGLFW &other) noexcept = delete;
+    WindowGLFW(const WindowGLFW& other) noexcept = delete;
 
-    WindowGLFW(WindowGLFW &&other) noexcept = delete;
+    WindowGLFW(WindowGLFW&& other) noexcept = delete;
 
-    WindowGLFW &operator=(const WindowGLFW &other) noexcept = delete;
+    WindowGLFW& operator=(const WindowGLFW& other) noexcept = delete;
 
-    WindowGLFW &operator=(WindowGLFW &&other) noexcept = delete;
+    WindowGLFW& operator=(WindowGLFW&& other) noexcept = delete;
 
     /**
      * @brief return GLFWwindow pointer with generic forme that allow user to ealsy use another lib
      * @return void*
      */
-    [[nodiscard]] inline const void *get() const noexcept final;
+    [[nodiscard]] inline const void* get() const noexcept final;
 
-    [[nodiscard]] inline void *get() noexcept final;
+    [[nodiscard]] inline void* get() noexcept final;
 
     /**
      * @brief Get the glfw current window
      * @return
      */
-    [[nodiscard]] constexpr inline const GLFWwindow *const getGLFWWindow() const noexcept;
+    [[nodiscard]] constexpr inline const GLFWwindow* const getGLFWWindow() const noexcept;
 
     /**
      * @brief return the size of the window
@@ -61,7 +61,7 @@ class WindowGLFW final : public IWindow
      * @param height
      * @return
      */
-    void getSize(unsigned short &width, unsigned short &height) const noexcept final;
+    void getSize(unsigned short& width, unsigned short& height) const noexcept final;
 };
 
 } // namespace Engine::Core::Renderering

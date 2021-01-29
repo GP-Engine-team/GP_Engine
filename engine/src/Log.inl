@@ -13,12 +13,12 @@ inline void Engine::Core::Debug::Log::closeAndTryToCreateFile() noexcept
         std::remove(fileLogPath.c_str());
 }
 
-inline void Engine::Core::Debug::Log::logAddMsg(const std::string &msg) noexcept
+inline void Engine::Core::Debug::Log::logAddMsg(const std::string& msg) noexcept
 {
     if (!fileLog.is_open())
         return;
 
-    std::streambuf *coutbuf = std::cout.rdbuf(); // save old buf
+    std::streambuf* coutbuf = std::cout.rdbuf(); // save old buf
     std::cout.rdbuf(fileLog.rdbuf());            // redirect std::cout to log.txt
 
     std::cout << msg;
@@ -39,7 +39,7 @@ inline void Engine::Core::Debug::Log::logHeading() noexcept
     logAddMsg(msgLog);
 }
 
-inline void Engine::Core::Debug::Log::log(const std::string &msg) noexcept
+inline void Engine::Core::Debug::Log::log(const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
@@ -52,7 +52,7 @@ inline void Engine::Core::Debug::Log::log(const std::string &msg) noexcept
     logAddMsg(msgLog);
 }
 
-inline void Engine::Core::Debug::Log::logError(const std::string &msg) noexcept
+inline void Engine::Core::Debug::Log::logError(const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
@@ -88,7 +88,7 @@ inline void Engine::Core::Debug::Log::logError(const std::string &msg) noexcept
     logAddMsg(msgLog);
 }
 
-inline void Engine::Core::Debug::Log::logWarning(const std::string &msg) noexcept
+inline void Engine::Core::Debug::Log::logWarning(const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
@@ -124,7 +124,7 @@ inline void Engine::Core::Debug::Log::logWarning(const std::string &msg) noexcep
     logAddMsg(msgLog);
 }
 
-inline void Engine::Core::Debug::Log::logTips(const std::string &msg) noexcept
+inline void Engine::Core::Debug::Log::logTips(const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
@@ -160,17 +160,17 @@ inline void Engine::Core::Debug::Log::logTips(const std::string &msg) noexcept
     logAddMsg(msgLog);
 }
 
-inline void Engine::Core::Debug::Log::logInitializationStart(const std::string &elem) noexcept
+inline void Engine::Core::Debug::Log::logInitializationStart(const std::string& elem) noexcept
 {
     log((std::string(elem) + " being initialized...").c_str());
 }
 
-inline void Engine::Core::Debug::Log::logInitializationStep(const std::string &elem, unsigned int count) noexcept
+inline void Engine::Core::Debug::Log::logInitializationStep(const std::string& elem, unsigned int count) noexcept
 {
     log((std::string(elem) + " initialization [" + std::to_string(count) + "%]").c_str());
 }
 
-inline void Engine::Core::Debug::Log::logInitializationEnd(const std::string &elem) noexcept
+inline void Engine::Core::Debug::Log::logInitializationEnd(const std::string& elem) noexcept
 {
     log((std::string(elem) + " initialization completed").c_str());
 }

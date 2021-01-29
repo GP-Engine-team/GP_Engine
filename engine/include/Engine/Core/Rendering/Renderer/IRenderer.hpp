@@ -14,14 +14,13 @@ namespace Engine::Core::Renderering
 {
 class IRenderer
 {
-  protected:
+protected:
     IWindow* m_pWindow = nullptr;
 
-  public:
-
-    IRenderer(IWindow& win) noexcept 
-        : m_pWindow {&win}
-    {}
+public:
+    IRenderer(IWindow& win) noexcept : m_pWindow{&win}
+    {
+    }
 
     virtual void swapBuffer() noexcept = 0;
 };

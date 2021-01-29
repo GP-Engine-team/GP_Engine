@@ -12,22 +12,22 @@ namespace Engine::Core::Renderering
 {
 class RendererGLFW_GL46 final : public IRenderer
 {
-  public:
-    RendererGLFW_GL46(WindowGLFW &window) noexcept;
+public:
+    RendererGLFW_GL46(WindowGLFW& window) noexcept;
 
     ~RendererGLFW_GL46() noexcept;
 
     RendererGLFW_GL46() noexcept = delete;
 
-    RendererGLFW_GL46(const RendererGLFW_GL46 &other) noexcept = delete;
+    RendererGLFW_GL46(const RendererGLFW_GL46& other) noexcept = delete;
 
-    RendererGLFW_GL46(RendererGLFW_GL46 &&other) noexcept = delete;
+    RendererGLFW_GL46(RendererGLFW_GL46&& other) noexcept = delete;
 
-    RendererGLFW_GL46 &operator=(RendererGLFW_GL46 const &other) noexcept = delete;
+    RendererGLFW_GL46& operator=(RendererGLFW_GL46 const& other) noexcept = delete;
 
-    RendererGLFW_GL46 &operator=(RendererGLFW_GL46 &&other) noexcept = delete;
+    RendererGLFW_GL46& operator=(RendererGLFW_GL46&& other) noexcept = delete;
 
-  public:
+public:
     void swapBuffer() noexcept final;
 };
 } // namespace Engine::Core::Renderering

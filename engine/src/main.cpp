@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -40,7 +40,7 @@ int main()
     // Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
 
     WindowGLFW win(WindowCreateArg{"GP engine", 600, 900});
-    RendererGLFW_GL46 ren (win);
+    RendererGLFW_GL46 ren(win);
 
     logExample();
 
@@ -48,4 +48,3 @@ int main()
 
     return 0;
 }
-
