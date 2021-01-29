@@ -39,8 +39,8 @@ int main()
 {
     // Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
 
-    WindowGLFW win(WindowCreateArg{"GP engine", 600, 900});
-    RendererGLFW_GL46 ren(win);
+    Window win(WindowCreateArg{"GP engine", 600, 900});
+    Renderer ren(win);
 
     logExample();
 
