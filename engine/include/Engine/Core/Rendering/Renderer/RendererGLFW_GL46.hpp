@@ -9,7 +9,7 @@
 
 namespace Engine::Core::Renderering
 {
-class RendererGLFW_GL46 : public IRenderer
+class RendererGLFW_GL46 final : public IRenderer
 {
   protected:
     void initialize(const WindowCreateArg &arg) noexcept final;

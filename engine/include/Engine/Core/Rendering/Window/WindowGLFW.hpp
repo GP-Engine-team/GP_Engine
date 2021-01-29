@@ -11,7 +11,7 @@
 
 namespace Engine::Core::Renderering
 {
-class WindowGLFW : public IWindow
+class WindowGLFW final : public IWindow
 {
   protected:
     GLFWwindow *m_window = nullptr;
