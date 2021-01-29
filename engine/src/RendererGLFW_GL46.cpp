@@ -111,12 +111,10 @@ inline void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint i
     Log::logError(stringFormat("%d: %s of %s severity, raised from %s: %s\n", id, _type, _severity, _source, msg));
 }
 
-void RendererGLFW_GL46::initialize(const WindowCreateArg &winArg) noexcept
+RendererGLFW_GL46::RendererGLFW_GL46(WindowGLFW &window) noexcept
+    : IRenderer(reinterpret_cast<IWindow *> (&window))
 {
     Log::logInitializationStart("GLFW / OpenGL 4.6 Renderer");
-
-    // Init window
-    m_pWindow = std::make_unique<WindowGLFW>(winArg);
 
     // Init glad
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
@@ -154,7 +152,8 @@ void RendererGLFW_GL46::initialize(const WindowCreateArg &winArg) noexcept
     Log::log(stringFormat("GL_VERSION = %s", glGetString(GL_VERSION)));
 }
 
-void RendererGLFW_GL46::release() noexcept
+
+RendererGLFW_GL46::~RendererGLFW_GL46() noexcept
 {
     Log::log("GLFW / OpenGL 4.6 renderer release");
 }
@@ -162,5 +161,5 @@ void RendererGLFW_GL46::release() noexcept
 void RendererGLFW_GL46::swapBuffer() noexcept
 {
     // Present frame
-    glfwSwapBuffers(reinterpret_cast<GLFWwindow *>(m_pWindow.get()->get()));
+    glfwSwapBuffers(reinterpret_cast<GLFWwindow *>(m_pWindow->get()));
 }

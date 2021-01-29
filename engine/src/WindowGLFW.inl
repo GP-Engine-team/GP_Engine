@@ -14,8 +14,3 @@ constexpr inline const GLFWwindow *const Engine::Core::Renderering::WindowGLFW::
 {
     return m_window;
 }
-
-inline void Engine::Core::Renderering::WindowGLFW::getSize(unsigned short &width, unsigned short &height) const noexcept
-{
-    glfwGetWindowSize(m_window, reinterpret_cast<int *>(&width), reinterpret_cast<int *>(&height));
-}

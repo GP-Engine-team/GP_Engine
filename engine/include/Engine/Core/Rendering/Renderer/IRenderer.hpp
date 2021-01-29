@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Rendering/Window/IWindow.hpp"
 #include <memory> //std::unique_ptr
 
@@ -14,17 +15,14 @@ namespace Engine::Core::Renderering
 class IRenderer
 {
   protected:
-    std::unique_ptr<IWindow> m_pWindow = nullptr;
-
-  protected:
-    virtual void initialize(const WindowCreateArg &arg) noexcept = 0;
-    virtual void release() noexcept = 0;
+    IWindow* m_pWindow = nullptr;
 
   public:
 
-    [[nodiscard]] inline const IWindow *getWindow() const noexcept
+    IRenderer(IWindow * pWin) noexcept 
+        : m_pWindow {pWin}
     {
-        return m_pWindow.get();
+    //    GPE_ASSERT(m_pWindow != nullptr);
     }
 
     virtual void swapBuffer() noexcept = 0;

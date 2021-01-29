@@ -3,11 +3,11 @@
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
  */
-
 #pragma once
 
 #include "Engine/Core/Rendering/Window/IWindow.hpp"
-#include <GLFW/glfw3.h>
+
+class GLFWwindow;
 
 namespace Engine::Core::Renderering
 {
@@ -61,7 +61,7 @@ class WindowGLFW final : public IWindow
      * @param height
      * @return
      */
-    inline void getSize(unsigned short &width, unsigned short &height) const noexcept final;
+    void getSize(unsigned short &width, unsigned short &height) const noexcept final;
 };
 
 } // namespace Engine::Core::Renderering

@@ -3,6 +3,8 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Format.hpp"
 
+#include <GLFW/glfw3.h>
+
 using namespace Engine::Core::Renderering;
 using namespace Engine::Core::Tools;
 using namespace Engine::Core::Debug;
@@ -49,4 +51,9 @@ void WindowGLFW::release() noexcept
     glfwDestroyWindow(m_window);
     glfwTerminate();
     Log::log("GLFW window release");
+}
+
+void Engine::Core::Renderering::WindowGLFW::getSize(unsigned short &width, unsigned short &height) const noexcept
+{
+    glfwGetWindowSize(m_window, reinterpret_cast<int *>(&width), reinterpret_cast<int *>(&height));
 }

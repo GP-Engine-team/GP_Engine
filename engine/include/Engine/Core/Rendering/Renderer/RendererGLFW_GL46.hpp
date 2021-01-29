@@ -5,27 +5,17 @@
  */
 #pragma once
 
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/Rendering/Renderer/IRenderer.hpp"
 
 namespace Engine::Core::Renderering
 {
 class RendererGLFW_GL46 final : public IRenderer
 {
-  protected:
-    void initialize(const WindowCreateArg &arg) noexcept final;
-
-    void release() noexcept final;
-
   public:
-    inline RendererGLFW_GL46(const WindowCreateArg &arg) noexcept : IRenderer()
-    {
-        initialize(arg);
-    }
+    RendererGLFW_GL46(WindowGLFW &window) noexcept;
 
-    inline virtual ~RendererGLFW_GL46() noexcept
-    {
-        release();
-    }
+    ~RendererGLFW_GL46() noexcept;
 
     RendererGLFW_GL46() noexcept = delete;
 
