@@ -112,7 +112,7 @@ inline void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint i
 }
 
 RendererGLFW_GL46::RendererGLFW_GL46(WindowGLFW &window) noexcept
-    : IRenderer(reinterpret_cast<IWindow *> (&window))
+    : IRenderer(reinterpret_cast<IWindow&>(window))
 {
     Log::logInitializationStart("GLFW / OpenGL 4.6 Renderer");
 

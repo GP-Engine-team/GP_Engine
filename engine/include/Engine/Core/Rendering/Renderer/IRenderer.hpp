@@ -19,11 +19,9 @@ class IRenderer
 
   public:
 
-    IRenderer(IWindow * pWin) noexcept 
-        : m_pWindow {pWin}
-    {
-    //    GPE_ASSERT(m_pWindow != nullptr);
-    }
+    IRenderer(IWindow& win) noexcept 
+        : m_pWindow {&win}
+    {}
 
     virtual void swapBuffer() noexcept = 0;
 };
