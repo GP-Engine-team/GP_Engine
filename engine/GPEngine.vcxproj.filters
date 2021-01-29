@@ -27,16 +27,10 @@
     <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Rendering\Renderer\IRenderer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Rendering\Window\IWindow.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp">
