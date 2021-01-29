@@ -1,11 +1,12 @@
 # GP_Engine
 
-Link to Production Pipeline document : https://docs.google.com/document/d/16_K5LYEYgaHoLp3JxO0UqVd54PJbOMVTss-FqXLqL3I/edit
-Link to Google Drive of our engine : https://drive.google.com/drive/folders/13uqdCMKSp5BYv3FkD2sflDcJ6F_QaaVE
+```suggestion
+[Production Pipeline document](https://docs.google.com/document/d/16_K5LYEYgaHoLp3JxO0UqVd54PJbOMVTss-FqXLqL3I/edit)
+[Google Drive of the engine](https://drive.google.com/drive/folders/13uqdCMKSp5BYv3FkD2sflDcJ6F_QaaVE)
 
 ## How to compile
 
-Run this command to doawload all depedancy (this operation can take few minutes)
+Run this command to download all dependencies (this operation can take up to a few minutes)
 
 ```batch
 git submodule update --init --recursive
