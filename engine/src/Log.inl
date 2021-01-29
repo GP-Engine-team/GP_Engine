@@ -9,7 +9,7 @@ inline void Engine::Core::Debug::Log::closeAndTryToCreateFile() noexcept
 {
     fileLog.close();
 
-    if (!getSettingState(ALWAYS_PRINT_LOG_FILE) || releaseLogFile)
+    if (!getSettingState(ESetting::ALWAYS_PRINT_LOG_FILE) || releaseLogFile)
         std::remove(fileLogPath.c_str());
 }
 
@@ -43,8 +43,8 @@ inline void Engine::Core::Debug::Log::log(const std::string &msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
-    msgLog += getSettingState(DISPLAY_DATE) ? getDateStr() + " " : "";
-    msgLog += getSettingState(DISPLAY_HOUR) ? getTimeStr() + " " : "";
+    msgLog += getSettingState(ESetting::DISPLAY_DATE) ? getDateStr() + " " : "";
+    msgLog += getSettingState(ESetting::DISPLAY_HOUR) ? getTimeStr() + " " : "";
     msgLog += msg;
     msgLog += "\n";
 
@@ -56,10 +56,10 @@ inline void Engine::Core::Debug::Log::logError(const std::string &msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
-    msgLog += getSettingState(DISPLAY_DATE) ? getDateStr() + " " : "";
-    msgLog += getSettingState(DISPLAY_HOUR) ? getTimeStr() + " " : "";
+    msgLog += getSettingState(ESetting::DISPLAY_DATE) ? getDateStr() + " " : "";
+    msgLog += getSettingState(ESetting::DISPLAY_HOUR) ? getTimeStr() + " " : "";
 
-    if (getSettingState(DISPLAY_WITH_COLOR))
+    if (getSettingState(ESetting::DISPLAY_WITH_COLOR))
     {
         logAddMsg(msgLog);
         std::cerr << msgLog;
@@ -81,7 +81,7 @@ inline void Engine::Core::Debug::Log::logError(const std::string &msg) noexcept
     msgLog += msg;
     msgLog += "\n";
 
-    if (getSettingState(PRINT_LOG_FILE_ERROR))
+    if (getSettingState(ESetting::PRINT_LOG_FILE_ERROR))
         releaseLogFile = false;
 
     std::cerr << msgLog;
@@ -92,10 +92,10 @@ inline void Engine::Core::Debug::Log::logWarning(const std::string &msg) noexcep
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
-    msgLog += getSettingState(DISPLAY_DATE) ? getDateStr() + " " : "";
-    msgLog += getSettingState(DISPLAY_HOUR) ? getTimeStr() + " " : "";
+    msgLog += getSettingState(ESetting::DISPLAY_DATE) ? getDateStr() + " " : "";
+    msgLog += getSettingState(ESetting::DISPLAY_HOUR) ? getTimeStr() + " " : "";
 
-    if (getSettingState(DISPLAY_WITH_COLOR))
+    if (getSettingState(ESetting::DISPLAY_WITH_COLOR))
     {
         logAddMsg(msgLog);
         std::cerr << msgLog;
@@ -117,7 +117,7 @@ inline void Engine::Core::Debug::Log::logWarning(const std::string &msg) noexcep
     msgLog += msg;
     msgLog += "\n";
 
-    if (getSettingState(PRINT_LOG_FILE_WARNING))
+    if (getSettingState(ESetting::PRINT_LOG_FILE_WARNING))
         releaseLogFile = false;
 
     std::cerr << msgLog;
@@ -128,10 +128,10 @@ inline void Engine::Core::Debug::Log::logTips(const std::string &msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
-    msgLog += getSettingState(DISPLAY_DATE) ? getDateStr() + " " : "";
-    msgLog += getSettingState(DISPLAY_HOUR) ? getTimeStr() + " " : "";
+    msgLog += getSettingState(ESetting::DISPLAY_DATE) ? getDateStr() + " " : "";
+    msgLog += getSettingState(ESetting::DISPLAY_HOUR) ? getTimeStr() + " " : "";
 
-    if (getSettingState(DISPLAY_WITH_COLOR))
+    if (getSettingState(ESetting::DISPLAY_WITH_COLOR))
     {
         logAddMsg(msgLog);
         std::cout << msgLog;
@@ -153,7 +153,7 @@ inline void Engine::Core::Debug::Log::logTips(const std::string &msg) noexcept
     msgLog += msg;
     msgLog += "\n";
 
-    if (getSettingState(ALWAYS_PRINT_LOG_FILE))
+    if (getSettingState(ESetting::ALWAYS_PRINT_LOG_FILE))
         releaseLogFile = false;
 
     std::cout << msgLog;
@@ -185,7 +185,7 @@ inline void Engine::Core::Debug::Log::removeSetting(uint8_t flag) noexcept
     settings &= ~flag;
 }
 
-inline bool Engine::Core::Debug::Log::getSettingState(ESetting setting) noexcept
+inline bool Engine::Core::Debug::Log::getSettingState(Engine::Core::Debug::ESetting setting) noexcept
 {
     return settings & setting;
 }
