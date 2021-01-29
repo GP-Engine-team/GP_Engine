@@ -6,7 +6,7 @@
 
 ## How to compile
 
-Run this command to doawload all depedancy (this operation can take few minutes)
+Run this command to download all dependencies (this operation can take up to a few minutes)
 
 ```batch
 git submodule update --init --recursive
