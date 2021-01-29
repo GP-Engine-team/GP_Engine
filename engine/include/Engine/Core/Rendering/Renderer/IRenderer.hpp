@@ -22,7 +22,7 @@ class IRenderer
 
   public:
 
-    [[nodiscard]] inline const IWindow const *getWindow() const noexcept
+    [[nodiscard]] inline const IWindow *getWindow() const noexcept
     {
         return m_pWindow.get();
     }
