@@ -12,9 +12,9 @@ namespace Engine::Core::Renderering
 {
 struct WindowCreateArg
 {
-    std::string name;
-    size_t height;
-    size_t width;
+    std::string name = "";
+    unsigned short height = 0;
+    unsigned short width = 0;
 };
 
 class IWindow
@@ -25,10 +25,9 @@ class IWindow
     virtual void release() noexcept = 0;
 
   public:
-
     inline virtual const void *get() const noexcept = 0;
     inline virtual void *get() noexcept = 0;
 
-    inline virtual void getSize(size_t &width, size_t &height) const noexcept = 0;
+    inline virtual void getSize(unsigned short &width, unsigned short &height) const noexcept = 0;
 };
 } // namespace Engine::Core::Renderering

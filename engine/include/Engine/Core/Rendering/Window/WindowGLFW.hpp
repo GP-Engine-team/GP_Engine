@@ -61,7 +61,7 @@ class WindowGLFW : public IWindow
      * @param height
      * @return
      */
-    inline void getSize(size_t &width, size_t &height) const noexcept final;
+    inline void getSize(unsigned short &width, unsigned short &height) const noexcept final;
 };
 
 } // namespace Engine::Core::Renderering
