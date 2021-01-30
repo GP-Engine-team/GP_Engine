@@ -41,14 +41,6 @@ public:
     Window& operator=(Window&& other) noexcept = delete;
 
     /**
-     * @brief return GLFWwindow pointer with generic forme that allow user to ealsy use another lib
-     * @return void*
-     */
-    [[nodiscard]] inline const void* get() const noexcept;
-
-    [[nodiscard]] inline void* get() noexcept;
-
-    /**
      * @brief Get the glfw current window
      * @return
      */
