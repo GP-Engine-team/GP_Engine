@@ -70,7 +70,7 @@ enum ESetting : uint8_t
     DISPLAY_WITH_COLOR = (1u << 3),     // display log with color for each even
     ALWAYS_PRINT_LOG_FILE = (1u << 4),  // never destroy log file
     PRINT_LOG_FILE_WARNING = (1u << 5), // print log file if warning happend
-    PRINT_LOG_FILE_ERROR = (1u << 6),   // print log file if error happend
+    PRINT_LOG_FILE_ERROR = (1u << 6)   // print log file if error happend
 };
 
 class Log
