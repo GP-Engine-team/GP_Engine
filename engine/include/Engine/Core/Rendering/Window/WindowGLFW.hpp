@@ -15,8 +15,8 @@ namespace Engine::Core::Renderering
 struct WindowCreateArg
 {
     std::string name = "";
-    unsigned short height = 0;
-    unsigned short width = 0;
+    int height = 0;
+    int width = 0;
 };
 
 class Window
@@ -53,7 +53,7 @@ public:
      * @param height
      * @return
      */
-    void getSize(unsigned short& width, unsigned short& height) const noexcept;
+    void getSize(int& width, int& height) const noexcept;
 };
 
 } // namespace Engine::Core::Renderering
