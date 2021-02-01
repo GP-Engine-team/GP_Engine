@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPGame", "GPGame.vcxproj", "{373AFEA3-5CA8-447B-B39A-202EA2DBBEC9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPEngine", "..\..\engine\GPEngine.vcxproj", "{7D7A0335-611A-485A-96C6-F9B79D1A08F2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{373AFEA3-5CA8-447B-B39A-202EA2DBBEC9} = {373AFEA3-5CA8-447B-B39A-202EA2DBBEC9}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
