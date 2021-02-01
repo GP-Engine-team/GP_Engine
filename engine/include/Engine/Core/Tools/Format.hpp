@@ -21,7 +21,8 @@ namespace Engine::Core::Tools
  * @param args
  * @return std::string
  */
-template <typename... Args>[[nodiscard]] std::string stringformat(const std::string &format, Args... args) noexcept;
+template <typename... Args>
+[[nodiscard]] std::string stringFormat(const std::string& format, Args... args) noexcept;
 } /*namespace Engine::Core::Tools*/
 
 #include "Format.inl"

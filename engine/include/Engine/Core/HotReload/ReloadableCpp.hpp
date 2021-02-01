@@ -19,16 +19,16 @@ namespace Engine::Core::HotReload
  */
 class ReloadableCpp
 {
-  private:
+private:
     std::string path;
 
     HMODULE module = nullptr;
     size_t lastRefreshTime = 0;
-    std::map<std::string, void *> processes; // current successfully loaded processes
+    std::map<std::string, void*> processes; // current successfully loaded processes
 
-  private:
+private:
     // Only call this when reloadableCpp.path is pointing towards a valid file.
-    void load(const char *newFileSuffix = ".copy.dll")
+    void load(const char* newFileSuffix = ".copy.dll")
     {
         std::string copyFilename = path + newFileSuffix;
 
@@ -40,7 +40,7 @@ class ReloadableCpp
             // If loaded successfully :
             if (module = LoadLibrary(copyFilename.c_str()))
             {
-                for (auto &p : processes)
+                for (auto& p : processes)
                 {
                     p.second = GetProcAddress((HMODULE)module, p.first.c_str());
                 }
@@ -63,13 +63,13 @@ class ReloadableCpp
         }
     }
 
-  public:
+public:
     /**
      * @brief Constructor of ReloadableCpp.
      * @param path The path of the dll, relative to the executable.
      *  Example : bin/myProgramDLL.dll
      */
-    ReloadableCpp(const std::string &path) : path(path)
+    ReloadableCpp(const std::string& path) : path(path)
     {
     }
 
@@ -94,8 +94,8 @@ class ReloadableCpp
 
         // If the file has been modified since last load :
         uint64_t fileLastWriteTime;
-        const bool hasFileBeenModified = (GetFileTime(fileHandle, NULL, NULL, (FILETIME *)&fileLastWriteTime) &&
-                                          lastRefreshTime < fileLastWriteTime);
+        const bool hasFileBeenModified =
+            (GetFileTime(fileHandle, NULL, NULL, (FILETIME*)&fileLastWriteTime) && lastRefreshTime < fileLastWriteTime);
 
         if (hasFileBeenModified)
         {
@@ -114,7 +114,7 @@ class ReloadableCpp
      * @brief Add a process that will be loaded
      * @param processName The name of the process (e.g. the function name)
      */
-    void addProcess(const std::string &processName)
+    void addProcess(const std::string& processName)
     {
         processes.emplace(std::make_pair(processName, GetProcAddress((HMODULE)module, processName.c_str())));
     }
@@ -124,9 +124,10 @@ class ReloadableCpp
      * @param processName The name of the process (e.g. the function name)
      * @return Returns a pointer to the process (e.g. the function)
      */
-    template <class C_FUNCTION_TYPE> C_FUNCTION_TYPE *getProcess(const std::string &processName)
+    template <class C_FUNCTION_TYPE>
+    C_FUNCTION_TYPE* getProcess(const std::string& processName)
     {
-        return (C_FUNCTION_TYPE *)processes[processName];
+        return (C_FUNCTION_TYPE*)processes[processName];
     }
 };
 } // namespace Engine::Core::HotReload

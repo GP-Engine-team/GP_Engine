@@ -1,14 +1,22 @@
 #include <iostream>
 
+#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 
+using namespace Engine::Core::Renderering;
 using namespace Engine::Core::Debug;
 
-int main()
+extern "C"
 {
-    // Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
+    _declspec(dllexport) int NvOptimusEnablement = 1;
+    _declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
 
+void logExample()
+{
     Log::logFileHeader();
 
     Log::logInitializationStart("logInitializationStart");
@@ -24,7 +32,17 @@ int main()
     FUNCT_ERROR("functError");
     FUNCT_WARNING("functWarning");
 
-    GPE_ASSERT(false, "GPE_assertInfo");
+    GPE_ASSERT(true, "GPE_assertInfo");
+}
+
+int main()
+{
+    // Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
+
+    Window win(WindowCreateArg{"GP engine", 600, 900});
+    Renderer ren(win);
+
+    logExample();
 
     Log::closeAndTryToCreateFile();
 

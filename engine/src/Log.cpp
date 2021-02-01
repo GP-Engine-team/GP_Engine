@@ -2,7 +2,7 @@
 
 using namespace Engine::Core::Debug;
 
-uint8_t Log::settings(DISPLAY_HOUR | DISPLAY_WITH_COLOR | PRINT_LOG_FILE_ERROR);
+uint8_t Log::settings(ESetting::DISPLAY_HOUR | ESetting::DISPLAY_WITH_COLOR | ESetting::PRINT_LOG_FILE_ERROR);
 
 bool Log::releaseLogFile(true);
 std::string Log::fileLogPath(
