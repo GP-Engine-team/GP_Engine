@@ -53,7 +53,7 @@ public:
      * @param height
      * @return
      */
-    void getSize(int& width, int& height) const noexcept;
+    void getSize(int width, int height) const noexcept;
 };
 
 } // namespace Engine::Core::Renderering
