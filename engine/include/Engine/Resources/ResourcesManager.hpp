@@ -26,7 +26,8 @@ namespace Engine::Resources
         public:
 
         ResourcesManager ()                                = default;
-        ResourcesManager (const ResourcesManager& other)  = delete;
+        ResourcesManager (const ResourcesManager& other)                = delete;
+        ResourcesManager&  operator= (const ResourcesManager& other)  = delete;
         ResourcesManager (ResourcesManager&& other)       = default;
         ~ResourcesManager ()                               = default;
 
@@ -167,49 +168,4 @@ namespace Engine::Resources
 
     };
 
-    template<class LType, class... RType>
-    class ResourcesManagerWithGlobalUsage 
-        : public ResourcesManager<LType, RType...>
-    {
-        public:
-
-            #pragma region constructor/destructor
-
-            ResourcesManagerWithGlobalUsage ()                                = default;
-            ResourcesManagerWithGlobalUsage (const ResourcesManagerWithGlobalUsage& other)  = delete;
-            ResourcesManagerWithGlobalUsage (ResourcesManagerWithGlobalUsage&& other)       = default;
-            ~ResourcesManagerWithGlobalUsage ()                               = default;
-
-            #pragma endregion //!constructor/destructor
-
-            #pragma region methods
-
-            void use    () noexcept;
-
-            #pragma endregion //!methods
-
-            static ResourcesManagerWithGlobalUsage<LType, RType...>* getResourceManagerUse() noexcept;
-
-        protected:
-
-        static ResourcesManagerWithGlobalUsage<LType, RType...>* resourceManagerToUse; //pointor to be in nullptr by default
-
-        private:
-
-    };
-
-    template<class LType, class... RType>
-    ResourcesManagerWithGlobalUsage<LType, RType...>* ResourcesManagerWithGlobalUsage<LType, RType...>::resourceManagerToUse {nullptr};
-
-    template<class LType, class... RType>
-    ResourcesManagerWithGlobalUsage<LType, RType...>* ResourcesManagerWithGlobalUsage<LType, RType...>::getResourceManagerUse() noexcept
-    {
-        return resourceManagerToUse; 
-    }
-
-    template<class LType, class... RType>
-    void ResourcesManagerWithGlobalUsage<LType, RType...>::use () noexcept
-    {
-        resourceManagerToUse = this;
-    }
 }// namespaceEngine::Resources

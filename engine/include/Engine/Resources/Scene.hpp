@@ -12,9 +12,13 @@ namespace Engine::Resources
 {
     class Scene
     {
+        friend class SceneManager;
+
         private:
     
         protected:
+
+        ResourcesManager<int> m_resourceManager;
 
         constexpr
         void loadResource(ResourcesManager<int>& resourceManager) noexcept {};
