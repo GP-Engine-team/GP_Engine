@@ -51,6 +51,9 @@
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -68,6 +71,9 @@
     <ClCompile Include="third_party\src\glad.c">
       <Filter>Third party</Filter>
     </ClCompile>
+    <ClCompile Include="src\TimeSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Log.inl">
@@ -78,6 +84,9 @@
     </None>
     <None Include=".clang-format" />
     <None Include="src\WindowGLFW.inl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="src\TimeSystem.inl">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
