@@ -60,29 +60,60 @@ public:
                 std::function<void(double unscaledDeltaTime, double deltaTime)> updateFunction,
                 std::function<void()> renderFunction) noexcept;
 
-    [[nodiscard]] inline double getFixedDeltaTime() noexcept;
 
-    [[nodiscard]] inline double getFixedUnscaledDeltaTime() noexcept;
-
+    /**
+     * @brief Change the fixed delta time used in fixed update. By default this value egales : 1/60 or 60 Hz
+     * @param newFixedUnscaledDetlaTime 
+     * @return 
+    */
     inline void setFixedUnscaledDeltaTime(double newFixedUnscaledDetlaTime) noexcept;
 
+    [[nodiscard]] inline double getFixedDeltaTime() noexcept;
+    [[nodiscard]] inline double getFixedUnscaledDeltaTime() noexcept;
     [[nodiscard]] inline double getDeltaTime() noexcept;
-
     [[nodiscard]] inline double getUnscaledDeltaTime() noexcept;
-
     [[nodiscard]] inline double getAccumulateTime() noexcept;
-
     [[nodiscard]] inline double getAccumulateUnscaledTime() noexcept;
-
     [[nodiscard]] inline double getTimeScale() noexcept;
 
+    /**
+     * @brief Redefine time scale. This value will use to comput scaled detla time and scaled fixed delta time. Usefull to change the game speed
+     * @param newtimeScale 
+     * @return 
+    */
     inline void setTimeScale(double newtimeScale) noexcept;
 
+    /**
+     * @brief Add Task into scaled timer container. This container allow you to create event after a delay and allow
+     * you to repeat it
+     * @param delay
+     * @param functionToExecute
+     * @param isLooping
+     * @return
+     */
     inline void addScaledTimer(double delay, std::function<void()> functionToExecute, bool isLooping = false) noexcept;
+
+    /**
+     * @brief Add Task into unscaled timer container. This container allow you to create event after a delay and allow
+     * you to repeat it
+     * @param delay
+     * @param functionToExecute
+     * @param isLooping
+     * @return
+     */
     inline void addUnscaledTimer(double delay, std::function<void()> functionToExecute,
                                  bool isLooping = false) noexcept;
 
+    /**
+     * @brief Clear all task of the scaled timer container
+     * @return
+     */
     inline void clearScaledTimer() noexcept;
+
+    /**
+     * @brief Clear all task of the unscaled timer container
+     * @return
+     */
     inline void clearUnscaledTimer() noexcept;
 };
 
