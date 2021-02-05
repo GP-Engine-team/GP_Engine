@@ -7,18 +7,31 @@
 #pragma once
 
 #include "Engine/Core/Debug/Log.hpp"
-#include <chrono> // std::chrono::seconds, std::chrono::system_clock::now()
-#include <functional>
+#include <chrono>     // std::chrono::seconds, std::chrono::system_clock::now()
+#include <functional> //std::function
+#include <queue>
 
 namespace Engine::Core
 {
+struct TimerTask
+{
+    double localTimer = 0.; // if current time egal 1s and local timer egal 0.5 global time egal 1.5
+    double globalTimer = 0.;
+    std::function<void()> task = nullptr;
+    bool isLooping = false;
+
+    bool operator>(const TimerTask& other) const noexcept
+    {
+        return globalTimer > other.globalTimer;
+    }
+};
+
 class TimeSystem
 {
-protected :
-
+protected:
     std::chrono::system_clock::time_point m_time = std::chrono::system_clock::now();
     std::chrono::system_clock::time_point m_tempTime = m_time;
-    double m_timeAcc = 0.;
+    double m_fixedTimeAcc = 0.;
 
     unsigned int m_frameAcc = 0;
 
@@ -31,34 +44,46 @@ protected :
     double m_scaledTimeAcc = 0.f;
     double m_unscaledTimeAcc = 0.f;
 
-public:
+    std::priority_queue<TimerTask, std::vector<TimerTask>, std::greater<TimerTask>> m_scaledTimerQueue;
+    std::priority_queue<TimerTask, std::vector<TimerTask>, std::greater<TimerTask>> m_unscaledTimerQueue;
 
+public:
     /**
      * @brief Update the time, update system and renderSystem. The update function will call with accumulator to be call
      * a fixed time by second
      *
-     * @param fixedUpdateFunction : lambda that contain all fixed update function (that use fixed deltaTime)
-     * @param updateFunction : lambda that contain all update function (physic update, scene, update...)
-     * @param renderFunction : lambda that contain all render function (clear screen, display elements, display
-     * screen...)
+     * @param fixedUpdateFunction : lambda that contain all fixed update function
+     * @param updateFunction : lambda that contain all update function
+     * @param renderFunction : lambda that contain all render function
      */
-    void update(std::function<void(double fixedUnscaledDetlaTime, double fixedDetlaTime)> fixedUpdateFunction, 
+    void update(std::function<void(double fixedUnscaledDetlaTime, double fixedDetlaTime)> fixedUpdateFunction,
                 std::function<void(double unscaledDeltaTime, double deltaTime)> updateFunction,
                 std::function<void()> renderFunction) noexcept;
 
-    double getFixedDeltaTime() noexcept;
+    [[nodiscard]] inline double getFixedDeltaTime() noexcept;
 
-    double getFixedUnscaledDeltaTime() noexcept;
-    void   setFixedUnscaledDeltaTime(double newFixedUnscaledDetlaTime) noexcept;
+    [[nodiscard]] inline double getFixedUnscaledDeltaTime() noexcept;
 
-    double getDeltaTime() noexcept;
-    double getUnscaledDeltaTime() noexcept;
+    inline void setFixedUnscaledDeltaTime(double newFixedUnscaledDetlaTime) noexcept;
 
-    double getAccumulateTime() noexcept;
-    double getAccumulateUnscaledTime() noexcept;
+    [[nodiscard]] inline double getDeltaTime() noexcept;
 
-    double getTimeScale() noexcept;
-    void   setTimeScale(double newtimeScale) noexcept;
+    [[nodiscard]] inline double getUnscaledDeltaTime() noexcept;
+
+    [[nodiscard]] inline double getAccumulateTime() noexcept;
+
+    [[nodiscard]] inline double getAccumulateUnscaledTime() noexcept;
+
+    [[nodiscard]] inline double getTimeScale() noexcept;
+
+    inline void setTimeScale(double newtimeScale) noexcept;
+
+    inline void addScaledTimer(double delay, std::function<void()> functionToExecute, bool isLooping = false) noexcept;
+    inline void addUnscaledTimer(double delay, std::function<void()> functionToExecute,
+                                 bool isLooping = false) noexcept;
+
+    inline void clearScaledTimer() noexcept;
+    inline void clearUnscaledTimer() noexcept;
 };
 
 } // namespace Engine::Core

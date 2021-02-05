@@ -18,8 +18,6 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDetlaTime, double
     m_unscaledDeltaTime = std::chrono::duration<double>(m_tempTime - m_time).count();
     m_time = m_tempTime;
 
-    m_timeAcc += m_unscaledDeltaTime;
-
     /*Apply time scale*/
     m_deltaTime = m_unscaledDeltaTime * m_timeScale;
 
@@ -27,21 +25,41 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDetlaTime, double
     m_scaledTimeAcc += m_deltaTime;
     m_unscaledTimeAcc += m_unscaledDeltaTime;
 
-    if (isinf(m_scaledTimeAcc))
-    {
-        m_scaledTimeAcc = 0;
-    }
-
-    if (isinf(m_unscaledTimeAcc))
-    {
-        m_unscaledTimeAcc = 0;
-    }
+    m_scaledTimeAcc *= !isinf(m_scaledTimeAcc);     // reset if isInf (avoid conditionnal jump)
+    m_unscaledTimeAcc *= !isinf(m_unscaledTimeAcc); // reset if isInf (avoid conditionnal jump)
 
     /*Fixed update*/
-    while (m_timeAcc >= m_fixedUnscaledDetlaTime)
+    m_fixedTimeAcc += m_unscaledDeltaTime;
+
+    while (m_fixedTimeAcc >= m_fixedUnscaledDetlaTime)
     {
         fixedUpdateFunction(m_fixedUnscaledDetlaTime, m_fixedDetlaTime);
-        m_timeAcc -= m_fixedUnscaledDetlaTime;
+        m_fixedTimeAcc -= m_fixedUnscaledDetlaTime;
+    }
+
+    /*Update timer queue task*/
+    while (!m_unscaledTimerQueue.empty() && m_unscaledTimerQueue.top().globalTimer <= m_unscaledTimeAcc)
+    {
+        const TimerTask& timerTask = m_unscaledTimerQueue.top();
+        timerTask.task();
+
+        if (timerTask.isLooping)
+        {
+            addUnscaledTimer(timerTask.localTimer, timerTask.task, timerTask.isLooping);
+        }
+        m_unscaledTimerQueue.pop();
+    }
+
+    while (!m_scaledTimerQueue.empty() && m_scaledTimerQueue.top().globalTimer <= m_scaledTimeAcc)
+    {
+        const TimerTask& timerTask = m_scaledTimerQueue.top();
+        timerTask.task();
+
+        if (timerTask.isLooping)
+        {
+            addScaledTimer(timerTask.localTimer, timerTask.task, timerTask.isLooping);
+        }
+        m_scaledTimerQueue.pop();
     }
 
     /*unfixed update*/

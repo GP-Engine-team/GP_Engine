@@ -43,6 +43,15 @@ void logExample()
     GPE_ASSERT(true, "GPE_assertInfo");
 }
 
+void logTimerExample(TimeSystem& ts)
+{
+    ts.addScaledTimer(
+        0.5, [&]() { std::cout << "Timer 0.5" << std::endl; }, true);
+
+    ts.addScaledTimer(
+        2., [&]() { std::cout << "Timer 2." << std::endl; }, true);
+}
+
 int main()
 {
     // Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
@@ -57,7 +66,18 @@ int main()
     int fixedUpdateFrameCount = 0;
     int unFixedUpdateFrameCount = 0;
     double chronoFPSLog = 0.;
-    double m_FPSLogDelay = 1.;
+    double m_FPSLogDelay = 3.;
+
+     ts.addScaledTimer(
+        m_FPSLogDelay,
+        [&]() 
+     {
+            std::cout << "FPS (fixedUpdate): " << fixedUpdateFrameCount / m_FPSLogDelay << std::endl;
+            std::cout << "FPS (unFixedUpdate): " << unFixedUpdateFrameCount / m_FPSLogDelay << std::endl << std::endl;
+            fixedUpdateFrameCount = 0;
+            unFixedUpdateFrameCount = 0;
+
+     }, true);
 
     while (1)
     {
@@ -68,23 +88,8 @@ int main()
             [&](double unscaledDeltaTime, double deltaTime)
         { 
             ++unFixedUpdateFrameCount;
-
-            chronoFPSLog += unscaledDeltaTime;
-
-            /*Display FPS*/
-            if (chronoFPSLog >= m_FPSLogDelay)
-            {
-                std::cout << "FPS (fixedUpdate): " << fixedUpdateFrameCount << std::endl;
-                std::cout << "FPS (unFixedUpdate): " << unFixedUpdateFrameCount << std::endl << std::endl;
-                chronoFPSLog -= m_FPSLogDelay;
-                fixedUpdateFrameCount = 0;
-                unFixedUpdateFrameCount = 0;
-            }
         }, 
-            [&]() 
-        {
-        
-        });
+            [&]() {});
     }
 
     Log::closeAndTryToCreateFile();
