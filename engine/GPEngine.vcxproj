@@ -187,6 +187,7 @@
     <None Include=".clang-format" />
     <None Include="src\Format.inl" />
     <None Include="src\Log.inl" />
+    <None Include="src\ResourcesManager.inl" />
     <None Include="src\WindowGLFW.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
