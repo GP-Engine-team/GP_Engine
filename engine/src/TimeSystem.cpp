@@ -6,7 +6,7 @@
 using namespace Engine::Core;
 using namespace Engine::Core::Debug;
 
-void TimeSystem::update(std::function<void(double fixedUnscaledDetlaTime, double fixedDetlaTim)> fixedUpdateFunction,
+void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double fixedDeltaTime)> fixedUpdateFunction,
                         std::function<void(double unscaledDeltaTime, double deltaTime)> updateFunction,
                         std::function<void()> renderFunction) noexcept
 {
