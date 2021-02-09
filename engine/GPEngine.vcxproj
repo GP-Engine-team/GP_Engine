@@ -173,7 +173,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Log.cpp" />
-    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ReloadableCpp.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
