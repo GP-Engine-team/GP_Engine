@@ -46,7 +46,7 @@ inline constexpr double Engine::Core::TimeSystem::getTimeScale() const noexcept
 inline constexpr void Engine::Core::TimeSystem::setTimeScale(double newtimeScale) noexcept
 {
     m_timeScale = newtimeScale;
-    m_fixedDetlaTime = m_fixedUnscaledDetlaTime * m_timeScale;
+    m_fixedDeltaTime = m_fixedUnscaledDeltaTime * m_timeScale;
 }
 
 void Engine::Core::TimeSystem::addScaledTimer(double delay, std::function<void()> functionToExecute, bool isLooping) noexcept
