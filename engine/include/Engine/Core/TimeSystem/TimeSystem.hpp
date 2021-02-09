@@ -81,7 +81,7 @@ public:
      * @param newtimeScale 
      * @return 
     */
-    inline void setTimeScale(double newtimeScale) noexcept;
+    inline constexpr void setTimeScale(double newtimeScale) noexcept;
 
     /**
      * @brief Add Task into scaled timer container. This container allow you to create event after a delay and allow
