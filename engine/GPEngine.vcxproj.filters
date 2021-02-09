@@ -51,6 +51,9 @@
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -78,6 +81,9 @@
     </None>
     <None Include=".clang-format" />
     <None Include="src\WindowGLFW.inl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="src\ResourcesManager.inl">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
