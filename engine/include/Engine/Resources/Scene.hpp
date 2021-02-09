@@ -43,7 +43,7 @@ namespace Engine::Resources
         constexpr inline
         Scene (Scene&& other) noexcept				    = delete;
         
-        //TODO: Scene can be capiable ? How manage resource
+        //TODO: Can scene be copied ? How to manage resource
         constexpr inline
         Scene& operator=(Scene const& other) noexcept		= delete;
     
