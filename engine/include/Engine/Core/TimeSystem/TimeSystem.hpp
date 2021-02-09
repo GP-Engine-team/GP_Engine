@@ -68,13 +68,13 @@ public:
     */
     inline constexpr void setFixedUnscaledDeltaTime(double newFixedUnscaledDeltaTime) noexcept;
 
-    [[nodiscard]] inline double getFixedDeltaTime() noexcept;
-    [[nodiscard]] inline double getFixedUnscaledDeltaTime() noexcept;
-    [[nodiscard]] inline double getDeltaTime() noexcept;
-    [[nodiscard]] inline double getUnscaledDeltaTime() noexcept;
-    [[nodiscard]] inline double getAccumulateTime() noexcept;
-    [[nodiscard]] inline double getAccumulateUnscaledTime() noexcept;
-    [[nodiscard]] inline double getTimeScale() noexcept;
+    [[nodiscard]] inline constexpr double getFixedDeltaTime() const noexcept;
+    [[nodiscard]] inline constexpr double getFixedUnscaledDeltaTime() const noexcept;
+    [[nodiscard]] inline constexpr double getDeltaTime() const noexcept;
+    [[nodiscard]] inline constexpr double getUnscaledDeltaTime() const noexcept;
+    [[nodiscard]] inline constexpr double getAccumulatedTime() const noexcept;
+    [[nodiscard]] inline constexpr double getAccumulatedUnscaledTime() const noexcept;
+    [[nodiscard]] inline constexpr double getTimeScale() const noexcept;
 
     /**
      * @brief Redefine time scale. This value will use to comput scaled detla time and scaled fixed delta time. Usefull to change the game speed
