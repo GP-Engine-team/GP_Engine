@@ -34,7 +34,7 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
     while (m_fixedTimeAcc >= m_fixedUnscaledDetlaTime)
     {
         fixedUpdateFunction(m_fixedUnscaledDetlaTime, m_fixedDeltaTime);
-        m_fixedTimeAcc -= m_fixedUnscaledDetlaTime;
+        m_fixedTimeAcc -= m_fixedUnscaledDeltaTime;
     }
 
     /*Update timer queue task*/
