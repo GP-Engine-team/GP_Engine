@@ -23,7 +23,7 @@ inline constexpr double Engine::Core::TimeSystem::getDeltaTime() const noexcept
     return m_deltaTime;
 }
 
-inline double Engine::Core::TimeSystem::getUnscaledDeltaTime() noexcept
+inline constexpr double Engine::Core::TimeSystem::getUnscaledDeltaTime() const noexcept
 {
     return m_unscaledDeltaTime;
 }
