@@ -81,7 +81,7 @@ int main()
 
     while (1)
     {
-        ts.update([&](double fixedUnscaledDetlaTime, double fixedDetlaTim)
+        ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
         { 
             ++fixedUpdateFrameCount;
         }, 
