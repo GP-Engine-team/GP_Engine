@@ -66,7 +66,7 @@ public:
      * @param newFixedUnscaledDeltaTime 
      * @return 
     */
-    inline void setFixedUnscaledDeltaTime(double newFixedUnscaledDetlaTime) noexcept;
+    inline constexpr void setFixedUnscaledDeltaTime(double newFixedUnscaledDeltaTime) noexcept;
 
     [[nodiscard]] inline double getFixedDeltaTime() noexcept;
     [[nodiscard]] inline double getFixedUnscaledDeltaTime() noexcept;
