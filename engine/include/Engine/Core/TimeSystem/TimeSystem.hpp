@@ -56,7 +56,7 @@ public:
      * @param updateFunction : lambda that contain all update function
      * @param renderFunction : lambda that contain all render function
      */
-    void update(std::function<void(double fixedUnscaledDetlaTime, double fixedDetlaTime)> fixedUpdateFunction,
+    void update(std::function<void(double fixedUnscaledDeltaTime, double fixedDeltaTime)> fixedUpdateFunction,
                 std::function<void(double unscaledDeltaTime, double deltaTime)> updateFunction,
                 std::function<void()> renderFunction) noexcept;
 
