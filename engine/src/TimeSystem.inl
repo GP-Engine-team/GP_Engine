@@ -38,7 +38,7 @@ inline double Engine::Core::TimeSystem::getAccumulateUnscaledTime() noexcept
     return m_unscaledTimeAcc;
 }
 
-inline double Engine::Core::TimeSystem::getTimeScale() noexcept
+inline constexpr double Engine::Core::TimeSystem::getTimeScale() const noexcept
 {
     return m_timeScale;
 }
