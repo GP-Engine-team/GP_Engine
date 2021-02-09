@@ -28,7 +28,7 @@ inline constexpr double Engine::Core::TimeSystem::getUnscaledDeltaTime() const n
     return m_unscaledDeltaTime;
 }
 
-inline double Engine::Core::TimeSystem::getAccumulateTime() noexcept
+inline constexpr double Engine::Core::TimeSystem::getAccumulatedTime() const noexcept
 {
     return m_scaledTimeAcc;
 }
