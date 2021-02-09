@@ -7,7 +7,7 @@ inline double Engine::Core::TimeSystem::getFixedDeltaTime() noexcept
 
 inline double Engine::Core::TimeSystem::getFixedUnscaledDeltaTime() noexcept
 {
-    return m_fixedUnscaledDetlaTime;
+    return m_fixedUnscaledDeltaTime;
 }
 
 inline void Engine::Core::TimeSystem::setFixedUnscaledDeltaTime(double newFixedUnscaledDetlaTime) noexcept
