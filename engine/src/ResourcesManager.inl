@@ -15,7 +15,7 @@ LType* Engine::Resources::ResourcesManager<LType>::get(const std::string& key) n
 
 template <class LType>
 template <typename... Args>
-LType& Engine::Resources::ResourcesManager<LType>::add(std::string key, Args&&... args) noexcept
+LType& Engine::Resources::ResourcesManager<LType>::add(std::string key, Args&&... args) noexcept(std::is_nothrow_constructible_v<LType>)
 {
     // auto for pair of iterator of LType and bool
     auto rst =
@@ -32,13 +32,13 @@ LType& Engine::Resources::ResourcesManager<LType>::add(std::string key, Args&&..
 }
 
 template <class LType>
-void Engine::Resources::ResourcesManager<LType>::remove(const std::string& key) noexcept
+void Engine::Resources::ResourcesManager<LType>::remove(const std::string& key) noexcept(std::is_nothrow_destructible_v<LType>)
 {
     m_resources.erase(key);
 }
 
 template <class LType>
-void Engine::Resources::ResourcesManager<LType>::clear() noexcept
+void Engine::Resources::ResourcesManager<LType>::clear() noexcept(std::is_nothrow_destructible_v<LType>)
 {
     m_resources.clear();
 }
@@ -52,21 +52,21 @@ T* Engine::Resources::ResourcesManager<LType, RType...>::get(const std::string& 
 
 template <class LType, class... RType>
 template <class T>
-void Engine::Resources::ResourcesManager<LType, RType...>::remove(const std::string& key) noexcept
+void Engine::Resources::ResourcesManager<LType, RType...>::remove(const std::string& key) noexcept(std::is_nothrow_destructible_v<T>)
 {
     Engine::Resources::ResourcesManager<T>::remove(key);
 }
 
 template <class LType, class... RType>
 template <class T, typename... Args>
-T& Engine::Resources::ResourcesManager<LType, RType...>::add(const std::string& key, Args&&... args) noexcept
+T& Engine::Resources::ResourcesManager<LType, RType...>::add(const std::string& key, Args&&... args) noexcept(std::is_nothrow_constructible_v<T>)
 {
     return Engine::Resources::ResourcesManager<T>::add(key, std::forward<Args>(args)...);
 }
 
 template <class LType, class... RType>
 template <class T>
-void Engine::Resources::ResourcesManager<LType, RType...>::clear() noexcept
+void Engine::Resources::ResourcesManager<LType, RType...>::clear() noexcept(std::is_nothrow_destructible_v<T>)
 {
     Engine::Resources::ResourcesManager<T>::clear();
 }
