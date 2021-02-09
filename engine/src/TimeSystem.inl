@@ -12,8 +12,8 @@ inline double Engine::Core::TimeSystem::getFixedUnscaledDeltaTime() noexcept
 
 inline constexpr void Engine::Core::TimeSystem::setFixedUnscaledDeltaTime(double newFixedUnscaledDeltaTime) noexcept
 {
-    if (newFixedUnscaledDetlaTime > 1.)
-        Engine::Core::Debug::Log::logWarning("New fixed unscaled detla time > 1.");
+    if (newFixedUnscaledDeltaTime > 1.)
+        Engine::Core::Debug::Log::logWarning("New fixed unscaled delta time > 1.");
 
     m_fixedUnscaledDetlaTime = newFixedUnscaledDetlaTime;
 }
