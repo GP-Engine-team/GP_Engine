@@ -35,7 +35,7 @@ namespace Engine::Resources
         inline
         ~Scene () noexcept				                = delete;
 
-        //TODO: Scene can be copiable ? How manage resource
+        //TODO: Can scene be copied ? How to manage resource
         constexpr inline
         Scene (const Scene& other) noexcept			    = delete;
     
