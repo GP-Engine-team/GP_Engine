@@ -38,8 +38,8 @@ protected:
     double m_deltaTime = 0.;
     double m_unscaledDeltaTime = 0.;
     double m_timeScale = 1.;
-    double m_fixedUnscaledDetlaTime = 1. / 60.;
-    double m_fixedDetlaTime = m_fixedUnscaledDetlaTime * m_timeScale;
+    double m_fixedUnscaledDeltaTime = 1. / 60.;
+    double m_fixedDeltaTime = m_fixedUnscaledDeltaTime * m_timeScale;
 
     double m_scaledTimeAcc = 0.f;
     double m_unscaledTimeAcc = 0.f;
