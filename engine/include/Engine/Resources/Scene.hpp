@@ -31,7 +31,7 @@ namespace Engine::Resources
             loadResource(resourceManager);
         }
     
-        //TODO: Scene can be create by default ?
+        //TODO: Can scene be created by default ?
         inline
         ~Scene () noexcept				                = delete;
 
