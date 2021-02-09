@@ -33,7 +33,7 @@ inline constexpr double Engine::Core::TimeSystem::getAccumulatedTime() const noe
     return m_scaledTimeAcc;
 }
 
-inline double Engine::Core::TimeSystem::getAccumulateUnscaledTime() noexcept
+inline constexpr double Engine::Core::TimeSystem::getAccumulatedUnscaledTime() const noexcept
 {
     return m_unscaledTimeAcc;
 }
