@@ -63,7 +63,7 @@ public:
 
     /**
      * @brief Change the fixed delta time used in fixed update. By default this value egales : 1/60 or 60 Hz
-     * @param newFixedUnscaledDetlaTime 
+     * @param newFixedUnscaledDeltaTime 
      * @return 
     */
     inline void setFixedUnscaledDeltaTime(double newFixedUnscaledDetlaTime) noexcept;
