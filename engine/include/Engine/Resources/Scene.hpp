@@ -47,7 +47,7 @@ namespace Engine::Resources
         constexpr inline
         Scene& operator=(Scene const& other) noexcept		= delete;
     
-        //TODO: Scene can be move ? How manage resource
+        //TODO: Can scene be moved ? How to manage resource
         constexpr inline
         Scene& operator=(Scene && other) noexcept			= delete;    
     };
