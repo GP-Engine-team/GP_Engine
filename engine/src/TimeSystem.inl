@@ -43,7 +43,7 @@ inline constexpr double Engine::Core::TimeSystem::getTimeScale() const noexcept
     return m_timeScale;
 }
 
-inline void Engine::Core::TimeSystem::setTimeScale(double newtimeScale) noexcept
+inline constexpr void Engine::Core::TimeSystem::setTimeScale(double newtimeScale) noexcept
 {
     m_timeScale = newtimeScale;
     m_fixedDetlaTime = m_fixedUnscaledDetlaTime * m_timeScale;
