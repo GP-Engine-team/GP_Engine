@@ -18,7 +18,7 @@ inline constexpr void Engine::Core::TimeSystem::setFixedUnscaledDeltaTime(double
     m_fixedUnscaledDeltaTime = newFixedUnscaledDeltaTime;
 }
 
-inline double Engine::Core::TimeSystem::getDeltaTime() noexcept
+inline constexpr double Engine::Core::TimeSystem::getDeltaTime() const noexcept
 {
     return m_deltaTime;
 }
