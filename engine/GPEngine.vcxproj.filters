@@ -52,6 +52,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp">
+    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -87,6 +88,7 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="src\TimeSystem.inl">
+    <None Include="src\ResourcesManager.inl">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

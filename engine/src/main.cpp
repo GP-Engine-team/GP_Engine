@@ -3,10 +3,12 @@
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/TimeSystem/TimeSystem.hpp"
+#include "Engine/Resources/ResourcesManager.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 
+using namespace Engine::Resources;
 using namespace Engine::Core::Renderering;
 using namespace Engine::Core::Debug;
 using namespace Engine::Core;
@@ -22,6 +24,15 @@ extern "C"
     __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif
+
+void ResourceManagerExample()
+{
+    ResourcesManager<int, float, double> rm;
+
+    rm.add<int>("six", 6);
+
+    std::cout << *rm.get<int>("six") << std::endl;
+}
 
 void logExample()
 {
@@ -59,6 +70,8 @@ int main()
     Window win(WindowCreateArg{"GP engine", 600, 900});
     Renderer ren(win);
     TimeSystem ts;
+
+    ResourceManagerExample();
 
     logExample();
 
