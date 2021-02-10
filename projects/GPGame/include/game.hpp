@@ -7,7 +7,17 @@
 class Game final : public AbstractGame
 {
 private:
-	virtual void update() override final
+	virtual void update(double unscaledDeltaTime, double deltaTime) override final
+	{
+
+	}
+
+	virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final
+	{
+
+	}
+
+	virtual void render() override final
 	{
 
 	}

@@ -5,7 +5,7 @@
 class GameStartup final : public ContextStartup
 {
 private:
-	class AbstractGame* game;
+	class AbstractGame* m_game;
 
 public:
 	GameStartup();

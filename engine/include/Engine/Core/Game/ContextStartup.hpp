@@ -6,9 +6,15 @@
 
 #pragma once
 
+#include "Engine/Core/TimeSystem/TimeSystem.hpp"
+
 class ContextStartup
 {
-  public:
+public:
+    Engine::Core::TimeSystem timeSystem;
+    bool isRunning = true;
+
+public:
     // Loads and initializes libraries
     ContextStartup()
     {
@@ -17,7 +23,7 @@ class ContextStartup
     // Contains gameloop
     void run()
     {
-        for (;;)
+        while (isRunning)
         {
             update();
         }

@@ -5,18 +5,21 @@
 
 #include <cassert>
 
-GameStartup::GameStartup() : game(createGameInstance())
+GameStartup::GameStartup() : m_game(createGameInstance())
 {
 
 }
 
 void GameStartup::update()
 {
-	assert(game != nullptr);
-	game->update();
+	assert(m_game != nullptr);
+	std::function<void(double, double)> update = std::bind(&AbstractGame::update, m_game, std::placeholders::_1, std::placeholders::_2);
+	std::function<void(double, double)> fixedUpdate = std::bind(&AbstractGame::fixedUpdate, m_game, std::placeholders::_1, std::placeholders::_2);
+	std::function<void()> render = std::bind(&AbstractGame::render, m_game);
+	timeSystem.update(update, fixedUpdate, render);
 }
 
 GameStartup::~GameStartup()
 {
-	destroyGameInstance(game);
+	destroyGameInstance(m_game);
 }

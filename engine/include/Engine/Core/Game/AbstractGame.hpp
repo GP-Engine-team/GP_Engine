@@ -8,7 +8,9 @@
 
 class AbstractGame
 {
-  public:
-    virtual void update() = 0;
+public:
+    virtual void update(double unscaledDeltaTime, double deltaTime) = 0;
+    virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) = 0;
+    virtual void render() = 0;
     virtual ~AbstractGame() = default;
 };

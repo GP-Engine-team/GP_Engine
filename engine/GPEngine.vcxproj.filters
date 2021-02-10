@@ -45,6 +45,9 @@
     <ClInclude Include="include\Engine\Core\Game\AbstractGame.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Log.inl">
@@ -54,12 +57,30 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include=".clang-format" />
+    <None Include="src\TimeSystem.inl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="src\ResourcesManager.inl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="src\WindowGLFW.inl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ReloadableCpp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RendererGLFW_GL46.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TimeSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WindowGLFW.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -28,13 +28,30 @@ void EditorStartup::CloseGame()
 
 void EditorStartup::update() 
 {
-    if (m_game != nullptr)
-    {
-        m_game->update();
-    }
-
     GPE_ASSERT(m_editor != nullptr, "m_editor should be valid since we've just ran the editor.");
-    m_editor->update();
+
+    auto update = [&](double fixedUnscaledDeltaTime, double deltaTime)
+    {
+        if (m_game != nullptr)
+            m_game->update(fixedUnscaledDeltaTime, deltaTime);
+
+        m_editor->update(fixedUnscaledDeltaTime, deltaTime);
+    };
+    auto fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+    {        
+        if (m_game != nullptr)
+            m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+
+        m_editor->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+    };
+    auto render = [&]()
+    {
+        if (m_game != nullptr)
+            m_game->render();
+
+        m_editor->render();
+    };
+    timeSystem.update(update, fixedUpdate, render);
 }
 
 EditorStartup::~EditorStartup()
