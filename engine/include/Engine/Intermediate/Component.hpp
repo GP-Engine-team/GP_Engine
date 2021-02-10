@@ -20,40 +20,43 @@ protected:
     bool m_isActivated{true};
 
 public:
-    Component(GameObject& refGameObject) : m_gameObject{refGameObject}, m_name{__FUNCTION__}
-    {
-    }
 
-    Component(const Component& other) = default;
-    Component(Component&& other) = default;
-    virtual ~Component() = default;
+    inline
+    Component(GameObject& refGameObject) noexcept;
 
-    Component() = delete;
-    Component& operator=(Component const& other) = delete;
-    Component& operator=(Component&& other) = delete;
+    inline
+    Component () noexcept 					            = delete;
 
-    GameObject& getGameObject() noexcept
-    {
-        return m_gameObject;
-    }
-    const GameObject& getGameObject() const noexcept
-    {
-        return m_gameObject;
-    }
+    inline
+    Component (const Component& other) noexcept			= default;
 
-    std::string toString() const noexcept
-    {
-        return m_name;
-    };
+    inline
+    Component (Component&& other) noexcept				= default;
 
-    bool isActivated() const noexcept
-    {
-        return m_isActivated;
-    }
-    void setActive(bool newState) noexcept
-    {
-        m_isActivated = newState;
-    }
+    inline
+    ~Component () noexcept				                = default;
+
+    inline
+    Component& operator=(const Component& other) noexcept		= default;
+
+    inline
+    Component& operator=(Component && other) noexcept			= default;
+
+    [[nodiscard]] inline
+    GameObject& getGameObject() noexcept;
+
+    [[nodiscard]] inline
+    const GameObject& getGameObject() const noexcept;
+
+    [[nodiscard]] inline
+    const std::string& toString() const noexcept;
+
+    [[nodiscard]] inline
+    bool isActivated() const noexcept;
+
+    inline
+    void setActive(bool newState) noexcept;
 };
-
 } // namespace Engine::Intermediate
+
+#include "Component.inl"

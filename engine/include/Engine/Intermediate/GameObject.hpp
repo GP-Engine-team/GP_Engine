@@ -1,12 +1,12 @@
-// Project : Engine
-// Editing by Gavelle Anthony, Nisi Guillaume, Six Jonathan
-// Date : 2020-04-29 - 19 h 27
+/*
+ * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
+ * This file is subject to the LGNU license terms in the LICENSE file
+ *	found in the top-level directory of this distribution.
+ */
 
-#ifndef _GAME_OBJECT_H
-#define _GAME_OBJECT_H
+#pragma once
 
-#include "Engine/Intermediate/Component.hpp" //Component
-#include "Engine/Intermediate/Entity.hpp"    //Entity
+#include "Engine/Intermediate/TransformComponent.hpp"    //TransformComponent
 #include <list>                              //std::list
 #include <memory>                            //std::unique_ptr
 #include <string>                            //std::string
@@ -14,30 +14,55 @@
 
 namespace Engine::Intermediate
 {
-typedef EntityCreateArg GameObjectCreateArg;
+struct GameObjectCreateArg
+{
+    const char* name = "";
+};
 
-class GameObject : public Entity
+class Component;
+
+class GameObject
 {
 protected:
-    std::list<std::unique_ptr<Component>> m_components;
+    std::string m_name;
+    TransformComponent m_transform;
+
+    std::list<Component*> m_pComponents;
     std::string m_tag{"GameObject"};
     bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
 public:
-    GameObject* parent;
-    std::list<std::unique_ptr<GameObject>> children;
+    GameObject* parent = nullptr;
+    std::list<std::unique_ptr<GameObject>> children = {};
 
 public:
-    GameObject(const GameObjectCreateArg& arg) : Entity{arg}
+
+    inline
+    GameObject(const GameObjectCreateArg& arg)
+        : m_name{arg.name}, 
+        m_transform{*this}, 
+        m_pComponents{}
+    {}
+
+    inline
+    GameObject() : m_name{""}, m_transform{*this}, m_pComponents{}
     {
     }
 
-    GameObject() = default;
-    GameObject(const GameObject& other) = default;
-    GameObject(GameObject&& other) = default;
-    ~GameObject() = default;
-    GameObject& operator=(GameObject const& other) = default;
-    GameObject& operator=(GameObject&& other) = default;
+    inline
+    GameObject (const GameObject& other) noexcept			= default;
+
+    constexpr inline
+    GameObject (GameObject&& other) noexcept				= default;
+
+    inline
+    ~GameObject () noexcept				                    = default;
+
+    inline
+    GameObject& operator=(GameObject const& other) noexcept		= default;
+
+    inline
+    GameObject& operator=(GameObject && other) noexcept			= default;
 
     /**
      * @brief update entity and these child if current entity is dirty
@@ -50,6 +75,24 @@ public:
      *
      */
     void forceUpdate() noexcept;
+    
+     /**
+     * @brief Get the Name object
+     * @return const char*
+     */
+    inline std::string getName() const noexcept
+    {
+        return m_name;
+    }
+
+    /**
+     * @brief Set the Name object
+     * @param newName
+     */
+    inline void setName(const char* newName) noexcept
+    {
+        m_name = newName;
+    }
 
     /**
      * @brief add a Component to the gameobject
@@ -101,12 +144,12 @@ public:
      *
      * @param Component
      */
-    std::list<std::unique_ptr<Component>>::iterator destroyComponent(Component* pComponent) noexcept;
+    std::list<Component*>::iterator destroyComponent(Component* pComponent) noexcept;
 
     void setActive(bool newState);
 
-    std::list<std::unique_ptr<Component>>::iterator destroyComponent(
-        const std::list<std::unique_ptr<Component>>::iterator& it) noexcept;
+    std::list<Component*>::iterator destroyComponent(
+        const std::list<Component*>::iterator& it) noexcept;
 
     /**
      * @brief Destroy the element at the next frame whe scene graph is update.
@@ -139,8 +182,8 @@ public:
     template <typename T>
     std::vector<T*> getComponents();
 
-    std::list<std::unique_ptr<Component>>& getComponents() noexcept;
-    const std::list<std::unique_ptr<Component>>& getComponents() const noexcept;
+    std::list<Component*>& getComponents() noexcept;
+    const std::list<Component*>& getComponents() const noexcept;
 
     std::string getRelativePath();
 
@@ -150,5 +193,3 @@ public:
     bool compareTag(const std::string& toCompare);
 };
 } // namespace Engine::Intermediate
-
-#endif //_GAME_OBJECT_H

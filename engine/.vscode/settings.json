@@ -52,6 +52,12 @@
         "functional": "cpp",
         "ratio": "cpp",
         "sstream": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "shared_mutex": "cpp",
+        "algorithm": "cpp",
+        "condition_variable": "cpp",
+        "deque": "cpp",
+        "mutex": "cpp",
+        "queue": "cpp"
     }
 }

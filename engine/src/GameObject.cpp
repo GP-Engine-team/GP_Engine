@@ -1,10 +1,10 @@
 #include "Engine/Intermediate/GameObject.hpp"
 
+#include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
+#include "Engine/Core/Debug/Log.hpp"
+#include <iostream>
 #include <istream>
 #include <sstream>
-#include <iostream>
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
 
 using namespace Engine::Intermediate;
 
@@ -14,7 +14,7 @@ void GameObject::updateSelfAndChild() noexcept
     {
         if ((*i)->m_transform.isDirty())
         {
-            if((*i)->m_isDead)
+            if ((*i)->m_isDead)
             {
                 i = children.erase(i);
                 continue;
@@ -30,7 +30,7 @@ void GameObject::updateSelfAndChild() noexcept
     }
 }
 
-void GameObject::forceUpdate()
+void GameObject::forceUpdate() noexcept
 {
     for (auto&& i = children.begin(); i != children.end(); i++)
     {
@@ -39,7 +39,7 @@ void GameObject::forceUpdate()
     }
 }
 
-GameObject* GameObject::getChild (const std::string& path) noexcept
+GameObject* GameObject::getChild(const std::string& path) noexcept
 {
     GPE_ASSERT(!path.empty(), "Void path");
 
@@ -49,7 +49,8 @@ GameObject* GameObject::getChild (const std::string& path) noexcept
 
     while (std::getline(sPath, word, '/'))
     {
-        if (word.empty() || word == "." || word == m_name) continue;
+        if (word.empty() || word == "." || word == m_name)
+            continue;
 
         bool isFound = false;
         for (auto&& child : currentEntity->children)
@@ -63,14 +64,15 @@ GameObject* GameObject::getChild (const std::string& path) noexcept
         }
         if (!isFound)
         {
-            Engine::Core::Debug::Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + m_name + "\"" + " with path : \"" + path + "\"" );
+            Engine::Core::Debug::Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
+                                                 m_name + "\"" + " with path : \"" + path + "\"");
             return nullptr;
         }
     }
     return currentEntity;
 }
 
-void GameObject::destroyChild (const std::string& path) noexcept
+void GameObject::destroyChild(const std::string& path) noexcept
 {
     GPE_ASSERT(!path.empty(), "Void path");
 
@@ -82,7 +84,8 @@ void GameObject::destroyChild (const std::string& path) noexcept
 
     while (std::getline(sPath, word, '/'))
     {
-        if (word.empty() || word == "." || word == m_name) continue;
+        if (word.empty() || word == "." || word == m_name)
+            continue;
 
         bool isFound = false;
         parentEntity = currentEntity;
@@ -96,10 +99,11 @@ void GameObject::destroyChild (const std::string& path) noexcept
                 break;
             }
         }
-            
+
         if (!isFound)
         {
-            Engine::Core::Debug::Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + m_name + "\"" + " with path : \"" + path + "\"" );
+            Engine::Core::Debug::Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
+                                                 m_name + "\"" + " with path : \"" + path + "\"");
             return;
         }
     }
@@ -107,7 +111,7 @@ void GameObject::destroyChild (const std::string& path) noexcept
     parentEntity->children.erase(it);
 }
 
-std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild (GameObject* pGameObject) noexcept
+std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild(GameObject* pGameObject) noexcept
 {
     for (std::list<std::unique_ptr<GameObject>>::iterator it = children.begin(); it != children.end(); it++)
     {
@@ -119,41 +123,43 @@ std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild (GameO
     return children.end();
 }
 
-std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild (const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept
+std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild(
+    const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept
 {
     return children.erase(it);
 }
 
-std::list<std::unique_ptr<Component>>::iterator GameObject::destroyComponent (Component* pComponent) noexcept
+std::list<Component*>::iterator GameObject::destroyComponent(Component* pComponent) noexcept
 {
-    for (std::list<std::unique_ptr<Component>>::iterator it =  m_components.begin(); it != m_components.end(); it++)
+    for (std::list<Component*>::iterator it = m_pComponents.begin(); it != m_pComponents.end(); it++)
     {
-        if ((*it).get() == pComponent)
+        if (*it == pComponent)
         {
-            return m_components.erase(it);
+            return m_pComponents.erase(it);
         }
     }
-    return m_components.end();
+    return m_pComponents.end();
 }
 
 void GameObject::setActive(bool newState)
 {
-    for (auto &&i : m_components)
+    for (auto&& i : m_pComponents)
     {
         i->setActive(newState);
     }
 }
 
-std::list<std::unique_ptr<Component>>::iterator GameObject::destroyComponent (const std::list<std::unique_ptr<Component>>::iterator& it) noexcept
+std::list<Component*>::iterator GameObject::destroyComponent(
+    const std::list<Component*>::iterator& it) noexcept
 {
-    return m_components.erase(it);
+    return m_pComponents.erase(it);
 }
 
 void GameObject::destroy() noexcept
 {
     /*set flag to be delete by it parent*/
     m_isDead = true;
-    //m_isDirty = true;
+    // m_isDirty = true;
 }
 
 void GameObject::destroyImmediate() noexcept
@@ -161,7 +167,7 @@ void GameObject::destroyImmediate() noexcept
     parent->destroyChild(this);
 }
 
-bool 		GameObject::operator==		(GameObject const& other)
+bool GameObject::operator==(GameObject const& other)
 {
     return (this == &other);
 }
