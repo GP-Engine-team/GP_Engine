@@ -23,7 +23,7 @@
     enum class EResourceManagement
     {
         RECYCLING,          //Enable recycling process
-        KEEP_IN_MEMORY,     //Keep ALL resources in memory even if there are not used. Usefull to load fastely previous scene
+        KEEP_IN_MEMORY,     //Keep ALL resources in memory even if they are not used. Usefull to load fastly previous scene
         BYPASS_RECYLCING    //Reload ALL resource even if there are used in both scen. Usefull if you know that any resource must be recycling
     };
 

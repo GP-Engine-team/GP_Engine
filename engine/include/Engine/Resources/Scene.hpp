@@ -31,23 +31,23 @@ namespace Engine::Resources
             loadResource(resourceManager);
         }
     
-        //TODO: Scene can be create by default ?
+        //TODO: Can scene be created by default ?
         inline
         ~Scene () noexcept				                = delete;
 
-        //TODO: Scene can be copiable ? How manage resource
+        //TODO: Can scene be copied ? How to manage resource
         constexpr inline
         Scene (const Scene& other) noexcept			    = delete;
     
-        //TODO: Scene can be move ? How manage resource
+        //TODO: Can scene be moved ? How to manage resource
         constexpr inline
         Scene (Scene&& other) noexcept				    = delete;
         
-        //TODO: Scene can be capiable ? How manage resource
+        //TODO: Can scene be copied ? How to manage resource
         constexpr inline
         Scene& operator=(Scene const& other) noexcept		= delete;
     
-        //TODO: Scene can be move ? How manage resource
+        //TODO: Can scene be moved ? How to manage resource
         constexpr inline
         Scene& operator=(Scene && other) noexcept			= delete;    
     };

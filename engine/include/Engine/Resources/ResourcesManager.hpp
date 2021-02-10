@@ -56,20 +56,20 @@ public:
      * @return unsigned int
      */
     template <typename... Args>
-    LType& add(std::string key, Args&&... args) noexcept;
+    LType& add(std::string key, Args&&... args) noexcept(std::is_nothrow_constructible_v<LType>);
 
     /**
      * @brief Remove resource with the corresponding key if key is found
      * @param key 
      * @return 
     */
-    inline void remove(const std::string& key) noexcept;
+    inline void remove(const std::string& key) noexcept(std::is_nothrow_destructible_v<LType>);
 
     /**
      * @brief clear the container and all associate resources
      * @return 
     */
-    inline void clear() noexcept;
+    inline void clear() noexcept(std::is_nothrow_destructible_v<LType>);
 };
 
 /**
@@ -110,7 +110,7 @@ public:
      * @return 
     */
     template <class T>
-    inline void remove(const std::string& key) noexcept;
+    inline void remove(const std::string& key) noexcept(std::is_nothrow_destructible_v<T>);
 
     /**
      * @brief Add resource.
@@ -121,7 +121,7 @@ public:
      * @return unsigned int
      */
     template <class T, typename... Args>
-    inline T& add(const std::string& key, Args&&... args) noexcept;
+    inline T& add(const std::string& key, Args&&... args) noexcept(std::is_nothrow_constructible_v<T>);
 
     /**
      * @brief clear the container and all associate resources
@@ -130,7 +130,7 @@ public:
      * @return 
     */
     template <class T>
-    inline void clear() noexcept;
+    inline void clear() noexcept(std::is_nothrow_destructible_v<T>);
 };
 
 } // namespace Engine::Resources
