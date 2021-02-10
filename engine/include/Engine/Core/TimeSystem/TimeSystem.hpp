@@ -31,7 +31,7 @@ class TimeSystem
 protected:
     std::chrono::steady_clock::time_point m_time = std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point m_tempTime = m_time;
-    double m_fixedTimeAcc = 0.;
+    double m_fixedUnscaledTimeAcc = 0.;
 
     double m_deltaTime = 0.;
     double m_unscaledDeltaTime = 0.;

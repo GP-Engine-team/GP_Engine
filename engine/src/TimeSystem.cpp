@@ -29,12 +29,12 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
     m_unscaledTimeAcc *= !isinf(m_unscaledTimeAcc); // reset if isInf (avoid conditionnal jump)
 
     /*Fixed update*/
-    m_fixedTimeAcc += m_unscaledDeltaTime;
+    m_fixedUnscaledTimeAcc += m_unscaledDeltaTime;
 
-    while (m_fixedTimeAcc >= m_fixedUnscaledDeltaTime)
+    while (m_fixedUnscaledTimeAcc >= m_fixedUnscaledDeltaTime)
     {
         fixedUpdateFunction(m_fixedUnscaledDeltaTime, m_fixedDeltaTime);
-        m_fixedTimeAcc -= m_fixedUnscaledDeltaTime;
+        m_fixedUnscaledTimeAcc -= m_fixedUnscaledDeltaTime;
     }
 
     /*Update timer queue task*/
