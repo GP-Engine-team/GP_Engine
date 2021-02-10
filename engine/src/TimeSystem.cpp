@@ -14,7 +14,7 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
     renderFunction();
 
     /*Second, prepar the next frame*/
-    m_tempTime = std::chrono::system_clock::now();
+    m_tempTime = std::chrono::steady_clock::now();
     m_unscaledDeltaTime = std::chrono::duration<double>(m_tempTime - m_time).count();
     m_time = m_tempTime;
 
@@ -31,9 +31,9 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
     /*Fixed update*/
     m_fixedTimeAcc += m_unscaledDeltaTime;
 
-    while (m_fixedTimeAcc >= m_fixedUnscaledDetlaTime)
+    while (m_fixedTimeAcc >= m_fixedUnscaledDeltaTime)
     {
-        fixedUpdateFunction(m_fixedUnscaledDetlaTime, m_fixedDeltaTime);
+        fixedUpdateFunction(m_fixedUnscaledDeltaTime, m_fixedDeltaTime);
         m_fixedTimeAcc -= m_fixedUnscaledDeltaTime;
     }
 

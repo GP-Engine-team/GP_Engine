@@ -29,8 +29,8 @@ struct TimerTask
 class TimeSystem
 {
 protected:
-    std::chrono::system_clock::time_point m_time = std::chrono::system_clock::now();
-    std::chrono::system_clock::time_point m_tempTime = m_time;
+    std::chrono::steady_clock::time_point m_time = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point m_tempTime = m_time;
     double m_fixedTimeAcc = 0.;
 
     unsigned int m_frameAcc = 0;

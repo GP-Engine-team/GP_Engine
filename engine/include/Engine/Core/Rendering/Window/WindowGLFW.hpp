@@ -54,8 +54,6 @@ public:
      * @return
      */
     void getSize(int& width, int& height) const noexcept;
-    // Or
-    Math::Vec2 getSize() const noexcept;
 };
 
 } // namespace Engine::Core::Renderering

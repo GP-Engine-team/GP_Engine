@@ -1,11 +1,11 @@
 #include "Engine/Core/TimeSystem/TimeSystem.hpp"
 
-inline double Engine::Core::TimeSystem::getFixedDeltaTime() noexcept
+inline constexpr double Engine::Core::TimeSystem::getFixedDeltaTime() const noexcept
 {
     return m_fixedDeltaTime;
 }
 
-inline double Engine::Core::TimeSystem::getFixedUnscaledDeltaTime() noexcept
+inline constexpr double Engine::Core::TimeSystem::getFixedUnscaledDeltaTime() const noexcept
 {
     return m_fixedUnscaledDeltaTime;
 }

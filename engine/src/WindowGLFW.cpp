@@ -53,7 +53,7 @@ Window::~Window() noexcept
     Log::log("GLFW window release");
 }
 
-void Engine::Core::Renderering::Window::getSize(int width, int height) const noexcept
+void Engine::Core::Renderering::Window::getSize(int& width, int& height) const noexcept
 {
     glfwGetWindowSize(m_window, &width, &height);
 }
