@@ -33,8 +33,6 @@ protected:
     std::chrono::steady_clock::time_point m_tempTime = m_time;
     double m_fixedTimeAcc = 0.;
 
-    unsigned int m_frameAcc = 0;
-
     double m_deltaTime = 0.;
     double m_unscaledDeltaTime = 0.;
     double m_timeScale = 1.;
