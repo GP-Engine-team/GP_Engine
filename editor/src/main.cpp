@@ -1,5 +1,5 @@
 #include "Engine/Core/Debug/Log.hpp"
-#include "gameStartup.hpp"
+#include "Editor/EditorStartup.hpp"
 
 using namespace Engine::Core::Debug;
 
@@ -9,8 +9,8 @@ int main(int argc, char* argv[])
 
     Log::logInitializationStart("GameStartup creation");
 
-    GameStartup gameStartup;
-    gameStartup.run();
+    EditorStartup editorStartup;
+    editorStartup.run();
 
     return 0;
 }
