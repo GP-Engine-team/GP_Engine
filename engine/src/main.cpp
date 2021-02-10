@@ -4,6 +4,7 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/TimeSystem/TimeSystem.hpp"
 #include "Engine/Resources/ResourcesManager.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -11,6 +12,7 @@
 using namespace Engine::Resources;
 using namespace Engine::Core::Renderering;
 using namespace Engine::Core::Debug;
+using namespace Engine::Intermediate;
 using namespace Engine::Core;
 
 #ifdef _WIN32
@@ -70,6 +72,8 @@ int main()
     Window win(WindowCreateArg{"GP engine", 600, 900});
     Renderer ren(win);
     TimeSystem ts;
+
+    GameObject GO;
 
     ResourceManagerExample();
 

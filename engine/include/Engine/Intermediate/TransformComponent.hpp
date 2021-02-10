@@ -10,32 +10,25 @@ namespace Engine::Intermediate
 {
 class TransformComponent
 {
-    protected:
-
+protected:
     bool m_isDirty = false;
 
-    public:
+public:
+    constexpr inline TransformComponent() noexcept = default;
 
-    constexpr inline
-    TransformComponent () noexcept 					                        = default;
+    constexpr inline TransformComponent(const TransformComponent& other) noexcept = default;
 
-    constexpr inline
-    TransformComponent (const TransformComponent& other) noexcept			= default;
+    constexpr inline TransformComponent(TransformComponent&& other) noexcept = default;
 
-    constexpr inline
-    TransformComponent (TransformComponent&& other) noexcept				= default;
+    inline virtual ~TransformComponent() noexcept = default;
 
-    inline
-    virtual ~TransformComponent () noexcept				                    = default;
+    constexpr inline TransformComponent& operator=(TransformComponent const& other) noexcept = default;
 
-    constexpr inline
-    TransformComponent& operator=(TransformComponent const& other) noexcept		= default;
+    constexpr inline TransformComponent& operator=(TransformComponent&& other) noexcept = default;
 
-    constexpr inline
-    TransformComponent& operator=(TransformComponent && other) noexcept			= default;
-
-    [[nodiscard]] constexpr inline 
-    bool isDirty() noexcept { return m_isDirty;}
-
+    [[nodiscard]] constexpr inline bool isDirty() noexcept
+    {
+        return m_isDirty;
+    }
 };
 } /*namespace Engine::Intermediate*/

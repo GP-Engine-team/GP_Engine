@@ -1,98 +1,114 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Third party">
-      <UniqueIdentifier>{0a5455a1-089a-4ab3-af52-c827384b7344}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="third_party\src\glad.c">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Log.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RendererGLFW_GL46.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TimeSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WindowGLFW.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Debug\Log.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\include\glad\glad.h">
-      <Filter>Third party</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\include\GLFW\glfw3.h">
-      <Filter>Third party</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\include\GLFW\glfw3native.h">
-      <Filter>Third party</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\include\KHR\khrplatform.h">
-      <Filter>Third party</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp">
-    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\SceneManager.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Debug\Log.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\glad\glad.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\GLFW\glfw3.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\GLFW\glfw3native.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\KHR\khrplatform.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Component.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Entity.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Log.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RendererGLFW_GL46.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\WindowGLFW.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="third_party\src\glad.c">
-      <Filter>Third party</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TimeSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Log.inl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="src\Format.inl">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include=".clang-format" />
-    <None Include="src\WindowGLFW.inl">
-      <Filter>Source Files</Filter>
+    <None Include="src\Format.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="src\Log.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="src\ResourcesManager.inl">
+      <Filter>src</Filter>
     </None>
     <None Include="src\TimeSystem.inl">
-    <None Include="src\ResourcesManager.inl">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </None>
+    <None Include="src\WindowGLFW.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="src\GameObject.inl">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{5e2530e7-0724-4e95-a72d-388f56ce908f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party">
+      <UniqueIdentifier>{fd0e0626-c061-4785-bf44-198eb4e624e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{000e1053-6ae7-4555-88fa-1680885403d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
