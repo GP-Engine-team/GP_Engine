@@ -17,13 +17,15 @@ namespace Engine::Core::Debug
 {
 #ifdef NDEBUG
 
-#define GPE_ASSERT(expr)
 #define GPE_ASSERT(expr, msg)
 
 #else /* Not NDEBUG.  */
 
 #define GPE_ASSERT(expr, msg)                                                                                          \
-    if (!expr)                                                                                                          \                                                                                                            \
+    if (expr)                                                                                                          \
+    {                                                                                                                  \
+    }                                                                                                                  \
+    else                                                                                                               \
     {                                                                                                                  \
         Engine::Core::Debug::Log::logError(                                                                            \
             Engine::Core::Tools::stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s",            \
