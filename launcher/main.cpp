@@ -1,5 +1,5 @@
 #include "Engine/Core/Debug/Log.hpp"
-#include "gameStartup.hpp"
+#include "GameStartup.hpp"
 
 using namespace Engine::Core::Debug;
 

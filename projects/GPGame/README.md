@@ -15,3 +15,19 @@ git submodule update --init --recursive
  - 2 : Run installer and check : add Cmake to system path 
 ![](https://tulip.labri.fr/TulipDrupal/sites/default/files/uploadedFiles/users/6/screenshot_cmake01.png)
 - 3 : Run [installer](install_dependancies.bat) in the project root to download dependancy (git submodule) and install it
+
+## How to run with Editor
+
+- Open GPGame.sln
+- Set GPEditor as default project
+- Compile and run
+
+If you want to use the hot reload, you have different methods :
+- You can run without debug mode (ctrl + f5) and then rebuild the dll (ctrl + maj + b) each time you change it.
+- You can run in debug mode (f5) and then rebuild the dll (ctrl + maj + b) with another visual studio instance each time you change it.
+
+## How to run in Release Mode
+
+- Open GPGame.sln
+- Set GPLauncher as default project
+- Compile and run

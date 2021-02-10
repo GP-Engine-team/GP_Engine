@@ -1,7 +1,7 @@
 #include "Editor/EditorStartup.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Editor/Editor.hpp"
-#include "game.hpp"
+#include "Game.hpp"
 
 EditorStartup::EditorStartup() : m_editor(new Editor())
 {
