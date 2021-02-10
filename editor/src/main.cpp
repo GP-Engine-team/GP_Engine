@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
     Log::logFileHeader();
 
-    Log::logInitializationStart("GameStartup creation");
+    Log::logInitializationStart("EditorStartup creation");
 
     EditorStartup editorStartup;
     editorStartup.run();

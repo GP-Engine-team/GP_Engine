@@ -38,6 +38,9 @@ setup_mirror.bat
 *.la
 *.a
 *.lib
+!third_party/lib/
+third_party/lib/*
+!third_party/lib/*.lib
 
 # Executables
 *.exe
@@ -129,6 +132,7 @@ fabric.properties
 *.user
 *.userosscache
 *.sln.docstates
+
 x64
 
 # User-specific files (MonoDevelop/Xamarin Studio)
@@ -468,5 +472,8 @@ MigrationBackup/
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+
+#dir Vs
+x64/
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,vs,vscode,rider

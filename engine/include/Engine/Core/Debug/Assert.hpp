@@ -28,7 +28,7 @@ namespace Engine::Core::Debug
     else                                                                                                               \
     {                                                                                                                  \
         Engine::Core::Debug::Log::logError(                                                                            \
-            Engine::Core::Tools::stringformat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s",            \
+            Engine::Core::Tools::stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s",            \
                                               F_RED("Assertion"), __FUNCSIG__, __FILE__, __LINE__, BOLD(#expr), msg)); \
         Engine::Core::Debug::Log::closeAndTryToCreateFile();                                                           \
         exit(3);                                                                                                       \

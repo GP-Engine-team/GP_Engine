@@ -2,3 +2,5 @@
 
 BasedOnStyle: Microsoft
 AlwaysBreakTemplateDeclarations: 'Yes'
+PointerAlignment: Left
+AccessModifierOffset: '-4'

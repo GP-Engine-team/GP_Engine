@@ -22,20 +22,20 @@ namespace Engine::Core::HotReload
  */
 class ReloadableCpp
 {
-  private:
+private:
     std::string path;
 
     HMODULE module = nullptr;
     size_t lastRefreshTime = 0;
-    std::map<std::string, void *> processes; // current successfully loaded processes
+    std::map<std::string, void*> processes; // current successfully loaded processes
 
-  private:
+private:
     // Only call this when reloadableCpp.path is pointing towards a valid file.
     void load(const char *newFileSuffix = ".copy.dll");
 
     void unload();
 
-  public:
+public:
     /**
      * @brief Constructor of ReloadableCpp.
      * @param path The path of the dll, relative to the executable.
@@ -68,9 +68,9 @@ class ReloadableCpp
      * @return Returns a pointer to the process (e.g. the function)
      */
     template <class C_FUNCTION_TYPE>
-    C_FUNCTION_TYPE *getProcess(const std::string &processName)
+    C_FUNCTION_TYPE* getProcess(const std::string& processName)
     {
-        return (C_FUNCTION_TYPE *)processes[processName];
+        return (C_FUNCTION_TYPE*)processes[processName];
     }
 };
 } // namespace Engine::Core::HotReload

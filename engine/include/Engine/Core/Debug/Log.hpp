@@ -55,11 +55,11 @@
 
 #define FUNCT_ERROR(msg)                                                                                               \
     Engine::Core::Debug::Log::logError(                                                                                \
-        Engine::Core::Tools::stringformat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
+        Engine::Core::Tools::stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
 
 #define FUNCT_WARNING(msg)                                                                                             \
     Engine::Core::Debug::Log::logWarning(                                                                              \
-        Engine::Core::Tools::stringformat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
+        Engine::Core::Tools::stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
 
 namespace Engine::Core::Debug
 {
@@ -70,12 +70,12 @@ enum ESetting : uint8_t
     DISPLAY_WITH_COLOR = (1u << 3),     // display log with color for each even
     ALWAYS_PRINT_LOG_FILE = (1u << 4),  // never destroy log file
     PRINT_LOG_FILE_WARNING = (1u << 5), // print log file if warning happend
-    PRINT_LOG_FILE_ERROR = (1u << 6),   // print log file if error happend
+    PRINT_LOG_FILE_ERROR = (1u << 6)   // print log file if error happend
 };
 
 class Log
 {
-  protected:
+protected:
 #pragma region static attribut
 
     // Bitfiled of the setting. By default is set to : DISPLAY_HOUR | DISPLAY_WITH_COLOR | PRINT_LOG_FILE_ERROR
@@ -87,20 +87,20 @@ class Log
 
 #pragma endregion //! static attribut
 
-  public:
+public:
 #pragma region constructor / destructor
 
     constexpr inline Log() noexcept = delete;
 
     inline ~Log() noexcept = delete;
 
-    constexpr inline Log(const Log &other) noexcept = delete;
+    constexpr inline Log(const Log& other) noexcept = delete;
 
-    constexpr inline Log(Log &&other) noexcept = delete;
+    constexpr inline Log(Log&& other) noexcept = delete;
 
-    constexpr inline Log &operator=(Log const &other) noexcept = delete;
+    constexpr inline Log& operator=(Log const& other) noexcept = delete;
 
-    constexpr inline Log &operator=(Log &&other) noexcept = delete;
+    constexpr inline Log& operator=(Log&& other) noexcept = delete;
 
     /**
      * @brief Create log file
@@ -121,7 +121,7 @@ class Log
      *
      * @param os
      */
-    static inline void logAddMsg(const std::string &msg) noexcept;
+    static inline void logAddMsg(const std::string& msg) noexcept;
 
     /**
      * @brief display log's heading
@@ -133,35 +133,35 @@ class Log
      *
      * @param msg
      */
-    static inline void log(const std::string &msg) noexcept;
+    static inline void log(const std::string& msg) noexcept;
 
     /**
      * @brief display message with prefix "Error : " in current stream
      *
      * @param msg
      */
-    static inline void logError(const std::string &msg) noexcept;
+    static inline void logError(const std::string& msg) noexcept;
 
     /**
      * @brief display message with prefix "Warning : " in current stream
      *
      * @param msg
      */
-    static inline void logWarning(const std::string &msg) noexcept;
+    static inline void logWarning(const std::string& msg) noexcept;
 
     /**
      * @brief display message with prefix "Tips : " in current stream
      *
      * @param msg
      */
-    static inline void logTips(const std::string &msg) noexcept;
+    static inline void logTips(const std::string& msg) noexcept;
 
     /**
      * @brief display message with elem initialized in current stream
      *
      * @param elem initialized
      */
-    static inline void logInitializationStart(const std::string &elem) noexcept;
+    static inline void logInitializationStart(const std::string& elem) noexcept;
 
     /**
      * @brief display message with count of elem initialize in current stream
@@ -169,14 +169,14 @@ class Log
      * @param elem
      * @param count in %
      */
-    static inline void logInitializationStep(const std::string &elem, unsigned int count) noexcept;
+    static inline void logInitializationStep(const std::string& elem, unsigned int count) noexcept;
 
     /**
      * @brief display message with elem initialized in current stream
      *
      * @param elem initialized
      */
-    static inline void logInitializationEnd(const std::string &elem) noexcept;
+    static inline void logInitializationEnd(const std::string& elem) noexcept;
 
     /**
      * @brief Add the Setting object
