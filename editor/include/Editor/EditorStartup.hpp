@@ -5,8 +5,8 @@
 class EditorStartup final : public ContextStartup
 {
 private:
-    class AbstractGame* game = nullptr;
-    class Editor* editor = nullptr;
+    class AbstractGame* m_game = nullptr;
+    class Editor* m_editor = nullptr;
 
 public:
     EditorStartup();

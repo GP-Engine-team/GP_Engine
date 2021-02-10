@@ -1,49 +1,49 @@
 #include "Editor/EditorStartup.hpp"
+#include "Engine/Core/Debug/Assert.hpp"
 #include "Editor/Editor.hpp"
 #include "game.hpp"
-#include <cassert>
 
-EditorStartup::EditorStartup() : editor(new Editor())
+EditorStartup::EditorStartup() : m_editor(new Editor())
 {
 
 }
 
 void EditorStartup::EditorStartup::StartGame()
 {
-    if (game != nullptr)
+    if (m_game != nullptr)
     {
-        delete game;
+        delete m_game;
     }
-    game = new Game();
+    m_game = new Game();
 }
 
 void EditorStartup::CloseGame()
 {
-    if (game != nullptr)
+    if (m_game != nullptr)
     {
-        delete game;
-        game = nullptr;
+        delete m_game;
+        m_game = nullptr;
     }
 }
 
 void EditorStartup::update() 
 {
-    if (game != nullptr)
+    if (m_game != nullptr)
     {
-        game->update();
+        m_game->update();
     }
 
-    assert(editor != nullptr);
-    editor->update();
+    GPE_ASSERT(m_editor != nullptr, "m_editor should be valid since we've just ran the editor.");
+    m_editor->update();
 }
 
 EditorStartup::~EditorStartup()
 {
-    if (game != nullptr)
+    if (m_game != nullptr)
     {
-        destroyGameInstance(game);
+        destroyGameInstance(m_game);
     }
 
-    assert(editor != nullptr);
-    delete editor;
+    GPE_ASSERT(m_editor != nullptr, "m_editor should be valid since we've just ran the editor.");
+    delete m_editor;
 }

@@ -1,7 +1,6 @@
 #include "game.hpp"
 
-#include <cstdio>
-#include <cassert>
+#include "Engine/Core/Debug/Assert.hpp"
 
 AbstractGame* createGameInstance()
 {
@@ -10,6 +9,6 @@ AbstractGame* createGameInstance()
 
 void destroyGameInstance(AbstractGame* game)
 {
-	assert(game != nullptr);
+	GPE_ASSERT(game != nullptr, "m_editor should be valid since we've just ran the editor.");
 	delete game;
 }
