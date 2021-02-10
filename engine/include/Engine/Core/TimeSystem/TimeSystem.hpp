@@ -77,7 +77,7 @@ public:
     [[nodiscard]] inline constexpr double getTimeScale() const noexcept;
 
     /**
-     * @brief Redefine time scale. This value will use to comput scaled detla time and scaled fixed delta time. Usefull to change the game speed
+     * @brief Redefine time scale. This value will use to compute scaled delta time and scaled fixed delta time. Useful to change the game speed
      * @param newtimeScale 
      * @return 
     */
