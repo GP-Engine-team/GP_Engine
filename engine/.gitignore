@@ -133,6 +133,8 @@ fabric.properties
 *.userosscache
 *.sln.docstates
 
+x64
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

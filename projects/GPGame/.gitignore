@@ -126,6 +126,11 @@ fabric.properties
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+x64
+bin
+.vs
+.vscode
+
 # User-specific files
 *.rsuser
 *.suo
