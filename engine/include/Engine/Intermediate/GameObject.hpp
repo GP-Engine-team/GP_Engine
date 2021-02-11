@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "Engine/Intermediate/TransformComponent.hpp"    //TransformComponent
-#include <list>                              //std::list
-#include <memory>                            //std::unique_ptr
-#include <string>                            //std::string
-#include <vector>                            //std::vector
+#include "Engine/Intermediate/TransformComponent.hpp" //TransformComponent
+#include <list>                                       //std::list
+#include <memory>                                     //std::unique_ptr
+#include <string>                                     //std::string
+#include <vector>                                     //std::vector
 
 namespace Engine::Intermediate
 {
@@ -25,7 +25,7 @@ class GameObject
 {
 protected:
     std::string m_name;
-    TransformComponent m_transform;
+    TransformComponent* m_pTransform;
 
     std::list<Component*> m_pComponents;
     std::string m_tag{"GameObject"};
@@ -35,34 +35,24 @@ public:
     GameObject* parent = nullptr;
     std::list<std::unique_ptr<GameObject>> children = {};
 
+ public: //TODO : Protected method ?
+    template <typename T>
+     void updateComponentLink(const T* oldPtr, T*  newPtr);
+
 public:
+    GameObject(const GameObjectCreateArg& arg);
 
-    inline
-    GameObject(const GameObjectCreateArg& arg)
-        : m_name{arg.name}, 
-        m_transform{*this}, 
-        m_pComponents{}
-    {}
+    GameObject();
 
-    inline
-    GameObject() : m_name{""}, m_transform{*this}, m_pComponents{}
-    {
-    }
+    inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is avalable
 
-    inline
-    GameObject (const GameObject& other) noexcept			= default;
+    constexpr inline GameObject(GameObject&& other) noexcept = default;
 
-    constexpr inline
-    GameObject (GameObject&& other) noexcept				= default;
+    inline ~GameObject() noexcept = default;
 
-    inline
-    ~GameObject () noexcept				                    = default;
+    inline GameObject& operator=(GameObject const& other) noexcept = delete; // TODO
 
-    inline
-    GameObject& operator=(GameObject const& other) noexcept		= default;
-
-    inline
-    GameObject& operator=(GameObject && other) noexcept			= default;
+    inline GameObject& operator=(GameObject&& other) noexcept = default;
 
     /**
      * @brief update entity and these child if current entity is dirty
@@ -75,24 +65,30 @@ public:
      *
      */
     void forceUpdate() noexcept;
-    
-     /**
+
+    /**
      * @brief Get the Name object
      * @return const char*
      */
-    inline std::string getName() const noexcept
-    {
-        return m_name;
-    }
+    [[nodiscard]] inline const std::string& getName() const noexcept;
 
     /**
      * @brief Set the Name object
      * @param newName
      */
-    inline void setName(const char* newName) noexcept
-    {
-        m_name = newName;
-    }
+    inline void setName(const char* newName) noexcept;
+
+    /**
+     * @brief Get the Transform object
+     * @return const char*
+     */
+    [[nodiscard]] constexpr inline const TransformComponent& getTransform() const noexcept;
+
+    /**
+     * @brief Get the Transform object
+     * @return const char*
+     */
+    [[nodiscard]] constexpr inline TransformComponent& getTransform() noexcept;
 
     /**
      * @brief add a Component to the gameobject
@@ -111,7 +107,7 @@ public:
      * @return Component&
      */
     template <typename T>
-    T* getComponent() noexcept;
+    [[nodiscard]] inline T* getComponent() noexcept;
 
     /**
      * @brief Get the first gameObject with path in arg
@@ -119,7 +115,7 @@ public:
      * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3
      * @return GraphEntity&
      */
-    GameObject* getChild(const std::string& path) noexcept;
+    [[nodiscard]] GameObject* getChild(const std::string& path) noexcept;
 
     /**
      * @brief Destroye the first gameObject with path in arg
@@ -127,35 +123,37 @@ public:
      * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3
      * @return GraphEntity&
      */
-    void destroyChild(const std::string& path) noexcept;
+    void destroyChild(const std::string& path) noexcept; //TODO: Destroy immediate may be dangerous
 
     /**
      * @brief destroy childen of gameobject
      *
      * @param GameObject
      */
-    std::list<std::unique_ptr<GameObject>>::iterator destroyChild(GameObject* pGameObject) noexcept;
+    std::list<std::unique_ptr<GameObject>>::iterator destroyChild(GameObject* pGameObject) noexcept; //TODO: Destroy immediate may be dangerous
 
-    std::list<std::unique_ptr<GameObject>>::iterator destroyChild(
-        const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept;
+    inline std::list<std::unique_ptr<GameObject>>::iterator destroyChild(
+        const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept; //TODO: Destroy immediate may be dangerous
+
+    template<typename TUniqueComponentType>
+    void destroyImmediateUniqueComponent() noexcept;
 
     /**
      * @brief destroy component of gameobject
      *
      * @param Component
      */
-    std::list<Component*>::iterator destroyComponent(Component* pComponent) noexcept;
+    std::list<Component*>::iterator destroyComponent(Component* pComponent) noexcept; //TODO: Destroy immediate may be dangerous
 
-    void setActive(bool newState);
+    inline void setActive(bool newState);
 
-    std::list<Component*>::iterator destroyComponent(
-        const std::list<Component*>::iterator& it) noexcept;
+    inline std::list<Component*>::iterator destroyComponent(const std::list<Component*>::iterator& it) noexcept; //TODO: Destroy immediate may be dangerous
 
     /**
      * @brief Destroy the element at the next frame whe scene graph is update.
      *
      */
-    virtual void destroy() noexcept;
+    inline void destroy() noexcept;
 
     /**
      * @brief Destroy the element now, don't way the next frame.
@@ -163,7 +161,7 @@ public:
      * Use this function only if you are sur that the object don't depending af the current frame
      *
      */
-    virtual void destroyImmediate() noexcept;
+    inline void destroyImmediate() noexcept;
 
     /**
      * @brief add specific entity to the graph with arg to construct it and return his id
@@ -177,19 +175,23 @@ public:
     template <typename T, typename... Args>
     GameObject& addChild(Args&&... args) noexcept;
 
-    bool operator==(GameObject const& other);
+    [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;
 
     template <typename T>
-    std::vector<T*> getComponents();
+    [[nodiscard]] std::vector<T*> getComponents();
 
-    std::list<Component*>& getComponents() noexcept;
-    const std::list<Component*>& getComponents() const noexcept;
+    [[nodiscard]] inline constexpr std::list<Component*>& getComponents() noexcept;
 
-    std::string getRelativePath();
+    [[nodiscard]] inline constexpr const std::list<Component*>& getComponents() const noexcept;
 
-    void setTag(const std::string& newTag);
-    std::string& getTag();
+    [[nodiscard]] std::string getRelativePath();
 
-    bool compareTag(const std::string& toCompare);
+    inline void setTag(const std::string& newTag);
+
+    [[nodiscard]] inline constexpr const std::string& getTag() const;
+
+    [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 };
 } // namespace Engine::Intermediate
+
+#include "GameObject.inl"

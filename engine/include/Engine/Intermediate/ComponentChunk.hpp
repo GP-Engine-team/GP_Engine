@@ -6,8 +6,9 @@
 
 #pragma once
 
+#include <array> //std::array
+#include <vector> //std::vector
 #include <shared_mutex> //std::shared_mutex
-
 namespace Engine::Intermediate
 {
 
@@ -18,7 +19,7 @@ namespace Engine::Intermediate
  * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
  * @tparam T : Component stored type
  */
-template<typename TStoredComponent>
+template <typename TStoredComponent, int TSize = 65536>  // 64KiB = 65,536Ko
 class ComponentChunk
 {
     /**
@@ -32,16 +33,13 @@ private:
 
 protected:
 
-    constexpr inline
-    ComponentChunk (int ) noexcept;
+    std::vector<TStoredComponent> m_components;
 
     constexpr inline
-    ComponentChunk () noexcept = default;
+    ComponentChunk () noexcept;
 
     inline
-    virtual ~ComponentChunk () noexcept				            = default;
-
-    std::vector<TStoredComponent> m_components;
+    ~ComponentChunk () noexcept				                    = default;
 
 public:
     constexpr inline
@@ -66,6 +64,8 @@ public:
     template <typename... Args>
     TStoredComponent& addComponent(Args&&... args) noexcept;
 
+    void destroyComponent(const TStoredComponent* componentToDestroy);
+
     /**
      * @brief This is the static method that controls the access to the singleton
      * instance. On the first run, it creates a singleton object and places it
@@ -75,6 +75,15 @@ public:
      * @param value 
      * @return ComponentChunk* 
      */
-    static ComponentChunk *getInstance(const std::string& value) noexcept;
+    static ComponentChunk* getInstance() noexcept;
 };
+
+template <typename TStoredComponent, int TSize>
+ComponentChunk<TStoredComponent, TSize>* ComponentChunk<TStoredComponent, TSize>::m_pInstance{nullptr};
+
+template <typename TStoredComponent, int TSize>
+std::shared_mutex ComponentChunk<TStoredComponent, TSize>::m_mutex;
+
 } /*namespace Engine::Intermediate*/
+
+#include "ComponentChunk.inl"

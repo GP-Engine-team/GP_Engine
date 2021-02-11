@@ -15,8 +15,7 @@ class GameObject;
 class Component
 {
 protected:
-    GameObject& m_gameObject;
-    std::string m_name;
+    GameObject* m_gameObject = nullptr;
     bool m_isActivated{true};
 
 public:
@@ -27,34 +26,33 @@ public:
     inline
     Component () noexcept 					            = delete;
 
-    inline
-    Component (const Component& other) noexcept			= default;
+    inline Component(const Component& other) noexcept = delete;
 
     inline
     Component (Component&& other) noexcept				= default;
 
     inline
-    ~Component () noexcept				                = default;
+    virtual ~Component () noexcept				        = default;
 
     inline
-    Component& operator=(const Component& other) noexcept		= default;
+    Component& operator=(const Component& other) noexcept		= delete;
 
     inline
     Component& operator=(Component && other) noexcept			= default;
 
-    [[nodiscard]] inline
+    [[nodiscard]] constexpr inline
     GameObject& getGameObject() noexcept;
 
-    [[nodiscard]] inline
+    [[nodiscard]] constexpr inline
     const GameObject& getGameObject() const noexcept;
 
     [[nodiscard]] inline
     const std::string& toString() const noexcept;
 
-    [[nodiscard]] inline
+    [[nodiscard]] constexpr inline
     bool isActivated() const noexcept;
 
-    inline
+    constexpr inline
     void setActive(bool newState) noexcept;
 };
 } // namespace Engine::Intermediate

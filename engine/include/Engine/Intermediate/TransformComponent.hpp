@@ -25,13 +25,13 @@ public:
 
     inline TransformComponent() noexcept = delete;
 
-    inline TransformComponent(const TransformComponent& other) noexcept = default;
+    inline TransformComponent(const TransformComponent& other) noexcept = delete;
 
     inline TransformComponent(TransformComponent&& other) noexcept = default;
 
     inline ~TransformComponent() noexcept = default;
 
-    inline TransformComponent& operator=(TransformComponent const& other) noexcept = default;
+    inline TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
 
     inline TransformComponent& operator=(TransformComponent&& other) noexcept = default;
 

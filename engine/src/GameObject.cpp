@@ -1,5 +1,6 @@
 #include "Engine/Intermediate/GameObject.hpp"
 
+#include "Engine/Intermediate/ComponentChunk.hpp" //ComponentChunk
 #include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
 #include "Engine/Core/Debug/Log.hpp"
 #include <iostream>
@@ -8,11 +9,22 @@
 
 using namespace Engine::Intermediate;
 
+GameObject::GameObject(const GameObjectCreateArg& arg)
+    : m_name{arg.name}, m_pTransform{&ComponentChunk<TransformComponent>::getInstance()->addComponent(*this)},
+      m_pComponents{}
+{
+}
+
+GameObject::GameObject()
+    : m_name{""}, m_pTransform{&ComponentChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
+{
+}
+
 void GameObject::updateSelfAndChild() noexcept
 {
     for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
     {
-        if ((*i)->m_transform.isDirty())
+        if ((*i)->m_pTransform->isDirty())
         {
             if ((*i)->m_isDead)
             {
@@ -20,7 +32,7 @@ void GameObject::updateSelfAndChild() noexcept
                 continue;
             }
 
-            //(*i)->update(m_transform.getModelMatrix());
+            //(*i)->update(m_pTransform->getModelMatrix());
             (*i)->forceUpdate();
         }
         else
@@ -34,7 +46,7 @@ void GameObject::forceUpdate() noexcept
 {
     for (auto&& i = children.begin(); i != children.end(); i++)
     {
-        //(*i)->update(m_transform.getModelMatrix());
+        //(*i)->update(m_pTransform->getModelMatrix());
         (*i)->forceUpdate();
     }
 }
@@ -123,12 +135,6 @@ std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild(GameOb
     return children.end();
 }
 
-std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild(
-    const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept
-{
-    return children.erase(it);
-}
-
 std::list<Component*>::iterator GameObject::destroyComponent(Component* pComponent) noexcept
 {
     for (std::list<Component*>::iterator it = m_pComponents.begin(); it != m_pComponents.end(); it++)
@@ -139,37 +145,6 @@ std::list<Component*>::iterator GameObject::destroyComponent(Component* pCompone
         }
     }
     return m_pComponents.end();
-}
-
-void GameObject::setActive(bool newState)
-{
-    for (auto&& i : m_pComponents)
-    {
-        i->setActive(newState);
-    }
-}
-
-std::list<Component*>::iterator GameObject::destroyComponent(
-    const std::list<Component*>::iterator& it) noexcept
-{
-    return m_pComponents.erase(it);
-}
-
-void GameObject::destroy() noexcept
-{
-    /*set flag to be delete by it parent*/
-    m_isDead = true;
-    // m_isDirty = true;
-}
-
-void GameObject::destroyImmediate() noexcept
-{
-    parent->destroyChild(this);
-}
-
-bool GameObject::operator==(GameObject const& other)
-{
-    return (this == &other);
 }
 
 std::string GameObject::getRelativePath()
@@ -184,11 +159,4 @@ std::string GameObject::getRelativePath()
     }
 
     return path;
-}
-
-bool GameObject::compareTag(const std::string& toCompare)
-{
-    if (toCompare.compare(m_tag) == 0)
-        return true;
-    return false;
 }

@@ -78,6 +78,9 @@
     <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -97,6 +100,9 @@
       <Filter>src</Filter>
     </None>
     <None Include="src\GameObject.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="src\ComponentChunk.inl">
       <Filter>src</Filter>
     </None>
   </ItemGroup>
