@@ -15,59 +15,68 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <None Include=".clang-format" />
+    <None Include="src\WindowGLFW.inl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="src\Format.inl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="src\Log.inl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="src\ResourcesManager.inl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="src\TimeSystem.inl">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Debug\Log.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\env-master\env-master\cygwin64\home\utilisateur\Linux\GameEngine3\include2\GE\Core\Rendering\Renderer\iRenderer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\env-master\env-master\cygwin64\home\utilisateur\Linux\GameEngine3\include2\GE\Core\Rendering\Renderer\rendererSDLOpGl33.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\env-master\env-master\cygwin64\home\utilisateur\Linux\GameEngine3\include2\GE\Core\Rendering\Window\iWindow.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\env-master\env-master\cygwin64\home\utilisateur\Linux\GameEngine3\include2\GE\Core\Rendering\Window\windowSDL.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
+    <ClInclude Include="include\Engine\Core\Game\AbstractGame.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Game\ContextStartup.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Game\AbstractGame.hpp">
+    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Scene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\SceneManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Log.inl">
+    <ClCompile Include="src\WindowGLFW.cpp">
       <Filter>Source Files</Filter>
-    </None>
-    <None Include="src\Format.inl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include=".clang-format" />
-    <None Include="src\TimeSystem.inl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="src\ResourcesManager.inl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="src\WindowGLFW.inl">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
+    </ClCompile>
     <ClCompile Include="src\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -78,9 +87,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\TimeSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\WindowGLFW.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
