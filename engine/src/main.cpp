@@ -6,6 +6,8 @@
 #include "Engine/Resources/ResourcesManager.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Intermediate/TransformComponent.hpp"
+#include "Engine/Resources/Mesh.hpp"
+#include "Engine/Resources/Shader.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -56,20 +58,26 @@ void logExample()
     FUNCT_ERROR("functError");
     FUNCT_WARNING("functWarning");
 
-    GPE_ASSERT(true, "GPE_assertInfo");
+    GPE_ASSERT(true, "GPE_assert");
 }
 
 void sceneGraphExample()
 {
     Log::logInitializationStart("sceneGraphExample");
 
-    GameObject world(GameObjectCreateArg{"Worsld"});
-    GameObject player(GameObjectCreateArg{"Player"});
-    player.addComponent<TransformComponent>(); //Add additionnal transformComponent
-    player.destroyImmediateUniqueComponent<TransformComponent>();
+    GameObject world(GameObjectCreateArg{"World"});
+    GameObject cube(GameObjectCreateArg{"Player"});
+    ResourcesManager<Mesh, Shader> rm;
 
-    player.parent = &world;
-    std::cout << player.getRelativePath() << std::endl;
+    //cube.addComponent<TransformComponent>(); //Add additionnal transformComponent
+    //cube.destroyImmediateUniqueComponent<TransformComponent>();
+    rm.add<Mesh>("Cube", Mesh::createCube(), false);
+    rm.add<Shader>("Shader", "./resources/shader/vTextureOnlyWithProjection.vs", "./resources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
+
+    //cube.addComponent<Model>();
+
+    cube.parent = &world;
+    std::cout << cube.getRelativePath() << std::endl;
 
     Log::logInitializationEnd("sceneGraphExample");
 }
@@ -104,15 +112,15 @@ int main()
     bool m_logFPS = true;
     int fixedUpdateFrameCount = 0;
     int unFixedUpdateFrameCount = 0;
-    double chronoFPSLog = 0.;
-    double m_FPSLogDelay = 3.;
+    double chronoFPLog = 0.;
+    double m_FPLogDelay = 3.;
 
      ts.addScaledTimer(
-        m_FPSLogDelay,
+        m_FPLogDelay,
         [&]() 
      {
-            std::cout << "FPS (fixedUpdate): " << fixedUpdateFrameCount / m_FPSLogDelay << std::endl;
-            std::cout << "FPS (unFixedUpdate): " << unFixedUpdateFrameCount / m_FPSLogDelay << std::endl << std::endl;
+            std::cout << "FPS (fixedUpdate): " << fixedUpdateFrameCount / m_FPLogDelay << std::endl;
+            std::cout << "FPS (unFixedUpdate): " << unFixedUpdateFrameCount / m_FPLogDelay << std::endl << std::endl;
             fixedUpdateFrameCount = 0;
             unFixedUpdateFrameCount = 0;
 
