@@ -23,8 +23,8 @@ git submodule update --init --recursive
 - Compile and run
 
 If you want to use hot reload, you have 2 choices:
-- You can run without debug mode (ctrl + f5) and then rebuild the dll (ctrl + maj + b) each time you change it.
-- You can run in debug mode (f5) and then rebuild the dll (ctrl + maj + b) with another visual studio instance each time you change it.
+- You can run without debug mode (Ctrl + F5) and then rebuild the dll (Ctrl + maj + B) each time you change it.
+- You can run in debug mode (F5) and then rebuild the dll (Ctrl + maj + B) with another Visual Studio instance each time you change it.
 
 ## How to run in Release Mode
 
