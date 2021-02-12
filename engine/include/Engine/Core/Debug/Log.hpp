@@ -85,10 +85,7 @@ protected:
     static std::string fileLogPath;
     static std::ofstream fileLog;
 
-#pragma endregion //! static attribut
-
 public:
-#pragma region constructor / destructor
 
     constexpr inline Log() noexcept = delete;
 
@@ -111,10 +108,6 @@ public:
      * @brief Save log file if error happen else destroy log file
      */
     static inline void closeAndTryToCreateFile() noexcept;
-
-#pragma endregion //! constructor/destructor
-
-#pragma region static methods
 
     /**
      * @brief print message in log event
@@ -211,8 +204,6 @@ public:
     [[nodiscard]] static inline std::string getDateAndTimeStrFileFormat() noexcept;
 
     [[nodiscard]] static inline std::string getDateAndTimeStr() noexcept;
-
-#pragma endregion //! static methods
 };
 } // namespace Engine::Core::Debug
 
