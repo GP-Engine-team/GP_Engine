@@ -1,3 +1,3 @@
 [submodule "engine/third_party/gpm"]
 	path = engine/third_party/gpm
-	url = git@github.com:GP-Engine-team/gpm.git
+	url = https://github.com/GP-Engine-team/gpm.git
