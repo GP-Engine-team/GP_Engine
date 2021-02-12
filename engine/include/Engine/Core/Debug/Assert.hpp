@@ -17,7 +17,7 @@ namespace Engine::Core::Debug
 {
 #ifdef NDEBUG
 
-#define GPE_ASSERT(expr)
+#define GPE_ASSERT(expr, msg)
 
 #else /* Not NDEBUG.  */
 

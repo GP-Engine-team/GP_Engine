@@ -4,6 +4,8 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/TimeSystem/TimeSystem.hpp"
 #include "Engine/Resources/ResourcesManager.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Intermediate/TransformComponent.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -11,6 +13,7 @@
 using namespace Engine::Resources;
 using namespace Engine::Core::Renderering;
 using namespace Engine::Core::Debug;
+using namespace Engine::Intermediate;
 using namespace Engine::Core;
 
 #ifdef _WIN32
@@ -27,18 +30,20 @@ extern "C"
 
 void ResourceManagerExample()
 {
+    Log::logInitializationStart("ResourceManagerExample");
     ResourcesManager<int, float, double> rm;
 
     rm.add<int>("six", 6);
 
     std::cout << *rm.get<int>("six") << std::endl;
+    Log::logInitializationEnd("ResourceManagerExample");
 }
 
 void logExample()
 {
     Log::logFileHeader();
 
-    Log::logInitializationStart("logInitializationStart");
+    Log::logInitializationStart("logExample");
 
     Log::logInitializationStep("logInitializationStep", 50);
 
@@ -46,7 +51,7 @@ void logExample()
     Log::logTips("logTips");
     Log::logWarning("logWarning");
     Log::logError("logError");
-    Log::logInitializationEnd("logInitializationEnd");
+    Log::logInitializationEnd("logExample");
 
     FUNCT_ERROR("functError");
     FUNCT_WARNING("functWarning");
@@ -54,13 +59,32 @@ void logExample()
     GPE_ASSERT(true, "GPE_assertInfo");
 }
 
+void sceneGraphExample()
+{
+    Log::logInitializationStart("sceneGraphExample");
+
+    GameObject world(GameObjectCreateArg{"Worsld"});
+    GameObject player(GameObjectCreateArg{"Player"});
+    player.addComponent<TransformComponent>(); //Add additionnal transformComponent
+    player.destroyImmediateUniqueComponent<TransformComponent>();
+
+    player.parent = &world;
+    std::cout << player.getRelativePath() << std::endl;
+
+    Log::logInitializationEnd("sceneGraphExample");
+}
+
 void logTimerExample(TimeSystem& ts)
 {
+    Log::logInitializationStart("logTimerExample");
+
     ts.addScaledTimer(
         0.5, [&]() { std::cout << "Timer 0.5" << std::endl; }, true);
 
     ts.addScaledTimer(
         2., [&]() { std::cout << "Timer 2." << std::endl; }, true);
+
+    Log::logInitializationEnd("logTimerExample");
 }
 
 int main()
@@ -70,6 +94,8 @@ int main()
     Window win(WindowCreateArg{"GP engine", 600, 900});
     Renderer ren(win);
     TimeSystem ts;
+
+    sceneGraphExample();
 
     ResourceManagerExample();
 

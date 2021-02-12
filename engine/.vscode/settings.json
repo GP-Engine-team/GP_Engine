@@ -15,7 +15,6 @@
         "cwchar": "cpp",
         "exception": "cpp",
         "fstream": "cpp",
-        "functional": "cpp",
         "initializer_list": "cpp",
         "ios": "cpp",
         "iosfwd": "cpp",
@@ -46,12 +45,19 @@
         "xlocnum": "cpp",
         "xmemory": "cpp",
         "xstddef": "cpp",
-        "xstring": "cpp",
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp",
         "chrono": "cpp",
+        "functional": "cpp",
         "ratio": "cpp",
-        "thread": "cpp"
+        "sstream": "cpp",
+        "thread": "cpp",
+        "shared_mutex": "cpp",
+        "algorithm": "cpp",
+        "condition_variable": "cpp",
+        "deque": "cpp",
+        "mutex": "cpp",
+        "queue": "cpp"
     }
 }
