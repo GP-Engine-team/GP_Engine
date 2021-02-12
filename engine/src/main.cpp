@@ -6,6 +6,8 @@
 #include "Engine/Resources/ResourcesManager.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Intermediate/TransformComponent.hpp"
+#include "Engine/Core/Input/InputManagerGLFW.hpp"
+#include "GLFW/glfw3.h"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -13,6 +15,7 @@
 using namespace Engine::Resources;
 using namespace Engine::Core::Renderering;
 using namespace Engine::Core::Debug;
+using namespace Engine::Core::Input;
 using namespace Engine::Intermediate;
 using namespace Engine::Core;
 
@@ -95,6 +98,8 @@ int main()
     Renderer ren(win);
     TimeSystem ts;
 
+    InputManager::setupCallbacks(win.getGLFWWindow());
+
     sceneGraphExample();
 
     ResourceManagerExample();
@@ -120,6 +125,7 @@ int main()
 
     while (1)
     {
+        glfwPollEvents();
         ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
         { 
             ++fixedUpdateFrameCount;

@@ -22,6 +22,12 @@
     <ClCompile Include="src\GameObject.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\InputComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InputManagerGLFW.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
@@ -79,6 +85,12 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Input\InputComponent.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Input\InputManagerGLFW.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
