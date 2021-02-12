@@ -44,7 +44,7 @@ public:
 
     GameObject();
 
-    inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is avalable
+    inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is available
 
     constexpr inline GameObject(GameObject&& other) noexcept = default;
 
@@ -55,7 +55,7 @@ public:
     inline GameObject& operator=(GameObject&& other) noexcept = default;
 
     /**
-     * @brief update entity and these child if current entity is dirty
+     * @brief update entity and their children if current entity is dirty
      *
      */
     void updateSelfAndChild() noexcept;
