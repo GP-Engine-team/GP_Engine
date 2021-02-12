@@ -4,10 +4,16 @@
     <ClCompile Include="third_party\src\glad.c">
       <Filter>third_party</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameObject.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Log.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\RendererGLFW_GL46.cpp">
@@ -19,41 +25,14 @@
     <ClCompile Include="src\WindowGLFW.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameObject.cpp">
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\SceneManager.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Debug\Log.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="third_party\include\glad\glad.h">
       <Filter>third_party</Filter>
     </ClInclude>
@@ -66,10 +45,34 @@
     <ClInclude Include="third_party\include\KHR\khrplatform.h">
       <Filter>third_party</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Debug\Log.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\Component.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Entity.hpp">
+    <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
@@ -78,13 +81,43 @@
     <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp">
+    <ClInclude Include="include\Engine\Resources\Color.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Mesh.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Scene.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\SceneManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Type.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Shader.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
+    <None Include="src\Component.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="src\ComponentChunk.inl">
+      <Filter>src</Filter>
+    </None>
     <None Include="src\Format.inl">
+      <Filter>src</Filter>
+    </None>
+    <None Include="src\GameObject.inl">
       <Filter>src</Filter>
     </None>
     <None Include="src\Log.inl">
@@ -97,12 +130,6 @@
       <Filter>src</Filter>
     </None>
     <None Include="src\WindowGLFW.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\GameObject.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\ComponentChunk.inl">
       <Filter>src</Filter>
     </None>
   </ItemGroup>
