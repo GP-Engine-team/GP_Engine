@@ -28,7 +28,6 @@ struct MaterialAndTextureCreateArg
 struct MaterialCreateArg
 {
     std::string name{""};
-    ;
     MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
     std::unique_ptr<Texture> pTexture{nullptr};
 };
@@ -56,7 +55,7 @@ public:
     Material() = default;
     Material(const Material& other) = default;
     Material(Material&& other) = default;
-    virtual ~Material() = default;
+    ~Material() = default;
     Material& operator=(Material const& other) = default;
     Material& operator=(Material&& other) = default;
 
