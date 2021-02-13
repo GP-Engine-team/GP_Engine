@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "gpm/Vector3.hpp"
+#include "GPM/Vector3.hpp"
 #include "Engine/Resources/Type.hpp"
 
 namespace Engine::Resources

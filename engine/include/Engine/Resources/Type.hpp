@@ -7,9 +7,9 @@
 #pragma once
 
 #include "Engine/Resources/Color.hpp" //ColorRGBA
-#include "gpm/Vector2.hpp"               //GPM::Vec2
-#include "gpm/Vector3.hpp"               //GPM::Vec3
-#include "gpm/Vector4.hpp"               //GPM::Vec4
+#include "GPM/Vector2.hpp"               //GPM::Vec2
+#include "GPM/Vector3.hpp"               //GPM::Vec3
+#include "GPM/Vector4.hpp"               //GPM::Vec4
 #include <string>                     //std::string
 #include <vector>                     //std::vector
 

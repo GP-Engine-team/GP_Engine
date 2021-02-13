@@ -1,23 +1,16 @@
-#include "Engine/Core/System/ModelRenderingSystem.hpp"
-#include "Engine/LowRenderer/camera.hpp"
-#include "Engine/Core/Maths/ShapeRelation/SpherePlane.hpp"
-#include "Engine/Core/Maths/Shape3D/Sphere.hpp"
-#include "Engine/Core/Maths/Shape3D/Volume.hpp"
-#include "Engine/LowRenderer/camera.hpp"
-#include "Engine/LowRenderer/Light/light.hpp"
-#include "Engine/Resources/GameObject.hpp"
-#include "Engine/Core/System/TimeSystem.hpp"
-#include "Engine/Core/Maths/mat.hpp"
+#include "Engine/Core/System/RendererSystem.hpp"
 
 #include <algorithm>
 #include <memory>
 #include <cstdio>
 #include <bitset>
 
-using namespace Engine::LowRenderer;
-using namespace Engine::Core::System;
-using namespace Engine::Core::Maths::ShapeRelation;
-using namespace Engine::Core::Maths::Shape3D;
+#include "Engine/Resources/Camera.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Core/System/TimeSystem.hpp"
+#include "Engine/Core/Maths/mat.hpp"
+
+using namespace Engine::Intermediate;
 using namespace Engine::Resources;
 using namespace GPM;
 

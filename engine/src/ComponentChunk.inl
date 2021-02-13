@@ -14,7 +14,7 @@ TStoredComponent& Engine::Intermediate::ComponentChunk<TStoredComponent, TSize>:
 {
     std::unique_lock lock(m_mutex);
 
-    m_components.emplace_back(args...);
+    m_components.emplace_back(std::forward<Args>(args)...);
     return m_components.back();
 }
 

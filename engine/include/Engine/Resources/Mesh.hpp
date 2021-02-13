@@ -14,7 +14,7 @@
 
 #include "Engine/Resources/Type.hpp"
 
-#include "gpm/Vector3.hpp"
+#include "GPM/Vector3.hpp"
 
 namespace Engine::Resources
 {

@@ -102,7 +102,7 @@ private:
     void initTextureBufferWithMTLId();
 
 public:
-    Model(Engine::Intermediate::GameObject& refGameObject, const CreateArg& arg);
+    Model(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
 
     Model(const Model& other);
     Model(Model&& other);

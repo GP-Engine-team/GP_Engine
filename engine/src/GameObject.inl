@@ -24,7 +24,7 @@ void Engine::Intermediate::GameObject::updateComponentLink(const T* oldPtr, T* n
 template <typename T, typename... Args>
 T& Engine::Intermediate::GameObject::addComponent(Args&&... args) noexcept
 {
-    T& newComponent = ComponentChunk<T>::getInstance()->addComponent(*this, args...);
+    T& newComponent = ComponentChunk<T>::getInstance()->addComponent(*this, std::forward<Args>(args)...);
     m_pComponents.emplace_back(&newComponent);
     return newComponent;
 }

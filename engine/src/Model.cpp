@@ -5,8 +5,8 @@
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
-#include "gpm/Matrix3.hpp"
-#include "gpm/Matrix4.hpp"
+#include "GPM/Matrix3.hpp"
+#include "GPM/Matrix4.hpp"
 //#include "Engine/Intermediate/RenderSystem.hpp"
 
 using namespace Engine::Resources;
@@ -16,17 +16,17 @@ using namespace GPM;
 
 Model::Model(const Model& other) : IModel(*other.m_gameObject)
 {
-    //RendererSystem::addModel(this);
+  //  RendererSystem::addModel(this);
 }
 
 Model::Model(Model&& other) : IModel(*other.m_gameObject)
 {
-    //RendererSystem::addModel(this);
+   // RendererSystem::addModel(this);
 }
 
 Model::~Model()
 {
-    //RendererSystem::removeModel(this);
+ //   RendererSystem::removeModel(this);
 }
 
 void Model::initTextureBufferWithMTLId()
@@ -52,11 +52,11 @@ void Model::initTextureBufferWithMTLId()
     }
 }
 
-Model::Model(GameObject& refGameObject, const CreateArg& arg)
-    : IModel{refGameObject}, m_pShader{arg.pShader}, m_pMaterial{arg.pMaterials}, m_pMesh{arg.pMesh},
+Model::Model(GameObject& owner, const CreateArg& arg)
+    : IModel{owner}, m_pShader{arg.pShader}, m_pMaterial{arg.pMaterials}, m_pMesh{arg.pMesh},
       m_enableBackFaceCulling{arg.enableBackFaceCulling}, m_isOpaque{arg.isOpaque}
 {
-    //RendererSystem::addModel(this);
+   // RendererSystem::addModel(this);
 
     initTextureBufferWithMTLId();
 

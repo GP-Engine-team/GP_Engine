@@ -1,7 +1,7 @@
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
-#include "gpm/constants.hpp"
+#include "GPM/constants.hpp"
 
 #include <iostream>
 #include <limits>

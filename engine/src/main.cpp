@@ -11,6 +11,7 @@
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Model.hpp"
+#include "Engine/Resources/Camera.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -70,6 +71,10 @@ void sceneGraphExample()
 
     GameObject world(GameObjectCreateArg{"World"});
     GameObject cube(GameObjectCreateArg{"Player"});
+
+    CameraPerspectiveCreateArg camCreateArg;
+    cube.addComponent<Camera>(camCreateArg);
+
     ResourcesManager<Mesh, Shader, Texture, Material> rm;
 
     //cube.addComponent<TransformComponent>(); //Add additionnal transformComponent

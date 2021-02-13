@@ -13,7 +13,7 @@
 
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Resources/ShaderType.hpp"
-#include "gpm/Vector3.hpp"
+#include "GPM/Vector3.hpp"
 
 namespace Engine::Resources
 {
