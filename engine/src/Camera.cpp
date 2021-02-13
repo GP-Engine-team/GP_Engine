@@ -3,13 +3,13 @@
 #include <iostream>
 
 using namespace Engine::Resources;
-using namespace Engine::Core::Maths;
+using namespace GPM;
 using namespace Engine::Core::Debug;
 
 Camera::Camera(const CameraPerspectiveCreateArg& arg)
     : GameObject(GameObjectCreateArg{arg.name, arg.position, arg.rotation, {1.0f, 1.0f, 1.0f}})
 {
-    GE_assert(arg.near > 0.f);
+    GPE_assert(arg.near > 0.f);
 
     ProjectionInfo info;
 
@@ -31,13 +31,13 @@ Camera::Camera(const CameraPerspectiveCreateArg& arg)
     isDirty_ = true;
     update();
 
-    SLog::log((std::string("Perspective projection add with name \"") + arg.name + "\"").c_str());
+    Log:log((std::string("Perspective projection add with name \"") + arg.name + "\"").c_str());
 }
 
 Camera::Camera(const CameraOrthographicCreateArg& arg)
     : GameObject(GameObjectCreateArg{arg.name, arg.position, arg.rotation, {1.0f, 1.0f, 1.0f}})
 {
-    GE_assert(arg.nearVal > 0.f);
+    GPE_assert(arg.nearVal > 0.f);
 
     ProjectionInfo info;
 
@@ -62,7 +62,7 @@ Camera::Camera(const CameraOrthographicCreateArg& arg)
     isDirty_ = true;
     update();
 
-    SLog::log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
+    Log:log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
 }
 
 void Camera::update() noexcept

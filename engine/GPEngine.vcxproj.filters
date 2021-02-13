@@ -31,6 +31,9 @@
     <ClCompile Include="src\ShaderParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -103,6 +106,12 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Texture.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

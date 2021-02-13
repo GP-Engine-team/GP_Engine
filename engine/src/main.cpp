@@ -8,6 +8,7 @@
 #include "Engine/Intermediate/TransformComponent.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/Shader.hpp"
+#include "Engine/Resources/Texture.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -67,12 +68,13 @@ void sceneGraphExample()
 
     GameObject world(GameObjectCreateArg{"World"});
     GameObject cube(GameObjectCreateArg{"Player"});
-    ResourcesManager<Mesh, Shader> rm;
+    ResourcesManager<Mesh, Shader, Texture> rm;
 
     //cube.addComponent<TransformComponent>(); //Add additionnal transformComponent
     //cube.destroyImmediateUniqueComponent<TransformComponent>();
     rm.add<Mesh>("Cube", Mesh::createCube(), false);
     rm.add<Shader>("Shader", "./resources/shader/vTextureOnlyWithProjection.vs", "./resources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
+    rm.add<Texture>("Texture", "./resources/texture/World_war_II_Sniper_gun_3d_models_texture.bmp");
 
     //cube.addComponent<Model>();
 

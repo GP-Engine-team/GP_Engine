@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "GE/Ressources/GameObject.hpp"
-#include "GE/Core/Maths/vec.hpp"
-#include "GE/Core/Maths/mat.hpp"
+#include "Engine/Resources/GameObject.hpp"
+#include "gmp/Vector3.hpp"
+#include "Engine/Core/Maths/mat.hpp"
 
 #include <string>
 
@@ -34,8 +34,8 @@ namespace Engine::Resources
 
     struct CameraPerspectiveCreateArg
     {
-        const Engine::Core::Maths::Vec3& position; 
-        const Engine::Core::Maths::Vec3& rotation;
+        const GPM::Vec3& position; 
+        const GPM::Vec3& rotation;
         float aspect; 
         float near; 
         float far; 
@@ -45,8 +45,8 @@ namespace Engine::Resources
 
     struct CameraOrthographicCreateArg
     {
-        const Engine::Core::Maths::Vec3& position; 
-        const Engine::Core::Maths::Vec3& rotation;
+        const GPM::Vec3& position; 
+        const GPM::Vec3& rotation;
         float left; 
         float right; 
         float bottom; 
@@ -57,15 +57,15 @@ namespace Engine::Resources
     };
 
     class Camera
-        : public Engine::Ressources::GameObject
+        : public Engine::Resources::GameObject
     {
         protected:
 
         ProjectionInfo              projInfo_;
-        Engine::Core::Maths::Mat4   projection_;
+        GPM::Mat4   projection_;
 
-        Engine::Core::Maths::Mat4   viewMatrix_;
-        Engine::Core::Maths::Mat4   viewProjectionMatrix_;
+        GPM::Mat4   viewMatrix_;
+        GPM::Mat4   viewProjectionMatrix_;
 
         static Camera* camToUse; //pointor to be in nullptr by default
 
@@ -137,7 +137,7 @@ namespace Engine::Resources
              * 
              * @param parentMeshMatrix : Mesh view matrix of parent
              */
-            void update (const Engine::Core::Maths::Mat4& parentMeshMatrix) noexcept override;        
+            void update (const GPM::Mat4& parentMeshMatrix) noexcept override;        
 
             /**
              * @brief construct view matrix with look at arg. 
@@ -146,7 +146,7 @@ namespace Engine::Resources
              * @param center : Specifies the position of the reference point
              * @param up     : Specifies the direction of the up vector
              */
-            void lookAt (const Engine::Core::Maths::Vec3& eye, const Engine::Core::Maths::Vec3& center, const Engine::Core::Maths::Vec3& up) noexcept;
+            void lookAt (const GPM::Vec3& eye, const GPM::Vec3& center, const GPM::Vec3& up) noexcept;
 
             /**
              * @brief Set the Fov Y object
@@ -170,22 +170,22 @@ namespace Engine::Resources
             /**
              * @brief Get the view * projection matrix
              * 
-             * @return const Engine::Core::Maths::Mat4& 
+             * @return const GPM::Mat4& 
              */
-            const Engine::Core::Maths::Mat4& getViewProjection() const noexcept { return viewProjectionMatrix_; }
+            const GPM::Mat4& getViewProjection() const noexcept { return viewProjectionMatrix_; }
 
             /**
              * @brief Get the view matrix
              * 
-             * @return const Engine::Core::Maths::Mat4& 
+             * @return const GPM::Mat4& 
              */
-            const Engine::Core::Maths::Mat4& getView() const noexcept { return viewMatrix_; }
+            const GPM::Mat4& getView() const noexcept { return viewMatrix_; }
 
             /**
              * @brief Get the projection matrix
              * 
-             * @return const Engine::Core::Maths::Mat4& 
+             * @return const GPM::Mat4& 
              */
-            const Engine::Core::Maths::Mat4& getProjection() const noexcept { return projection_; }
+            const GPM::Mat4& getProjection() const noexcept { return projection_; }
     };
 } /*namespace Engine::Resources*/
