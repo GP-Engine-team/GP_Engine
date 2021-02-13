@@ -6,14 +6,14 @@
 
 #pragma once
 
+#include <list>
+#include <vector>
+
 #include "Engine/Resources/IModel.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Texture.hpp"
-
-#include <list>
-#include <vector>
 
 namespace Engine::Resources
 {
@@ -76,9 +76,9 @@ class Model : public IModel
 public:
     struct CreateArg
     {
-        std::string shaderName;
-        std::string materialName;
-        std::string meshName;
+        Shader* pShader;
+        std::vector<Material>* pMaterials;
+        Mesh* pMesh;
 
         bool loadInGPU{true};
         bool enableBackFaceCulling{true};
@@ -86,20 +86,14 @@ public:
     };
 
 protected:
-    Engine::Resources::Shader* m_pShader;
-    std::vector<Engine::Resources::Material>* m_pMaterial; // contain the texture and material data
-    std::vector<Engine::Resources::Material*>
-        m_pMaterialToUse; // contain pointor to the material to use when model is display.
-    Engine::Resources::Mesh* m_pMesh;
-
-    std::string m_shaderName;
-    std::string m_materialName;
-    std::string m_meshName;
+    Shader* m_pShader;
+    std::vector<Material>* m_pMaterial;      // contain the texture and material data
+    std::vector<Material*> m_pMaterialToUse; // contain pointor to the material to use when model is display.
+    Mesh* m_pMesh;
 
     bool m_enableBackFaceCulling;
     bool m_isOpaque;
 
-protected:
 private:
     /**
      * @brief fill pTextureToUse in function of
@@ -108,24 +102,20 @@ private:
     void initTextureBufferWithMTLId();
 
 public:
-    Model(Engine::Resources::GameObject& refGameObject, const CreateArg& arg);
+    Model(Engine::Intermediate::GameObject& refGameObject, const CreateArg& arg);
 
     Model(const Model& other);
     Model(Model&& other);
     virtual ~Model();
 
-    Model(Engine::Intermediate::GameObject& refGameObject, std::vector<std::string>& params, Engine
-          : &ressourcesManager); // load construtor
+    /*
+    Model(Engine::Intermediate::GameObject& refGameObject, std::vector<std::string>& params,
+          ResourcesManager& ressourcesManager); // load construtor
+    */
 
     Model() = delete;
     Model& operator=(Model const& other) = delete;
     Model& operator=(Model&& other) = delete;
-
-    /**
-     * @brief Draw element only if it is load in GPU
-     *
-     */
-    void draw() const noexcept override;
 
     /**
      * @brief Load texture and Mesh from CPU to GPU. This operation can be slow.
@@ -134,42 +124,21 @@ public:
     void loadInGPU() noexcept;
     void unloadFromGPU() noexcept;
 
-    bool isVisibleTowardCamera() const noexcept;
-
-    // nullptr if don't use the shader else set pointor to shader to use
-    void useSimpleShader(Engine::Resources : Shader* pShader);
-
     bool isOpaque() const noexcept
     {
         return m_isOpaque;
     }
 
-    const std::string& getShaderName() const noexcept
-    {
-        return m_shaderName;
-    }
-    const std::string& getMaterialName() const noexcept
-    {
-        return m_materialName;
-    }
-    const std::string& getMeshName() const noexcept
-    {
-        return m_meshName;
-    }
-
-    Engine::Resources : Shader* getpShader() noexcept
+    Shader* getpShader() noexcept
     {
         return m_pShader;
     }
-    Engine::Resources : Mesh* getpMesh() noexcept
+
+    Mesh* getpMesh() noexcept
     {
         return m_pMesh;
     }
 
     void insertModelPartsOnContenor(std::list<ModelPart>& modelPartContenor) noexcept;
-
-    std::shared_ptr<Engine::Core::Maths::Shape3D::Volume> getpBoudingVolume() const noexcept;
-
-    virtual void sendToShaderModelMatrix() const noexcept;
 };
 } /*namespace Engine::Resources*/

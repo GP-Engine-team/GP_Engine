@@ -10,6 +10,7 @@
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/Resources/Material.hpp"
+#include "Engine/Resources/Model.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"

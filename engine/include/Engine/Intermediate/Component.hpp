@@ -46,9 +46,6 @@ public:
     [[nodiscard]] constexpr inline
     const GameObject& getGameObject() const noexcept;
 
-    [[nodiscard]] inline
-    const std::string& toString() const noexcept;
-
     [[nodiscard]] constexpr inline
     bool isActivated() const noexcept;
 

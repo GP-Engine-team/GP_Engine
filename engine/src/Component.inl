@@ -15,11 +15,6 @@ constexpr inline const Engine::Intermediate::GameObject& Engine::Intermediate::C
     return *m_gameObject;
 }
 
-inline const std::string& Engine::Intermediate::Component::toString() const noexcept
-{
-    return __FUNCTION__;
-};
-
 constexpr inline bool Engine::Intermediate::Component::isActivated() const noexcept
 {
     return m_isActivated;
