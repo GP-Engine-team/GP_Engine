@@ -16,7 +16,7 @@ namespace Engine::Intermediate
 {
 struct GameObjectCreateArg
 {
-    const char* name = "";
+    std::string name = "";
 };
 
 class Component;
