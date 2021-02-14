@@ -8,6 +8,9 @@
 
 #include "Engine/Intermediate/Component.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "GPM/Transform.hpp"
+#include "GPM/Matrix4.hpp"
+#include "GPM/Conversion.hpp"
 #include <vector>
 
 namespace Engine::Intermediate
@@ -15,7 +18,11 @@ namespace Engine::Intermediate
 class TransformComponent : public Component
 {
 protected:
+    
+    GPM::Transform m_transform;
+    GPM::SplitTransform m_spaceAttribut;
     bool m_isDirty = false;
+    
 
 public:
     TransformComponent(GameObject& refGameObject) noexcept : Component(refGameObject)
@@ -32,6 +39,41 @@ public:
     [[nodiscard]] constexpr inline bool isDirty() const
     {
         return m_isDirty;
+    }
+
+            /**
+     * @brief update Mesh matrix
+     *
+     */
+    void update() noexcept
+    {
+        if (!m_isDirty)
+            return;
+
+        m_transform.model = GPM::toTransform(m_spaceAttribut);
+        m_isDirty   = false;
+    }
+
+    /**
+     * @brief update transform if it depend to parent Mesh view (use in inherance in scene graph)
+     *
+     * @param parentMeshMatrix : Mesh view matrix of parent
+     */
+    void update(const GPM::Mat4& parentMeshMatrix) noexcept
+    {
+        m_transform.model = parentMeshMatrix * GPM::toTransform(m_spaceAttribut).model;
+        m_isDirty = false;
+    }
+
+    inline GPM::Transform& get()
+    {
+        return m_transform;
+    }
+
+    inline
+    const GPM::Mat4& getModelMatrix() const 
+    {
+        return m_transform.model;
     }
 };
 } /*namespace Engine::Intermediate*/
