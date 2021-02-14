@@ -43,7 +43,13 @@
     <ClCompile Include="src\Camera.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\RendererSystem.cpp">
+    <ClCompile Include="src\RenderSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ObjParser.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MTLParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -166,6 +172,12 @@
       <Filter>third_party\gpm</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

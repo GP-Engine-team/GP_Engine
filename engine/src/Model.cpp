@@ -19,17 +19,17 @@ using namespace GPM;
 
 Model::Model(const Model& other) : Component(*other.m_gameObject)
 {
-    RendererSystem::getInstance()->addModel(this);
+    RenderSystem::getInstance()->addModel(this);
 }
 
 Model::Model(Model&& other) : Component(*other.m_gameObject)
 {
-    RendererSystem::getInstance()->addModel(this);
+    RenderSystem::getInstance()->addModel(this);
 }
 
 Model::~Model()
 {
-    RendererSystem::getInstance()->removeModel(this);
+    RenderSystem::getInstance()->removeModel(this);
 }
 
 void Model::initTextureBufferWithMTLId()
@@ -59,7 +59,7 @@ Model::Model(GameObject& owner, const CreateArg& arg)
     : Component{owner}, m_pShader{arg.pShader}, m_pMaterial{arg.pMaterials}, m_pMesh{arg.pMesh},
       m_enableBackFaceCulling{arg.enableBackFaceCulling}, m_isOpaque{arg.isOpaque}
 {
-    RendererSystem::getInstance()->addModel(this);
+    RenderSystem::getInstance()->addModel(this);
 
     initTextureBufferWithMTLId();
 

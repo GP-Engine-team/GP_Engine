@@ -11,7 +11,7 @@
 
 namespace Engine::Resources
 {
-#define PATH_TEXTURE_RESSORUCE "./ressources/texture/"
+#define PATH_TEXTURE_RESOURCE "./resources/textures/"
 
 enum class EWrapType
 {

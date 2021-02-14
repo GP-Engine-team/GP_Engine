@@ -23,7 +23,7 @@ namespace Engine::Intermediate
  * class over and over. Thread safe singleton according with link below :
  * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
  */
-class RendererSystem
+class RenderSystem
 {
     /**
      * The Singleton's constructor/destructor should always be private to
@@ -31,7 +31,7 @@ class RendererSystem
      * operator.
      */
 private:
-    static RendererSystem*   m_pInstance;
+    static RenderSystem*   m_pInstance;
     static std::shared_mutex m_mutex;
 
 protected:
@@ -53,14 +53,14 @@ protected:
 
     void resetCurrentRenderPassKey();
 
-    inline RendererSystem() noexcept = default;
-    ~RendererSystem() noexcept = default;
+    inline RenderSystem() noexcept = default;
+    ~RenderSystem() noexcept = default;
 
 public:
-    RendererSystem(const RendererSystem& other) noexcept = delete;
-    RendererSystem(RendererSystem&& other) noexcept      = delete;
-    RendererSystem& operator=(RendererSystem const& other) noexcept = delete;
-    RendererSystem& operator=(RendererSystem&& other) noexcept = delete;
+    RenderSystem(const RenderSystem& other) noexcept = delete;
+    RenderSystem(RenderSystem&& other) noexcept      = delete;
+    RenderSystem& operator=(RenderSystem const& other) noexcept = delete;
+    RenderSystem& operator=(RenderSystem&& other) noexcept = delete;
 
     void draw() noexcept;
 
@@ -92,9 +92,9 @@ public:
      * object stored in the static field.
      *
      * @param value
-     * @return RendererSystem*
+     * @return RenderSystem*
      */
-    static RendererSystem* getInstance() noexcept
+    static RenderSystem* getInstance() noexcept
     {
         // double same if to avoid to lock mutex
         if (m_pInstance == nullptr)
@@ -104,7 +104,7 @@ public:
                 if (m_pInstance == nullptr)
                     [[unlikely]]
                     {
-                        m_pInstance = new RendererSystem();
+                        m_pInstance = new RenderSystem();
                     }
                 return m_pInstance;
             }

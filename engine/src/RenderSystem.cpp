@@ -14,8 +14,8 @@ using namespace Engine::Intermediate;
 using namespace Engine::Resources;
 using namespace GPM;
 
-RendererSystem*   RendererSystem::m_pInstance{nullptr};
-std::shared_mutex RendererSystem::m_mutex;
+RenderSystem*   RenderSystem::m_pInstance{nullptr};
+std::shared_mutex RenderSystem::m_mutex;
 
 void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
 {
@@ -98,7 +98,7 @@ void drawModelPart(const ModelPart& modelPart)
     glDrawArrays(GL_TRIANGLES, modelPart.indexStart, modelPart.indexCount);
 }
 
-void RendererSystem::tryToBindShader(Shader* pShader)
+void RenderSystem::tryToBindShader(Shader* pShader)
 {
     if (m_currentShaderId == pShader->getIdProgramm())
         return;
@@ -112,7 +112,7 @@ void RendererSystem::tryToBindShader(Shader* pShader)
     sendDataToInitShader(*m_pCameras[0] ,m_currentPShaderUse);
 }
 
-void RendererSystem::tryToBindTexture(unsigned int textureId)
+void RenderSystem::tryToBindTexture(unsigned int textureId)
 {
     if (m_currentTextureId == textureId)
         return;
@@ -123,7 +123,7 @@ void RendererSystem::tryToBindTexture(unsigned int textureId)
     m_currentTextureId = textureId;
 }
 
-void RendererSystem::tryToBindMesh(unsigned int meshId)
+void RenderSystem::tryToBindMesh(unsigned int meshId)
 {
     if (m_currentMeshId == meshId)
         return;
@@ -134,7 +134,7 @@ void RendererSystem::tryToBindMesh(unsigned int meshId)
     m_currentMeshId = meshId;
 }
 
-void RendererSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
+void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
 {
     if (m_currentBackFaceCullingModeEnable == useBackFaceCulling)
         return;
@@ -153,7 +153,7 @@ void RendererSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
     m_currentBackFaceCullingModeEnable = useBackFaceCulling;
 }
 
-void RendererSystem::resetCurrentRenderPassKey()
+void RenderSystem::resetCurrentRenderPassKey()
 {
     m_currentShaderId         = 0;
     m_currentTextureId        = 0;
@@ -169,7 +169,7 @@ void RendererSystem::resetCurrentRenderPassKey()
     glBindVertexArray(0);
 }
 
-void RendererSystem::draw () noexcept
+void RenderSystem::draw () noexcept
 {
     std::list<ModelPart> modelParts;
     std::map<float, Model*> mapElemSortedByDistance;
@@ -224,12 +224,12 @@ void RendererSystem::draw () noexcept
     resetCurrentRenderPassKey();
 }
 
-void RendererSystem::addModel(Model* pModel) noexcept
+void RenderSystem::addModel(Model* pModel) noexcept
 {
     m_pModels.push_back(pModel);
 }
 
-void RendererSystem::updateModelPointer(Model* newPointorModel, Model* exPointorModel) noexcept
+void RenderSystem::updateModelPointer(Model* newPointorModel, Model* exPointorModel) noexcept
 {
     for (std::vector<Model*>::iterator it = m_pModels.begin(); it != m_pModels.end(); it++)
     {
@@ -241,7 +241,7 @@ void RendererSystem::updateModelPointer(Model* newPointorModel, Model* exPointor
     }
 }
 
-void RendererSystem::removeModel (Model* pModel) noexcept
+void RenderSystem::removeModel (Model* pModel) noexcept
 {
     for (std::vector<Model*>::iterator it = m_pModels.begin(); it != m_pModels.end(); it++)
     {
@@ -254,12 +254,12 @@ void RendererSystem::removeModel (Model* pModel) noexcept
     }
 }
 
-void RendererSystem::addCamera(Camera* pCamera) noexcept
+void RenderSystem::addCamera(Camera* pCamera) noexcept
 {
     m_pCameras.push_back(pCamera);
 }
 
-void RendererSystem::updateCameraPointer(Camera* newPointorCamera, Camera* exPointorCamera) noexcept
+void RenderSystem::updateCameraPointer(Camera* newPointorCamera, Camera* exPointorCamera) noexcept
 {
     for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != m_pCameras.end(); it++)
     {
@@ -271,7 +271,7 @@ void RendererSystem::updateCameraPointer(Camera* newPointorCamera, Camera* exPoi
     }
 }
 
-void RendererSystem::removeCamera(Camera* pCamera) noexcept
+void RenderSystem::removeCamera(Camera* pCamera) noexcept
 {
     for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != m_pCameras.end(); it++)
     {

@@ -12,6 +12,8 @@
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Model.hpp"
 #include "Engine/Resources/Camera.hpp"
+#include "Engine/Intermediate/RenderSystem.hpp"
+#include "Engine/Core/Parsers/ObjParser.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -20,6 +22,7 @@ using namespace Engine::Resources;
 using namespace Engine::Core::Renderering;
 using namespace Engine::Core::Debug;
 using namespace Engine::Intermediate;
+using namespace Engine::Core::Parsers;
 using namespace Engine::Core;
 
 #ifdef _WIN32
@@ -65,7 +68,26 @@ void logExample()
     GPE_ASSERT(true, "GPE_assert");
 }
 
-void sceneGraphExample()
+void loadTreeResource(ResourcesManager<Mesh, Shader, Texture, std::vector<Material>>& ressourceManager)
+{
+    Attrib                      attrib;
+    std::vector<Shape>          shape;
+    std::vector<MaterialAttrib> materialAttribs;
+
+    loadObjWithMTL("./resources/meshs/Tree.obj", &attrib, &shape, &materialAttribs);
+
+    ressourceManager.add<Mesh>("TreeMesh", attrib, shape);
+
+    {
+        std::vector<Material> material;
+        material.reserve(materialAttribs.size());
+        /*Instanciate material vector with data read on materalAtribs*/
+        material.assign(materialAttribs.begin(), materialAttribs.end());
+        ressourceManager.add<std::vector<Material>>("TreeMaterials", std::move(material));
+    }
+}
+
+void sceneGraphExample(Renderer& ren)
 {
     Log::logInitializationStart("sceneGraphExample");
 
@@ -75,23 +97,28 @@ void sceneGraphExample()
     CameraPerspectiveCreateArg camCreateArg;
     cube.addComponent<Camera>(camCreateArg);
 
-    ResourcesManager<Mesh, Shader, Texture, Material> rm;
+    ResourcesManager<Mesh, Shader, Texture, std::vector<Material>> rm;
+
+    loadTreeResource(rm);
 
     //cube.addComponent<TransformComponent>(); //Add additionnal transformComponent
     //cube.destroyImmediateUniqueComponent<TransformComponent>();
     rm.add<Mesh>("Cube", Mesh::createCube(), false);
-    rm.add<Shader>("Shader", "./resources/shader/vTextureOnlyWithProjection.vs", "./resources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
-    rm.add<Texture>("Texture", "./resources/texture/World_war_II_Sniper_gun_3d_models_texture.bmp");
+    rm.add<Shader>("Shader", "./resources/shaders/vTextureOnlyWithProjection.vs", "./resources/shader/fColorOnly.fs", AMBIANTE_COLOR_ONLY);
+    rm.add<Texture>("Texture", "./resources/textures/World_war_II_Sniper_gun_3d_models_texture.bmp");
 
     MaterialAndTextureCreateArg matArg;
-    matArg.pathDiffuseTexture = "./resources/texture/World_war_II_Sniper_gun_3d_models_texture.bmp";
+    matArg.pathDiffuseTexture = "./resources/textures/World_war_II_Sniper_gun_3d_models_texture.bmp";
 
-    rm.add<Material>("Material", matArg);
+    rm.add<std::vector<Material>>("Material", std::vector<Material>{matArg});
 
     //cube.addComponent<Model>();
 
     cube.parent = &world;
     std::cout << cube.getRelativePath() << std::endl;
+
+    RenderSystem::getInstance()->draw();
+    ren.swapBuffer();
 
     Log::logInitializationEnd("sceneGraphExample");
 }
@@ -117,7 +144,7 @@ int main()
     Renderer ren(win);
     TimeSystem ts;
 
-    sceneGraphExample();
+    sceneGraphExample(ren);
 
     ResourceManagerExample();
 

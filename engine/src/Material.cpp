@@ -27,7 +27,7 @@ Material::Material(const MaterialAndTextureCreateArg& arg)
 Material::Material(const MaterialAttrib& arg)
     : m_comp{arg.ambient, arg.diffuse, arg.specular, arg.shininess},
       m_pDiffuseTexturetexture(
-          std::make_shared<Texture>((std::string(PATH_TEXTURE_RESSORUCE) + arg.nameDiffuseTexture).c_str())),
+          std::make_shared<Texture>((std::string(PATH_TEXTURE_RESOURCE) + arg.nameDiffuseTexture).c_str())),
       m_name(arg.id)
 {
 }
