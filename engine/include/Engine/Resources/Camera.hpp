@@ -6,11 +6,10 @@
 
 #pragma once
 
+#include <string>
+
 #include "Engine/Intermediate/Component.hpp"
 #include "GPM/Matrix4.hpp"
-#include "GPM/Vector3.hpp"
-
-#include <string>
 
 namespace Engine::Resources
 {
@@ -65,7 +64,7 @@ public:
 
     Camera(Camera&& other) noexcept = default;
     Camera& operator=(Camera&& other) noexcept = default;
-    ~Camera() noexcept = default;
+    virtual ~Camera() noexcept = default;
 
     /**
      * @brief Construct a new perspective camera object

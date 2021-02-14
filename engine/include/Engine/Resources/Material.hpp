@@ -6,7 +6,8 @@
 
 #pragma once
 
-#include <memory>
+#include <memory> //std::unique_ptr, std::shared_ptr
+#include <string> //std::string
 
 #include "Engine/Resources/ShaderType.hpp"
 #include "Engine/Resources/Texture.hpp"
@@ -16,28 +17,28 @@ namespace Engine::Resources
 {
 struct MaterialAndTextureCreateArg
 {
-    std::string name{""};
+    std::string       name{""};
     MaterialComponent comp{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
-    const char* pathDiffuseTexture{nullptr};
-    EWrapType wrapType{EWrapType::REPEAT};
-    EFilterType filterType{EFilterType::LINEAR};
-    bool flipTexture{true};
-    bool loadInGPU{true};
+    const char*       pathDiffuseTexture{nullptr};
+    EWrapType         wrapType{EWrapType::REPEAT};
+    EFilterType       filterType{EFilterType::LINEAR};
+    bool              flipTexture{true};
+    bool              loadInGPU{true};
 };
 
 struct MaterialCreateArg
 {
-    std::string name{""};
-    MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
+    std::string              name{""};
+    MaterialComponent        comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
     std::unique_ptr<Texture> pTexture{nullptr};
 };
 
 class Material
 {
 protected:
-    MaterialComponent m_comp;
+    MaterialComponent        m_comp;
     std::shared_ptr<Texture> m_pDiffuseTexturetexture;
-    std::string m_name;
+    std::string              m_name;
 
 public:
     Material(std::string m_name, MaterialComponent comp);
@@ -52,10 +53,10 @@ public:
      */
     Material(const MaterialAttrib& arg);
 
-    Material() = default;
+    Material()                      = default;
     Material(const Material& other) = default;
-    Material(Material&& other) = default;
-    ~Material() = default;
+    Material(Material&& other)      = default;
+    ~Material()                     = default;
     Material& operator=(Material const& other) = default;
     Material& operator=(Material&& other) = default;
 

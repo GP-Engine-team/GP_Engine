@@ -180,10 +180,10 @@
     <ClInclude Include="include\Engine\Intermediate\Component.hpp" />
     <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp" />
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp" />
     <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp" />
     <ClInclude Include="include\Engine\Resources\Camera.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
-    <ClInclude Include="include\Engine\Resources\IModel.hpp" />
     <ClInclude Include="include\Engine\Resources\Material.hpp" />
     <ClInclude Include="include\Engine\Resources\Mesh.hpp" />
     <ClInclude Include="include\Engine\Resources\Model.hpp" />
@@ -217,6 +217,7 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\RendererGLFW_GL46.cpp" />
+    <ClCompile Include="src\RendererSystem.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ShaderParser.cpp" />
     <ClCompile Include="src\Texture.cpp" />
@@ -226,6 +227,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
+    <None Include="ClassDiagram.cd" />
     <None Include="src\Component.inl" />
     <None Include="src\ComponentChunk.inl" />
     <None Include="src\Format.inl" />

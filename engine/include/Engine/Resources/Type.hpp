@@ -7,9 +7,9 @@
 #pragma once
 
 #include "Engine/Resources/Color.hpp" //ColorRGBA
-#include "GPM/Vector2.hpp"               //GPM::Vec2
-#include "GPM/Vector3.hpp"               //GPM::Vec3
-#include "GPM/Vector4.hpp"               //GPM::Vec4
+#include "GPM/Vector2.hpp"            //GPM::Vec2
+#include "GPM/Vector3.hpp"            //GPM::Vec3
+#include "GPM/Vector4.hpp"            //GPM::Vec4
 #include <string>                     //std::string
 #include <vector>                     //std::vector
 
@@ -25,7 +25,7 @@ typedef union {
     {
         float kr, kg, kb, ki;
     };
-    float e[4];
+    float     e[4];
     GPM::Vec4 rgbi;
     ColorRGBA rgba;
 
@@ -37,11 +37,11 @@ typedef AmbiantComponent Emission;
 
 struct MaterialAttrib
 {
-    AmbiantComponent ambient;
-    DiffuseComponent diffuse;
+    AmbiantComponent  ambient;
+    DiffuseComponent  diffuse;
     SpecularComponent specular;
-    Emission emission;
-    float shininess;
+    Emission          emission;
+    float             shininess;
 
     std::string nameAmbiantTexture;
     std::string nameDiffuseTexture;
@@ -52,16 +52,16 @@ struct MaterialAttrib
 
 struct Shape
 {
-    std::string name;
+    std::string               name;
     std::vector<unsigned int> iv;
     std::vector<unsigned int> ivn;
     std::vector<unsigned int> ivt;
-    std::string material_ids;
+    std::string               material_ids;
 };
 
 struct Attrib
 {
-    std::string objName;
+    std::string            objName;
     std::vector<GPM::Vec3> vBuffer;
     std::vector<GPM::Vec2> vtBuffer;
     std::vector<GPM::Vec3> vnBuffer;

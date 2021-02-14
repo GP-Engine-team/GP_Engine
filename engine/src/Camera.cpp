@@ -2,9 +2,10 @@
 
 #include <iostream>
 
-#include "GPM/Transform.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Intermediate/RenderSystem.hpp"
+#include "GPM/Transform.hpp"
 
 using namespace Engine::Resources;
 using namespace GPM;
@@ -17,18 +18,20 @@ Camera::Camera(GameObject& owner, const CameraPerspectiveCreateArg& arg) : Compo
 
     ProjectionInfo info;
 
-    info.name = arg.name;
-    info.type = EProjectionType::PERSPECTIVE;
+    info.name   = arg.name;
+    info.type   = EProjectionType::PERSPECTIVE;
     info.aspect = arg.aspect;
-    info.near = arg.near;
-    info.far = arg.far;
-    info.fovY = arg.fovY;
-    info.fovX = arg.aspect * arg.fovY;
-    info.hSide = arg.far * sinf(info.fovX / 2.f);
-    info.vSide = arg.far * sinf(info.fovY / 2.f);
+    info.near   = arg.near;
+    info.far    = arg.far;
+    info.fovY   = arg.fovY;
+    info.fovX   = arg.aspect * arg.fovY;
+    info.hSide  = arg.far * sinf(info.fovX / 2.f);
+    info.vSide  = arg.far * sinf(info.fovY / 2.f);
 
-    m_projInfo = info;
+    m_projInfo   = info;
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.near, m_projInfo.far);
+
+    RendererSystem::getInstance()->addCamera(this);
 
     Log::log((std::string("Perspective projection add with name \"") + arg.name + "\"").c_str());
 }
@@ -39,27 +42,28 @@ Camera::Camera(GameObject& owner, const CameraOrthographicCreateArg& arg) : Comp
 
     ProjectionInfo info;
 
-    info.name = arg.name;
-    info.type = EProjectionType::ORTHOGRAPHIC;
+    info.name   = arg.name;
+    info.type   = EProjectionType::ORTHOGRAPHIC;
     info.aspect = arg.hSide / arg.vSide;
-    info.near = arg.nearVal;
-    info.far = arg.farVal;
-    info.fovY = arg.farVal * asinf(arg.vSide);
-    info.fovX = arg.farVal * asinf(arg.hSide);
-    info.hSide = arg.hSide;
-    info.vSide = arg.vSide;
+    info.near   = arg.nearVal;
+    info.far    = arg.farVal;
+    info.fovY   = arg.farVal * asinf(arg.vSide);
+    info.fovX   = arg.farVal * asinf(arg.hSide);
+    info.hSide  = arg.hSide;
+    info.vSide  = arg.vSide;
 
     m_projInfo = info;
     m_projection =
         Transform::orthographic(m_projInfo.hSide / 2.f, m_projInfo.vSide / 2.f, m_projInfo.near, m_projInfo.far);
 
+    RendererSystem::getInstance()->addCamera(this);
     Log::log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
 }
 
 void Camera::setFovY(const float fovY) noexcept
 {
-    m_projInfo.fovY = fovY;
-    m_projInfo.fovX = m_projInfo.aspect * fovY;
+    m_projInfo.fovY  = fovY;
+    m_projInfo.fovX  = m_projInfo.aspect * fovY;
     m_projInfo.hSide = m_projInfo.far * sinf(m_projInfo.fovX);
     m_projInfo.vSide = m_projInfo.far * sinf(m_projInfo.fovY);
 
@@ -83,13 +87,14 @@ void Camera::setFovY(const float fovY) noexcept
 void Camera::setAspect(const float newAspect) noexcept
 {
     m_projInfo.aspect = newAspect;
-    m_projInfo.fovX = m_projInfo.aspect * m_projInfo.fovY;
-    m_projInfo.hSide = m_projInfo.far * sinf(m_projInfo.fovX);
+    m_projInfo.fovX   = m_projInfo.aspect * m_projInfo.fovY;
+    m_projInfo.hSide  = m_projInfo.far * sinf(m_projInfo.fovX);
 
     switch (m_projInfo.type)
     {
     case EProjectionType::ORTHOGRAPHIC:
-        m_projection = Transform::orthographic(m_projInfo.hSide / 2.f, m_projInfo.vSide / 2.f, m_projInfo.near, m_projInfo.far);
+        m_projection =
+            Transform::orthographic(m_projInfo.hSide / 2.f, m_projInfo.vSide / 2.f, m_projInfo.near, m_projInfo.far);
         break;
 
     case EProjectionType::PERSPECTIVE:

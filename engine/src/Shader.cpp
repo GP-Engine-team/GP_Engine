@@ -1,10 +1,11 @@
 #include "Engine/Resources/Shader.hpp"
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Parsers/ShaderParser.hpp"
-#include "Engine/Resources/Color.hpp"
 
 #include <fstream>
 #include <sstream>
+
+#include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Core/Parsers/ShaderParser.hpp"
+#include "Engine/Resources/Color.hpp"
 
 using namespace GPM;
 using namespace Engine::Resources;
@@ -12,6 +13,7 @@ using namespace Engine::Core::Debug;
 using namespace Engine::Core::Parsers;
 using namespace std;
 
+//TODO:OpenGL must coincide with the openGl context
 static const char* versionHeaderStr = R"(#version 460 core
 
 )";
@@ -222,9 +224,7 @@ Shader::~Shader()
     glDeleteBuffers(1, &m_lightsUniformBuffer);
     glDeleteShader(m_id);
 
-    Log::log(
-        (std::string("Release ") + m_nameVertex.c_str() + ".vs and " + m_nameFragment + ".fs")
-            .c_str());
+    Log::log((std::string("Release ") + m_nameVertex.c_str() + ".vs and " + m_nameFragment + ".fs").c_str());
 }
 
 void Shader::use()
@@ -236,7 +236,7 @@ void Shader::use()
         glUseProgram(m_id);
 }
 
-void Shader::setLightBlock(const std::vector<light>& lightBuffer, const Vec3& viewPos)
+void Shader::setLightBlock(const std::vector<Light>& lightBuffer, const Vec3& viewPos)
 {
     if ((m_featureMask & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
@@ -246,12 +246,12 @@ void Shader::setLightBlock(const std::vector<light>& lightBuffer, const Vec3& vi
         }
 
         glBindBuffer(GL_UNIFORM_BUFFER, m_lightsUniformBuffer);
-        glBufferData(GL_UNIFORM_BUFFER, lightBuffer.size() * sizeof(light), lightBuffer.data(), GL_DYNAMIC_DRAW);
+        glBufferData(GL_UNIFORM_BUFFER, lightBuffer.size() * sizeof(Light), lightBuffer.data(), GL_DYNAMIC_DRAW);
 
         { // try to get uniform block index
-            GLuint blockIndex;
+            GLuint      blockIndex;
             const char* blockName = "lightBlock";
-            blockIndex = glGetUniformBlockIndex(m_id, blockName);
+            blockIndex            = glGetUniformBlockIndex(m_id, blockName);
 
             if (blockIndex == GL_INVALID_INDEX)
             {
@@ -326,7 +326,7 @@ bool Shader::loadFile(const char* vertexPath, std::string& vertexCode, const cha
     fShaderFile.close();
 
     // convert stream into string
-    vertexCode = vShaderStream.str().c_str();
+    vertexCode   = vShaderStream.str().c_str();
     fragmentCode = fShaderStream.str().c_str();
 
     return false;
@@ -339,14 +339,14 @@ void Shader::compile(std::string& vertexCode, std::string& fragmentCode)
 
     // vertex shader
     const char* vShaderCode = vertexCode.c_str();
-    vertex = glCreateShader(GL_VERTEX_SHADER);
+    vertex                  = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
     checkCompileErrors(vertex, EShaderType::VERTEX);
 
     // fragment Shader
     const char* fShaderCode = fragmentCode.c_str();
-    fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    fragment                = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
     checkCompileErrors(fragment, EShaderType::FRAGMENT);
@@ -365,7 +365,7 @@ void Shader::compile(std::string& vertexCode, std::string& fragmentCode)
 
 void Shader::checkCompileErrors(unsigned int shader, EShaderType type)
 {
-    int success;
+    int  success;
     char infoLog[1024];
     if (type != EShaderType::PROGRAM)
     {

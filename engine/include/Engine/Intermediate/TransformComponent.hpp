@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <vector>
-#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Intermediate/Component.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
+#include <vector>
 
 namespace Engine::Intermediate
 {
@@ -16,26 +16,22 @@ class TransformComponent : public Component
 {
 protected:
     bool m_isDirty = false;
-    
+
 public:
+    TransformComponent(GameObject& refGameObject) noexcept : Component(refGameObject)
+    {
+    }
 
-    TransformComponent(GameObject& refGameObject) noexcept
-        : Component(refGameObject)
-    {}
+    TransformComponent() noexcept                                = delete;
+    TransformComponent(const TransformComponent& other) noexcept = delete;
+    TransformComponent(TransformComponent&& other) noexcept      = default;
+    virtual ~TransformComponent() noexcept                       = default;
+    TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
+    TransformComponent& operator=(TransformComponent&& other) noexcept = default;
 
-    inline TransformComponent() noexcept = delete;
-
-    inline TransformComponent(const TransformComponent& other) noexcept = delete;
-
-    inline TransformComponent(TransformComponent&& other) noexcept = default;
-
-    inline ~TransformComponent() noexcept = default;
-
-    inline TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
-
-    inline TransformComponent& operator=(TransformComponent&& other) noexcept = default;
-
-    [[nodiscard]] constexpr inline
-    bool isDirty() const { return m_isDirty; }
+    [[nodiscard]] constexpr inline bool isDirty() const
+    {
+        return m_isDirty;
+    }
 };
 } /*namespace Engine::Intermediate*/
