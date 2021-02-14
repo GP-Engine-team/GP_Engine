@@ -26,15 +26,16 @@ public:
     };
 
 protected:
-    GPM::Transform      m_transform;
     GPM::SplitTransform m_spaceAttribut;
-    bool                m_isDirty = true;
+    GPM::Transform      m_transform = GPM::toTransform(m_spaceAttribut);
+    bool                m_isDirty = false;
 
 public:
     TransformComponent(GameObject& refGameObject, const CreateArg& arg = CreateArg{}) noexcept
-        : Component(refGameObject), m_transform{}, m_spaceAttribut{
+        : Component(refGameObject), m_spaceAttribut{
                                                        GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)),
-                                                       arg.position, arg.scale}
+                                                       arg.position, arg.scale},
+          m_transform{GPM::toTransform(m_spaceAttribut)}
     {}
 
     TransformComponent() noexcept                                = delete;
@@ -71,6 +72,36 @@ public:
     {
         m_transform.model = parentMeshMatrix * GPM::toTransform(m_spaceAttribut).model;
         m_isDirty         = false;
+    }
+
+     void translate(const GPM::Vec3& translation) noexcept
+    {
+        m_spaceAttribut.position += translation;
+        m_isDirty = true;
+    }
+
+     void scale(const GPM::Vec3& scale) noexcept
+    {
+        m_spaceAttribut.scale += scale;
+        m_isDirty = true;
+    }
+
+     void setTranslation(const GPM::Vec3& translation) noexcept
+    {
+        m_spaceAttribut.position = translation;
+        m_isDirty  = true;
+    }
+
+     void setScale(const GPM::Vec3& scale) noexcept
+    {
+        m_spaceAttribut.scale   = scale;
+        m_isDirty = true;
+    }
+
+
+    inline GPM::SplitTransform& getSpacialAttribut()
+    {
+        return m_spaceAttribut;
     }
 
     inline GPM::Transform& get()

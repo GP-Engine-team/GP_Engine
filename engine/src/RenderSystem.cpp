@@ -19,6 +19,11 @@ std::shared_mutex RenderSystem::m_mutex;
 
 void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
 {
+    std::cout << camToUse.getView() << std::endl;
+
+    pCurrentShaderUse->setMat4("view", camToUse.getView().e);
+    pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
+
     /*
     if ((pCurrentShaderUse->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
@@ -59,6 +64,9 @@ void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
 void sendModelDataToShader(ModelPart& modelPart)
 {
     Shader* pShader = modelPart.pModel->getpShader();
+
+    pShader->setMat4("model", modelPart.pModel->getGameObject().getTransform().getModelMatrix().e);
+
     /*
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
@@ -70,12 +78,9 @@ void sendModelDataToShader(ModelPart& modelPart)
         pShader->setMat4("projectViewModelMatrix", &(Camera::getCamUse()->getProjection() * Camera::getCamUse()->getView() * modelPart.pModel->getGameObject().getModelMatrix()).mat[0]);
         pShader->setMat3("inverseModelMatrix", &inverseModelMatrix3.mat[0]);
     }
-    else
+    else if ((pShader->getFeature() & SKYBOX) != SKYBOX)
     {
-        if ((pShader->getFeature() & SKYBOX) != SKYBOX)
-        {
-            modelPart.pModel->sendToShaderModelMatrix();
-        }
+        modelPart.pModel->sendToShaderModelMatrix();
     }
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
@@ -171,6 +176,11 @@ void RenderSystem::resetCurrentRenderPassKey()
 
 void RenderSystem::draw () noexcept
 {
+    glEnable(GL_DEPTH_TEST); 
+
+    glClearColor(0.3f, 0.3f, 0.3f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     std::list<ModelPart> modelParts;
     std::map<float, Model*> mapElemSortedByDistance;
 
@@ -208,6 +218,7 @@ void RenderSystem::draw () noexcept
         tryToSetBackFaceCulling(modelPart.useBackFaceCulling);
 
         //TODO: To optimize ! Use Draw instanced Array
+
         sendModelDataToShader(modelPart);
         drawModelPart(modelPart);
     }

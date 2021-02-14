@@ -128,10 +128,7 @@ public:
      *
      * @return const GPM::Mat4&
      */
-    const GPM::Mat4& getView() const noexcept
-    {
-        return m_viewMatrix;
-    }
+    const GPM::Mat4& getView() const noexcept;
 
     /**
      * @brief Get the projection matrix

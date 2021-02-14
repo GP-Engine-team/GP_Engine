@@ -59,7 +59,7 @@ public:
      * @brief update entity and their children if current entity is dirty
      *
      */
-    void updateSelfAndChild() noexcept;
+    void updateSelfAndChildren() noexcept;
 
     /**
      * @brief Force the update of entity without check if entity is dirty

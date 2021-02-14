@@ -108,7 +108,7 @@ void loadTree(GameObject& parent, ResourcesManager<Mesh, Shader, Texture, std::v
     GameObjectCreateArg treeGameObject{"Trees", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}};
 
     GameObject&      treeContener = parent.addChild<GameObject>(treeGameObject);
-    Model::CreateArg treeModelArg{resourceManager.get<Shader>("ColorOnly"),
+    Model::CreateArg treeModelArg{resourceManager.get<Shader>("TextureOnly"),
                                   resourceManager.get<std::vector<Material>>("TreeMaterials"),
                                   resourceManager.get<Mesh>("TreeMesh")};
 
@@ -127,39 +127,9 @@ void loadTree(GameObject& parent, ResourcesManager<Mesh, Shader, Texture, std::v
 
         GameObject& treeGO = treeContener.addChild<GameObject>(treeGameObject);
         treeGO.addComponent<Model>(treeModelArg);
-
-        GameObjectCreateArg treeColliderArg{"TreeCollider", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, treeGameObject.transformArg.scale}};
-        treeColliderArg.transformArg.scale.y *= 10.f;
-        treeColliderArg.transformArg.scale.x *= 0.001f;
-        treeColliderArg.transformArg.scale.z *= 0.001f;
-        treeGO.addChild<GameObject>(treeColliderArg);
     }
 }
 
-void sceneGraphExample(Renderer& ren)
-{
-    Log::logInitializationStart("sceneGraphExample");
-
-    GameObject world(GameObjectCreateArg{"World"});
-    GameObject player(GameObjectCreateArg{"Player"});
-    player.parent = &world;
-
-    CameraPerspectiveCreateArg camCreateArg;
-    player.addComponent<Camera>(camCreateArg);
-
-    ResourcesManager<Mesh, Shader, Texture, std::vector<Material>> rm;
-
-    rm.add<Shader>("ColorOnly", "./resources/shaders/vTextureOnlyWithProjection.vs", "./resources/shader/fColorOnly.fs",
-                   AMBIANTE_COLOR_ONLY);
-
-    loadTreeResource(rm);
-    loadTree(world, rm, 100);
-
-    RenderSystem::getInstance()->draw();
-    ren.swapBuffer();
-
-    Log::logInitializationEnd("sceneGraphExample");
-}
 
 void logTimerExample(TimeSystem& ts)
 {
@@ -182,7 +152,24 @@ int main()
     Renderer   ren(win);
     TimeSystem ts;
 
-    sceneGraphExample(ren);
+    Log::logInitializationStart("sceneGraphExample");
+
+    GameObject world(GameObjectCreateArg{"World"});
+    GameObject& player = world.addChild<GameObject>(GameObjectCreateArg{"Player"});
+
+    CameraPerspectiveCreateArg camCreateArg;
+    camCreateArg.far = 10000.f;
+    player.addComponent<Camera>(camCreateArg);
+
+    ResourcesManager<Mesh, Shader, Texture, std::vector<Material>> rm;
+
+    rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnlyWithProjection.vs", "./resources/shaders/fTextureOnly.fs");
+
+    loadTreeResource(rm);
+    loadTree(world, rm, 30);
+
+    Log::logInitializationEnd("sceneGraphExample");
+
 
     ResourceManagerExample();
 
@@ -193,6 +180,8 @@ int main()
     int    unFixedUpdateFrameCount = 0;
     double chronoFPLog             = 0.;
     double m_FPLogDelay            = 3.;
+
+    float speedPlayer = 1.f;
 
     ts.addScaledTimer(
         m_FPLogDelay,
@@ -207,7 +196,15 @@ int main()
     while (1)
     {
         ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime) { ++fixedUpdateFrameCount; },
-                  [&](double unscaledDeltaTime, double deltaTime) { ++unFixedUpdateFrameCount; }, [&]() {});
+                  [&](double unscaledDeltaTime, double deltaTime) {
+                      ++unFixedUpdateFrameCount;
+                      player.getTransform().translate(GPM::Vec3(0.f, 0.f, speedPlayer * deltaTime));
+                      world.updateSelfAndChildren();
+                  },
+                  [&]() {
+                      RenderSystem::getInstance()->draw();
+                      ren.swapBuffer();
+                  });
     }
 
     Log::closeAndTryToCreateFile();

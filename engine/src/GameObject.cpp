@@ -20,8 +20,11 @@ GameObject::GameObject()
 {
 }
 
-void GameObject::updateSelfAndChild() noexcept
+void GameObject::updateSelfAndChildren() noexcept
 {
+    if (parent != nullptr && m_pTransform->isDirty())
+        getTransform().update(parent->getTransform().getModelMatrix());
+
     for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
     {
         if ((*i)->m_pTransform->isDirty())
@@ -37,13 +40,16 @@ void GameObject::updateSelfAndChild() noexcept
         }
         else
         {
-            (*i)->updateSelfAndChild();
+            (*i)->updateSelfAndChildren();
         }
     }
 }
 
 void GameObject::forceUpdate() noexcept
 {
+    if (parent != nullptr)
+        getTransform().update(parent->getTransform().getModelMatrix());
+
     for (auto&& i = children.begin(); i != children.end(); i++)
     {
         (*i)->getTransform().update(m_pTransform->getModelMatrix());

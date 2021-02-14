@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Intermediate/RenderSystem.hpp"
@@ -105,4 +106,10 @@ void Camera::setAspect(const float newAspect) noexcept
         FUNCT_WARNING("Other projection not implemented");
         break;
     }
+}
+
+const GPM::Mat4& Camera::getView() const noexcept
+{
+    return m_gameObject->getTransform().getModelMatrix();
+    return m_gameObject->getTransform().getModelMatrix().inversed();
 }
