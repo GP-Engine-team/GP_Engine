@@ -7,11 +7,11 @@
 #pragma once
 
 #ifndef NDEBUG
-#include "Engine/Core/Debug/Log.hpp"
 #include <string>
-#endif
 
+#include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Format.hpp"
+#endif
 
 namespace Engine::Core::Debug
 {
