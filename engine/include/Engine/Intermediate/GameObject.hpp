@@ -17,6 +17,7 @@ namespace Engine::Intermediate
 struct GameObjectCreateArg
 {
     std::string name = "";
+    TransformComponent::CreateArg transformArg;
 };
 
 class Component;

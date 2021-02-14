@@ -118,7 +118,7 @@ void loadTree(GameObject& parent, ResourcesManager<Mesh, Shader, Texture, std::v
         treeGameObject.name                    = "Tree" + std::to_string(i);
         treeGameObject.transformArg.position.x = randRanged<float>(-250.f, 250.f);
         treeGameObject.transformArg.position.z = randRanged<float>(-250.f, 250.f);
-        treeGameObject.transformArg.rotation.y = randRanged<float>(360.f * 3.14f / 180.f);
+        treeGameObject.transformArg.eulerRotation.y = randRanged<float>(360.f * 3.14f / 180.f);
         float globalScale                      = randRanged<float>(8.f, 12.f);
         treeGameObject.transformArg.scale += globalScale;
 
@@ -141,31 +141,19 @@ void sceneGraphExample(Renderer& ren)
     Log::logInitializationStart("sceneGraphExample");
 
     GameObject world(GameObjectCreateArg{"World"});
-    GameObject cube(GameObjectCreateArg{"Player"});
+    GameObject player(GameObjectCreateArg{"Player"});
+    player.parent = &world;
 
     CameraPerspectiveCreateArg camCreateArg;
-    cube.addComponent<Camera>(camCreateArg);
+    player.addComponent<Camera>(camCreateArg);
 
     ResourcesManager<Mesh, Shader, Texture, std::vector<Material>> rm;
 
-    loadTreeResource(rm);
-
-    // cube.addComponent<TransformComponent>(); //Add additionnal transformComponent
-    // cube.destroyImmediateUniqueComponent<TransformComponent>();
-    rm.add<Mesh>("Cube", Mesh::createCube(), false);
     rm.add<Shader>("ColorOnly", "./resources/shaders/vTextureOnlyWithProjection.vs", "./resources/shader/fColorOnly.fs",
                    AMBIANTE_COLOR_ONLY);
-    rm.add<Texture>("Texture", "./resources/textures/World_war_II_Sniper_gun_3d_models_texture.bmp");
 
-    MaterialAndTextureCreateArg matArg;
-    matArg.pathDiffuseTexture = "./resources/textures/World_war_II_Sniper_gun_3d_models_texture.bmp";
-
-    rm.add<std::vector<Material>>("Material", std::vector<Material>{matArg});
-
-    // cube.addComponent<Model>();
-
-    cube.parent = &world;
-    std::cout << cube.getRelativePath() << std::endl;
+    loadTreeResource(rm);
+    loadTree(world, rm, 100);
 
     RenderSystem::getInstance()->draw();
     ren.swapBuffer();

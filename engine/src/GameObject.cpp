@@ -10,7 +10,7 @@
 using namespace Engine::Intermediate;
 
 GameObject::GameObject(const GameObjectCreateArg& arg)
-    : m_name{arg.name}, m_pTransform{&ComponentChunk<TransformComponent>::getInstance()->addComponent(*this)},
+    : m_name{arg.name}, m_pTransform{&ComponentChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)},
       m_pComponents{}
 {
 }
@@ -32,7 +32,7 @@ void GameObject::updateSelfAndChild() noexcept
                 continue;
             }
 
-            //(*i)->update(m_pTransform->getModelMatrix());
+            (*i)->getTransform().update(m_pTransform->getModelMatrix());
             (*i)->forceUpdate();
         }
         else
@@ -46,7 +46,7 @@ void GameObject::forceUpdate() noexcept
 {
     for (auto&& i = children.begin(); i != children.end(); i++)
     {
-        //(*i)->update(m_pTransform->getModelMatrix());
+        (*i)->getTransform().update(m_pTransform->getModelMatrix());
         (*i)->forceUpdate();
     }
 }
