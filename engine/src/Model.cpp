@@ -2,31 +2,34 @@
 
 #include <memory>
 
+#include "Engine/Resources/Mesh.hpp"
+#include "Engine/Resources/Shader.hpp"
+#include "Engine/Resources/Texture.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Intermediate/RenderSystem.hpp"
 #include "GPM/Matrix3.hpp"
 #include "GPM/Matrix4.hpp"
-//#include "Engine/Intermediate/RenderSystem.hpp"
 
 using namespace Engine::Resources;
 using namespace Engine::Intermediate;
 using namespace Engine::Core::Debug;
 using namespace GPM;
 
-Model::Model(const Model& other) : IModel(*other.m_gameObject)
+Model::Model(const Model& other) : Component(*other.m_gameObject)
 {
-  //  RendererSystem::addModel(this);
+    RendererSystem::getInstance()->addModel(this);
 }
 
-Model::Model(Model&& other) : IModel(*other.m_gameObject)
+Model::Model(Model&& other) : Component(*other.m_gameObject)
 {
-   // RendererSystem::addModel(this);
+    RendererSystem::getInstance()->addModel(this);
 }
 
 Model::~Model()
 {
- //   RendererSystem::removeModel(this);
+    RendererSystem::getInstance()->removeModel(this);
 }
 
 void Model::initTextureBufferWithMTLId()
@@ -53,10 +56,10 @@ void Model::initTextureBufferWithMTLId()
 }
 
 Model::Model(GameObject& owner, const CreateArg& arg)
-    : IModel{owner}, m_pShader{arg.pShader}, m_pMaterial{arg.pMaterials}, m_pMesh{arg.pMesh},
+    : Component{owner}, m_pShader{arg.pShader}, m_pMaterial{arg.pMaterials}, m_pMesh{arg.pMesh},
       m_enableBackFaceCulling{arg.enableBackFaceCulling}, m_isOpaque{arg.isOpaque}
 {
-   // RendererSystem::addModel(this);
+    RendererSystem::getInstance()->addModel(this);
 
     initTextureBufferWithMTLId();
 
@@ -98,8 +101,8 @@ void Model::unloadFromGPU() noexcept
 
 void Model::insertModelPartsOnContenor(std::list<ModelPart>& modelPartContenor) noexcept
 {
-    unsigned int first = 0;
-    Material* pMatToUse = nullptr;
+    unsigned int first     = 0;
+    Material*    pMatToUse = nullptr;
 
     for (size_t part = 0; part < m_pMesh->getIndices().size(); part++)
     {

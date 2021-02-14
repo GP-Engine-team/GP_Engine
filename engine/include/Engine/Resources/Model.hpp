@@ -9,22 +9,21 @@
 #include <list>
 #include <vector>
 
-#include "Engine/Resources/IModel.hpp"
+#include "Engine/Intermediate/Component.hpp"
 #include "Engine/Resources/Material.hpp"
-#include "Engine/Resources/Mesh.hpp"
-#include "Engine/Resources/Shader.hpp"
-#include "Engine/Resources/Texture.hpp"
 
 namespace Engine::Resources
 {
-class Model;
+
+class Mesh;
+class Shader;
 
 struct RenderPassKey
 {
-    RenderPassKey() = default;
+    RenderPassKey()                           = default;
     RenderPassKey(const RenderPassKey& other) = default;
-    RenderPassKey(RenderPassKey&& other) = default;
-    ~RenderPassKey() = default;
+    RenderPassKey(RenderPassKey&& other)      = default;
+    ~RenderPassKey()                          = default;
     RenderPassKey& operator=(RenderPassKey const& other) = default;
     RenderPassKey& operator=(RenderPassKey&& other) = default;
 
@@ -49,19 +48,19 @@ struct RenderPassKey
 
 struct ModelPart
 {
-    ModelPart() = default;
+    ModelPart()                       = default;
     ModelPart(const ModelPart& other) = default;
-    ModelPart(ModelPart&& other) = default;
-    ~ModelPart() = default;
+    ModelPart(ModelPart&& other)      = default;
+    ~ModelPart()                      = default;
     ModelPart& operator=(ModelPart const& other) = default;
     ModelPart& operator=(ModelPart&& other) = default;
 
     const RenderPassKey key;
 
-    Model* pModel{nullptr};
+    class Model*                 pModel{nullptr};
     Engine::Resources::Material* pMaterialToUse{nullptr};
 
-    const bool useBackFaceCulling{false};
+    const bool         useBackFaceCulling{false};
     const unsigned int indexStart{0};
     const unsigned int indexCount{0};
 
@@ -71,14 +70,14 @@ struct ModelPart
     }
 };
 
-class Model : public IModel
+class Model : public Engine::Intermediate::Component
 {
 public:
     struct CreateArg
     {
-        Shader* pShader;
+        Shader*                pShader;
         std::vector<Material>* pMaterials;
-        Mesh* pMesh;
+        Mesh*                  pMesh;
 
         bool loadInGPU{true};
         bool enableBackFaceCulling{true};
@@ -86,13 +85,14 @@ public:
     };
 
 protected:
-    Shader* m_pShader;
+    Shader*                m_pShader;
     std::vector<Material>* m_pMaterial;      // contain the texture and material data
     std::vector<Material*> m_pMaterialToUse; // contain pointor to the material to use when model is display.
-    Mesh* m_pMesh;
+    Mesh*                  m_pMesh;
 
     bool m_enableBackFaceCulling;
     bool m_isOpaque;
+    bool m_isLoadInGPU = false;
 
 private:
     /**
@@ -113,7 +113,7 @@ public:
           ResourcesManager& ressourcesManager); // load construtor
     */
 
-    Model() = delete;
+    Model()        = delete;
     Model& operator=(Model const& other) = delete;
     Model& operator=(Model&& other) = delete;
 
@@ -140,5 +140,16 @@ public:
     }
 
     void insertModelPartsOnContenor(std::list<ModelPart>& modelPartContenor) noexcept;
+
+    /**
+     * @brief return true if Texture is load in GPU and ready to use
+     *
+     * @return true
+     * @return false
+     */
+    bool isLoadInGPU() const noexcept
+    {
+        return m_isLoadInGPU;
+    }
 };
 } /*namespace Engine::Resources*/
