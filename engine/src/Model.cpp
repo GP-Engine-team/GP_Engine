@@ -1,7 +1,5 @@
 #include "Engine/Resources/Model.hpp"
 
-#include <memory>
-
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Texture.hpp"
@@ -17,12 +15,12 @@ using namespace Engine::Intermediate;
 using namespace Engine::Core::Debug;
 using namespace GPM;
 
-Model::Model(const Model& other) : Component(*other.m_gameObject)
+Model::Model(const Model& other) : Component(other.m_gameObject)
 {
     RenderSystem::getInstance()->addModel(this);
 }
 
-Model::Model(Model&& other) : Component(*other.m_gameObject)
+Model::Model(Model&& other) : Component(other.m_gameObject)
 {
     RenderSystem::getInstance()->addModel(this);
 }

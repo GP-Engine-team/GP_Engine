@@ -108,7 +108,7 @@ void Camera::setAspect(const float newAspect) noexcept
     }
 }
 
-GPM::Mat4 Camera::getView() const noexcept
+GPM::Mat4 Camera::getView() const noexcept //TODO: inversed matrix do not made each frame
 {
-    return m_gameObject->getTransform().getModelMatrix().inversed();
+    return m_gameObject.getTransform().getModelMatrix().inversed();
 }
