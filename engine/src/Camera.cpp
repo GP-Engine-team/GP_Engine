@@ -108,8 +108,7 @@ void Camera::setAspect(const float newAspect) noexcept
     }
 }
 
-const GPM::Mat4& Camera::getView() const noexcept
+GPM::Mat4 Camera::getView() const noexcept
 {
-    return m_gameObject->getTransform().getModelMatrix();
     return m_gameObject->getTransform().getModelMatrix().inversed();
 }

@@ -19,8 +19,6 @@ std::shared_mutex RenderSystem::m_mutex;
 
 void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
 {
-    std::cout << camToUse.getView() << std::endl;
-
     pCurrentShaderUse->setMat4("view", camToUse.getView().e);
     pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
 
