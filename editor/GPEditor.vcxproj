@@ -138,14 +138,17 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../editor/include;$(SolutionDir)/../../engine/include;$(SolutionDir)/../../engine/src;$(SolutionDir)/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../engine/include;$(SolutionDir)../../engine/include;$(SolutionDir)../engine/src;$(SolutionDir)../../engine/src;$(SolutionDir)../engine/third_party;$(SolutionDir)../../engine/third_party/imgui;$(SolutionDir)../../engine/third_party;$(SolutionDir)../projects/GPGame/include;$(SolutionDir)../../projects/GPGame/include;$(SolutionDir)../editor/include;$(SolutionDir)../../editor/include;$(SolutionDir)../../engine/third_party/lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;GPGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GPEngine.lib;GPGame.lib;glfw3.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)\;$(SolutionDir)..\..\engine\third_party\lib</AdditionalLibraryDirectories>
     </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
