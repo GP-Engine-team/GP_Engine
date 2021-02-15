@@ -63,7 +63,7 @@ inline void parseNormal(const std::string& line, std::vector<Vec3>& vnBuffer)
 
 inline unsigned int getNumberIndice(const std::string& line, unsigned int numberAttributeByIndice)
 {
-    return numberAttributeByIndice == 1 ? 0 : std::count(line.begin(), line.end(), '/') / (numberAttributeByIndice - 1);
+    return numberAttributeByIndice == 1 ? 0 : static_cast<unsigned int>(std::count(line.begin(), line.end(), '/')) / (numberAttributeByIndice - 1);
 }
 
 inline unsigned int getNumberAttributeByIndice(const std::string& line)
@@ -71,7 +71,7 @@ inline unsigned int getNumberAttributeByIndice(const std::string& line)
     std::size_t cursorStart = line.find_first_not_of(" ", 1);
     std::string indiceBlock = line.substr(cursorStart, line.find_first_of(" ", cursorStart) - cursorStart);
 
-    return std::count(indiceBlock.begin(), indiceBlock.end(), '/') + 1;
+    return static_cast<unsigned int>(std::count(indiceBlock.begin(), indiceBlock.end(), '/')) + 1;
 }
 
 inline void parseIndice(const std::string& line, std::vector<Shape>& shape)

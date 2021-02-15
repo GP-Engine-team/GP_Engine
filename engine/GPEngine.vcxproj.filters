@@ -204,6 +204,9 @@
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

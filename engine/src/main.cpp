@@ -205,7 +205,7 @@ int main()
         ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime) { ++fixedUpdateFrameCount; },
                   [&](double unscaledDeltaTime, double deltaTime) {
                       ++unFixedUpdateFrameCount;
-                      player.getTransform().translate(GPM::Vec3(0.f, 0.f, speedPlayer * deltaTime));
+                      player.getTransform().translate(GPM::Vec3(0.f, 0.f, speedPlayer * (float)deltaTime));
                       world.updateSelfAndChildren();
                   },
                   [&]() {

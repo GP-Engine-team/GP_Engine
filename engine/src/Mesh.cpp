@@ -1,7 +1,7 @@
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
-#include "GPM/constants.hpp"
+#include "GPM/Constants.hpp"
 
 #include <iostream>
 #include <limits>
@@ -9,56 +9,6 @@
 using namespace GPM;
 using namespace Engine::Core::Debug;
 using namespace Engine::Resources;
-
-/*
-Mesh::Mesh (const char* objPath, bool loadInGPU)
-    :   m_indexVAO    (0),
-        m_isLoadInGPU (false)
-{
-    Attrib attrib;
-    std::vector<Shape> shapes;
-
-    loadObjWithMTL (objPath, &attrib, &shapes, nullptr);
-
-    m_objName        = attrib.objName;
-    m_vBuffer        = attrib.vBuffer;
-    m_vtBuffer       = attrib.vtBuffer;
-    m_vnBuffer       = attrib.vnBuffer;
-
-    m_iBuffer.reserve(shapes.size());
-    m_idMaterial.reserve(shapes.size());
-
-    if (m_vnBuffer.empty())
-    {
-        generateNormalAndLoadIndice(shapes);
-    }
-    else
-    {
-        for (auto&& shape : shapes)
-        {
-        m_iBuffer.push_back      ({});
-        for (size_t i = 0; i < shape.iv.size(); i++)
-        {
-            m_iBuffer.back().push_back      ({shape.iv[i], shape.ivt[i], shape.ivn[i]});
-        }
-
-        if (!shape.material_ids.empty())
-            m_idMaterial.push_back	(shape.material_ids);
-        }
-    }
-
-    if (m_boundingVolumeType == BoundingVolume::SPHERE)
-    {
-        generateBoundingSphere();
-    }
-    else if (m_boundingVolumeType == BoundingVolume::NONE)
-    {
-        m_boundingVolume = nullptr;
-    }
-
-    if(loadInGPU)
-        Mesh::loadInGPU();
-}*/
 
 Mesh::Mesh(const CreateArg& arg, bool isLoadInGPU)
     : m_indexVAO(0), m_isLoadInGPU(false), m_objName(arg.objName), m_vBuffer(arg.vBuffer), m_vtBuffer(arg.vtBuffer),
@@ -127,7 +77,7 @@ void Mesh::loadInGPU() noexcept
     unsigned int nbVertex = 0;
     for (size_t part = 0; part < m_iBuffer.size(); part++)
     {
-        nbVertex += m_iBuffer[part].size();
+        nbVertex += static_cast<unsigned int>(m_iBuffer[part].size());
         ;
     }
 
@@ -150,9 +100,12 @@ void Mesh::loadInGPU() noexcept
     GLuint uvbuffer;
     GLuint normalbuffer;
     // GLuint EBOid;
-    initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vVBO[0], vVBO.size() * sizeof(Vec3));
-    initializeVertexBuffer(uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vtVBO[0], vtVBO.size() * sizeof(Vec2));
-    initializeVertexBuffer(normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vnVBO[0], vnVBO.size() * sizeof(Vec3));
+    initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vVBO[0],
+                           static_cast<int>(vVBO.size() * sizeof(Vec3)));
+    initializeVertexBuffer(uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vtVBO[0],
+                           static_cast<int>(vtVBO.size() * sizeof(Vec2)));
+    initializeVertexBuffer(normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vnVBO[0],
+                           static_cast<int>(vnVBO.size() * sizeof(Vec3)));
 
     // Generate VAO
     glGenVertexArrays(1, &m_indexVAO);
@@ -212,8 +165,8 @@ void Mesh::draw() const noexcept
     unsigned int first = 0;
     for (size_t part = 0; part < m_iBuffer.size(); part++)
     {
-        glDrawArrays(GL_TRIANGLES, first, m_iBuffer[part].size());
-        first += m_iBuffer[part].size();
+        glDrawArrays(GL_TRIANGLES, first, static_cast<GLsizei>(m_iBuffer[part].size()));
+        first += static_cast<unsigned int>(m_iBuffer[part].size());
     }
 }
 
@@ -387,7 +340,7 @@ Mesh::CreateArg Mesh::createSphere(int latitudeCount, int longitudeCount)
     mesh.objName = "Sphere";
     mesh.iBuffer.push_back({});
 
-    latitudeCount *= 2.f;
+    latitudeCount *= 2;
 
     float latitudeStep  = 2.f * PI / latitudeCount;
     float longitudeStep = PI / longitudeCount;
@@ -476,9 +429,9 @@ Mesh::CreateArg Mesh::createCylindre(unsigned int prescision)
     mesh.iBuffer.push_back({});
 
     // Cylindre contain prescision * 2 + 2
-    mesh.vBuffer.reserve(prescision * 2 + 2);
-    mesh.vnBuffer.reserve(prescision * 2 + 2);
-    mesh.vtBuffer.reserve(prescision * 2 + 2);
+    mesh.vBuffer.reserve(static_cast<size_t>(prescision) * 2 + 2);
+    mesh.vnBuffer.reserve(static_cast<size_t>(prescision) * 2 + 2);
+    mesh.vtBuffer.reserve(static_cast<size_t>(prescision) * 2 + 2);
 
     float angleRad = PI * 2 / static_cast<float>(prescision);
 

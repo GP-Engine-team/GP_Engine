@@ -185,7 +185,7 @@ inline void Engine::Core::Debug::Log::removeSetting(uint8_t flag) noexcept
     settings &= ~flag;
 }
 
-inline bool Engine::Core::Debug::Log::getSettingState(Engine::Core::Debug::ESetting setting) noexcept
+inline bool Engine::Core::Debug::Log::getSettingState(Engine::Core::Debug::Log::ESetting setting) noexcept
 {
     return settings & setting;
 }

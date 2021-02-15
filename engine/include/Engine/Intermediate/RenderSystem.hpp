@@ -9,11 +9,12 @@
 #include <shared_mutex> //std::shared_mutex
 #include <vector>       //std::vector
 
-//TODO : Why this class don't work in forward declaration ????
-#include "Engine/Resources/Shader.hpp"
+// TODO : Why this class don't work in forward declaration ????
+#include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/Resources/Camera.hpp"
-#include "Engine/Resources/Model.hpp"
 #include "Engine/Resources/Light/Light.hpp"
+#include "Engine/Resources/Model.hpp"
+#include "Engine/Resources/Shader.hpp"
 
 namespace Engine::Intermediate
 {
@@ -32,19 +33,19 @@ class RenderSystem
      * operator.
      */
 private:
-    static RenderSystem*   m_pInstance;
+    static RenderSystem*     m_pInstance;
     static std::shared_mutex m_mutex;
 
 protected:
-    std::vector<Engine::Resources::Model*> m_pModels;
+    std::vector<Engine::Resources::Model*>  m_pModels;
     std::vector<Engine::Resources::Camera*> m_pCameras;
-    std::vector<Engine::Resources::Light*> m_pLights;
+    std::vector<Engine::Resources::Light*>  m_pLights;
 
-    unsigned int m_currentShaderId                  = 0;
-    unsigned int m_currentTextureId                 = 0;
-    unsigned int m_currentMeshId                    = 0;
+    unsigned int               m_currentShaderId                  = 0;
+    unsigned int               m_currentTextureId                 = 0;
+    unsigned int               m_currentMeshId                    = 0;
     Engine::Resources::Shader* m_currentPShaderUse                = nullptr;
-    bool         m_currentBackFaceCullingModeEnable = false;
+    bool                       m_currentBackFaceCullingModeEnable = false;
 
 protected:
     void tryToBindShader(Engine::Resources::Shader* pShader);
@@ -56,7 +57,7 @@ protected:
     void resetCurrentRenderPassKey();
 
     inline RenderSystem() noexcept = default;
-    ~RenderSystem() noexcept = default;
+    ~RenderSystem() noexcept       = default;
 
 public:
     RenderSystem(const RenderSystem& other) noexcept = delete;
@@ -79,7 +80,6 @@ public:
 
     void removeModel(Engine::Resources::Model* pModel) noexcept;
 
-
     // TODO: Remove this shit and create variadic templated system
     void addCamera(Engine::Resources::Camera* pCamera) noexcept;
 
@@ -88,12 +88,11 @@ public:
 
     void removeCamera(Engine::Resources::Camera* pCamera) noexcept;
 
-
-    //TODO: Remove this shit and create variadic templated system
+    // TODO: Remove this shit and create variadic templated system
     void addLight(Engine::Resources::Light* pLight) noexcept;
 
     void updateLightPointer(Engine::Resources::Light* newPointerLight,
-                             Engine::Resources::Light* exPointerLight) noexcept;
+                            Engine::Resources::Light* exPointerLight) noexcept;
 
     void removeLight(Engine::Resources::Light* pLight) noexcept;
 
@@ -109,17 +108,15 @@ public:
     static RenderSystem* getInstance() noexcept
     {
         // double same if to avoid to lock mutex
-        if (m_pInstance == nullptr)
-            [[unlikely]]
+        if (unlikely(m_pInstance == nullptr))
+        {
+            std::unique_lock lock(m_mutex);
+            if (unlikely(m_pInstance == nullptr))
             {
-                std::unique_lock lock(m_mutex);
-                if (m_pInstance == nullptr)
-                    [[unlikely]]
-                    {
-                        m_pInstance = new RenderSystem();
-                    }
-                return m_pInstance;
+                m_pInstance = new RenderSystem();
             }
+            return m_pInstance;
+        }
 
         std::shared_lock lock(m_mutex);
         return m_pInstance;

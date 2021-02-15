@@ -54,7 +54,7 @@ private:
     void generateNormalAndLoadIndice(const std::vector<Shape>& shapes) noexcept;
 
 public:
-    // Mesh(const char* objPath, bool loadInGPU = true);
+
     Mesh(const CreateArg& meshArg, bool loadInGPU = true);
     Mesh(const Attrib& attrib, const std::vector<Shape>& shape, bool loadInGPU = true);
 

@@ -1,6 +1,9 @@
 
 #include "Engine/Intermediate/DataChunk.hpp"
+
 #include <utility> //std::swap
+
+#include "Engine/Core/Tools/BranchPrediction.hpp"
 
 template <typename TStoredComponent, int TSize>
 constexpr inline Engine::Intermediate::DataChunk<TStoredComponent, TSize>::DataChunk() noexcept
@@ -26,34 +29,31 @@ void Engine::Intermediate::DataChunk<TStoredComponent, TSize>::destroyComponent(
 
     for (size_t i = 0; i < m_components.size(); ++i)
     {
-        if (&m_components[i] == componentToDestroy)
-            [[unlikely]]
-            {
-                std::swap(m_components[i], m_components.back());
+        if (unlikely(&m_components[i] == componentToDestroy))
+        {
+            std::swap(m_components[i], m_components.back());
 
-                m_components[i].getGameObject().updateComponentLink<TStoredComponent>(&m_components.back(),
-                                                                                      &m_components[i]);
-                m_components.pop_back();
-            }
+            m_components[i].getGameObject().updateComponentLink<TStoredComponent>(&m_components.back(),
+                                                                                  &m_components[i]);
+            m_components.pop_back();
+        }
     }
 }
 
 template <typename TStoredComponent, int TSize>
-Engine::Intermediate::DataChunk<TStoredComponent, TSize>* Engine::Intermediate::DataChunk<
-    TStoredComponent, TSize>::getInstance() noexcept
+Engine::Intermediate::DataChunk<TStoredComponent, TSize>* Engine::Intermediate::DataChunk<TStoredComponent,
+                                                                                          TSize>::getInstance() noexcept
 {
     // double same if to avoid to lock mutex
-    if (m_pInstance == nullptr)
-        [[unlikely]]
+    if (unlikely(m_pInstance == nullptr))
+    {
+        std::unique_lock lock(m_mutex);
+        if (unlikely(m_pInstance == nullptr))
         {
-            std::unique_lock lock(m_mutex);
-            if (m_pInstance == nullptr)
-                [[unlikely]]
-                {
-                    m_pInstance = new DataChunk<TStoredComponent, TSize>();
-                }
-            return m_pInstance;
+            m_pInstance = new DataChunk<TStoredComponent, TSize>();
         }
+        return m_pInstance;
+    }
 
     std::shared_lock lock(m_mutex);
     return m_pInstance;

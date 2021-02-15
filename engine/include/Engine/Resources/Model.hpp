@@ -27,9 +27,9 @@ struct RenderPassKey
     RenderPassKey& operator=(RenderPassKey const& other) = default;
     RenderPassKey& operator=(RenderPassKey&& other) = default;
 
-    unsigned int textureId{0}; // less important bit
-    unsigned int meshId{0};
-    unsigned int shaderId{0}; // Most important bit
+    unsigned int textureId = 0; // less important bit
+    unsigned int meshId    = 0;
+    unsigned int shaderId  = 0; // Most important bit
 
     bool operator<(const RenderPassKey& other) const
     {
@@ -57,12 +57,12 @@ struct ModelPart
 
     const RenderPassKey key;
 
-    class Model*                 pModel{nullptr};
-    Engine::Resources::Material* pMaterialToUse{nullptr};
+    class Model*                 pModel         = nullptr;
+    Engine::Resources::Material* pMaterialToUse = nullptr;
 
-    const bool         useBackFaceCulling{false};
-    const unsigned int indexStart{0};
-    const unsigned int indexCount{0};
+    const bool         useBackFaceCulling = false;
+    const unsigned int indexStart         = 0;
+    const unsigned int indexCount         = 0;
 
     bool operator<(const ModelPart& other) const
     {
@@ -75,24 +75,24 @@ class Model : public Engine::Intermediate::Component
 public:
     struct CreateArg
     {
-        Shader*                pShader;
-        std::vector<Material>* pMaterials;
-        Mesh*                  pMesh;
+        Shader*                pShader    = nullptr;
+        std::vector<Material>* pMaterials = nullptr;
+        Mesh*                  pMesh      = nullptr;
 
-        bool loadInGPU{true};
-        bool enableBackFaceCulling{true};
-        bool isOpaque{true};
+        bool loadInGPU             = true;
+        bool enableBackFaceCulling = true;
+        bool isOpaque              = true;
     };
 
 protected:
-    Shader*                m_pShader;
-    std::vector<Material>* m_pMaterial;      // contain the texture and material data
-    std::vector<Material*> m_pMaterialToUse; // contain pointor to the material to use when model is display.
-    Mesh*                  m_pMesh;
+    Shader*                m_pShader        = nullptr;
+    std::vector<Material>* m_pMaterial      = nullptr; // contain the texture and material data
+    std::vector<Material*> m_pMaterialToUse = {};      // contain pointor to the material to use when model is display.
+    Mesh*                  m_pMesh          = nullptr;
 
-    bool m_enableBackFaceCulling;
-    bool m_isOpaque;
-    bool m_isLoadInGPU = false;
+    bool m_enableBackFaceCulling = true;
+    bool m_isOpaque              = true;
+    bool m_isLoadInGPU           = false;
 
 private:
     /**
@@ -104,8 +104,8 @@ private:
 public:
     Model(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
 
-    Model(const Model& other);
-    Model(Model&& other);
+    Model(const Model& other) noexcept;
+    Model(Model&& other) noexcept;
     virtual ~Model();
 
     /*

@@ -262,7 +262,7 @@ void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3
             glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, m_lightsUniformBuffer);
         }
 
-        setInt("numberLightUse", lightBuffer.size());
+        setInt("numberLightUse", static_cast<int>(lightBuffer.size()));
         setVec3("viewPos", viewPos.x, viewPos.y, viewPos.z);
     }
     else
