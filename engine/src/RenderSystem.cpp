@@ -17,16 +17,21 @@ using namespace GPM;
 RenderSystem*   RenderSystem::m_pInstance{nullptr};
 std::shared_mutex RenderSystem::m_mutex;
 
-void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
+void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse)
 {
     pCurrentShaderUse->setMat4("view", camToUse.getView().e);
     pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
 
-    /*
     if ((pCurrentShaderUse->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        const std::vector<light>& lightBuffer = Light::getLightsToUseInAlignasStruct();
-        pCurrentShaderUse->setLightBlock(lightBuffer, camToUse.getPosition());
+        std::vector<LightData> lightBuffer;
+
+        for (auto&& light : lights)
+        {
+            light->addToLightToUseBuffer(lightBuffer);
+        }
+
+        pCurrentShaderUse->setLightBlock(lightBuffer, camToUse.getGameObject().getTransform().getGlobalPosition());
     }
     else
     {
@@ -39,15 +44,13 @@ void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
 
     if ((pCurrentShaderUse->getFeature() & SKYBOX) == SKYBOX)
     {
-        Mat4 view = Camera::getCamUse()->getView();
+        Mat4 view = camToUse.getView();
         //suppress translation
-        view[3][0] = 0;
-        view[3][1] = 0;
-        view[3][2] = 0;
-        pCurrentShaderUse->setMat4("view", &view.mat[0]);
-        pCurrentShaderUse->setMat4("projection", &Camera::getCamUse()->getProjection().mat[0]);
+        view.c[3].xyz = {0.f, 0.f, 0.f};
+        pCurrentShaderUse->setMat4("view", view.e);
+        pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
     }
-
+    /*
     if ((pCurrentShaderUse->getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
     {
         pCurrentShaderUse->setFloat("scaledTimeAcc", TimeSystem::getAccumulateTime());
@@ -59,32 +62,25 @@ void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
     }*/
 }
 
-void sendModelDataToShader(ModelPart& modelPart)
+void sendModelDataToShader(Camera& camToUse, ModelPart& modelPart)
 {
     Shader* pShader = modelPart.pModel->getpShader();
 
-    pShader->setMat4("model", modelPart.pModel->getGameObject().getTransform().getModelMatrix().e);
-
-    /*
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        Mat4 inverseModelMatrix;
-        modelPart.pModel->getGameObject().getModelMatrix().inverse(inverseModelMatrix);
-        Mat3 inverseModelMatrix3 (inverseModelMatrix);
+        Mat3 inverseModelMatrix3(GPM::toMatrix3(modelPart.pModel->getGameObject().getTransform().getModelMatrix().inversed()));
 
-        modelPart.pModel->sendToShaderModelMatrix();
-        pShader->setMat4("projectViewModelMatrix", &(Camera::getCamUse()->getProjection() * Camera::getCamUse()->getView() * modelPart.pModel->getGameObject().getModelMatrix()).mat[0]);
-        pShader->setMat3("inverseModelMatrix", &inverseModelMatrix3.mat[0]);
+        pShader->setMat4("projectViewModelMatrix", (camToUse.getProjection() * camToUse.getView() * modelPart.pModel->getGameObject().getTransform().getModelMatrix()).e);
+        pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
     }
-    else if ((pShader->getFeature() & SKYBOX) != SKYBOX)
-    {
-        modelPart.pModel->sendToShaderModelMatrix();
-    }
+
+    pShader->setMat4("model", modelPart.pModel->getGameObject().getTransform().getModelMatrix().e);
+   
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         pShader->setMaterialBlock(modelPart.pMaterialToUse->getMaterialComponent());
-    }*/
+    }
     
     if ((pShader->getFeature()  & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
     {
@@ -112,7 +108,7 @@ void RenderSystem::tryToBindShader(Shader* pShader)
     m_currentShaderId = pShader->getIdProgramm();
     m_currentPShaderUse = pShader;
 
-    sendDataToInitShader(*m_pCameras[0] ,m_currentPShaderUse);
+    sendDataToInitShader(*m_pCameras[0], m_pLights ,m_currentPShaderUse);
 }
 
 void RenderSystem::tryToBindTexture(unsigned int textureId)
@@ -217,7 +213,7 @@ void RenderSystem::draw () noexcept
 
         //TODO: To optimize ! Use Draw instanced Array
 
-        sendModelDataToShader(modelPart);
+        sendModelDataToShader(*m_pCameras[0], modelPart);
         drawModelPart(modelPart);
     }
 

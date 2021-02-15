@@ -6,8 +6,6 @@
 
 #pragma once
 
-#include <string>
-
 namespace Engine::Intermediate
 {
 class GameObject;

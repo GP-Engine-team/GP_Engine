@@ -5,6 +5,7 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/TimeSystem/TimeSystem.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Intermediate/Light/DirectionnalLight.hpp"
 #include "Engine/Intermediate/RenderSystem.hpp"
 #include "Engine/Intermediate/TransformComponent.hpp"
 #include "Engine/Resources/Camera.hpp"
@@ -108,18 +109,18 @@ void loadTree(GameObject& parent, ResourcesManager<Mesh, Shader, Texture, std::v
     GameObjectCreateArg treeGameObject{"Trees", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}};
 
     GameObject&      treeContener = parent.addChild<GameObject>(treeGameObject);
-    Model::CreateArg treeModelArg{resourceManager.get<Shader>("TextureOnly"),
+    Model::CreateArg treeModelArg{resourceManager.get<Shader>("TextureWithLihghts"),
                                   resourceManager.get<std::vector<Material>>("TreeMaterials"),
                                   resourceManager.get<Mesh>("TreeMesh")};
 
     /*Create tree with random size, position and rotation and add it on tre contener*/
     for (size_t i = 0; i < number; i++)
     {
-        treeGameObject.name                    = "Tree" + std::to_string(i);
-        treeGameObject.transformArg.position.x = randRanged<float>(-250.f, 250.f);
-        treeGameObject.transformArg.position.z = randRanged<float>(-250.f, 250.f);
+        treeGameObject.name                         = "Tree" + std::to_string(i);
+        treeGameObject.transformArg.position.x      = randRanged<float>(-250.f, 250.f);
+        treeGameObject.transformArg.position.z      = randRanged<float>(-250.f, 250.f);
         treeGameObject.transformArg.eulerRotation.y = randRanged<float>(360.f * 3.14f / 180.f);
-        float globalScale                      = randRanged<float>(8.f, 12.f);
+        float globalScale                           = randRanged<float>(8.f, 12.f);
         treeGameObject.transformArg.scale += globalScale;
 
         treeGameObject.transformArg.scale = {randRanged<float>(4.f, 8.f), randRanged<float>(4.f, 8.f),
@@ -129,7 +130,6 @@ void loadTree(GameObject& parent, ResourcesManager<Mesh, Shader, Texture, std::v
         treeGO.addComponent<Model>(treeModelArg);
     }
 }
-
 
 void logTimerExample(TimeSystem& ts)
 {
@@ -154,22 +154,27 @@ int main()
 
     Log::logInitializationStart("sceneGraphExample");
 
-    GameObject world(GameObjectCreateArg{"World"});
+    GameObject  world(GameObjectCreateArg{"World"});
     GameObject& player = world.addChild<GameObject>(GameObjectCreateArg{"Player"});
 
     CameraPerspectiveCreateArg camCreateArg;
     camCreateArg.far = 10000.f;
     player.addComponent<Camera>(camCreateArg);
 
+    DirectionnalLightCreateArg lightArg{
+        {0.f, 1.f, -1.f}, {1.f, 0.f, 0.f, 0.1f}, {1.f, 0.f, 0.f, 0.7f}, {1.f, 0.f, 0.f, 1.f}};
+    player.addComponent<DirectionnalLight>(lightArg);
+
     ResourcesManager<Mesh, Shader, Texture, std::vector<Material>> rm;
 
-    rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnlyWithProjection.vs", "./resources/shaders/fTextureOnly.fs");
+    rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs");
+    rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
+                   "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
 
     loadTreeResource(rm);
     loadTree(world, rm, 30);
 
     Log::logInitializationEnd("sceneGraphExample");
-
 
     ResourceManagerExample();
 
