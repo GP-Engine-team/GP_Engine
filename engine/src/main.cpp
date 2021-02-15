@@ -98,7 +98,7 @@ int main()
     Renderer ren(win);
     TimeSystem ts;
 
-    InputManager::setupCallbacks(win.getGLFWWindow());
+    InputManager::GetInstance()->setupCallbacks(win.getGLFWWindow());
 
     sceneGraphExample();
 

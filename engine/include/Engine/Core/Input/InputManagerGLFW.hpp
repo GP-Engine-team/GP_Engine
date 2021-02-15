@@ -43,7 +43,5 @@ namespace Engine::Core::Input
 		void setupCallbacks(GLFWwindow* window);
 		void fireInputComponents(const std::string& action);
 	};
-
-	InputManager* InputManager::m_inputManager = nullptr;
 	void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 } // namespace Engine::Core::Input
