@@ -8,13 +8,13 @@
 
 namespace Engine::Resources
 {
-    struct ColorRGBA
-    {
-        float r, g, b, a;
-    };
+struct ColorRGBA
+{
+    float r, g, b, a;
+};
 
-    struct ColorRGB
-    {
-        float r, g, b;
-    };
+struct ColorRGB
+{
+    float r, g, b;
+};
 } /*namespace Engine::Resources*/

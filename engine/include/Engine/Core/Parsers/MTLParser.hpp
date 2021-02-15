@@ -16,12 +16,12 @@
 
 namespace Engine::Core::Parsers
 {
-    /**
-     * @brief Parse file .mtl and return buffer of data parsing
-     * 
-     * @param materialPath 
-     * @param materials
-     */
-    extern void loadMTL (std::string& materialPath, std::vector<Engine::Resources::MaterialAttrib>&  materials) noexcept;
+/**
+ * @brief Parse file .mtl and return buffer of data parsing
+ *
+ * @param materialPath
+ * @param materials
+ */
+extern void loadMTL(std::string& materialPath, std::vector<Engine::Resources::MaterialAttrib>& materials) noexcept;
 
 } // namespace Engine::Core::Parsers

@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <array> //std::array
-#include <vector> //std::vector
+#include <array>        //std::array
 #include <shared_mutex> //std::shared_mutex
+#include <vector>       //std::vector
 namespace Engine::Intermediate
 {
 
@@ -19,7 +19,7 @@ namespace Engine::Intermediate
  * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
  * @tparam T : Component stored type
  */
-template <typename TStoredComponent, int TSize = 65536>  // 64KiB = 65,536Ko
+template <typename TStoredComponent, int TSize = 65536> // 64KiB = 65,536Ko
 class ComponentChunk
 {
     /**
@@ -28,38 +28,31 @@ class ComponentChunk
      * operator.
      */
 private:
-    static ComponentChunk * m_pInstance;
+    static ComponentChunk*   m_pInstance;
     static std::shared_mutex m_mutex;
 
 protected:
-
     std::vector<TStoredComponent> m_components;
 
-    constexpr inline
-    ComponentChunk () noexcept;
+    constexpr inline ComponentChunk() noexcept;
 
-    inline
-    ~ComponentChunk () noexcept				                    = default;
+    inline ~ComponentChunk() noexcept = default;
 
 public:
-    constexpr inline
-    ComponentChunk (const ComponentChunk& other) noexcept		= delete;
+    constexpr inline ComponentChunk(const ComponentChunk& other) noexcept = delete;
 
-    constexpr inline
-    ComponentChunk (ComponentChunk&& other) noexcept			= delete;
+    constexpr inline ComponentChunk(ComponentChunk&& other) noexcept = delete;
 
-    constexpr inline
-    ComponentChunk& operator=(ComponentChunk const& other) noexcept		= delete;
+    constexpr inline ComponentChunk& operator=(ComponentChunk const& other) noexcept = delete;
 
-    constexpr inline
-    ComponentChunk& operator=(ComponentChunk && other) noexcept			= delete;
-    
+    constexpr inline ComponentChunk& operator=(ComponentChunk&& other) noexcept = delete;
+
     /**
      * @brief Create new component with given arguments
-     * 
-     * @tparam Args 
-     * @param args 
-     * @return T& 
+     *
+     * @tparam Args
+     * @param args
+     * @return T&
      */
     template <typename... Args>
     TStoredComponent& addComponent(Args&&... args) noexcept;
@@ -71,9 +64,9 @@ public:
      * instance. On the first run, it creates a singleton object and places it
      * into the static field. On subsequent runs, it returns the client existing
      * object stored in the static field.
-     * 
-     * @param value 
-     * @return ComponentChunk* 
+     *
+     * @param value
+     * @return ComponentChunk*
      */
     static ComponentChunk* getInstance() noexcept;
 };

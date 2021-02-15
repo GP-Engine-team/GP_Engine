@@ -1,12 +1,12 @@
 #include "Engine/Resources/Model.hpp"
 
-#include "Engine/Resources/Mesh.hpp"
-#include "Engine/Resources/Shader.hpp"
-#include "Engine/Resources/Texture.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Intermediate/RenderSystem.hpp"
+#include "Engine/Resources/Mesh.hpp"
+#include "Engine/Resources/Shader.hpp"
+#include "Engine/Resources/Texture.hpp"
 #include "GPM/Matrix3.hpp"
 #include "GPM/Matrix4.hpp"
 

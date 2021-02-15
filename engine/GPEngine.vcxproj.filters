@@ -102,12 +102,6 @@
     <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Component.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -204,15 +198,15 @@
     <ClInclude Include="include\Engine\Resources\Texture.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Component.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
-    <None Include="src\Component.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\ComponentChunk.inl">
-      <Filter>src</Filter>
-    </None>
     <None Include="src\Format.inl">
       <Filter>src</Filter>
     </None>
@@ -256,6 +250,12 @@
       <Filter>third_party\gpm</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
+    <None Include="src\ComponentChunk.inl">
+      <Filter>src\WIP</Filter>
+    </None>
+    <None Include="src\Component.inl">
+      <Filter>src\WIP</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">

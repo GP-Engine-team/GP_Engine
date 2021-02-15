@@ -6,13 +6,12 @@
 
 #pragma once
 
-
 #include <glad/glad.h>
 #include <string>
 #include <vector>
 
-#include "GPM/Vector3.hpp" //Vec3
 #include "Engine/Resources/ShaderType.hpp"
+#include "GPM/Vector3.hpp" //Vec3
 
 namespace Engine::Resources
 {
@@ -36,7 +35,7 @@ public:
 
 protected:
     const unsigned char m_featureMask; // feature is shader interger into shader like light, blure etc....
-    unsigned int m_lightsUniformBuffer;
+    unsigned int        m_lightsUniformBuffer;
 
     std::string m_nameFragment;
     std::string m_nameVertex;
@@ -54,7 +53,7 @@ public:
      */
     Shader(const char* vertexPath, const char* fragmentPath, unsigned char featureMask = 0);
     Shader(const Shader& other) = delete;
-    Shader(Shader&& other) = default;
+    Shader(Shader&& other)      = default;
     ~Shader();
 
     /**

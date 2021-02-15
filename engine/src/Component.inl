@@ -1,7 +1,6 @@
 #include "Engine/Intermediate/Component.hpp"
 
-inline Engine::Intermediate::Component::Component(GameObject& refGameObject) noexcept
-    : m_gameObject{refGameObject}
+inline Engine::Intermediate::Component::Component(GameObject& refGameObject) noexcept : m_gameObject{refGameObject}
 {
 }
 

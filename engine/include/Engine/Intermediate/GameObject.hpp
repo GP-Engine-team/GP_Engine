@@ -26,20 +26,20 @@ public:
     };
 
 protected:
-    std::string m_name;
+    std::string         m_name;
     TransformComponent* m_pTransform;
 
     std::list<Component*> m_pComponents;
-    std::string m_tag{"GameObject"};
+    std::string           m_tag{"GameObject"};
     bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
 public:
-    GameObject* parent = nullptr;
+    GameObject*                            parent   = nullptr;
     std::list<std::unique_ptr<GameObject>> children = {};
 
- public: //TODO : Protected method ?
+public: // TODO : Protected method ?
     template <typename T>
-     void updateComponentLink(const T* oldPtr, T*  newPtr);
+    void updateComponentLink(const T* oldPtr, T* newPtr);
 
 public:
     GameObject(const CreateArg& arg);
@@ -125,19 +125,21 @@ public:
      * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3
      * @return GraphEntity&
      */
-    void destroyChild(const std::string& path) noexcept; //TODO: Destroy immediate may be dangerous
+    void destroyChild(const std::string& path) noexcept; // TODO: Destroy immediate may be dangerous
 
     /**
      * @brief destroy childen of gameobject
      *
      * @param GameObject
      */
-    std::list<std::unique_ptr<GameObject>>::iterator destroyChild(GameObject* pGameObject) noexcept; //TODO: Destroy immediate may be dangerous
+    std::list<std::unique_ptr<GameObject>>::iterator destroyChild(
+        GameObject* pGameObject) noexcept; // TODO: Destroy immediate may be dangerous
 
     inline std::list<std::unique_ptr<GameObject>>::iterator destroyChild(
-        const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept; //TODO: Destroy immediate may be dangerous
+        const std::list<std::unique_ptr<GameObject>>::iterator&
+            it) noexcept; // TODO: Destroy immediate may be dangerous
 
-    template<typename TUniqueComponentType>
+    template <typename TUniqueComponentType>
     void destroyImmediateUniqueComponent() noexcept;
 
     /**
@@ -145,11 +147,13 @@ public:
      *
      * @param Component
      */
-    std::list<Component*>::iterator destroyComponent(Component* pComponent) noexcept; //TODO: Destroy immediate may be dangerous
+    std::list<Component*>::iterator destroyComponent(
+        Component* pComponent) noexcept; // TODO: Destroy immediate may be dangerous
 
     inline void setActive(bool newState);
 
-    inline std::list<Component*>::iterator destroyComponent(const std::list<Component*>::iterator& it) noexcept; //TODO: Destroy immediate may be dangerous
+    inline std::list<Component*>::iterator destroyComponent(
+        const std::list<Component*>::iterator& it) noexcept; // TODO: Destroy immediate may be dangerous
 
     /**
      * @brief Destroy the element at the next frame whe scene graph is update.

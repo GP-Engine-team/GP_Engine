@@ -17,7 +17,7 @@ using namespace Engine::Resources;
 Texture::Texture(const char* path, bool flipTexture, bool loadInGPU) : m_id(0), m_isLoadInGPU(false), m_path(path)
 {
     m_filterType = EFilterType::LINEAR;
-    m_wrapType = EWrapType::REPEAT;
+    m_wrapType   = EWrapType::REPEAT;
 
     stbi_set_flip_vertically_on_load(flipTexture);
     m_pixels = stbi_load(path, &m_w, &m_h, (int*)&m_comp, 0);
@@ -40,7 +40,7 @@ Texture::Texture(const char* path, bool flipTexture, bool loadInGPU) : m_id(0), 
 Texture::Texture(const CreateArg& arg) : m_id(0), m_isLoadInGPU(false)
 {
     m_filterType = arg.filterType;
-    m_wrapType = arg.wrapType;
+    m_wrapType   = arg.wrapType;
 
     stbi_set_flip_vertically_on_load(arg.flipTexture);
     m_pixels = stbi_load(arg.path, &m_w, &m_h, (int*)&m_comp, 0);

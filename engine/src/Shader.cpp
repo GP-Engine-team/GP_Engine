@@ -13,7 +13,7 @@ using namespace Engine::Core::Debug;
 using namespace Engine::Core::Parsers;
 using namespace std;
 
-//TODO:OpenGL must coincide with the openGl context
+// TODO:OpenGL must coincide with the openGl context
 static const char* versionHeaderStr = R"(#version 460 core
 
 )";

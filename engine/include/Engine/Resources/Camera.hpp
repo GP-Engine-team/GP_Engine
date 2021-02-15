@@ -53,19 +53,19 @@ public:
 
 protected:
     ProjectionInfo m_projInfo;
-    GPM::Mat4 m_projection;
+    GPM::Mat4      m_projection;
 
     GPM::Mat4 m_viewMatrix;
     GPM::Mat4 m_viewProjectionMatrix;
 
 public:
-    Camera() noexcept = delete;
+    Camera() noexcept                    = delete;
     Camera(const Camera& other) noexcept = delete;
     Camera& operator=(Camera const& other) noexcept = delete;
 
     Camera(Camera&& other) noexcept = default;
     Camera& operator=(Camera&& other) noexcept = default;
-    virtual ~Camera() noexcept = default;
+    virtual ~Camera() noexcept                 = default;
 
     /**
      * @brief Construct a new perspective camera object

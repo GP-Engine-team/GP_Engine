@@ -40,15 +40,15 @@ public:
     };
 
 protected:
-    unsigned int m_id = 0;
-    bool m_isLoadInGPU = true;
+    unsigned int m_id          = 0;
+    bool         m_isLoadInGPU = true;
 
     unsigned char* m_pixels{nullptr};
-    int m_w = 0, m_h = 0;
-    unsigned char m_comp = 0; // RGB = 3 / RGBA = 4
-    EFilterType m_filterType = EFilterType::LINEAR;
-    EWrapType m_wrapType = EWrapType::REPEAT;
-    std::string m_path = "";
+    int            m_w = 0, m_h = 0;
+    unsigned char  m_comp       = 0; // RGB = 3 / RGBA = 4
+    EFilterType    m_filterType = EFilterType::LINEAR;
+    EWrapType      m_wrapType   = EWrapType::REPEAT;
+    std::string    m_path       = "";
 
 protected:
     /**
@@ -59,9 +59,9 @@ protected:
     void hFlip();
 
 public:
-    Texture() = default;
-    Texture(const Texture& other) = delete; // TODO;
-    Texture(Texture&& other) = default;     // TODO;
+    Texture()                     = default;
+    Texture(const Texture& other) = delete;  // TODO;
+    Texture(Texture&& other)      = default; // TODO;
 
     Texture(const char* path, bool flipTexture = true, bool loadInGPU = true);
     Texture(const CreateArg& arg);

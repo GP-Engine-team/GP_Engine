@@ -24,10 +24,10 @@ class Mesh
 public:
     struct CreateArg
     {
-        std::string objName;
-        std::vector<GPM::Vec3> vBuffer;
-        std::vector<GPM::Vec2> vtBuffer;
-        std::vector<GPM::Vec3> vnBuffer;
+        std::string                                         objName;
+        std::vector<GPM::Vec3>                              vBuffer;
+        std::vector<GPM::Vec2>                              vtBuffer;
+        std::vector<GPM::Vec3>                              vnBuffer;
         std::vector<std::vector<Engine::Resources::Indice>> iBuffer;
     };
 
@@ -40,26 +40,26 @@ public:
 
 protected:
     GLuint m_indexVAO;
-    bool m_isLoadInGPU;
+    bool   m_isLoadInGPU;
 
-    std::string m_objName;
-    std::vector<GPM::Vec3> m_vBuffer;
-    std::vector<GPM::Vec2> m_vtBuffer;
-    std::vector<GPM::Vec3> m_vnBuffer;
+    std::string                                         m_objName;
+    std::vector<GPM::Vec3>                              m_vBuffer;
+    std::vector<GPM::Vec2>                              m_vtBuffer;
+    std::vector<GPM::Vec3>                              m_vnBuffer;
     std::vector<std::vector<Engine::Resources::Indice>> m_iBuffer;
-    std::vector<std::string> m_idMaterial;
+    std::vector<std::string>                            m_idMaterial;
 
 private:
     // this function generate the normal of object. Must be use if obj file don't contain normal.
     void generateNormalAndLoadIndice(const std::vector<Shape>& shapes) noexcept;
 
 public:
-    //Mesh(const char* objPath, bool loadInGPU = true);
+    // Mesh(const char* objPath, bool loadInGPU = true);
     Mesh(const CreateArg& meshArg, bool loadInGPU = true);
     Mesh(const Attrib& attrib, const std::vector<Shape>& shape, bool loadInGPU = true);
 
     Mesh(const Mesh& other) = delete;
-    Mesh(Mesh&& other) = default;
+    Mesh(Mesh&& other)      = default;
     ~Mesh();
 
     /**
@@ -94,7 +94,7 @@ public:
      * @return MeshConstructorArg
      */
     static Mesh::CreateArg createPlane(float textureRepetition = 1.f, unsigned int indexTextureX = 0,
-                                          unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y);
+                                       unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y);
 
     /**
      * @brief Create a Cube object of radius 1 and return it mesh. Cube is centered on the origin

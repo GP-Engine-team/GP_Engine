@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Intermediate/RenderSystem.hpp"
 #include "GPM/Transform.hpp"
 
@@ -108,7 +108,7 @@ void Camera::setAspect(const float newAspect) noexcept
     }
 }
 
-GPM::Mat4 Camera::getView() const noexcept //TODO: inversed matrix do not made each frame
+GPM::Mat4 Camera::getView() const noexcept // TODO: inversed matrix do not made each frame
 {
     return m_gameObject.getTransform().getModelMatrix().inversed();
 }

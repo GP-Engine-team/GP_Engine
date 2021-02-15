@@ -31,7 +31,8 @@ void Engine::Intermediate::ComponentChunk<TStoredComponent, TSize>::destroyCompo
             {
                 std::swap(m_components[i], m_components.back());
 
-                m_components[i].getGameObject().updateComponentLink<TStoredComponent>(&m_components.back(), &m_components[i]);
+                m_components[i].getGameObject().updateComponentLink<TStoredComponent>(&m_components.back(),
+                                                                                      &m_components[i]);
                 m_components.pop_back();
             }
     }

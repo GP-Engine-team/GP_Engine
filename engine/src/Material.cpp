@@ -4,8 +4,7 @@
 using namespace Engine::Core::Debug;
 using namespace Engine::Resources;
 
-Material::Material(const CreateArgWithTexture& arg)
-    : m_comp(arg.comp), m_pDiffuseTexture(), m_name(arg.name)
+Material::Material(const CreateArgWithTexture& arg) : m_comp(arg.comp), m_pDiffuseTexture(), m_name(arg.name)
 {
     if (arg.pathDiffuseTexture == nullptr)
     {
@@ -14,10 +13,10 @@ Material::Material(const CreateArgWithTexture& arg)
     else
     {
         Texture::CreateArg textArg;
-        textArg.path = arg.pathDiffuseTexture;
-        textArg.filterType = arg.filterType;
-        textArg.loadInGPU = arg.loadInGPU;
-        textArg.wrapType = arg.wrapType;
+        textArg.path        = arg.pathDiffuseTexture;
+        textArg.filterType  = arg.filterType;
+        textArg.loadInGPU   = arg.loadInGPU;
+        textArg.wrapType    = arg.wrapType;
         textArg.flipTexture = arg.flipTexture;
 
         m_pDiffuseTexture = std::make_shared<Texture>(textArg);
@@ -32,7 +31,6 @@ Material::Material(const MaterialAttrib& arg)
 {
 }
 
-Material::Material(CreateArg& arg)
-    : m_comp(arg.comp), m_pDiffuseTexture(std::move(arg.pTexture)), m_name(arg.name)
+Material::Material(CreateArg& arg) : m_comp(arg.comp), m_pDiffuseTexture(std::move(arg.pTexture)), m_name(arg.name)
 {
 }

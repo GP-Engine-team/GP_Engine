@@ -10,33 +10,30 @@
 
 namespace Engine::Core::Parsers
 {
-    //singletone
-    class ShaderParser
+// singletone
+class ShaderParser
+{
+public:
+    ShaderParser()                          = delete;
+    ShaderParser(const ShaderParser& other) = delete;
+    ShaderParser(ShaderParser&& other)      = delete;
+    ~ShaderParser()                         = delete;
+
+    /**
+     * @brief call and use all parse function
+     *
+     * @param sourceCode
+     */
+    static inline void parse(std::string& sourceCode)
     {
-        public:
+        parseIncludesShader(sourceCode);
+    }
 
-            ShaderParser ()							    = delete;
-            ShaderParser (const ShaderParser& other)	= delete;
-            ShaderParser (ShaderParser&& other)			= delete;
-            ~ShaderParser ()				            = delete;
-
-            /**
-             * @brief call and use all parse function
-             * 
-             * @param sourceCode 
-             */
-            static inline 
-            void parse(std::string& sourceCode)
-            {
-                parseIncludesShader (sourceCode);
-            }     
-
-            /**
-             * @brief Search and include shader source code if the shader contain #include "path"
-             * 
-             * @param sourceCode 
-             */
-            static
-            void parseIncludesShader(std::string& sourceCode);
-    };
+    /**
+     * @brief Search and include shader source code if the shader contain #include "path"
+     *
+     * @param sourceCode
+     */
+    static void parseIncludesShader(std::string& sourceCode);
+};
 } /*namespace Engine::Core::Parsers*/

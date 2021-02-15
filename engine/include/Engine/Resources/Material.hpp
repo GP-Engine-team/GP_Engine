@@ -17,16 +17,16 @@ namespace Engine::Resources
 {
 class Material
 {
-public : 
+public:
     struct CreateArgWithTexture
     {
-        std::string       name{""};
-        MaterialComponent comp{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
-        const char*       pathDiffuseTexture{nullptr};
+        std::string          name{""};
+        MaterialComponent    comp{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
+        const char*          pathDiffuseTexture{nullptr};
         Texture::EWrapType   wrapType{Texture::EWrapType::REPEAT};
         Texture::EFilterType filterType{Texture::EFilterType::LINEAR};
-        bool              flipTexture{true};
-        bool              loadInGPU{true};
+        bool                 flipTexture{true};
+        bool                 loadInGPU{true};
     };
 
     struct CreateArg
