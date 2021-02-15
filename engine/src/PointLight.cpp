@@ -3,7 +3,7 @@
 using namespace Engine::Intermediate;
 using namespace Engine::Resources;
 
-PointLight::PointLight (GameObject &owner, const PointLightCreateArg& arg)
+PointLight::PointLight (GameObject &owner, const CreateArg& arg)
             :   Light               (owner, arg.ambient, arg.diffuse, arg.specular),
                 m_constant           (arg.constant),
                 m_linear             (arg.linear),

@@ -14,16 +14,17 @@
 
 namespace Engine::Intermediate
 {
-struct GameObjectCreateArg
-{
-    std::string name = "";
-    TransformComponent::CreateArg transformArg;
-};
-
 class Component;
 
 class GameObject
 {
+public:
+    struct CreateArg
+    {
+        std::string                   name = "";
+        TransformComponent::CreateArg transformArg;
+    };
+
 protected:
     std::string m_name;
     TransformComponent* m_pTransform;
@@ -41,7 +42,7 @@ public:
      void updateComponentLink(const T* oldPtr, T*  newPtr);
 
 public:
-    GameObject(const GameObjectCreateArg& arg);
+    GameObject(const CreateArg& arg);
 
     GameObject();
 

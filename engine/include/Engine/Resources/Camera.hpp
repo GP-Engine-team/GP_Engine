@@ -13,43 +13,44 @@
 
 namespace Engine::Resources
 {
-enum class EProjectionType
-{
-    PERSPECTIVE,
-    ORTHOGRAPHIC
-};
-
-struct ProjectionInfo
-{
-    std::string name;
-    EProjectionType type;
-
-    float aspect;
-    float near, far;
-    float hSide, vSide;
-    float fovY, fovX;
-};
-
-struct CameraPerspectiveCreateArg
-{
-    float aspect = 16.f / 9.f;
-    float near = 0.001f;
-    float far = 10.f;
-    float fovY = 70.f;
-    const char* name = "Camera";
-};
-
-struct CameraOrthographicCreateArg
-{
-    float hSide = 1.f;
-    float vSide = 1.f;
-    float nearVal = 0.001f;
-    float farVal = 10.f;
-    const char* name = "Camera";
-};
-
 class Camera : public Engine::Intermediate::Component
 {
+public:
+    enum class EProjectionType
+    {
+        PERSPECTIVE,
+        ORTHOGRAPHIC
+    };
+
+    struct ProjectionInfo
+    {
+        std::string     name;
+        EProjectionType type;
+
+        float aspect;
+        float near, far;
+        float hSide, vSide;
+        float fovY, fovX;
+    };
+
+    struct PerspectiveCreateArg
+    {
+        float       aspect = 16.f / 9.f;
+        float       near   = 0.001f;
+        float       far    = 10.f;
+        float       fovY   = 70.f;
+        const char* name   = "Camera";
+    };
+
+    struct OrthographicCreateArg
+    {
+        float       hSide   = 1.f;
+        float       vSide   = 1.f;
+        float       nearVal = 0.001f;
+        float       farVal  = 10.f;
+        const char* name    = "Camera";
+    };
+
 protected:
     ProjectionInfo m_projInfo;
     GPM::Mat4 m_projection;
@@ -77,7 +78,7 @@ public:
      * @param fovY      : by default to 70 (human FovY)
      * @param name
      */
-    Camera(Engine::Intermediate::GameObject& owner, const CameraPerspectiveCreateArg& arg);
+    Camera(Engine::Intermediate::GameObject& owner, const PerspectiveCreateArg& arg);
 
     /**
      * @brief Construct a new orthographic camera object
@@ -92,7 +93,7 @@ public:
      * @param farVal
      * @param name
      */
-    Camera(Engine::Intermediate::GameObject& owner, const CameraOrthographicCreateArg& arg);
+    Camera(Engine::Intermediate::GameObject& owner, const OrthographicCreateArg& arg);
 
     /**
      * @brief Set the Fov Y object

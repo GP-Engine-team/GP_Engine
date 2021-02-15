@@ -14,22 +14,23 @@
 
 namespace Engine::Intermediate
 {
-struct SpotLightCreateArg
-{
-    const Engine::Resources::AmbiantComponent&  ambient;
-    const Engine::Resources::DiffuseComponent&  diffuse;
-    const Engine::Resources::SpecularComponent& specular;
-
-    float constant;
-    float linear;
-    float quadratic;
-
-    float cutOff;
-    float cutOffExponent;
-};
-
 class SpotLight : public PointLight
 {
+public:
+    struct CreateArg
+    {
+        const Engine::Resources::AmbiantComponent&  ambient;
+        const Engine::Resources::DiffuseComponent&  diffuse;
+        const Engine::Resources::SpecularComponent& specular;
+
+        float constant;
+        float linear;
+        float quadratic;
+
+        float cutOff;
+        float cutOffExponent;
+    };
+
 protected:
     float m_cutOff; // specifies the spotlight's radius.
     float m_cutOffExponent;
@@ -62,7 +63,7 @@ public:
               const Engine::Resources::DiffuseComponent& diffuse, const Engine::Resources::SpecularComponent& specular,
               float constant, float linear, float quadratic, float cutOff, float cutOffExponent);
 
-    SpotLight(Engine::Intermediate::GameObject& owner, SpotLightCreateArg arg);
+    SpotLight(Engine::Intermediate::GameObject& owner, CreateArg arg);
 
     virtual void addToLightToUseBuffer(std::vector<Engine::Resources::LightData>& lb) noexcept override;
 };

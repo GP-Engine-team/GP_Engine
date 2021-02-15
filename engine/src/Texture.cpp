@@ -37,7 +37,7 @@ Texture::Texture(const char* path, bool flipTexture, bool loadInGPU) : m_id(0), 
     Log::log((std::string("Texture \"") + m_path + "\" load").c_str());
 }
 
-Texture::Texture(const TextureCreateArg& arg) : m_id(0), m_isLoadInGPU(false)
+Texture::Texture(const CreateArg& arg) : m_id(0), m_isLoadInGPU(false)
 {
     m_filterType = arg.filterType;
     m_wrapType = arg.wrapType;

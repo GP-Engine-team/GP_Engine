@@ -9,7 +9,7 @@
 
 using namespace Engine::Intermediate;
 
-GameObject::GameObject(const GameObjectCreateArg& arg)
+GameObject::GameObject(const CreateArg& arg)
     : m_name{arg.name}, m_pTransform{&ComponentChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)},
       m_pComponents{}
 {

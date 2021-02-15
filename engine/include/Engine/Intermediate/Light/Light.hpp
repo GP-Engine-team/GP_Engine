@@ -19,23 +19,24 @@
 // TODO: Light must be a resource
 namespace Engine::Intermediate
 {
-struct LightCreateArg
-{
-    const Engine::Resources::AmbiantComponent&  ambient;
-    const Engine::Resources::DiffuseComponent&  diffuse;
-    const Engine::Resources::SpecularComponent& specular;
-};
-
 class Light // TODO: Can be more optimize change information only when light is update
     : public Engine::Intermediate::Component
 {
+public:
+    struct CreateArg
+    {
+        const Engine::Resources::AmbiantComponent&  ambient;
+        const Engine::Resources::DiffuseComponent&  diffuse;
+        const Engine::Resources::SpecularComponent& specular;
+    };
+
 protected:
     Engine::Resources::AmbiantComponent  m_ambientComp;
     Engine::Resources::DiffuseComponent  m_diffuseComp;
     Engine::Resources::SpecularComponent m_specularComp;
 
 public:
-    Light(Engine::Intermediate::GameObject& owner, const LightCreateArg& arg);
+    Light(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
 
     Light(Engine::Intermediate::GameObject& owner, const Engine::Resources::AmbiantComponent& ambient,
           const Engine::Resources::DiffuseComponent& diffuse, const Engine::Resources::SpecularComponent& specular);

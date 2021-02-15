@@ -15,36 +15,35 @@
 
 namespace Engine::Resources
 {
-struct MaterialAndTextureCreateArg
-{
-    std::string       name{""};
-    MaterialComponent comp{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
-    const char*       pathDiffuseTexture{nullptr};
-    EWrapType         wrapType{EWrapType::REPEAT};
-    EFilterType       filterType{EFilterType::LINEAR};
-    bool              flipTexture{true};
-    bool              loadInGPU{true};
-};
-
-struct MaterialCreateArg
-{
-    std::string              name{""};
-    MaterialComponent        comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
-    std::unique_ptr<Texture> pTexture{nullptr};
-};
-
 class Material
 {
+public : 
+    struct CreateArgWithTexture
+    {
+        std::string       name{""};
+        MaterialComponent comp{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
+        const char*       pathDiffuseTexture{nullptr};
+        Texture::EWrapType   wrapType{Texture::EWrapType::REPEAT};
+        Texture::EFilterType filterType{Texture::EFilterType::LINEAR};
+        bool              flipTexture{true};
+        bool              loadInGPU{true};
+    };
+
+    struct CreateArg
+    {
+        std::string              name{""};
+        MaterialComponent        comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
+        std::unique_ptr<Texture> pTexture{nullptr};
+    };
+
 protected:
     MaterialComponent        m_comp;
-    std::shared_ptr<Texture> m_pDiffuseTexturetexture;
+    std::shared_ptr<Texture> m_pDiffuseTexture;
     std::string              m_name;
 
 public:
-    Material(std::string m_name, MaterialComponent comp);
-
-    Material(const MaterialAndTextureCreateArg& arg);
-    Material(MaterialCreateArg& arg);
+    Material(const CreateArgWithTexture& arg);
+    Material(CreateArg& arg);
 
     /**
      * @brief Construct a new Material object after parse mtl files
@@ -77,7 +76,7 @@ public:
      */
     Texture* getPDiffuseTexture() noexcept
     {
-        return m_pDiffuseTexturetexture.get();
+        return m_pDiffuseTexture.get();
     }
 
     /**

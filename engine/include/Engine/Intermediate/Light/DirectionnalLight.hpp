@@ -15,16 +15,17 @@
 
 namespace Engine::Intermediate
 {
-struct DirectionnalLightCreateArg
-{
-    const GPM::Vec3&                            direction;
-    const Engine::Resources::AmbiantComponent&  ambient;
-    const Engine::Resources::DiffuseComponent&  diffuse;
-    const Engine::Resources::SpecularComponent& specular;
-};
-
 class DirectionnalLight : public Light
 {
+public:
+    struct CreateArg
+    {
+        const GPM::Vec3&                            direction;
+        const Engine::Resources::AmbiantComponent&  ambient;
+        const Engine::Resources::DiffuseComponent&  diffuse;
+        const Engine::Resources::SpecularComponent& specular;
+    };
+
 protected:
     GPM::Vec3 m_direction;
 
@@ -37,7 +38,7 @@ public:
     DirectionnalLight& operator=(DirectionnalLight const& other) = delete;
     DirectionnalLight& operator=(DirectionnalLight&& other) = default;
 
-    DirectionnalLight(Engine::Intermediate::GameObject& owner, const DirectionnalLightCreateArg& arg);
+    DirectionnalLight(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
 
     DirectionnalLight(Engine::Intermediate::GameObject& owner, const GPM::Vec3& direction,
                       const Engine::Resources::AmbiantComponent&  ambient,

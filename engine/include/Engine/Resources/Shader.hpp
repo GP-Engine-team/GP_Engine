@@ -16,14 +16,6 @@
 
 namespace Engine::Resources
 {
-
-enum class EShaderType
-{
-    FRAGMENT,
-    VERTEX,
-    PROGRAM
-};
-
 // feature mask
 #define LIGHT_BLIN_PHONG 1    // 2^0, bit 1
 #define SKYBOX 2              // 2^1, bit 2
@@ -34,6 +26,14 @@ enum class EShaderType
 // Inspiread about code exemple on learn openGl : https://learnopengl.com/Getting-started/Shaders
 class Shader
 {
+public:
+    enum class EType
+    {
+        FRAGMENT,
+        VERTEX,
+        PROGRAM
+    };
+
 protected:
     const unsigned char m_featureMask; // feature is shader interger into shader like light, blure etc....
     unsigned int m_lightsUniformBuffer;
@@ -122,7 +122,7 @@ private:
      * @param shader
      * @param type
      */
-    void checkCompileErrors(unsigned int shader, EShaderType type);
+    void checkCompileErrors(unsigned int shader, EType type);
 
     /**
      * @brief parse the name of image integer in path

@@ -15,20 +15,21 @@
 
 namespace Engine::Intermediate
 {
-struct PointLightCreateArg
-{
-    const Engine::Resources::AmbiantComponent&  ambient;
-    const Engine::Resources::DiffuseComponent&  diffuse;
-    const Engine::Resources::SpecularComponent& specular;
-
-    float constant;
-    float linear;
-    float quadratic;
-    bool  isEnable{true};
-};
-
 class PointLight : public Light
 {
+public:
+    struct CreateArg
+    {
+        const Engine::Resources::AmbiantComponent&  ambient;
+        const Engine::Resources::DiffuseComponent&  diffuse;
+        const Engine::Resources::SpecularComponent& specular;
+
+        float constant;
+        float linear;
+        float quadratic;
+        bool  isEnable{true};
+    };
+
 protected:
     float m_constant, m_linear, m_quadratic;
 
@@ -41,7 +42,7 @@ public:
     PointLight& operator=(PointLight const& other) = delete;
     PointLight& operator=(PointLight&& other) = default;
 
-    PointLight(Engine::Intermediate::GameObject& owner, const PointLightCreateArg& arg);
+    PointLight(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
 
     PointLight(Engine::Intermediate::GameObject& owner, const Engine::Resources::AmbiantComponent& ambient,
                const Engine::Resources::DiffuseComponent& diffuse, const Engine::Resources::SpecularComponent& specular,

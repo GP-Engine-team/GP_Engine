@@ -13,9 +13,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\RendererGLFW_GL46.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -25,44 +22,47 @@
     <ClCompile Include="src\WindowGLFW.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Shader.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ShaderParser.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Material.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Model.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Camera.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\RenderSystem.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ObjParser.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MTLParser.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>src\WIP</Filter>
     </ClCompile>
     <ClCompile Include="src\directionnalLight.cpp">
-      <Filter>src</Filter>
+      <Filter>src\WIP</Filter>
     </ClCompile>
     <ClCompile Include="src\light.cpp">
-      <Filter>src</Filter>
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Material.cpp">
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh.cpp">
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MTLParser.cpp">
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ObjParser.cpp">
+      <Filter>src\WIP</Filter>
     </ClCompile>
     <ClCompile Include="src\pointLight.cpp">
-      <Filter>src</Filter>
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderParser.cpp">
+      <Filter>src\WIP</Filter>
     </ClCompile>
     <ClCompile Include="src\spotLight.cpp">
-      <Filter>src</Filter>
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>src\WIP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,16 +108,7 @@
     <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Color.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Mesh.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
@@ -130,27 +121,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\Type.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Shader.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Texture.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Material.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Model.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Camera.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -186,23 +156,53 @@
     <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Resources\Camera.hpp">
+      <Filter>include\WIP</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Resources\Color.hpp">
+      <Filter>include\WIP</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\Light\DirectionnalLight.hpp">
-      <Filter>include</Filter>
+      <Filter>include\WIP</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Light\Light.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
+      <Filter>include\WIP</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\Light\PointLight.hpp">
-      <Filter>include</Filter>
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Model.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Mesh.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Light\Light.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Material.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Shader.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
+      <Filter>include\WIP</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\Light\SpotLight.hpp">
-      <Filter>include</Filter>
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Texture.hpp">
+      <Filter>include\WIP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +269,12 @@
     </Filter>
     <Filter Include="third_party\gpm">
       <UniqueIdentifier>{a2407ea9-052e-4dda-94fb-8a6a09d22eba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\WIP">
+      <UniqueIdentifier>{571b2d23-522e-40d5-9945-58ac09133dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\WIP">
+      <UniqueIdentifier>{6af8d59a-d108-4b2c-bad1-09c4f11ab1f9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

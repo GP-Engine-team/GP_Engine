@@ -13,31 +13,32 @@ namespace Engine::Resources
 {
 #define PATH_TEXTURE_RESOURCE "./resources/textures/"
 
-enum class EWrapType
-{
-    CLAMP_TO_EDGE,
-    CLAMP_TO_BORDER,
-    MIRRORED_REPEAT,
-    REPEAT
-};
-
-enum class EFilterType
-{
-    NEAREST,
-    LINEAR
-};
-
-struct TextureCreateArg
-{
-    const char* path;
-    EWrapType wrapType = EWrapType::REPEAT;
-    EFilterType filterType = EFilterType::LINEAR;
-    bool flipTexture = true;
-    bool loadInGPU = true;
-};
-
 class Texture
 {
+public:
+    enum class EWrapType
+    {
+        CLAMP_TO_EDGE,
+        CLAMP_TO_BORDER,
+        MIRRORED_REPEAT,
+        REPEAT
+    };
+
+    enum class EFilterType
+    {
+        NEAREST,
+        LINEAR
+    };
+
+    struct CreateArg
+    {
+        const char* path;
+        EWrapType   wrapType    = EWrapType::REPEAT;
+        EFilterType filterType  = EFilterType::LINEAR;
+        bool        flipTexture = true;
+        bool        loadInGPU   = true;
+    };
+
 protected:
     unsigned int m_id = 0;
     bool m_isLoadInGPU = true;
@@ -63,7 +64,7 @@ public:
     Texture(Texture&& other) = default;     // TODO;
 
     Texture(const char* path, bool flipTexture = true, bool loadInGPU = true);
-    Texture(const TextureCreateArg& arg);
+    Texture(const CreateArg& arg);
     virtual ~Texture();
 
     unsigned int getID() const

@@ -13,7 +13,7 @@ using namespace GPM;
 using namespace Engine::Core::Debug;
 using namespace Engine::Intermediate;
 
-Camera::Camera(GameObject& owner, const CameraPerspectiveCreateArg& arg) : Component(owner)
+Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) : Component(owner)
 {
     GPE_ASSERT(arg.near > 0.f, "Near must be greater than 0");
 
@@ -37,7 +37,7 @@ Camera::Camera(GameObject& owner, const CameraPerspectiveCreateArg& arg) : Compo
     Log::log((std::string("Perspective projection add with name \"") + arg.name + "\"").c_str());
 }
 
-Camera::Camera(GameObject& owner, const CameraOrthographicCreateArg& arg) : Component(owner)
+Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) : Component(owner)
 {
     GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");
 

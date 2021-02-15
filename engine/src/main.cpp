@@ -106,7 +106,7 @@ static auto randRanged(const T& min, const T& max) -> std::enable_if_t<std::is_f
 void loadTree(GameObject& parent, ResourcesManager<Mesh, Shader, Texture, std::vector<Material>>& resourceManager,
               unsigned int number)
 {
-    GameObjectCreateArg treeGameObject{"Trees", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}};
+    GameObject::CreateArg treeGameObject{"Trees", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {1.f, 1.f, 1.f}}};
 
     GameObject&      treeContener = parent.addChild<GameObject>(treeGameObject);
     Model::CreateArg treeModelArg{resourceManager.get<Shader>("TextureWithLihghts"),
@@ -154,14 +154,14 @@ int main()
 
     Log::logInitializationStart("sceneGraphExample");
 
-    GameObject  world(GameObjectCreateArg{"World"});
-    GameObject& player = world.addChild<GameObject>(GameObjectCreateArg{"Player"});
+    GameObject  world(GameObject::CreateArg{"World"});
+    GameObject& player = world.addChild<GameObject>(GameObject::CreateArg{"Player"});
 
-    CameraPerspectiveCreateArg camCreateArg;
+    Camera::PerspectiveCreateArg camCreateArg;
     camCreateArg.far = 10000.f;
     player.addComponent<Camera>(camCreateArg);
 
-    DirectionnalLightCreateArg lightArg{
+    DirectionnalLight::CreateArg lightArg{
         {0.f, 1.f, -1.f}, {1.f, 0.f, 0.f, 0.1f}, {1.f, 0.f, 0.f, 0.7f}, {1.f, 0.f, 0.f, 1.f}};
     player.addComponent<DirectionnalLight>(lightArg);
 

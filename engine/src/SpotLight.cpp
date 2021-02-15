@@ -20,7 +20,7 @@ SpotLight::SpotLight ( GameObject &            owner,
     m_cutOffExponent     (cosf(cutOffExponent * PI / 180.f))
 {}
 
-SpotLight::SpotLight (GameObject & owner, SpotLightCreateArg arg)
+SpotLight::SpotLight (GameObject & owner, CreateArg arg)
 :   PointLight          (owner, arg.ambient, arg.diffuse, arg.specular, arg.constant, arg.linear, arg.quadratic),
     m_cutOff             (cosf(arg.cutOff * PI / 180.f)),
     m_cutOffExponent     (cosf(arg.cutOffExponent * PI / 180.f))

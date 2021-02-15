@@ -342,43 +342,43 @@ void Shader::compile(std::string& vertexCode, std::string& fragmentCode)
     vertex                  = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
-    checkCompileErrors(vertex, EShaderType::VERTEX);
+    checkCompileErrors(vertex, EType::VERTEX);
 
     // fragment Shader
     const char* fShaderCode = fragmentCode.c_str();
     fragment                = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
-    checkCompileErrors(fragment, EShaderType::FRAGMENT);
+    checkCompileErrors(fragment, EType::FRAGMENT);
 
     // shader Program
     m_id = glCreateProgram();
     glAttachShader(m_id, vertex);
     glAttachShader(m_id, fragment);
     glLinkProgram(m_id);
-    checkCompileErrors(m_id, EShaderType::PROGRAM);
+    checkCompileErrors(m_id, EType::PROGRAM);
 
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 }
 
-void Shader::checkCompileErrors(unsigned int shader, EShaderType type)
+void Shader::checkCompileErrors(unsigned int shader, EType type)
 {
     int  success;
     char infoLog[1024];
-    if (type != EShaderType::PROGRAM)
+    if (type != EType::PROGRAM)
     {
         glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
         if (!success)
         {
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
 
-            if (type == EShaderType::VERTEX)
+            if (type == EType::VERTEX)
             {
                 Log::logError(std::string("Shader name's \"") + m_nameVertex + "\" compilation error\n" + infoLog);
             }
-            else if (type == EShaderType::FRAGMENT)
+            else if (type == EType::FRAGMENT)
             {
                 Log::logError(std::string("Shader name's \"") + m_nameFragment + "\" compilation error\n" + infoLog);
             }
@@ -391,12 +391,12 @@ void Shader::checkCompileErrors(unsigned int shader, EShaderType type)
         {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
 
-            if (type == EShaderType::VERTEX)
+            if (type == EType::VERTEX)
             {
                 Log::logError(
                     (std::string("Shader name's \"") + m_nameVertex.c_str() + "\" linking error.\n" + infoLog).c_str());
             }
-            else if (type == EShaderType::FRAGMENT)
+            else if (type == EType::FRAGMENT)
             {
                 Log::logError(
                     (std::string("Shader name's \"") + m_nameFragment.c_str() + "\" linking error.\n" + infoLog)

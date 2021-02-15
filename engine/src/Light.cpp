@@ -17,7 +17,7 @@ Light::Light (Engine::Intermediate::GameObject &      owner,
     RenderSystem::getInstance()->addLight(this);
 }
 
-Light::Light (Engine::Intermediate::GameObject &owner, const LightCreateArg&    arg)
+Light::Light (Engine::Intermediate::GameObject &owner, const CreateArg&    arg)
     :   Component          {owner},
         m_ambientComp       (arg.ambient),
         m_diffuseComp       (arg.diffuse),

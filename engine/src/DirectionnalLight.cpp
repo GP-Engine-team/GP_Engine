@@ -7,7 +7,7 @@ using namespace GPM;
 using namespace Engine::Resources;
 
 
-DirectionnalLight::DirectionnalLight (GameObject & owner, const DirectionnalLightCreateArg& arg)
+DirectionnalLight::DirectionnalLight (GameObject & owner, const CreateArg& arg)
             :   Light               {owner, arg.ambient, arg.diffuse, arg.specular},
                 m_direction          {arg.direction.normalized()}
 {}
