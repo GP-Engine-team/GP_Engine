@@ -21,7 +21,7 @@ namespace Engine::Resources
 
     // Same memory layout than 'struct light' in glsl shader
     // alignas to Vec4 at 16o. Pading must be add if alignas is not respected (i.e : Vec3 + pad)
-    struct alignas(16) Light
+    struct alignas(16) LightData
     {
         AmbiantComponent Ambient;
         DiffuseComponent Diffuse;
