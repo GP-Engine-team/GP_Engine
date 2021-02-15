@@ -180,16 +180,16 @@
     <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
     <ClInclude Include="include\Engine\Intermediate\Component.hpp" />
-    <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
-    <ClInclude Include="include\Engine\Intermediate\Light\DirectionnalLight.hpp" />
-    <ClInclude Include="include\Engine\Intermediate\Light\Light.hpp" />
-    <ClInclude Include="include\Engine\Intermediate\Light\PointLight.hpp" />
-    <ClInclude Include="include\Engine\Intermediate\Light\SpotLight.hpp" />
     <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp" />
     <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp" />
     <ClInclude Include="include\Engine\Resources\Camera.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
+    <ClInclude Include="include\Engine\Resources\Light\DirectionnalLight.hpp" />
+    <ClInclude Include="include\Engine\Resources\Light\Light.hpp" />
+    <ClInclude Include="include\Engine\Resources\Light\PointLight.hpp" />
+    <ClInclude Include="include\Engine\Resources\Light\SpotLight.hpp" />
     <ClInclude Include="include\Engine\Resources\Material.hpp" />
     <ClInclude Include="include\Engine\Resources\Mesh.hpp" />
     <ClInclude Include="include\Engine\Resources\Model.hpp" />
@@ -216,9 +216,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\directionnalLight.cpp" />
+    <ClCompile Include="src\DirectionnalLight.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
-    <ClCompile Include="src\light.cpp" />
+    <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Material.cpp" />
@@ -226,12 +226,12 @@
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\MTLParser.cpp" />
     <ClCompile Include="src\ObjParser.cpp" />
-    <ClCompile Include="src\pointLight.cpp" />
+    <ClCompile Include="src\PointLight.cpp" />
     <ClCompile Include="src\RendererGLFW_GL46.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ShaderParser.cpp" />
-    <ClCompile Include="src\spotLight.cpp" />
+    <ClCompile Include="src\SpotLight.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\WindowGLFW.cpp" />
@@ -241,7 +241,7 @@
     <None Include=".clang-format" />
     <None Include="ClassDiagram.cd" />
     <None Include="src\Component.inl" />
-    <None Include="src\ComponentChunk.inl" />
+    <None Include="src\DataChunk.inl" />
     <None Include="src\Format.inl" />
     <None Include="src\GameObject.inl" />
     <None Include="src\Log.inl" />

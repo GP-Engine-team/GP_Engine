@@ -5,7 +5,7 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/TimeSystem/TimeSystem.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Intermediate/Light/DirectionnalLight.hpp"
+#include "Engine/Resources/Light/DirectionnalLight.hpp"
 #include "Engine/Intermediate/RenderSystem.hpp"
 #include "Engine/Intermediate/TransformComponent.hpp"
 #include "Engine/Resources/Camera.hpp"
@@ -84,7 +84,7 @@ void loadTreeResource(ResourcesManager<Mesh, Shader, Texture, std::vector<Materi
         material.reserve(materialAttribs.size());
         /*Instanciate material vector with data read on materalAtribs*/
         material.assign(materialAttribs.begin(), materialAttribs.end());
-        resourceManager.add<std::vector<Material>>("TreeMaterials", std::move(material));
+        resourceManager.add<std::vector<Material>>("TreeMaterials", material);
     }
 }
 
@@ -155,7 +155,9 @@ int main()
     Log::logInitializationStart("sceneGraphExample");
 
     GameObject  world(GameObject::CreateArg{"World"});
-    GameObject& player = world.addChild<GameObject>(GameObject::CreateArg{"Player"});
+    GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 5.f, 0.f}}};
+
+    GameObject& player = world.addChild<GameObject>(playerArg);
 
     Camera::PerspectiveCreateArg camCreateArg;
     camCreateArg.far = 10000.f;
@@ -172,7 +174,7 @@ int main()
                    "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
 
     loadTreeResource(rm);
-    loadTree(world, rm, 30);
+    loadTree(world, rm, 5000);
 
     Log::logInitializationEnd("sceneGraphExample");
 
@@ -186,7 +188,7 @@ int main()
     double chronoFPLog             = 0.;
     double m_FPLogDelay            = 3.;
 
-    float speedPlayer = 1.f;
+    float speedPlayer = 5.f;
 
     ts.addScaledTimer(
         m_FPLogDelay,

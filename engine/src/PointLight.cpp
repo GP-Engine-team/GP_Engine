@@ -1,4 +1,4 @@
-#include "Engine/Intermediate/Light/PointLight.hpp"
+#include "Engine/Resources/Light/PointLight.hpp"
 
 using namespace Engine::Intermediate;
 using namespace Engine::Resources;

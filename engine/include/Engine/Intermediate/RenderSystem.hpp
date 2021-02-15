@@ -13,7 +13,7 @@
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Camera.hpp"
 #include "Engine/Resources/Model.hpp"
-#include "Engine/Intermediate/Light/Light.hpp"
+#include "Engine/Resources/Light/Light.hpp"
 
 namespace Engine::Intermediate
 {
@@ -38,7 +38,7 @@ private:
 protected:
     std::vector<Engine::Resources::Model*> m_pModels;
     std::vector<Engine::Resources::Camera*> m_pCameras;
-    std::vector<Engine::Intermediate::Light*> m_pLights;
+    std::vector<Engine::Resources::Light*> m_pLights;
 
     unsigned int m_currentShaderId                  = 0;
     unsigned int m_currentTextureId                 = 0;
@@ -90,12 +90,12 @@ public:
 
 
     //TODO: Remove this shit and create variadic templated system
-    void addLight(Engine::Intermediate::Light* pLight) noexcept;
+    void addLight(Engine::Resources::Light* pLight) noexcept;
 
-    void updateLightPointer(Engine::Intermediate::Light* newPointerLight,
-                             Engine::Intermediate::Light* exPointerLight) noexcept;
+    void updateLightPointer(Engine::Resources::Light* newPointerLight,
+                             Engine::Resources::Light* exPointerLight) noexcept;
 
-    void removeLight(Engine::Intermediate::Light* pLight) noexcept;
+    void removeLight(Engine::Resources::Light* pLight) noexcept;
 
     /**
      * @brief This is the static method that controls the access to the singleton

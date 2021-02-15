@@ -1,16 +1,16 @@
 
-#include "Engine/Intermediate/ComponentChunk.hpp"
+#include "Engine/Intermediate/DataChunk.hpp"
 #include <utility> //std::swap
 
 template <typename TStoredComponent, int TSize>
-constexpr inline Engine::Intermediate::ComponentChunk<TStoredComponent, TSize>::ComponentChunk() noexcept
+constexpr inline Engine::Intermediate::DataChunk<TStoredComponent, TSize>::DataChunk() noexcept
 {
     m_components.reserve(TSize / sizeof(TStoredComponent));
 }
 
 template <typename TStoredComponent, int TSize>
 template <typename... Args>
-TStoredComponent& Engine::Intermediate::ComponentChunk<TStoredComponent, TSize>::addComponent(Args&&... args) noexcept
+TStoredComponent& Engine::Intermediate::DataChunk<TStoredComponent, TSize>::addComponent(Args&&... args) noexcept
 {
     std::unique_lock lock(m_mutex);
 
@@ -19,7 +19,7 @@ TStoredComponent& Engine::Intermediate::ComponentChunk<TStoredComponent, TSize>:
 }
 
 template <typename TStoredComponent, int TSize>
-void Engine::Intermediate::ComponentChunk<TStoredComponent, TSize>::destroyComponent(
+void Engine::Intermediate::DataChunk<TStoredComponent, TSize>::destroyComponent(
     const TStoredComponent* componentToDestroy)
 {
     std::unique_lock lock(m_mutex);
@@ -39,7 +39,7 @@ void Engine::Intermediate::ComponentChunk<TStoredComponent, TSize>::destroyCompo
 }
 
 template <typename TStoredComponent, int TSize>
-Engine::Intermediate::ComponentChunk<TStoredComponent, TSize>* Engine::Intermediate::ComponentChunk<
+Engine::Intermediate::DataChunk<TStoredComponent, TSize>* Engine::Intermediate::DataChunk<
     TStoredComponent, TSize>::getInstance() noexcept
 {
     // double same if to avoid to lock mutex
@@ -50,7 +50,7 @@ Engine::Intermediate::ComponentChunk<TStoredComponent, TSize>* Engine::Intermedi
             if (m_pInstance == nullptr)
                 [[unlikely]]
                 {
-                    m_pInstance = new ComponentChunk<TStoredComponent, TSize>();
+                    m_pInstance = new DataChunk<TStoredComponent, TSize>();
                 }
             return m_pInstance;
         }

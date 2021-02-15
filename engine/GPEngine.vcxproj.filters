@@ -28,12 +28,6 @@
     <ClCompile Include="src\Camera.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
-    <ClCompile Include="src\directionnalLight.cpp">
-      <Filter>src\WIP</Filter>
-    </ClCompile>
-    <ClCompile Include="src\light.cpp">
-      <Filter>src\WIP</Filter>
-    </ClCompile>
     <ClCompile Include="src\Material.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
@@ -49,19 +43,25 @@
     <ClCompile Include="src\ObjParser.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
-    <ClCompile Include="src\pointLight.cpp">
-      <Filter>src\WIP</Filter>
-    </ClCompile>
     <ClCompile Include="src\Shader.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
     <ClCompile Include="src\ShaderParser.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
-    <ClCompile Include="src\spotLight.cpp">
+    <ClCompile Include="src\Texture.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
+    <ClCompile Include="src\Light.cpp">
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PointLight.cpp">
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpotLight.cpp">
+      <Filter>src\WIP</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DirectionnalLight.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
   </ItemGroup>
@@ -156,13 +156,7 @@
     <ClInclude Include="include\Engine\Resources\Color.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Light\DirectionnalLight.hpp">
-      <Filter>include\WIP</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
-      <Filter>include\WIP</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Light\PointLight.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\Model.hpp">
@@ -177,9 +171,6 @@
     <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Light\Light.hpp">
-      <Filter>include\WIP</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Resources\Material.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
@@ -189,19 +180,28 @@
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Light\SpotLight.hpp">
-      <Filter>include\WIP</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\Texture.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp">
+    <ClInclude Include="include\Engine\Intermediate\Component.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Component.hpp">
+    <ClInclude Include="include\Engine\Resources\Light\DirectionnalLight.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Light\Light.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Light\PointLight.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Light\SpotLight.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
   </ItemGroup>
@@ -250,10 +250,10 @@
       <Filter>third_party\gpm</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
-    <None Include="src\ComponentChunk.inl">
+    <None Include="src\Component.inl">
       <Filter>src\WIP</Filter>
     </None>
-    <None Include="src\Component.inl">
+    <None Include="src\DataChunk.inl">
       <Filter>src\WIP</Filter>
     </None>
   </ItemGroup>

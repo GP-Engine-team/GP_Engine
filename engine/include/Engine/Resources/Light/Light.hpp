@@ -16,8 +16,7 @@
 #include "GPM/Vector3.hpp"
 #include "GPM/Vector4.hpp"
 
-// TODO: Light must be a resource
-namespace Engine::Intermediate
+namespace Engine::Resources
 {
 class Light // TODO: Can be more optimize change information only when light is update
     : public Engine::Intermediate::Component
@@ -25,21 +24,21 @@ class Light // TODO: Can be more optimize change information only when light is 
 public:
     struct CreateArg
     {
-        const Engine::Resources::AmbiantComponent&  ambient;
-        const Engine::Resources::DiffuseComponent&  diffuse;
-        const Engine::Resources::SpecularComponent& specular;
+        const AmbiantComponent&  ambient;
+        const DiffuseComponent&  diffuse;
+        const SpecularComponent& specular;
     };
 
 protected:
-    Engine::Resources::AmbiantComponent  m_ambientComp;
-    Engine::Resources::DiffuseComponent  m_diffuseComp;
-    Engine::Resources::SpecularComponent m_specularComp;
+    AmbiantComponent  m_ambientComp;
+    DiffuseComponent  m_diffuseComp;
+    SpecularComponent m_specularComp;
 
 public:
     Light(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
 
-    Light(Engine::Intermediate::GameObject& owner, const Engine::Resources::AmbiantComponent& ambient,
-          const Engine::Resources::DiffuseComponent& diffuse, const Engine::Resources::SpecularComponent& specular);
+    Light(Engine::Intermediate::GameObject& owner, const AmbiantComponent& ambient,
+          const DiffuseComponent& diffuse, const SpecularComponent& specular);
 
     Light(const Light& other) = delete;
     Light(Light&& other)      = default;
@@ -49,7 +48,7 @@ public:
     Light& operator=(Light const& other) = delete;
     Light& operator=(Light&& other) = default;
 
-    virtual void addToLightToUseBuffer(std::vector<Engine::Resources::LightData>& lb) noexcept
+    virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept
     {
         lb.push_back({m_ambientComp,
                       m_diffuseComp,
@@ -64,20 +63,20 @@ public:
                       0.f});
     }
 
-    virtual const Engine::Resources::AmbiantComponent& getAmbient() const noexcept
+    virtual const AmbiantComponent& getAmbient() const noexcept
     {
         return m_ambientComp;
     }
-    virtual const Engine::Resources::DiffuseComponent& getDiffuse() const noexcept
+    virtual const DiffuseComponent& getDiffuse() const noexcept
     {
         return m_diffuseComp;
     }
-    virtual const Engine::Resources::SpecularComponent& getSpecular() const noexcept
+    virtual const SpecularComponent& getSpecular() const noexcept
     {
         return m_specularComp;
     }
 
-    virtual void setGlobalComponent(const Engine::Resources::ColorRGBA& newComponent) noexcept
+    virtual void setGlobalComponent(const ColorRGBA& newComponent) noexcept
     {
         m_ambientComp.rgba  = newComponent;
         m_diffuseComp.rgba  = newComponent;
@@ -91,15 +90,15 @@ public:
         m_specularComp.rgbi = newComponent;
     }
 
-    virtual void setAmbient(const Engine::Resources::AmbiantComponent& newAmbient) noexcept
+    virtual void setAmbient(const AmbiantComponent& newAmbient) noexcept
     {
         m_ambientComp.rgba = newAmbient.rgba;
     }
-    virtual void setDiffuse(const Engine::Resources::DiffuseComponent& newDiffuse) noexcept
+    virtual void setDiffuse(const DiffuseComponent& newDiffuse) noexcept
     {
         m_diffuseComp.rgba = newDiffuse.rgba;
     }
-    virtual void setSpecular(const Engine::Resources::SpecularComponent& newSpecular) noexcept
+    virtual void setSpecular(const SpecularComponent& newSpecular) noexcept
     {
         m_specularComp.rgba = newSpecular.rgba;
     }
@@ -117,4 +116,4 @@ public:
         m_specularComp.rgbi = newSpecular;
     }
 };
-} /*namespace Engine::Intermediate*/
+} /*namespace Engine::Resources*/

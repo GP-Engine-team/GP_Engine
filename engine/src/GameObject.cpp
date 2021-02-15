@@ -1,6 +1,6 @@
 #include "Engine/Intermediate/GameObject.hpp"
 
-#include "Engine/Intermediate/ComponentChunk.hpp" //ComponentChunk
+#include "Engine/Intermediate/DataChunk.hpp" //DataChunk
 #include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
 #include "Engine/Core/Debug/Log.hpp"
 #include <iostream>
@@ -10,21 +10,18 @@
 using namespace Engine::Intermediate;
 
 GameObject::GameObject(const CreateArg& arg)
-    : m_name{arg.name}, m_pTransform{&ComponentChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)},
+    : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)},
       m_pComponents{}
 {
 }
 
 GameObject::GameObject()
-    : m_name{""}, m_pTransform{&ComponentChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
+    : m_name{""}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
 {
 }
 
 void GameObject::updateSelfAndChildren() noexcept
 {
-    if (parent != nullptr && m_pTransform->isDirty())
-        getTransform().update(parent->getTransform().getModelMatrix());
-
     for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
     {
         if ((*i)->m_pTransform->isDirty())
@@ -47,9 +44,6 @@ void GameObject::updateSelfAndChildren() noexcept
 
 void GameObject::forceUpdate() noexcept
 {
-    if (parent != nullptr)
-        getTransform().update(parent->getTransform().getModelMatrix());
-
     for (auto&& i = children.begin(); i != children.end(); i++)
     {
         (*i)->getTransform().update(m_pTransform->getModelMatrix());

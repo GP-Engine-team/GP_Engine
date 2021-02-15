@@ -1,4 +1,4 @@
-#include "Engine/Intermediate/ComponentChunk.hpp"
+#include "Engine/Intermediate/DataChunk.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 
@@ -24,7 +24,7 @@ void Engine::Intermediate::GameObject::updateComponentLink(const T* oldPtr, T* n
 template <typename T, typename... Args>
 T& Engine::Intermediate::GameObject::addComponent(Args&&... args) noexcept
 {
-    T& newComponent = ComponentChunk<T>::getInstance()->addComponent(*this, std::forward<Args>(args)...);
+    T& newComponent = DataChunk<T>::getInstance()->addComponent(*this, std::forward<Args>(args)...);
     m_pComponents.emplace_back(&newComponent);
     return newComponent;
 }
@@ -128,7 +128,7 @@ void Engine::Intermediate::GameObject::destroyImmediateUniqueComponent() noexcep
         if (checkedCompPtr != nullptr)
             [[unlikely]]
         {
-            ComponentChunk<TUniqueComponentType>::getInstance()->destroyComponent(checkedCompPtr);
+            DataChunk<TUniqueComponentType>::getInstance()->destroyComponent(checkedCompPtr);
             m_pComponents.erase(it);
             return;
         }

@@ -9,19 +9,19 @@
 #include <vector>
 
 #include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Intermediate/Light/PointLight.hpp"
+#include "Engine/Resources/Light/PointLight.hpp"
 #include "GPM/Vector3.hpp"
 
-namespace Engine::Intermediate
+namespace Engine::Resources
 {
 class SpotLight : public PointLight
 {
 public:
     struct CreateArg
     {
-        const Engine::Resources::AmbiantComponent&  ambient;
-        const Engine::Resources::DiffuseComponent&  diffuse;
-        const Engine::Resources::SpecularComponent& specular;
+        const AmbiantComponent&  ambient;
+        const DiffuseComponent&  diffuse;
+        const SpecularComponent& specular;
 
         float constant;
         float linear;
@@ -59,12 +59,12 @@ public:
      * @param cutOffExponent    : in degres : specifies the spotlight's radius attenuation
      * @param name
      */
-    SpotLight(Engine::Intermediate::GameObject& owner, const Engine::Resources::AmbiantComponent& ambient,
-              const Engine::Resources::DiffuseComponent& diffuse, const Engine::Resources::SpecularComponent& specular,
+    SpotLight(Engine::Intermediate::GameObject& owner, const AmbiantComponent& ambient,
+              const DiffuseComponent& diffuse, const SpecularComponent& specular,
               float constant, float linear, float quadratic, float cutOff, float cutOffExponent);
 
     SpotLight(Engine::Intermediate::GameObject& owner, CreateArg arg);
 
-    virtual void addToLightToUseBuffer(std::vector<Engine::Resources::LightData>& lb) noexcept override;
+    virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
 };
-} /*namespace Engine::Intermediate*/
+} /*namespace Engine::Resources*/

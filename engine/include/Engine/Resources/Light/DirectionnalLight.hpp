@@ -9,11 +9,11 @@
 #include <vector>
 
 #include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Intermediate/Light/Light.hpp"
+#include "Engine/Resources/Light/Light.hpp"
 #include "Engine/Resources/ShaderType.hpp"
 #include "GPM/Vector3.hpp"
 
-namespace Engine::Intermediate
+namespace Engine::Resources
 {
 class DirectionnalLight : public Light
 {
@@ -21,9 +21,9 @@ public:
     struct CreateArg
     {
         const GPM::Vec3&                            direction;
-        const Engine::Resources::AmbiantComponent&  ambient;
-        const Engine::Resources::DiffuseComponent&  diffuse;
-        const Engine::Resources::SpecularComponent& specular;
+        const AmbiantComponent&  ambient;
+        const DiffuseComponent&  diffuse;
+        const SpecularComponent& specular;
     };
 
 protected:
@@ -41,15 +41,15 @@ public:
     DirectionnalLight(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
 
     DirectionnalLight(Engine::Intermediate::GameObject& owner, const GPM::Vec3& direction,
-                      const Engine::Resources::AmbiantComponent&  ambient,
-                      const Engine::Resources::DiffuseComponent&  diffuse,
-                      const Engine::Resources::SpecularComponent& specular);
+                      const AmbiantComponent&  ambient,
+                      const DiffuseComponent&  diffuse,
+                      const SpecularComponent& specular);
 
-    virtual void addToLightToUseBuffer(std::vector<Engine::Resources::LightData>& lb) noexcept override;
+    virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
 
     void setDirection(const GPM::Vec3& newDirection) noexcept
     {
         m_direction = newDirection.normalized();
     }
 };
-} /*namespace Engine::Intermediate*/
+} /*namespace Engine::Resources*/

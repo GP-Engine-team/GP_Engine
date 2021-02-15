@@ -1,4 +1,4 @@
-#include "Engine/Intermediate/Light/DirectionnalLight.hpp"
+#include "Engine/Resources/Light/DirectionnalLight.hpp"
 
 #include <string>
 
