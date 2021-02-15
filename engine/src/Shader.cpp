@@ -236,7 +236,7 @@ void Shader::use()
         glUseProgram(m_id);
 }
 
-void Shader::setLightBlock(const std::vector<Light>& lightBuffer, const Vec3& viewPos)
+void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3& viewPos)
 {
     if ((m_featureMask & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
@@ -246,7 +246,7 @@ void Shader::setLightBlock(const std::vector<Light>& lightBuffer, const Vec3& vi
         }
 
         glBindBuffer(GL_UNIFORM_BUFFER, m_lightsUniformBuffer);
-        glBufferData(GL_UNIFORM_BUFFER, lightBuffer.size() * sizeof(Light), lightBuffer.data(), GL_DYNAMIC_DRAW);
+        glBufferData(GL_UNIFORM_BUFFER, lightBuffer.size() * sizeof(LightData), lightBuffer.data(), GL_DYNAMIC_DRAW);
 
         { // try to get uniform block index
             GLuint      blockIndex;
