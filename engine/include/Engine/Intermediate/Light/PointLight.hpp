@@ -6,10 +6,11 @@
 
 #pragma once
 
-#include <vector>
+#include <string> //std::string
+#include <vector> //std::vectorA
 
-#include "Engine/Intermediate/Light/Light.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Intermediate/Light/Light.hpp"
 #include "GPM/Vector3.hpp"
 
 namespace Engine::Intermediate
@@ -32,19 +33,21 @@ protected:
     float m_constant, m_linear, m_quadratic;
 
 public:
-    PointLight() = default;
+    PointLight(const PointLight& other) = delete;
+    PointLight(PointLight&& other)      = default;
+    virtual ~PointLight()               = default;
+
+    PointLight()        = delete;
+    PointLight& operator=(PointLight const& other) = delete;
+    PointLight& operator=(PointLight&& other) = default;
 
     PointLight(Engine::Intermediate::GameObject& owner, const PointLightCreateArg& arg);
 
     PointLight(Engine::Intermediate::GameObject& owner, const Engine::Resources::AmbiantComponent& ambient,
                const Engine::Resources::DiffuseComponent& diffuse, const Engine::Resources::SpecularComponent& specular,
-               float constant, float linear, float quadratic, bool isEnable = true);
+               float constant, float linear, float quadratic);
 
     PointLight(Engine::Intermediate::GameObject& owner, const std::vector<std::string>& params);
-
-    PointLight(const PointLight& other) = default;
-    PointLight(PointLight&& other)      = default;
-    virtual ~PointLight()               = default;
 
     virtual void addToLightToUseBuffer(std::vector<Engine::Resources::LightData>& lb) noexcept override;
 

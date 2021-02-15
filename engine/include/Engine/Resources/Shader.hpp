@@ -78,7 +78,7 @@ public:
     void setMat4(const char* name, const float* value) const;
     void setpVec3(const char* name, unsigned int count, const float* pV) const;
     void setpVec4(const char* name, unsigned int count, const float* pV) const;
-    void setLightBlock(const std::vector<Light>& lightBuffer, const GPM::Vec3& viewPos);
+    void setLightBlock(const std::vector<LightData>& lightBuffer, const GPM::Vec3& viewPos);
     void setMaterialBlock(const MaterialComponent& material);
 
     unsigned int getIdProgramm() const noexcept

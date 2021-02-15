@@ -1,4 +1,5 @@
 #include "Engine/Intermediate/Light/Light.hpp"
+#include "Engine/Intermediate/RenderSystem.hpp"
 
 using namespace GPM;
 using namespace Engine::Intermediate;
@@ -7,39 +8,25 @@ using namespace Engine::Resources;
 Light::Light (Engine::Intermediate::GameObject &      owner, 
                 const AmbiantComponent&             ambient, 
                 const DiffuseComponent&             diffuse, 
-                const SpecularComponent&            specular,
-                bool isEnable)
+                const SpecularComponent&            specular)
     :   Component          {owner},
         m_ambientComp       (ambient),
         m_diffuseComp       (diffuse),
-        m_specularComp      (specular),
-        m_isEnable          (!isEnable)
+        m_specularComp      (specular)
 {
-    enable (isEnable);
+    RenderSystem::getInstance()->addLight(this);
 }
 
 Light::Light (Engine::Intermediate::GameObject &owner, const LightCreateArg&    arg)
     :   Component          {owner},
         m_ambientComp       (arg.ambient),
         m_diffuseComp       (arg.diffuse),
-        m_specularComp      (arg.specular),
-        m_isEnable          (!arg.isEnable)
+        m_specularComp      (arg.specular)
 {
-    enable (arg.isEnable);
+    RenderSystem::getInstance()->addLight(this);
 }
 
 Light::~Light()
 {
-    if (m_isEnable)
-    {
-        enable(false);
-    }
-}
-
-void Light::enable (bool flag) throw() 
-{
-    if(m_isEnable == flag)
-        return;
-    else    
-        m_isEnable = flag;
+    RenderSystem::getInstance()->removeLight(this);
 }

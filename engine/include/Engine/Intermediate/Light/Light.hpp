@@ -11,11 +11,12 @@
 #include "Engine/Intermediate/Component.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Camera.hpp"
-#include "Engine/Resources/ShaderType.hpp"
 #include "Engine/Resources/Color.hpp"
+#include "Engine/Resources/ShaderType.hpp"
 #include "GPM/Vector3.hpp"
 #include "GPM/Vector4.hpp"
 
+// TODO: Light must be a resource
 namespace Engine::Intermediate
 {
 struct LightCreateArg
@@ -23,7 +24,6 @@ struct LightCreateArg
     const Engine::Resources::AmbiantComponent&  ambient;
     const Engine::Resources::DiffuseComponent&  diffuse;
     const Engine::Resources::SpecularComponent& specular;
-    bool                                        isEnable{true};
 };
 
 class Light // TODO: Can be more optimize change information only when light is update
@@ -34,29 +34,26 @@ protected:
     Engine::Resources::DiffuseComponent  m_diffuseComp;
     Engine::Resources::SpecularComponent m_specularComp;
 
-    bool m_isEnable;
-
 public:
     Light(Engine::Intermediate::GameObject& owner, const LightCreateArg& arg);
 
     Light(Engine::Intermediate::GameObject& owner, const Engine::Resources::AmbiantComponent& ambient,
-          const Engine::Resources::DiffuseComponent& diffuse, const Engine::Resources::SpecularComponent& specular,
-          bool isEnable = true);
+          const Engine::Resources::DiffuseComponent& diffuse, const Engine::Resources::SpecularComponent& specular);
 
     Light(const Light& other) = delete;
-    Light(Light&& other)      = delete;
+    Light(Light&& other)      = default;
     virtual ~Light();
 
     Light()        = delete;
     Light& operator=(Light const& other) = delete;
-    Light& operator=(Light&& other) = delete;
+    Light& operator=(Light&& other) = default;
 
     virtual void addToLightToUseBuffer(std::vector<Engine::Resources::LightData>& lb) noexcept
     {
         lb.push_back({m_ambientComp,
                       m_diffuseComp,
                       m_specularComp,
-                      getGameObject().getGlobalPosition(),
+                      getGameObject().getTransform().getGlobalPosition(),
                       0.f,
                       0.f,
                       0.f,
@@ -77,10 +74,6 @@ public:
     virtual const Engine::Resources::SpecularComponent& getSpecular() const noexcept
     {
         return m_specularComp;
-    }
-    virtual bool isEnable() const noexcept
-    {
-        return m_isEnable;
     }
 
     virtual void setGlobalComponent(const Engine::Resources::ColorRGBA& newComponent) noexcept
@@ -122,7 +115,5 @@ public:
     {
         m_specularComp.rgbi = newSpecular;
     }
-
-    virtual void enable(bool flag) throw();
 };
 } /*namespace Engine::Intermediate*/

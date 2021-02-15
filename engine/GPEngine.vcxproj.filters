@@ -52,6 +52,18 @@
     <ClCompile Include="src\MTLParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\directionnalLight.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\light.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pointLight.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spotLight.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -178,6 +190,18 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Light\DirectionnalLight.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Light\Light.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Light\PointLight.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Light\SpotLight.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

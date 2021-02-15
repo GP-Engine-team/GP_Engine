@@ -292,3 +292,34 @@ void RenderSystem::removeCamera(Camera* pCamera) noexcept
         }
     }
 }
+
+
+void RenderSystem::addLight(Light* pLight) noexcept
+{
+    m_pLights.push_back(pLight);
+}
+
+void RenderSystem::updateLightPointer(Light* newPointorLight, Light* exPointorLight) noexcept
+{
+    for (std::vector<Light*>::iterator it = m_pLights.begin(); it != m_pLights.end(); it++)
+    {
+        if ((*it) == exPointorLight)
+        {
+            *it = newPointorLight;
+            return;
+        }
+    }
+}
+
+void RenderSystem::removeLight(Light* pLight) noexcept
+{
+    for (std::vector<Light*>::iterator it = m_pLights.begin(); it != m_pLights.end(); it++)
+    {
+        if ((*it) == pLight)
+        {
+            std::swap<Light*>(m_pLights.back(), (*it));
+            m_pLights.pop_back();
+            return;
+        }
+    }
+}

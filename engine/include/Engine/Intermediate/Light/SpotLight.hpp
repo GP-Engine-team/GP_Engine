@@ -8,72 +8,62 @@
 
 #include <vector>
 
-#include "GPM/Vector3.hpp"
-#include "Engine/Intermediate/Light/PointLight.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Intermediate/Light/PointLight.hpp"
+#include "GPM/Vector3.hpp"
 
 namespace Engine::Intermediate
 {
-    struct SpotLightCreateArg
-    {
-        const Engine::Resources::AmbiantComponent&             ambient; 
-        const Engine::Resources::DiffuseComponent&             diffuse;
-        const Engine::Resources::SpecularComponent&            specular;
+struct SpotLightCreateArg
+{
+    const Engine::Resources::AmbiantComponent&  ambient;
+    const Engine::Resources::DiffuseComponent&  diffuse;
+    const Engine::Resources::SpecularComponent& specular;
 
-        float                                                   constant; 
-        float                                                   linear;
-        float                                                   quadratic;
+    float constant;
+    float linear;
+    float quadratic;
 
-        float                                                   cutOff;
-        float                                                   cutOffExponent;
-        bool                                                    isEnable {true};
+    float cutOff;
+    float cutOffExponent;
+};
 
-    };
+class SpotLight : public PointLight
+{
+protected:
+    float m_cutOff; // specifies the spotlight's radius.
+    float m_cutOffExponent;
 
-    class SpotLight
-        : public PointLight
-    {
-        protected:
-    
-            float m_cutOff;              //specifies the spotlight's radius.
-            float m_cutOffExponent;
+public:
+    SpotLight(const SpotLight& other) = delete;
+    SpotLight(SpotLight&& other)      = default;
+    virtual ~SpotLight()              = default;
 
-        public:
+    SpotLight()        = delete;
+    SpotLight& operator=(SpotLight const& other) = delete;
+    SpotLight& operator=(SpotLight&& other) = default;
 
-            SpotLight ()						= default;
+    /**
+     * @brief Construct a new Spot Light object
+     *
+     * @param pos
+     * @param ambient
+     * @param diffuse
+     * @param specular
+     * @param constant
+     * @param linear
+     * @param quadratic
+     * @param direction
+     * @param cutOff            : in degres : specifies the spotlight's radius
+     * @param cutOffExponent    : in degres : specifies the spotlight's radius attenuation
+     * @param name
+     */
+    SpotLight(Engine::Intermediate::GameObject& owner, const Engine::Resources::AmbiantComponent& ambient,
+              const Engine::Resources::DiffuseComponent& diffuse, const Engine::Resources::SpecularComponent& specular,
+              float constant, float linear, float quadratic, float cutOff, float cutOffExponent);
 
-            /**
-             * @brief Construct a new Spot Light object
-             * 
-             * @param pos 
-             * @param ambient 
-             * @param diffuse 
-             * @param specular 
-             * @param constant 
-             * @param linear 
-             * @param quadratic 
-             * @param direction 
-             * @param cutOff            : in degres : specifies the spotlight's radius
-             * @param cutOffExponent    : in degres : specifies the spotlight's radius attenuation
-             * @param name 
-             */
-            SpotLight(Engine::Intermediate::GameObject& owner,
-                        const Engine::Resources::AmbiantComponent&            ambient, 
-                        const Engine::Resources::DiffuseComponent&            diffuse, 
-                        const Engine::Resources::SpecularComponent&           specular,
-                        float                                                  constant, 
-                        float                                                  linear, 
-                        float                                                  quadratic,
-                        float                                                  cutOff,
-                        float                                                  cutOffExponent,
-                        bool                                                   isEnable = true);
+    SpotLight(Engine::Intermediate::GameObject& owner, SpotLightCreateArg arg);
 
-            SpotLight(Engine::Intermediate::GameObject& owner, SpotLightCreateArg arg);
-            
-            SpotLight (const SpotLight& other)		= default;
-            SpotLight (SpotLight&& other)			= default;
-            virtual ~SpotLight ()				    = default;
-
-            virtual void addToLightToUseBuffer(std::vector<Engine::Resources::LightData>& lb) noexcept override;   
-    };
+    virtual void addToLightToUseBuffer(std::vector<Engine::Resources::LightData>& lb) noexcept override;
+};
 } /*namespace Engine::Intermediate*/

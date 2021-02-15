@@ -182,6 +182,10 @@
     <ClInclude Include="include\Engine\Intermediate\Component.hpp" />
     <ClInclude Include="include\Engine\Intermediate\ComponentChunk.hpp" />
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\Light\DirectionnalLight.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\Light\Light.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\Light\PointLight.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\Light\SpotLight.hpp" />
     <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp" />
     <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp" />
     <ClInclude Include="include\Engine\Resources\Camera.hpp" />
@@ -212,7 +216,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\directionnalLight.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\light.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Material.cpp" />
@@ -220,10 +226,12 @@
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\MTLParser.cpp" />
     <ClCompile Include="src\ObjParser.cpp" />
+    <ClCompile Include="src\pointLight.cpp" />
     <ClCompile Include="src\RendererGLFW_GL46.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ShaderParser.cpp" />
+    <ClCompile Include="src\spotLight.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\WindowGLFW.cpp" />

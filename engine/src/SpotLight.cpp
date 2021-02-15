@@ -13,16 +13,15 @@ SpotLight::SpotLight ( GameObject &            owner,
             float                              linear, 
             float                              quadratic,
             float                              cutOff,
-            float                              cutOffExponent, 
-            bool                               isEnable)
+            float                              cutOffExponent)
 
-:   PointLight          (owner, ambient, diffuse, specular, constant, linear, quadratic, isEnable),
+:   PointLight          (owner, ambient, diffuse, specular, constant, linear, quadratic),
     m_cutOff             (cosf(cutOff * PI / 180.f)),
     m_cutOffExponent     (cosf(cutOffExponent * PI / 180.f))
 {}
 
 SpotLight::SpotLight (GameObject & owner, SpotLightCreateArg arg)
-:   PointLight          (owner, arg.ambient, arg.diffuse, arg.specular, arg.constant, arg.linear, arg.quadratic, arg.isEnable),
+:   PointLight          (owner, arg.ambient, arg.diffuse, arg.specular, arg.constant, arg.linear, arg.quadratic),
     m_cutOff             (cosf(arg.cutOff * PI / 180.f)),
     m_cutOffExponent     (cosf(arg.cutOffExponent * PI / 180.f))
 {}
@@ -32,7 +31,8 @@ void SpotLight::addToLightToUseBuffer(std::vector<LightData>& lb) noexcept
     lb.push_back({  m_ambientComp, 
                     m_diffuseComp, 
                     m_specularComp,
-                    getGameObject().getGlobalPosition(), 2.f,
-                    m_constant, m_linear, m_quadratic, m_cutOffExponent,
-                    m_gameObject.getVecForward(), m_cutOff});
+                    getGameObject().getTransform().getGlobalPosition(), 2.f,
+                    m_constant, m_linear, m_quadratic, m_cutOffExponent, 
+                    getGameObject().getTransform().getVectorForward(),
+                  m_cutOff});
 }
