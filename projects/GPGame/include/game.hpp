@@ -3,6 +3,7 @@
 
 #include "Engine/Core/Game/AbstractGame.hpp"
 #include "GameApiMacros.hpp"
+#include <iostream>
 
 class Game final : public AbstractGame
 {

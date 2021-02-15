@@ -96,13 +96,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine/src;$(SolutionDir)/../../engine/third_party/include;$(SolutionDir)/../../engine/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -112,7 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine/src;$(SolutionDir)/../../engine/third_party/include;$(SolutionDir)/../../engine/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -121,6 +128,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -128,13 +142,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine/src;$(SolutionDir)/../../engine/third_party/include;$(SolutionDir)/../../engine/include;$(SolutionDir)src;$(SolutionDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -144,7 +165,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine/src;$(SolutionDir)/../../engine/third_party/include;$(SolutionDir)/../../engine/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -153,6 +174,13 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(ProjectDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\env-master\env-master\cygwin64\home\utilisateur\Linux\GameEngine3\include2\GE\Core\Rendering\Renderer\iRenderer.hpp" />
@@ -166,6 +194,7 @@
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp" />
     <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
+    <ClInclude Include="include\Engine\Foo.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

@@ -48,6 +48,9 @@
     <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Foo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Log.inl">
