@@ -10,6 +10,9 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "GPM/Conversion.hpp"
 #include "GPM/Matrix4.hpp"
+#include "GPM/Vector3.hpp"
+#include "GPM/Vector4.hpp"
+#include "GPM/Quaternion.hpp"
 #include "GPM/Transform.hpp"
 #include <vector>
 
@@ -49,6 +52,22 @@ public:
     {
         return m_isDirty;
     }
+
+    GPM::Vec3 getGlobalPosition() const noexcept
+    {
+        return m_transform.translation();
+    }
+
+    GPM::Vec3 getGlobalScale() const noexcept
+    {
+        return m_transform.scaling();
+    }
+
+    GPM::Quaternion getGlobalRotation() const noexcept
+    {
+        return toQuaternion(m_transform.rotation());
+    }
+
 
     /**
      * @brief update Mesh matrix
@@ -98,6 +117,18 @@ public:
         m_isDirty = true;
     }
 
+    GPM::Vec3 getVectorForward() const noexcept
+    {
+        return m_transform.forward().normalized();
+    }
+    GPM::Vec3 getVectorRight() const noexcept
+    {
+        return m_transform.right().normalized();
+    }
+    GPM::Vec3 getVectorUp() const noexcept
+    {
+        return m_transform.up().normalized();
+    }
 
     inline GPM::SplitTransform& getSpacialAttribut()
     {
