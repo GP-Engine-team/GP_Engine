@@ -9,17 +9,6 @@
 
 using namespace GPE;
 
-GameObject::GameObject(const CreateArg& arg)
-    : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)},
-      m_pComponents{}
-{
-}
-
-GameObject::GameObject()
-    : m_name{""}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
-{
-}
-
 void GameObject::updateSelfAndChildren() noexcept
 {
     for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
@@ -147,7 +136,7 @@ std::list<Component*>::iterator GameObject::destroyComponent(Component* pCompone
     return m_pComponents.end();
 }
 
-std::string GameObject::getRelativePath()
+std::string GameObject::getRelativePath() const noexcept
 {
     std::string path = this->getName();
     GameObject* parentIt = this->parent;

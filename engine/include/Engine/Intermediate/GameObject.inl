@@ -1,7 +1,19 @@
 #include "Engine/Intermediate/GameObject.hpp"
 
+GameObject::GameObject(const CreateArg& arg)
+    : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this,
+                                                                                                 arg.transformArg)},
+      m_pComponents{}
+{
+}
+
+GameObject::GameObject()
+    : m_name{""}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
+{
+}
+
 template <typename T>
-void GameObject::updateComponentLink(const T* oldPtr, T* newPtr)
+void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept
 {
     GPE_ASSERT(oldPtr != nullptr, "oldPtr canno't be nullptr");
     GPE_ASSERT(newPtr != nullptr, "newPtr canno't be nullptr");
@@ -42,23 +54,23 @@ T* GameObject::getComponent() noexcept
     return nullptr;
 }
 
-inline const std::string& GameObject::getName() const noexcept
+const std::string& GameObject::getName() const noexcept
 {
     return m_name;
 }
 
-inline void GameObject::setName(const char* newName) noexcept
+void GameObject::setName(const char* newName) noexcept
 {
     m_name = newName;
 }
 
-constexpr inline const TransformComponent& GameObject::getTransform()
+constexpr const TransformComponent& GameObject::getTransform()
     const noexcept
 {
     return *m_pTransform;
 }
 
-constexpr inline TransformComponent& GameObject::getTransform() noexcept
+constexpr TransformComponent& GameObject::getTransform() noexcept
 {
     return *m_pTransform;
 }
@@ -74,7 +86,7 @@ GameObject& GameObject::addChild(Args&&... args) noexcept
 }
 
 template <typename T>
-std::vector<T*> GameObject::getComponents()
+std::vector<T*> GameObject::getComponents() noexcept
 {
     std::vector<T*> toReturn;
     for (std::unique_ptr<Component>& uniquePtrComponent : m_pComponents)
@@ -89,28 +101,28 @@ std::vector<T*> GameObject::getComponents()
     return toReturn;
 }
 
-constexpr inline std::list<Component*>& GameObject::getComponents() noexcept
+constexpr std::list<Component*>& GameObject::getComponents() noexcept
 {
     return m_pComponents;
 }
 
-constexpr inline const std::list<Component*>& GameObject::getComponents()
+constexpr const std::list<Component*>& GameObject::getComponents()
     const noexcept
 {
     return m_pComponents;
 }
 
-inline void GameObject::setTag(const std::string& newTag)
+void GameObject::setTag(const std::string& newTag) noexcept
 {
     m_tag = newTag;
 }
 
-constexpr inline const std::string& GameObject::getTag() const
+constexpr const std::string& GameObject::getTag() const noexcept
 {
     return m_tag;
 }
 
-inline std::list<std::unique_ptr<GameObject>>::iterator 
+std::list<std::unique_ptr<GameObject>>::iterator 
     GameObject::destroyChild(const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept
 {
     return children.erase(it);
@@ -133,7 +145,7 @@ void GameObject::destroyImmediateUniqueComponent() noexcept
     };
 }
 
-inline void GameObject::setActive(bool newState)
+void GameObject::setActive(bool newState)
 {
     for (auto&& i : m_pComponents)
     {
@@ -141,30 +153,30 @@ inline void GameObject::setActive(bool newState)
     }
 }
 
-inline std::list<Component*>::iterator GameObject::
+std::list<Component*>::iterator GameObject::
     destroyComponent(const std::list<Component*>::iterator& it) noexcept
 {
     return m_pComponents.erase(it);
 }
 
-inline void GameObject::destroy() noexcept
+void GameObject::destroy() noexcept
 {
     /*set flag to be delete by it parent*/
     m_isDead = true;
     // m_isDirty = true;
 }
 
-inline void GameObject::destroyImmediate() noexcept
+void GameObject::destroyImmediate() noexcept
 {
     parent->destroyChild(this);
 }
 
-constexpr inline bool GameObject::operator==(GameObject const& other) noexcept
+constexpr bool GameObject::operator==(GameObject const& other) noexcept
 {
     return (this == &other);
 }
 
-inline bool GameObject::compareTag(const std::string& toCompare) const noexcept
+bool GameObject::compareTag(const std::string& toCompare) const noexcept
 {
     if (toCompare.compare(m_tag) == 0)
         return true;

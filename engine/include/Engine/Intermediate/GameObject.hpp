@@ -12,7 +12,7 @@
 #include <string>                                     //std::string
 #include <vector>                                     //std::vector
 
-//in Inl
+// in Inl
 #include "Engine/Intermediate/DataChunk.hpp"
 
 namespace GPE
@@ -42,11 +42,13 @@ public:
 
 public: // TODO : Protected method ?
     template <typename T>
-    void updateComponentLink(const T* oldPtr, T* newPtr);
+    void updateComponentLink(const T* oldPtr, T* newPtr) noexcept;
 
 public:
+    inline
     GameObject(const CreateArg& arg);
 
+    inline
     GameObject();
 
     inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is available
@@ -187,17 +189,17 @@ public:
     [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;
 
     template <typename T>
-    [[nodiscard]] std::vector<T*> getComponents();
+    [[nodiscard]] std::vector<T*> getComponents() noexcept;
 
     [[nodiscard]] inline constexpr std::list<Component*>& getComponents() noexcept;
 
     [[nodiscard]] inline constexpr const std::list<Component*>& getComponents() const noexcept;
 
-    [[nodiscard]] std::string getRelativePath();
+    [[nodiscard]] std::string getRelativePath() const noexcept;
 
-    inline void setTag(const std::string& newTag);
+    inline void setTag(const std::string& newTag) noexcept;
 
-    [[nodiscard]] inline constexpr const std::string& getTag() const;
+    [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
     [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 };
