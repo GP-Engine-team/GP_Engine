@@ -43,9 +43,9 @@ public:
     PointLight& operator=(PointLight const& other) = delete;
     PointLight& operator=(PointLight&& other) = default;
 
-    inline PointLight(GameObject& owner, const CreateArg& arg) noexcept;
+    PointLight(GameObject& owner, const CreateArg& arg) noexcept;
 
-    inline PointLight(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
+    PointLight(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
                       const SpecularComponent& specular, float constant, float linear, float quadratic) noexcept;
 
     void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;

@@ -254,6 +254,7 @@
     <None Include="include\Engine\Resources\Model.inl" />
     <None Include="include\Engine\Resources\ResourcesManager.inl" />
     <None Include="include\Engine\Resources\Shader.inl" />
+    <None Include="include\Engine\Resources\Texture.inl" />
     <None Include="third_party\gpm\src\conversion.inl" />
     <None Include="third_party\gpm\src\Matrix3.inl" />
     <None Include="third_party\gpm\src\Matrix4.inl" />

@@ -42,10 +42,8 @@ public:
     DirectionalLight& operator=(DirectionalLight const& other) = delete;
     DirectionalLight& operator=(DirectionalLight&& other) = default;
 
-    inline
     DirectionalLight(GameObject& owner, const CreateArg& arg) noexcept;
 
-    inline
     DirectionalLight(GameObject& owner, const GPM::Vec3& direction, const AmbiantComponent& ambient,
                      const DiffuseComponent& diffuse, const SpecularComponent& specular) noexcept;
 
