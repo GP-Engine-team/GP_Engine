@@ -210,24 +210,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
-    <None Include="src\Format.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\GameObject.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\Log.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\ResourcesManager.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\TimeSystem.inl">
-      <Filter>src</Filter>
-    </None>
-    <None Include="src\WindowGLFW.inl">
-      <Filter>src</Filter>
-    </None>
     <None Include="third_party\gpm\src\conversion.inl">
       <Filter>third_party\gpm</Filter>
     </None>
@@ -253,11 +235,29 @@
       <Filter>third_party\gpm</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
-    <None Include="src\Component.inl">
-      <Filter>src\WIP</Filter>
+    <None Include="include\Engine\Intermediate\Component.inl">
+      <Filter>include</Filter>
     </None>
-    <None Include="src\DataChunk.inl">
-      <Filter>src\WIP</Filter>
+    <None Include="include\Engine\Intermediate\DataChunk.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Intermediate\GameObject.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Core\Tools\Format.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Core\Debug\Log.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Resources\ResourcesManager.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Core\TimeSystem\TimeSystem.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl">
+      <Filter>include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

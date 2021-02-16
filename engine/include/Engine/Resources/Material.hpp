@@ -13,7 +13,7 @@
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/Resources/Type.hpp"
 
-namespace Engine::Resources
+namespace GPE
 {
 class Material
 {
@@ -89,4 +89,4 @@ public:
         return m_name;
     }
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

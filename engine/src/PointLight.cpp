@@ -1,7 +1,6 @@
 #include "Engine/Resources/Light/PointLight.hpp"
 
-using namespace Engine::Intermediate;
-using namespace Engine::Resources;
+using namespace GPE;
 
 PointLight::PointLight(GameObject& owner, const CreateArg& arg)
     : Light(owner, arg.ambient, arg.diffuse, arg.specular), m_constant(arg.constant), m_linear(arg.linear),

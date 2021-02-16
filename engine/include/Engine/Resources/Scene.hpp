@@ -8,7 +8,7 @@
 
 #include "Engine/Resources/ResourcesManager.hpp"
 
-namespace Engine::Resources
+namespace GPE
 {
     class Scene
     {
@@ -51,4 +51,4 @@ namespace Engine::Resources
         constexpr inline
         Scene& operator=(Scene && other) noexcept			= delete;    
     };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

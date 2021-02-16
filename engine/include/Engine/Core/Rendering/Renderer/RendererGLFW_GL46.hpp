@@ -5,7 +5,7 @@
  */
 #pragma once
 
-namespace Engine::Core::Renderering
+namespace GPE
 {
 class Renderer
 {
@@ -31,4 +31,4 @@ public:
 public:
     void swapBuffer() noexcept;
 };
-} // namespace Engine::Core::Renderering
+} // namespace GPE

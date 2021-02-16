@@ -12,7 +12,7 @@
 #include "Engine/Intermediate/Component.hpp"
 #include "Engine/Resources/Material.hpp"
 
-namespace Engine::Resources
+namespace GPE
 {
 
 class Mesh;
@@ -58,7 +58,7 @@ struct ModelPart
     const RenderPassKey key;
 
     class Model*                 pModel         = nullptr;
-    Engine::Resources::Material* pMaterialToUse = nullptr;
+    Material* pMaterialToUse = nullptr;
 
     const bool         useBackFaceCulling = false;
     const unsigned int indexStart         = 0;
@@ -70,7 +70,7 @@ struct ModelPart
     }
 };
 
-class Model : public Engine::Intermediate::Component
+class Model : public Component
 {
 public:
     struct CreateArg
@@ -102,14 +102,14 @@ private:
     void initTextureBufferWithMTLId();
 
 public:
-    Model(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
+    Model(GameObject& owner, const CreateArg& arg);
 
     Model(const Model& other) noexcept;
     Model(Model&& other) noexcept;
     virtual ~Model();
 
     /*
-    Model(Engine::Intermediate::GameObject& refGameObject, std::vector<std::string>& params,
+    Model(GameObject& refGameObject, std::vector<std::string>& params,
           ResourcesManager& ressourcesManager); // load construtor
     */
 
@@ -152,4 +152,4 @@ public:
         return m_isLoadInGPU;
     }
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

@@ -10,9 +10,7 @@
 #include "Engine/Core/Parsers/ParserTool.hpp"
 #include "glad/glad.h"
 
-using namespace Engine::Core::Parsers;
-using namespace Engine::Core::Debug;
-using namespace Engine::Resources;
+using namespace GPE;
 
 Texture::Texture(const char* path, bool flipTexture, bool loadInGPU) : m_id(0), m_isLoadInGPU(false), m_path(path)
 {

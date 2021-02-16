@@ -9,7 +9,14 @@
 #include <array>        //std::array
 #include <shared_mutex> //std::shared_mutex
 #include <vector>       //std::vector
-namespace Engine::Intermediate
+#include <utility> //std::swap
+
+//In inl
+#include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Core/Debug/Assert.hpp"
+#include "Engine/Core/Tools/BranchPrediction.hpp"
+
+namespace GPE
 {
 
 /**
@@ -78,6 +85,6 @@ DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent, TSize>::m_pInsta
 template <typename TStoredComponent, int TSize>
 std::shared_mutex DataChunk<TStoredComponent, TSize>::m_mutex;
 
-} /*namespace Engine::Intermediate*/
-
 #include "DataChunk.inl"
+
+} /*namespace GPE*/

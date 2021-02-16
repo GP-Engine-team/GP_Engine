@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\gpm\src;$(SolutionDir)third_party\gpm\include;$(SolutionDir)src;$(SolutionDir)include;$(SolutionDir)third_party\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third_party\gpm\src;$(SolutionDir)third_party\gpm\include;$(SolutionDir)include;$(SolutionDir)third_party\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -115,7 +115,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\gpm\src;$(SolutionDir)third_party\gpm\include;$(SolutionDir)src;$(SolutionDir)include;$(SolutionDir)third_party\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third_party\gpm\src;$(SolutionDir)third_party\gpm\include;$(SolutionDir)include;$(SolutionDir)third_party\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -134,7 +134,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\gpm\src;$(SolutionDir)third_party\gpm\include;$(SolutionDir)src;$(SolutionDir)include;$(SolutionDir)third_party\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third_party\gpm\src;$(SolutionDir)third_party\gpm\include;$(SolutionDir)include;$(SolutionDir)third_party\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -153,7 +153,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)third_party\gpm\src;$(SolutionDir)third_party\gpm\include;$(SolutionDir)src;$(SolutionDir)include;$(SolutionDir)third_party\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)third_party\gpm\src;$(SolutionDir)third_party\gpm\include;$(SolutionDir)include;$(SolutionDir)third_party\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -241,14 +241,14 @@
   <ItemGroup>
     <None Include=".clang-format" />
     <None Include="ClassDiagram.cd" />
-    <None Include="src\Component.inl" />
-    <None Include="src\DataChunk.inl" />
-    <None Include="src\Format.inl" />
-    <None Include="src\GameObject.inl" />
-    <None Include="src\Log.inl" />
-    <None Include="src\ResourcesManager.inl" />
-    <None Include="src\TimeSystem.inl" />
-    <None Include="src\WindowGLFW.inl" />
+    <None Include="include\Engine\Core\Debug\Log.inl" />
+    <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl" />
+    <None Include="include\Engine\Core\TimeSystem\TimeSystem.inl" />
+    <None Include="include\Engine\Core\Tools\Format.inl" />
+    <None Include="include\Engine\Intermediate\Component.inl" />
+    <None Include="include\Engine\Intermediate\DataChunk.inl" />
+    <None Include="include\Engine\Intermediate\GameObject.inl" />
+    <None Include="include\Engine\Resources\ResourcesManager.inl" />
     <None Include="third_party\gpm\src\conversion.inl" />
     <None Include="third_party\gpm\src\Matrix3.inl" />
     <None Include="third_party\gpm\src\Matrix4.inl" />

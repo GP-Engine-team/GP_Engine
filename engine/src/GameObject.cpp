@@ -7,7 +7,7 @@
 #include <istream>
 #include <sstream>
 
-using namespace Engine::Intermediate;
+using namespace GPE;
 
 GameObject::GameObject(const CreateArg& arg)
     : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)},
@@ -76,7 +76,7 @@ GameObject* GameObject::getChild(const std::string& path) noexcept
         }
         if (!isFound)
         {
-            Engine::Core::Debug::Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
+            Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
                                                  m_name + "\"" + " with path : \"" + path + "\"");
             return nullptr;
         }
@@ -114,7 +114,7 @@ void GameObject::destroyChild(const std::string& path) noexcept
 
         if (!isFound)
         {
-            Engine::Core::Debug::Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
+            Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
                                                  m_name + "\"" + " with path : \"" + path + "\"");
             return;
         }

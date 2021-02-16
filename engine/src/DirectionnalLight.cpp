@@ -2,9 +2,8 @@
 
 #include <string>
 
-using namespace Engine::Intermediate;
+using namespace GPE;
 using namespace GPM;
-using namespace Engine::Resources;
 
 DirectionnalLight::DirectionnalLight(GameObject& owner, const CreateArg& arg)
     : Light{owner, arg.ambient, arg.diffuse, arg.specular}, m_direction{arg.direction.normalized()}

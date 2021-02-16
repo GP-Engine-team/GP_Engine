@@ -8,10 +8,8 @@
 #include "Engine/Intermediate/RenderSystem.hpp"
 #include "GPM/Transform.hpp"
 
-using namespace Engine::Resources;
+using namespace GPE;
 using namespace GPM;
-using namespace Engine::Core::Debug;
-using namespace Engine::Intermediate;
 
 Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) : Component(owner)
 {

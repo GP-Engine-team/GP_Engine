@@ -8,7 +8,7 @@
 
 #include <string>
 
-namespace Engine::Core::Parsers
+namespace GPE
 {
 // singletone
 class ShaderParser
@@ -36,4 +36,4 @@ public:
      */
     static void parseIncludesShader(std::string& sourceCode);
 };
-} /*namespace Engine::Core::Parsers*/
+} /*namespace GPE*/

@@ -16,10 +16,10 @@
 #include "GPM/Vector3.hpp"
 #include "GPM/Vector4.hpp"
 
-namespace Engine::Resources
+namespace GPE
 {
 class Light // TODO: Can be more optimize change information only when light is update
-    : public Engine::Intermediate::Component
+    : public Component
 {
 public:
     struct CreateArg
@@ -35,9 +35,9 @@ protected:
     SpecularComponent m_specularComp;
 
 public:
-    Light(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
+    Light(GameObject& owner, const CreateArg& arg);
 
-    Light(Engine::Intermediate::GameObject& owner, const AmbiantComponent& ambient,
+    Light(GameObject& owner, const AmbiantComponent& ambient,
           const DiffuseComponent& diffuse, const SpecularComponent& specular);
 
     Light(const Light& other) = delete;
@@ -116,4 +116,4 @@ public:
         m_specularComp.rgbi = newSpecular;
     }
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

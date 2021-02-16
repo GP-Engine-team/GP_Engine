@@ -13,7 +13,7 @@
 #include <string>                     //std::string
 #include <vector>                     //std::vector
 
-namespace Engine::Resources
+namespace GPE
 {
 struct Indice
 {
@@ -79,4 +79,4 @@ struct Size
 {
     int width, height;
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

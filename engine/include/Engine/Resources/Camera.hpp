@@ -11,9 +11,9 @@
 #include "Engine/Intermediate/Component.hpp"
 #include "GPM/Matrix4.hpp"
 
-namespace Engine::Resources
+namespace GPE
 {
-class Camera : public Engine::Intermediate::Component
+class Camera : public Component
 {
 public:
     enum class EProjectionType
@@ -78,7 +78,7 @@ public:
      * @param fovY      : by default to 70 (human FovY)
      * @param name
      */
-    Camera(Engine::Intermediate::GameObject& owner, const PerspectiveCreateArg& arg);
+    Camera(GameObject& owner, const PerspectiveCreateArg& arg);
 
     /**
      * @brief Construct a new orthographic camera object
@@ -93,7 +93,7 @@ public:
      * @param farVal
      * @param name
      */
-    Camera(Engine::Intermediate::GameObject& owner, const OrthographicCreateArg& arg);
+    Camera(GameObject& owner, const OrthographicCreateArg& arg);
 
     /**
      * @brief Set the Fov Y object
@@ -141,4 +141,4 @@ public:
         return m_projection;
     }
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

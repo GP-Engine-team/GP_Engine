@@ -6,7 +6,7 @@
 
 #pragma once
 
-namespace Engine::Intermediate
+namespace GPE
 {
 class GameObject;
 
@@ -33,6 +33,7 @@ public:
 
     constexpr inline void setActive(bool newState) noexcept;
 };
-} // namespace Engine::Intermediate
 
 #include "Component.inl"
+
+} // namespace GPE

@@ -12,7 +12,7 @@
 #include "Engine/Resources/Light/PointLight.hpp"
 #include "GPM/Vector3.hpp"
 
-namespace Engine::Resources
+namespace GPE
 {
 class SpotLight : public PointLight
 {
@@ -59,12 +59,12 @@ public:
      * @param cutOffExponent    : in degres : specifies the spotlight's radius attenuation
      * @param name
      */
-    SpotLight(Engine::Intermediate::GameObject& owner, const AmbiantComponent& ambient,
+    SpotLight(GameObject& owner, const AmbiantComponent& ambient,
               const DiffuseComponent& diffuse, const SpecularComponent& specular,
               float constant, float linear, float quadratic, float cutOff, float cutOffExponent);
 
-    SpotLight(Engine::Intermediate::GameObject& owner, CreateArg arg);
+    SpotLight(GameObject& owner, CreateArg arg);
 
     virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

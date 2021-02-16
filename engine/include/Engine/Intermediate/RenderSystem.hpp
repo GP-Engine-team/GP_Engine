@@ -16,7 +16,7 @@
 #include "Engine/Resources/Model.hpp"
 #include "Engine/Resources/Shader.hpp"
 
-namespace Engine::Intermediate
+namespace GPE
 {
 
 /**
@@ -37,18 +37,18 @@ private:
     static std::shared_mutex m_mutex;
 
 protected:
-    std::vector<Engine::Resources::Model*>  m_pModels;
-    std::vector<Engine::Resources::Camera*> m_pCameras;
-    std::vector<Engine::Resources::Light*>  m_pLights;
+    std::vector<Model*>  m_pModels;
+    std::vector<Camera*> m_pCameras;
+    std::vector<Light*>  m_pLights;
 
     unsigned int               m_currentShaderId                  = 0;
     unsigned int               m_currentTextureId                 = 0;
     unsigned int               m_currentMeshId                    = 0;
-    Engine::Resources::Shader* m_currentPShaderUse                = nullptr;
+    Shader* m_currentPShaderUse                = nullptr;
     bool                       m_currentBackFaceCullingModeEnable = false;
 
 protected:
-    void tryToBindShader(Engine::Resources::Shader* pShader);
+    void tryToBindShader(Shader* pShader);
     void tryToBindTexture(unsigned int textureId);
     void tryToBindMesh(unsigned int meshId);
     void tryToSetAlphaEnabled(bool alphaEnabled);
@@ -73,28 +73,28 @@ public:
      * @param pModel
      */
     // TODO: Remove this shit and create variadic templated system
-    void addModel(Engine::Resources::Model* pModel) noexcept;
+    void addModel(Model* pModel) noexcept;
 
-    void updateModelPointer(Engine::Resources::Model* newPointerModel,
-                            Engine::Resources::Model* exPointerModel) noexcept;
+    void updateModelPointer(Model* newPointerModel,
+                            Model* exPointerModel) noexcept;
 
-    void removeModel(Engine::Resources::Model* pModel) noexcept;
-
-    // TODO: Remove this shit and create variadic templated system
-    void addCamera(Engine::Resources::Camera* pCamera) noexcept;
-
-    void updateCameraPointer(Engine::Resources::Camera* newPointerCamera,
-                             Engine::Resources::Camera* exPointerCamera) noexcept;
-
-    void removeCamera(Engine::Resources::Camera* pCamera) noexcept;
+    void removeModel(Model* pModel) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
-    void addLight(Engine::Resources::Light* pLight) noexcept;
+    void addCamera(Camera* pCamera) noexcept;
 
-    void updateLightPointer(Engine::Resources::Light* newPointerLight,
-                            Engine::Resources::Light* exPointerLight) noexcept;
+    void updateCameraPointer(Camera* newPointerCamera,
+                             Camera* exPointerCamera) noexcept;
 
-    void removeLight(Engine::Resources::Light* pLight) noexcept;
+    void removeCamera(Camera* pCamera) noexcept;
+
+    // TODO: Remove this shit and create variadic templated system
+    void addLight(Light* pLight) noexcept;
+
+    void updateLightPointer(Light* newPointerLight,
+                            Light* exPointerLight) noexcept;
+
+    void removeLight(Light* pLight) noexcept;
 
     /**
      * @brief This is the static method that controls the access to the singleton
@@ -123,4 +123,4 @@ public:
     }
 };
 
-} /*namespace Engine::Intermediate*/
+} /*namespace GPE*/

@@ -1,19 +1,14 @@
-
 #include "Engine/Intermediate/DataChunk.hpp"
 
-#include <utility> //std::swap
-
-#include "Engine/Core/Tools/BranchPrediction.hpp"
-
 template <typename TStoredComponent, int TSize>
-constexpr inline Engine::Intermediate::DataChunk<TStoredComponent, TSize>::DataChunk() noexcept
+constexpr inline DataChunk<TStoredComponent, TSize>::DataChunk() noexcept
 {
     m_components.reserve(TSize / sizeof(TStoredComponent));
 }
 
 template <typename TStoredComponent, int TSize>
 template <typename... Args>
-TStoredComponent& Engine::Intermediate::DataChunk<TStoredComponent, TSize>::addComponent(Args&&... args) noexcept
+TStoredComponent& DataChunk<TStoredComponent, TSize>::addComponent(Args&&... args) noexcept
 {
     std::unique_lock lock(m_mutex);
 
@@ -22,7 +17,7 @@ TStoredComponent& Engine::Intermediate::DataChunk<TStoredComponent, TSize>::addC
 }
 
 template <typename TStoredComponent, int TSize>
-void Engine::Intermediate::DataChunk<TStoredComponent, TSize>::destroyComponent(
+void DataChunk<TStoredComponent, TSize>::destroyComponent(
     const TStoredComponent* componentToDestroy)
 {
     std::unique_lock lock(m_mutex);
@@ -41,7 +36,7 @@ void Engine::Intermediate::DataChunk<TStoredComponent, TSize>::destroyComponent(
 }
 
 template <typename TStoredComponent, int TSize>
-Engine::Intermediate::DataChunk<TStoredComponent, TSize>* Engine::Intermediate::DataChunk<TStoredComponent,
+DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent,
                                                                                           TSize>::getInstance() noexcept
 {
     // double same if to avoid to lock mutex

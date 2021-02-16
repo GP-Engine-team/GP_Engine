@@ -1,8 +1,7 @@
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 
-using namespace Engine::Core::Debug;
-using namespace Engine::Resources;
+using namespace GPE;
 
 Material::Material(const CreateArgWithTexture& arg) : m_comp(arg.comp), m_pDiffuseTexture(), m_name(arg.name)
 {

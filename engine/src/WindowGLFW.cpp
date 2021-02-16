@@ -5,9 +5,7 @@
 
 #include <GLFW/glfw3.h>
 
-using namespace Engine::Core::Renderering;
-using namespace Engine::Core::Tools;
-using namespace Engine::Core::Debug;
+using namespace GPE;
 using namespace std;
 
 Window::Window(const WindowCreateArg& arg) noexcept
@@ -53,7 +51,7 @@ Window::~Window() noexcept
     Log::log("GLFW window release");
 }
 
-void Engine::Core::Renderering::Window::getSize(int& width, int& height) const noexcept
+void Window::getSize(int& width, int& height) const noexcept
 {
     glfwGetWindowSize(m_window, &width, &height);
 }

@@ -8,9 +8,7 @@
 #include "Engine/Resources/Color.hpp"
 
 using namespace GPM;
-using namespace Engine::Resources;
-using namespace Engine::Core::Debug;
-using namespace Engine::Core::Parsers;
+using namespace GPE;
 using namespace std;
 
 // TODO:OpenGL must coincide with the openGl context

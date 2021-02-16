@@ -10,9 +10,7 @@
 #include "GPM/Matrix3.hpp"
 #include "GPM/Matrix4.hpp"
 
-using namespace Engine::Resources;
-using namespace Engine::Intermediate;
-using namespace Engine::Core::Debug;
+using namespace GPE;
 using namespace GPM;
 
 Shader*                m_pShader        = nullptr;

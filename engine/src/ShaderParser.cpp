@@ -5,8 +5,7 @@
 #include <iostream>
 #include <sstream>
 
-using namespace Engine::Core::Parsers;
-using namespace Engine::Core::Debug;
+using namespace GPE;
 
 void ShaderParser::parseIncludesShader(std::string& sourceCode)
 {

@@ -1,11 +1,11 @@
 #include "Engine/Core/Debug/Log.hpp"
 
-inline void Engine::Core::Debug::Log::logFileHeader() noexcept
+inline void Log::logFileHeader() noexcept
 {
     logHeading();
 }
 
-inline void Engine::Core::Debug::Log::closeAndTryToCreateFile() noexcept
+inline void Log::closeAndTryToCreateFile() noexcept
 {
     fileLog.close();
 
@@ -13,7 +13,7 @@ inline void Engine::Core::Debug::Log::closeAndTryToCreateFile() noexcept
         std::remove(fileLogPath.c_str());
 }
 
-inline void Engine::Core::Debug::Log::logAddMsg(const std::string& msg) noexcept
+inline void Log::logAddMsg(const std::string& msg) noexcept
 {
     if (!fileLog.is_open())
         return;
@@ -26,7 +26,7 @@ inline void Engine::Core::Debug::Log::logAddMsg(const std::string& msg) noexcept
     std::cout.rdbuf(coutbuf); // reset to standard output again
 }
 
-inline void Engine::Core::Debug::Log::logHeading() noexcept
+inline void Log::logHeading() noexcept
 {
     std::string msgLog;
     msgLog += "================================\n";
@@ -39,7 +39,7 @@ inline void Engine::Core::Debug::Log::logHeading() noexcept
     logAddMsg(msgLog);
 }
 
-inline void Engine::Core::Debug::Log::log(const std::string& msg) noexcept
+inline void Log::log(const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
@@ -52,7 +52,7 @@ inline void Engine::Core::Debug::Log::log(const std::string& msg) noexcept
     logAddMsg(msgLog);
 }
 
-inline void Engine::Core::Debug::Log::logError(const std::string& msg) noexcept
+inline void Log::logError(const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
@@ -88,7 +88,7 @@ inline void Engine::Core::Debug::Log::logError(const std::string& msg) noexcept
     logAddMsg(msgLog);
 }
 
-inline void Engine::Core::Debug::Log::logWarning(const std::string& msg) noexcept
+inline void Log::logWarning(const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
@@ -124,7 +124,7 @@ inline void Engine::Core::Debug::Log::logWarning(const std::string& msg) noexcep
     logAddMsg(msgLog);
 }
 
-inline void Engine::Core::Debug::Log::logTips(const std::string& msg) noexcept
+inline void Log::logTips(const std::string& msg) noexcept
 {
     std::string msgLog;
     msgLog += "GPEngine: ";
@@ -160,47 +160,47 @@ inline void Engine::Core::Debug::Log::logTips(const std::string& msg) noexcept
     logAddMsg(msgLog);
 }
 
-inline void Engine::Core::Debug::Log::logInitializationStart(const std::string& elem) noexcept
+inline void Log::logInitializationStart(const std::string& elem) noexcept
 {
     log((std::string(elem) + " being initialized...").c_str());
 }
 
-inline void Engine::Core::Debug::Log::logInitializationStep(const std::string& elem, unsigned int count) noexcept
+inline void Log::logInitializationStep(const std::string& elem, unsigned int count) noexcept
 {
     log((std::string(elem) + " initialization [" + std::to_string(count) + "%]").c_str());
 }
 
-inline void Engine::Core::Debug::Log::logInitializationEnd(const std::string& elem) noexcept
+inline void Log::logInitializationEnd(const std::string& elem) noexcept
 {
     log((std::string(elem) + " initialization completed").c_str());
 }
 
-inline void Engine::Core::Debug::Log::addSetting(uint8_t flag) noexcept
+inline void Log::addSetting(uint8_t flag) noexcept
 {
     settings |= flag;
 }
 
-inline void Engine::Core::Debug::Log::removeSetting(uint8_t flag) noexcept
+inline void Log::removeSetting(uint8_t flag) noexcept
 {
     settings &= ~flag;
 }
 
-inline bool Engine::Core::Debug::Log::getSettingState(Engine::Core::Debug::Log::ESetting setting) noexcept
+inline bool Log::getSettingState(Log::ESetting setting) noexcept
 {
     return settings & setting;
 }
 
-inline std::string Engine::Core::Debug::Log::getDateAndTimeStrFileFormat() noexcept
+inline std::string Log::getDateAndTimeStrFileFormat() noexcept
 {
     return getDateStr('_') + std::string(1, '_') + getTimeStr('_');
 }
 
-inline std::string Engine::Core::Debug::Log::getDateAndTimeStr() noexcept
+inline std::string Log::getDateAndTimeStr() noexcept
 {
     return getDateStr() + std::string(1, ' ') + getTimeStr();
 }
 
-inline std::string Engine::Core::Debug::Log::getTimeStr(char delimitator) noexcept
+inline std::string Log::getTimeStr(char delimitator) noexcept
 {
     struct tm newtime;
     time_t now = time(0);
@@ -213,7 +213,7 @@ inline std::string Engine::Core::Debug::Log::getTimeStr(char delimitator) noexce
     return rst;
 }
 
-inline std::string Engine::Core::Debug::Log::getDateStr(char delimitator) noexcept
+inline std::string Log::getDateStr(char delimitator) noexcept
 {
     struct tm newtime;
     time_t now = time(0);

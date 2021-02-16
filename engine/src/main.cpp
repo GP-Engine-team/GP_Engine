@@ -19,12 +19,8 @@
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 
-using namespace Engine::Resources;
-using namespace Engine::Core::Renderering;
-using namespace Engine::Core::Debug;
-using namespace Engine::Intermediate;
-using namespace Engine::Core::Parsers;
-using namespace Engine::Core;
+using namespace GPE;
+using namespace GPM;
 
 #ifdef _WIN32
 // Use discrete GPU by default.

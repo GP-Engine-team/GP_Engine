@@ -13,7 +13,7 @@
 #include "Engine/Resources/ShaderType.hpp"
 #include "GPM/Vector3.hpp" //Vec3
 
-namespace Engine::Resources
+namespace GPE
 {
 // feature mask
 #define LIGHT_BLIN_PHONG 1    // 2^0, bit 1
@@ -176,4 +176,4 @@ inline void Shader::setpVec4(const char* name, unsigned int count, const float* 
 {
     glUniform4fv(glGetUniformLocation(m_id, name), count, pV);
 }
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

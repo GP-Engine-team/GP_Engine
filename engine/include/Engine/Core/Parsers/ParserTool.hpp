@@ -8,7 +8,7 @@
 
 #include <string>
 
-namespace Engine::Core::Parsers
+namespace GPE
 {
 inline bool isTitle(const std::string& line, std::string&& title)
 {
@@ -49,4 +49,4 @@ inline std::string parseNameInPath(const char* path)
 
     return src.substr(cursStart, cursEnd - cursStart);
 }
-} /*namespace Engine::Core::Parsers*/
+} /*namespace GPE*/

@@ -9,7 +9,7 @@
 #include "GPM/Vector3.hpp"
 #include "Engine/Resources/Type.hpp"
 
-namespace Engine::Resources
+namespace GPE
 {
     struct alignas(16) MaterialComponent
     {
@@ -36,4 +36,4 @@ namespace Engine::Resources
         GPM::Vec3 direction;
         float cutOff; // specifies the spotlight's radius.
     };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

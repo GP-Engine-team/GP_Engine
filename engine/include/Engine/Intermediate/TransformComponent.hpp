@@ -16,7 +16,7 @@
 #include "GPM/Transform.hpp"
 #include <vector>
 
-namespace Engine::Intermediate
+namespace GPE
 {
 class TransformComponent : public Component
 {
@@ -145,4 +145,4 @@ public:
         return m_transform.model;
     }
 };
-} /*namespace Engine::Intermediate*/
+} /*namespace GPE*/

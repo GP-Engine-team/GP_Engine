@@ -14,7 +14,7 @@
 #define PATH_MTL "./resources/materials/"
 #define EXTENSION_MTL ".mtl"
 
-namespace Engine::Core::Parsers
+namespace GPE
 {
 /**
  * @brief Parse file .mtl and return buffer of data parsing
@@ -22,6 +22,6 @@ namespace Engine::Core::Parsers
  * @param materialPath
  * @param materials
  */
-extern void loadMTL(std::string& materialPath, std::vector<Engine::Resources::MaterialAttrib>& materials) noexcept;
+void loadMTL(std::string& materialPath, std::vector<MaterialAttrib>& materials) noexcept;
 
-} // namespace Engine::Core::Parsers
+} // namespace GPE

@@ -12,7 +12,10 @@
 #include <string>                                     //std::string
 #include <vector>                                     //std::vector
 
-namespace Engine::Intermediate
+//in Inl
+#include "Engine/Intermediate/DataChunk.hpp"
+
+namespace GPE
 {
 class Component;
 
@@ -198,6 +201,7 @@ public:
 
     [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 };
-} // namespace Engine::Intermediate
 
 #include "GameObject.inl"
+
+} // namespace GPE

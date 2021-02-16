@@ -6,9 +6,8 @@
 #include <iostream>
 #include <limits>
 
+using namespace GPE;
 using namespace GPM;
-using namespace Engine::Core::Debug;
-using namespace Engine::Resources;
 
 Mesh::Mesh(const CreateArg& arg, bool isLoadInGPU)
     : m_indexVAO(0), m_isLoadInGPU(false), m_objName(arg.objName), m_vBuffer(arg.vBuffer), m_vtBuffer(arg.vtBuffer),

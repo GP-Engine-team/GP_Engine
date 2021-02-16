@@ -10,8 +10,7 @@
 //#include "Engine/Core/System/TimeSystem.hpp"
 #include "GPM/Matrix4.hpp"
 
-using namespace Engine::Intermediate;
-using namespace Engine::Resources;
+using namespace GPE;
 using namespace GPM;
 
 RenderSystem*   RenderSystem::m_pInstance{nullptr};

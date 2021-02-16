@@ -13,7 +13,7 @@
 #include "Engine/Resources/ShaderType.hpp"
 #include "GPM/Vector3.hpp"
 
-namespace Engine::Resources
+namespace GPE
 {
 class DirectionnalLight : public Light
 {
@@ -38,9 +38,9 @@ public:
     DirectionnalLight& operator=(DirectionnalLight const& other) = delete;
     DirectionnalLight& operator=(DirectionnalLight&& other) = default;
 
-    DirectionnalLight(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
+    DirectionnalLight(GameObject& owner, const CreateArg& arg);
 
-    DirectionnalLight(Engine::Intermediate::GameObject& owner, const GPM::Vec3& direction,
+    DirectionnalLight(GameObject& owner, const GPM::Vec3& direction,
                       const AmbiantComponent&  ambient,
                       const DiffuseComponent&  diffuse,
                       const SpecularComponent& specular);
@@ -52,4 +52,4 @@ public:
         m_direction = newDirection.normalized();
     }
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

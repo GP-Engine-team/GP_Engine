@@ -54,14 +54,14 @@
 #define B_WHITE(x) "\033[47m" x RESET
 
 #define FUNCT_ERROR(msg)                                                                                               \
-    Engine::Core::Debug::Log::logError(                                                                                \
-        Engine::Core::Tools::stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
+    Log::logError(                                                                                \
+        stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
 
 #define FUNCT_WARNING(msg)                                                                                             \
-    Engine::Core::Debug::Log::logWarning(                                                                              \
-        Engine::Core::Tools::stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
+    Log::logWarning(                                                                              \
+        stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
 
-namespace Engine::Core::Debug
+namespace GPE
 {
 
 class Log
@@ -206,6 +206,7 @@ public:
 
     [[nodiscard]] static inline std::string getDateAndTimeStr() noexcept;
 };
-} // namespace Engine::Core::Debug
 
 #include "Log.inl"
+
+} // namespace GPE

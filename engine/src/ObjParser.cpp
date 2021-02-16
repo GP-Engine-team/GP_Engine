@@ -9,10 +9,8 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ParserTool.hpp"
 
-using namespace Engine::Resources;
+using namespace GPE;
 using namespace GPM;
-using namespace Engine::Core::Debug;
-using namespace Engine::Core::Parsers;
 
 inline void parseVertexPos(const std::string& line, std::vector<Vec3>& vBuffer)
 {
@@ -231,8 +229,8 @@ inline void parseLine(const std::string& line, Attrib* attrib, std::vector<Shape
         Log::logWarning(std::string("Obj Parser don't parse this line : " + line).c_str());
 }
 
-void Engine::Core::Parsers::loadObjWithMTL(const char* objPath, Attrib* attrib, std::vector<Shape>* shape,
-                                           std::vector<MaterialAttrib>* materials) noexcept
+void GPE::loadObjWithMTL(const char* objPath, Attrib* attrib, std::vector<Shape>* shape,
+                           std::vector<MaterialAttrib>* materials) noexcept
 {
     GPE_ASSERT(objPath != nullptr, "Void path");
 

@@ -16,7 +16,7 @@
 
 #include "GPM/Vector3.hpp"
 
-namespace Engine::Resources
+namespace GPE
 {
 
 class Mesh
@@ -28,7 +28,7 @@ public:
         std::vector<GPM::Vec3>                              vBuffer;
         std::vector<GPM::Vec2>                              vtBuffer;
         std::vector<GPM::Vec3>                              vnBuffer;
-        std::vector<std::vector<Engine::Resources::Indice>> iBuffer;
+        std::vector<std::vector<Indice>> iBuffer;
     };
 
     enum class Axis
@@ -46,7 +46,7 @@ protected:
     std::vector<GPM::Vec3>                              m_vBuffer;
     std::vector<GPM::Vec2>                              m_vtBuffer;
     std::vector<GPM::Vec3>                              m_vnBuffer;
-    std::vector<std::vector<Engine::Resources::Indice>> m_iBuffer;
+    std::vector<std::vector<Indice>> m_iBuffer;
     std::vector<std::string>                            m_idMaterial;
 
 private:
@@ -143,7 +143,7 @@ public:
     {
         return m_vnBuffer;
     }
-    const std::vector<std::vector<Engine::Resources::Indice>>& getIndices() const noexcept
+    const std::vector<std::vector<Indice>>& getIndices() const noexcept
     {
         return m_iBuffer;
     }
@@ -158,4 +158,4 @@ public:
         return m_idMaterial;
     }
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

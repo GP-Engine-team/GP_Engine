@@ -9,7 +9,7 @@
 #include "Engine/Resources/Type.hpp"
 #include <string>
 
-namespace Engine::Resources
+namespace GPE
 {
 #define PATH_TEXTURE_RESOURCE "./resources/textures/"
 
@@ -112,4 +112,4 @@ public:
 
     // Texture& operator=(Texture const &other); //TODO:
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

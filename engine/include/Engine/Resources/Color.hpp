@@ -6,7 +6,7 @@
 
 #pragma once
 
-namespace Engine::Resources
+namespace GPE
 {
 struct ColorRGBA
 {
@@ -17,4 +17,4 @@ struct ColorRGB
 {
     float r, g, b;
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

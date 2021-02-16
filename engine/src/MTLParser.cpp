@@ -1,4 +1,4 @@
-#include "Engine/Core/Parsers/mtlParser.hpp"
+#include "Engine/Core/Parsers/MTLParser.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -9,12 +9,10 @@
 #include <iostream>
 #include <sstream>
 
-using namespace Engine::Resources;
+using namespace GPE;
 using namespace GPM;
-using namespace Engine::Core::Debug;
-using namespace Engine::Core::Parsers;
 
-enum class E_ComponentType
+enum class EComponentType
 {
     AMBIENT,
     DIFFUSE,
@@ -22,7 +20,7 @@ enum class E_ComponentType
     EMISSION
 };
 
-void parseComponent(std::string& line, std::vector<MaterialAttrib>& materials, E_ComponentType type)
+void parseComponent(std::string& line, std::vector<MaterialAttrib>& materials, EComponentType type)
 {
     std::size_t cursorStart = line.find_first_not_of(" ", 2);
     std::size_t cursorEnd   = line.find(" ", cursorStart);
@@ -40,15 +38,15 @@ void parseComponent(std::string& line, std::vector<MaterialAttrib>& materials, E
 
     switch (type)
     {
-    case E_ComponentType::AMBIENT:
+    case EComponentType::AMBIENT:
         materials.back().ambient.rgbi = {x, y, z, 1.f};
         break;
 
-    case E_ComponentType::DIFFUSE:
+    case EComponentType::DIFFUSE:
         materials.back().diffuse.rgbi = {x, y, z, 1.f};
         break;
 
-    case E_ComponentType::SPECULAR:
+    case EComponentType::SPECULAR:
         materials.back().specular.rgbi = {x, y, z, 1.f};
         break;
     default:
@@ -56,19 +54,19 @@ void parseComponent(std::string& line, std::vector<MaterialAttrib>& materials, E
     }
 }
 
-inline void parseTextureName(std::string& line, std::vector<MaterialAttrib>& materials, E_ComponentType type)
+inline void parseTextureName(std::string& line, std::vector<MaterialAttrib>& materials, EComponentType type)
 {
     switch (type)
     {
-    case E_ComponentType::AMBIENT:
+    case EComponentType::AMBIENT:
         parseName(line, materials.back().nameAmbiantTexture);
         break;
 
-    case E_ComponentType::DIFFUSE:
+    case EComponentType::DIFFUSE:
         parseName(line, materials.back().nameDiffuseTexture);
         break;
 
-    case E_ComponentType::SPECULAR:
+    case EComponentType::SPECULAR:
         parseName(line, materials.back().nameSpecularTexture);
         break;
     default:
@@ -90,24 +88,24 @@ inline void parseLine(std::string line, std::vector<MaterialAttrib>& materials)
     else if (isTitle(line, "newmtl"))
         createNewMaterialAndParseName(line, materials);
     else if (isTitle(line, "Ka"))
-        parseComponent(line, materials, E_ComponentType::AMBIENT);
+        parseComponent(line, materials, EComponentType::AMBIENT);
     else if (isTitle(line, "Kd"))
-        parseComponent(line, materials, E_ComponentType::DIFFUSE);
+        parseComponent(line, materials, EComponentType::DIFFUSE);
     else if (isTitle(line, "Ks"))
-        parseComponent(line, materials, E_ComponentType::SPECULAR);
+        parseComponent(line, materials, EComponentType::SPECULAR);
     else if (isTitle(line, "Ns"))
         materials.back().shininess = parse<float>(line, 2);
     else if (isTitle(line, "map_Ka"))
-        parseTextureName(line, materials, E_ComponentType::AMBIENT);
+        parseTextureName(line, materials, EComponentType::AMBIENT);
     else if (isTitle(line, "map_Kd"))
-        parseTextureName(line, materials, E_ComponentType::DIFFUSE);
+        parseTextureName(line, materials, EComponentType::DIFFUSE);
     else if (isTitle(line, "map_Ks"))
-        parseTextureName(line, materials, E_ComponentType::SPECULAR);
+        parseTextureName(line, materials, EComponentType::SPECULAR);
     else
         Log::logWarning(std::string("MTL Parser cannot read this line : " + line).c_str());
 }
 
-void Engine::Core::Parsers::loadMTL(std::string& materialPath, std::vector<MaterialAttrib>& materials) noexcept
+void GPE::loadMTL(std::string& materialPath, std::vector<MaterialAttrib>& materials) noexcept
 {
     std::ifstream file(materialPath);
 

@@ -2,8 +2,7 @@
 #include "Engine/Resources/Light/SpotLight.hpp"
 #include "GPM/Constants.hpp"
 
-using namespace Engine::Resources;
-using namespace Engine::Intermediate;
+using namespace GPE;
 
 SpotLight::SpotLight(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
                      const SpecularComponent& specular, float constant, float linear, float quadratic, float cutOff,

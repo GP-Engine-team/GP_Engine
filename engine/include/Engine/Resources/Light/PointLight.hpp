@@ -13,7 +13,7 @@
 #include "Engine/Resources/Light/Light.hpp"
 #include "GPM/Vector3.hpp"
 
-namespace Engine::Resources
+namespace GPE
 {
 class PointLight : public Light
 {
@@ -42,13 +42,13 @@ public:
     PointLight& operator=(PointLight const& other) = delete;
     PointLight& operator=(PointLight&& other) = default;
 
-    PointLight(Engine::Intermediate::GameObject& owner, const CreateArg& arg);
+    PointLight(GameObject& owner, const CreateArg& arg);
 
-    PointLight(Engine::Intermediate::GameObject& owner, const AmbiantComponent& ambient,
+    PointLight(GameObject& owner, const AmbiantComponent& ambient,
                const DiffuseComponent& diffuse, const SpecularComponent& specular,
                float constant, float linear, float quadratic);
 
-    PointLight(Engine::Intermediate::GameObject& owner, const std::vector<std::string>& params);
+    PointLight(GameObject& owner, const std::vector<std::string>& params);
 
     virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
 
@@ -61,4 +61,4 @@ public:
         m_linear = linear;
     }
 };
-} /*namespace Engine::Resources*/
+} /*namespace GPE*/

@@ -12,7 +12,7 @@
 #include "Engine/Core/Parsers/MTLParser.hpp"
 #include "Engine/Resources/Type.hpp"
 
-namespace Engine::Core::Parsers
+namespace GPE
 {
 /**
  * @brief Parse Obj file and fill buffer if arg not Null
@@ -22,8 +22,7 @@ namespace Engine::Core::Parsers
  * @param shape
  * @param materials
  */
-extern void loadObjWithMTL(const char* objPath, Engine::Resources::Attrib* attrib,
-                           std::vector<Engine::Resources::Shape>*          shape,
-                           std::vector<Engine::Resources::MaterialAttrib>* materials) noexcept;
+void loadObjWithMTL(const char* objPath, Attrib* attrib, std::vector<Shape>* shape,
+                    std::vector<MaterialAttrib>* materials) noexcept;
 
-} // namespace Engine::Core::Parsers
+} // namespace GPE
