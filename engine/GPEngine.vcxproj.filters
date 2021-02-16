@@ -52,9 +52,6 @@
     <ClCompile Include="src\Texture.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
-    <ClCompile Include="src\Light.cpp">
-      <Filter>src\WIP</Filter>
-    </ClCompile>
     <ClCompile Include="src\PointLight.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
@@ -269,6 +266,9 @@
       <Filter>include\WIP</Filter>
     </None>
     <None Include="include\Engine\Resources\Light\SpotLight.inl">
+      <Filter>include\WIP</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Material.inl">
       <Filter>include\WIP</Filter>
     </None>
   </ItemGroup>
