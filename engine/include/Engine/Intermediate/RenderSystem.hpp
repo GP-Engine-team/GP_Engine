@@ -9,15 +9,14 @@
 #include <shared_mutex> //std::shared_mutex
 #include <vector>       //std::vector
 
-// TODO : Why this class don't work in forward declaration ????
 #include "Engine/Core/Tools/BranchPrediction.hpp"
-#include "Engine/Resources/Camera.hpp"
-#include "Engine/Resources/Light/Light.hpp"
-#include "Engine/Resources/Model.hpp"
-#include "Engine/Resources/Shader.hpp"
 
 namespace GPE
 {
+    class Light;
+    class Camera;
+    class Model;
+    class Shader;
 
 /**
  * @brief The Singleton class defines the `GetInstance` method that serves as an

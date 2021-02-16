@@ -249,6 +249,9 @@
     <None Include="include\Engine\Intermediate\GameObject.inl" />
     <None Include="include\Engine\Resources\Camera.inl" />
     <None Include="include\Engine\Resources\Light\DirectionalLight.inl" />
+    <None Include="include\Engine\Resources\Light\Light.inl" />
+    <None Include="include\Engine\Resources\Light\PointLight.inl" />
+    <None Include="include\Engine\Resources\Light\SpotLight.inl" />
     <None Include="include\Engine\Resources\ResourcesManager.inl" />
     <None Include="third_party\gpm\src\conversion.inl" />
     <None Include="third_party\gpm\src\Matrix3.inl" />

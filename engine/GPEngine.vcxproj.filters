@@ -262,6 +262,15 @@
     <None Include="include\Engine\Resources\Light\DirectionalLight.inl">
       <Filter>include\WIP</Filter>
     </None>
+    <None Include="include\Engine\Resources\Light\Light.inl">
+      <Filter>include\WIP</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Light\PointLight.inl">
+      <Filter>include\WIP</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Light\SpotLight.inl">
+      <Filter>include\WIP</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">

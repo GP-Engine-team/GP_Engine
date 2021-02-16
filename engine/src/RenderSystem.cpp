@@ -9,6 +9,10 @@
 #include "Engine/Intermediate/GameObject.hpp"
 //#include "Engine/Core/System/TimeSystem.hpp"
 #include "GPM/Matrix4.hpp"
+#include "Engine/Resources/Light/Light.hpp"
+#include "Engine/Resources/Camera.hpp"
+#include "Engine/Resources/Model.hpp"
+#include "Engine/Resources/Shader.hpp"
 
 using namespace GPE;
 using namespace GPM;

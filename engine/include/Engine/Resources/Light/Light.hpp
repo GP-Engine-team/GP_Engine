@@ -13,8 +13,12 @@
 #include "Engine/Resources/Camera.hpp"
 #include "Engine/Resources/Color.hpp"
 #include "Engine/Resources/ShaderType.hpp"
+#include "Engine/Resources/Type.hpp"
 #include "GPM/Vector3.hpp"
 #include "GPM/Vector4.hpp"
+
+// in inl
+#include "Engine/Intermediate/RenderSystem.hpp"
 
 namespace GPE
 {
@@ -35,14 +39,17 @@ protected:
     SpecularComponent m_specularComp;
 
 public:
-    Light(GameObject& owner, const CreateArg& arg);
+    inline Light(GameObject& owner, const CreateArg& arg);
 
-    Light(GameObject& owner, const AmbiantComponent& ambient,
-          const DiffuseComponent& diffuse, const SpecularComponent& specular);
+    inline Light(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
+          const SpecularComponent& specular);
 
     Light(const Light& other) = delete;
     Light(Light&& other)      = default;
-    virtual ~Light();
+    virtual ~Light()
+    {
+        RenderSystem::getInstance()->removeLight(this);
+    }
 
     Light()        = delete;
     Light& operator=(Light const& other) = delete;
@@ -63,57 +70,23 @@ public:
                       0.f});
     }
 
-    virtual const AmbiantComponent& getAmbient() const noexcept
-    {
-        return m_ambientComp;
-    }
-    virtual const DiffuseComponent& getDiffuse() const noexcept
-    {
-        return m_diffuseComp;
-    }
-    virtual const SpecularComponent& getSpecular() const noexcept
-    {
-        return m_specularComp;
-    }
 
-    virtual void setGlobalComponent(const ColorRGBA& newComponent) noexcept
-    {
-        m_ambientComp.rgba  = newComponent;
-        m_diffuseComp.rgba  = newComponent;
-        m_specularComp.rgba = newComponent;
-    }
+    inline const AmbiantComponent&  getAmbient() const noexcept;
+    inline const DiffuseComponent&  getDiffuse() const noexcept;
+    inline const SpecularComponent& getSpecular() const noexcept;
 
-    virtual void setGlobalComponent(const GPM::Vec4& newComponent) noexcept
-    {
-        m_ambientComp.rgbi  = newComponent;
-        m_diffuseComp.rgbi  = newComponent;
-        m_specularComp.rgbi = newComponent;
-    }
+    inline void setGlobalComponent(const ColorRGBA& newComponent) noexcept;
+    inline void setGlobalComponent(const GPM::Vec4& newComponent) noexcept;
 
-    virtual void setAmbient(const AmbiantComponent& newAmbient) noexcept
-    {
-        m_ambientComp.rgba = newAmbient.rgba;
-    }
-    virtual void setDiffuse(const DiffuseComponent& newDiffuse) noexcept
-    {
-        m_diffuseComp.rgba = newDiffuse.rgba;
-    }
-    virtual void setSpecular(const SpecularComponent& newSpecular) noexcept
-    {
-        m_specularComp.rgba = newSpecular.rgba;
-    }
+    inline void setAmbient(const AmbiantComponent& newAmbient) noexcept;
+    inline void setDiffuse(const DiffuseComponent& newDiffuse) noexcept;
+    inline void setSpecular(const SpecularComponent& newSpecular) noexcept;
 
-    virtual void setAmbient(const GPM::Vec4& newAmbient) noexcept
-    {
-        m_ambientComp.rgbi = newAmbient;
-    }
-    virtual void setDiffuse(const GPM::Vec4& newDiffuse) noexcept
-    {
-        m_diffuseComp.rgbi = newDiffuse;
-    }
-    virtual void setSpecular(const GPM::Vec4& newSpecular) noexcept
-    {
-        m_specularComp.rgbi = newSpecular;
-    }
+    inline void setAmbient(const GPM::Vec4& newAmbient) noexcept;
+    inline void setDiffuse(const GPM::Vec4& newDiffuse) noexcept;
+    inline void setSpecular(const GPM::Vec4& newSpecular) noexcept;
 };
+
+#include "Light.inl"
+
 } /*namespace GPE*/
