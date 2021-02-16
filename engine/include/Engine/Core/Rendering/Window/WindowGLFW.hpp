@@ -9,7 +9,7 @@
 
 struct GLFWwindow;
 
-namespace Engine::Core::Renderering
+namespace GPE
 {
 
 struct WindowCreateArg
@@ -56,6 +56,6 @@ public:
     void getSize(int& width, int& height) const noexcept;
 };
 
-} // namespace Engine::Core::Renderering
-
 #include "WindowGLFW.inl"
+
+} // namespace GPE

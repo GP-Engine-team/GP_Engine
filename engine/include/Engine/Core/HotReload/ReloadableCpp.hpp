@@ -12,7 +12,7 @@
 
 #include <Windows.h>
 
-namespace Engine::Core::HotReload
+namespace GPE
 {
 /**
  * @brief Corresponds to a dll
@@ -130,4 +130,4 @@ public:
         return (C_FUNCTION_TYPE*)processes[processName];
     }
 };
-} // namespace Engine::Core::HotReload
+} // namespace GPE

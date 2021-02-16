@@ -6,55 +6,33 @@
 
 #pragma once
 
-#include <string>
-
-namespace Engine::Intermediate
+namespace GPE
 {
 class GameObject;
 
 class Component
 {
 protected:
-    GameObject* m_gameObject = nullptr;
-    bool m_isActivated{true};
+    GameObject& m_gameObject;
+    bool        m_isActivated{true};
 
 public:
-
-    inline
-    Component(GameObject& refGameObject) noexcept;
-
-    inline
-    Component () noexcept 					            = delete;
-
+    inline Component(GameObject& refGameObject) noexcept;
+    inline Component() noexcept                       = delete;
     inline Component(const Component& other) noexcept = delete;
+    inline Component(Component&& other) noexcept      = default;
+    inline virtual ~Component() noexcept              = default;
+    inline Component& operator=(const Component& other) noexcept = delete;
+    inline Component& operator=(Component&& other) noexcept = default;
 
-    inline
-    Component (Component&& other) noexcept				= default;
+    [[nodiscard]] constexpr inline GameObject& getGameObject() noexcept;
 
-    inline
-    virtual ~Component () noexcept				        = default;
+    [[nodiscard]] constexpr inline const GameObject& getGameObject() const noexcept;
 
-    inline
-    Component& operator=(const Component& other) noexcept		= delete;
+    [[nodiscard]] constexpr inline bool isActivated() const noexcept;
 
-    inline
-    Component& operator=(Component && other) noexcept			= default;
-
-    [[nodiscard]] constexpr inline
-    GameObject& getGameObject() noexcept;
-
-    [[nodiscard]] constexpr inline
-    const GameObject& getGameObject() const noexcept;
-
-    [[nodiscard]] inline
-    const std::string& toString() const noexcept;
-
-    [[nodiscard]] constexpr inline
-    bool isActivated() const noexcept;
-
-    constexpr inline
-    void setActive(bool newState) noexcept;
+    constexpr inline void setActive(bool newState) noexcept;
 };
-} // namespace Engine::Intermediate
+} // namespace GPE
 
 #include "Component.inl"

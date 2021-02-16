@@ -12,39 +12,46 @@
 #include <string>                                     //std::string
 #include <vector>                                     //std::vector
 
-namespace Engine::Intermediate
-{
-struct GameObjectCreateArg
-{
-    const char* name = "";
-};
+// in Inl
+#include "Engine/Intermediate/DataChunk.hpp"
 
+namespace GPE
+{
 class Component;
 
 class GameObject
 {
+public:
+    struct CreateArg
+    {
+        std::string                   name = "";
+        TransformComponent::CreateArg transformArg;
+    };
+
 protected:
-    std::string m_name;
+    std::string         m_name;
     TransformComponent* m_pTransform;
 
     std::list<Component*> m_pComponents;
-    std::string m_tag{"GameObject"};
+    std::string           m_tag{"GameObject"};
     bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
 public:
-    GameObject* parent = nullptr;
+    GameObject*                            parent   = nullptr;
     std::list<std::unique_ptr<GameObject>> children = {};
 
- public: //TODO : Protected method ?
+public: // TODO : Protected method ?
     template <typename T>
-     void updateComponentLink(const T* oldPtr, T*  newPtr);
+    void updateComponentLink(const T* oldPtr, T* newPtr) noexcept;
 
 public:
-    GameObject(const GameObjectCreateArg& arg);
+    inline
+    GameObject(const CreateArg& arg);
 
+    inline
     GameObject();
 
-    inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is avalable
+    inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is available
 
     constexpr inline GameObject(GameObject&& other) = default;
 
@@ -55,10 +62,10 @@ public:
     inline GameObject& operator=(GameObject&& other) noexcept = default;
 
     /**
-     * @brief update entity and these child if current entity is dirty
+     * @brief update entity and their children if current entity is dirty
      *
      */
-    void updateSelfAndChild() noexcept;
+    void updateSelfAndChildren() noexcept;
 
     /**
      * @brief Force the update of entity without check if entity is dirty
@@ -123,19 +130,21 @@ public:
      * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3
      * @return GraphEntity&
      */
-    void destroyChild(const std::string& path) noexcept; //TODO: Destroy immediate may be dangerous
+    void destroyChild(const std::string& path) noexcept; // TODO: Destroy immediate may be dangerous
 
     /**
      * @brief destroy childen of gameobject
      *
      * @param GameObject
      */
-    std::list<std::unique_ptr<GameObject>>::iterator destroyChild(GameObject* pGameObject) noexcept; //TODO: Destroy immediate may be dangerous
+    std::list<std::unique_ptr<GameObject>>::iterator destroyChild(
+        GameObject* pGameObject) noexcept; // TODO: Destroy immediate may be dangerous
 
     inline std::list<std::unique_ptr<GameObject>>::iterator destroyChild(
-        const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept; //TODO: Destroy immediate may be dangerous
+        const std::list<std::unique_ptr<GameObject>>::iterator&
+            it) noexcept; // TODO: Destroy immediate may be dangerous
 
-    template<typename TUniqueComponentType>
+    template <typename TUniqueComponentType>
     void destroyImmediateUniqueComponent() noexcept;
 
     /**
@@ -143,11 +152,13 @@ public:
      *
      * @param Component
      */
-    std::list<Component*>::iterator destroyComponent(Component* pComponent) noexcept; //TODO: Destroy immediate may be dangerous
+    std::list<Component*>::iterator destroyComponent(
+        Component* pComponent) noexcept; // TODO: Destroy immediate may be dangerous
 
     inline void setActive(bool newState);
 
-    inline std::list<Component*>::iterator destroyComponent(const std::list<Component*>::iterator& it) noexcept; //TODO: Destroy immediate may be dangerous
+    inline std::list<Component*>::iterator destroyComponent(
+        const std::list<Component*>::iterator& it) noexcept; // TODO: Destroy immediate may be dangerous
 
     /**
      * @brief Destroy the element at the next frame whe scene graph is update.
@@ -178,20 +189,21 @@ public:
     [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;
 
     template <typename T>
-    [[nodiscard]] std::vector<T*> getComponents();
+    [[nodiscard]] std::vector<T*> getComponents() noexcept;
 
     [[nodiscard]] inline constexpr std::list<Component*>& getComponents() noexcept;
 
     [[nodiscard]] inline constexpr const std::list<Component*>& getComponents() const noexcept;
 
-    [[nodiscard]] std::string getRelativePath();
+    [[nodiscard]] std::string getRelativePath() const noexcept;
 
-    inline void setTag(const std::string& newTag);
+    inline void setTag(const std::string& newTag) noexcept;
 
-    [[nodiscard]] inline constexpr const std::string& getTag() const;
+    [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
     [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 };
-} // namespace Engine::Intermediate
 
 #include "GameObject.inl"
+
+} // namespace GPE

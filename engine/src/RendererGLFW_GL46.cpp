@@ -7,9 +7,7 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Format.hpp"
 
-using namespace Engine::Core::Renderering;
-using namespace Engine::Core::Debug;
-using namespace Engine::Core::Tools;
+using namespace GPE;
 using namespace std;
 
 inline void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
@@ -112,7 +110,7 @@ inline void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint i
 }
 
 Renderer::Renderer(Window& window) noexcept 
-    : m_pWindow {reinterpret_cast<Window*>(&window)}
+    : m_pWindow {&window}
 {
     Log::logInitializationStart("GLFW / OpenGL 4.6 Renderer");
 

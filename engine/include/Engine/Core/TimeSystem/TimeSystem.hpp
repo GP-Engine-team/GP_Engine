@@ -11,7 +11,7 @@
 #include <functional> //std::function
 #include <queue>
 
-namespace Engine::Core
+namespace GPE
 {
 struct TimerTask
 {
@@ -115,6 +115,7 @@ public:
     inline void clearUnscaledTimer() noexcept;
 };
 
-} // namespace Engine::Core
-
 #include "TimeSystem.inl"
+
+} // namespace GPE
+

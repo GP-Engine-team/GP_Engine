@@ -54,29 +54,30 @@
 #define B_WHITE(x) "\033[47m" x RESET
 
 #define FUNCT_ERROR(msg)                                                                                               \
-    Engine::Core::Debug::Log::logError(                                                                                \
-        Engine::Core::Tools::stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
+    Log::logError(                                                                                \
+        stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
 
 #define FUNCT_WARNING(msg)                                                                                             \
-    Engine::Core::Debug::Log::logWarning(                                                                              \
-        Engine::Core::Tools::stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
+    Log::logWarning(                                                                              \
+        stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
 
-namespace Engine::Core::Debug
+namespace GPE
 {
-enum ESetting : uint8_t
-{
-    DISPLAY_DATE = (1u << 1),           // display date befor message (2)
-    DISPLAY_HOUR = (1u << 2),           // display hour befor message (3)
-    DISPLAY_WITH_COLOR = (1u << 3),     // display log with color for each even
-    ALWAYS_PRINT_LOG_FILE = (1u << 4),  // never destroy log file
-    PRINT_LOG_FILE_WARNING = (1u << 5), // print log file if warning happend
-    PRINT_LOG_FILE_ERROR = (1u << 6)   // print log file if error happend
-};
 
 class Log
 {
+public:
+    enum ESetting : uint8_t
+    {
+        DISPLAY_DATE           = (1u << 1), // display date befor message (2)
+        DISPLAY_HOUR           = (1u << 2), // display hour befor message (3)
+        DISPLAY_WITH_COLOR     = (1u << 3), // display log with color for each even
+        ALWAYS_PRINT_LOG_FILE  = (1u << 4), // never destroy log file
+        PRINT_LOG_FILE_WARNING = (1u << 5), // print log file if warning happend
+        PRINT_LOG_FILE_ERROR   = (1u << 6)  // print log file if error happend
+    };
+
 protected:
-#pragma region static attribut
 
     // Bitfiled of the setting. By default is set to : DISPLAY_HOUR | DISPLAY_WITH_COLOR | PRINT_LOG_FILE_ERROR
     static uint8_t settings;
@@ -85,10 +86,7 @@ protected:
     static std::string fileLogPath;
     static std::ofstream fileLog;
 
-#pragma endregion //! static attribut
-
 public:
-#pragma region constructor / destructor
 
     constexpr inline Log() noexcept = delete;
 
@@ -111,10 +109,6 @@ public:
      * @brief Save log file if error happen else destroy log file
      */
     static inline void closeAndTryToCreateFile() noexcept;
-
-#pragma endregion //! constructor/destructor
-
-#pragma region static methods
 
     /**
      * @brief print message in log event
@@ -211,9 +205,8 @@ public:
     [[nodiscard]] static inline std::string getDateAndTimeStrFileFormat() noexcept;
 
     [[nodiscard]] static inline std::string getDateAndTimeStr() noexcept;
-
-#pragma endregion //! static methods
 };
-} // namespace Engine::Core::Debug
 
 #include "Log.inl"
+
+} // namespace GPE

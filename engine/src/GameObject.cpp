@@ -1,26 +1,15 @@
 #include "Engine/Intermediate/GameObject.hpp"
 
-#include "Engine/Intermediate/ComponentChunk.hpp" //ComponentChunk
+#include "Engine/Intermediate/DataChunk.hpp" //DataChunk
 #include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
 #include "Engine/Core/Debug/Log.hpp"
 #include <iostream>
 #include <istream>
 #include <sstream>
 
-using namespace Engine::Intermediate;
+using namespace GPE;
 
-GameObject::GameObject(const GameObjectCreateArg& arg)
-    : m_name{arg.name}, m_pTransform{&ComponentChunk<TransformComponent>::getInstance()->addComponent(*this)},
-      m_pComponents{}
-{
-}
-
-GameObject::GameObject()
-    : m_name{""}, m_pTransform{&ComponentChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
-{
-}
-
-void GameObject::updateSelfAndChild() noexcept
+void GameObject::updateSelfAndChildren() noexcept
 {
     for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
     {
@@ -32,12 +21,12 @@ void GameObject::updateSelfAndChild() noexcept
                 continue;
             }
 
-            //(*i)->update(m_pTransform->getModelMatrix());
+            (*i)->getTransform().update(m_pTransform->getModelMatrix());
             (*i)->forceUpdate();
         }
         else
         {
-            (*i)->updateSelfAndChild();
+            (*i)->updateSelfAndChildren();
         }
     }
 }
@@ -46,7 +35,7 @@ void GameObject::forceUpdate() noexcept
 {
     for (auto&& i = children.begin(); i != children.end(); i++)
     {
-        //(*i)->update(m_pTransform->getModelMatrix());
+        (*i)->getTransform().update(m_pTransform->getModelMatrix());
         (*i)->forceUpdate();
     }
 }
@@ -76,7 +65,7 @@ GameObject* GameObject::getChild(const std::string& path) noexcept
         }
         if (!isFound)
         {
-            Engine::Core::Debug::Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
+            Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
                                                  m_name + "\"" + " with path : \"" + path + "\"");
             return nullptr;
         }
@@ -114,7 +103,7 @@ void GameObject::destroyChild(const std::string& path) noexcept
 
         if (!isFound)
         {
-            Engine::Core::Debug::Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
+            Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
                                                  m_name + "\"" + " with path : \"" + path + "\"");
             return;
         }
@@ -147,7 +136,7 @@ std::list<Component*>::iterator GameObject::destroyComponent(Component* pCompone
     return m_pComponents.end();
 }
 
-std::string GameObject::getRelativePath()
+std::string GameObject::getRelativePath() const noexcept
 {
     std::string path = this->getName();
     GameObject* parentIt = this->parent;

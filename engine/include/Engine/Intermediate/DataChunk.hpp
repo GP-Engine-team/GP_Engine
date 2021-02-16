@@ -6,10 +6,17 @@
 
 #pragma once
 
-#include <array> //std::array
-#include <vector> //std::vector
+#include <array>        //std::array
 #include <shared_mutex> //std::shared_mutex
-namespace Engine::Intermediate
+#include <utility>      //std::swap
+#include <vector>       //std::vector
+
+// In inl
+#include "Engine/Core/Debug/Assert.hpp"
+#include "Engine/Core/Tools/BranchPrediction.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
+
+namespace GPE
 {
 
 /**
@@ -19,8 +26,9 @@ namespace Engine::Intermediate
  * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
  * @tparam T : Component stored type
  */
-template <typename TStoredComponent, int TSize = 65536>  // 64KiB = 65,536Ko
-class ComponentChunk
+// TODO: Remove multiplicator
+template <typename TStoredComponent, int TSize = 65536 * 1000> // 64KiB = 65,536Ko
+class DataChunk
 {
     /**
      * The Singleton's constructor/destructor should always be private to
@@ -28,62 +36,56 @@ class ComponentChunk
      * operator.
      */
 private:
-    static ComponentChunk * m_pInstance;
+    static DataChunk*        m_pInstance;
     static std::shared_mutex m_mutex;
 
 protected:
-
     std::vector<TStoredComponent> m_components;
 
-    constexpr inline
-    ComponentChunk () noexcept;
+protected:
+    constexpr DataChunk() noexcept;
 
-    inline
-    ~ComponentChunk () noexcept				                    = default;
+    ~DataChunk() noexcept = default;
 
 public:
-    constexpr inline
-    ComponentChunk (const ComponentChunk& other) noexcept		= delete;
+    constexpr DataChunk(const DataChunk& other) noexcept = delete;
 
-    constexpr inline
-    ComponentChunk (ComponentChunk&& other) noexcept			= delete;
+    constexpr DataChunk(DataChunk&& other) noexcept = delete;
 
-    constexpr inline
-    ComponentChunk& operator=(ComponentChunk const& other) noexcept		= delete;
+    constexpr DataChunk& operator=(DataChunk const& other) noexcept = delete;
 
-    constexpr inline
-    ComponentChunk& operator=(ComponentChunk && other) noexcept			= delete;
-    
+    constexpr DataChunk& operator=(DataChunk&& other) noexcept = delete;
+
     /**
      * @brief Create new component with given arguments
-     * 
-     * @tparam Args 
-     * @param args 
-     * @return T& 
+     *
+     * @tparam Args
+     * @param args
+     * @return T&
      */
     template <typename... Args>
     TStoredComponent& addComponent(Args&&... args) noexcept;
 
-    void destroyComponent(const TStoredComponent* componentToDestroy);
+    void destroyComponent(const TStoredComponent* componentToDestroy) noexcept;
 
     /**
      * @brief This is the static method that controls the access to the singleton
      * instance. On the first run, it creates a singleton object and places it
      * into the static field. On subsequent runs, it returns the client existing
      * object stored in the static field.
-     * 
-     * @param value 
-     * @return ComponentChunk* 
+     *
+     * @param value
+     * @return DataChunk*
      */
-    static ComponentChunk* getInstance() noexcept;
+    static DataChunk* getInstance() noexcept;
 };
 
 template <typename TStoredComponent, int TSize>
-ComponentChunk<TStoredComponent, TSize>* ComponentChunk<TStoredComponent, TSize>::m_pInstance{nullptr};
+DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent, TSize>::m_pInstance{nullptr};
 
 template <typename TStoredComponent, int TSize>
-std::shared_mutex ComponentChunk<TStoredComponent, TSize>::m_mutex;
+std::shared_mutex DataChunk<TStoredComponent, TSize>::m_mutex;
 
-} /*namespace Engine::Intermediate*/
+#include "DataChunk.inl"
 
-#include "ComponentChunk.inl"
+} /*namespace GPE*/

@@ -12,7 +12,7 @@
 
  #include "Engine/Resources/Scene.hpp"
  
- namespace Engine::Resources
+ namespace GPE
  {
     enum class ESceneGraphManagement
     {
@@ -98,5 +98,5 @@
         }
     };
 
- } /*namespace Engine::Resources*/
+ } /*namespace GPE*/
  
