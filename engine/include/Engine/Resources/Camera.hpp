@@ -109,26 +109,22 @@ public:
      *
      * @return const ProjectionInfo&
      */
-    const ProjectionInfo& getProjectionInfo() const noexcept
-    {
-        return m_projInfo;
-    }
+    inline const ProjectionInfo& getProjectionInfo() const noexcept;
 
     /**
      * @brief Get the view * projection matrix
      *
      * @return const GPM::Mat4&
      */
-    const GPM::Mat4& getViewProjection() const noexcept
-    {
-        return m_viewProjectionMatrix;
-    }
+    inline
+    const GPM::Mat4& getViewProjection() const noexcept;
 
     /**
      * @brief Get the view matrix
      *
      * @return const GPM::Mat4&
      */
+    inline
     GPM::Mat4 getView() const noexcept;
 
     /**
@@ -136,9 +132,10 @@ public:
      *
      * @return const GPM::Mat4&
      */
+    inline
     const GPM::Mat4& getProjection() const noexcept
-    {
-        return m_projection;
-    }
 };
+
+#include "Camera.inl"
+
 } /*namespace GPE*/

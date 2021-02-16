@@ -11,7 +11,7 @@
 using namespace GPE;
 using namespace GPM;
 
-Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) : Component(owner)
+Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Component(owner)
 {
     GPE_ASSERT(arg.near > 0.f, "Near must be greater than 0");
 
@@ -35,7 +35,7 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) : Component(o
     Log::log((std::string("Perspective projection add with name \"") + arg.name + "\"").c_str());
 }
 
-Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) : Component(owner)
+Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : Component(owner)
 {
     GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");
 
@@ -104,9 +104,4 @@ void Camera::setAspect(const float newAspect) noexcept
         FUNCT_WARNING("Other projection not implemented");
         break;
     }
-}
-
-GPM::Mat4 Camera::getView() const noexcept // TODO: inversed matrix do not made each frame
-{
-    return m_gameObject.getTransform().getModelMatrix().inversed();
 }
