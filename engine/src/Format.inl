@@ -1,5 +1,8 @@
 #include "Engine/Core/Tools/Format.hpp"
 
+#include <cassert>
+#include <memory>
+
 template <typename... Args>
 std::string Engine::Core::Tools::stringFormat(const std::string& format, Args... args) noexcept
 {
