@@ -7,7 +7,7 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Intermediate/TransformComponent.hpp"
 #include "Engine/Core/Input/InputManagerGLFW.hpp"
-#include "GLFW/glfw3.h"
+//#include "GLFW/glfw3.h"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -99,6 +99,11 @@ int main()
     TimeSystem ts;
 
     InputManager::GetInstance()->setupCallbacks(win.getGLFWWindow());
+    InputManager::GetInstance()->bindInput(GLFW_KEY_W, "forward");
+    InputManager::GetInstance()->bindInput(GLFW_KEY_S, "back");
+    InputManager::GetInstance()->bindInput(GLFW_KEY_A, "left");
+    InputManager::GetInstance()->bindInput(GLFW_KEY_D, "right");
+
 
     sceneGraphExample();
 

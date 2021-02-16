@@ -38,10 +38,11 @@ namespace Engine::Core::Input
 	public:
 		static InputManager* GetInstance();
 
-		_NODISCARD bool checkForAction(const std::string& action);
-		void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		_NODISCARD bool checkForAction(const std::string& action) const;
+		void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const;
 		void setupCallbacks(GLFWwindow* window);
-		void fireInputComponents(const std::string& action);
+		void fireInputComponents(const std::string& action) const;
+		void bindInput(const int& key, const std::string& action);
 	};
 	void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 } // namespace Engine::Core::Input

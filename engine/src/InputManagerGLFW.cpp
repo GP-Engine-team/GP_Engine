@@ -19,7 +19,7 @@ InputManager* InputManager::GetInstance()
 	return m_inputManager;
 }
 
-void InputManager::fireInputComponents(const std::string& action)
+void InputManager::fireInputComponents(const std::string& action) const
 {
 	InputManager* input = InputManager::GetInstance();
 	if (!action.empty())
@@ -31,7 +31,7 @@ void InputManager::fireInputComponents(const std::string& action)
 	}
 }
 
-void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const
 {
 	InputManager* input = InputManager::GetInstance();
 	auto it = input->actionMap.equal_range(key);
@@ -39,6 +39,7 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 	for(auto i = it.first; i != it.second; i++)
 	{
 		input->fireInputComponents(i->second);
+		std::cout << i->second << std::endl;
 	}
 }
 
@@ -50,4 +51,9 @@ void Input::setKeycallback(GLFWwindow* window, int key, int scancode, int action
 void InputManager::setupCallbacks(GLFWwindow* window)
 {
 	glfwSetKeyCallback(window, setKeycallback);
+}
+
+void InputManager::bindInput(const int& key, const std::string& action)
+{
+	actionMap.emplace(key,action);
 }
