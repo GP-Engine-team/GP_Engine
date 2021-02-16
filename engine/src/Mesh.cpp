@@ -9,7 +9,7 @@
 using namespace GPE;
 using namespace GPM;
 
-Mesh::Mesh(const CreateArg& arg, bool isLoadInGPU)
+Mesh::Mesh(const CreateArg& arg, bool isLoadInGPU) noexcept
     : m_indexVAO(0), m_isLoadInGPU(false), m_objName(arg.objName), m_vBuffer(arg.vBuffer), m_vtBuffer(arg.vtBuffer),
       m_vnBuffer(arg.vnBuffer), m_iBuffer(arg.iBuffer)
 {
@@ -17,7 +17,7 @@ Mesh::Mesh(const CreateArg& arg, bool isLoadInGPU)
         loadInGPU();
 }
 
-Mesh::Mesh(const Attrib& attrib, const std::vector<Shape>& shapes, bool isLoadInGPU)
+Mesh::Mesh(const Attrib& attrib, const std::vector<Shape>& shapes, bool isLoadInGPU) noexcept
     : m_indexVAO(0), m_isLoadInGPU(false), m_objName(attrib.objName), m_vBuffer(attrib.vBuffer),
       m_vtBuffer(attrib.vtBuffer), m_vnBuffer(attrib.vnBuffer), m_iBuffer(), m_idMaterial()
 {
@@ -47,13 +47,7 @@ Mesh::Mesh(const Attrib& attrib, const std::vector<Shape>& shapes, bool isLoadIn
         loadInGPU();
 }
 
-Mesh::~Mesh()
-{
-    if (m_isLoadInGPU)
-        unloadFromGPU();
-}
-
-void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, const void* data, int size)
+static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, const void* data, int size) noexcept
 {
     glGenBuffers(1, &buffer);
     glBindBuffer(target, buffer);
@@ -170,7 +164,7 @@ void Mesh::draw() const noexcept
 }
 
 Mesh::CreateArg Mesh::createPlane(float textureRepetition, unsigned int indexTextureX, unsigned int indexTextureY,
-                                  Axis towardAxis)
+                                  Axis towardAxis) noexcept
 {
     Mesh::CreateArg mesh;
     mesh.objName = "Plane";
@@ -243,7 +237,7 @@ Mesh::CreateArg Mesh::createPlane(float textureRepetition, unsigned int indexTex
     return mesh;
 }
 
-Mesh::CreateArg Mesh::createCube(float textureRepetition)
+Mesh::CreateArg Mesh::createCube(float textureRepetition) noexcept
 {
     Mesh::CreateArg mesh;
     mesh.objName = "Cube";
@@ -331,7 +325,7 @@ Mesh::CreateArg Mesh::createCube(float textureRepetition)
     return mesh;
 }
 
-Mesh::CreateArg Mesh::createSphere(int latitudeCount, int longitudeCount)
+Mesh::CreateArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexcept
 {
     GPE_ASSERT(latitudeCount > 2 && longitudeCount > 2, "Latitude and Longitude must be greater than 2");
 
@@ -419,7 +413,7 @@ Mesh::CreateArg Mesh::createSphere(int latitudeCount, int longitudeCount)
     return mesh;
 }
 
-Mesh::CreateArg Mesh::createCylindre(unsigned int prescision)
+Mesh::CreateArg Mesh::createCylindre(unsigned int prescision) noexcept
 {
     GPE_ASSERT(prescision > 2, "Prescision must be greater than 2");
 

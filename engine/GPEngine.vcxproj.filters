@@ -271,6 +271,9 @@
     <None Include="include\Engine\Resources\Material.inl">
       <Filter>include\WIP</Filter>
     </None>
+    <None Include="include\Engine\Resources\Mesh.inl">
+      <Filter>include\WIP</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
