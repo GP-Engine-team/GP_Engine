@@ -8,13 +8,13 @@
 
 #include <array>        //std::array
 #include <shared_mutex> //std::shared_mutex
+#include <utility>      //std::swap
 #include <vector>       //std::vector
-#include <utility> //std::swap
 
-//In inl
-#include "Engine/Intermediate/GameObject.hpp"
+// In inl
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Tools/BranchPrediction.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
 
 namespace GPE
 {
@@ -26,7 +26,7 @@ namespace GPE
  * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
  * @tparam T : Component stored type
  */
-//TODO: Remove multiplicator
+// TODO: Remove multiplicator
 template <typename TStoredComponent, int TSize = 65536 * 1000> // 64KiB = 65,536Ko
 class DataChunk
 {
@@ -36,24 +36,25 @@ class DataChunk
      * operator.
      */
 private:
-    static DataChunk*   m_pInstance;
+    static DataChunk*        m_pInstance;
     static std::shared_mutex m_mutex;
 
 protected:
     std::vector<TStoredComponent> m_components;
 
-    constexpr inline DataChunk() noexcept;
+protected:
+    constexpr DataChunk() noexcept;
 
-    inline ~DataChunk() noexcept = default;
+    ~DataChunk() noexcept = default;
 
 public:
-    constexpr inline DataChunk(const DataChunk& other) noexcept = delete;
+    constexpr DataChunk(const DataChunk& other) noexcept = delete;
 
-    constexpr inline DataChunk(DataChunk&& other) noexcept = delete;
+    constexpr DataChunk(DataChunk&& other) noexcept = delete;
 
-    constexpr inline DataChunk& operator=(DataChunk const& other) noexcept = delete;
+    constexpr DataChunk& operator=(DataChunk const& other) noexcept = delete;
 
-    constexpr inline DataChunk& operator=(DataChunk&& other) noexcept = delete;
+    constexpr DataChunk& operator=(DataChunk&& other) noexcept = delete;
 
     /**
      * @brief Create new component with given arguments

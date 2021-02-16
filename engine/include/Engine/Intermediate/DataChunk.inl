@@ -17,8 +17,7 @@ TStoredComponent& DataChunk<TStoredComponent, TSize>::addComponent(Args&&... arg
 }
 
 template <typename TStoredComponent, int TSize>
-void DataChunk<TStoredComponent, TSize>::destroyComponent(
-    const TStoredComponent* componentToDestroy)
+void DataChunk<TStoredComponent, TSize>::destroyComponent(const TStoredComponent* componentToDestroy) noexcept
 {
     std::unique_lock lock(m_mutex);
 
@@ -36,8 +35,7 @@ void DataChunk<TStoredComponent, TSize>::destroyComponent(
 }
 
 template <typename TStoredComponent, int TSize>
-DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent,
-                                                                                          TSize>::getInstance() noexcept
+DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent, TSize>::getInstance() noexcept
 {
     // double same if to avoid to lock mutex
     if (unlikely(m_pInstance == nullptr))
