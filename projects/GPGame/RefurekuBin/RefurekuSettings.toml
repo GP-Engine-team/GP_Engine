@@ -10,7 +10,7 @@ outputDirectory = '''Generated/'''
 
 # Files contained in the directories of this list will be parsed
 toParseDirectories = [
-#	'''../../include/Engine/'''
+	'''include/'''
 ]
 
 # Files to parse which are not included in any directory of toParseDirectories
@@ -35,7 +35,8 @@ shouldParseAllEntities = false
 
 # Include directories of the project
 projectIncludeDirectories = [
-	'''../include/'''
+#	'''../include/'''
+	'''../'''
 ]
 
 # Must be one of "msvc", "clang++", "g++"

@@ -29,10 +29,10 @@ public:
         fileParserFactory.logger = &logger;
         fileGenerator.logger = &logger;
 
-        fileParserFactory.loadSettings("RefurekuSettings.toml");
-        fileGenerator.loadSettings("RefurekuSettings.toml");
+        //fileParserFactory.loadSettings("RefurekuSettings.toml");
+        //fileGenerator.loadSettings("RefurekuSettings.toml");
 
-        fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit);
+        //fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit);
 
         std::cout << Foo::staticGetArchetype().getField("f")->ownerStruct->name << '\n';
     }
