@@ -253,6 +253,7 @@
     <None Include="include\Engine\Resources\Light\SpotLight.inl" />
     <None Include="include\Engine\Resources\Material.inl" />
     <None Include="include\Engine\Resources\Mesh.inl" />
+    <None Include="include\Engine\Resources\Model.inl" />
     <None Include="include\Engine\Resources\ResourcesManager.inl" />
     <None Include="third_party\gpm\src\conversion.inl" />
     <None Include="third_party\gpm\src\Matrix3.inl" />
