@@ -1,5 +1,6 @@
 #include "Engine/Intermediate/Component.hpp"
-
+namespace GPE
+{
 inline Component::Component(GameObject& refGameObject) noexcept : m_gameObject{refGameObject}
 {
 }
@@ -23,3 +24,4 @@ constexpr inline void Component::setActive(bool newState) noexcept
 {
     m_isActivated = newState;
 }
+} // namespace GPE

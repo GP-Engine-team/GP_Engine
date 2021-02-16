@@ -33,7 +33,6 @@ public:
 
     constexpr inline void setActive(bool newState) noexcept;
 };
+} // namespace GPE
 
 #include "Component.inl"
-
-} // namespace GPE

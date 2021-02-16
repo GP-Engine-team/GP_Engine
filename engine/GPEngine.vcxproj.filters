@@ -61,9 +61,6 @@
     <ClCompile Include="src\SpotLight.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
-    <ClCompile Include="src\DirectionnalLight.cpp">
-      <Filter>src\WIP</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -189,9 +186,6 @@
     <ClInclude Include="include\Engine\Intermediate\Component.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Light\DirectionnalLight.hpp">
-      <Filter>include\WIP</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Resources\Light\Light.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
@@ -205,6 +199,9 @@
       <Filter>include\WIP</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp">
+      <Filter>include\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Light\DirectionalLight.hpp">
       <Filter>include\WIP</Filter>
     </ClInclude>
   </ItemGroup>
@@ -258,6 +255,12 @@
     </None>
     <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl">
       <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Camera.inl">
+      <Filter>include\WIP</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Light\DirectionalLight.inl">
+      <Filter>include\WIP</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

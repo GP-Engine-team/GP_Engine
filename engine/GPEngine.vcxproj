@@ -187,7 +187,7 @@
     <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp" />
     <ClInclude Include="include\Engine\Resources\Camera.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
-    <ClInclude Include="include\Engine\Resources\Light\DirectionnalLight.hpp" />
+    <ClInclude Include="include\Engine\Resources\Light\DirectionalLight.hpp" />
     <ClInclude Include="include\Engine\Resources\Light\Light.hpp" />
     <ClInclude Include="include\Engine\Resources\Light\PointLight.hpp" />
     <ClInclude Include="include\Engine\Resources\Light\SpotLight.hpp" />
@@ -217,7 +217,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\DirectionnalLight.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\Log.cpp" />
@@ -248,6 +247,8 @@
     <None Include="include\Engine\Intermediate\Component.inl" />
     <None Include="include\Engine\Intermediate\DataChunk.inl" />
     <None Include="include\Engine\Intermediate\GameObject.inl" />
+    <None Include="include\Engine\Resources\Camera.inl" />
+    <None Include="include\Engine\Resources\Light\DirectionalLight.inl" />
     <None Include="include\Engine\Resources\ResourcesManager.inl" />
     <None Include="third_party\gpm\src\conversion.inl" />
     <None Include="third_party\gpm\src\Matrix3.inl" />

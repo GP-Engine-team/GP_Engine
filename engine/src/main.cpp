@@ -5,7 +5,7 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/TimeSystem/TimeSystem.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Light/DirectionnalLight.hpp"
+#include "Engine/Resources/Light/DirectionalLight.hpp"
 #include "Engine/Intermediate/RenderSystem.hpp"
 #include "Engine/Intermediate/TransformComponent.hpp"
 #include "Engine/Resources/Camera.hpp"
@@ -159,9 +159,9 @@ int main()
     camCreateArg.far = 10000.f;
     player.addComponent<Camera>(camCreateArg);
 
-    DirectionnalLight::CreateArg lightArg{
+    DirectionalLight::CreateArg lightArg{
         {0.f, 1.f, -1.f}, {1.f, 0.f, 0.f, 0.1f}, {1.f, 0.f, 0.f, 0.7f}, {1.f, 0.f, 0.f, 1.f}};
-    player.addComponent<DirectionnalLight>(lightArg);
+    player.addComponent<DirectionalLight>(lightArg);
 
     ResourcesManager<Mesh, Shader, Texture, std::vector<Material>> rm;
 

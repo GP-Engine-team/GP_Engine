@@ -11,6 +11,9 @@
 #include "Engine/Intermediate/Component.hpp"
 #include "GPM/Matrix4.hpp"
 
+//in inl
+#include "Engine/Intermediate/GameObject.hpp"
+
 namespace GPE
 {
 class Camera : public Component
@@ -78,7 +81,7 @@ public:
      * @param fovY      : by default to 70 (human FovY)
      * @param name
      */
-    Camera(GameObject& owner, const PerspectiveCreateArg& arg);
+    Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept;
 
     /**
      * @brief Construct a new orthographic camera object
@@ -93,7 +96,7 @@ public:
      * @param farVal
      * @param name
      */
-    Camera(GameObject& owner, const OrthographicCreateArg& arg);
+    Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept;
 
     /**
      * @brief Set the Fov Y object
@@ -132,8 +135,7 @@ public:
      *
      * @return const GPM::Mat4&
      */
-    inline
-    const GPM::Mat4& getProjection() const noexcept
+    inline const GPM::Mat4& getProjection() const noexcept;
 };
 
 #include "Camera.inl"

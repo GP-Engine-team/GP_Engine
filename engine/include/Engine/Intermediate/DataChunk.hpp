@@ -66,7 +66,7 @@ public:
     template <typename... Args>
     TStoredComponent& addComponent(Args&&... args) noexcept;
 
-    void destroyComponent(const TStoredComponent* componentToDestroy);
+    void destroyComponent(const TStoredComponent* componentToDestroy) noexcept;
 
     /**
      * @brief This is the static method that controls the access to the singleton
