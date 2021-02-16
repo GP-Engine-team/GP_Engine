@@ -26,6 +26,9 @@
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="GPGame.props" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -67,15 +70,19 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="GPGame.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="GPGame.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="GPGame.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="GPGame.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -104,7 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine;$(ProjectDir);$(SolutionDir);$(SolutionDir)/../../engine/third_party/include/Refureku;$(SolutionDir)/include/;$(SolutionDir)../../engine/src/;$(SolutionDir)../../engine/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngine)/;$(ProjectDir);$(SolutionDir);$(GPEngine)/third_party/include/Refureku;$(SolutionDir)/include/;$(GPEngine)/src/;$(GPEngine)/include/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -129,7 +136,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine;$(ProjectDir);$(SolutionDir);$(SolutionDir)/../../engine/third_party/include/Refureku;$(SolutionDir)/include/;$(SolutionDir)../../engine/src/;$(SolutionDir)../../engine/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngine)/;$(ProjectDir);$(SolutionDir);$(GPEngine)/third_party/include/Refureku;$(SolutionDir)/include/;$(GPEngine)/src/;$(GPEngine)/include/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -154,7 +161,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine;$(ProjectDir);$(SolutionDir);$(SolutionDir)/../../engine/third_party/include/Refureku;$(SolutionDir)/include/;$(SolutionDir)../../engine/src/;$(SolutionDir)../../engine/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngine)/;$(ProjectDir);$(SolutionDir);$(GPEngine)/third_party/include/Refureku;$(SolutionDir)/include/;$(GPEngine)/src/;$(GPEngine)/include/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -179,7 +186,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine;$(ProjectDir);$(SolutionDir);$(SolutionDir)/../../engine/third_party/include/Refureku;$(SolutionDir)/include/;$(SolutionDir)../../engine/src/;$(SolutionDir)../../engine/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngine)/;$(ProjectDir);$(SolutionDir);$(GPEngine)/third_party/include/Refureku;$(SolutionDir)/include/;$(GPEngine)/src/;$(GPEngine)/include/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

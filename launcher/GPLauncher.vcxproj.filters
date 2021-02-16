@@ -27,4 +27,7 @@
       <Filter>Fichiers sources</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="GPLauncher.props" />
+  </ItemGroup>
 </Project>
