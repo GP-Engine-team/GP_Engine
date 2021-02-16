@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine/src;$(SolutionDir)/../../engine/third_party/include;$(SolutionDir)/../../engine/include;$(SolutionDir)src;$(SolutionDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine/src;$(SolutionDir)/../../engine/third_party/include;$(SolutionDir)/../../engine/include;$(SolutionDir)src;$(SolutionDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories);$(SolutionDir)/third_party/gpm/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -144,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../engine/src;$(SolutionDir)/../../engine/third_party/include;$(SolutionDir)/../../engine/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../editor/include;$(SolutionDir)/../../engine/include;$(SolutionDir)/third_party/gpm/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -155,25 +155,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\env-master\env-master\cygwin64\home\utilisateur\Linux\GameEngine3\include2\GE\Core\Rendering\Renderer\iRenderer.hpp" />
-    <ClInclude Include="..\..\env-master\env-master\cygwin64\home\utilisateur\Linux\GameEngine3\include2\GE\Core\Rendering\Renderer\rendererSDLOpGl33.hpp" />
-    <ClInclude Include="..\..\env-master\env-master\cygwin64\home\utilisateur\Linux\GameEngine3\include2\GE\Core\Rendering\Window\iWindow.hpp" />
-    <ClInclude Include="..\..\env-master\env-master\cygwin64\home\utilisateur\Linux\GameEngine3\include2\GE\Core\Rendering\Window\windowSDL.hpp" />
-    <ClInclude Include="include\Engine\Core\Debug\Assert.hpp" />
-    <ClInclude Include="include\Engine\Core\Debug\Log.hpp" />
-    <ClInclude Include="include\Engine\Core\Game\AbstractGame.hpp" />
-    <ClInclude Include="include\Engine\Core\Game\ContextStartup.hpp" />
-    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp" />
-    <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp" />
-    <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include=".clang-format" />
     <None Include="src\Format.inl" />
     <None Include="src\Log.inl" />
     <None Include="src\ResourcesManager.inl" />
     <None Include="src\TimeSystem.inl" />
     <None Include="src\WindowGLFW.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Engine\Core\Debug\Assert.hpp" />
+    <ClInclude Include="include\Engine\Core\Debug\Log.hpp" />
+    <ClInclude Include="include\Engine\Core\Game\AbstractGame.hpp" />
+    <ClInclude Include="include\Engine\Core\Game\ContextStartup.hpp" />
+    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp" />
+    <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
+    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp" />
+    <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
+    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp" />
+    <ClInclude Include="include\Engine\Resources\Scene.hpp" />
+    <ClInclude Include="include\Engine\Resources\SceneManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Log.cpp" />
