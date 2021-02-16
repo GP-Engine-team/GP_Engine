@@ -163,7 +163,7 @@ void GameObject::destroy() noexcept
 {
     /*set flag to be delete by it parent*/
     m_isDead = true;
-    // m_isDirty = true;
+    //m_isDirty = true;
 }
 
 void GameObject::destroyImmediate() noexcept
