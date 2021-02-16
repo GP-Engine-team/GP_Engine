@@ -12,6 +12,7 @@
 #include "Engine/Resources/Light/Light.hpp"
 #include "Engine/Resources/ShaderType.hpp"
 #include "GPM/Vector3.hpp"
+#include "Engine/Core/Tools/ClassUtility.hpp"
 
 //in inl
 #include <string>
@@ -50,9 +51,6 @@ public:
 
     virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
 
-    inline void setDirection(const GPM::Vec3& newDirection) noexcept;
+    DEFAULT_GETTER_SETTER(Direction, m_direction);
 };
-
-#include "DirectionalLight.inl"
-
 } /*namespace GPE*/
