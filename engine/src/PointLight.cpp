@@ -14,7 +14,7 @@ PointLight::PointLight(GameObject& owner, const AmbiantComponent& ambient, const
 {
 }
 
-void PointLight::addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override
+void PointLight::addToLightToUseBuffer(std::vector<LightData>& lb) noexcept
 {
     lb.push_back({m_ambientComp,
                   m_diffuseComp,

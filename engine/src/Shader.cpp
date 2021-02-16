@@ -217,7 +217,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char f
                  .c_str());
 }
 
-Shader::~Shader()
+Shader::~Shader() noexcept
 {
     glDeleteBuffers(1, &m_lightsUniformBuffer);
     glDeleteShader(m_id);
@@ -234,7 +234,7 @@ void Shader::use()
         glUseProgram(m_id);
 }
 
-void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3& viewPos)
+void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3& viewPos) noexcept
 {
     if ((m_featureMask & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
@@ -269,7 +269,7 @@ void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3
     }
 }
 
-void Shader::setMaterialBlock(const MaterialComponent& material)
+void Shader::setMaterialBlock(const MaterialComponent& material) const noexcept
 {
     if ((m_featureMask & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {

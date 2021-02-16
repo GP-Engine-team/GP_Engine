@@ -58,6 +58,9 @@
     <ClCompile Include="src\SpotLight.cpp">
       <Filter>src\WIP</Filter>
     </ClCompile>
+    <ClCompile Include="src\DirectionalLight.cpp">
+      <Filter>src\WIP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -256,16 +259,7 @@
     <None Include="include\Engine\Resources\Camera.inl">
       <Filter>include\WIP</Filter>
     </None>
-    <None Include="include\Engine\Resources\Light\DirectionalLight.inl">
-      <Filter>include\WIP</Filter>
-    </None>
     <None Include="include\Engine\Resources\Light\Light.inl">
-      <Filter>include\WIP</Filter>
-    </None>
-    <None Include="include\Engine\Resources\Light\PointLight.inl">
-      <Filter>include\WIP</Filter>
-    </None>
-    <None Include="include\Engine\Resources\Light\SpotLight.inl">
       <Filter>include\WIP</Filter>
     </None>
     <None Include="include\Engine\Resources\Material.inl">
@@ -275,6 +269,9 @@
       <Filter>include\WIP</Filter>
     </None>
     <None Include="include\Engine\Resources\Model.inl">
+      <Filter>include\WIP</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Shader.inl">
       <Filter>include\WIP</Filter>
     </None>
   </ItemGroup>

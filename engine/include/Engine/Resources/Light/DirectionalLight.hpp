@@ -49,7 +49,7 @@ public:
     DirectionalLight(GameObject& owner, const GPM::Vec3& direction, const AmbiantComponent& ambient,
                      const DiffuseComponent& diffuse, const SpecularComponent& specular) noexcept;
 
-    virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
+    void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept final;
 
     DEFAULT_GETTER_SETTER(Direction, m_direction);
 };
