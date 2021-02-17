@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\GameApiMacros.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\game.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Projects.props" />

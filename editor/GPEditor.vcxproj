@@ -27,6 +27,9 @@
     <ClInclude Include="include\Editor\Editor.hpp" />
     <ClInclude Include="include\Editor\EditorStartup.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="GPEditor.props" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
