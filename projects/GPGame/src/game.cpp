@@ -1,5 +1,4 @@
-#include "game.hpp"
-
+#include "Game/Game.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 
 AbstractGame* createGameInstance()
