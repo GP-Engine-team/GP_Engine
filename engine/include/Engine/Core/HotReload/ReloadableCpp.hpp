@@ -15,7 +15,7 @@
 #define ADD_PROCESS(rcpp, function) rcpp.addProcess(#function);
 #define GET_PROCESS(rcpp, function) rcpp.getProcess<decltype(function)>(#function);
 
-namespace Engine::Core::HotReload
+namespace GPE
 {
 /**
  * @brief Corresponds to a dll

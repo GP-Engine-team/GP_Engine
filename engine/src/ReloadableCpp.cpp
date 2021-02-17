@@ -1,6 +1,6 @@
 #include "Engine/Core/HotReload/ReloadableCpp.hpp"
 
-using namespace Engine::Core::HotReload;
+using namespace GPE;
 
 void ReloadableCpp::load(const char *newFileSuffix)
 {
