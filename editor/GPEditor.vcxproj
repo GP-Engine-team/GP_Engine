@@ -158,7 +158,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../engine/include;$(SolutionDir)../../engine/src;$(SolutionDir)../../engine/third_party/imgui;$(SolutionDir)../../engine/third_party/include;$(SolutionDir)../../engine/third_party;$(SolutionDir)../../projects/GPGame/include;$(SolutionDir)../../editor/include;$(SolutionDir)../../engine/third_party/lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../engine/include;$(SolutionDir)../../engine/src;$(SolutionDir)../../engine/third_party/imgui;$(SolutionDir)../../engine/third_party/include;$(SolutionDir)../../engine/third_party;$(SolutionDir)../../projects/GPGame/include;$(SolutionDir)../../editor/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
