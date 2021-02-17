@@ -280,6 +280,9 @@
     <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl">
       <Filter>include</Filter>
     </None>
+    <None Include="include\Engine\Core\Input\InputManager.inl">
+      <Filter>include</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">

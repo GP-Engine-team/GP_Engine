@@ -10,16 +10,18 @@
 #include <string>
 #include "Engine/Intermediate/Component.hpp"
 
-namespace Engine::Core::Input
+namespace GPE
 {
-	class InputComponent : public Engine::Intermediate::Component
+	class InputComponent : public Component
 	{
 	public:
-		InputComponent() = default;
+		//InputComponent() = delete;
 		~InputComponent() = default;
+		InputComponent(GameObject& owner);
 
 	private:
 		std::unordered_map<std::string, void*> m_functionMap;
+		int									   m_key;
 
 	public:
 

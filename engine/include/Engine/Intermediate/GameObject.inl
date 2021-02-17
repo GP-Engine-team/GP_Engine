@@ -42,9 +42,9 @@ T& GameObject::addComponent(Args&&... args) noexcept
 template <typename T>
 T* GameObject::getComponent() noexcept
 {
-    for (std::unique_ptr<Component>& uniquePtrComponent : m_pComponents)
+    for (auto&& pComponent : m_pComponents)
     {
-        T* comp = dynamic_cast<T*>(uniquePtrComponent.get());
+        T* comp = dynamic_cast<T*>(pComponent);
 
         if (comp != nullptr)
         {

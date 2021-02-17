@@ -244,6 +244,7 @@
     <None Include=".clang-format" />
     <None Include="ClassDiagram.cd" />
     <None Include="include\Engine\Core\Debug\Log.inl" />
+    <None Include="include\Engine\Core\Input\InputManager.inl" />
     <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl" />
     <None Include="include\Engine\Core\TimeSystem\TimeSystem.inl" />
     <None Include="include\Engine\Core\Tools\Format.inl" />

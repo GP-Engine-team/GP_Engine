@@ -20,9 +20,8 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "GLFW/glfw3.h"
 
-using namespace Engine::Core::Input;
-using namespace Engine::Core;
 using namespace GPE;
 using namespace GPM;
 
@@ -144,6 +143,11 @@ void logTimerExample(TimeSystem& ts)
     Log::logInitializationEnd("logTimerExample");
 }
 
+void jump()
+{
+    std::cout << "JUMP !!!" << std::endl;
+}
+
 int main()
 {
     // Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
@@ -157,6 +161,7 @@ int main()
     InputManager::GetInstance()->bindInput(GLFW_KEY_S, "back");
     InputManager::GetInstance()->bindInput(GLFW_KEY_A, "left");
     InputManager::GetInstance()->bindInput(GLFW_KEY_D, "right");
+    InputManager::GetInstance()->bindInput(GLFW_KEY_SPACE, "jump");
 
 
     //sceneGraphExample();
@@ -174,6 +179,11 @@ int main()
     DirectionalLight::CreateArg lightArg{
         {0.f, 1.f, -1.f}, {1.f, 0.f, 0.f, 0.1f}, {1.f, 0.f, 0.f, 0.7f}, {1.f, 0.f, 0.f, 1.f}};
     player.addComponent<DirectionalLight>(lightArg);
+
+    player.addComponent<InputComponent>();
+
+    //InputComponent* input = player.getComponent<InputComponent>();
+    //input->bindAction("jump",jump);
 
     ResourcesManager<Mesh, Shader, Texture, std::vector<Material>> rm;
 
