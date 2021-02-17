@@ -5,8 +5,6 @@
 #include "GameApiMacros.hpp"
 #include <iostream>
 
-#include "Bar.hpp"
-
 class Game final : public AbstractGame
 {
 private:
@@ -26,10 +24,7 @@ private:
 	}
 
 public:
-	Game()
-	{
-		std::cout << Bar::staticGetArchetype().getField("f")->ownerStruct->name << '\n';
-	}
+	Game() = default;
 	virtual ~Game() final = default;
 };
 
@@ -41,4 +36,4 @@ extern "C" GAME_API class AbstractGame* createGameInstance();
  * @brief Called by the exe, by retriewing the dll functions. Can't be inlined.
  * The class is created in the dll, so it must be deleted in the dll.
 */
-extern "C" GAME_API void destroyGameInstance(class AbstractGame * game);
+extern "C" GAME_API void destroyGameInstance(class AbstractGame* game);
