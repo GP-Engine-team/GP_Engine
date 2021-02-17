@@ -18,6 +18,7 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "GPM/Random.hpp"
 
 using namespace GPE;
 using namespace GPM;
