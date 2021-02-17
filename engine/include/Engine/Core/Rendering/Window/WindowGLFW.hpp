@@ -7,7 +7,7 @@
 
 #include <string> //std::string
 
-class GLFWwindow;
+struct GLFWwindow;
 
 namespace Engine::Core::Renderering
 {
