@@ -1,0 +1,53 @@
+[FileGenerationSettings]
+# Generated files will use this extension
+generatedFilesExtension = ".rfk.h"
+
+# List of supported extensions
+supportedExtensions = [".h", ".hpp"]
+
+# Generated files will be located here
+outputDirectory = '''include/Generated/'''
+
+# Files contained in the directories of this list will be parsed
+toParseDirectories = [
+	'''../engine/include/Engine/'''
+]
+
+# Files to parse which are not included in any directory of toParseDirectories
+toParseFiles = []
+
+# Files contained in the directories of this list will be ignored
+ignoredDirectories = [
+#	'''Path/To/Output/Dir''',
+#	'''Path/To/Directory/To/Ignore'''
+	'''../engine/include/Engine/'''
+]
+
+# Files not to parse which are not included in any directory of ignoredDirectories
+ignoredFiles = []
+
+
+[FileParsingSettings]
+# Abort parsing on first encountered error
+shouldAbortParsingOnFirstError = true
+
+# Should all entities be parsed whether they are tagged with the macro or not
+shouldParseAllEntities = false
+
+# Include directories of the project
+projectIncludeDirectories = [
+#	'''../include/'''
+	'''../'''
+]
+
+# Must be one of "msvc", "clang++", "g++"
+compilerExeName = "msvc"
+
+[FileParsingSettings.Properties]
+namespaceMacroName = "RFKNamespace"
+classmacroName = "RFKClass"
+structMacroName = "RFKStruct"
+fieldMacroName = "RFKField"
+methodMacroName = "RFKMethod"
+enumMacroName = "RFKEnum"
+enumValueMacroName = "RFKEnumVal"
