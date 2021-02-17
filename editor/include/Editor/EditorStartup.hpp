@@ -8,11 +8,18 @@
 
 #include "Engine/Core/Game/ContextStartup.hpp"
 
+class AbstractGame;
+
+namespace Editor
+{
+
+class Editor;
+
 class EditorStartup final : public ContextStartup
 {
 private:
-    class AbstractGame* m_game = nullptr;
-    class Editor* m_editor = nullptr;
+    AbstractGame* m_game = nullptr;
+    Editor* m_editor = nullptr;
 
 public:
     EditorStartup();
@@ -21,3 +28,5 @@ public:
     virtual void update() override final;
     virtual ~EditorStartup() final;
 };
+
+} // End of namespace Editor

@@ -6,21 +6,23 @@
 
 #pragma once
 
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+
+namespace Editor
+{
+
 class Editor
 {
+private:
+	Engine::Core::Renderering::Window window;
+
 public:
-	void update(double unscaledDeltaTime, double deltaTime)
-	{
+	Editor();
+	~Editor();
 
-	}
-
-	void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
-	{
-
-	}
-
-	void render()
-	{
-
-	}
+	void update		(double unscaledDeltaTime, double deltaTime);
+	void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime);
+	void render		();
 };
+
+} // End of namespace Editor
