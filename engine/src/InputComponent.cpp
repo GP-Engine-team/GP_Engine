@@ -9,12 +9,27 @@ InputComponent::InputComponent(GameObject& owner) : Component(owner)
     m_key = InputManager::GetInstance()->addComponent(this);
 }
 
-void InputComponent::bindAction(const string& action, void* function)
+InputComponent::InputComponent(const InputComponent& other) noexcept : Component(other.m_gameObject)
 {
-    m_functionMap.emplace(action,function);
+    m_key = -1;
+}
+
+InputComponent::InputComponent(InputComponent&& other) noexcept : Component(other.m_gameObject)
+{
+    m_key = -1;
+}
+
+void InputComponent::bindAction(const string& action, const std::function<void()>& function)
+{
+    m_functionMap.emplace(action, function);
 }
 
 void InputComponent::fireAction(const std::string& action)
 {
-    m_functionMap.find(action)->second;
+    auto it = m_functionMap.find(action);
+    if (it != m_functionMap.end())
+    {
+        std::function<void()> myfunc = it->second;
+        myfunc();
+    }
 }

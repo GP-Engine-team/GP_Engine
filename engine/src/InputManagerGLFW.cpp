@@ -34,16 +34,47 @@ void InputManager::fireInputComponents(const std::string& action) const
 void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const
 {
     InputManager* input = InputManager::GetInstance();
-    auto          it    = input->m_actionMap.equal_range(key);
+    //auto          it    = input->m_actionMap.equal_range(key);
 
-    for (auto i = it.first; i != it.second; i++)
+    input->m_stateMap[key] = action != GLFW_RELEASE;// || action == GLFW_REPEAT && action != GLFW_RELEASE);
+    /*for (auto i = it.first; i != it.second; i++)
     {
-        input->fireInputComponents(i->second);
-        //std::cout << i->second << std::endl;
-    }
+        if (input->m_stateMap[key])
+        {
+            input->fireInputComponents(i->second);
+        }
+    }*/
 }
 
 void InputManager::setupCallbacks(GLFWwindow* window)
 {
     glfwSetKeyCallback(window, setKeycallback);
+}
+
+void InputManager::processInput()
+{
+    InputManager* input = InputManager::GetInstance();
+
+    for (auto keyState : input->m_stateMap)
+    {
+        if (keyState.second == false)
+            continue;
+
+        auto it = input->m_actionMap.equal_range(keyState.first);
+        for (auto i2 = it.first; i2 != it.second; i2++)
+        {
+            input->fireInputComponents(i2->second);
+        }
+    }
+}
+
+void InputManager::keyPressed(int key)
+{
+    InputManager* input = InputManager::GetInstance();
+
+    auto it = input->m_actionMap.equal_range(key);
+    for (auto i = it.first; i != it.second; i++)
+    {
+        input->fireInputComponents(i->second);
+    }
 }

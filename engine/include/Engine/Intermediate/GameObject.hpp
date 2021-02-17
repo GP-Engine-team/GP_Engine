@@ -53,7 +53,7 @@ public:
 
     inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is available
 
-    constexpr inline GameObject(GameObject&& other) = default;
+    inline GameObject(GameObject&& other) noexcept = default;
 
     inline ~GameObject() noexcept = default;
 
@@ -202,6 +202,18 @@ public:
     [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
     [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
+
+    void up();
+
+    void down();
+
+    void forward();
+
+    void back();
+
+    void left();
+
+    void right();
 };
 
 #include "GameObject.inl"

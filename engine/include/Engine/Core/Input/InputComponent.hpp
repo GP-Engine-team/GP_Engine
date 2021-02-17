@@ -5,38 +5,39 @@
  */
 
 #pragma once
-#include <iostream>
-#include <unordered_map>
-#include <string>
 #include "Engine/Intermediate/Component.hpp"
+#include <functional>
+#include <iostream>
+#include <string>
+#include <unordered_map>
 
 namespace GPE
 {
-	class InputComponent : public Component
-	{
-	public:
-		//InputComponent() = delete;
-		~InputComponent() = default;
-		InputComponent(GameObject& owner);
+class InputComponent : public Component
+{
+public:
+    // InputComponent() = delete;
+    InputComponent(const InputComponent& other) noexcept;
+    InputComponent(InputComponent&& other) noexcept;
+    virtual ~InputComponent() = default;
+    InputComponent(GameObject& owner);
 
-	private:
-		std::unordered_map<std::string, void*> m_functionMap;
-		int									   m_key;
+private:
+    std::unordered_map<std::string, std::function<void()>> m_functionMap;
+    int                                                       m_key = -1;
 
-	public:
+public:
+    /**
+     * @brief Bind a function to an action
+     * @param action
+     * @param function
+     */
+    void bindAction(const std::string& action, const std::function<void()>& function);
 
-		/**
-		 * @brief Bind a function to an action
-		 * @param action
-		 * @param function
-		*/
-		void bindAction(const std::string& action, void* function);
-
-		/**
-		 * @brief launch an action
-		 * @param action
-		*/
-		void fireAction(const std::string& action);
-
-	};
-} // namespace Engine::Core::Input
+    /**
+     * @brief launch an action
+     * @param action
+     */
+    void fireAction(const std::string& action);
+};
+} // namespace GPE

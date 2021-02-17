@@ -34,18 +34,22 @@ public:
 
 private:
     std::unordered_multimap<int, std::string> m_actionMap;
-    std::unordered_map<int, InputComponent*>   m_inputComponents;
+    std::unordered_map<int, bool>             m_prevStateMap;
+    std::unordered_map<int, bool>             m_stateMap;
+    std::unordered_map<int, InputComponent*>  m_inputComponents;
 
 public:
     static InputManager* GetInstance();
 
-    _NODISCARD bool              checkForAction(const std::string& action) const;
-    void                         keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const;
-    void                         fireInputComponents(const std::string& action) const;
-    void                         setupCallbacks(GLFWwindow* window);
-    inline void                  bindInput(const int& key, const std::string& action);
-    _NODISCARD inline const int& addComponent(InputComponent* input);
-    inline void                  removeComponent(const int& key);
+    _NODISCARD bool             checkForAction(const std::string& action) const;
+    void                        keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const;
+    void                        fireInputComponents(const std::string& action) const;
+    void                        setupCallbacks(GLFWwindow* window);
+    inline void                 bindInput(int key, const std::string& action);
+    _NODISCARD inline const int addComponent(InputComponent* input);
+    inline void                 removeComponent(int key);
+    void                        processInput();
+    void                        keyPressed(int key);
 };
 inline void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 

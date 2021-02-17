@@ -5,20 +5,20 @@ void GPE::setKeycallback(GLFWwindow* window, int key, int scancode, int action, 
     InputManager::GetInstance()->keyCallback(window, key, scancode, action, mods);
 }
 
-void InputManager::bindInput(const int& key, const std::string& action)
+void InputManager::bindInput(int key, const std::string& action)
 {
     m_actionMap.emplace(key, action);
 }
 
-const int& InputManager::addComponent(InputComponent* input)
+const int InputManager::addComponent(InputComponent* input)
 {
    int key = static_cast<int>(m_inputComponents.size());
-    //m_inputComponents.emplace(key, input);
+    m_inputComponents.emplace(key, input);
 
     return key;
 }
 
-void InputManager::removeComponent(const int& key)
+void InputManager::removeComponent(int key)
 {
     m_inputComponents.erase(key);
 }

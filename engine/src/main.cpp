@@ -1,14 +1,14 @@
 #include <iostream>
 
+#include "Engine/Core/Input/InputManagerGLFW.hpp"
 #include "Engine/Core/Parsers/ObjParser.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/TimeSystem/TimeSystem.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Light/DirectionalLight.hpp"
 #include "Engine/Intermediate/RenderSystem.hpp"
 #include "Engine/Intermediate/TransformComponent.hpp"
-#include "Engine/Core/Input/InputManagerGLFW.hpp"
+#include "Engine/Resources/Light/DirectionalLight.hpp"
 
 #include "Engine/Resources/Camera.hpp"
 #include "Engine/Resources/Material.hpp"
@@ -143,31 +143,56 @@ void logTimerExample(TimeSystem& ts)
     Log::logInitializationEnd("logTimerExample");
 }
 
-void jump()
+void GameObject::up()
 {
-    std::cout << "JUMP !!!" << std::endl;
+    getTransform().translate(Vec3(0, 1, 0));
+}
+
+void GameObject::down()
+{
+    getTransform().translate(Vec3(0, -1, 0));
+}
+
+void GameObject::forward()
+{
+    getTransform().translate(Vec3(0, 0, -1));
+}
+
+void GameObject::back()
+{
+    getTransform().translate(Vec3(0, 0, 1));
+}
+
+void GameObject::left()
+{
+    getTransform().translate(Vec3(-1, 0, 0));
+}
+
+void GameObject::right()
+{
+    getTransform().translate(Vec3(1, 0, 0));
 }
 
 int main()
 {
     // Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
 
-    Window     win(WindowCreateArg{"GP engine", 600, 900});
-    Renderer   ren(win);
-    TimeSystem ts;
+    Window        win(WindowCreateArg{"GP engine", 600, 900});
+    Renderer      ren(win);
+    TimeSystem    ts;
+    InputManager* iManager = InputManager::GetInstance();
+    iManager->setupCallbacks(win.getGLFWWindow());
+    iManager->bindInput(GLFW_KEY_W, "forward");
+    iManager->bindInput(GLFW_KEY_S, "back");
+    iManager->bindInput(GLFW_KEY_A, "left");
+    iManager->bindInput(GLFW_KEY_D, "right");
+    iManager->bindInput(GLFW_KEY_SPACE, "jump");
+    iManager->bindInput(GLFW_KEY_LEFT_CONTROL, "down");
 
-    InputManager::GetInstance()->setupCallbacks(win.getGLFWWindow());
-    InputManager::GetInstance()->bindInput(GLFW_KEY_W, "forward");
-    InputManager::GetInstance()->bindInput(GLFW_KEY_S, "back");
-    InputManager::GetInstance()->bindInput(GLFW_KEY_A, "left");
-    InputManager::GetInstance()->bindInput(GLFW_KEY_D, "right");
-    InputManager::GetInstance()->bindInput(GLFW_KEY_SPACE, "jump");
-
-
-    //sceneGraphExample();
+    // sceneGraphExample();
     Log::logInitializationStart("sceneGraphExample");
 
-    GameObject  world(GameObject::CreateArg{"World"});
+    GameObject            world(GameObject::CreateArg{"World"});
     GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 5.f, 0.f}}};
 
     GameObject& player = world.addChild<GameObject>(playerArg);
@@ -180,10 +205,13 @@ int main()
         {0.f, 1.f, -1.f}, {1.f, 0.f, 0.f, 0.1f}, {1.f, 0.f, 0.f, 0.7f}, {1.f, 0.f, 0.f, 1.f}};
     player.addComponent<DirectionalLight>(lightArg);
 
-    player.addComponent<InputComponent>();
-
-    //InputComponent* input = player.getComponent<InputComponent>();
-    //input->bindAction("jump",jump);
+    InputComponent* input = &player.addComponent<InputComponent>();
+    input->bindAction("jump", std::bind(&GameObject::up, &player));
+    input->bindAction("down", std::bind(&GameObject::down, &player));
+    input->bindAction("right", std::bind(&GameObject::right, &player));
+    input->bindAction("left", std::bind(&GameObject::left, &player));
+    input->bindAction("forward", std::bind(&GameObject::forward, &player));
+    input->bindAction("back", std::bind(&GameObject::back, &player));
 
     ResourcesManager<Mesh, Shader, Texture, std::vector<Material>> rm;
 
@@ -192,7 +220,7 @@ int main()
                    "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
 
     loadTreeResource(rm);
-    loadTree(world, rm, 5000);
+    loadTree(world, rm, 50);
 
     Log::logInitializationEnd("sceneGraphExample");
 
@@ -221,19 +249,12 @@ int main()
     while (1)
     {
         glfwPollEvents();
-        ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
-        { 
-            ++fixedUpdateFrameCount;
-        }, 
-            [&](double unscaledDeltaTime, double deltaTime)
-        { 
-            ++unFixedUpdateFrameCount;
-        }, 
-            [&]() {});
+        iManager->processInput();
+        ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime) { ++fixedUpdateFrameCount; },
+                  [&](double unscaledDeltaTime, double deltaTime) { ++unFixedUpdateFrameCount; }, [&]() {});
         ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime) { ++fixedUpdateFrameCount; },
                   [&](double unscaledDeltaTime, double deltaTime) {
                       ++unFixedUpdateFrameCount;
-                      player.getTransform().translate(GPM::Vec3(0.f, 0.f, speedPlayer * (float)deltaTime));
                       world.updateSelfAndChildren();
                   },
                   [&]() {
