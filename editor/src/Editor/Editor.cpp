@@ -3,7 +3,6 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "imgui/imgui.h"
 
-//#define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
@@ -24,7 +23,7 @@ namespace Editor
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor()
-    : window{{"GP engine editor", 100, 100}}
+    : window{{"GP engine editor", 100, 100}}, renderer{window}
 {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -57,6 +56,17 @@ Editor::~Editor()
 void Editor::update(double unscaledDeltaTime, double deltaTime)
 {
     glfwPollEvents();
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Hey");
+        ImGui::Text("Hello there");
+    ImGui::End();
+
+    render();
+    renderer.swapBuffer();
 }
 
 
@@ -76,6 +86,12 @@ void Editor::render()
     glClearColor(1.f, 1.f, 1.f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+
+bool Editor::isRunning()
+{
+    return !glfwWindowShouldClose(window.getGLFWWindow());
 }
 
 } // End of namespace Editor

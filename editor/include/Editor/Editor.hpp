@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 
 namespace Editor
 {
@@ -14,7 +15,8 @@ namespace Editor
 class Editor
 {
 private:
-	Engine::Core::Renderering::Window window;
+	Engine::Core::Renderering::Window   window;
+	Engine::Core::Renderering::Renderer renderer;
 
 public:
 	Editor();
@@ -23,6 +25,7 @@ public:
 	void update		(double unscaledDeltaTime, double deltaTime);
 	void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime);
 	void render		();
+	bool isRunning  ();
 };
 
 } // End of namespace Editor
