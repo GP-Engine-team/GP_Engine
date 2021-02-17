@@ -19,11 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Bar.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\GameApiMacros.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Projects.props" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -66,15 +70,19 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Projects.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Projects.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Projects.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Projects.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -101,17 +109,24 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS;GAME_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)/../../engine/third_party/include/Refureku;$(SolutionDir)/include/;$(SolutionDir)../../engine/src/;$(SolutionDir)../../engine/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>GPEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\engine\third_party\lib\Refureku;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\lib\;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\RefurekuBin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -119,9 +134,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS;GAME_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)/../../engine/third_party/include/Refureku;$(SolutionDir)/include/;$(SolutionDir)../../engine/src/;$(SolutionDir)../../engine/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)/;$(ProjectDir);$(SolutionDir);$(GPEngineDir)/third_party/include/Refureku;$(SolutionDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -130,24 +145,38 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>GPEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\engine\third_party\lib\Refureku;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\lib\;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\RefurekuBin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS;GAME_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)/../../engine/third_party/include/Refureku;$(SolutionDir)/include/;$(SolutionDir)../../engine/src/;$(SolutionDir)../../engine/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>GPEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\engine\third_party\lib\Refureku;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\lib\;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\RefurekuBin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -155,9 +184,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS;GAME_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)/../../engine/third_party/include/Refureku;$(SolutionDir)/include/;$(SolutionDir)../../engine/src/;$(SolutionDir)../../engine/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)/;$(ProjectDir);$(SolutionDir);$(GPEngineDir)/third_party/include/Refureku;$(SolutionDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -166,8 +195,15 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>GPEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\engine\third_party\lib\Refureku;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\lib\;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\RefurekuBin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

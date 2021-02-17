@@ -5,6 +5,8 @@
 #include "GameApiMacros.hpp"
 #include <iostream>
 
+#include "Bar.hpp"
+
 class Game final : public AbstractGame
 {
 private:
@@ -24,7 +26,10 @@ private:
 	}
 
 public:
-	Game() = default;
+	Game()
+	{
+		std::cout << Bar::staticGetArchetype().getField("f")->ownerStruct->name << '\n';
+	}
 	virtual ~Game() final = default;
 };
 

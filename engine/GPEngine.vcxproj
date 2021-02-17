@@ -59,15 +59,19 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\projects\GPGame\Projects.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\projects\GPGame\Projects.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\projects\GPGame\Projects.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\projects\GPGame\Projects.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -96,7 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -104,7 +108,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
@@ -119,7 +123,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -129,7 +133,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
@@ -142,7 +146,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -150,7 +154,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
@@ -165,7 +169,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -175,7 +179,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
