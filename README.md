@@ -5,10 +5,10 @@ Link to Google Drive of our engine : https://drive.google.com/drive/folders/13uq
 
 ## How to compile
 
-Run this command to doawload all depedancy (this operation can take few minutes)
+Start by cloning the project with
 
 ```batch
-git submodule update --init --recursive
+`git clone --recurse-submodules https://github.com/GP-Engine-team/GP_Engine.git`
 ```
 
  - 1 : Download cmake for windows : https://cmake.org/download/
