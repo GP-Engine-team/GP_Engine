@@ -1,12 +1,17 @@
 #include "Editor/EditorStartup.hpp"
-#include "Engine/Core/Debug/Assert.hpp"
 #include "Editor/Editor.hpp"
+#include "Engine/Core/Debug/Assert.hpp"
+#include "Engine/Core/Game/AbstractGame.hpp"
 #include "game.hpp"
 
-EditorStartup::EditorStartup() : m_editor(new Editor())
+namespace Editor
+{
+
+EditorStartup::EditorStartup() : m_editor{new Editor()}
 {
 
 }
+
 
 void EditorStartup::EditorStartup::StartGame()
 {
@@ -17,6 +22,7 @@ void EditorStartup::EditorStartup::StartGame()
     m_game = new Game();
 }
 
+
 void EditorStartup::CloseGame()
 {
     if (m_game != nullptr)
@@ -25,6 +31,7 @@ void EditorStartup::CloseGame()
         m_game = nullptr;
     }
 }
+
 
 void EditorStartup::update() 
 {
@@ -54,6 +61,7 @@ void EditorStartup::update()
     timeSystem.update(update, fixedUpdate, render);
 }
 
+
 EditorStartup::~EditorStartup()
 {
     if (m_game != nullptr)
@@ -64,3 +72,5 @@ EditorStartup::~EditorStartup()
     GPE_ASSERT(m_editor != nullptr, "m_editor should be valid since we've just ran the editor.");
     delete m_editor;
 }
+
+} // End of namespace Editor
