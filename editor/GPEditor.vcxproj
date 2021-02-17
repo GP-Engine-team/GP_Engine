@@ -19,13 +19,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\imgui.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\engine\third_party\src\glad.c" />
     <ClCompile Include="src\Editor\Editor.cpp" />
     <ClCompile Include="src\Editor\EditorStartup.cpp" />
+    <ClCompile Include="src\Editor\Viewport.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Editor\Editor.hpp" />
     <ClInclude Include="include\Editor\EditorStartup.hpp" />
+    <ClInclude Include="include\Editor\Viewport.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -138,13 +148,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../editor/include;$(SolutionDir)/../../engine/include;$(SolutionDir)/../../engine/src;$(SolutionDir)/include/;$(SolutionDir)/../../engine/third_party/gpm/include;$(SolutionDir)/../engine/third_party/gpm/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../editor/include;$(SolutionDir)../../editor/include;$(SolutionDir)../../engine/include;$(SolutionDir)../../engine/src;$(SolutionDir)include/;$(SolutionDir)../../engine/third_party/gpm/include;$(SolutionDir)../engine/third_party/gpm/include;$(SolutionDir)../../engine/third_party;$(SolutionDir)../../engine/third_party/include;$(SolutionDir)../../engine/third_party/imgui/backends;$(SolutionDir)../../engine/third_party/imgui;$(SolutionDir)../../engine/third_party/src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;GPGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GPEngine.lib;GPGame.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)\;$(SolutionDir)../../engine/third_party/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
