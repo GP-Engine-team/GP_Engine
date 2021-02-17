@@ -11,8 +11,10 @@ InputComponent::InputComponent(GameObject& owner) : Component(owner)
 
 void InputComponent::bindAction(const string& action, void* function)
 {
+    m_functionMap.emplace(action,function);
 }
 
 void InputComponent::fireAction(const std::string& action)
 {
+    m_functionMap.find(action)->second;
 }
