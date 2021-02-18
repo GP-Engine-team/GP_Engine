@@ -83,23 +83,23 @@ inline void createNewMaterialAndParseName(std::string line, std::vector<Material
 inline void parseLine(std::string line, std::vector<MaterialAttrib>& materials)
 {
     // Detect line type and parse this line
-    if (isTitle(line, "#"))
+    if (stringStartsWith(line, "#"))
         return;
-    else if (isTitle(line, "newmtl"))
+    else if (stringStartsWith(line, "newmtl"))
         createNewMaterialAndParseName(line, materials);
-    else if (isTitle(line, "Ka"))
+    else if (stringStartsWith(line, "Ka"))
         parseComponent(line, materials, EComponentType::AMBIENT);
-    else if (isTitle(line, "Kd"))
+    else if (stringStartsWith(line, "Kd"))
         parseComponent(line, materials, EComponentType::DIFFUSE);
-    else if (isTitle(line, "Ks"))
+    else if (stringStartsWith(line, "Ks"))
         parseComponent(line, materials, EComponentType::SPECULAR);
-    else if (isTitle(line, "Ns"))
+    else if (stringStartsWith(line, "Ns"))
         materials.back().shininess = parse<float>(line, 2);
-    else if (isTitle(line, "map_Ka"))
+    else if (stringStartsWith(line, "map_Ka"))
         parseTextureName(line, materials, EComponentType::AMBIENT);
-    else if (isTitle(line, "map_Kd"))
+    else if (stringStartsWith(line, "map_Kd"))
         parseTextureName(line, materials, EComponentType::DIFFUSE);
-    else if (isTitle(line, "map_Ks"))
+    else if (stringStartsWith(line, "map_Ks"))
         parseTextureName(line, materials, EComponentType::SPECULAR);
     else
         Log::logWarning(std::string("MTL Parser cannot read this line : " + line).c_str());

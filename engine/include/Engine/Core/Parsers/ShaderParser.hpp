@@ -26,7 +26,7 @@ public:
      */
     static inline void parse(std::string& sourceCode)
     {
-        parseIncludesShader(sourceCode);
+        includeHeaders(sourceCode);
     }
 
     /**
@@ -34,6 +34,6 @@ public:
      *
      * @param sourceCode
      */
-    static void parseIncludesShader(std::string& sourceCode);
+    static void includeHeaders(std::string& sourceCode);
 };
 } /*namespace GPE*/

@@ -7,6 +7,8 @@
 #pragma once
 
 #include <string>
+#include <cassert>
+#include <memory>
 
 namespace GPE
 {
