@@ -205,6 +205,23 @@
     <ClInclude Include="third_party\gpm\include\GPM\Matrix3.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\Matrix4.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\Quaternion.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Random.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Referential.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\AABB.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Capsule.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Cylinder.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\InfiniteCylinder.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Line.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\OrientedBox.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Plane.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Quad.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Segment.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Sphere.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Volume.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\ShapeRelation\Intersection.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\ShapeRelation\SegmentPlane.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\ShapeRelation\SpherePlane.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Tools.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\Transform.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\types.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\Vector2.hpp" />
@@ -234,6 +251,11 @@
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\WindowGLFW.cpp" />
+    <ClCompile Include="third_party\gpm\src\Intersection.cpp" />
+    <ClCompile Include="third_party\gpm\src\main.cpp" />
+    <ClCompile Include="third_party\gpm\src\Plane.cpp" />
+    <ClCompile Include="third_party\gpm\src\SegmentPlane.cpp" />
+    <ClCompile Include="third_party\gpm\src\SpherePlane.cpp" />
     <ClCompile Include="third_party\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +276,7 @@
     <None Include="include\Engine\Resources\ResourcesManager.inl" />
     <None Include="include\Engine\Resources\Shader.inl" />
     <None Include="include\Engine\Resources\Texture.inl" />
+    <None Include="third_party\gpm\include\GPM\Random.inl" />
     <None Include="third_party\gpm\src\conversion.inl" />
     <None Include="third_party\gpm\src\Matrix3.inl" />
     <None Include="third_party\gpm\src\Matrix4.inl" />

@@ -105,3 +105,28 @@ void Camera::setAspect(const float newAspect) noexcept
         break;
     }
 }
+
+Camera::Frustum Camera::getFrustum() const noexcept
+{
+    // TODO: Optimization with furstum matrix ??
+    Frustum          frustum;
+    const GPM::Vec3& forward        = -m_gameObject.getTransform().getVectorForward();
+    const GPM::Vec3& right          = m_gameObject.getTransform().getVectorRight();
+    const GPM::Vec3& up             = m_gameObject.getTransform().getVectorUp();
+    const GPM::Vec3& globalPosition = m_gameObject.getTransform().getGlobalPosition();
+
+    frustum.backFace  = {globalPosition + m_projInfo.near * forward, forward};
+    frustum.frontFace = {globalPosition + m_projInfo.far * forward, -forward};
+
+    frustum.rightFace = {globalPosition,
+                         GPM::Vec3::cross(forward * m_projInfo.far + right * (m_projInfo.hSide / 2.f), up)};
+    frustum.leftFace  = {globalPosition,
+                        -GPM::Vec3::cross(forward * m_projInfo.far + right * (-m_projInfo.hSide / 2.f), up)};
+
+    frustum.topFace    = {globalPosition,
+                       GPM::Vec3::cross(forward * m_projInfo.far + up * (m_projInfo.vSide / 2.f), right)};
+    frustum.bottomFace = {globalPosition,
+                          -GPM::Vec3::cross(forward * m_projInfo.far + up * (-m_projInfo.vSide / 2.f), right)};
+
+    return frustum;
+}

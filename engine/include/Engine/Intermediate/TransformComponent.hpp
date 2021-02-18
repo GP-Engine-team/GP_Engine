@@ -144,5 +144,20 @@ public:
     {
         return m_transform.model;
     }
+
+    const GPM::Vec3& getPosition() const noexcept
+    {
+        return m_spaceAttribut.position;
+    }
+
+    const GPM::Quaternion& getRotation() const noexcept
+    {
+        return m_spaceAttribut.rotation;
+    }
+
+    const GPM::Vec3& getScale() const noexcept
+    {
+        return m_spaceAttribut.scale;
+    }
 };
 } /*namespace GPE*/
