@@ -12,8 +12,7 @@ TStoredComponent& DataChunk<TStoredComponent, TSize>::addComponent(Args&&... arg
 {
     std::unique_lock lock(m_mutex);
 
-    m_components.emplace_back(std::forward<Args>(args)...);
-    return m_components.back();
+    return m_components.emplace_back(std::forward<Args>(args)...);
 }
 
 template <typename TStoredComponent, int TSize>
