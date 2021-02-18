@@ -6,24 +6,24 @@ inline bool stringStartsWith(const std::string& line, std::string&& title) noexc
 }
 
 template <typename T>
-T parse(const std::string& line, size_t pos, size_t len) noexcept
+T parse(const std::string& src, size_t pos, size_t len) noexcept
 {
     T i;
-    std::istringstream(line.substr(pos, len)) >> i;
+    std::istringstream(src.substr(pos, len)) >> i;
     return i;
 }
 
-inline void parseName(const std::string& line, std::string& name) noexcept
+inline void removeUntilFirstSpace(const std::string& src, std::string& dest) noexcept
 {
-    std::size_t cursorStart = line.find_first_of(" ", 0) + 1;
-    name = line.substr(cursorStart, line.size() - cursorStart); // Search first word between two space
-    if (!isalpha(name.back()))
+    std::size_t cursorStart = src.find_first_of(" ", 0) + 1;
+    dest = src.substr(cursorStart, src.size() - cursorStart); // Search first word between two space
+    if (!isalpha(dest.back()))
     {
-        name.erase(name.end() - 1);
+        dest.erase(dest.end() - 1);
     }
 }
 
-inline std::string parseNameInPath(const char* path) noexcept
+inline std::string removeUntilFirstSpaceInPath(const char* path) noexcept
 {
     std::string src(path);
 

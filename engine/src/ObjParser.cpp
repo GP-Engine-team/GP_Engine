@@ -191,13 +191,13 @@ inline void parseMtl(const std::string& line, std::vector<MaterialAttrib>& mater
 inline void parseUseMtl(const std::string& line, std::vector<Shape>& shape)
 {
     shape.push_back({});
-    parseName(line, shape.back().material_ids);
+    removeUntilFirstSpace(line, shape.back().material_ids);
 }
 
 inline void parseSurfaceName(const std::string& line, std::vector<Shape>& shape)
 {
     if (!shape.empty())
-        parseName(line, shape.back().name);
+        removeUntilFirstSpace(line, shape.back().name);
 }
 
 inline void parseLine(const std::string& line, Attrib* attrib, std::vector<Shape>* shape,
@@ -208,7 +208,7 @@ inline void parseLine(const std::string& line, Attrib* attrib, std::vector<Shape
         return;
     else if (stringStartsWith(line, "o") && attrib != nullptr)
     {
-        parseName(line, attrib->objName);
+        removeUntilFirstSpace(line, attrib->objName);
         Log::log((std::string("Obj name : ") + attrib->objName).c_str());
     }
     else if (stringStartsWith(line, "g") && shape != nullptr)

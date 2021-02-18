@@ -28,7 +28,7 @@ Texture::Texture(const char* path, bool flipTexture, bool loadInGPU) noexcept
         return;
     }
 
-    parseNameInPath(path);
+    removeUntilFirstSpaceInPath(path);
 
     if (loadInGPU)
         Texture::loadInGPU();
@@ -50,7 +50,7 @@ Texture::Texture(const CreateArg& arg) noexcept  : m_id(0), m_isLoadInGPU(false)
         return;
     }
 
-    parseNameInPath(arg.path);
+    removeUntilFirstSpaceInPath(arg.path);
 
     if (arg.loadInGPU)
         Texture::loadInGPU();

@@ -59,15 +59,15 @@ static void parseTextureName(std::string& line, std::vector<MaterialAttrib>& mat
     switch (type)
     {
     case EComponentType::AMBIENT:
-        parseName(line, materials.back().nameAmbiantTexture);
+        removeUntilFirstSpace(line, materials.back().nameAmbiantTexture);
         break;
 
     case EComponentType::DIFFUSE:
-        parseName(line, materials.back().nameDiffuseTexture);
+        removeUntilFirstSpace(line, materials.back().nameDiffuseTexture);
         break;
 
     case EComponentType::SPECULAR:
-        parseName(line, materials.back().nameSpecularTexture);
+        removeUntilFirstSpace(line, materials.back().nameSpecularTexture);
         break;
     default:
         break;
@@ -77,7 +77,7 @@ static void parseTextureName(std::string& line, std::vector<MaterialAttrib>& mat
 inline void createNewMaterialAndParseName(std::string line, std::vector<MaterialAttrib>& materials)
 {
     materials.push_back({});
-    parseName(line, materials.back().id);
+    removeUntilFirstSpace(line, materials.back().id);
 }
 
 inline void parseLine(std::string line, std::vector<MaterialAttrib>& materials)

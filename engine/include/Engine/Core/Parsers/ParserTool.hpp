@@ -10,18 +10,19 @@
 
 namespace GPE
 {
-inline bool stringStartsWith(const std::string& line, std::string&& title) noexcept;
+inline bool stringStartsWith(const std::string& src, std::string&& title) noexcept;
 
 template <typename T>
-T parse(const std::string& line, size_t pos = 0, size_t len = std::string::npos) noexcept;
+T parse(const std::string& srtc, size_t pos = 0, size_t len = std::string::npos) noexcept;
 
-inline void parseName(const std::string& line, std::string& name) noexcept;
+
+inline void removeUntilFirstSpace(const std::string& src, std::string& dest) noexcept;
 
 /**
  * @brief parse the name of image integer in path
  *
  */
-inline std::string parseNameInPath(const char* path) noexcept;
+inline std::string removeUntilFirstSpaceInPath(const char* path) noexcept;
 
 #include "ParserTool.inl"
 
