@@ -2,6 +2,8 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 
+using namespace GPE;
+
 AbstractGame* createGameInstance()
 {
 	return new Game();

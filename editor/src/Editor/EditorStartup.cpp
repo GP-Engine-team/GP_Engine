@@ -3,6 +3,8 @@
 #include "Editor/Editor.hpp"
 #include "Game.hpp"
 
+using namespace GPE;
+
 EditorStartup::EditorStartup() : m_editor(new Editor())
 {
 

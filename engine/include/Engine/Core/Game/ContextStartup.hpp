@@ -11,7 +11,7 @@
 class ContextStartup
 {
 public:
-    Engine::Core::TimeSystem timeSystem;
+    GPE::TimeSystem timeSystem;
     bool isRunning = true;
 
 public:

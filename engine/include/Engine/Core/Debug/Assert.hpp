@@ -27,10 +27,9 @@ namespace GPE
     }                                                                                                                  \
     else                                                                                                               \
     {                                                                                                                  \
-        Log::logError(                                                                            \
-            stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s",            \
-                                              F_RED("Assertion"), __FUNCSIG__, __FILE__, __LINE__, BOLD(#expr), msg)); \
-        Log::closeAndTryToCreateFile();                                                           \
+        Log::logError(stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s", F_RED("Assertion"),   \
+                                   __FUNCSIG__, __FILE__, __LINE__, BOLD(#expr), msg));                                \
+        Log::closeAndTryToCreateFile();                                                                                \
         exit(3);                                                                                                       \
     }
 
