@@ -15,8 +15,8 @@ GameObject::GameObject()
 template <typename T>
 void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept
 {
-    GPE_ASSERT(oldPtr != nullptr, "oldPtr canno't be nullptr");
-    GPE_ASSERT(newPtr != nullptr, "newPtr canno't be nullptr");
+    GPE_ASSERT(oldPtr != nullptr, "oldPtr cannot be nullptr");
+    GPE_ASSERT(newPtr != nullptr, "newPtr cannot be nullptr");
 
     for (Component* pComponent : m_pComponents)
     {
