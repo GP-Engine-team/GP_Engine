@@ -20,13 +20,14 @@ EditorStartup::EditorStartup()
           if (m_game != nullptr)
               m_game->update(fixedUnscaledDeltaTime, deltaTime);
       
-          m_editor->update(fixedUnscaledDeltaTime, deltaTime);
+          //m_editor->update(fixedUnscaledDeltaTime, deltaTime);
       }},
       m_render{[&]()
       {
           if (m_game != nullptr)
               m_game->render();
 
+          m_editor->update(.0, .0);
           m_editor->render();
       }},
       m_editor{new Editor()}, m_game{nullptr}

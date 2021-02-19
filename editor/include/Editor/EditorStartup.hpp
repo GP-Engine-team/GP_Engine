@@ -8,7 +8,6 @@
 
 #include "Engine/Core/Game/ContextStartup.hpp"
 
-
 #include <functional>
 
 class AbstractGame;
