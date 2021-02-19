@@ -11,6 +11,7 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Light/PointLight.hpp"
 #include "GPM/Vector3.hpp"
+#include "Engine/Core/Tools/ClassUtility.hpp"
 
 namespace GPE
 {
@@ -65,6 +66,10 @@ public:
 
     SpotLight(GameObject& owner, CreateArg arg);
 
-    virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
+    void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept final;
+
+
+    DEFAULT_GETTER_SETTER(CutOff, m_cutOff);
+    DEFAULT_GETTER_SETTER(CutOffExponent, m_cutOffExponent);
 };
 } /*namespace GPE*/

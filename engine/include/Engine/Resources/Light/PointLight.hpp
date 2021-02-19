@@ -9,6 +9,7 @@
 #include <string> //std::string
 #include <vector> //std::vectorA
 
+#include "Engine/Core/Tools/ClassUtility.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Light/Light.hpp"
 #include "GPM/Vector3.hpp"
@@ -42,23 +43,15 @@ public:
     PointLight& operator=(PointLight const& other) = delete;
     PointLight& operator=(PointLight&& other) = default;
 
-    PointLight(GameObject& owner, const CreateArg& arg);
+    PointLight(GameObject& owner, const CreateArg& arg) noexcept;
 
-    PointLight(GameObject& owner, const AmbiantComponent& ambient,
-               const DiffuseComponent& diffuse, const SpecularComponent& specular,
-               float constant, float linear, float quadratic);
+    PointLight(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
+                      const SpecularComponent& specular, float constant, float linear, float quadratic) noexcept;
 
-    PointLight(GameObject& owner, const std::vector<std::string>& params);
+    void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
 
-    virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
-
-    float getLinear()
-    {
-        return m_linear;
-    }
-    void setLinear(float linear)
-    {
-        m_linear = linear;
-    }
+    DEFAULT_GETTER_SETTER(Constant, m_constant);
+    DEFAULT_GETTER_SETTER(Linear, m_linear);
+    DEFAULT_GETTER_SETTER(Quadratic, m_quadratic);
 };
 } /*namespace GPE*/

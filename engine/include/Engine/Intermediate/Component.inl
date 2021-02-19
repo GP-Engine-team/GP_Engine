@@ -1,7 +1,6 @@
 #include "Engine/Intermediate/Component.hpp"
-namespace GPE
-{
-inline Component::Component(GameObject& refGameObject) noexcept : m_gameObject{refGameObject}
+
+inline Component::Component(GameObject& owner) noexcept : m_gameObject{owner}
 {
 }
 
@@ -24,4 +23,3 @@ constexpr inline void Component::setActive(bool newState) noexcept
 {
     m_isActivated = newState;
 }
-} // namespace GPE

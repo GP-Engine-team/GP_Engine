@@ -99,7 +99,7 @@ private:
      * @brief fill pTextureToUse in function of
      *
      */
-    void initTextureBufferWithMTLId();
+    void initTextureBufferWithMTLId() noexcept;
 
 public:
     Model(GameObject& owner, const CreateArg& arg);
@@ -121,25 +121,15 @@ public:
      * @brief Load texture and Mesh from CPU to GPU. This operation can be slow.
      *
      */
-    void loadInGPU() noexcept;
-    void unloadFromGPU() noexcept;
+    inline void loadInGPU() noexcept;
 
-    bool isOpaque() const noexcept
-    {
-        return m_isOpaque;
-    }
+    inline void unloadFromGPU() noexcept;
 
-    Shader* getpShader() noexcept
-    {
-        return m_pShader;
-    }
+    inline bool isOpaque() const noexcept;
 
-    Mesh* getpMesh() noexcept
-    {
-        return m_pMesh;
-    }
+    inline Shader* getpShader() noexcept;
 
-    void insertModelPartsOnContenor(std::list<ModelPart>& modelPartContenor) noexcept;
+    inline Mesh* getpMesh() noexcept;
 
     /**
      * @brief return true if Texture is load in GPU and ready to use
@@ -147,9 +137,11 @@ public:
      * @return true
      * @return false
      */
-    bool isLoadInGPU() const noexcept
-    {
-        return m_isLoadInGPU;
-    }
+    inline bool isLoadInGPU() const noexcept;
+
+    void insertModelPartsOnContenor(std::list<ModelPart>& modelPartContenor) noexcept;
 };
+
+#include "Model.inl"
+
 } /*namespace GPE*/

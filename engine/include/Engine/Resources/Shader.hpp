@@ -35,7 +35,7 @@ public:
 
 protected:
     const unsigned char m_featureMask; // feature is shader interger into shader like light, blure etc....
-    unsigned int        m_lightsUniformBuffer;
+    unsigned int        m_lightsUniformBuffer; //TODO: no sens to have id of uniform light in any shaders
 
     std::string m_nameFragment;
     std::string m_nameVertex;
@@ -54,7 +54,7 @@ public:
     Shader(const char* vertexPath, const char* fragmentPath, unsigned char featureMask = 0);
     Shader(const Shader& other) = delete;
     Shader(Shader&& other)      = default;
-    ~Shader();
+    ~Shader() noexcept;
 
     /**
      * @brief activate the shader
@@ -68,32 +68,20 @@ public:
      * @param name
      * @param value
      */
-    void setBool(const char* name, bool value) const;
-    void setInt(const char* name, int value) const;
-    void setFloat(const char* name, float value) const;
-    void setVec3(const char* name, float v1, float v2, float v3) const;
-    void setVec4(const char* name, float v1, float v2, float v3, float v4) const;
-    void setMat3(const char* name, const float* value) const;
-    void setMat4(const char* name, const float* value) const;
-    void setpVec3(const char* name, unsigned int count, const float* pV) const;
-    void setpVec4(const char* name, unsigned int count, const float* pV) const;
-    void setLightBlock(const std::vector<LightData>& lightBuffer, const GPM::Vec3& viewPos);
-    void setMaterialBlock(const MaterialComponent& material);
+    inline void setBool(const char* name, bool value) const noexcept;
+    inline void setInt(const char* name, int value) const noexcept;
+    inline void setFloat(const char* name, float value) const noexcept;
+    inline void setVec3(const char* name, float v1, float v2, float v3) const noexcept;
+    inline void setVec4(const char* name, float v1, float v2, float v3, float v4) const noexcept;
+    inline void setMat3(const char* name, const float* value) const noexcept;
+    inline void setMat4(const char* name, const float* value) const noexcept;
+    inline void setpVec3(const char* name, unsigned int count, const float* pV) const noexcept;
+    inline void setpVec4(const char* name, unsigned int count, const float* pV) const noexcept;
+    void setLightBlock(const std::vector<LightData>& lightBuffer, const GPM::Vec3& viewPos) noexcept;
+    void setMaterialBlock(const MaterialComponent& material) const noexcept;
 
-    unsigned int getIdProgramm() const noexcept
-    {
-        return m_id;
-    };
-
-    /**
-     * @brief Get the Feature object
-     *
-     * @return const std::vector<E_ShaderFeature>&
-     */
-    unsigned char getFeature()
-    {
-        return m_featureMask;
-    }
+    inline unsigned int getIdProgramm() const noexcept;
+    inline unsigned char getFeature() const noexcept;
 
 private:
     /**
@@ -132,48 +120,6 @@ private:
     void parseName(const char* path, std::string& shaderName);
 };
 
-inline void Shader::setBool(const char* name, bool value) const
-{
-    glUniform1i(glGetUniformLocation(m_id, name), (int)value);
-}
+#include "Shader.inl"
 
-inline void Shader::setInt(const char* name, int value) const
-{
-    glUniform1i(glGetUniformLocation(m_id, name), value);
-}
-
-inline void Shader::setFloat(const char* name, float value) const
-{
-    glUniform1f(glGetUniformLocation(m_id, name), value);
-}
-
-inline void Shader::setVec3(const char* name, float v1, float v2, float v3) const
-{
-    glUniform3f(glGetUniformLocation(m_id, name), v1, v2, v3);
-}
-
-inline void Shader::setVec4(const char* name, float v1, float v2, float v3, float v4) const
-{
-    glUniform4f(glGetUniformLocation(m_id, name), v1, v2, v3, v4);
-}
-
-inline void Shader::setMat3(const char* name, const float* value) const
-{
-    glUniformMatrix3fv(glGetUniformLocation(m_id, name), 1, GL_FALSE, value);
-}
-
-inline void Shader::setMat4(const char* name, const float* value) const
-{
-    glUniformMatrix4fv(glGetUniformLocation(m_id, name), 1, GL_FALSE, value);
-}
-
-inline void Shader::setpVec3(const char* name, unsigned int count, const float* pV) const
-{
-    glUniform3fv(glGetUniformLocation(m_id, name), count, pV);
-}
-
-inline void Shader::setpVec4(const char* name, unsigned int count, const float* pV) const
-{
-    glUniform4fv(glGetUniformLocation(m_id, name), count, pV);
-}
 } /*namespace GPE*/

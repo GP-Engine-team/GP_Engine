@@ -12,7 +12,7 @@
 using namespace GPE;
 using namespace GPM;
 
-inline void parseVertexPos(const std::string& line, std::vector<Vec3>& vBuffer)
+static void parseVertexPos(const std::string& line, std::vector<Vec3>& vBuffer)
 {
     std::size_t cursorStart = line.find_first_not_of(" ", 1);
     std::size_t cursorEnd   = line.find(" ", cursorStart);
@@ -29,7 +29,7 @@ inline void parseVertexPos(const std::string& line, std::vector<Vec3>& vBuffer)
     vBuffer.push_back({x, y, z});
 }
 
-inline void parseTexturePos(const std::string& line, std::vector<Vec2>& vtBuffer)
+static void parseTexturePos(const std::string& line, std::vector<Vec2>& vtBuffer)
 {
     std::size_t cursorStart = line.find_first_not_of(" ", 2);
     std::size_t cursorEnd   = line.find(" ", cursorStart);
@@ -42,7 +42,7 @@ inline void parseTexturePos(const std::string& line, std::vector<Vec2>& vtBuffer
     vtBuffer.push_back({tx, ty});
 }
 
-inline void parseNormal(const std::string& line, std::vector<Vec3>& vnBuffer)
+static void parseNormal(const std::string& line, std::vector<Vec3>& vnBuffer)
 {
     std::size_t cursorStart = line.find_first_not_of(" ", 2);
     std::size_t cursorEnd   = line.find(" ", cursorStart);
@@ -64,7 +64,7 @@ inline unsigned int getNumberIndice(const std::string& line, unsigned int number
     return numberAttributeByIndice == 1 ? 0 : static_cast<unsigned int>(std::count(line.begin(), line.end(), '/')) / (numberAttributeByIndice - 1);
 }
 
-inline unsigned int getNumberAttributeByIndice(const std::string& line)
+static unsigned int getNumberAttributeByIndice(const std::string& line)
 {
     std::size_t cursorStart = line.find_first_not_of(" ", 1);
     std::string indiceBlock = line.substr(cursorStart, line.find_first_of(" ", cursorStart) - cursorStart);

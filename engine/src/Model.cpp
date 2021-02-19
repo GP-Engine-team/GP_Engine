@@ -45,7 +45,7 @@ Model::~Model()
     RenderSystem::getInstance()->removeModel(this);
 }
 
-void Model::initTextureBufferWithMTLId()
+void Model::initTextureBufferWithMTLId() noexcept
 {
     for (auto&& idMat : m_pMesh->getIdMaterials())
     {

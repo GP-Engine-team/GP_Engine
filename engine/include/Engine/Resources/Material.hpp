@@ -43,14 +43,14 @@ protected:
 
 public:
     Material(const CreateArgWithTexture& arg);
-    Material(CreateArg& arg);
+    inline Material(CreateArg& arg);
 
     /**
      * @brief Construct a new Material object after parse mtl files
      *
      * @param arg
      */
-    Material(const MaterialAttrib& arg);
+    inline Material(const MaterialAttrib& arg);
 
     Material()                      = default;
     Material(const Material& other) = default;
@@ -64,29 +64,23 @@ public:
      *
      * @return const MaterialComponent&
      */
-    const MaterialComponent& getMaterialComponent() const noexcept
-    {
-        return m_comp;
-    }
+    inline const MaterialComponent& getMaterialComponent() const noexcept;
 
     /**
      * @brief Get the pointor to diffuse texture object
      *
      * @return const Texture*
      */
-    Texture* getPDiffuseTexture() noexcept
-    {
-        return m_pDiffuseTexture.get();
-    }
+    inline Texture* getPDiffuseTexture() noexcept;
 
     /**
      * @brief Get the Name object
      *
      * @return const std::string&
      */
-    const std::string& getName() const noexcept
-    {
-        return m_name;
-    }
+    inline const std::string& getName() const noexcept;
 };
+
+#include "Material.inl"
+
 } /*namespace GPE*/

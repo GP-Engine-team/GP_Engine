@@ -17,7 +17,7 @@ protected:
     bool        m_isActivated{true};
 
 public:
-    inline Component(GameObject& refGameObject) noexcept;
+    inline Component(GameObject& owner) noexcept;
     inline Component() noexcept                       = delete;
     inline Component(const Component& other) noexcept = delete;
     inline Component(Component&& other) noexcept      = default;
@@ -33,6 +33,7 @@ public:
 
     constexpr inline void setActive(bool newState) noexcept;
 };
-} // namespace GPE
 
 #include "Component.inl"
+
+} // namespace GPE

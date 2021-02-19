@@ -12,6 +12,7 @@
 #include "Engine/Resources/Light/Light.hpp"
 #include "Engine/Resources/ShaderType.hpp"
 #include "GPM/Vector3.hpp"
+#include "Engine/Core/Tools/ClassUtility.hpp"
 
 //in inl
 #include <string>
@@ -41,18 +42,13 @@ public:
     DirectionalLight& operator=(DirectionalLight const& other) = delete;
     DirectionalLight& operator=(DirectionalLight&& other) = default;
 
-    inline
     DirectionalLight(GameObject& owner, const CreateArg& arg) noexcept;
 
-    inline
     DirectionalLight(GameObject& owner, const GPM::Vec3& direction, const AmbiantComponent& ambient,
                      const DiffuseComponent& diffuse, const SpecularComponent& specular) noexcept;
 
-    virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
+    void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept final;
 
-    inline void setDirection(const GPM::Vec3& newDirection) noexcept;
+    DEFAULT_GETTER_SETTER(Direction, m_direction);
 };
-
-#include "DirectionalLight.inl"
-
 } /*namespace GPE*/
