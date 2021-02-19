@@ -480,3 +480,6 @@ x64/
 
 #Resources
 resources/*
+
+.vscode/*
+.idea/*
