@@ -43,6 +43,7 @@ public:
 
     _NODISCARD bool             checkForAction(const std::string& action) const;
     void                        keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const;
+    void                        cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) const;
     void                        fireInputComponents(const std::string& action) const;
     void                        setupCallbacks(GLFWwindow* window);
     inline void                 bindInput(int key, const std::string& action);
@@ -52,6 +53,7 @@ public:
     void                        keyPressed(int key);
 };
 inline void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+inline void setCursorCallback(GLFWwindow* window, double xpos, double ypos);
 
 #include "Engine/Core/Input/InputManager.inl"
 } // namespace GPE

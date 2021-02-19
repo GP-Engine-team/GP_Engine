@@ -5,6 +5,11 @@ void GPE::setKeycallback(GLFWwindow* window, int key, int scancode, int action, 
     InputManager::GetInstance()->keyCallback(window, key, scancode, action, mods);
 }
 
+void GPE::setCursorCallback(GLFWwindow* window, double xpos, double ypos)
+{
+    InputManager::GetInstance()->cursorPositionCallback(window, xpos, ypos);
+}
+
 void InputManager::bindInput(int key, const std::string& action)
 {
     m_actionMap.emplace(key, action);

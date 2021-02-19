@@ -34,21 +34,19 @@ void InputManager::fireInputComponents(const std::string& action) const
 void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const
 {
     InputManager* input = InputManager::GetInstance();
-    //auto          it    = input->m_actionMap.equal_range(key);
 
-    input->m_stateMap[key] = action != GLFW_RELEASE;// || action == GLFW_REPEAT && action != GLFW_RELEASE);
-    /*for (auto i = it.first; i != it.second; i++)
-    {
-        if (input->m_stateMap[key])
-        {
-            input->fireInputComponents(i->second);
-        }
-    }*/
+    input->m_stateMap[key] = action != GLFW_RELEASE;
+}
+
+void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) const
+{
 }
 
 void InputManager::setupCallbacks(GLFWwindow* window)
 {
     glfwSetKeyCallback(window, setKeycallback);
+    glfwSetCursorPosCallback(window, setCursorCallback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void InputManager::processInput()
