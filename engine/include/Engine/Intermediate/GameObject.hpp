@@ -45,11 +45,9 @@ public: // TODO : Protected method ?
     void updateComponentLink(const T* oldPtr, T* newPtr) noexcept;
 
 public:
-    inline
-    GameObject(const CreateArg& arg);
+    inline GameObject(const CreateArg& arg);
 
-    inline
-    GameObject();
+    inline GameObject();
 
     inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is available
 
@@ -214,6 +212,8 @@ public:
     void left();
 
     void right();
+
+    void leave();
 };
 
 #include "GameObject.inl"

@@ -3,6 +3,7 @@
 
 using namespace std;
 using namespace GPE;
+using namespace GPM;
 
 InputManager* InputManager::m_inputManager = nullptr;
 
@@ -38,8 +39,12 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
     input->m_stateMap[key] = action != GLFW_RELEASE;
 }
 
-void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) const
+void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 {
+    Vec2 newPos;
+    newPos.x = xpos;
+    newPos.y = ypos;
+    m_cursor.deltaDisplasment = newPos - m_cursor.position;
 }
 
 void InputManager::setupCallbacks(GLFWwindow* window)

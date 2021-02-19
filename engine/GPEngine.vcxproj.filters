@@ -16,9 +16,6 @@
     <ClCompile Include="src\InputManagerGLFW.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Light.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\Log.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -65,6 +62,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\WindowGLFW.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DirectionalLight.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -281,6 +281,9 @@
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\Core\Input\InputManager.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Core\Input\Cursor.hpp">
       <Filter>include</Filter>
     </None>
   </ItemGroup>

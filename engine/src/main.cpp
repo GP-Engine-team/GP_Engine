@@ -145,32 +145,38 @@ void logTimerExample(TimeSystem& ts)
 
 void GameObject::up()
 {
-    getTransform().translate(Vec3(0, 1, 0));
+    getTransform().translate(getTransform().getVectorUp());
 }
 
 void GameObject::down()
 {
-    getTransform().translate(Vec3(0, -1, 0));
+    getTransform().translate(getTransform().getVectorUp() * -1);
 }
 
 void GameObject::forward()
 {
-    getTransform().translate(Vec3(0, 0, -1));
+    getTransform().translate(getTransform().getVectorForward() * -1);
 }
 
 void GameObject::back()
 {
-    getTransform().translate(Vec3(0, 0, 1));
+    getTransform().translate(getTransform().getVectorForward());
 }
 
 void GameObject::left()
 {
-    getTransform().translate(Vec3(-1, 0, 0));
+    getTransform().translate(getTransform().getVectorRight() * -1);
 }
 
 void GameObject::right()
 {
-    getTransform().translate(Vec3(1, 0, 0));
+    getTransform().translate(getTransform().getVectorRight());
+}
+
+void GameObject::leave()
+{
+    Log::closeAndTryToCreateFile();
+    exit(666);
 }
 
 int main()
@@ -188,6 +194,7 @@ int main()
     iManager->bindInput(GLFW_KEY_D, "right");
     iManager->bindInput(GLFW_KEY_SPACE, "jump");
     iManager->bindInput(GLFW_KEY_LEFT_CONTROL, "down");
+    iManager->bindInput(GLFW_KEY_ESCAPE, "exit");
 
     // sceneGraphExample();
     Log::logInitializationStart("sceneGraphExample");
@@ -202,7 +209,7 @@ int main()
     player.addComponent<Camera>(camCreateArg);
 
     DirectionalLight::CreateArg lightArg{
-        {0.f, 1.f, -1.f}, {1.f, 0.f, 0.f, 0.1f}, {1.f, 0.f, 0.f, 0.7f}, {1.f, 0.f, 0.f, 1.f}};
+        {0.f, 1.f, -1.f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 0.f, 0.f, 0.7f}, {1.f, 0.f, 0.f, 1.f}};
     player.addComponent<DirectionalLight>(lightArg);
 
     InputComponent* input = &player.addComponent<InputComponent>();
@@ -212,6 +219,7 @@ int main()
     input->bindAction("left", std::bind(&GameObject::left, &player));
     input->bindAction("forward", std::bind(&GameObject::forward, &player));
     input->bindAction("back", std::bind(&GameObject::back, &player));
+    input->bindAction("exit", std::bind(&GameObject::leave, &player));
 
     ResourcesManager<Mesh, Shader, Texture, std::vector<Material>> rm;
 
@@ -255,12 +263,16 @@ int main()
         ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime) { ++fixedUpdateFrameCount; },
                   [&](double unscaledDeltaTime, double deltaTime) {
                       ++unFixedUpdateFrameCount;
-                      world.updateSelfAndChildren();
+                      world.forceUpdate();
                   },
                   [&]() {
                       RenderSystem::getInstance()->draw();
                       ren.swapBuffer();
                   });
+
+        //player.getTransform().get().rotate(/*player.getTransform().get().eulerAngles() +*/Vec3(1,0,0) * 0.001);
+        player.getTransform().getSpacialAttribut().rotation = Quaternion::angleAxis(iManager->m_cursor.deltaDisplasment.length() * 0.001, Vec3(iManager->m_cursor.deltaDisplasment.y, iManager->m_cursor.deltaDisplasment.x, 0)) * player.getTransform().getSpacialAttribut().rotation;
+        //std::cout << iManager->c_
     }
 
     Log::closeAndTryToCreateFile();

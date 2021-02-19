@@ -6,6 +6,7 @@
 
 #pragma once
 #include "Engine/Core/Input/InputComponent.hpp"
+#include "Engine/Core/Input/Cursor.hpp"
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -39,11 +40,12 @@ private:
     std::unordered_map<int, InputComponent*>  m_inputComponents;
 
 public:
+    Cursor                                    m_cursor;
     static InputManager* GetInstance();
 
     _NODISCARD bool             checkForAction(const std::string& action) const;
     void                        keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const;
-    void                        cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) const;
+    void                        cursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
     void                        fireInputComponents(const std::string& action) const;
     void                        setupCallbacks(GLFWwindow* window);
     inline void                 bindInput(int key, const std::string& action);

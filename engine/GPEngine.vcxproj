@@ -218,10 +218,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\InputComponent.cpp" />
     <ClCompile Include="src\InputManagerGLFW.cpp" />
-    <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Material.cpp" />
@@ -244,6 +244,7 @@
     <None Include=".clang-format" />
     <None Include="ClassDiagram.cd" />
     <None Include="include\Engine\Core\Debug\Log.inl" />
+    <None Include="include\Engine\Core\Input\Cursor.hpp" />
     <None Include="include\Engine\Core\Input\InputManager.inl" />
     <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl" />
     <None Include="include\Engine\Core\TimeSystem\TimeSystem.inl" />
