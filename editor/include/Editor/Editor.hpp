@@ -6,8 +6,7 @@
 
 #pragma once
 
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
+struct GLFWwindow;
 
 namespace Editor
 {
@@ -15,8 +14,13 @@ namespace Editor
 class Editor
 {
 private:
-	Engine::Core::Renderering::Window   window;
-	Engine::Core::Renderering::Renderer renderer;
+	GLFWwindow* m_window;
+	int			m_framebufferWidth;
+	int			m_framebufferHeight;
+
+	void initGLFW();
+	void initGlad();
+	void initDearImGui();
 
 public:
 	Editor();
@@ -26,6 +30,8 @@ public:
 	void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime);
 	void render		();
 	bool isRunning  ();
+
+	friend void windowFramebufferResized(GLFWwindow* window, int width, int height);
 };
 
 } // End of namespace Editor
