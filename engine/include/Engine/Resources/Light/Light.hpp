@@ -60,7 +60,7 @@ public:
         lb.push_back({m_ambientComp,
                       m_diffuseComp,
                       m_specularComp,
-                      getGameObject().getTransform().getGlobalPosition(),
+                      getOwner().getTransform().getGlobalPosition(),
                       0.f,
                       0.f,
                       0.f,

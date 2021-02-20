@@ -60,7 +60,7 @@ void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* 
             light->addToLightToUseBuffer(lightBuffer);
         }
 
-        pCurrentShaderUse->setLightBlock(lightBuffer, camToUse.getGameObject().getTransform().getGlobalPosition());
+        pCurrentShaderUse->setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
     }
     else
     {
@@ -98,15 +98,15 @@ void sendModelDataToShader(Camera& camToUse, ModelPart& modelPart)
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         Mat3 inverseModelMatrix3(
-            GPM::toMatrix3(modelPart.pModel->getGameObject().getTransform().getModelMatrix().inversed()));
+            GPM::toMatrix3(modelPart.pModel->getOwner().getTransform().getModelMatrix().inversed()));
 
         pShader->setMat4("projectViewModelMatrix", (camToUse.getProjection() * camToUse.getView() *
-                                                    modelPart.pModel->getGameObject().getTransform().getModelMatrix())
+                                                    modelPart.pModel->getOwner().getTransform().getModelMatrix())
                                                        .e);
         pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
     }
 
-    pShader->setMat4("model", modelPart.pModel->getGameObject().getTransform().getModelMatrix().e);
+    pShader->setMat4("model", modelPart.pModel->getOwner().getTransform().getModelMatrix().e);
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {

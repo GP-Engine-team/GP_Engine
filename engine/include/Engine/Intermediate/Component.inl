@@ -4,12 +4,12 @@ inline Component::Component(GameObject& owner) noexcept : m_gameObject{owner}
 {
 }
 
-constexpr inline GameObject& Component::getGameObject() noexcept
+constexpr inline GameObject& Component::getOwner() noexcept
 {
     return m_gameObject;
 }
 
-constexpr inline const GameObject& Component::getGameObject() const noexcept
+constexpr inline const GameObject& Component::getOwner() const noexcept
 {
     return m_gameObject;
 }

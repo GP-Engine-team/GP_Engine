@@ -21,7 +21,7 @@ SpotLight::SpotLight(GameObject& owner, CreateArg arg)
 
 void SpotLight::addToLightToUseBuffer(std::vector<LightData>& lb) noexcept
 {
-    lb.push_back({m_ambientComp, m_diffuseComp, m_specularComp, getGameObject().getTransform().getGlobalPosition(), 2.f,
-                  m_constant, m_linear, m_quadratic, m_cutOffExponent,
-                  getGameObject().getTransform().getVectorForward(), m_cutOff});
+    lb.push_back({m_ambientComp, m_diffuseComp, m_specularComp, getOwner().getTransform().getGlobalPosition(), 2.f,
+                  m_constant, m_linear, m_quadratic, m_cutOffExponent, getOwner().getTransform().getVectorForward(),
+                  m_cutOff});
 }
