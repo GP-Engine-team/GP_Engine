@@ -145,7 +145,7 @@ public:
             it) noexcept; // TODO: Destroy immediate may be dangerous
 
     template <typename TUniqueComponentType>
-    void destroyImmediateUniqueComponent() noexcept;
+    void destroyUniqueComponentNow() noexcept;
 
     /**
      * @brief destroy component of gameobject
@@ -172,7 +172,7 @@ public:
      * Use this function only if you are sur that the object don't depending af the current frame
      *
      */
-    inline void destroyImmediate() noexcept;
+    inline void destroyNow() noexcept;
 
     /**
      * @brief add specific entity to the graph with arg to construct it and return his id

@@ -125,7 +125,7 @@ std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild(
 }
 
 template <typename TUniqueComponentType>
-void GameObject::destroyImmediateUniqueComponent() noexcept
+void GameObject::destroyUniqueComponentNow() noexcept
 {
     for (auto&& it = m_pComponents.begin(); it != m_pComponents.end(); ++it)
     {
@@ -161,7 +161,7 @@ void GameObject::destroy() noexcept
     // m_isDirty = true;
 }
 
-void GameObject::destroyImmediate() noexcept
+void GameObject::destroyNow() noexcept
 {
     parent->destroyChild(this);
 }
