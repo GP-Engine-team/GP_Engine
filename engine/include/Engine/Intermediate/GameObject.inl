@@ -1,9 +1,8 @@
 #include "Engine/Intermediate/GameObject.hpp"
 
 GameObject::GameObject(const CreateArg& arg)
-    : m_name{arg.name}, m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this,
-                                                                                                 arg.transformArg)},
-      m_pComponents{}
+    : m_name{arg.name},
+      m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)}, m_pComponents{}
 {
 }
 
@@ -20,14 +19,11 @@ void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept
 
     for (Component* pComponent : m_pComponents)
     {
-        T* checkedCompPtr = dynamic_cast<T*>(pComponent);
-
-        if (checkedCompPtr == oldPtr)
-            [[unlikely]]
-            {
-                pComponent = newPtr;
-                return;
-            }
+        if (unlikely(pComponent == oldPtr))
+        {
+            pComponent = newPtr;
+            return;
+        }
     };
 }
 
@@ -131,13 +127,12 @@ void GameObject::destroyUniqueComponentNow() noexcept
     {
         TUniqueComponentType* checkedCompPtr = dynamic_cast<TUniqueComponentType*>(*it);
 
-        if (checkedCompPtr != nullptr)
-            [[unlikely]]
-            {
-                DataChunk<TUniqueComponentType>::getInstance()->destroyComponent(checkedCompPtr);
-                m_pComponents.erase(it);
-                return;
-            }
+        if (unlikely(checkedCompPtr != nullptr))
+        {
+            DataChunk<TUniqueComponentType>::getInstance()->destroyComponent(checkedCompPtr);
+            m_pComponents.erase(it);
+            return;
+        }
     };
 }
 
