@@ -10,8 +10,6 @@ template <typename TStoredComponent, int TSize>
 template <typename... Args>
 TStoredComponent& DataChunk<TStoredComponent, TSize>::addComponent(Args&&... args) noexcept
 {
-    std::unique_lock lock(m_mutex);
-
     return m_components.emplace_back(std::forward<Args>(args)...);
 }
 
@@ -20,7 +18,6 @@ void DataChunk<TStoredComponent, TSize>::destroyComponent(const TStoredComponent
 {
     GPE_ASSERT((componentToDestroy - m_components.data()) <= (m_components.size() - 1u) * sizeof(TStoredComponent),
                "Pointer out of range");
-    std::unique_lock lock(m_mutex);
 
     // Avoid for each. Pointer allow to access
     const TStoredComponent& back = m_components.back();
@@ -35,14 +32,8 @@ DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent, TSize>::getInsta
     // double same if to avoid to lock mutex
     if (unlikely(m_pInstance == nullptr))
     {
-        std::unique_lock lock(m_mutex);
-        if (unlikely(m_pInstance == nullptr))
-        {
-            m_pInstance = new DataChunk<TStoredComponent, TSize>();
-        }
-        return m_pInstance;
+        m_pInstance = new DataChunk<TStoredComponent, TSize>();
     }
 
-    std::shared_lock lock(m_mutex);
     return m_pInstance;
 }

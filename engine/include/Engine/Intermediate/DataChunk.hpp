@@ -7,7 +7,6 @@
 #pragma once
 
 #include <array>        //std::array
-#include <shared_mutex> //std::shared_mutex
 #include <utility>      //std::swap
 #include <vector>       //std::vector
 
@@ -22,7 +21,7 @@ namespace GPE
 /**
  * @brief The Singleton class defines the `GetInstance` method that serves as an
  * alternative to constructor and lets clients access the same instance of this
- * class over and over. Thread safe singleton according with link below :
+ * class over and over. Naif singleton according with link below :
  * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
  * @tparam T : Component stored type
  */
@@ -37,7 +36,6 @@ class DataChunk
      */
 private:
     static DataChunk*        m_pInstance;
-    static std::shared_mutex m_mutex;
 
 protected:
     std::vector<TStoredComponent> m_components;
@@ -82,9 +80,6 @@ public:
 
 template <typename TStoredComponent, int TSize>
 DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent, TSize>::m_pInstance{nullptr};
-
-template <typename TStoredComponent, int TSize>
-std::shared_mutex DataChunk<TStoredComponent, TSize>::m_mutex;
 
 #include "DataChunk.inl"
 

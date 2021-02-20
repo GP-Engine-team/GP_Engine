@@ -20,7 +20,6 @@ using namespace GPE;
 using namespace GPM;
 
 RenderSystem*     RenderSystem::m_pInstance{nullptr};
-std::shared_mutex RenderSystem::m_mutex;
 
 static bool isOnCameraFrustum(const Camera::Frustum& camFrustum, const Model* pModel)
 {
