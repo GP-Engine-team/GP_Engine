@@ -168,7 +168,5 @@ constexpr bool GameObject::operator==(GameObject const& other) noexcept
 
 bool GameObject::compareTag(const std::string& toCompare) const noexcept
 {
-    if (toCompare.compare(m_tag) == 0)
-        return true;
-    return false;
+    return (!toCompare.compare(m_tag));
 }
