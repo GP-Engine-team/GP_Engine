@@ -30,7 +30,9 @@ void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept
 template <typename T, typename... Args>
 T& GameObject::addComponent(Args&&... args) noexcept
 {
-    return m_pComponents.emplace_back(&DataChunk<T>::getInstance()->addComponent(*this, std::forward<Args>(args)...));
+    T& newComponent = DataChunk<T>::getInstance()->addComponent(*this, std::forward<Args>(args)...);
+    m_pComponents.emplace_back(&newComponent);
+    return newComponent;
 }
 
 template <typename T>

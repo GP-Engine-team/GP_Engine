@@ -29,7 +29,6 @@ void DataChunk<TStoredComponent, TSize>::destroyComponent(const TStoredComponent
 template <typename TStoredComponent, int TSize>
 DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent, TSize>::getInstance() noexcept
 {
-    // double same if to avoid to lock mutex
     if (unlikely(m_pInstance == nullptr))
     {
         m_pInstance = new DataChunk<TStoredComponent, TSize>();

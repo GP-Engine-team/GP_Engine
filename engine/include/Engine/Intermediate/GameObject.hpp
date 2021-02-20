@@ -195,7 +195,7 @@ public:
 
     [[nodiscard]] inline constexpr const std::list<Component*>& getComponents() const noexcept;
 
-    [[nodiscard]] std::string getRelativePath() const noexcept;
+    [[nodiscard]] std::string getAbsolutePath() const noexcept;
 
     inline void setTag(const std::string& newTag) noexcept;
 
