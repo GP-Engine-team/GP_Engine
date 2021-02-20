@@ -136,7 +136,7 @@ std::list<Component*>::iterator GameObject::destroyComponent(Component* pCompone
     return m_pComponents.end();
 }
 
-std::string GameObject::getRelativePath() const noexcept
+std::string GameObject::getAbsolutePath() const noexcept
 {
     std::string path = this->getName();
     GameObject* parentIt = this->parent;
