@@ -18,7 +18,7 @@ TStoredComponent& DataChunk<TStoredComponent, TSize>::addComponent(Args&&... arg
 template <typename TStoredComponent, int TSize>
 void DataChunk<TStoredComponent, TSize>::destroyComponent(const TStoredComponent* componentToDestroy) noexcept
 {
-    GPE_ASSERT((componentToDestroy - m_components.data()) <= (m_components.si ze() - 1u) * sizeof(TStoredComponent),
+    GPE_ASSERT((componentToDestroy - m_components.data()) <= (m_components.size() - 1u) * sizeof(TStoredComponent),
                "Pointer out of range");
     std::unique_lock lock(m_mutex);
 
