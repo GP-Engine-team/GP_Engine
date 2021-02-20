@@ -30,7 +30,7 @@ public:
 
 protected:
     std::string         m_name;
-    TransformComponent* m_pTransform;
+    TransformComponent& m_transform;
 
     std::list<Component*> m_pComponents;
     std::string           m_tag{"GameObject"};

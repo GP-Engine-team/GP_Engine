@@ -1,14 +1,14 @@
 #include "Engine/Intermediate/GameObject.hpp"
 
 GameObject::GameObject(const CreateArg& arg)
-    : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this,
+    : m_name{arg.name}, m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this,
                                                                                                  arg.transformArg)},
       m_pComponents{}
 {
 }
 
 GameObject::GameObject()
-    : m_name{""}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
+    : m_name{""}, m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
 {
 }
 
@@ -64,12 +64,12 @@ void GameObject::setName(const char* newName) noexcept
 
 constexpr const TransformComponent& GameObject::getTransform() const noexcept
 {
-    return *m_pTransform;
+    return m_transform;
 }
 
 constexpr TransformComponent& GameObject::getTransform() noexcept
 {
-    return *m_pTransform;
+    return m_transform;
 }
 
 template <typename T, typename... Args>

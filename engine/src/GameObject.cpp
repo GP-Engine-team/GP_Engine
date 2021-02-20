@@ -13,7 +13,7 @@ void GameObject::updateSelfAndChildren() noexcept
 {
     for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
     {
-        if ((*i)->m_pTransform->isDirty())
+        if ((*i)->m_transform.isDirty())
         {
             if ((*i)->m_isDead)
             {
@@ -21,7 +21,7 @@ void GameObject::updateSelfAndChildren() noexcept
                 continue;
             }
 
-            (*i)->getTransform().update(m_pTransform->getModelMatrix());
+            (*i)->getTransform().update(m_transform.getModelMatrix());
             (*i)->forceUpdate();
         }
         else
@@ -35,7 +35,7 @@ void GameObject::forceUpdate() noexcept
 {
     for (auto&& i = children.begin(); i != children.end(); i++)
     {
-        (*i)->getTransform().update(m_pTransform->getModelMatrix());
+        (*i)->getTransform().update(m_transform.getModelMatrix());
         (*i)->forceUpdate();
     }
 }
