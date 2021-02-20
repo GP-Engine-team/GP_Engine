@@ -22,6 +22,6 @@ namespace GPE
  * @param materialPath
  * @param materials
  */
-void loadMTL(std::string& materialPath, std::vector<MaterialAttrib>& materials) noexcept;
+void loadMTL(const std::string& materialPath, std::vector<MaterialAttrib>& materials) noexcept;
 
 } // namespace GPE

@@ -105,7 +105,7 @@ inline void parseLine(std::string line, std::vector<MaterialAttrib>& materials)
         Log::logWarning(std::string("MTL Parser cannot read this line : " + line).c_str());
 }
 
-void GPE::loadMTL(std::string& materialPath, std::vector<MaterialAttrib>& materials) noexcept
+void GPE::loadMTL(const std::string& materialPath, std::vector<MaterialAttrib>& materials) noexcept
 {
     std::ifstream file(materialPath);
 
