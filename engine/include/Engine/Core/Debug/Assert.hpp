@@ -7,17 +7,17 @@
 #pragma once
 
 #ifndef NDEBUG
-#include "Engine/Core/Debug/Log.hpp"
 #include <string>
+
+#include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Core/Tools/Format.hpp"
 #endif
 
-#include "Engine/Core/Tools/Format.hpp"
-
-namespace Engine::Core::Debug
+namespace GPE
 {
 #ifdef NDEBUG
 
-#define GPE_ASSERT(expr)
+#define GPE_ASSERT(expr, msg)
 
 #else /* Not NDEBUG.  */
 
@@ -27,12 +27,11 @@ namespace Engine::Core::Debug
     }                                                                                                                  \
     else                                                                                                               \
     {                                                                                                                  \
-        Engine::Core::Debug::Log::logError(                                                                            \
-            Engine::Core::Tools::stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s",            \
-                                              F_RED("Assertion"), __FUNCSIG__, __FILE__, __LINE__, BOLD(#expr), msg)); \
-        Engine::Core::Debug::Log::closeAndTryToCreateFile();                                                           \
+        Log::logError(stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s", F_RED("Assertion"),   \
+                                   __FUNCSIG__, __FILE__, __LINE__, BOLD(#expr), msg));                                \
+        Log::closeAndTryToCreateFile();                                                                                \
         exit(3);                                                                                                       \
     }
 
 #endif // NDEBUG
-} // namespace Engine::Core::Debug
+} // namespace GPE

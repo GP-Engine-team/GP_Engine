@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <utility>
 
-namespace Engine::Resources
+namespace GPE
 {
 // Technical inspired about understanding example found from stackOverFlow :
 // https://stackoverflow.com/questions/27941661/generating-one-class-member-per-variadic-template-argument/53112843#53112843?newreg=f97a957ca4ca467bab0d0ce1cc6ea7b2
@@ -133,6 +133,6 @@ public:
     inline void clear() noexcept(std::is_nothrow_destructible_v<T>);
 };
 
-} // namespace Engine::Resources
-
 #include "ResourcesManager.inl"
+
+} // namespace GPE

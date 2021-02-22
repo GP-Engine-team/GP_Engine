@@ -480,3 +480,9 @@ MigrationBackup/
 x64/
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,vs,vscode,rider
+
+#Resources
+resources/*
+
+.vscode/*
+.idea/*

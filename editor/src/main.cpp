@@ -1,7 +1,7 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Editor/EditorStartup.hpp"
 
-using namespace Engine::Core::Debug;
+using namespace GPE;
 
 int main(int argc, char* argv[])
 {
