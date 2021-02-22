@@ -13,6 +13,8 @@
 #include <unordered_map>
 
 struct GLFWwindow;
+#define MOUSE_X 1
+#define MOUSE_Y 2
 
 namespace GPE
 {
@@ -35,26 +37,26 @@ public:
     void operator=(const InputManager&) = delete;
 
 private:
-    std::unordered_multimap<int, std::string>       m_actionMap;
-    //std::unordered_multimap<GPM::Vec3, std::string> m_axisMap;
-    std::unordered_map<int, bool>                   m_prevStateMap;
-    std::unordered_map<int, bool>                   m_stateMap;
-    std::unordered_map<int, InputComponent*>        m_inputComponents;
+    std::unordered_multimap<int, std::string> m_actionMap;
+    std::unordered_multimap<int, std::string> m_axisMap;
+    std::unordered_map<int, bool>             m_prevStateMap;
+    std::unordered_map<int, bool>             m_stateMap;
+    std::unordered_map<int, InputComponent*>  m_inputComponents;
 
 public:
     static InputManager* GetInstance();
-    Cursor        m_cursor;
+    Cursor               m_cursor;
 
     void                        keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const;
     void                        cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) const;
     void                        fireInputComponents(const std::string& action) const;
     void                        setupCallbacks(GLFWwindow* window);
     inline void                 bindInput(int key, const std::string& action);
-    //inline void                 bindAxis(GPM::Vec3 axis, const std::string& action);
+    inline void                 bindAxis(int key, const std::string& action);
     _NODISCARD inline const int addComponent(InputComponent* input);
     inline void                 removeComponent(int key);
     void                        processInput();
-    //void                        keyPressed(int key);
+    // void                        keyPressed(int key);
 };
 inline void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 inline void setCursorCallback(GLFWwindow* window, double xpos, double ypos);

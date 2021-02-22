@@ -63,6 +63,8 @@ void InputManager::processInput()
         {
             input->fireInputComponents(i2->second);
         }
+
+        auto it = input ->m
     }
 
     /*for (auto axis : input->m_axisMap)

@@ -200,7 +200,7 @@ int main()
     iManager->bindInput(GLFW_KEY_SPACE, "jump");
     iManager->bindInput(GLFW_KEY_LEFT_CONTROL, "down");
     iManager->bindInput(GLFW_KEY_ESCAPE, "exit");
-    //iManager->bindInput(MOUSE_Y, "cursor");
+    iManager->bindAxis(MOUSE_X, "cursor");
 
     // sceneGraphExample();
     Log::logInitializationStart("sceneGraphExample");
