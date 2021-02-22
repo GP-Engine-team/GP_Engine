@@ -12,8 +12,6 @@ EditorStartup::EditorStartup()
       {        
           if (m_game != nullptr)
               m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
-      
-          m_editor->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
       }},
       m_update{[&](double fixedUnscaledDeltaTime, double deltaTime)
       {
@@ -27,7 +25,7 @@ EditorStartup::EditorStartup()
           if (m_game != nullptr)
               m_game->render();
 
-          m_editor->update(.0, .0);
+          m_editor->update();
           m_editor->render();
       }},
       m_editor{new Editor()}, m_game{nullptr}

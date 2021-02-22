@@ -11,10 +11,6 @@
 using namespace Engine::Core::Debug;
 using namespace Editor;
 
-void glfwErrorCallback(int error, const char* description)
-{
-    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
-}
 
 int main(int argc, char* argv[])
 {

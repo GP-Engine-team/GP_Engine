@@ -102,14 +102,66 @@ void Editor::initDearImGui()
     //io.ConfigViewportsNoTaskBarIcon = true;
 
     // Setup Dear ImGui style
-    //ImGui::StyleColorsDark();
-    ImGui::StyleColorsClassic();
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsClassic();
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(m_window, true);
     ImGui_ImplOpenGL3_Init("#version 460");
+
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->Pos);
+	ImGui::SetNextWindowSize(viewport->Size);
+	ImGui::SetNextWindowViewport(viewport->ID);
 }
 
+
+void Editor::renderMenuBar() const
+{
+    ImGui::BeginMainMenuBar();
+        // File
+        if (ImGui::BeginMenu("File"))
+        {
+            ImGui::MenuItem("New");
+            ImGui::MenuItem("Open");
+            ImGui::MenuItem("Open recent");
+            ImGui::EndMenu();
+        }
+        // Edit
+        if (ImGui::BeginMenu("Edit"))
+        {
+            /// Menu content
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("View"))
+        {
+            if (ImGui::BeginMenu("Add window"))
+            {
+                ImGui::MenuItem("Viewport");
+                ImGui::MenuItem("Scene graph");
+                ImGui::MenuItem("Project browser");
+                ImGui::MenuItem("Inspector");
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
+
+        // Options
+        if (ImGui::BeginMenu("Options"))
+        {
+            // Menu content
+            ImGui::EndMenu();
+        }
+
+        // Help
+        if (ImGui::BeginMenu("Help"))
+        {
+            // Menu content
+            ImGui::EndMenu();
+        }
+    ImGui::EndMainMenuBar();
+}
 
 
 
@@ -137,32 +189,37 @@ Editor::~Editor()
 }
 
 
-void Editor::update(double unscaledDeltaTime, double deltaTime)
+void Editor::update()
 {
+    const ImGuiWindowFlags windowFlags = 0;
     glfwPollEvents();
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::Begin("Anther one");
-        ImGui::Text("bites the dust");
+    // Actual UI
+    ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
+
+    // Top bar
+    renderMenuBar();
+
+    ImGui::Begin("Editor viewport", nullptr, windowFlags);
+        ImGui::Text("Level editor");
     ImGui::End();
-    ImGui::Begin("Never gonna leave you up");
-        ImGui::Text("Never gonna let you down");
+
+    ImGui::Begin("Scene graph", nullptr, windowFlags);
+        ImGui::Text("Scene graph hierarchy");
     ImGui::End();
-}
 
-
-void Editor::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
-{
-
+    ImGui::Begin("Resource browser", nullptr, windowFlags);
+        ImGui::Text("Resource browser content");
+    ImGui::End();
 }
 
 
 void Editor::render()
 {
-    // Rendering
     ImGui::Render();
 
     glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);

@@ -22,12 +22,13 @@ private:
 	void initGlad();
 	void initDearImGui();
 
+	void renderMenuBar() const;
+
 public:
 	Editor();
 	~Editor();
 
-	void update		(double unscaledDeltaTime, double deltaTime);
-	void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime);
+	void update		();
 	void render		();
 	bool isRunning  ();
 
