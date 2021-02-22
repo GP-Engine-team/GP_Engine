@@ -84,8 +84,18 @@ void Texture::loadInGPU() noexcept
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
 
-    if (m_comp == 3)
+    if (m_comp == 1)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, m_w, m_h, 0, GL_RED, GL_UNSIGNED_BYTE, m_pixels);
+    }
+    else if (m_comp == 2)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, m_w, m_h, 0, GL_RG, GL_UNSIGNED_BYTE, m_pixels);
+    }
+    else if (m_comp == 3)
+    {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_w, m_h, 0, GL_RGB, GL_UNSIGNED_BYTE, m_pixels);
+    }
     else if (m_comp == 4)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_w, m_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
@@ -139,8 +149,18 @@ void Texture::resize(unsigned int width, unsigned int height) noexcept
     m_h = height;
     glBindTexture(GL_TEXTURE_2D, m_id);
 
-    if (m_comp == 3)
+    if (m_comp == 1)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, m_w, m_h, 0, GL_RED, GL_UNSIGNED_BYTE, m_pixels);
+    }
+    else if (m_comp == 2)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, m_w, m_h, 0, GL_RG, GL_UNSIGNED_BYTE, m_pixels);
+    }
+    else if (m_comp == 3)
+    {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_w, m_h, 0, GL_RGB, GL_UNSIGNED_BYTE, m_pixels);
+    }
     else if (m_comp == 4)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_w, m_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
