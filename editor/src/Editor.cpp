@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Debug/Log.hpp"
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -60,7 +61,7 @@ void Editor::initGLFW()
     glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
-    m_window = glfwCreateWindow(100, 100, "GP engine editor", nullptr, nullptr);
+    m_window = glfwCreateWindow(1024, 720, "GP engine editor", nullptr, nullptr);
 
     if (!m_window)
     {
@@ -108,11 +109,6 @@ void Editor::initDearImGui()
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(m_window, true);
     ImGui_ImplOpenGL3_Init("#version 460");
-
-    ImGuiViewport* viewport = ImGui::GetMainViewport();
-	ImGui::SetNextWindowPos(viewport->Pos);
-	ImGui::SetNextWindowSize(viewport->Size);
-	ImGui::SetNextWindowViewport(viewport->ID);
 }
 
 
@@ -124,16 +120,18 @@ void Editor::renderMenuBar() const
         {
             ImGui::MenuItem("New");
             ImGui::MenuItem("Open");
-            ImGui::MenuItem("Open recent");
-            ImGui::EndMenu();
-        }
-        // Edit
-        if (ImGui::BeginMenu("Edit"))
-        {
-            /// Menu content
+            ImGui::MenuItem("Save");
             ImGui::EndMenu();
         }
 
+        // Edit
+        if (ImGui::BeginMenu("Edit"))
+        {
+            ImGui::MenuItem("Edit something");
+            ImGui::EndMenu();
+        }
+
+        // View
         if (ImGui::BeginMenu("View"))
         {
             if (ImGui::BeginMenu("Add window"))
@@ -151,6 +149,7 @@ void Editor::renderMenuBar() const
         if (ImGui::BeginMenu("Options"))
         {
             // Menu content
+            ImGui::MenuItem("Preferences");
             ImGui::EndMenu();
         }
 
@@ -158,10 +157,57 @@ void Editor::renderMenuBar() const
         if (ImGui::BeginMenu("Help"))
         {
             // Menu content
+            ImGui::MenuItem("Useful links");
             ImGui::EndMenu();
         }
     ImGui::EndMainMenuBar();
 }
+
+
+void Editor::renderLevelEditor()
+{
+    ImGui::Begin("Editor viewport");
+    ImGui::End();
+}
+
+
+void Editor::renderInspector() const
+{
+    ImGui::Begin("Inspector");
+        ImGui::Text("Inspector content");
+    ImGui::End();
+}
+
+
+void Editor::renderSceneGraph() const
+{
+    ImGui::Begin("Scene graph");
+        ImGui::Text("Scene graph hierarchy");
+    ImGui::End();
+}
+
+
+void Editor::renderProjectExplorer() const
+{
+    ImGui::Begin("Project explorer");
+        if (ImGui::BeginTabBar("Project explorer"))
+        {
+            if (ImGui::BeginTabItem("Project"))
+            {
+                ImGui::Text("Project's content");
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Logs"))
+            {
+                ImGui::Text("This is a log");
+                ImGui::EndTabItem();
+            }
+            ImGui::EndTabBar();
+        }
+    ImGui::End();
+}
+
 
 
 
@@ -191,30 +237,23 @@ Editor::~Editor()
 
 void Editor::update()
 {
-    const ImGuiWindowFlags windowFlags = 0;
+    // Listen to keyboard and mouse
     glfwPollEvents();
 
+    // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    // Actual UI
-    ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
-
-    // Top bar
+    // Start drawing
     renderMenuBar();
 
-    ImGui::Begin("Editor viewport", nullptr, windowFlags);
-        ImGui::Text("Level editor");
-    ImGui::End();
+    ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
-    ImGui::Begin("Scene graph", nullptr, windowFlags);
-        ImGui::Text("Scene graph hierarchy");
-    ImGui::End();
-
-    ImGui::Begin("Resource browser", nullptr, windowFlags);
-        ImGui::Text("Resource browser content");
-    ImGui::End();
+    renderLevelEditor();
+    renderSceneGraph();
+    renderProjectExplorer();
+    renderInspector();
 }
 
 
@@ -223,6 +262,7 @@ void Editor::render()
     ImGui::Render();
 
     glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
+    glClearColor(1.f, 1.f, 1.f, .0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

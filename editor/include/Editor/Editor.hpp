@@ -8,6 +8,8 @@
 
 struct GLFWwindow;
 
+#include "Viewport.hpp"
+
 namespace Editor
 {
 
@@ -18,11 +20,16 @@ private:
 	int			m_framebufferWidth;
 	int			m_framebufferHeight;
 
+private:
 	void initGLFW();
 	void initGlad();
 	void initDearImGui();
 
 	void renderMenuBar() const;
+	void renderLevelEditor();
+	void renderInspector() const;
+	void renderSceneGraph() const;
+	void renderProjectExplorer() const;
 
 public:
 	Editor();
