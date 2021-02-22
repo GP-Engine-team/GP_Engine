@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <vector>
+
 namespace GPE
 {
 class RenderTexture
@@ -13,7 +15,9 @@ class RenderTexture
 public:
     struct CreateArg
     {
-
+        std::vector<class Texture*> colorBuffers;
+        class Texture* depthBuffer;
+        class Texture* stencilBuffer;
     };
 
 protected:
