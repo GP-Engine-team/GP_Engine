@@ -3,6 +3,7 @@
 
 #include "Engine/Core/Game/AbstractGame.hpp"
 #include "GameApiMacros.hpp"
+#include <iostream>
 
 class Game final : public AbstractGame
 {
@@ -35,4 +36,4 @@ extern "C" GAME_API class AbstractGame* createGameInstance();
  * @brief Called by the exe, by retriewing the dll functions. Can't be inlined.
  * The class is created in the dll, so it must be deleted in the dll.
 */
-extern "C" GAME_API void destroyGameInstance(class AbstractGame * game);
+extern "C" GAME_API void destroyGameInstance(class AbstractGame* game);
