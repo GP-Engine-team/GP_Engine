@@ -133,7 +133,7 @@ void Texture::hFlip() noexcept
     }
 }
 
-void Texture::resize(unsigned int width, unsigned int height)
+void Texture::resize(unsigned int width, unsigned int height) noexcept
 {
     m_w  = width;
     m_h = height;

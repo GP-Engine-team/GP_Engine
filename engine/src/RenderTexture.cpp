@@ -1,7 +1,5 @@
 #include "Engine/Resources/RenderTexture.hpp"
 
-#include <glad/glad.h>
-
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Resources/Texture.hpp"
 
@@ -9,21 +7,25 @@ using namespace GPE;
 
 RenderTexture::RenderTexture(const CreateArg& arg) noexcept
 {
-    GPE_ASSERT(arg.colorBuffers.size() < 32, "32 color buffer max in OpenGl frameBuffer");
-
     glGenFramebuffers(1, &m_id);
     glBindFramebuffer(GL_FRAMEBUFFER, m_id);
 
-    std::vector<GLenum> drawBuffers;
-    drawBuffers.reserve(arg.colorBuffers.size());
-
-    for (size_t i = 0; i < arg.colorBuffers.size(); i++)
+    if (!arg.colorBuffers.empty())
     {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, arg.colorBuffers[i]->getID(), 0);
-        drawBuffers.emplace_back(GL_COLOR_ATTACHMENT0 + i);
-    }
+        GPE_ASSERT(arg.colorBuffers.size() < 32, "32 color buffer max in OpenGl frameBuffer");
 
-    glDrawBuffers(arg.colorBuffers.size(), drawBuffers.data());
+        std::vector<GLenum> drawBuffers;
+        drawBuffers.reserve(arg.colorBuffers.size());
+
+        for (size_t i = 0; i < arg.colorBuffers.size(); i++)
+        {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + i), GL_TEXTURE_2D,
+                                   arg.colorBuffers[i]->getID(), 0);
+            drawBuffers.emplace_back(static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + i));
+        }
+
+        glDrawBuffers(static_cast<GLsizei>(arg.colorBuffers.size()), drawBuffers.data());
+    }
 
     if (arg.depthBuffer != nullptr)
     {

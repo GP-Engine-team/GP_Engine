@@ -11,22 +11,22 @@ struct GLFWwindow;
 
 namespace GPE
 {
-
-struct WindowCreateArg
-{
-    std::string name = "";
-    int height = 0;
-    int width = 0;
-};
-
 class Window
 {
+public: 
+    struct CreateArg
+    {
+        std::string name   = "";
+        int         height = 0;
+        int         width  = 0;
+    };
+
 protected:
     GLFWwindow* m_window = nullptr;
 
 public:
 
-    Window(const WindowCreateArg& arg) noexcept;
+    Window(const CreateArg& arg) noexcept;
 
     ~Window() noexcept;
 
