@@ -27,10 +27,10 @@
     <ClCompile Include="..\engine\third_party\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\engine\third_party\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\engine\third_party\src\glad.c" />
-    <ClCompile Include="src\Editor\Editor.cpp" />
-    <ClCompile Include="src\Editor\EditorStartup.cpp" />
-    <ClCompile Include="src\Editor\Viewport.cpp" />
+    <ClCompile Include="src\Editor.cpp" />
+    <ClCompile Include="src\EditorStartup.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Viewport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.h" />
@@ -41,6 +41,7 @@
     <ClInclude Include="..\engine\third_party\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\engine\third_party\imgui\imstb_textedit.h" />
     <ClInclude Include="..\engine\third_party\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\engine\third_party\include\glad\glad.h" />
     <ClInclude Include="..\engine\third_party\include\GLFW\glfw3.h" />
     <ClInclude Include="..\engine\third_party\include\GLFW\glfw3native.h" />
     <ClInclude Include="include\Editor\Editor.hpp" />

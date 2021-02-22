@@ -31,20 +31,11 @@
     <Filter Include="Fichiers d%27en-tête\third_party\glfw">
       <UniqueIdentifier>{4a5752ba-0d5c-4797-9846-b5d7e7596375}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\third_party\glad">
+      <UniqueIdentifier>{95c15c83-0eb8-4518-aae6-492efb0747ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Editor\Editor.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Editor\EditorStartup.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Editor\Viewport.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\third_party\src\glad.c">
       <Filter>Fichiers sources\third_party\glad</Filter>
     </ClCompile>
@@ -68,6 +59,18 @@
     </ClCompile>
     <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>Fichiers sources\third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Viewport.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EditorStartup.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.h">
       <Filter>Fichiers d%27en-tête\third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\third_party\include\glad\glad.h">
+      <Filter>Fichiers d%27en-tête\third_party\glad</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
