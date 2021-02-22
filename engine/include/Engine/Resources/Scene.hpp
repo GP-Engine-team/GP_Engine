@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/Resources/ResourcesManager.hpp"
+#include "Engine/Resources/ResourcesManagerType.hpp"
 
 namespace GPE
 {
@@ -18,15 +18,12 @@ namespace GPE
     
         protected:
 
-        ResourcesManager<int> m_resourceManager;
+        ResourceManagerType m_resourceManager;
 
-        constexpr
-        void loadResource(ResourcesManager<int>& resourceManager) noexcept {};
-    
+        constexpr void loadResource(ResourceManagerType& resourceManager) noexcept {};
+
         public:
-    
-        constexpr inline
-        Scene (ResourcesManager<int>& resourceManager) noexcept
+            constexpr inline Scene(ResourceManagerType& resourceManager) noexcept
         {
             loadResource(resourceManager);
         }
