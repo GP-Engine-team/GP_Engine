@@ -170,6 +170,7 @@
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp" />
     <ClInclude Include="include\Engine\Core\Debug\Log.hpp" />
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp" />
+    <ClInclude Include="include\Engine\Core\Input\Cursor.hpp" />
     <ClInclude Include="include\Engine\Core\Input\InputComponent.hpp" />
     <ClInclude Include="include\Engine\Core\Input\InputManagerGLFW.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp" />

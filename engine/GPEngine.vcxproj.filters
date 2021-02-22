@@ -213,6 +213,9 @@
     <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\Input\Cursor.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

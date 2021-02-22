@@ -6,6 +6,7 @@
 
 #pragma once
 #include "Engine/Intermediate/Component.hpp"
+#include "GPM/Vector3.hpp"
 #include <functional>
 #include <iostream>
 #include <string>
@@ -23,8 +24,9 @@ public:
     InputComponent(GameObject& owner);
 
 private:
-    std::unordered_map<std::string, std::function<void()>> m_functionMap;
-    int                                                       m_key = -1;
+    std::unordered_map<std::string, std::function<void()>>          m_functionMap;
+    std::unordered_map<std::string, std::function<void(GPM::Vec3)>> m_axisFunctionMap;
+    int                                                             m_key = -1;
 
 public:
     /**
@@ -33,6 +35,13 @@ public:
      * @param function
      */
     void bindAction(const std::string& action, const std::function<void()>& function);
+
+    /**
+     * @brief Bind an function axis to an action
+     * @param action 
+     * @param function 
+    */
+    void bindAxis(const std::string& action, const std::function<void(const GPM::Vec3& axis)>& function);
 
     /**
      * @brief launch an action

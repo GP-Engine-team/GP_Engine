@@ -64,15 +64,24 @@ void InputManager::processInput()
             input->fireInputComponents(i2->second);
         }
     }
-}
 
-void InputManager::keyPressed(int key)
-{
-    InputManager* input = InputManager::GetInstance();
-
-    auto it = input->m_actionMap.equal_range(key);
-    for (auto i = it.first; i != it.second; i++)
+    /*for (auto axis : input->m_axisMap)
     {
-        input->fireInputComponents(i->second);
-    }
+        auto it = input->m_axisMap.equal_range(axis.first);
+        for (auto i2 = it.first; i2 != it.second; i2++)
+        {
+            input->fireInputComponents(i2->second);
+        }
+    }*/
 }
+
+//void InputManager::keyPressed(int key)
+//{
+//    InputManager* input = InputManager::GetInstance();
+//
+//    auto it = input->m_actionMap.equal_range(key);
+//    for (auto i = it.first; i != it.second; i++)
+//    {
+//        input->fireInputComponents(i->second);
+//    }
+//}

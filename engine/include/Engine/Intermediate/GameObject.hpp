@@ -214,6 +214,10 @@ public:
     void left();
 
     void right();
+
+    void leave();
+
+    void rotate(const GPM::Vec3& axis);
 };
 
 #include "GameObject.inl"

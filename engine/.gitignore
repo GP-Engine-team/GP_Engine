@@ -478,3 +478,8 @@ x64/
 
 #Resources
 resources/*
+
+#Zip files
+*.zip
+*.rar
+*.7zp

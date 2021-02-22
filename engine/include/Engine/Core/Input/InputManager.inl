@@ -15,6 +15,11 @@ void InputManager::bindInput(int key, const std::string& action)
     m_actionMap.emplace(key, action);
 }
 
+/*void InputManager::bindAxis(GPM::Vec3 axis, const std::string& action)
+{
+    m_axisMap.emplace(axis, action);
+}*/
+
 const int InputManager::addComponent(InputComponent* input)
 {
    int key = static_cast<int>(m_inputComponents.size());
