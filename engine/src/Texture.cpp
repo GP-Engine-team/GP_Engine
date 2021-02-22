@@ -15,17 +15,21 @@ using namespace GPE;
 Texture::Texture(const char* path, bool flipTexture, bool loadInGPU) noexcept
     : m_id(0), m_isLoadInGPU(false), m_path(path)
 {
-    stbi_set_flip_vertically_on_load(flipTexture);
-    m_pixels = stbi_load(path, &m_w, &m_h, (int*)&m_comp, 0);
-
-    if (m_pixels == nullptr)
+    if (path != nullptr)
     {
-        FUNCT_ERROR((std::string("STBI canno't load image : ") + path).c_str());
-        FUNCT_ERROR(std::string("Loading image failed: ") + stbi_failure_reason());
-        return;
-    }
 
-    removeUntilFirstSpaceInPath(path);
+        stbi_set_flip_vertically_on_load(flipTexture);
+        m_pixels = stbi_load(path, &m_w, &m_h, (int*)&m_comp, 0);
+
+        if (m_pixels == nullptr)
+        {
+            FUNCT_ERROR((std::string("STBI canno't load image : ") + path).c_str());
+            FUNCT_ERROR(std::string("Loading image failed: ") + stbi_failure_reason());
+            return;
+        }
+
+        removeUntilFirstSpaceInPath(path);
+    }
 
     if (loadInGPU)
         Texture::loadInGPU();
@@ -40,16 +44,19 @@ Texture::Texture(const CreateArg& arg) noexcept : m_id(0), m_isLoadInGPU(false)
     m_textureWrapS     = arg.textureWrapS;
     m_textureWrapT     = arg.textureWrapT;
 
-    stbi_set_flip_vertically_on_load(arg.flipTexture);
-    m_pixels = stbi_load(arg.path, &m_w, &m_h, (int*)&m_comp, 0);
-
-    if (m_pixels == nullptr)
+    if (arg.path != nullptr)
     {
-        FUNCT_ERROR((std::string("STBI canno't load image : ") + arg.path).c_str());
-        return;
-    }
+        stbi_set_flip_vertically_on_load(arg.flipTexture);
+        m_pixels = stbi_load(arg.path, &m_w, &m_h, (int*)&m_comp, 0);
 
-    removeUntilFirstSpaceInPath(arg.path);
+        if (m_pixels == nullptr)
+        {
+            FUNCT_ERROR((std::string("STBI canno't load image : ") + arg.path).c_str());
+            return;
+        }
+
+        removeUntilFirstSpaceInPath(arg.path);
+    }
 
     if (arg.loadInGPU)
         Texture::loadInGPU();
@@ -123,5 +130,24 @@ void Texture::hFlip() noexcept
         {
             std::swap(m_pixels[(wComp * (m_h - 1 - i)) + j], m_pixels[(wComp * i) + j]);
         }
+    }
+}
+
+void Texture::resize(unsigned int width, unsigned int height)
+{
+    m_w  = width;
+    m_h = height;
+    glBindTexture(GL_TEXTURE_2D, m_id);
+
+    if (m_comp == 3)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_w, m_h, 0, GL_RGB, GL_UNSIGNED_BYTE, m_pixels);
+    else if (m_comp == 4)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_w, m_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
+    }
+    else
+    {
+        FUNCT_WARNING(std::string("Texture component unsuppported with component : ") + std::to_string(m_comp));
+        exit(1);
     }
 }

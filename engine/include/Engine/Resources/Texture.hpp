@@ -124,6 +124,8 @@ public:
     inline void use() const noexcept;
 
     inline Size getSize() const noexcept;
+
+    void resize(unsigned int width, unsigned int height) noexcept;
 };
 
 #include "Texture.inl"

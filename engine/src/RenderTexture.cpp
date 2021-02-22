@@ -8,20 +8,6 @@ using namespace GPE;
 
 RenderTexture::RenderTexture(const CreateArg& arg) noexcept
 {
-    // Create base buffer
-    {
-        glGenTextures(1, &m_textureId);
-        glBindTexture(GL_TEXTURE_2D, m_textureId);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, m_width, m_height, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
     glGenFramebuffers(1, &m_id);
     glBindFramebuffer(GL_FRAMEBUFFER, m_id);
 
