@@ -58,19 +58,19 @@
     <ClCompile Include="src\Texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="third_party\gpm\src\Intersection.cpp">
-      <Filter>third_party\gpm</Filter>
-    </ClCompile>
     <ClCompile Include="third_party\gpm\src\main.cpp">
       <Filter>third_party\gpm</Filter>
     </ClCompile>
-    <ClCompile Include="third_party\gpm\src\Plane.cpp">
+    <ClCompile Include="..\..\..\gpm\gpm\src\Intersection.cpp">
       <Filter>third_party\gpm</Filter>
     </ClCompile>
-    <ClCompile Include="third_party\gpm\src\SegmentPlane.cpp">
+    <ClCompile Include="..\..\..\gpm\gpm\src\Plane.cpp">
       <Filter>third_party\gpm</Filter>
     </ClCompile>
-    <ClCompile Include="third_party\gpm\src\SpherePlane.cpp">
+    <ClCompile Include="..\..\..\gpm\gpm\src\SegmentPlane.cpp">
+      <Filter>third_party\gpm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\gpm\gpm\src\SpherePlane.cpp">
       <Filter>third_party\gpm</Filter>
     </ClCompile>
   </ItemGroup>

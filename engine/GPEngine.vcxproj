@@ -178,7 +178,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -265,6 +265,10 @@
     <ClInclude Include="third_party\include\KHR\khrplatform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\gpm\gpm\src\Intersection.cpp" />
+    <ClCompile Include="..\..\..\gpm\gpm\src\Plane.cpp" />
+    <ClCompile Include="..\..\..\gpm\gpm\src\SegmentPlane.cpp" />
+    <ClCompile Include="..\..\..\gpm\gpm\src\SpherePlane.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
@@ -283,11 +287,7 @@
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\WindowGLFW.cpp" />
-    <ClCompile Include="third_party\gpm\src\Intersection.cpp" />
     <ClCompile Include="third_party\gpm\src\main.cpp" />
-    <ClCompile Include="third_party\gpm\src\Plane.cpp" />
-    <ClCompile Include="third_party\gpm\src\SegmentPlane.cpp" />
-    <ClCompile Include="third_party\gpm\src\SpherePlane.cpp" />
     <ClCompile Include="third_party\src\glad.c" />
   </ItemGroup>
   <ItemGroup>

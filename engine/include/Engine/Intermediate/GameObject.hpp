@@ -53,7 +53,7 @@ public:
 
     inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is available
 
-    constexpr inline GameObject(GameObject&& other) noexcept = default;
+    constexpr inline GameObject(GameObject&& other) = default;
 
     inline ~GameObject() noexcept = default;
 
