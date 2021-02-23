@@ -17,5 +17,6 @@ public:
 public:
     GPM::Vec2 position         = {300, 450};
     GPM::Vec2 deltaDisplasment = {0, 0};
+    //GPM::Vec2
 };
 } // namespace GPE

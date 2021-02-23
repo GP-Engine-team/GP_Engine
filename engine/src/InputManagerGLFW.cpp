@@ -41,10 +41,18 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 
 void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 {
+    int x, y;
+    glfwGetWindowSize(window, &x, &y);
+    Vec2 center;
     Vec2 newPos;
-    newPos.x = xpos;
-    newPos.y = ypos;
-    m_cursor.deltaDisplasment = newPos - m_cursor.position;
+    center.x = x/2;
+    center.y = y/2;
+    m_cursor.position.x = xpos;
+    m_cursor.position.y = ypos;
+    m_cursor.deltaDisplasment = m_cursor.position - center;
+    glfwSetCursorPos(window, x/2, y/2);
+    //std::cout << " Length = " << iManager->m_cursor.deltaDisplasment.length() << ";" << std::endl;
+    //std::cout << "Xpos = " << xpos << "; Ypos = " << ypos << ";" << std::endl;
 }
 
 void InputManager::setupCallbacks(GLFWwindow* window)

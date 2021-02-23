@@ -117,6 +117,18 @@ public:
         m_isDirty = true;
     }
 
+    void setRotation(const GPM::Quaternion& q) noexcept
+    {
+        m_spaceAttribut.rotation = q;
+        m_isDirty = true;
+    }
+
+    void setRotationZ(const float& z) noexcept
+    {
+        m_spaceAttribut.rotation.z = z;
+        m_isDirty = true;
+    }
+
     GPM::Vec3 getVectorForward() const noexcept
     {
         return m_transform.forward().normalized();

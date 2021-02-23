@@ -179,6 +179,11 @@ void GameObject::leave()
     exit(666);
 }
 
+void printQuaternion(const Quaternion& q) noexcept
+{
+    std::cout << " Angle = " << q.s << "; X = " << q.x << "; Y = " << q.y << "; Z = " << q.z << std::endl;
+}
+
 int main()
 {
     // Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
@@ -258,6 +263,20 @@ int main()
     {
         glfwPollEvents();
         iManager->processInput();
+        if (iManager->m_cursor.deltaDisplasment.length() > 0.4)
+        {
+            Vec3 tmp{ iManager->m_cursor.deltaDisplasment.y, iManager->m_cursor.deltaDisplasment.x, 0.f };
+            Vec3 axis{ tmp.dot(player.getTransform().getVectorRight()),
+                          tmp.dot(Vec3::up()),
+                            0 };
+            axis.normalize();
+            player.getTransform().setRotation(Quaternion::angleAxis(iManager->m_cursor.deltaDisplasment.length() * 0.001, axis) * player.getTransform().getSpacialAttribut().rotation);
+            player.getTransform().setRotationZ(0);
+            player.getTransform().update();
+            printQuaternion(player.getTransform().getSpacialAttribut().rotation);//player.getTransform().getSpacialAttribut().rotation);
+
+        }
+
         ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime) { ++fixedUpdateFrameCount; },
                   [&](double unscaledDeltaTime, double deltaTime) { ++unFixedUpdateFrameCount; }, [&]() {});
         ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime) { ++fixedUpdateFrameCount; },
@@ -271,8 +290,24 @@ int main()
                   });
 
         //player.getTransform().get().rotate(/*player.getTransform().get().eulerAngles() +*/Vec3(1,0,0) * 0.001);
-        player.getTransform().getSpacialAttribut().rotation = Quaternion::angleAxis(iManager->m_cursor.deltaDisplasment.length() * 0.001, Vec3(iManager->m_cursor.deltaDisplasment.y, iManager->m_cursor.deltaDisplasment.x, 0)) * player.getTransform().getSpacialAttribut().rotation;
-        //std::cout << iManager->c_
+        /*if (iManager->m_cursor.deltaDisplasment.length() > 0.4)
+        {
+            Vec3 tmp{ iManager->m_cursor.deltaDisplasment.y, iManager->m_cursor.deltaDisplasment.x, 0.f };
+            Vec3 axis{ tmp.dot(player.getTransform().getVectorRight()),
+                          tmp.dot(Vec3::up()),
+                            0 };
+            axis.normalize();
+            player.getTransform().setRotation(Quaternion::angleAxis(iManager->m_cursor.deltaDisplasment.length() * 0.001, axis) * player.getTransform().getSpacialAttribut().rotation);
+            player.getTransform().setRotationZ(0);
+            player.getTransform().update();
+            printQuaternion(player.getTransform().getSpacialAttribut().rotation);//player.getTransform().getSpacialAttribut().rotation);
+
+        }*/
+        //int x, y;
+        //glfwGetWindowSize(win.getGLFWWindow(), &x, &y);
+        //glfwSetCursorPos(win.getGLFWWindow(), x / 2, y / 2);
+        iManager->m_cursor.deltaDisplasment = {0,0};
+        //std::cout << "Xpos = " << iManager->m_cursor.position.x << "; Ypos = " << iManager->m_cursor.position.y << ";" << std::endl;
     }
 
     Log::closeAndTryToCreateFile();
