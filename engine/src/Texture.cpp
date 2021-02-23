@@ -12,162 +12,76 @@
 
 using namespace GPE;
 
-Texture::Texture(const char* path, bool flipTexture, bool loadInGPU) noexcept
-    : m_id(0), m_isLoadInGPU(false), m_path(path)
+Texture::Texture(const LoadArg& arg) noexcept
 {
-    if (path != nullptr)
+    stbi_set_flip_vertically_on_load(arg.flipTexture);
+
+    int            w, h, comp;
+    unsigned char* pixels = stbi_load(arg.path, &w, &h, &comp, 0);
+
+    if (pixels == nullptr)
     {
-
-        stbi_set_flip_vertically_on_load(flipTexture);
-        m_pixels = stbi_load(path, &m_w, &m_h, (int*)&m_comp, 0);
-
-        if (m_pixels == nullptr)
-        {
-            FUNCT_ERROR((std::string("STBI canno't load image : ") + path).c_str());
-            FUNCT_ERROR(std::string("Loading image failed: ") + stbi_failure_reason());
-            return;
-        }
-
-        removeUntilFirstSpaceInPath(path);
+        FUNCT_ERROR((std::string("STBI canno't load image : ") + arg.path).c_str());
+        FUNCT_ERROR(std::string("Loading image failed: ") + stbi_failure_reason());
+        return;
     }
 
-    if (loadInGPU)
-        Texture::loadInGPU();
+    Texture::loadInGPU(w, h, comp, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT,
+                       pixels);
 
-    Log::log((std::string("Texture \"") + m_path + "\" load").c_str());
+    Log::log((std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path) + "\" load in GPU").c_str());
+    stbi_image_free(pixels);
 }
 
-Texture::Texture(const CreateArg& arg) noexcept : m_id(0), m_isLoadInGPU(false)
+Texture::Texture(const CreateArg& arg) noexcept
 {
-    m_textureMinFilter = arg.textureMinFilter;
-    m_textureMagFilter = arg.textureMagFilter;
-    m_textureWrapS     = arg.textureWrapS;
-    m_textureWrapT     = arg.textureWrapT;
+    Texture::loadInGPU(arg.width, arg.height, static_cast<unsigned char>(arg.format), arg.textureMinFilter,
+                       arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT, nullptr);
 
-    if (arg.path != nullptr)
-    {
-        stbi_set_flip_vertically_on_load(arg.flipTexture);
-        m_pixels = stbi_load(arg.path, &m_w, &m_h, (int*)&m_comp, 0);
-
-        if (m_pixels == nullptr)
-        {
-            FUNCT_ERROR((std::string("STBI canno't load image : ") + arg.path).c_str());
-            return;
-        }
-
-        removeUntilFirstSpaceInPath(arg.path);
-    }
-
-    if (arg.loadInGPU)
-        Texture::loadInGPU();
+    Log::log((std::string("Texture create of ") + std::to_string(arg.width) + '/' + std::to_string(arg.height) +
+              " load in GPU")
+                 .c_str());
 }
 
 Texture::~Texture() noexcept
 {
-    if (m_pixels != nullptr)
-        stbi_image_free(m_pixels);
-
-    if (m_isLoadInGPU)
-        unloadFromGPU();
-
-    Log::log((std::string("Texture \"") + m_path + "\" release").c_str());
+    glDeleteTextures(1, &m_id);
+    Log::log("Texture release");
 }
 
-void Texture::loadInGPU() noexcept
+void Texture::loadInGPU(int w, int h, int comp, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
+                        ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept
 {
-    if (m_isLoadInGPU)
-    {
-        FUNCT_WARNING(std::string("Texture already load in GPU").c_str());
-        return;
-    }
-
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
 
-    if (m_comp == 1)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(textureMinFilter));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(textureMagFilter));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(textureWrapS));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(textureWrapT));
+
+    if (comp == 1)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, m_w, m_h, 0, GL_RED, GL_UNSIGNED_BYTE, m_pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, w, h, 0, GL_RED, GL_UNSIGNED_BYTE, pixels);
     }
-    else if (m_comp == 2)
+    else if (comp == 2)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, m_w, m_h, 0, GL_RG, GL_UNSIGNED_BYTE, m_pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, w, h, 0, GL_RG, GL_UNSIGNED_BYTE, pixels);
     }
-    else if (m_comp == 3)
+    else if (comp == 3)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_w, m_h, 0, GL_RGB, GL_UNSIGNED_BYTE, m_pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
     }
-    else if (m_comp == 4)
+    else if (comp == 4)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_w, m_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     }
     else
     {
-        FUNCT_WARNING(std::string("Texture component unsuppported with component : ") + std::to_string(m_comp));
+        FUNCT_WARNING((std::string("Texture component unsuppported with component : ") + std::to_string(comp)).c_str());
         exit(1);
     }
 
     glGenerateMipmap(GL_TEXTURE_2D);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(m_textureMinFilter));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(m_textureMagFilter));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(m_textureWrapS));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(m_textureWrapT));
-
     glBindTexture(GL_TEXTURE_2D, 0);
-    m_isLoadInGPU = true;
-
-    Log::log(std::string("Texture load in GPU").c_str());
-}
-
-void Texture::unloadFromGPU() noexcept
-{
-    if (!m_isLoadInGPU)
-    {
-        FUNCT_WARNING(std::string("Texture isn't load in GPU").c_str());
-        return;
-    }
-
-    glDeleteTextures(1, &m_id);
-    m_isLoadInGPU = false;
-}
-
-void Texture::hFlip() noexcept
-{
-    int wComp = m_w * m_comp;
-
-    for (int i = 0; i < m_h / 2; i++)
-    {
-        for (int j = 0; j < wComp; j++)
-        {
-            std::swap(m_pixels[(wComp * (m_h - 1 - i)) + j], m_pixels[(wComp * i) + j]);
-        }
-    }
-}
-
-void Texture::resize(unsigned int width, unsigned int height) noexcept
-{
-    m_w  = width;
-    m_h = height;
-    glBindTexture(GL_TEXTURE_2D, m_id);
-
-    if (m_comp == 1)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, m_w, m_h, 0, GL_RED, GL_UNSIGNED_BYTE, m_pixels);
-    }
-    else if (m_comp == 2)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, m_w, m_h, 0, GL_RG, GL_UNSIGNED_BYTE, m_pixels);
-    }
-    else if (m_comp == 3)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_w, m_h, 0, GL_RGB, GL_UNSIGNED_BYTE, m_pixels);
-    }
-    else if (m_comp == 4)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_w, m_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixels);
-    }
-    else
-    {
-        FUNCT_WARNING(std::string("Texture component unsuppported with component : ") + std::to_string(m_comp));
-        exit(1);
-    }
 }

@@ -85,13 +85,6 @@ Model::Model(GameObject& owner, const CreateArg& arg)
 
 void Model::loadInGPU() noexcept
 {
-    for (size_t part = 0; part < m_pMaterialToUse.size(); part++)
-    {
-        if ((m_pMaterialToUse[part])->getPDiffuseTexture() != nullptr &&
-            !(m_pMaterialToUse[part])->getPDiffuseTexture()->isLoadInGPU())
-            (m_pMaterialToUse[part])->getPDiffuseTexture()->loadInGPU();
-    }
-
     if (!m_pMesh->isLoadInGPU())
         m_pMesh->loadInGPU();
 
@@ -100,13 +93,6 @@ void Model::loadInGPU() noexcept
 
 void Model::unloadFromGPU() noexcept
 {
-    for (size_t part = 0; part < m_pMaterialToUse.size(); part++)
-    {
-        if ((m_pMaterialToUse[part])->getPDiffuseTexture() != nullptr &&
-            (m_pMaterialToUse[part])->getPDiffuseTexture()->isLoadInGPU())
-            (m_pMaterialToUse[part])->getPDiffuseTexture()->unloadFromGPU();
-    }
-
     if (m_pMesh->isLoadInGPU())
         m_pMesh->unloadFromGPU();
 

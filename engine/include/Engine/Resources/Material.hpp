@@ -20,9 +20,9 @@ class Material
 public:
     struct CreateArgWithTexture
     {
-        std::string          name{""};
-        MaterialComponent    comp{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
-        Texture::CreateArg   diffuseTextureArg;
+        std::string       name{""};
+        MaterialComponent comp{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
+        Texture::LoadArg  diffuseTextureArg;
     };
 
     struct CreateArg
