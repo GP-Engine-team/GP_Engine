@@ -20,7 +20,7 @@ InputManager* InputManager::GetInstance()
     return m_inputManager;
 }
 
-void InputManager::fireInputComponents(const std::string& action) const
+void InputManager::fireInputComponents(const std::string& action) const noexcept
 {
     InputManager* input = InputManager::GetInstance();
     if (!action.empty())
@@ -32,38 +32,37 @@ void InputManager::fireInputComponents(const std::string& action) const
     }
 }
 
-void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const
+void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const noexcept
 {
     InputManager* input = InputManager::GetInstance();
 
     input->m_stateMap[key] = action != GLFW_RELEASE;
 }
 
-void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
+void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
     int x, y;
     glfwGetWindowSize(window, &x, &y);
-    Vec2 center;
-    Vec2 newPos;
-    center.x = x/2;
-    center.y = y/2;
-    m_cursor.position.x = xpos;
-    m_cursor.position.y = ypos;
-    m_cursor.deltaDisplasment = m_cursor.position - center;
-    glfwSetCursorPos(window, x/2, y/2);
-    //std::cout << " Length = " << iManager->m_cursor.deltaDisplasment.length() << ";" << std::endl;
-    //std::cout << "Xpos = " << xpos << "; Ypos = " << ypos << ";" << std::endl;
+    m_cursor.center.x   = x / 2.f;
+    m_cursor.center.y   = y / 2.f;
+    m_cursor.position.x = static_cast<GPM::f32>(xpos);
+    m_cursor.position.y = static_cast<GPM::f32>(ypos);
+    m_cursor.deltaPos   = m_cursor.position - m_cursor.center;
+    glfwSetCursorPos(window, m_cursor.center.x, m_cursor.center.y);
 }
 
-void InputManager::setupCallbacks(GLFWwindow* window)
+void InputManager::setupCallbacks(GLFWwindow* window) noexcept
 {
     glfwSetKeyCallback(window, setKeycallback);
     glfwSetCursorPosCallback(window, setCursorCallback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void InputManager::processInput()
+void InputManager::processInput() noexcept
 {
+    m_cursor.deltaPos = {0, 0};
+    glfwPollEvents();
+
     InputManager* input = InputManager::GetInstance();
 
     for (auto keyState : input->m_stateMap)
@@ -79,7 +78,7 @@ void InputManager::processInput()
     }
 }
 
-void InputManager::keyPressed(int key)
+void InputManager::keyPressed(int key) noexcept
 {
     InputManager* input = InputManager::GetInstance();
 

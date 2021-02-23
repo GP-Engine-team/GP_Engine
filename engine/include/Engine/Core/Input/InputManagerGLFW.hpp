@@ -5,8 +5,8 @@
  */
 
 #pragma once
-#include "Engine/Core/Input/InputComponent.hpp"
 #include "Engine/Core/Input/Cursor.hpp"
+#include "Engine/Core/Input/InputComponent.hpp"
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -38,24 +38,25 @@ private:
     std::unordered_map<int, bool>             m_prevStateMap;
     std::unordered_map<int, bool>             m_stateMap;
     std::unordered_map<int, InputComponent*>  m_inputComponents;
+    Cursor                                    m_cursor;
 
 public:
-    Cursor                                    m_cursor;
     static InputManager* GetInstance();
 
-    _NODISCARD bool             checkForAction(const std::string& action) const;
-    void                        keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const;
-    void                        cursorPositionCallback(GLFWwindow* window, double xpos, double ypos);
-    void                        fireInputComponents(const std::string& action) const;
-    void                        setupCallbacks(GLFWwindow* window);
-    inline void                 bindInput(int key, const std::string& action);
-    _NODISCARD inline const int addComponent(InputComponent* input);
-    inline void                 removeComponent(int key);
-    void                        processInput();
-    void                        keyPressed(int key);
+    [[nodiscard]] bool checkForAction(const std::string& action) const noexcept;
+    void            keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const noexcept;
+    void            cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
+    void            fireInputComponents(const std::string& action) const noexcept;
+    void            setupCallbacks(GLFWwindow* window) noexcept;
+    inline void     bindInput(int key, const std::string& action) noexcept;
+    inline int      addComponent(InputComponent* input) noexcept;
+    inline void     removeComponent(int key) noexcept;
+    void            processInput() noexcept;
+    void            keyPressed(int key) noexcept;
+    [[nodiscard]] inline const Cursor& getCursor() const noexcept;
 };
-inline void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-inline void setCursorCallback(GLFWwindow* window, double xpos, double ypos);
+inline void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept;
+inline void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
 
 #include "Engine/Core/Input/InputManager.inl"
 } // namespace GPE

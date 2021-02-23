@@ -15,8 +15,8 @@ public:
     ~Cursor() = default;
 
 public:
-    GPM::Vec2 position         = {300, 450};
-    GPM::Vec2 deltaDisplasment = {0, 0};
-    //GPM::Vec2
+    GPM::Vec2 position = {300, 450};
+    GPM::Vec2 deltaPos = {0, 0};
+    GPM::Vec2 center   = {300, 450};
 };
 } // namespace GPE

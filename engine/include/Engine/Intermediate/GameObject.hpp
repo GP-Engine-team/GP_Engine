@@ -214,6 +214,8 @@ public:
     void right();
 
     void leave();
+
+    void rotate( const GPM::Vec2& deltaDisplacement);
 };
 
 #include "GameObject.inl"
