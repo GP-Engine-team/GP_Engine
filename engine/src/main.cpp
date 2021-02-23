@@ -270,9 +270,11 @@ int main()
                           tmp.dot(Vec3::up()),
                             0 };
             axis.normalize();
-            player.getTransform().setRotation(Quaternion::angleAxis(iManager->m_cursor.deltaDisplasment.length() * 0.001, axis) * player.getTransform().getSpacialAttribut().rotation);
-            player.getTransform().setRotationZ(0);
-            player.getTransform().update();
+            //world.forceUpdate();
+            //player.getTransform().setRotation(Quaternion::angleAxis(iManager->m_cursor.deltaDisplasment.length() * 0.001, tmp) * player.getTransform().getSpacialAttribut().rotation);
+            player.getTransform().setRotation(Quaternion::angleAxis(iManager->m_cursor.deltaDisplasment.x * 0.001, {0,1,0}) * player.getTransform().getSpacialAttribut().rotation);
+            player.getTransform().setRotation(player.getTransform().getSpacialAttribut().rotation * Quaternion::angleAxis(iManager->m_cursor.deltaDisplasment.y * 0.001, { 1,0,0 }));
+            //world.forceUpdate();
             printQuaternion(player.getTransform().getSpacialAttribut().rotation);//player.getTransform().getSpacialAttribut().rotation);
 
         }
@@ -282,7 +284,7 @@ int main()
         ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime) { ++fixedUpdateFrameCount; },
                   [&](double unscaledDeltaTime, double deltaTime) {
                       ++unFixedUpdateFrameCount;
-                      world.forceUpdate();
+                      world.updateSelfAndChildren();
                   },
                   [&]() {
                       RenderSystem::getInstance()->draw();
