@@ -12,12 +12,13 @@
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/Resources/RenderBuffer.hpp"
 #include "Engine/Resources/RenderTexture.hpp"
+#include "Engine/Resources/Model.hpp"
 #include "Engine/Resources/ResourcesManager.hpp"
 
 #include <vector>
 
 namespace GPE
 {
-using ResourceManagerType = ResourcesManager<std::vector<Mesh>, Mesh, Shader, Texture, RenderBuffer, RenderTexture, std::vector<Material>>;
+using ResourceManagerType = ResourcesManager<std::vector<Mesh>, std::vector<SubModel>, Mesh, Shader, Texture, RenderBuffer, RenderTexture, std::vector<Material>>;
 
 } // namespace GPE

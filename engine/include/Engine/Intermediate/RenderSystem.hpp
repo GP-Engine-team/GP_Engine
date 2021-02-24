@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <vector>       //std::vector
+#include <vector> //std::vector
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
@@ -36,21 +36,21 @@ private:
     static RenderSystem* m_pInstance;
 
 protected:
-    std::vector<Renderer*>  m_pRenderers;
-    std::vector<Model*>     m_pModels;
-    std::vector<Camera*>    m_pCameras;
-    std::vector<Light*>     m_pLights;
+    std::vector<Renderer*> m_pRenderers;
+    std::vector<SubModel*> m_pSubModels;
+    std::vector<Camera*>   m_pCameras;
+    std::vector<Light*>    m_pLights;
 
-    unsigned int m_currentShaderId                  = 0;
-    unsigned int m_currentTextureId                 = 0;
-    unsigned int m_currentMeshId                    = 0;
+    unsigned int m_currentShaderID                  = 0;
+    unsigned int m_currentTextureID                 = 0;
+    unsigned int m_currentMeshID                    = 0;
     Shader*      m_currentPShaderUse                = nullptr;
     bool         m_currentBackFaceCullingModeEnable = false;
 
 protected:
-    void tryToBindShader(Shader* pShader);
-    void tryToBindTexture(unsigned int textureId);
-    void tryToBindMesh(unsigned int meshId);
+    void tryToBindShader(Shader& shader);
+    void tryToBindTexture(unsigned int textureID);
+    void tryToBindMesh(unsigned int meshID);
     void tryToSetAlphaEnabled(bool alphaEnabled);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
@@ -73,13 +73,13 @@ public:
     void updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept;
 
     void removeRenderer(Renderer* pRenderer) noexcept;
-     
-     // TODO: Remove this shit and create variadic templated system
-    void addModel(Model* pModel) noexcept;
 
-    void updateModelPointer(Model* newPointerModel, Model* exPointerModel) noexcept;
+    // TODO: Remove this shit and create variadic templated system
+    void addSubModel(SubModel* pSubModel) noexcept;
 
-    void removeModel(Model* pModel) noexcept;
+    void updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept;
+
+    void removeSubModel(SubModel* pSubModel) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
     void addCamera(Camera* pCamera) noexcept;

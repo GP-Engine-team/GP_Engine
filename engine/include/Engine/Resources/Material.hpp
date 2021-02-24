@@ -60,6 +60,11 @@ public:
      * @return const std::string&
      */
     inline const std::string& getName() const noexcept;
+
+    inline bool isOpaque() const noexcept
+    {
+        return false;
+    }
 };
 
 #include "Material.inl"

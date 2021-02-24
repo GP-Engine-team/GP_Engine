@@ -7,10 +7,11 @@
 #pragma once
 
 #include "Engine/Resources/ResourcesManagerType.hpp"
+#include "Engine/Resources/Model.hpp"
 
 namespace GPE
 {
 
-void importeAsset(const char* assetPath, ResourceManagerType& resourceManager) noexcept;
+std::vector<SubModel> importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager) noexcept;
 
 } // namespace GPE

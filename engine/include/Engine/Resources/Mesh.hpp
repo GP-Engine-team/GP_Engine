@@ -82,16 +82,13 @@ public:
      */
     void draw() const noexcept;
 
-    /**
-     * @brief return the id of Mesh load in GPU.
-     *
-     * @return const GLuint* : nullptr if Mesh is not load in GPU
-     */
-    inline const GLuint* getID() const noexcept;
+    inline unsigned int getID() const noexcept;
 
     inline BoundingVolume getBoundingVolumeType() const noexcept;
 
     inline const GPM::Volume* getBoundingVolume() const noexcept;
+
+    inline unsigned int getVerticesCount() const noexcept;
 
 
     /**

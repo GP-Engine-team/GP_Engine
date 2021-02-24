@@ -1,8 +1,8 @@
 #include "Engine/Resources/Mesh.hpp"
 
-const GLuint* Mesh::getID() const noexcept
+unsigned int Mesh::getID() const noexcept
 {
-    return &m_indexVAO;
+    return static_cast<unsigned int>(m_indexVAO);
 }
 
 Mesh::BoundingVolume Mesh::getBoundingVolumeType() const noexcept
@@ -13,4 +13,9 @@ Mesh::BoundingVolume Mesh::getBoundingVolumeType() const noexcept
 const GPM::Volume* Mesh::getBoundingVolume() const noexcept
 {
     return m_boundingVolume.get();
+}
+
+unsigned int Mesh::getVerticesCount() const noexcept
+{
+    return m_verticesCount;
 }

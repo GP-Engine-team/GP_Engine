@@ -6,11 +6,10 @@
 
 #pragma once
 
-#include <list>
-#include <vector>
+#include <vector> //std::vector
+#include <memory> //std::shared_ptr
 
 #include "Engine/Intermediate/Component.hpp"
-#include "Engine/Resources/Material.hpp"
 #include "GPM/Shape3D/Volume.hpp"
 
 namespace GPE
@@ -18,81 +17,31 @@ namespace GPE
 
 class Mesh;
 class Shader;
+class Material;
+class Model;
 
-struct RenderPassKey
+struct SubModel
 {
-    RenderPassKey()                           = default;
-    RenderPassKey(const RenderPassKey& other) = default;
-    RenderPassKey(RenderPassKey&& other)      = default;
-    ~RenderPassKey()                          = default;
-    RenderPassKey& operator=(RenderPassKey const& other) = default;
-    RenderPassKey& operator=(RenderPassKey&& other) = default;
+    Model*    pModel   = nullptr;
+    Shader*   pShader   = nullptr;
+    Material* pMaterial = nullptr;
+    Mesh*     pMesh     = nullptr;
 
-    unsigned int textureId = 0; // less important bit
-    unsigned int meshId    = 0;
-    unsigned int shaderId  = 0; // Most important bit
-
-    bool operator<(const RenderPassKey& other) const
-    {
-        if (shaderId < other.shaderId)
-        {
-            return true;
-        }
-        else if (meshId < other.meshId)
-        {
-            return true;
-        }
-
-        return textureId < other.textureId;
-    }
+    bool enableBackFaceCulling = true;
 };
 
-struct ModelPart
-{
-    ModelPart()                       = default;
-    ModelPart(const ModelPart& other) = default;
-    ModelPart(ModelPart&& other)      = default;
-    ~ModelPart()                      = default;
-    ModelPart& operator=(ModelPart const& other) = default;
-    ModelPart& operator=(ModelPart&& other) = default;
-
-    const RenderPassKey key;
-
-    class Model* pModel         = nullptr;
-    Material*    pMaterialToUse = nullptr;
-
-    const bool         useBackFaceCulling = false;
-    const unsigned int indexStart         = 0;
-    const unsigned int indexCount         = 0;
-
-    bool operator<(const ModelPart& other) const
-    {
-        return key < other.key;
-    }
-};
+inline bool isSubModelHasPriorityOverAnother(const SubModel& lhs, const SubModel& rhs) noexcept;
 
 class Model : public Component
 {
 public:
     struct CreateArg
     {
-        Shader*                pShader     = nullptr;
-        std::vector<Material>* pMaterials  = nullptr;
-        std::vector<Mesh>*     m_pSubMeshs = nullptr;
-
-        bool loadInGPU             = true;
-        bool enableBackFaceCulling = true;
-        bool isOpaque              = true;
+        std::vector<SubModel>* pSubModels;
     };
 
 protected:
-    Shader*                m_pShader        = nullptr;
-    std::vector<Material>* m_pMaterial      = nullptr; // contain the texture and material data
-    std::vector<Mesh>*     m_pSubMeshs      = {};
-
-    bool m_enableBackFaceCulling = true;
-    bool m_isOpaque              = true;
-    bool m_isLoadInGPU           = false;
+    std::vector<SubModel>& m_subModels;
 
 public:
     Model(GameObject& owner, const CreateArg& arg);

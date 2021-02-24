@@ -11,7 +11,7 @@
 using namespace GPE;
 using namespace GPM;
 
-void GPE::importeAsset(const char* assetPath, ResourceManagerType& resourceManager) noexcept
+std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager) noexcept
 {
     GPE_ASSERT(assetPath != nullptr, "Void path");
 
@@ -24,6 +24,11 @@ void GPE::importeAsset(const char* assetPath, ResourceManagerType& resourceManag
     if (!scene)
         FUNCT_ERROR(importer.GetErrorString());
 
+    // SubModule initialization
+    GPE_ASSERT(scene->HasMeshes(), "File without mesh");
+    std::vector<SubModel> subModuleBuffer;
+    subModuleBuffer.reserve(scene->mNumMeshes);
+
     // Material and texture
     GPE_ASSERT(scene->HasMaterials(), "Mesh without material not supported");
 
@@ -32,7 +37,6 @@ void GPE::importeAsset(const char* assetPath, ResourceManagerType& resourceManag
 
     for (size_t i = 1; i < scene->mNumMaterials; ++i)
     {
-
         GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) != 0,
                    "No diffuse texture not supported");
         GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) < 2,
@@ -65,39 +69,43 @@ void GPE::importeAsset(const char* assetPath, ResourceManagerType& resourceManag
         materialArg.pTexture = &resourceManager.add<Texture>(str.C_Str(), textureArg);
     }
 
-    resourceManager.add<std::vector<Material>>("Mat", matArgs.begin(), matArgs.end());
+    std::vector<Material>& materials =
+        resourceManager.add<std::vector<Material>>("Mat", matArgs.begin(), matArgs.end());
 
     // Mesh
-    if (scene->HasMeshes())
+    for (size_t i = 0; i < scene->mNumMeshes; ++i)
     {
-        for (size_t i = 0; i < scene->mNumMeshes; ++i)
+        Mesh::CreateArg arg;
+        arg.vBuffer.reserve(scene->mMeshes[i]->mNumVertices);
+        arg.vtBuffer.reserve(scene->mMeshes[i]->mNumVertices);
+        arg.vnBuffer.reserve(scene->mMeshes[i]->mNumVertices);
+
+        arg.objName = scene->mMeshes[i]->mName.C_Str();
+
+        for (size_t verticeId = 0; verticeId < scene->mMeshes[i]->mNumVertices; ++verticeId)
         {
-            Mesh::CreateArg arg;
-            arg.vBuffer.reserve(scene->mMeshes[i]->mNumVertices);
-            arg.vtBuffer.reserve(scene->mMeshes[i]->mNumVertices);
-            arg.vnBuffer.reserve(scene->mMeshes[i]->mNumVertices);
+            GPE_ASSERT(scene->mMeshes[i]->mVertices != nullptr, "Mesh without vertices");
+            GPE_ASSERT(scene->mMeshes[i]->HasNormals(), "Mesh without Normal");
+            GPE_ASSERT(scene->mMeshes[i]->mTextureCoords != nullptr, "Mesh without UV");
+            GPE_ASSERT(scene->mMeshes[i]->mTextureCoords[0] != nullptr, "Invalid UV");
 
-            arg.objName = scene->mMeshes[i]->mName.C_Str();
+            const aiVector3D& vertice   = scene->mMeshes[i]->mVertices[verticeId];
+            const aiVector3D& textCoord = scene->mMeshes[i]->mTextureCoords[0][verticeId];
+            const aiVector3D& normal    = scene->mMeshes[i]->mNormals[verticeId];
 
-            for (size_t verticeId = 0; verticeId < scene->mMeshes[i]->mNumVertices; ++verticeId)
-            {
-                GPE_ASSERT(scene->mMeshes[i]->mVertices != nullptr, "Mesh without vertices");
-                GPE_ASSERT(scene->mMeshes[i]->HasNormals(), "Mesh without Normal");
-                GPE_ASSERT(scene->mMeshes[i]->mTextureCoords != nullptr, "Mesh without UV");
-                GPE_ASSERT(scene->mMeshes[i]->mTextureCoords[0] != nullptr, "Invalid UV");
-
-                const aiVector3D& vertice   = scene->mMeshes[i]->mVertices[verticeId];
-                const aiVector3D& textCoord = scene->mMeshes[i]->mTextureCoords[0][verticeId];
-                const aiVector3D& normal    = scene->mMeshes[i]->mNormals[verticeId];
-
-                arg.vBuffer.emplace_back(vertice.x, vertice.y, vertice.z);
-                arg.vnBuffer.emplace_back(normal.x, normal.y, normal.z);
-                arg.vtBuffer.emplace_back(textCoord.x, textCoord.y);
-            }
-
-            resourceManager.add<Mesh>(arg.objName, arg);
+            arg.vBuffer.emplace_back(vertice.x, vertice.y, vertice.z);
+            arg.vnBuffer.emplace_back(normal.x, normal.y, normal.z);
+            arg.vtBuffer.emplace_back(textCoord.x, textCoord.y);
         }
+
+        bool enableBackFaceCulling = true;
+
+        subModuleBuffer.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
+                                              &materials[scene->mMeshes[i]->mMaterialIndex + 1],
+                                              &resourceManager.add<Mesh>(arg.objName, arg), true});
     }
 
     Log::logInitializationEnd("Obj parsing");
+
+    return subModuleBuffer;
 }
