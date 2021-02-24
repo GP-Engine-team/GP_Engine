@@ -184,8 +184,8 @@ void GameObject::rotate(const Vec2& deltaDisplacement)
     if (deltaDisplacement.length() > 0.4)
     {
         getTransform().setRotation(getTransform().getSpacialAttribut().rotation *
-                                   Quaternion::angleAxis(deltaDisplacement.y * 0.001, {1, 0, 0}));
-        getTransform().setRotation(Quaternion::angleAxis(deltaDisplacement.x * 0.001, {0, 1, 0}) *
+                                   Quaternion::angleAxis(deltaDisplacement.y * 0.001f, {1, 0, 0}));
+        getTransform().setRotation(Quaternion::angleAxis(deltaDisplacement.x * 0.001f, {0, 1, 0}) *
                                    getTransform().getSpacialAttribut().rotation);
     }
 }
