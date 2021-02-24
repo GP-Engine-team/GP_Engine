@@ -58,19 +58,16 @@
     <ClCompile Include="src\Texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="third_party\gpm\src\main.cpp">
+    <ClCompile Include="third_party\gpm\src\Intersection.cpp">
       <Filter>third_party\gpm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\gpm\gpm\src\Intersection.cpp">
+    <ClCompile Include="third_party\gpm\src\Plane.cpp">
       <Filter>third_party\gpm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\gpm\gpm\src\Plane.cpp">
+    <ClCompile Include="third_party\gpm\src\SegmentPlane.cpp">
       <Filter>third_party\gpm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\gpm\gpm\src\SegmentPlane.cpp">
-      <Filter>third_party\gpm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\gpm\gpm\src\SpherePlane.cpp">
+    <ClCompile Include="third_party\gpm\src\SpherePlane.cpp">
       <Filter>third_party\gpm</Filter>
     </ClCompile>
   </ItemGroup>
@@ -316,31 +313,31 @@
     <None Include="include\Engine\Resources\Texture.inl">
       <Filter>include</Filter>
     </None>
+    <None Include="third_party\gpm\include\GPM\conversion.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\include\GPM\Matrix3.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\include\GPM\Matrix4.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\include\GPM\Quaternion.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
     <None Include="third_party\gpm\include\GPM\Random.inl">
       <Filter>third_party\gpm</Filter>
     </None>
-    <None Include="third_party\gpm\src\conversion.inl">
+    <None Include="third_party\gpm\include\GPM\Transform.inl">
       <Filter>third_party\gpm</Filter>
     </None>
-    <None Include="third_party\gpm\src\Matrix3.inl">
+    <None Include="third_party\gpm\include\GPM\Vector2.inl">
       <Filter>third_party\gpm</Filter>
     </None>
-    <None Include="third_party\gpm\src\Matrix4.inl">
+    <None Include="third_party\gpm\include\GPM\Vector3.inl">
       <Filter>third_party\gpm</Filter>
     </None>
-    <None Include="third_party\gpm\src\Quaternion.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Transform.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Vector2.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Vector3.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Vector4.inl">
+    <None Include="third_party\gpm\include\GPM\Vector4.inl">
       <Filter>third_party\gpm</Filter>
     </None>
   </ItemGroup>
