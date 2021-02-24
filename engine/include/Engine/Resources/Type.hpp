@@ -56,7 +56,7 @@ struct Shape
     std::vector<unsigned int> iv;
     std::vector<unsigned int> ivn;
     std::vector<unsigned int> ivt;
-    std::string               material_ids;
+    std::string               IDsMaterial;
 };
 
 struct Attrib

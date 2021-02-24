@@ -18,6 +18,6 @@
 
 namespace GPE
 {
-using ResourceManagerType = ResourcesManager<Mesh, Shader, Texture, RenderBuffer, RenderTexture, std::vector<Material>>;
+using ResourceManagerType = ResourcesManager<std::vector<Mesh>, Mesh, Shader, Texture, RenderBuffer, RenderTexture, std::vector<Material>>;
 
 } // namespace GPE

@@ -10,12 +10,7 @@ Shader* Model::getpShader() noexcept
     return m_pShader;
 }
 
-Mesh* Model::getpMesh() noexcept
+const std::vector<Mesh>& Model::getSubMeshs() const noexcept
 {
-    return m_pMesh;
-}
-
-bool Model::isLoadInGPU() const noexcept
-{
-    return m_isLoadInGPU;
+    return *m_pSubMeshs;
 }

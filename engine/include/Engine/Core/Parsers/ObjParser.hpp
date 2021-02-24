@@ -6,23 +6,11 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-
-#include "Engine/Core/Parsers/MTLParser.hpp"
-#include "Engine/Resources/Type.hpp"
+#include "Engine/Resources/ResourcesManagerType.hpp"
 
 namespace GPE
 {
-/**
- * @brief Parse Obj file and fill buffer if arg not Null
- *
- * @param objPath
- * @param attrib
- * @param shape
- * @param materials
- */
-void loadObjWithMTL(const char* objPath, Attrib* attrib, std::vector<Shape>* shape,
-                    std::vector<MaterialAttrib>* materials) noexcept;
+
+void importeAsset(const char* assetPath, ResourceManagerType& resourceManager) noexcept;
 
 } // namespace GPE

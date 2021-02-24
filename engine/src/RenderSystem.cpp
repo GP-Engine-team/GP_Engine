@@ -220,7 +220,7 @@ void RenderSystem::draw(const ResourceManagerType& res) noexcept
         {
             if (pModel->isOpaque())
             {
-                pModel->insertModelPartsOnContenor(modelParts);
+                
             }
             /*else
             {
@@ -263,7 +263,7 @@ void RenderSystem::draw(const ResourceManagerType& res) noexcept
         glViewport(0, 0, w, h);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        glBindVertexArray(*res.get<Mesh>("ScreenPlan")->getVAOId());
+        glBindVertexArray(*res.get<Mesh>("ScreenPlan")->getID());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(res.get<Shader>("PostProcess")->getIdProgramm());
         glUniform1i(glGetUniformLocation(res.get<Shader>("PostProcess")->getIdProgramm(), "colorTexture"), 0);

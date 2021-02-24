@@ -58,8 +58,8 @@ struct ModelPart
 
     const RenderPassKey key;
 
-    class Model*                 pModel         = nullptr;
-    Material* pMaterialToUse = nullptr;
+    class Model* pModel         = nullptr;
+    Material*    pMaterialToUse = nullptr;
 
     const bool         useBackFaceCulling = false;
     const unsigned int indexStart         = 0;
@@ -76,9 +76,9 @@ class Model : public Component
 public:
     struct CreateArg
     {
-        Shader*                pShader    = nullptr;
-        std::vector<Material>* pMaterials = nullptr;
-        Mesh*                  pMesh      = nullptr;
+        Shader*                pShader     = nullptr;
+        std::vector<Material>* pMaterials  = nullptr;
+        std::vector<Mesh>*     m_pSubMeshs = nullptr;
 
         bool loadInGPU             = true;
         bool enableBackFaceCulling = true;
@@ -88,19 +88,11 @@ public:
 protected:
     Shader*                m_pShader        = nullptr;
     std::vector<Material>* m_pMaterial      = nullptr; // contain the texture and material data
-    std::vector<Material*> m_pMaterialToUse = {};      // contain pointor to the material to use when model is display.
-    Mesh*                  m_pMesh          = nullptr;
+    std::vector<Mesh>*     m_pSubMeshs      = {};
 
     bool m_enableBackFaceCulling = true;
     bool m_isOpaque              = true;
     bool m_isLoadInGPU           = false;
-
-private:
-    /**
-     * @brief fill pTextureToUse in function of
-     *
-     */
-    void initTextureBufferWithMTLId() noexcept;
 
 public:
     Model(GameObject& owner, const CreateArg& arg);
@@ -109,40 +101,17 @@ public:
     Model(Model&& other) noexcept;
     virtual ~Model();
 
-    /*
-    Model(GameObject& refGameObject, std::vector<std::string>& params,
-          ResourcesManager& ressourcesManager); // load construtor
-    */
-
     Model()        = delete;
     Model& operator=(Model const& other) = delete;
     Model& operator=(Model&& other) = delete;
-
-    /**
-     * @brief Load texture and Mesh from CPU to GPU. This operation can be slow.
-     *
-     */
-    inline void loadInGPU() noexcept;
-
-    inline void unloadFromGPU() noexcept;
 
     inline bool isOpaque() const noexcept;
 
     inline Shader* getpShader() noexcept;
 
-    inline Mesh* getpMesh() noexcept;
+    inline const std::vector<Mesh>& getSubMeshs() const noexcept;
 
     std::shared_ptr<GPM::Volume> getpBoudingVolume() const noexcept;
-
-    /**
-     * @brief return true if Texture is load in GPU and ready to use
-     *
-     * @return true
-     * @return false
-     */
-    inline bool isLoadInGPU() const noexcept;
-
-    void insertModelPartsOnContenor(std::list<ModelPart>& modelPartContenor) noexcept;
 };
 
 #include "Model.inl"
