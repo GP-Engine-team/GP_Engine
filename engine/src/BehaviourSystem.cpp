@@ -44,7 +44,6 @@ void BehaviourSystem::removeFixedUpdate(BehaviourComponent* fixedUpdateFunctionT
 void BehaviourSystem::addBehaviour(BehaviourComponent* pBehaviour) noexcept
 {
     m_pBehaviours.push_back(pBehaviour);
-    pBehaviour->awake();
 }
 
 void BehaviourSystem::updateBehaviourPointer(BehaviourComponent* newPointorBehaviour,
