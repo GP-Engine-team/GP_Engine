@@ -35,7 +35,7 @@ public:
         std::vector<GPM::Vec3>           vBuffer;
         std::vector<GPM::Vec2>           vtBuffer;
         std::vector<GPM::Vec3>           vnBuffer;
-        std::vector<std::vector<Indice>> iBuffer;
+        std::vector<Indice>              iBuffer;
         BoundingVolume                   boundingVolume{BoundingVolume::SPHERE};
     };
 

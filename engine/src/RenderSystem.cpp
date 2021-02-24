@@ -208,7 +208,6 @@ void RenderSystem::draw(const ResourceManagerType& res) noexcept
     int h, w;
     m_pRenderers[0]->getWindow()->getSize(w, h);
 
-
     std::list<ModelPart>    modelParts;
     std::map<float, Model*> mapElemSortedByDistance;
 
@@ -216,7 +215,7 @@ void RenderSystem::draw(const ResourceManagerType& res) noexcept
 
     for (auto&& pModel : m_pModels)
     {
-        if (pModel->isActivated() && isOnCameraFrustum(camFrustum, pModel))
+        if (pModel->isActivated() /*&& isOnCameraFrustum(camFrustum, pModel)*/)
         {
             if (pModel->isOpaque())
             {

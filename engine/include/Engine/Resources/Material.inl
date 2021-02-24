@@ -1,13 +1,6 @@
 #include "Engine/Resources/Material.hpp"
 
-Material::Material(const MaterialAttrib& arg)
-    : m_comp{arg.ambient, arg.diffuse, arg.specular, arg.shininess},
-      m_pDiffuseTexture(std::make_shared<Texture>(
-          Texture::LoadArg{(std::string(PATH_TEXTURE_RESOURCE) + arg.nameDiffuseTexture).c_str()})),
-      m_name(arg.id)
-{}
-
-Material::Material(CreateArg& arg) : m_comp(arg.comp), m_pDiffuseTexture(std::move(arg.pTexture)), m_name(arg.name)
+Material::Material(const CreateArg& arg) : m_comp(arg.comp), m_pDiffuseTexture(arg.pTexture), m_name(arg.name)
 {
 }
 
@@ -16,9 +9,9 @@ const MaterialComponent& Material::getMaterialComponent() const noexcept
     return m_comp;
 }
 
-Texture* Material::getPDiffuseTexture() noexcept
+const Texture* Material::getDiffuseTexture() const noexcept
 {
-    return m_pDiffuseTexture.get();
+    return m_pDiffuseTexture;
 }
 
 const std::string& Material::getName() const noexcept

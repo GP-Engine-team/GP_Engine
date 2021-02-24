@@ -6,6 +6,7 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Resources/Texture.hpp"
 
 using namespace GPE;
 using namespace GPM;
@@ -17,44 +18,56 @@ void GPE::importeAsset(const char* assetPath, ResourceManagerType& resourceManag
     Log::logInitializationStart("Obj parsing");
 
     Assimp::Importer importer;
-    const aiScene*   scene = importer.ReadFile(assetPath, aiProcess_Triangulate /*| aiProcess_JoinIdenticalVertices*/| aiProcess_SortByPType |
-                                         aiProcess_GenNormals | aiProcess_GenUVCoords);
+    const aiScene*   scene =
+        importer.ReadFile(assetPath, aiProcess_Triangulate /*| aiProcess_JoinIdenticalVertices*/ |
+                                         aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords);
     if (!scene)
         FUNCT_ERROR(importer.GetErrorString());
 
-    //Material and texture
+    // Material and texture
     GPE_ASSERT(scene->HasMaterials(), "Mesh without material not supported");
+
+    std::vector<Material::CreateArg> matArgs;
+    matArgs.reserve(scene->mNumMaterials - 1);
 
     for (size_t i = 1; i < scene->mNumMaterials; ++i)
     {
-        std::cout << scene->mMaterials[i]->GetName().C_Str() << std::endl;
-        std::cout << scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_NONE) << std::endl;
-        std::cout << scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_UNKNOWN) << std::endl;
-        std::cout << scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_AMBIENT) << std::endl;
-        std::cout << scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_AMBIENT_OCCLUSION) << std::endl;
-        std::cout << scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) << std::endl;
-        std::cout << scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE_ROUGHNESS) << std::endl;
 
-        GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) != 0, "No diffuse texture not supported");
-        GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) < 2, "Multiple diffuse trexture not supported");
+        GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) != 0,
+                   "No diffuse texture not supported");
+        GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) < 2,
+                   "Multiple diffuse trexture not supported");
 
         aiString str;
         scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &str);
 
-        std::cout << str.C_Str() << std::endl;
+        Texture::LoadArg textureArg;
+        textureArg.path = PATH_TEXTURE_RESOURCE;
+        textureArg.path += str.C_Str();
 
-        
-        //resourceManager.add<Texture>();
+        matArgs.emplace_back();
+        Material::CreateArg& materialArg = matArgs.back();
 
+        aiColor3D color;
+        scene->mMaterials[i]->Get(AI_MATKEY_COLOR_AMBIENT, color);
+        materialArg.comp.ambient.rgbi = GPM::Vec4{color.r, color.g, color.b, 1.f};
 
-        Material::CreateArg arg;
-        
+        scene->mMaterials[i]->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+        materialArg.comp.diffuse.rgbi = GPM::Vec4{color.r, color.g, color.b, 1.f};
 
-        //resourceManager.add<Material>()
+        scene->mMaterials[i]->Get(AI_MATKEY_COLOR_SPECULAR, color);
+        materialArg.comp.specular.rgbi = GPM::Vec4{color.r, color.g, color.b, 1.f};
+
+        float scale;
+        scene->mMaterials[i]->Get(AI_MATKEY_SHININESS_STRENGTH, scale);
+        materialArg.comp.shininess = scale;
+
+        materialArg.pTexture = &resourceManager.add<Texture>(str.C_Str(), textureArg);
     }
-    exit(10);
 
-    //Mesh
+    resourceManager.add<std::vector<Material>>("Mat", matArgs.begin(), matArgs.end());
+
+    // Mesh
     if (scene->HasMeshes())
     {
         for (size_t i = 0; i < scene->mNumMeshes; ++i)
@@ -82,7 +95,7 @@ void GPE::importeAsset(const char* assetPath, ResourceManagerType& resourceManag
                 arg.vtBuffer.emplace_back(textCoord.x, textCoord.y);
             }
 
-            resourceManager.add<Mesh>(arg.objName, arg);            
+            resourceManager.add<Mesh>(arg.objName, arg);
         }
     }
 
