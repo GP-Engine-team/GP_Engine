@@ -21,16 +21,16 @@ namespace GPE
 
 #else /* Not NDEBUG.  */
 
-#define GPE_ASSERT(expr, msg)                                                                                          \
-    if (expr)                                                                                                          \
-    {                                                                                                                  \
-    }                                                                                                                  \
-    else                                                                                                               \
-    {                                                                                                                  \
-        Log::logError(stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s", F_RED("Assertion"),   \
-                                   __FUNCSIG__, __FILE__, __LINE__, BOLD(#expr), msg));                                \
-        Log::closeAndTryToCreateFile();                                                                                \
-        exit(3);                                                                                                       \
+#define GPE_ASSERT(expr, msg)                                                                                                  \
+    if (expr)                                                                                                                  \
+    {                                                                                                                          \
+    }                                                                                                                          \
+    else                                                                                                                       \
+    {                                                                                                                          \
+        GPE::Log::logError(GPE::stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s", F_RED("Assertion"), \
+                           __FUNCSIG__, __FILE__, __LINE__, BOLD(#expr), msg));                                                \
+        GPE::Log::closeAndTryToCreateFile();                                                                                   \
+        exit(3);                                                                                                               \
     }
 
 #endif // NDEBUG
