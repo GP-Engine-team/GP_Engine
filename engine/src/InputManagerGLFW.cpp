@@ -20,14 +20,25 @@ InputManager* InputManager::GetInstance()
     return m_inputManager;
 }
 
-void InputManager::fireInputComponents(const std::string& action) const noexcept
+void InputManager::fireInputComponents(const std::string& action, const int& key) const noexcept
 {
     InputManager* input = InputManager::GetInstance();
     if (!action.empty())
     {
+        auto it = input->m_stateMap.find(key);
         for (int i = 0; i < input->m_inputComponents.size(); i++)
         {
-            input->m_inputComponents[i]->fireAction(action);
+            auto it2  = input->m_inputComponents[i]->m_keyModeMap.find(action);
+            if (it2->second == EKeyMode::KEY_PRESS && it->second == true)
+            {
+                input->m_inputComponents[i]->fireAction(action);
+                input->m_stateMap[key] = false;
+            }
+
+            else if (it2->second == EKeyMode::KEY_REPEAT && it->second == true)
+            {
+                input->m_inputComponents[i]->fireAction(action);
+            }
         }
     }
 }
@@ -36,7 +47,10 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 {
     InputManager* input = InputManager::GetInstance();
 
-    input->m_stateMap[key] = action != GLFW_RELEASE;
+    if (action != GLFW_REPEAT)
+    {
+        input->m_stateMap[key] = action != GLFW_RELEASE;
+    }
 }
 
 void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
@@ -77,13 +91,10 @@ void InputManager::processInput() noexcept
 
     for (auto keyState : input->m_stateMap)
     {
-        if (keyState.second == false)
-            continue;
-
         auto it = input->m_actionMap.equal_range(keyState.first);
         for (auto i2 = it.first; i2 != it.second; i2++)
         {
-            input->fireInputComponents(i2->second);
+            input->fireInputComponents(i2->second, keyState.first);
         }
     }
 }

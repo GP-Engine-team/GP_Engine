@@ -19,9 +19,10 @@ InputComponent::InputComponent(InputComponent&& other) noexcept : Component(othe
     m_key = -1;
 }
 
-void InputComponent::bindAction(const string& action, const std::function<void()>& function)
+void InputComponent::bindAction(const string& action, const std::function<void()>& function, const EKeyMode& keyMode)
 {
     m_functionMap.emplace(action, function);
+    m_keyModeMap.emplace(action, keyMode);
 }
 
 void InputComponent::fireAction(const std::string& action)
@@ -36,5 +37,5 @@ void InputComponent::fireAction(const std::string& action)
 
 void InputComponent::bindAxis(const std::string& action, const std::function<void(const GPM::Vec3& axis)>& function)
 {
-    //m_axisFunctionMap.emplace(action, function);
+    // m_axisFunctionMap.emplace(action, function);
 }

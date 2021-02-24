@@ -71,7 +71,7 @@ public:
      * @param action 
      * @return 
     */
-    void            fireInputComponents(const std::string& action) const noexcept;
+    void            fireInputComponents(const std::string& action, const int& key) const noexcept;
 
     /**
      * @brief Setup Callbacks (call it one time to setup callbacks function proprely)

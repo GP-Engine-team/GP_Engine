@@ -12,6 +12,13 @@
 #include <string>
 #include <unordered_map>
 
+enum class EKeyMode
+{
+    KEY_PRESS   = 0,
+    KEY_REPEAT  = 1,
+    KEY_RELEASE = 2,
+};
+
 namespace GPE
 {
 class InputComponent : public Component
@@ -24,23 +31,24 @@ public:
     InputComponent(GameObject& owner);
 
 private:
-    std::unordered_map<std::string, std::function<void()>>          m_functionMap;
-    std::unordered_map<std::string, std::function<void(GPM::Vec3)>> m_axisFunctionMap;
-    int                                                             m_key = -1;
+    std::unordered_map<std::string, std::function<void()>> m_functionMap;
+    // std::unordered_map<std::string, std::function<void(GPM::Vec3)>> m_axisFunctionMap;
+    int m_key = -1;
 
 public:
+    std::unordered_map<std::string, EKeyMode> m_keyModeMap;
     /**
      * @brief Bind a function to an action
      * @param action
      * @param function
      */
-    void bindAction(const std::string& action, const std::function<void()>& function);
+    void bindAction(const std::string& action, const std::function<void()>& function, const EKeyMode& keyMode);
 
     /**
      * @brief Bind an function axis to an action
-     * @param action 
-     * @param function 
-    */
+     * @param action
+     * @param function
+     */
     void bindAxis(const std::string& action, const std::function<void(const GPM::Vec3& axis)>& function);
 
     /**
