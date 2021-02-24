@@ -6,11 +6,11 @@
 
 #pragma once
 
+#include <string>
 #include <cassert>
 #include <memory>
-#include <string>
 
-namespace Engine::Core::Tools
+namespace GPE
 {
 /**
  * @brief std::string formatting like sprintf. Use std::format if you use __cplusplus > 201703L
@@ -23,6 +23,8 @@ namespace Engine::Core::Tools
  */
 template <typename... Args>
 [[nodiscard]] std::string stringFormat(const std::string& format, Args... args) noexcept;
-} /*namespace Engine::Core::Tools*/
 
 #include "Format.inl"
+
+} /*namespace GPE*/
+

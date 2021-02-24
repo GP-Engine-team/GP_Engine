@@ -117,4 +117,7 @@
       <Filter>Fichiers d%27en-tête\third_party\glad</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="GPEditor.props" />
+  </ItemGroup>
 </Project>

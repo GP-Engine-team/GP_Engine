@@ -6,10 +6,9 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Format.hpp"
+#include "Engine/Intermediate/RenderSystem.hpp"
 
-using namespace Engine::Core::Renderering;
-using namespace Engine::Core::Debug;
-using namespace Engine::Core::Tools;
+using namespace GPE;
 using namespace std;
 
 inline void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
@@ -112,7 +111,7 @@ inline void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint i
 }
 
 Renderer::Renderer(Window& window) noexcept 
-    : m_pWindow {reinterpret_cast<Window*>(&window)}
+    : m_pWindow {&window}
 {
     Log::logInitializationStart("GLFW / OpenGL 4.6 Renderer");
 
@@ -150,10 +149,14 @@ Renderer::Renderer(Window& window) noexcept
     Log::log(stringFormat("GL_VENDOR = %s", glGetString(GL_VENDOR)));
     Log::log(stringFormat("GL_RENDERER = %s", glGetString(GL_RENDERER)));
     Log::log(stringFormat("GL_VERSION = %s", glGetString(GL_VERSION)));
+
+    RenderSystem::getInstance()->addRenderer(this);
 }
 
 Renderer::~Renderer() noexcept
 {
+    RenderSystem::getInstance()->removeRenderer(this);
+
     Log::log("GLFW / OpenGL 4.6 renderer release");
 }
 

@@ -3,8 +3,7 @@
 #include <string>
 #include <thread> // std::this_thread::sleep_for
 
-using namespace Engine::Core;
-using namespace Engine::Core::Debug;
+using namespace GPE;
 
 void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double fixedDeltaTime)> fixedUpdateFunction,
                         std::function<void(double unscaledDeltaTime, double deltaTime)> updateFunction,

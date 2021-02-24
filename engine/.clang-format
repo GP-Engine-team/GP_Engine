@@ -2,5 +2,7 @@
 
 BasedOnStyle: Microsoft
 AlwaysBreakTemplateDeclarations: 'Yes'
+AlignConsecutiveAssignments: 'true'
+AlignConsecutiveDeclarations: 'true'
 PointerAlignment: Left
 AccessModifierOffset: '-4'

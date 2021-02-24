@@ -8,9 +8,7 @@
 #include "include/glad/glad.h"
 #include "include/GLFW/glfw3.h"
 
-using namespace Engine::Core::Debug;
-using namespace Editor;
-
+using namespace GPE;
 
 int main(int argc, char* argv[])
 {

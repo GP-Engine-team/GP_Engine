@@ -1,6 +1,6 @@
 #include "Engine/Core/Debug/Log.hpp"
 
-using namespace Engine::Core::Debug;
+using namespace GPE;
 
 uint8_t Log::settings(ESetting::DISPLAY_HOUR | ESetting::DISPLAY_WITH_COLOR | ESetting::PRINT_LOG_FILE_ERROR);
 

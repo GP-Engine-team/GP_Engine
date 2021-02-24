@@ -4,6 +4,9 @@
 # Git mirror setup
 setup_mirror.bat
 
+# Project
+Generated
+
 ### C++ ###
 # Prerequisites
 *.d
