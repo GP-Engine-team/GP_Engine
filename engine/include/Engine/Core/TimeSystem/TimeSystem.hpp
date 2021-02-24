@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "Engine/Core/Debug/Log.hpp"
 #include <chrono>     // std::chrono::seconds, std::chrono::system_clock::now()
 #include <functional> //std::function
 #include <queue>

@@ -7,14 +7,19 @@
 
 #include "Engine/Intermediate/GameObject.hpp"
 //#include "Engine/Core/System/TimeSystem.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Resources/Camera.hpp"
 #include "Engine/Resources/Light/Light.hpp"
 #include "Engine/Resources/Model.hpp"
+#include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/Shader.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
 #include "GPM/Shape3D/Volume.hpp"
 #include "GPM/ShapeRelation/SpherePlane.hpp"
 #include "GPM/Matrix4.hpp"
+#include "Engine/Resources/RenderTexture.hpp"
+#include "Engine/Resources/RenderBuffer.hpp"
 
 using namespace GPE;
 using namespace GPM;
@@ -198,12 +203,11 @@ void RenderSystem::resetCurrentRenderPassKey()
     glBindVertexArray(0);
 }
 
-void RenderSystem::draw() noexcept
+void RenderSystem::draw(const ResourceManagerType& res) noexcept
 {
-    glEnable(GL_DEPTH_TEST);
+    int h, w;
+    m_pRenderers[0]->getWindow()->getSize(w, h);
 
-    glClearColor(0.3f, 0.3f, 0.3f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     std::list<ModelPart>    modelParts;
     std::map<float, Model*> mapElemSortedByDistance;
@@ -233,6 +237,13 @@ void RenderSystem::draw() noexcept
     resetCurrentRenderPassKey();
     // TODO : Remove gl functions
     glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+
+    glViewport(0, 0, w, h);
+    glBindFramebuffer(GL_FRAMEBUFFER, res.get<RenderTexture>("FBO")->getID());
+
+    glClearColor(0.3f, 0.3f, 0.3f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for (auto&& modelPart : modelParts)
     {
@@ -245,6 +256,22 @@ void RenderSystem::draw() noexcept
 
         sendModelDataToShader(*m_pCameras[0], modelPart);
         drawModelPart(modelPart);
+    }
+
+    // Render to screen
+    {
+        glViewport(0, 0, w, h);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glBindVertexArray(*res.get<Mesh>("ScreenPlan")->getVAOId());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glUseProgram(res.get<Shader>("PostProcess")->getIdProgramm());
+        glUniform1i(glGetUniformLocation(res.get<Shader>("PostProcess")->getIdProgramm(), "colorTexture"), 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, res.get<Texture>("ColorBufferFBO")->getID());
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
     // TODO : Remove gl functions
@@ -260,18 +287,48 @@ void RenderSystem::draw() noexcept
     resetCurrentRenderPassKey();
 }
 
+void RenderSystem::addRenderer(Renderer* pRenderer) noexcept
+{
+    m_pRenderers.push_back(pRenderer);
+}
+
+void RenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept
+{
+    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != m_pRenderers.end(); it++)
+    {
+        if ((*it) == exPointerRenderer)
+        {
+            *it = newPointerRenderer;
+            return;
+        }
+    }
+}
+
+void RenderSystem::removeRenderer(Renderer* pRenderer) noexcept
+{
+    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != m_pRenderers.end(); it++)
+    {
+        if ((*it) == pRenderer)
+        {
+            std::swap<Renderer*>(m_pRenderers.back(), (*it));
+            m_pRenderers.pop_back();
+            return;
+        }
+    }
+}
+
 void RenderSystem::addModel(Model* pModel) noexcept
 {
     m_pModels.push_back(pModel);
 }
 
-void RenderSystem::updateModelPointer(Model* newPointorModel, Model* exPointorModel) noexcept
+void RenderSystem::updateModelPointer(Model* newPointerModel, Model* exPointerModel) noexcept
 {
     for (std::vector<Model*>::iterator it = m_pModels.begin(); it != m_pModels.end(); it++)
     {
-        if ((*it) == exPointorModel)
+        if ((*it) == exPointerModel)
         {
-            *it = newPointorModel;
+            *it = newPointerModel;
             return;
         }
     }
@@ -295,13 +352,13 @@ void RenderSystem::addCamera(Camera* pCamera) noexcept
     m_pCameras.push_back(pCamera);
 }
 
-void RenderSystem::updateCameraPointer(Camera* newPointorCamera, Camera* exPointorCamera) noexcept
+void RenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept
 {
     for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != m_pCameras.end(); it++)
     {
-        if ((*it) == exPointorCamera)
+        if ((*it) == exPointerCamera)
         {
-            *it = newPointorCamera;
+            *it = newPointerCamera;
             return;
         }
     }
@@ -325,13 +382,13 @@ void RenderSystem::addLight(Light* pLight) noexcept
     m_pLights.push_back(pLight);
 }
 
-void RenderSystem::updateLightPointer(Light* newPointorLight, Light* exPointorLight) noexcept
+void RenderSystem::updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept
 {
     for (std::vector<Light*>::iterator it = m_pLights.begin(); it != m_pLights.end(); it++)
     {
-        if ((*it) == exPointorLight)
+        if ((*it) == exPointerLight)
         {
-            *it = newPointorLight;
+            *it = newPointerLight;
             return;
         }
     }

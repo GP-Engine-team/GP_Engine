@@ -184,8 +184,8 @@ void Mesh::draw() const noexcept
     }
 }
 
-Mesh::CreateArg Mesh::createPlane(float textureRepetition, unsigned int indexTextureX, unsigned int indexTextureY,
-                                  Axis towardAxis) noexcept
+Mesh::CreateArg Mesh::createPlane(float width, float height, float textureRepetition, unsigned int indexTextureX,
+                                  unsigned int indexTextureY, Axis towardAxis, bool isRectoVerso) noexcept
 {
     Mesh::CreateArg mesh;
     mesh.objName = "Plane";
@@ -193,10 +193,10 @@ Mesh::CreateArg Mesh::createPlane(float textureRepetition, unsigned int indexTex
     // plane contain 4 triangle, 4 vertex 4 texture coordonate and 2 normal
     mesh.vBuffer.reserve(4);
     mesh.vtBuffer.reserve(4);
-    mesh.vnBuffer.reserve(2);
+    mesh.vnBuffer.reserve(isRectoVerso ? 2 : 1);
     mesh.iBuffer.push_back({});
-    mesh.iBuffer.reserve(2);
-
+    mesh.iBuffer.reserve(isRectoVerso ? 12 : 6);
+    
     // Face 1
     mesh.iBuffer[0].emplace_back(Indice{0, 0, 0});
     mesh.iBuffer[0].emplace_back(Indice{1, 1, 0});
@@ -205,37 +205,50 @@ Mesh::CreateArg Mesh::createPlane(float textureRepetition, unsigned int indexTex
     mesh.iBuffer[0].emplace_back(Indice{2, 3, 0});
     mesh.iBuffer[0].emplace_back(Indice{3, 2, 0});
 
-    // Face 2
-    mesh.iBuffer[0].emplace_back(Indice{0, 0, 1});
-    mesh.iBuffer[0].emplace_back(Indice{1, 1, 1});
-    mesh.iBuffer[0].emplace_back(Indice{3, 2, 1});
-    mesh.iBuffer[0].emplace_back(Indice{1, 1, 1});
-    mesh.iBuffer[0].emplace_back(Indice{2, 3, 1});
-    mesh.iBuffer[0].emplace_back(Indice{3, 2, 1});
-
     // initialize vertex :
 
     switch (towardAxis)
     {
     case Axis::X:
-        mesh.vBuffer.push_back({0.f, -0.5f, -0.5});
-        mesh.vBuffer.push_back({0.f, 0.5f, -0.5});
-        mesh.vBuffer.push_back({0.f, 0.5f, 0.5});
-        mesh.vBuffer.push_back({0.f, -0.5f, 0.5});
+        mesh.vBuffer.push_back({0.f, -height, -width});
+        mesh.vBuffer.push_back({0.f, height, -width});
+        mesh.vBuffer.push_back({0.f, height, width});
+        mesh.vBuffer.push_back({0.f, -height, width});
+        break;
+
+     case Axis::NEG_X:
+        mesh.vBuffer.push_back({0.f, height, width});
+        mesh.vBuffer.push_back({0.f, -height, width});
+        mesh.vBuffer.push_back({0.f, -height, -width});
+        mesh.vBuffer.push_back({0.f, height, -width});
         break;
 
     case Axis::Y:
-        mesh.vBuffer.push_back({-0.5f, 0.f, -0.5});
-        mesh.vBuffer.push_back({0.5f, 0.f, -0.5});
-        mesh.vBuffer.push_back({0.5f, 0.f, 0.5});
-        mesh.vBuffer.push_back({-0.5f, 0.f, 0.5});
+        mesh.vBuffer.push_back({-height, 0.f, -width});
+        mesh.vBuffer.push_back({height, 0.f, -width});
+        mesh.vBuffer.push_back({height, 0.f, width});
+        mesh.vBuffer.push_back({-height, 0.f, width});
+        break;
+
+    case Axis::NEG_Y:
+        mesh.vBuffer.push_back({height, 0.f, width});
+        mesh.vBuffer.push_back({-height, 0.f, width});
+        mesh.vBuffer.push_back({-height, 0.f, -width});
+        mesh.vBuffer.push_back({height, 0.f, -width});
         break;
 
     case Axis::Z:
-        mesh.vBuffer.push_back({-0.5f, -0.5, 0.f});
-        mesh.vBuffer.push_back({0.5f, -0.5, 0.f});
-        mesh.vBuffer.push_back({0.5f, 0.5, 0.f});
-        mesh.vBuffer.push_back({-0.5f, 0.5, 0.f});
+        mesh.vBuffer.push_back({-height, -width, 0.f});
+        mesh.vBuffer.push_back({height, -width, 0.f});
+        mesh.vBuffer.push_back({height, width, 0.f});
+        mesh.vBuffer.push_back({-height, width, 0.f});
+        break;
+
+    case Axis::NEG_Z:
+        mesh.vBuffer.push_back({-height, -width, 0.f});
+        mesh.vBuffer.push_back({height, -width, 0.f});
+        mesh.vBuffer.push_back({height, width, 0.f});
+        mesh.vBuffer.push_back({-height, width, 0.f});
         break;
 
     default:
@@ -253,7 +266,21 @@ Mesh::CreateArg Mesh::createPlane(float textureRepetition, unsigned int indexTex
 
     // initialize normal :
     mesh.vnBuffer.push_back({0.f, -1.f, 0.f});
-    mesh.vnBuffer.push_back({0.f, 1.f, 0.f});
+
+    if (isRectoVerso)
+    {
+        // Face 2
+        mesh.iBuffer[0].emplace_back(Indice{0, 0, 1});
+        mesh.iBuffer[0].emplace_back(Indice{1, 1, 1});
+        mesh.iBuffer[0].emplace_back(Indice{3, 2, 1});
+        mesh.iBuffer[0].emplace_back(Indice{1, 1, 1});
+        mesh.iBuffer[0].emplace_back(Indice{2, 3, 1});
+        mesh.iBuffer[0].emplace_back(Indice{3, 2, 1});
+
+        //normal
+        mesh.vnBuffer.push_back({0.f, 1.f, 0.f});
+    }
+        
 
     return mesh;
 }

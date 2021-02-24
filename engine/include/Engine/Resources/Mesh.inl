@@ -6,7 +6,7 @@ Mesh::~Mesh() noexcept
         unloadFromGPU();
 }
 
-const GLuint* Mesh::getVAOId() noexcept
+const GLuint* Mesh::getVAOId() const noexcept
 {
     return &m_indexVAO;
 }

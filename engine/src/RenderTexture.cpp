@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Resources/Texture.hpp"
+#include "Engine/Resources/RenderBuffer.hpp"
 
 using namespace GPE;
 
@@ -17,7 +18,7 @@ RenderTexture::RenderTexture(const CreateArg& arg) noexcept
         std::vector<GLenum> drawBuffers;
         drawBuffers.reserve(arg.colorBuffers.size());
 
-        for (size_t i = 0; i < arg.colorBuffers.size(); i++)
+        for (size_t i = 0; i < arg.colorBuffers.size(); ++i)
         {
             glFramebufferTexture2D(GL_FRAMEBUFFER, static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + i), GL_TEXTURE_2D,
                                    arg.colorBuffers[i]->getID(), 0);
@@ -28,9 +29,7 @@ RenderTexture::RenderTexture(const CreateArg& arg) noexcept
     }
 
     if (arg.depthBuffer != nullptr)
-    {
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, arg.depthBuffer->getID());
-    }
 
     if (arg.stencilBuffer != nullptr)
     {

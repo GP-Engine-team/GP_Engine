@@ -7,11 +7,13 @@
 
 namespace GPE
 {
+class Window;
+
 class Renderer
 {
 protected:
 
-    class Window* m_pWindow;
+    Window* m_pWindow = nullptr;
 
 public:
     Renderer(class Window& window) noexcept;
@@ -30,5 +32,10 @@ public:
 
 public:
     void swapBuffer() noexcept;
+
+    const Window* getWindow() const noexcept
+    {
+        return m_pWindow;
+    }
 };
 } // namespace GPE
