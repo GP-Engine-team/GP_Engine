@@ -191,39 +191,39 @@ inline void parseMtl(const std::string& line, std::vector<MaterialAttrib>& mater
 inline void parseUseMtl(const std::string& line, std::vector<Shape>& shape)
 {
     shape.push_back({});
-    parseName(line, shape.back().material_ids);
+    removeUntilFirstSpace(line, shape.back().material_ids);
 }
 
 inline void parseSurfaceName(const std::string& line, std::vector<Shape>& shape)
 {
     if (!shape.empty())
-        parseName(line, shape.back().name);
+        removeUntilFirstSpace(line, shape.back().name);
 }
 
 inline void parseLine(const std::string& line, Attrib* attrib, std::vector<Shape>* shape,
                       std::vector<MaterialAttrib>* materials)
 {
     // Detect line type and parse this line
-    if (isTitle(line, "#"))
+    if (stringStartsWith(line, "#"))
         return;
-    else if (isTitle(line, "o") && attrib != nullptr)
+    else if (stringStartsWith(line, "o") && attrib != nullptr)
     {
-        parseName(line, attrib->objName);
+        removeUntilFirstSpace(line, attrib->objName);
         Log::log((std::string("Obj name : ") + attrib->objName).c_str());
     }
-    else if (isTitle(line, "g") && shape != nullptr)
+    else if (stringStartsWith(line, "g") && shape != nullptr)
         parseSurfaceName(line, *shape);
-    else if (isTitle(line, "mtllib") && materials != nullptr)
+    else if (stringStartsWith(line, "mtllib") && materials != nullptr)
         parseMtl(line, *materials);
-    else if (isTitle(line, "usemtl") && shape != nullptr)
+    else if (stringStartsWith(line, "usemtl") && shape != nullptr)
         parseUseMtl(line, *shape);
-    else if (isTitle(line, "vt") && attrib != nullptr)
+    else if (stringStartsWith(line, "vt") && attrib != nullptr)
         parseTexturePos(line, attrib->vtBuffer);
-    else if (isTitle(line, "vn") && attrib != nullptr)
+    else if (stringStartsWith(line, "vn") && attrib != nullptr)
         parseNormal(line, attrib->vnBuffer);
-    else if (isTitle(line, "v") && attrib != nullptr)
+    else if (stringStartsWith(line, "v") && attrib != nullptr)
         parseVertexPos(line, attrib->vBuffer);
-    else if (isTitle(line, "f") && shape != nullptr)
+    else if (stringStartsWith(line, "f") && shape != nullptr)
         parseIndice(line, *shape);
     else
         Log::logWarning(std::string("Obj Parser don't parse this line : " + line).c_str());

@@ -30,7 +30,7 @@ public:
 
 protected:
     std::string         m_name;
-    TransformComponent* m_pTransform;
+    TransformComponent& m_transform;
 
     std::list<Component*> m_pComponents;
     std::string           m_tag{"GameObject"};
@@ -45,13 +45,15 @@ public: // TODO : Protected method ?
     void updateComponentLink(const T* oldPtr, T* newPtr) noexcept;
 
 public:
-    inline GameObject(const CreateArg& arg);
+    inline
+    GameObject(const CreateArg& arg);
 
-    inline GameObject();
+    inline
+    GameObject();
 
     inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is available
 
-    inline GameObject(GameObject&& other) noexcept = default;
+    constexpr inline GameObject(GameObject&& other) = default;
 
     inline ~GameObject() noexcept = default;
 
@@ -143,7 +145,7 @@ public:
             it) noexcept; // TODO: Destroy immediate may be dangerous
 
     template <typename TUniqueComponentType>
-    void destroyImmediateUniqueComponent() noexcept;
+    void destroyUniqueComponentNow() noexcept;
 
     /**
      * @brief destroy component of gameobject
@@ -170,7 +172,7 @@ public:
      * Use this function only if you are sur that the object don't depending af the current frame
      *
      */
-    inline void destroyImmediate() noexcept;
+    inline void destroyNow() noexcept;
 
     /**
      * @brief add specific entity to the graph with arg to construct it and return his id
@@ -193,29 +195,13 @@ public:
 
     [[nodiscard]] inline constexpr const std::list<Component*>& getComponents() const noexcept;
 
-    [[nodiscard]] std::string getRelativePath() const noexcept;
+    [[nodiscard]] std::string getAbsolutePath() const noexcept;
 
     inline void setTag(const std::string& newTag) noexcept;
 
     [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
     [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
-
-    void up();
-
-    void down();
-
-    void forward();
-
-    void back();
-
-    void left();
-
-    void right();
-
-    void leave();
-
-    void rotate( const GPM::Vec2& deltaDisplacement);
 };
 
 #include "GameObject.inl"

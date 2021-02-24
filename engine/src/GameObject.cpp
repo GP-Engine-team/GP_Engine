@@ -13,7 +13,7 @@ void GameObject::updateSelfAndChildren() noexcept
 {
     for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
     {
-        if ((*i)->m_pTransform->isDirty())
+        if ((*i)->m_transform.isDirty())
         {
             if ((*i)->m_isDead)
             {
@@ -21,7 +21,7 @@ void GameObject::updateSelfAndChildren() noexcept
                 continue;
             }
 
-            (*i)->getTransform().update(m_pTransform->getModelMatrix());
+            (*i)->getTransform().update(m_transform.getModelMatrix());
             (*i)->forceUpdate();
         }
         else
@@ -35,7 +35,7 @@ void GameObject::forceUpdate() noexcept
 {
     for (auto&& i = children.begin(); i != children.end(); i++)
     {
-        (*i)->getTransform().update(m_pTransform->getModelMatrix());
+        (*i)->getTransform().update(m_transform.getModelMatrix());
         (*i)->forceUpdate();
     }
 }
@@ -136,7 +136,7 @@ std::list<Component*>::iterator GameObject::destroyComponent(Component* pCompone
     return m_pComponents.end();
 }
 
-std::string GameObject::getRelativePath() const noexcept
+std::string GameObject::getAbsolutePath() const noexcept
 {
     std::string path = this->getName();
     GameObject* parentIt = this->parent;

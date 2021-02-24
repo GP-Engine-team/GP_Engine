@@ -8,7 +8,7 @@
 using namespace GPE;
 using namespace std;
 
-Window::Window(const WindowCreateArg& arg) noexcept
+Window::Window(const CreateArg& arg) noexcept
 {
     Log::logInitializationStart("GLFW window");
 

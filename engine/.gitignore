@@ -4,6 +4,9 @@
 # Git mirror setup
 setup_mirror.bat
 
+# Project
+Generated
+
 ### C++ ###
 # Prerequisites
 *.d
@@ -132,6 +135,8 @@ fabric.properties
 *.user
 *.userosscache
 *.sln.docstates
+
+x64
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -479,7 +484,5 @@ x64/
 #Resources
 resources/*
 
-#Zip files
-*.zip
-*.rar
-*.7zp
+.vscode/*
+.idea/*

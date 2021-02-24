@@ -10,43 +10,20 @@
 
 namespace GPE
 {
-inline bool isTitle(const std::string& line, std::string&& title)
-{
-    return line.substr(0, title.size()) == title;
-}
+inline bool stringStartsWith(const std::string& src, std::string&& title) noexcept;
 
 template <typename T>
-T parse(const std::string& line, size_t pos = 0, size_t len = std::string::npos)
-{
-    T i;
-    std::istringstream(line.substr(pos, len)) >> i;
-    return i;
-}
+T parse(const std::string& srtc, size_t pos = 0, size_t len = std::string::npos) noexcept;
 
-inline void parseName(const std::string& line, std::string& name)
-{
-    std::size_t cursorStart = line.find_first_of(" ", 0) + 1;
-    name = line.substr(cursorStart, line.size() - cursorStart); // Search first word between two space
-    if (!isalpha(name.back()))
-    {
-        name.erase(name.end() - 1);
-    }
-}
+
+inline void removeUntilFirstSpace(const std::string& src, std::string& dest) noexcept;
 
 /**
  * @brief parse the name of image integer in path
  *
  */
-inline std::string parseNameInPath(const char* path)
-{
-    std::string src(path);
+inline std::string removeUntilFirstSpaceInPath(const char* path) noexcept;
 
-    std::size_t cursStart = src.find_last_of('/');
-    if (cursStart == std::string::npos)
-        cursStart = 0;
-    cursStart += 1;
-    std::size_t cursEnd = src.find_last_of('.');
+#include "ParserTool.inl"
 
-    return src.substr(cursStart, cursEnd - cursStart);
-}
 } /*namespace GPE*/

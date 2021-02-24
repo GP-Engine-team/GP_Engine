@@ -11,6 +11,7 @@
 
 #include "Engine/Intermediate/Component.hpp"
 #include "Engine/Resources/Material.hpp"
+#include "GPM/Shape3D/Volume.hpp"
 
 namespace GPE
 {
@@ -130,6 +131,8 @@ public:
     inline Shader* getpShader() noexcept;
 
     inline Mesh* getpMesh() noexcept;
+
+    std::shared_ptr<GPM::Volume> getpBoudingVolume() const noexcept;
 
     /**
      * @brief return true if Texture is load in GPU and ready to use

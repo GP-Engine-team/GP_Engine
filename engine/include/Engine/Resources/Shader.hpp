@@ -117,7 +117,7 @@ private:
      * @param path
      * @param shaderName
      */
-    void parseName(const char* path, std::string& shaderName);
+    void removeUntilFirstSpace(const char* path, std::string& shaderName);
 };
 
 #include "Shader.inl"

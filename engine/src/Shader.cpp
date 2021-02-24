@@ -175,8 +175,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char f
     std::string vertexCode;
     std::string fragmentCode;
 
-    parseName(vertexPath, m_nameVertex);
-    parseName(fragmentPath, m_nameFragment);
+    removeUntilFirstSpace(vertexPath, m_nameVertex);
+    removeUntilFirstSpace(fragmentPath, m_nameFragment);
     if (loadFile(vertexPath, vertexCode, fragmentPath, fragmentCode))
     {
         return;
@@ -404,7 +404,7 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
     }
 }
 
-void Shader::parseName(const char* path, std::string& shaderName)
+void Shader::removeUntilFirstSpace(const char* path, std::string& shaderName)
 {
     std::string src(path);
 

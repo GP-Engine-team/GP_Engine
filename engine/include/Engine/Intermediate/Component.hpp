@@ -25,9 +25,9 @@ public:
     inline Component& operator=(const Component& other) noexcept = delete;
     inline Component& operator=(Component&& other) noexcept = default;
 
-    [[nodiscard]] constexpr inline GameObject& getGameObject() noexcept;
+    [[nodiscard]] constexpr inline GameObject& getOwner() noexcept;
 
-    [[nodiscard]] constexpr inline const GameObject& getGameObject() const noexcept;
+    [[nodiscard]] constexpr inline const GameObject& getOwner() const noexcept;
 
     [[nodiscard]] constexpr inline bool isActivated() const noexcept;
 

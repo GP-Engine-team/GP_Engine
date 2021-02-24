@@ -2,6 +2,7 @@
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "GPM/Constants.hpp"
+#include "GPM/Shape3D/Sphere.hpp"
 
 #include <iostream>
 #include <limits>
@@ -13,13 +14,24 @@ Mesh::Mesh(const CreateArg& arg, bool isLoadInGPU) noexcept
     : m_indexVAO(0), m_isLoadInGPU(false), m_objName(arg.objName), m_vBuffer(arg.vBuffer), m_vtBuffer(arg.vtBuffer),
       m_vnBuffer(arg.vnBuffer), m_iBuffer(arg.iBuffer)
 {
+    if (m_boundingVolumeType == BoundingVolume::SPHERE)
+    {
+        generateBoundingSphere();
+    }
+    else if (m_boundingVolumeType == BoundingVolume::NONE)
+    {
+        m_boundingVolume = nullptr;
+    }
+
     if (isLoadInGPU)
         loadInGPU();
 }
 
-Mesh::Mesh(const Attrib& attrib, const std::vector<Shape>& shapes, bool isLoadInGPU) noexcept
+Mesh::Mesh(const Attrib& attrib, const std::vector<Shape>& shapes, bool isLoadInGPU,
+           BoundingVolume boundingVolumeType) noexcept
     : m_indexVAO(0), m_isLoadInGPU(false), m_objName(attrib.objName), m_vBuffer(attrib.vBuffer),
-      m_vtBuffer(attrib.vtBuffer), m_vnBuffer(attrib.vnBuffer), m_iBuffer(), m_idMaterial()
+      m_vtBuffer(attrib.vtBuffer), m_vnBuffer(attrib.vnBuffer), m_iBuffer(),
+      m_idMaterial(), m_boundingVolumeType{boundingVolumeType}
 {
     m_iBuffer.reserve(shapes.size());
     m_idMaterial.reserve(shapes.size());
@@ -41,6 +53,15 @@ Mesh::Mesh(const Attrib& attrib, const std::vector<Shape>& shapes, bool isLoadIn
             if (!shape.material_ids.empty())
                 m_idMaterial.push_back(shape.material_ids);
         }
+    }
+
+     if (m_boundingVolumeType == BoundingVolume::SPHERE)
+    {
+        generateBoundingSphere();
+    }
+    else if (m_boundingVolumeType == BoundingVolume::NONE)
+    {
+        m_boundingVolume = nullptr;
     }
 
     if (isLoadInGPU)
@@ -544,4 +565,24 @@ void Mesh::generateNormalAndLoadIndice(const std::vector<Shape>& shapes) noexcep
             m_vnBuffer.emplace_back((v1 - v3).cross(v2 - v3).normalized());
         }
     }
+}
+
+void Mesh::generateBoundingSphere() noexcept
+{
+    if (m_vBuffer.empty())
+        return;
+
+    float farestVertexLengthSquare = std::numeric_limits<float>::min();
+
+    for (auto&& vertex : m_vBuffer)
+    {
+        float newVertexLength = std::fabs(vertex.length2());
+
+        if (farestVertexLengthSquare < newVertexLength)
+        {
+            farestVertexLengthSquare = newVertexLength;
+        }
+    }
+
+    m_boundingVolume = std::make_unique<Sphere>(std::sqrt(farestVertexLengthSquare));
 }

@@ -10,30 +10,37 @@
 
 #include "Engine/Intermediate/Component.hpp"
 #include "GPM/Matrix4.hpp"
+#include "GPM/Shape3D/Plane.hpp"
 
-//in inl
+// in inl
 #include "Engine/Intermediate/GameObject.hpp"
+#include "GPM/Vector3.hpp"
 
 namespace GPE
 {
+
 class Camera : public Component
 {
 public:
     enum class EProjectionType
     {
         PERSPECTIVE,
-        ORTHOGRAPHIC
+        ORTHOGRAPHIC,
+        NONE
     };
 
     struct ProjectionInfo
     {
-        std::string     name;
-        EProjectionType type;
+        std::string     name = {""};
+        EProjectionType type = EProjectionType::NONE;
 
-        float aspect;
-        float near, far;
-        float hSide, vSide;
-        float fovY, fovX;
+        float aspect = 16.f / 9.f;
+        float near   = 0.001f;
+        float far    = 10.f;
+        float hSide  = 1.f;
+        float vSide  = 1.f;
+        float fovY   = 70.f;
+        float fovX   = 70.f;
     };
 
     struct PerspectiveCreateArg
@@ -52,6 +59,18 @@ public:
         float       nearVal = 0.001f;
         float       farVal  = 10.f;
         const char* name    = "Camera";
+    };
+
+    struct Frustum
+    {
+        GPM::Plane topFace;
+        GPM::Plane bottomFace;
+
+        GPM::Plane rightFace;
+        GPM::Plane leftFace;
+
+        GPM::Plane frontFace;
+        GPM::Plane backFace;
     };
 
 protected:
@@ -119,16 +138,14 @@ public:
      *
      * @return const GPM::Mat4&
      */
-    inline
-    const GPM::Mat4& getViewProjection() const noexcept;
+    inline const GPM::Mat4& getViewProjection() const noexcept;
 
     /**
      * @brief Get the view matrix
      *
      * @return const GPM::Mat4&
      */
-    inline
-    GPM::Mat4 getView() const noexcept;
+    inline GPM::Mat4 getView() const noexcept;
 
     /**
      * @brief Get the projection matrix
@@ -136,6 +153,12 @@ public:
      * @return const GPM::Mat4&
      */
     inline const GPM::Mat4& getProjection() const noexcept;
+
+    /**
+     * @brief Return struct with all plane that composed the camera frustum
+     * @return
+     */
+    Frustum getFrustum() const noexcept;
 };
 
 #include "Camera.inl"

@@ -22,11 +22,7 @@ public:
     {
         std::string          name{""};
         MaterialComponent    comp{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
-        const char*          pathDiffuseTexture{nullptr};
-        Texture::EWrapType   wrapType{Texture::EWrapType::REPEAT};
-        Texture::EFilterType filterType{Texture::EFilterType::LINEAR};
-        bool                 flipTexture{true};
-        bool                 loadInGPU{true};
+        Texture::CreateArg   diffuseTextureArg;
     };
 
     struct CreateArg

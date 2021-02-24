@@ -1,29 +1,25 @@
 #include "Engine/Intermediate/GameObject.hpp"
 
 GameObject::GameObject(const CreateArg& arg)
-    : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this,
-                                                                                                 arg.transformArg)},
-      m_pComponents{}
+    : m_name{arg.name},
+      m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)}, m_pComponents{}
 {
 }
 
 GameObject::GameObject()
-    : m_name{""}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
+    : m_name{""}, m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
 {
 }
 
 template <typename T>
 void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept
 {
-    GPE_ASSERT(oldPtr != nullptr, "oldPtr canno't be nullptr");
-    GPE_ASSERT(newPtr != nullptr, "newPtr canno't be nullptr");
+    GPE_ASSERT(oldPtr != nullptr, "oldPtr cannot be nullptr");
+    GPE_ASSERT(newPtr != nullptr, "newPtr cannot be nullptr");
 
     for (Component* pComponent : m_pComponents)
     {
-        T* checkedCompPtr = dynamic_cast<T*>(pComponent);
-
-        if (checkedCompPtr == oldPtr)
-            [[unlikely]]
+        if (unlikely(pComponent == oldPtr))
         {
             pComponent = newPtr;
             return;
@@ -64,25 +60,24 @@ void GameObject::setName(const char* newName) noexcept
     m_name = newName;
 }
 
-constexpr const TransformComponent& GameObject::getTransform()
-    const noexcept
+constexpr const TransformComponent& GameObject::getTransform() const noexcept
 {
-    return *m_pTransform;
+    return m_transform;
 }
 
 constexpr TransformComponent& GameObject::getTransform() noexcept
 {
-    return *m_pTransform;
+    return m_transform;
 }
 
 template <typename T, typename... Args>
 GameObject& GameObject::addChild(Args&&... args) noexcept
 {
-    (*this).children.emplace_back(std::make_unique<T>(args...));
-    (*this).children.back()->children = std::list<std::unique_ptr<GameObject>>();
-    //(*this).children.back()->update((*this).getModelMatrix());
-    (*this).children.back()->parent = this;
-    return *(*this).children.back();
+    std::unique_ptr<GameObject>& pChild = this->children.emplace_back(std::make_unique<T>(args...));
+    pChild->children                    = std::list<std::unique_ptr<GameObject>>();
+    // pChild->update((*this).getModelMatrix());
+    pChild->parent = this;
+    return *pChild;
 }
 
 template <typename T>
@@ -106,8 +101,7 @@ constexpr std::list<Component*>& GameObject::getComponents() noexcept
     return m_pComponents;
 }
 
-constexpr const std::list<Component*>& GameObject::getComponents()
-    const noexcept
+constexpr const std::list<Component*>& GameObject::getComponents() const noexcept
 {
     return m_pComponents;
 }
@@ -122,21 +116,20 @@ constexpr const std::string& GameObject::getTag() const noexcept
     return m_tag;
 }
 
-std::list<std::unique_ptr<GameObject>>::iterator 
-    GameObject::destroyChild(const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept
+std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild(
+    const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept
 {
     return children.erase(it);
 }
 
 template <typename TUniqueComponentType>
-void GameObject::destroyImmediateUniqueComponent() noexcept
+void GameObject::destroyUniqueComponentNow() noexcept
 {
     for (auto&& it = m_pComponents.begin(); it != m_pComponents.end(); ++it)
     {
         TUniqueComponentType* checkedCompPtr = dynamic_cast<TUniqueComponentType*>(*it);
 
-        if (checkedCompPtr != nullptr)
-            [[unlikely]]
+        if (unlikely(checkedCompPtr != nullptr))
         {
             DataChunk<TUniqueComponentType>::getInstance()->destroyComponent(checkedCompPtr);
             m_pComponents.erase(it);
@@ -153,8 +146,7 @@ void GameObject::setActive(bool newState)
     }
 }
 
-std::list<Component*>::iterator GameObject::
-    destroyComponent(const std::list<Component*>::iterator& it) noexcept
+std::list<Component*>::iterator GameObject::destroyComponent(const std::list<Component*>::iterator& it) noexcept
 {
     return m_pComponents.erase(it);
 }
@@ -163,10 +155,10 @@ void GameObject::destroy() noexcept
 {
     /*set flag to be delete by it parent*/
     m_isDead = true;
-    //m_isDirty = true;
+    // m_isDirty = true;
 }
 
-void GameObject::destroyImmediate() noexcept
+void GameObject::destroyNow() noexcept
 {
     parent->destroyChild(this);
 }
@@ -178,7 +170,5 @@ constexpr bool GameObject::operator==(GameObject const& other) noexcept
 
 bool GameObject::compareTag(const std::string& toCompare) const noexcept
 {
-    if (toCompare.compare(m_tag) == 0)
-        return true;
-    return false;
+    return (!toCompare.compare(m_tag));
 }

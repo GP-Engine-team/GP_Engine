@@ -1,25 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\Camera.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameObject.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="third_party\src\glad.c">
       <Filter>third_party</Filter>
     </ClCompile>
-    <ClCompile Include="src\InputComponent.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\InputManagerGLFW.cpp">
+    <ClCompile Include="src\GameObject.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Log.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
+    <ClCompile Include="src\RendererGLFW_GL46.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TimeSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WindowGLFW.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DirectionalLight.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Material.cpp">
@@ -32,18 +38,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\MTLParser.cpp">
-      <Filter>third_party</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\ObjParser.cpp">
-      <Filter>third_party</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\PointLight.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RendererGLFW_GL46.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RenderSystem.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Shader.cpp">
@@ -58,53 +58,23 @@
     <ClCompile Include="src\Texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\TimeSystem.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="third_party\gpm\src\main.cpp">
+      <Filter>third_party\gpm</Filter>
     </ClCompile>
-    <ClCompile Include="src\WindowGLFW.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\..\..\gpm\gpm\src\Intersection.cpp">
+      <Filter>third_party\gpm</Filter>
     </ClCompile>
-    <ClCompile Include="src\DirectionalLight.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\..\..\gpm\gpm\src\Plane.cpp">
+      <Filter>third_party\gpm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\gpm\gpm\src\SegmentPlane.cpp">
+      <Filter>third_party\gpm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\gpm\gpm\src\SpherePlane.cpp">
+      <Filter>third_party\gpm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Camera.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Color.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Component.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\gpm\include\GPM\conversion.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Light\DirectionalLight.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="third_party\include\glad\glad.h">
       <Filter>third_party</Filter>
     </ClInclude>
@@ -114,49 +84,13 @@
     <ClInclude Include="third_party\include\GLFW\glfw3native.h">
       <Filter>third_party</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Input\InputComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Input\InputManagerGLFW.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="third_party\include\KHR\khrplatform.h">
       <Filter>third_party</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Light\Light.hpp">
+    <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Debug\Log.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Material.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\gpm\include\GPM\Matrix3.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\gpm\include\GPM\Matrix4.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Mesh.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Model.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Light\PointLight.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\gpm\include\GPM\Quaternion.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
@@ -165,7 +99,19 @@
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp">
+    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
@@ -175,6 +121,57 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\SceneManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Type.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Camera.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Color.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Component.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Light\DirectionalLight.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Light\Light.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Material.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Mesh.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Model.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Light\PointLight.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\Shader.hpp">
@@ -189,116 +186,176 @@
     <ClInclude Include="include\Engine\Resources\Texture.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\conversion.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Matrix3.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Matrix4.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Quaternion.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Random.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Referential.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\AABB.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Capsule.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Cylinder.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\InfiniteCylinder.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Line.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\OrientedBox.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Plane.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Quad.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Segment.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Sphere.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Volume.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\ShapeRelation\Intersection.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\ShapeRelation\SegmentPlane.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\ShapeRelation\SpherePlane.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Tools.hpp">
+      <Filter>third_party\gpm</Filter>
     </ClInclude>
     <ClInclude Include="third_party\gpm\include\GPM\Transform.hpp">
-      <Filter>include</Filter>
+      <Filter>third_party\gpm</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Type.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="third_party\gpm\include\GPM\types.hpp">
+      <Filter>third_party\gpm</Filter>
     </ClInclude>
     <ClInclude Include="third_party\gpm\include\GPM\Vector2.hpp">
-      <Filter>include</Filter>
+      <Filter>third_party\gpm</Filter>
     </ClInclude>
     <ClInclude Include="third_party\gpm\include\GPM\Vector3.hpp">
-      <Filter>include</Filter>
+      <Filter>third_party\gpm</Filter>
     </ClInclude>
     <ClInclude Include="third_party\gpm\include\GPM\Vector4.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Input\Cursor.hpp">
-      <Filter>include</Filter>
+      <Filter>third_party\gpm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="include\Engine\Resources\Camera.inl">
-      <Filter>include</Filter>
-    </None>
     <None Include=".clang-format" />
+    <None Include="ClassDiagram.cd" />
     <None Include="include\Engine\Intermediate\Component.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="third_party\gpm\src\conversion.inl">
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\Intermediate\DataChunk.inl">
       <Filter>include</Filter>
     </None>
-    <None Include="include\Engine\Resources\Light\DirectionalLight.inl">
+    <None Include="include\Engine\Intermediate\GameObject.inl">
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\Core\Tools\Format.inl">
       <Filter>include</Filter>
     </None>
-    <None Include="include\Engine\Intermediate\GameObject.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Resources\Light\Light.inl">
-      <Filter>include</Filter>
-    </None>
     <None Include="include\Engine\Core\Debug\Log.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Matrix3.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Matrix4.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Resources\Light\PointLight.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Quaternion.inl">
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\Resources\ResourcesManager.inl">
       <Filter>include</Filter>
     </None>
-    <None Include="include\Engine\Resources\Light\SpotLight.inl">
-      <Filter>include</Filter>
-    </None>
     <None Include="include\Engine\Core\TimeSystem\TimeSystem.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Transform.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Vector2.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Vector3.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="third_party\gpm\src\Vector4.inl">
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl">
       <Filter>include</Filter>
     </None>
-    <None Include="include\Engine\Core\Input\InputManager.inl">
+    <None Include="include\Engine\Resources\Camera.inl">
       <Filter>include</Filter>
     </None>
-    <None Include="include\Engine\Core\Input\Cursor.hpp">
+    <None Include="include\Engine\Resources\Light\Light.inl">
       <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Material.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Mesh.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Model.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Shader.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Texture.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="third_party\gpm\include\GPM\Random.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\src\conversion.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\src\Matrix3.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\src\Matrix4.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\src\Quaternion.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\src\Transform.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\src\Vector2.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\src\Vector3.inl">
+      <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="third_party\gpm\src\Vector4.inl">
+      <Filter>third_party\gpm</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
-      <UniqueIdentifier>{d029611d-45e1-4b08-bc40-beee425fc4b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src">
-      <UniqueIdentifier>{1905d976-e83b-42d7-b3c5-510439b81e46}</UniqueIdentifier>
+      <UniqueIdentifier>{5e2530e7-0724-4e95-a72d-388f56ce908f}</UniqueIdentifier>
     </Filter>
     <Filter Include="third_party">
-      <UniqueIdentifier>{3ba42278-98d7-4b17-aa88-7ed6f7e07892}</UniqueIdentifier>
+      <UniqueIdentifier>{fd0e0626-c061-4785-bf44-198eb4e624e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{000e1053-6ae7-4555-88fa-1680885403d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\gpm">
+      <UniqueIdentifier>{a2407ea9-052e-4dda-94fb-8a6a09d22eba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

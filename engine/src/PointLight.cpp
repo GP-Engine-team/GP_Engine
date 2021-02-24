@@ -19,7 +19,7 @@ void PointLight::addToLightToUseBuffer(std::vector<LightData>& lb) noexcept
     lb.push_back({m_ambientComp,
                   m_diffuseComp,
                   m_specularComp,
-                  getGameObject().getTransform().getGlobalPosition(),
+                  getOwner().getTransform().getGlobalPosition(),
                   1.f,
                   m_constant,
                   m_linear,

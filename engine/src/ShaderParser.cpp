@@ -7,7 +7,7 @@
 
 using namespace GPE;
 
-void ShaderParser::parseIncludesShader(std::string& sourceCode)
+void ShaderParser::includeHeaders(std::string& sourceCode)
 {
     std::stringstream input(sourceCode);
     std::stringstream output;

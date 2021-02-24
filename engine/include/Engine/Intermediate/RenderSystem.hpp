@@ -6,17 +6,16 @@
 
 #pragma once
 
-#include <shared_mutex> //std::shared_mutex
 #include <vector>       //std::vector
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
 
 namespace GPE
 {
-    class Light;
-    class Camera;
-    class Model;
-    class Shader;
+class Light;
+class Camera;
+class Model;
+class Shader;
 
 /**
  * @brief The Singleton class defines the `GetInstance` method that serves as an
@@ -32,19 +31,18 @@ class RenderSystem
      * operator.
      */
 private:
-    static RenderSystem*     m_pInstance;
-    static std::shared_mutex m_mutex;
+    static RenderSystem* m_pInstance;
 
 protected:
     std::vector<Model*>  m_pModels;
     std::vector<Camera*> m_pCameras;
     std::vector<Light*>  m_pLights;
 
-    unsigned int               m_currentShaderId                  = 0;
-    unsigned int               m_currentTextureId                 = 0;
-    unsigned int               m_currentMeshId                    = 0;
-    Shader* m_currentPShaderUse                = nullptr;
-    bool                       m_currentBackFaceCullingModeEnable = false;
+    unsigned int m_currentShaderId                  = 0;
+    unsigned int m_currentTextureId                 = 0;
+    unsigned int m_currentMeshId                    = 0;
+    Shader*      m_currentPShaderUse                = nullptr;
+    bool         m_currentBackFaceCullingModeEnable = false;
 
 protected:
     void tryToBindShader(Shader* pShader);
@@ -74,24 +72,21 @@ public:
     // TODO: Remove this shit and create variadic templated system
     void addModel(Model* pModel) noexcept;
 
-    void updateModelPointer(Model* newPointerModel,
-                            Model* exPointerModel) noexcept;
+    void updateModelPointer(Model* newPointerModel, Model* exPointerModel) noexcept;
 
     void removeModel(Model* pModel) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
     void addCamera(Camera* pCamera) noexcept;
 
-    void updateCameraPointer(Camera* newPointerCamera,
-                             Camera* exPointerCamera) noexcept;
+    void updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept;
 
     void removeCamera(Camera* pCamera) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
     void addLight(Light* pLight) noexcept;
 
-    void updateLightPointer(Light* newPointerLight,
-                            Light* exPointerLight) noexcept;
+    void updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept;
 
     void removeLight(Light* pLight) noexcept;
 
@@ -106,18 +101,10 @@ public:
      */
     static RenderSystem* getInstance() noexcept
     {
-        // double same if to avoid to lock mutex
         if (unlikely(m_pInstance == nullptr))
         {
-            std::unique_lock lock(m_mutex);
-            if (unlikely(m_pInstance == nullptr))
-            {
-                m_pInstance = new RenderSystem();
-            }
-            return m_pInstance;
+            m_pInstance = new RenderSystem();
         }
-
-        std::shared_lock lock(m_mutex);
         return m_pInstance;
     }
 };

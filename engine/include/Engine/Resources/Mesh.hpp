@@ -14,6 +14,7 @@
 
 #include "Engine/Resources/Type.hpp"
 
+#include "GPM/Shape3D/Volume.hpp"
 #include "GPM/Vector3.hpp"
 
 namespace GPE
@@ -22,13 +23,20 @@ namespace GPE
 class Mesh
 {
 public:
+    enum class BoundingVolume
+    {
+        NONE,
+        SPHERE
+    };
+
     struct CreateArg
     {
-        std::string                                         objName;
-        std::vector<GPM::Vec3>                              vBuffer;
-        std::vector<GPM::Vec2>                              vtBuffer;
-        std::vector<GPM::Vec3>                              vnBuffer;
+        std::string                      objName;
+        std::vector<GPM::Vec3>           vBuffer;
+        std::vector<GPM::Vec2>           vtBuffer;
+        std::vector<GPM::Vec3>           vnBuffer;
         std::vector<std::vector<Indice>> iBuffer;
+        BoundingVolume                   boundingVolume{BoundingVolume::SPHERE};
     };
 
     enum class Axis
@@ -42,21 +50,25 @@ protected:
     GLuint m_indexVAO;
     bool   m_isLoadInGPU;
 
-    std::string                                         m_objName;
-    std::vector<GPM::Vec3>                              m_vBuffer;
-    std::vector<GPM::Vec2>                              m_vtBuffer;
-    std::vector<GPM::Vec3>                              m_vnBuffer;
+    std::string                      m_objName;
+    std::vector<GPM::Vec3>           m_vBuffer;
+    std::vector<GPM::Vec2>           m_vtBuffer;
+    std::vector<GPM::Vec3>           m_vnBuffer;
     std::vector<std::vector<Indice>> m_iBuffer;
-    std::vector<std::string>                            m_idMaterial;
+    std::vector<std::string>         m_idMaterial;
+    BoundingVolume                   m_boundingVolumeType{BoundingVolume::NONE};
+    std::unique_ptr<GPM::Volume>     m_boundingVolume = nullptr;
 
 private:
     // this function generate the normal of object. Must be use if obj file don't contain normal.
     void generateNormalAndLoadIndice(const std::vector<Shape>& shapes) noexcept;
 
-public:
+    void generateBoundingSphere() noexcept;
 
+public:
     Mesh(const CreateArg& meshArg, bool loadInGPU = true) noexcept;
-    Mesh(const Attrib& attrib, const std::vector<Shape>& shape, bool loadInGPU = true) noexcept;
+    Mesh(const Attrib& attrib, const std::vector<Shape>& shape, bool loadInGPU = true,
+         BoundingVolume boundingVolumeType = BoundingVolume::SPHERE) noexcept;
 
     Mesh(const Mesh& other) = delete;
     Mesh(Mesh&& other)      = default;
@@ -119,7 +131,7 @@ public:
      * @return MeshConstructorArg
      */
     static CreateArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace Culling (bad
-                                                              // normal)
+                                                                       // normal)
 
     /**
      * @brief return the id of Mesh load in GPU.
@@ -139,6 +151,10 @@ public:
      * @return const std::vector<std::string>&
      */
     inline const std::vector<std::string>& getIdMaterials() const noexcept;
+
+    inline BoundingVolume getBoundingVolumeType() const noexcept;
+
+    inline const GPM::Volume* getBoundingVolume() const noexcept;
 };
 
 #include "Mesh.inl"

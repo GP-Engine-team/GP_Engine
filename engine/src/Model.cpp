@@ -9,6 +9,7 @@
 #include "Engine/Resources/Texture.hpp"
 #include "GPM/Matrix3.hpp"
 #include "GPM/Matrix4.hpp"
+#include "GPM/Shape3D/Sphere.hpp"
 
 using namespace GPE;
 using namespace GPM;
@@ -110,6 +111,24 @@ void Model::unloadFromGPU() noexcept
         m_pMesh->unloadFromGPU();
 
     m_isLoadInGPU = false;
+}
+
+std::shared_ptr<GPM::Volume> Model::getpBoudingVolume() const noexcept
+{
+    // TODO: Horrible technique
+    if (m_pMesh->getBoundingVolumeType() == Mesh::BoundingVolume::SPHERE)
+    {
+        const GPM::Sphere* boundingSphere = dynamic_cast<const GPM::Sphere*>(m_pMesh->getBoundingVolume());
+
+        float maxScale =
+            std::max(std::max(m_gameObject.getTransform().getScale().x, m_gameObject.getTransform().getScale().y), m_gameObject.getTransform().getScale().z);
+        return std::make_shared<GPM::Sphere>(boundingSphere->getRadius() * maxScale,
+                                             m_gameObject.getTransform().getGlobalPosition() + boundingSphere->getCenter());
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 void Model::insertModelPartsOnContenor(std::list<ModelPart>& modelPartContenor) noexcept
