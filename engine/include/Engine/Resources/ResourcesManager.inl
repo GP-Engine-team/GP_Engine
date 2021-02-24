@@ -14,6 +14,19 @@ LType* ResourcesManager<LType>::get(const std::string& key) noexcept
 }
 
 template <class LType>
+const LType* ResourcesManager<LType>::get(const std::string& key) const noexcept
+{
+    // iterator of LType
+    auto it = m_resources.find(key);
+    if (it == m_resources.end())
+    {
+        return nullptr;
+    }
+
+    return &it->second;
+}
+
+template <class LType>
 template <typename... Args>
 LType& ResourcesManager<LType>::add(std::string key, Args&&... args) noexcept(std::is_nothrow_constructible_v<LType>)
 {
@@ -46,6 +59,13 @@ void ResourcesManager<LType>::clear() noexcept(std::is_nothrow_destructible_v<LT
 template <class LType, class... RType>
 template <class T>
 T* ResourcesManager<LType, RType...>::get(const std::string& key) noexcept
+{
+    return ResourcesManager<T>::get(key);
+}
+
+template <class LType, class... RType>
+template <class T>
+const T* ResourcesManager<LType, RType...>::get(const std::string& key) const noexcept
 {
     return ResourcesManager<T>::get(key);
 }

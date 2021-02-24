@@ -12,9 +12,6 @@ inline constexpr double TimeSystem::getFixedUnscaledDeltaTime() const noexcept
 
 inline constexpr void TimeSystem::setFixedUnscaledDeltaTime(double newFixedUnscaledDeltaTime) noexcept
 {
-    if (newFixedUnscaledDeltaTime > 1.)
-        Log::logWarning("New fixed unscaled delta time > 1.");
-
     m_fixedUnscaledDeltaTime = newFixedUnscaledDeltaTime;
 }
 

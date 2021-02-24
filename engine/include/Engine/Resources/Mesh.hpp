@@ -42,8 +42,11 @@ public:
     enum class Axis
     {
         X,
+        NEG_X,
         Y,
-        Z
+        NEG_Y,
+        Z,
+        NEG_Z,
     };
 
 protected:
@@ -105,8 +108,9 @@ public:
      * @param indexTexture          : index of texture if split
      * @return MeshConstructorArg
      */
-    static Mesh::CreateArg createPlane(float textureRepetition = 1.f, unsigned int indexTextureX = 0,
-                                       unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y) noexcept;
+    static Mesh::CreateArg createPlane(float width = 0.5f, float height = 0.5f, float textureRepetition = 1.f,
+                                       unsigned int indexTextureX = 0,
+                                       unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y, bool isRectoVerso = false) noexcept;
 
     /**
      * @brief Create a Cube object of radius 1 and return it mesh. Cube is centered on the origin
@@ -138,7 +142,7 @@ public:
      *
      * @return const GLuint* : nullptr if Mesh is not load in GPU
      */
-    inline const GLuint* getVAOId() noexcept;
+    inline const GLuint* getVAOId() const noexcept;
 
     inline const std::vector<GPM::Vec3>&           getVertices() const noexcept;
     inline const std::vector<GPM::Vec2>&           getUV() const noexcept;

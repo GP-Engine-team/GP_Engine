@@ -54,9 +54,25 @@ public:
         MIRROR_CLAMP_TO_EDGE = GL_MIRRORED_REPEAT
     };
 
-    struct CreateArg
+    enum class EFormat
     {
-        const char*       path;
+        R    = 1,
+        RG   = 2,
+        RGB  = 3,
+        RGBA = 4
+    };
+
+    enum class ERenderBufferType
+    {
+        DEPTH_COMPONENT16  = 1,
+        DEPTH_COMPONENT24  = 2,
+        DEPTH_COMPONENT32F = 3,
+        STENCIL_INDEX8     = 4
+    };
+
+    struct LoadArg
+    {
+        const char*       path             = "";
         ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
@@ -65,67 +81,40 @@ public:
         bool              loadInGPU        = true;
     };
 
-protected:
-    unsigned int m_id          = 0;
-    bool         m_isLoadInGPU = true;
+    struct CreateArg
+    {
+        unsigned int      width            = 0;
+        unsigned int      height           = 0;
+        EFormat           format           = EFormat::RGBA;
+        ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
+        ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
+        ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
+        ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
+        bool              loadInGPU        = true;
+    };
 
-    unsigned char*    m_pixels{nullptr};
-    int               m_w = 0, m_h = 0;
-    unsigned char     m_comp             = 0; // RGB = 3 / RGBA = 4
-    ETextureMinFilter m_textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
-    ETextureMagFilter m_textureMagFilter = ETextureMagFilter::LINEAR;
-    ETextureWrapS     m_textureWrapS     = ETextureWrapS::REPEAT;
-    ETextureWrapT     m_textureWrapT     = ETextureWrapT::REPEAT;
-    std::string       m_path             = "";
+protected:
+    unsigned int m_id = 0;
 
 protected:
-    /**
-     * @brief inverse pixels of image
-     *
-     * @param char
-     */
-    void hFlip() noexcept;
+    void loadInGPU(int w, int h, int comp, ETextureMinFilter textureMinFilter,
+                   ETextureMagFilter textureMagFilter, ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept;
 
 public:
     Texture()                     = default;
     Texture(const Texture& other) = delete;
     Texture(Texture&& other)      = default;
 
-    Texture(const char* path, bool flipTexture = true, bool loadInGPU = true) noexcept;
+    Texture(const LoadArg& arg) noexcept;
     Texture(const CreateArg& arg) noexcept;
-    virtual ~Texture() noexcept;
+    ~Texture() noexcept;
 
     inline unsigned int getID() const noexcept;
-
-    inline const unsigned char* getPixels() const noexcept;
-
-    inline unsigned char* getPixels() noexcept;
-
-    /**
-     * @brief Load texture and Mesh from CPU to GPU. This operation can be slow but display element more faster.
-     *
-     */
-    virtual void loadInGPU() noexcept;
-
-    void unloadFromGPU() noexcept;
-
-    /**
-     * @brief return true if texture is load in GPU and ready to use
-     *
-     * @return true
-     * @return false
-     */
-    inline bool isLoadInGPU() const noexcept;
-
     /**
      * @brief bind texture to openGL to be use for the next drawing
      *
      */
     inline void use() const noexcept;
-
-    inline Size getSize() const noexcept;
-
-    void resize(unsigned int width, unsigned int height) noexcept;
 };
 
 #include "Texture.inl"

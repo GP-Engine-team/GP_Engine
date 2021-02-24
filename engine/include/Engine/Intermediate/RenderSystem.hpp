@@ -9,9 +9,11 @@
 #include <vector>       //std::vector
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
+#include "Engine/Resources/ResourcesManagerType.hpp"
 
 namespace GPE
 {
+class Renderer;
 class Light;
 class Camera;
 class Model;
@@ -34,9 +36,10 @@ private:
     static RenderSystem* m_pInstance;
 
 protected:
-    std::vector<Model*>  m_pModels;
-    std::vector<Camera*> m_pCameras;
-    std::vector<Light*>  m_pLights;
+    std::vector<Renderer*>  m_pRenderers;
+    std::vector<Model*>     m_pModels;
+    std::vector<Camera*>    m_pCameras;
+    std::vector<Light*>     m_pLights;
 
     unsigned int m_currentShaderId                  = 0;
     unsigned int m_currentTextureId                 = 0;
@@ -62,14 +65,16 @@ public:
     RenderSystem& operator=(RenderSystem const& other) noexcept = delete;
     RenderSystem& operator=(RenderSystem&& other) noexcept = delete;
 
-    void draw() noexcept;
+    void draw(const ResourceManagerType& res) noexcept;
 
-    /**
-     * @brief Add Model (using key word this) on the physic system. This object will be updated by the physic system
-     *
-     * @param pModel
-     */
     // TODO: Remove this shit and create variadic templated system
+    void addRenderer(Renderer* pRenderer) noexcept;
+
+    void updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept;
+
+    void removeRenderer(Renderer* pRenderer) noexcept;
+     
+     // TODO: Remove this shit and create variadic templated system
     void addModel(Model* pModel) noexcept;
 
     void updateModelPointer(Model* newPointerModel, Model* exPointerModel) noexcept;
