@@ -6,15 +6,19 @@
 namespace Editor
 {
 
-class Viewport
+struct Viewport
 {
-private:
-    GLuint texture;
+    GLsizei width {0u};
+    GLsizei height{0u};
+    GLuint  id    {0u};
+    GLuint  screen{0u};
+    GLuint  depth {0u};
 
-public:
+    Viewport() = default;
     Viewport(float width, float height);
     ~Viewport();
     
+    void resize(int width, int height);
     void render() const;
 };
 
