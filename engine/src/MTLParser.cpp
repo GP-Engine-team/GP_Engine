@@ -20,7 +20,7 @@ enum class EComponentType
     EMISSION
 };
 
-void parseComponent(std::string& line, std::vector<MaterialAttrib>& materials, EComponentType type)
+static void parseComponent(std::string& line, std::vector<MaterialAttrib>& materials, EComponentType type)
 {
     std::size_t cursorStart = line.find_first_not_of(" ", 2);
     std::size_t cursorEnd   = line.find(" ", cursorStart);
@@ -54,7 +54,7 @@ void parseComponent(std::string& line, std::vector<MaterialAttrib>& materials, E
     }
 }
 
-inline void parseTextureName(std::string& line, std::vector<MaterialAttrib>& materials, EComponentType type)
+static void parseTextureName(std::string& line, std::vector<MaterialAttrib>& materials, EComponentType type)
 {
     switch (type)
     {

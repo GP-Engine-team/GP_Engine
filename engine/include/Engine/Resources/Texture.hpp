@@ -9,6 +9,10 @@
 #include "Engine/Resources/Type.hpp"
 #include <string>
 
+//in inl
+#include "Engine/Core/Debug/Assert.hpp"
+#include "glad/glad.h"
+
 namespace GPE
 {
 #define PATH_TEXTURE_RESOURCE "./resources/textures/"
@@ -56,37 +60,30 @@ protected:
      *
      * @param char
      */
-    void hFlip();
+    void hFlip() noexcept;
 
 public:
     Texture()                     = default;
-    Texture(const Texture& other) = delete;  // TODO;
-    Texture(Texture&& other)      = default; // TODO;
+    Texture(const Texture& other) = delete;
+    Texture(Texture&& other)      = default;
 
-    Texture(const char* path, bool flipTexture = true, bool loadInGPU = true);
-    Texture(const CreateArg& arg);
-    virtual ~Texture();
+    Texture(const char* path, bool flipTexture = true, bool loadInGPU = true) noexcept;
+    Texture(const CreateArg& arg) noexcept;
+    virtual ~Texture() noexcept;
 
-    unsigned int getID() const
-    {
-        return m_id;
-    }
-    const unsigned char* getPixels() const
-    {
-        return m_pixels;
-    } // read only
-    unsigned char* getPixels()
-    {
-        return m_pixels;
-    } // read/write
+    inline unsigned int         getID() const noexcept;
+
+    inline const unsigned char* getPixels() const noexcept;
+
+    inline unsigned char* getPixels() noexcept;
 
     /**
      * @brief Load texture and Mesh from CPU to GPU. This operation can be slow but display element more faster.
      *
      */
-    virtual void loadInGPU();
+    virtual void loadInGPU() noexcept;
 
-    void unloadFromGPU();
+    void unloadFromGPU() noexcept;
 
     /**
      * @brief return true if texture is load in GPU and ready to use
@@ -94,22 +91,17 @@ public:
      * @return true
      * @return false
      */
-    bool isLoadInGPU() const noexcept
-    {
-        return m_isLoadInGPU;
-    }
+    inline bool isLoadInGPU() const noexcept;
 
     /**
      * @brief bind texture to openGL to be use for the next drawing
      *
      */
-    void use() const noexcept;
+    inline void use() const noexcept;
 
-    Size getSize() const noexcept
-    {
-        return {m_w, m_h};
-    }
-
-    // Texture& operator=(Texture const &other); //TODO:
+    inline Size getSize() const noexcept;
 };
+
+#include "Texture.inl"
+
 } /*namespace GPE*/

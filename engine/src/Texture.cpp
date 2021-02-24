@@ -12,7 +12,8 @@
 
 using namespace GPE;
 
-Texture::Texture(const char* path, bool flipTexture, bool loadInGPU) : m_id(0), m_isLoadInGPU(false), m_path(path)
+Texture::Texture(const char* path, bool flipTexture, bool loadInGPU) noexcept
+     : m_id(0), m_isLoadInGPU(false), m_path(path)
 {
     m_filterType = EFilterType::LINEAR;
     m_wrapType   = EWrapType::REPEAT;
@@ -35,7 +36,7 @@ Texture::Texture(const char* path, bool flipTexture, bool loadInGPU) : m_id(0), 
     Log::log((std::string("Texture \"") + m_path + "\" load").c_str());
 }
 
-Texture::Texture(const CreateArg& arg) : m_id(0), m_isLoadInGPU(false)
+Texture::Texture(const CreateArg& arg) noexcept  : m_id(0), m_isLoadInGPU(false)
 {
     m_filterType = arg.filterType;
     m_wrapType   = arg.wrapType;
@@ -55,7 +56,7 @@ Texture::Texture(const CreateArg& arg) : m_id(0), m_isLoadInGPU(false)
         Texture::loadInGPU();
 }
 
-Texture::~Texture()
+Texture::~Texture() noexcept
 {
     if (m_pixels != nullptr)
         stbi_image_free(m_pixels);
@@ -66,7 +67,7 @@ Texture::~Texture()
     Log::log((std::string("Texture \"") + m_path + "\" release").c_str());
 }
 
-void Texture::loadInGPU()
+void Texture::loadInGPU() noexcept
 {
     if (m_isLoadInGPU)
     {
@@ -142,7 +143,7 @@ void Texture::loadInGPU()
     Log::log(std::string("Texture load in GPU").c_str());
 }
 
-void Texture::unloadFromGPU()
+void Texture::unloadFromGPU() noexcept
 {
     if (!m_isLoadInGPU)
     {
@@ -154,7 +155,7 @@ void Texture::unloadFromGPU()
     m_isLoadInGPU = false;
 }
 
-void Texture::hFlip()
+void Texture::hFlip() noexcept
 {
     int wComp = m_w * m_comp;
 
@@ -165,11 +166,4 @@ void Texture::hFlip()
             std::swap(m_pixels[(wComp * (m_h - 1 - i)) + j], m_pixels[(wComp * i) + j]);
         }
     }
-}
-
-void Texture::use() const noexcept
-{
-    GPE_ASSERT(isLoadInGPU(), "Try to use texture not load in GPU");
-
-    glBindTexture(GL_TEXTURE_2D, m_id);
 }

@@ -145,48 +145,53 @@ void logTimerExample(TimeSystem& ts)
 
 void GameObject::up()
 {
-    getTransform().translate(Vec3(0, 1, 0));
+    getTransform().translate(getTransform().getVectorUp());
 }
 
 void GameObject::down()
 {
-    getTransform().translate(Vec3(0, -1, 0));
+    getTransform().translate(getTransform().getVectorUp() * -1);
 }
 
 void GameObject::forward()
 {
-    getTransform().translate(Vec3(0, 0, -1));
+    getTransform().translate(getTransform().getVectorForward() * -1);
 }
 
 void GameObject::back()
 {
-    getTransform().translate(Vec3(0, 0, 1));
+    getTransform().translate(getTransform().getVectorForward());
 }
 
 void GameObject::left()
 {
-    getTransform().translate(Vec3(-1, 0, 0));
+    getTransform().translate(getTransform().getVectorRight() * -1);
 }
 
 void GameObject::right()
 {
-    getTransform().translate(Vec3(1, 0, 0));
+    getTransform().translate(getTransform().getVectorRight());
 }
 
 void GameObject::leave()
 {
+    Log::closeAndTryToCreateFile();
     exit(666);
 }
 
-void GameObject::rotate(const Vec3& axis)
+void GameObject::rotate(const Vec2& deltaDisplacement)
 {
-    std::cout << "GG" << std::endl;
-    getTransform().getSpacialAttribut().rotation = Quaternion::angleAxis(0.01, axis) * getTransform().getSpacialAttribut().rotation;
+    if (deltaDisplacement.length() > 0.4)
+    {
+        getTransform().setRotation(getTransform().getSpacialAttribut().rotation *
+                                   Quaternion::angleAxis(deltaDisplacement.y * 0.001, {1, 0, 0}));
+        getTransform().setRotation(Quaternion::angleAxis(deltaDisplacement.x * 0.001, {0, 1, 0}) *
+                                   getTransform().getSpacialAttribut().rotation);
+    }
 }
 
 int main()
 {
-    // Log::setSetting(ESetting::ALWAYS_PRINT_LOG_FILE, true);
 
     Window        win(WindowCreateArg{"GP engine", 600, 900});
     Renderer      ren(win);
@@ -200,9 +205,7 @@ int main()
     iManager->bindInput(GLFW_KEY_SPACE, "jump");
     iManager->bindInput(GLFW_KEY_LEFT_CONTROL, "down");
     iManager->bindInput(GLFW_KEY_ESCAPE, "exit");
-    iManager->bindAxis(MOUSE_X, "cursor");
 
-    // sceneGraphExample();
     Log::logInitializationStart("sceneGraphExample");
 
     GameObject            world(GameObject::CreateArg{"World"});
@@ -215,10 +218,8 @@ int main()
     player.addComponent<Camera>(camCreateArg);
 
     DirectionalLight::CreateArg lightArg{
-        {0.f, 1.f, -1.f}, {1.f, 0.f, 0.f, 0.1f}, {1.f, 0.f, 0.f, 0.7f}, {1.f, 0.f, 0.f, 1.f}};
+        {0.f, 1.f, -1.f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 0.f, 0.f, 0.7f}, {1.f, 0.f, 0.f, 1.f}};
     player.addComponent<DirectionalLight>(lightArg);
-
-    Vec3 displacementVec3 = Vec3(iManager->m_cursor.m_displacement, 0);
 
     InputComponent* input = &player.addComponent<InputComponent>();
     input->bindAction("jump", std::bind(&GameObject::up, &player));
@@ -228,9 +229,6 @@ int main()
     input->bindAction("forward", std::bind(&GameObject::forward, &player));
     input->bindAction("back", std::bind(&GameObject::back, &player));
     input->bindAction("exit", std::bind(&GameObject::leave, &player));
-    input->bindAxis("cursor", std::bind(&GameObject::rotate, &player, displacementVec3));
-
-    //input->bindAxis("cursor", [&](const Vec3& axis) { player.rotate(axis);});
 
     ResourcesManager<Mesh, Shader, Texture, std::vector<Material>> rm;
 
@@ -267,20 +265,20 @@ int main()
 
     while (1)
     {
-        glfwPollEvents();
         iManager->processInput();
+        player.rotate(iManager->getCursor().deltaPos);
+
         ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime) { ++fixedUpdateFrameCount; },
                   [&](double unscaledDeltaTime, double deltaTime) { ++unFixedUpdateFrameCount; }, [&]() {});
         ts.update([&](double fixedUnscaledDeltaTime, double fixedDeltaTime) { ++fixedUpdateFrameCount; },
                   [&](double unscaledDeltaTime, double deltaTime) {
                       ++unFixedUpdateFrameCount;
-                      world.forceUpdate();
+                      world.updateSelfAndChildren();
                   },
                   [&]() {
                       RenderSystem::getInstance()->draw();
                       ren.swapBuffer();
                   });
-        //player.rotate(Vec3(1,0,0));
     }
 
     Log::closeAndTryToCreateFile();

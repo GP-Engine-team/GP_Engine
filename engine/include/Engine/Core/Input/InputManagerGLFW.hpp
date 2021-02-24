@@ -7,14 +7,11 @@
 #pragma once
 #include "Engine/Core/Input/Cursor.hpp"
 #include "Engine/Core/Input/InputComponent.hpp"
-#include "GPM/Vector3.hpp"
 #include <iostream>
 #include <string>
 #include <unordered_map>
 
 struct GLFWwindow;
-#define MOUSE_X 1
-#define MOUSE_Y 2
 
 namespace GPE
 {
@@ -38,28 +35,86 @@ public:
 
 private:
     std::unordered_multimap<int, std::string> m_actionMap;
-    std::unordered_multimap<int, std::string> m_axisMap;
-    std::unordered_map<int, bool>             m_prevStateMap;
     std::unordered_map<int, bool>             m_stateMap;
     std::unordered_map<int, InputComponent*>  m_inputComponents;
+    Cursor                                    m_cursor;
 
 public:
+    /**
+     * @brief get a pointeur to the InputManager singleton
+     * @return 
+    */
     static InputManager* GetInstance();
-    Cursor               m_cursor;
 
-    void                        keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const;
-    void                        cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) const;
-    void                        fireInputComponents(const std::string& action) const;
-    void                        setupCallbacks(GLFWwindow* window);
-    inline void                 bindInput(int key, const std::string& action);
-    inline void                 bindAxis(int key, const std::string& action);
-    _NODISCARD inline const int addComponent(InputComponent* input);
-    inline void                 removeComponent(int key);
-    void                        processInput();
-    // void                        keyPressed(int key);
+    /**
+     * @brief Callback to get the state of any keyboard keys
+     * @param window 
+     * @param key 
+     * @param scancode 
+     * @param action 
+     * @param mods 
+     * @return 
+    */
+    void            keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const noexcept;
+    
+    /**
+     * @brief Callback to get the new position of the mouse cursor
+     * @param window 
+     * @param xpos 
+     * @param ypos 
+     * @return 
+    */
+    void            cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
+
+    /**
+     * @brief Throw events to input components
+     * @param action 
+     * @return 
+    */
+    void            fireInputComponents(const std::string& action) const noexcept;
+
+    /**
+     * @brief Setup Callbacks (call it one time to setup callbacks function proprely)
+     * @param window 
+     * @return 
+    */
+    void            setupCallbacks(GLFWwindow* window) noexcept;
+
+    /**
+     * @brief bind a key to an action
+     * @param key 
+     * @param action 
+     * @return 
+    */
+    inline void     bindInput(int key, const std::string& action) noexcept;
+
+    /**
+     * @brief add input component to the component list
+     * @param input 
+     * @return 
+    */
+    inline int      addComponent(InputComponent* input) noexcept;
+
+    /**
+     * @brief remove input component to the component list
+     * @param key 
+     * @return 
+    */
+    inline void     removeComponent(int key) noexcept;
+
+    /**
+     * @brief Call it to poll events and update inputs
+     * @return 
+    */
+    void            processInput() noexcept;
+    
+    
+    /**
+     * @brief get a reference to the cursor
+     * @return 
+    */
+    [[nodiscard]] inline const Cursor& getCursor() const noexcept;
 };
-inline void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-inline void setCursorCallback(GLFWwindow* window, double xpos, double ypos);
 
 #include "Engine/Core/Input/InputManager.inl"
 } // namespace GPE

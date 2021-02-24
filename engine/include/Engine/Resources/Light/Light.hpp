@@ -75,6 +75,7 @@ public:
     inline const DiffuseComponent&  getDiffuse() const noexcept;
     inline const SpecularComponent& getSpecular() const noexcept;
 
+
     inline void setGlobalComponent(const ColorRGBA& newComponent) noexcept;
     inline void setGlobalComponent(const GPM::Vec4& newComponent) noexcept;
 

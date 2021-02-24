@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
+ * This file is subject to the LGNU license terms in the LICENSE file
+ *	found in the top-level directory of this distribution.
+ */
 #pragma once
 #include "GPM/Vector2.hpp"
 
@@ -10,8 +15,8 @@ public:
     ~Cursor() = default;
 
 public:
-    GPM::Vec2 m_position     = {0, 0};
-    float     m_speed        = {1};
-    GPM::Vec2 m_displacement = {0, 0};
+    GPM::Vec2 position = {300, 450};
+    GPM::Vec2 deltaPos = {0, 0};
+    GPM::Vec2 center   = {300, 450};
 };
 } // namespace GPE
