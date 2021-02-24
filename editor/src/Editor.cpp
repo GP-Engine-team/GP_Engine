@@ -1,15 +1,13 @@
 #include "Editor/Editor.hpp"
 
-#include "Engine/Core/Debug/Log.hpp"
 #include "imgui/imgui.h"
-#include "imgui/imgui_internal.h"
-
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 
-using namespace Engine::Core::Debug;
+#include <cstdio>
+#include <cstdlib>
 
 // Hint to use GPU if available
 extern "C"
@@ -27,7 +25,7 @@ void windowFramebufferResized(GLFWwindow* window, int newWidth, int newHeight)
 {
     Editor* editor{(Editor*)glfwGetWindowUserPointer(window)};
 
-    editor->m_framebufferWidth = newWidth;
+    editor->m_framebufferWidth  = newWidth;
     editor->m_framebufferHeight = newHeight;
 }
 
@@ -114,7 +112,8 @@ void Editor::initDearImGui()
 
 void Editor::renderMenuBar() const
 {
-    ImGui::BeginMainMenuBar();
+    if (ImGui::BeginMainMenuBar())
+    {
         // File
         if (ImGui::BeginMenu("File"))
         {
@@ -160,13 +159,16 @@ void Editor::renderMenuBar() const
             ImGui::MenuItem("Useful links");
             ImGui::EndMenu();
         }
-    ImGui::EndMainMenuBar();
+
+        ImGui::EndMainMenuBar();
+    }
 }
 
 
-void Editor::renderLevelEditor()
+void Editor::renderLevelEditor() const
 {
-    ImGui::Begin("Editor viewport");
+    ImGui::Begin("Level editor");
+        ImGui::Text("Level editor");
     ImGui::End();
 }
 
@@ -187,10 +189,10 @@ void Editor::renderSceneGraph() const
 }
 
 
-void Editor::renderProjectExplorer() const
+void Editor::renderExplorer() const
 {
-    ImGui::Begin("Project explorer");
-        if (ImGui::BeginTabBar("Project explorer"))
+    ImGui::Begin("Explorer");
+        if (ImGui::BeginTabBar("Explorer"))
         {
             if (ImGui::BeginTabItem("Project"))
             {
@@ -201,8 +203,16 @@ void Editor::renderProjectExplorer() const
             if (ImGui::BeginTabItem("Logs"))
             {
                 ImGui::Text("This is a log");
+                ImGui::Text("And another log");
                 ImGui::EndTabItem();
             }
+            
+            if (ImGui::BeginTabItem("Profiler"))
+            {
+                ImGui::Text("Plots, and graphs, and numbers...");
+                ImGui::EndTabItem();
+            }
+
             ImGui::EndTabBar();
         }
     ImGui::End();
@@ -252,7 +262,7 @@ void Editor::update()
 
     renderLevelEditor();
     renderSceneGraph();
-    renderProjectExplorer();
+    renderExplorer();
     renderInspector();
 }
 

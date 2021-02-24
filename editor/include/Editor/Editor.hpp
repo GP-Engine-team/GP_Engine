@@ -26,10 +26,10 @@ private:
 	void initDearImGui();
 
 	void renderMenuBar() const;
-	void renderLevelEditor();
+	void renderLevelEditor() const;
 	void renderInspector() const;
 	void renderSceneGraph() const;
-	void renderProjectExplorer() const;
+	void renderExplorer() const;
 
 public:
 	Editor();
