@@ -51,6 +51,16 @@ void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, doubl
     glfwSetCursorPos(window, m_cursor.center.x, m_cursor.center.y);
 }
 
+static void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
+{
+    InputManager::GetInstance()->cursorPositionCallback(window, xpos, ypos);
+}
+
+static void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
+{
+    InputManager::GetInstance()->keyCallback(window, key, scancode, action, mods);
+}
+
 void InputManager::setupCallbacks(GLFWwindow* window) noexcept
 {
     glfwSetKeyCallback(window, setKeycallback);
@@ -75,16 +85,5 @@ void InputManager::processInput() noexcept
         {
             input->fireInputComponents(i2->second);
         }
-    }
-}
-
-void InputManager::keyPressed(int key) noexcept
-{
-    InputManager* input = InputManager::GetInstance();
-
-    auto it = input->m_actionMap.equal_range(key);
-    for (auto i = it.first; i != it.second; i++)
-    {
-        input->fireInputComponents(i->second);
     }
 }
