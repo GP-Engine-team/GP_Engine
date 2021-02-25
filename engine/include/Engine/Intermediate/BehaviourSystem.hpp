@@ -48,11 +48,11 @@ public:
     BehaviourSystem& operator=(BehaviourSystem const& other) noexcept = delete;
     BehaviourSystem& operator=(BehaviourSystem&& other) noexcept = delete;
 
-    void addUpdate(BehaviourComponent* updateFunction) noexcept;
-    void addFixedUpdate(BehaviourComponent* fixedUpdateFunction) noexcept;
+    void addUpdate(BehaviourComponent& updateFunction) noexcept;
+    void addFixedUpdate(BehaviourComponent& fixedUpdateFunction) noexcept;
     
-    void removeUpdate(BehaviourComponent* updateFunctionToRemove) noexcept;
-    void removeFixedUpdate(BehaviourComponent* fixedUpdateFunctionToRemove) noexcept;
+    void removeUpdate(BehaviourComponent& updateFunctionToRemove) noexcept;
+    void removeFixedUpdate(BehaviourComponent& fixedUpdateFunctionToRemove) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
     void addBehaviour(BehaviourComponent* pBehaviour) noexcept;
