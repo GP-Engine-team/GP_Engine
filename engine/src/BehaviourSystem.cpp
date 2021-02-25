@@ -51,7 +51,8 @@ void BehaviourSystem::addBehaviour(BehaviourComponent* pBehaviour) noexcept
 void BehaviourSystem::updateBehaviourPointer(BehaviourComponent* newPointorBehaviour,
                                              BehaviourComponent* exPointorBehaviour) noexcept
 {
-    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != m_pBehaviours.end(); it++)
+    const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();
+    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != end; ++it)
     {
         if ((*it) == exPointorBehaviour)
         {
@@ -63,7 +64,8 @@ void BehaviourSystem::updateBehaviourPointer(BehaviourComponent* newPointorBehav
 
 void BehaviourSystem::removeBehaviour(BehaviourComponent* pBehaviour) noexcept
 {
-    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != m_pBehaviours.end(); it++)
+    const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();
+    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != end; ++it)
     {
         if ((*it) == pBehaviour)
         {
