@@ -7,6 +7,7 @@
 #pragma once
 
 #include <vector> //std::vector
+#include <functional> //std::function
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
@@ -16,6 +17,7 @@ namespace GPE
 class Renderer;
 class Light;
 class Camera;
+struct Frustum;
 class Model;
 class Shader;
 
@@ -27,6 +29,8 @@ class Shader;
  */
 class RenderSystem
 {
+    public :
+    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>, std::vector<SubModel*>, std::vector<Camera*>, std::vector<Light*>)>;
     /**
      * The Singleton's constructor/destructor should always be private to
      * prevent direct construction/desctruction calls with the `new`/`delete`
@@ -48,14 +52,6 @@ protected:
     bool         m_currentBackFaceCullingModeEnable = false;
 
 protected:
-    void tryToBindShader(Shader& shader);
-    void tryToBindTexture(unsigned int textureID);
-    void tryToBindMesh(unsigned int meshID);
-    void tryToSetAlphaEnabled(bool alphaEnabled);
-    void tryToSetBackFaceCulling(bool useBackFaceCulling);
-
-    void resetCurrentRenderPassKey();
-
     inline RenderSystem() noexcept = default;
     ~RenderSystem() noexcept       = default;
 
@@ -65,7 +61,25 @@ public:
     RenderSystem& operator=(RenderSystem const& other) noexcept = delete;
     RenderSystem& operator=(RenderSystem&& other) noexcept = delete;
 
-    void draw(const ResourceManagerType& res) noexcept;
+public:
+    void tryToBindShader(Shader& shader);
+    void tryToBindTexture(unsigned int textureID);
+    void tryToBindMesh(unsigned int meshID);
+    void tryToSetAlphaEnabled(bool alphaEnabled);
+    void tryToSetBackFaceCulling(bool useBackFaceCulling);
+
+    void resetCurrentRenderPassKey();
+
+    bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel);
+    void drawModelPart(const SubModel& subModel);
+    void sendModelDataToShader(Camera& camToUse, SubModel& subModel);
+    void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse);
+
+    RenderPipeline defaultRenderPipeline() const noexcept;
+    void draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
+
+public:
+
 
     // TODO: Remove this shit and create variadic templated system
     void addRenderer(Renderer* pRenderer) noexcept;

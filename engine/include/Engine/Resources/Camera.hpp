@@ -19,6 +19,19 @@
 namespace GPE
 {
 
+//TODO: Furstum must be inside Camera but is forwarding in file RenderSystem. While camera do not own it's frustum, frustum struct must be outside
+struct Frustum
+{
+    GPM::Plane topFace;
+    GPM::Plane bottomFace;
+
+    GPM::Plane rightFace;
+    GPM::Plane leftFace;
+
+    GPM::Plane frontFace;
+    GPM::Plane backFace;
+};
+
 class Camera : public Component
 {
 public:
@@ -59,18 +72,6 @@ public:
         float       nearVal = 0.001f;
         float       farVal  = 10.f;
         const char* name    = "Camera";
-    };
-
-    struct Frustum
-    {
-        GPM::Plane topFace;
-        GPM::Plane bottomFace;
-
-        GPM::Plane rightFace;
-        GPM::Plane leftFace;
-
-        GPM::Plane frontFace;
-        GPM::Plane backFace;
     };
 
 protected:

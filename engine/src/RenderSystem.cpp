@@ -26,7 +26,7 @@ using namespace GPM;
 
 RenderSystem* RenderSystem::m_pInstance{nullptr};
 
-static bool isOnCameraFrustum(const Camera::Frustum& camFrustum, const SubModel* pSubModel)
+bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel)
 {
     const Volume* pBoudingVolume = pSubModel->pMesh->getBoundingVolume();
 
@@ -58,7 +58,7 @@ static bool isOnCameraFrustum(const Camera::Frustum& camFrustum, const SubModel*
     return true;
 }
 
-void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse)
+void RenderSystem::sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse)
 {
     pCurrentShaderUse->setMat4("view", camToUse.getView().e);
     pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
@@ -103,7 +103,7 @@ void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* 
     }*/
 }
 
-void sendModelDataToShader(Camera& camToUse, SubModel& subModel)
+void RenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
 {
     Shader* pShader = subModel.pShader;
 
@@ -134,7 +134,7 @@ void sendModelDataToShader(Camera& camToUse, SubModel& subModel)
     }
 }
 
-void drawModelPart(const SubModel& subModel)
+void RenderSystem::drawModelPart(const SubModel& subModel)
 {
     glDrawArrays(GL_TRIANGLES, 0, subModel.pMesh->getVerticesCount());
 }
@@ -204,86 +204,96 @@ void RenderSystem::resetCurrentRenderPassKey()
     glBindVertexArray(0);
 }
 
-void RenderSystem::draw(const ResourceManagerType& res) noexcept
+RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
-    int h, w;
-    m_pRenderers[0]->getWindow()->getSize(w, h);
+    return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*> pRenderers,
+              std::vector<SubModel*> pSubModels, std::vector<Camera*> pCameras, std::vector<Light*> pLights)
 
-    std::map<float, Model*> mapElemSortedByDistance;
-
-    Camera::Frustum camFrustum = m_pCameras[0]->getFrustum();
-
-    /*
-    for (auto&& pSubModel : m_pSubModels)
     {
-        if (pSubModel->isActivated() && isOnCameraFrustum(camFrustum, pModel))
+        int h, w;
+        pRenderers[0]->getWindow()->getSize(w, h);
+
+        //std::map<float, Model*> mapElemSortedByDistance;
+
+        Frustum camFrustum = pCameras[0]->getFrustum();
+
+        /*
+        for (auto&& pSubModel : m_pSubModels)
         {
-            if (pSubModel->isOpaque())
+            if (pSubModel->isActivated() && isOnFrustum(camFrustum, pModel))
             {
+                if (pSubModel->isOpaque())
+                {
 
+                }
+                else
+                {
+
+                    float distance = (m_pCameras[0]->getGameObject().getTransform().getGlobalPosition() -
+                                      (pModel->getGameObject().getTransform().getGlobalPosition())).length2();
+                    mapElemSortedByDistance[distance] = pModel;
+                }
             }
-            else
-            {
+        }*/
 
-                float distance = (m_pCameras[0]->getGameObject().getTransform().getGlobalPosition() -
-                                  (pModel->getGameObject().getTransform().getGlobalPosition())).length2();
-                mapElemSortedByDistance[distance] = pModel;
-            }
-        }
-    }*/
+        rs.resetCurrentRenderPassKey();
+        glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
 
-    resetCurrentRenderPassKey();
-    glDisable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
-
-    glViewport(0, 0, w, h);
-    glBindFramebuffer(GL_FRAMEBUFFER, res.get<RenderTexture>("FBO")->getID());
-
-    glClearColor(0.3f, 0.3f, 0.3f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    for (auto&& pSubModel : m_pSubModels)
-    {
-        if (!isOnCameraFrustum(camFrustum, pSubModel))
-            continue;
-
-        tryToBindShader(*pSubModel->pShader);
-        tryToBindMesh(pSubModel->pMesh->getID());
-        tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());
-        tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
-
-        // TODO: To optimize ! Use Draw instanced Array
-
-        sendModelDataToShader(*m_pCameras[0], *pSubModel);
-        drawModelPart(*pSubModel);
-    }
-
-    // Render to screen
-    {
         glViewport(0, 0, w, h);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, rm.get<RenderTexture>("FBO")->getID());
 
-        glBindVertexArray(res.get<Mesh>("ScreenPlan")->getID());
+        glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(res.get<Shader>("PostProcess")->getID());
-        glUniform1i(glGetUniformLocation(res.get<Shader>("PostProcess")->getID(), "colorTexture"), 0);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, res.get<Texture>("ColorBufferFBO")->getID());
+        for (auto&& pSubModel : pSubModels)
+        {
+            if (!rs.isOnFrustum(camFrustum, pSubModel))
+                continue;
 
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-    }
+            rs.tryToBindShader(*pSubModel->pShader);
+            rs.tryToBindMesh(pSubModel->pMesh->getID());
+            rs.tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());
+            rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
-    glEnable(GL_BLEND);
+            // TODO: To optimize ! Use Draw instanced Array
 
-    /*Display transparent element*/
-    /*for(std::map<float, Model*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it !=
-    mapElemSortedByDistance.rend(); ++it)
-    {
-        it->second->draw();
-    };*/
+            rs.sendModelDataToShader(*pCameras[0], *pSubModel);
+            rs.drawModelPart(*pSubModel);
+        }
 
-    resetCurrentRenderPassKey();
+        // Render to screen
+        {
+            glViewport(0, 0, w, h);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            glBindVertexArray(rm.get<Mesh>("ScreenPlan")->getID());
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glUseProgram(rm.get<Shader>("PostProcess")->getID());
+            glUniform1i(glGetUniformLocation(rm.get<Shader>("PostProcess")->getID(), "colorTexture"), 0);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, rm.get<Texture>("ColorBufferFBO")->getID());
+
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+
+        glEnable(GL_BLEND);
+
+        /*Display transparent element*/
+        /*for(std::map<float, Model*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it !=
+        mapElemSortedByDistance.rend(); ++it)
+        {
+            it->second->draw();
+        };*/
+
+        rs.resetCurrentRenderPassKey();
+    };
+}
+
+void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
+{
+    renderPipeline(res, *this, m_pRenderers, m_pSubModels, m_pCameras, m_pLights);
 }
 
 void RenderSystem::addRenderer(Renderer* pRenderer) noexcept

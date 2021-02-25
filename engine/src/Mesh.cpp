@@ -63,7 +63,6 @@ Mesh::Mesh(const CreateArg& arg) noexcept
             vVBO.emplace_back(arg.vBuffer[arg.iBuffer[i].iv]);
             vtVBO.emplace_back(arg.vtBuffer[arg.iBuffer[i].ivt]);
             vnVBO.emplace_back(arg.vnBuffer[arg.iBuffer[i].ivn]);
-            std::cout << vVBO.back() << std::endl;
         }
 
 

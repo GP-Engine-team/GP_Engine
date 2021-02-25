@@ -54,7 +54,4 @@ public:
     Model& operator=(Model const& other) = delete;
     Model& operator=(Model&& other) = delete;
 };
-
-#include "Model.inl"
-
 } /*namespace GPE*/
