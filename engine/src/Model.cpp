@@ -50,23 +50,3 @@ Model::Model(GameObject& owner, const CreateArg& arg)
         RenderSystem::getInstance()->addSubModel(&pSubMesh);
     }
 }
-
-std::shared_ptr<GPM::Volume> Model::getpBoudingVolume() const noexcept
-{
-    // TODO: Horrible technique
-    if (m_subModels[0].pMesh->getBoundingVolumeType() == Mesh::BoundingVolume::SPHERE)
-    {
-        const GPM::Sphere* boundingSphere = dynamic_cast<const GPM::Sphere*>(m_subModels[0].pMesh->getBoundingVolume());
-
-        float maxScale =
-            std::max(std::max(m_gameObject.getTransform().getScale().x, m_gameObject.getTransform().getScale().y),
-                     m_gameObject.getTransform().getScale().z);
-        return std::make_shared<GPM::Sphere>(boundingSphere->getRadius() * maxScale,
-                                             m_gameObject.getTransform().getGlobalPosition() +
-                                                 boundingSphere->getCenter());
-    }
-    else
-    {
-        return nullptr;
-    }
-}

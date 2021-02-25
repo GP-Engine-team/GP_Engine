@@ -26,20 +26,28 @@ using namespace GPM;
 
 RenderSystem* RenderSystem::m_pInstance{nullptr};
 
-static bool isOnCameraFrustum(const Camera::Frustum& camFrustum, const Model* pModel)
+static bool isOnCameraFrustum(const Camera::Frustum& camFrustum, const SubModel* pSubModel)
 {
-    std::shared_ptr<Volume> pBoudingVolume = pModel->getpBoudingVolume();
+    const Volume* pBoudingVolume = pSubModel->pMesh->getBoundingVolume();
 
-    Sphere* pBoudingSphere = dynamic_cast<Sphere*>(pBoudingVolume.get());
+    const Sphere* pBoudingSphere = dynamic_cast<const Sphere*>(pBoudingVolume);
     if (pBoudingSphere)
     {
+        float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
+                                           pSubModel->pModel->getOwner().getTransform().getScale().y),
+                                  pSubModel->pModel->getOwner().getTransform().getScale().z);
+
+        Sphere globalSphere(pBoudingSphere->getRadius() * maxScale,
+                            pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
+                                pBoudingSphere->getCenter());
+
         /*Sort to be more optimized*/
-        if (SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.leftFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.rightFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.frontFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.bottomFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.topFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.backFace))
+        if (SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.leftFace) &&
+            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.rightFace) &&
+            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.frontFace) &&
+            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.bottomFace) &&
+            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.topFace) &&
+            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.backFace))
         {
 
             return true;
@@ -109,7 +117,6 @@ void sendModelDataToShader(Camera& camToUse, SubModel& subModel)
                                                        .e);
         pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
     }
-
 
     pShader->setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
 
@@ -237,6 +244,9 @@ void RenderSystem::draw(const ResourceManagerType& res) noexcept
 
     for (auto&& pSubModel : m_pSubModels)
     {
+        if (!isOnCameraFrustum(camFrustum, pSubModel))
+            continue;
+
         tryToBindShader(*pSubModel->pShader);
         tryToBindMesh(pSubModel->pMesh->getID());
         tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());

@@ -53,14 +53,6 @@ public:
     Model()        = delete;
     Model& operator=(Model const& other) = delete;
     Model& operator=(Model&& other) = delete;
-
-    inline bool isOpaque() const noexcept;
-
-    inline Shader* getpShader() noexcept;
-
-    inline const std::vector<Mesh>& getSubMeshs() const noexcept;
-
-    std::shared_ptr<GPM::Volume> getpBoudingVolume() const noexcept;
 };
 
 #include "Model.inl"
