@@ -30,7 +30,7 @@ struct SubModel
     bool enableBackFaceCulling = true;
 };
 
-inline bool isSubModelHasPriorityOverAnother(const SubModel& lhs, const SubModel& rhs) noexcept;
+bool isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept;
 
 class Model : public Component
 {
@@ -41,7 +41,7 @@ public:
     };
 
 protected:
-    std::vector<SubModel>& m_subModels;
+    std::vector<SubModel> m_subModels;
 
 public:
     Model(GameObject& owner, const CreateArg& arg);

@@ -18,7 +18,7 @@ static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, 
     glBindBuffer(target, 0);
 }
 
-Mesh::Mesh(const CreateArg& arg) noexcept : m_verticesCount{static_cast<unsigned int>(arg.iBuffer.size())}
+Mesh::Mesh(const CreateArg& arg) noexcept
 {
     if (arg.boundingVolume == BoundingVolume::SPHERE)
     {
@@ -37,6 +37,8 @@ Mesh::Mesh(const CreateArg& arg) noexcept : m_verticesCount{static_cast<unsigned
 
     if (arg.iBuffer.empty())
     {
+        m_verticesCount = static_cast<unsigned int>(arg.vBuffer.size());
+
         initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vBuffer.data(),
                                static_cast<int>(arg.vBuffer.size() * sizeof(arg.vBuffer[0])));
         initializeVertexBuffer(uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vtBuffer.data(),
@@ -50,24 +52,26 @@ Mesh::Mesh(const CreateArg& arg) noexcept : m_verticesCount{static_cast<unsigned
         std::vector<Vec2> vtVBO;
         std::vector<Vec3> vnVBO;
 
-        vVBO.reserve(arg.vBuffer.size());
-        vtVBO.reserve(arg.vBuffer.size());
-        vnVBO.reserve(arg.vBuffer.size());
+        m_verticesCount = static_cast<unsigned int>(arg.iBuffer.size());
+
+        vVBO.reserve(arg.iBuffer.size());
+        vtVBO.reserve(arg.iBuffer.size());
+        vnVBO.reserve(arg.iBuffer.size());
 
         for (size_t i = 0; i < arg.iBuffer.size(); ++i)
         {
             vVBO.emplace_back(arg.vBuffer[arg.iBuffer[i].iv]);
             vtVBO.emplace_back(arg.vtBuffer[arg.iBuffer[i].ivt]);
             vnVBO.emplace_back(arg.vnBuffer[arg.iBuffer[i].ivn]);
-
-            std::cout << arg.iBuffer[i].iv << " " << vVBO.back() << std::endl;
+            std::cout << vVBO.back() << std::endl;
         }
 
-        initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vVBO[0],
+
+        initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vVBO.data(),
                                static_cast<int>(vVBO.size() * sizeof(vVBO[0])));
-        initializeVertexBuffer(uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vtVBO[0],
+        initializeVertexBuffer(uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vtVBO.data(),
                                static_cast<int>(vtVBO.size() * sizeof(vtVBO[0])));
-        initializeVertexBuffer(normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vnVBO[0],
+        initializeVertexBuffer(normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vnVBO.data(),
                                static_cast<int>(vnVBO.size() * sizeof(vnVBO[0])));
     }
 

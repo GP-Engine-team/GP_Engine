@@ -110,6 +110,7 @@ void sendModelDataToShader(Camera& camToUse, SubModel& subModel)
         pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
     }
 
+
     pShader->setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)

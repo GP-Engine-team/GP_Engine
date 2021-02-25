@@ -62,9 +62,7 @@ std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceMan
         scene->mMaterials[i]->Get(AI_MATKEY_COLOR_SPECULAR, color);
         materialArg.comp.specular.rgbi = GPM::Vec4{color.r, color.g, color.b, 1.f};
 
-        float scale;
-        scene->mMaterials[i]->Get(AI_MATKEY_SHININESS_STRENGTH, scale);
-        materialArg.comp.shininess = scale;
+        scene->mMaterials[i]->Get(AI_MATKEY_SHININESS, materialArg.comp.shininess);
 
         materialArg.pTexture = &resourceManager.add<Texture>(str.C_Str(), textureArg);
     }
@@ -101,7 +99,7 @@ std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceMan
         bool enableBackFaceCulling = true;
 
         subModuleBuffer.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
-                                              &materials[scene->mMeshes[i]->mMaterialIndex + 1],
+                                              &materials[scene->mMeshes[i]->mMaterialIndex - 1],
                                               &resourceManager.add<Mesh>(arg.objName, arg), true});
     }
 
