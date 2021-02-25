@@ -26,6 +26,9 @@ BehaviourComponent::BehaviourComponent(BehaviourComponent&& other) noexcept
 
 void BehaviourComponent::enableUpdate(bool flag) noexcept
 {
+    if (m_isUpdated == flag)
+        return;
+
     if (m_isUpdated = flag)
         BehaviourSystem::getInstance()->addUpdate(*this);
     else
@@ -34,6 +37,9 @@ void BehaviourComponent::enableUpdate(bool flag) noexcept
 
 void BehaviourComponent::enableFixedUpdate(bool flag) noexcept
 {
+    if (m_isFixedUpdated == flag)
+        return;
+
     if (m_isFixedUpdated = flag)
         BehaviourSystem::getInstance()->addFixedUpdate(*this);
     else

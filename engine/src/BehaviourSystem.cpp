@@ -25,6 +25,7 @@ void BehaviourSystem::removeUpdate(BehaviourComponent& updateFunctionToRemove) n
         {
             std::swap(function, m_updateFunctions.back());
             m_updateFunctions.pop_back();
+            return;
         }
     }
 }
@@ -37,6 +38,7 @@ void BehaviourSystem::removeFixedUpdate(BehaviourComponent& fixedUpdateFunctionT
         {
             std::swap(function, m_updateFunctions.back());
             m_updateFunctions.pop_back();
+            return;
         }
     }
 }
