@@ -72,6 +72,7 @@ struct Material {
     vec4    diffuse;
     vec4    specular;
     float   shininess;
+    float   opacity;
 };
 
 uniform Material material;
@@ -280,6 +281,7 @@ void Shader::setMaterialBlock(const MaterialComponent& material) const noexcept
         setVec4("material.specular", material.specular.rgbi.x, material.specular.rgbi.y, material.specular.rgbi.z,
                 material.specular.rgbi.w);
         setFloat("material.shininess", material.shininess);
+        setFloat("material.opacity", material.opacity);
     }
     else
     {

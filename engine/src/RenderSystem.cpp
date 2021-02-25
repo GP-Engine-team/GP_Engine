@@ -42,17 +42,12 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
                                 pBoudingSphere->getCenter());
 
         /*Sort to be more optimized*/
-        if (SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.leftFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.rightFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.frontFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.bottomFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.topFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.backFace))
-        {
-
-            return true;
-        }
-        return false;
+        return (SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.leftFace) &&
+                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.rightFace) &&
+                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.frontFace) &&
+                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.bottomFace) &&
+                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.topFace) &&
+                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.backFace));
     }
 
     return true;
@@ -207,34 +202,14 @@ void RenderSystem::resetCurrentRenderPassKey()
 RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
     return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*> pRenderers,
-              std::vector<SubModel*> pSubModels, std::vector<Camera*> pCameras, std::vector<Light*> pLights)
+              std::vector<SubModel*> pOpaqueSubModels, std::vector<SubModel*> pTransparenteSubModels,
+              std::vector<Camera*> pCameras, std::vector<Light*> pLights)
 
     {
         int h, w;
         pRenderers[0]->getWindow()->getSize(w, h);
 
-        //std::map<float, Model*> mapElemSortedByDistance;
-
         Frustum camFrustum = pCameras[0]->getFrustum();
-
-        /*
-        for (auto&& pSubModel : m_pSubModels)
-        {
-            if (pSubModel->isActivated() && isOnFrustum(camFrustum, pModel))
-            {
-                if (pSubModel->isOpaque())
-                {
-
-                }
-                else
-                {
-
-                    float distance = (m_pCameras[0]->getGameObject().getTransform().getGlobalPosition() -
-                                      (pModel->getGameObject().getTransform().getGlobalPosition())).length2();
-                    mapElemSortedByDistance[distance] = pModel;
-                }
-            }
-        }*/
 
         rs.resetCurrentRenderPassKey();
         glDisable(GL_BLEND);
@@ -246,7 +221,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for (auto&& pSubModel : pSubModels)
+        /*Display opaque element*/
+        for (auto&& pSubModel : pOpaqueSubModels)
         {
             if (!rs.isOnFrustum(camFrustum, pSubModel))
                 continue;
@@ -261,6 +237,38 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             rs.sendModelDataToShader(*pCameras[0], *pSubModel);
             rs.drawModelPart(*pSubModel);
         }
+
+        /*Display transparent element*/
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+
+        std::map<float, SubModel*> mapElemSortedByDistance;
+
+        for (auto&& pSubModel : pTransparenteSubModels)
+        {
+            if (rs.isOnFrustum(camFrustum, pSubModel))
+            {
+                float distance = (pCameras[0]->getOwner().getTransform().getGlobalPosition() -
+                                  (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
+                                     .length2();
+                mapElemSortedByDistance[distance] = pSubModel;
+            }
+        }
+
+        
+        std::map<float, SubModel*>::reverse_iterator rEnd = mapElemSortedByDistance.rend();
+        for (std::map<float, SubModel*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != rEnd; ++it)
+        {
+            rs.tryToBindShader(*it->second->pShader);
+            rs.tryToBindMesh(it->second->pMesh->getID());
+            rs.tryToBindTexture(it->second->pMaterial->getDiffuseTexture()->getID());
+            rs.tryToSetBackFaceCulling(it->second->enableBackFaceCulling);
+
+            // TODO: To optimize ! Use Draw instanced Array
+
+            rs.sendModelDataToShader(*pCameras[0], *it->second);
+            rs.drawModelPart(*it->second);
+        };
 
         // Render to screen
         {
@@ -278,22 +286,13 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
 
-        glEnable(GL_BLEND);
-
-        /*Display transparent element*/
-        /*for(std::map<float, Model*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it !=
-        mapElemSortedByDistance.rend(); ++it)
-        {
-            it->second->draw();
-        };*/
-
         rs.resetCurrentRenderPassKey();
     };
 }
 
 void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
 {
-    renderPipeline(res, *this, m_pRenderers, m_pSubModels, m_pCameras, m_pLights);
+    renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights);
 }
 
 void RenderSystem::addRenderer(Renderer* pRenderer) noexcept
@@ -328,26 +327,58 @@ void RenderSystem::removeRenderer(Renderer* pRenderer) noexcept
 
 void RenderSystem::addSubModel(SubModel* pSubModel) noexcept
 {
-    m_pSubModels.insert(
-        std::upper_bound(m_pSubModels.begin(), m_pSubModels.end(), pSubModel, isSubModelHasPriorityOverAnother),
-        pSubModel);
+    if (pSubModel->pMaterial->isOpaque())
+    {
+        m_pOpaqueSubModels.insert(std::upper_bound(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel,
+                                                   isSubModelHasPriorityOverAnother),
+                                  pSubModel);
+    }
+    else
+    {
+        m_pTransparenteSubModels.emplace_back(pSubModel);
+    }
 }
 
 void RenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept
 {
-    for (std::vector<SubModel*>::iterator it = m_pSubModels.begin(); it != m_pSubModels.end(); ++it)
+    if (newPointerSubModel->pMaterial->isOpaque())
     {
-        if ((*it) == exPointerSubModel)
+        for (std::vector<SubModel*>::iterator it = m_pOpaqueSubModels.begin(); it != m_pOpaqueSubModels.end(); ++it)
         {
-            *it = newPointerSubModel;
-            return;
+            if ((*it) == exPointerSubModel)
+            {
+                *it = newPointerSubModel;
+                return;
+            }
+        }
+    }
+    else
+    {
+        for (std::vector<SubModel*>::iterator it = m_pTransparenteSubModels.begin();
+             it != m_pTransparenteSubModels.end(); ++it)
+        {
+            if ((*it) == exPointerSubModel)
+            {
+                *it = newPointerSubModel;
+                return;
+            }
         }
     }
 }
 
 void RenderSystem::removeSubModel(SubModel* pSubModel) noexcept
 {
-    m_pSubModels.erase(std::remove(m_pSubModels.begin(), m_pSubModels.end(), pSubModel), m_pSubModels.end());
+    if (pSubModel->pMaterial->isOpaque())
+    {
+        m_pOpaqueSubModels.erase(std::remove(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel),
+                                 m_pOpaqueSubModels.end());
+    }
+    else
+    {
+        m_pTransparenteSubModels.erase(
+            std::remove(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), pSubModel),
+            m_pTransparenteSubModels.end());
+    }
 }
 
 void RenderSystem::addCamera(Camera* pCamera) noexcept

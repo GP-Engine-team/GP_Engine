@@ -63,6 +63,7 @@ std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceMan
         materialArg.comp.specular.rgbi = GPM::Vec4{color.r, color.g, color.b, 1.f};
 
         scene->mMaterials[i]->Get(AI_MATKEY_SHININESS, materialArg.comp.shininess);
+        scene->mMaterials[i]->Get(AI_MATKEY_OPACITY, materialArg.comp.opacity);
 
         materialArg.pTexture = &resourceManager.add<Texture>(str.C_Str(), textureArg);
     }

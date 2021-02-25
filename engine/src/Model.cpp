@@ -18,7 +18,8 @@ using namespace GPM;
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
 {
     return lhs->pShader->getID() < rhs->pShader->getID() || lhs->pMesh->getID() < rhs->pMesh->getID() ||
-           lhs->pMaterial->getDiffuseTexture()->getID() < rhs->pMaterial->getDiffuseTexture()->getID();
+           lhs->pMaterial->getDiffuseTexture()->getID() < rhs->pMaterial->getDiffuseTexture()->getID() ||
+           (lhs->pMaterial->isOpaque() && !rhs->pMaterial->isOpaque());
 }
 
 Model::Model(const Model& other) noexcept : Component(other.m_gameObject), m_subModels{other.m_subModels}

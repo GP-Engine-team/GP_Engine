@@ -17,6 +17,7 @@ namespace GPE
         DiffuseComponent    diffuse;
         SpecularComponent   specular;
         float               shininess;
+        float               opacity;
     };
 
     // Same memory layout than 'struct light' in glsl shader

@@ -30,7 +30,7 @@ class Shader;
 class RenderSystem
 {
     public :
-    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>, std::vector<SubModel*>, std::vector<Camera*>, std::vector<Light*>)>;
+    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>, std::vector<SubModel*>, std::vector<SubModel*>, std::vector<Camera*>, std::vector<Light*>)>;
     /**
      * The Singleton's constructor/destructor should always be private to
      * prevent direct construction/desctruction calls with the `new`/`delete`
@@ -41,7 +41,8 @@ private:
 
 protected:
     std::vector<Renderer*> m_pRenderers;
-    std::vector<SubModel*> m_pSubModels;
+    std::vector<SubModel*> m_pOpaqueSubModels;
+    std::vector<SubModel*> m_pTransparenteSubModels;
     std::vector<Camera*>   m_pCameras;
     std::vector<Light*>    m_pLights;
 

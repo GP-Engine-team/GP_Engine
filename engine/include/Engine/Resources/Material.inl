@@ -18,3 +18,8 @@ const std::string& Material::getName() const noexcept
 {
     return m_name;
 }
+
+inline bool Material::isOpaque() const noexcept
+{
+    return !(m_comp.opacity < 1.f);
+}

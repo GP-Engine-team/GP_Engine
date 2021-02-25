@@ -21,13 +21,13 @@ public:
     struct CreateArg
     {
         std::string       name{""};
-        MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
+        MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
         Texture*          pTexture{nullptr};
     };
 
 protected:
     std::string       m_name{""};
-    MaterialComponent m_comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
+    MaterialComponent m_comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
     Texture*          m_pDiffuseTexture{nullptr};
 
 public:
@@ -61,10 +61,7 @@ public:
      */
     inline const std::string& getName() const noexcept;
 
-    inline bool isOpaque() const noexcept
-    {
-        return false;
-    }
+    inline bool isOpaque() const noexcept;
 };
 
 #include "Material.inl"
