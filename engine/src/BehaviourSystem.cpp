@@ -49,7 +49,7 @@ void BehaviourSystem::addBehaviour(BehaviourComponent* pBehaviour) noexcept
 }
 
 void BehaviourSystem::updateBehaviourPointer(BehaviourComponent* newPointorBehaviour,
-                                             BehaviourComponent* exPointorBehaviour) noexcept
+                                             const BehaviourComponent* exPointorBehaviour) noexcept
 {
     const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();
     for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != end; ++it)

@@ -57,7 +57,7 @@ public:
     // TODO: Remove this shit and create variadic templated system
     void addBehaviour(BehaviourComponent* pBehaviour) noexcept;
 
-    void updateBehaviourPointer(BehaviourComponent* newPointerBehaviour, BehaviourComponent* exPointerBehaviour) noexcept;
+    void updateBehaviourPointer(BehaviourComponent * newPointerBehaviour, const BehaviourComponent* exPointerBehaviour) noexcept;
 
     void removeBehaviour(BehaviourComponent* pBehaviour) noexcept;
 
