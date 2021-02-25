@@ -1,4 +1,5 @@
-[submodule "engine/third_party/gpm"]
+
+[submodule "gpm"]
 	path = engine/third_party/gpm
 	url = https://github.com/GP-Engine-team/gpm.git
-	branch = main
+	branch = develop
