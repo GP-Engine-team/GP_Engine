@@ -55,6 +55,4 @@ public:
     Model& operator=(Model&& other) = delete;
 };
 
-#include "Model.inl"
-
 } /*namespace GPE*/
