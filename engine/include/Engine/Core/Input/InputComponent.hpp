@@ -32,7 +32,6 @@ public:
 
 private:
     std::unordered_map<std::string, std::function<void()>> m_functionMap;
-    // std::unordered_map<std::string, std::function<void(GPM::Vec3)>> m_axisFunctionMap;
     int m_key = -1;
 
 public:
@@ -43,13 +42,6 @@ public:
      * @param function
      */
     void bindAction(const std::string& action, const std::function<void()>& function, const EKeyMode& keyMode);
-
-    /**
-     * @brief Bind an function axis to an action
-     * @param action
-     * @param function
-     */
-    void bindAxis(const std::string& action, const std::function<void(const GPM::Vec3& axis)>& function);
 
     /**
      * @brief launch an action

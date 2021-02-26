@@ -34,8 +34,3 @@ void InputComponent::fireAction(const std::string& action)
         myfunc();
     }
 }
-
-void InputComponent::bindAxis(const std::string& action, const std::function<void(const GPM::Vec3& axis)>& function)
-{
-    // m_axisFunctionMap.emplace(action, function);
-}
