@@ -115,7 +115,7 @@
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>C:\Users\Utilisateur\Downloads\GP_Engine_Seria3\GP_Engine\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
+      <Command>$(GPEngine)..\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -145,7 +145,7 @@
       </AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>C:\Users\Utilisateur\Downloads\GP_Engine_Seria3\GP_Engine\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
+      <Command>$(GPEngine)..\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -169,7 +169,7 @@
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>C:\Users\Utilisateur\Downloads\GP_Engine_Seria3\GP_Engine\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
+      <Command>$(GPEngine)..\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -199,7 +199,7 @@
       </AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>C:\Users\Utilisateur\Downloads\GP_Engine_Seria3\GP_Engine\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
+      <Command>$(GPEngine)..\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -238,8 +238,7 @@
     <ClInclude Include="include\Engine\Resources\Shader.hpp" />
     <ClInclude Include="include\Engine\Resources\Texture.hpp" />
     <ClInclude Include="include\Engine\Resources\Type.hpp" />
-    <ClInclude Include="include\Engine\Test\Foo.hpp" />
-    <ClInclude Include="include\Engine\Test\Serialize.h" />
+    <ClInclude Include="include\Engine\Serialization\Serialize.h" />
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\conversion.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\Matrix3.hpp" />

@@ -195,9 +195,6 @@
     <ClInclude Include="include\Engine\Core\Game\ContextStartup.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Test\Foo.hpp">
-      <Filter>Test</Filter>
-    </ClInclude>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
       <Filter>third_party\gpm</Filter>
     </ClInclude>
@@ -279,8 +276,8 @@
     <ClInclude Include="third_party\gpm\include\GPM\Vector4.hpp">
       <Filter>third_party\gpm</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Test\Serialize.h">
-      <Filter>Test</Filter>
+    <ClInclude Include="include\Engine\Serialization\Serialize.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -371,9 +368,6 @@
     </Filter>
     <Filter Include="third_party\gpm">
       <UniqueIdentifier>{a2407ea9-052e-4dda-94fb-8a6a09d22eba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Test">
-      <UniqueIdentifier>{c26745be-877b-485c-97ee-87f2b82ea8d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
