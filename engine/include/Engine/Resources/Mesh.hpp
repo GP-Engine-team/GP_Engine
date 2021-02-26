@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -31,12 +31,12 @@ public:
 
     struct CreateArg
     {
-        std::string                      objName;
-        std::vector<GPM::Vec3>           vBuffer;
-        std::vector<GPM::Vec2>           vtBuffer;
-        std::vector<GPM::Vec3>           vnBuffer;
-        std::vector<Indice>              iBuffer;
-        BoundingVolume                   boundingVolume{BoundingVolume::SPHERE};
+        std::string            objName;
+        std::vector<GPM::Vec3> vBuffer;
+        std::vector<GPM::Vec2> vtBuffer;
+        std::vector<GPM::Vec3> vnBuffer;
+        std::vector<Indice>    iBuffer;
+        BoundingVolume         boundingVolume{BoundingVolume::SPHERE};
     };
 
     enum class Axis
@@ -50,23 +50,13 @@ public:
     };
 
 protected:
-    GLuint m_indexVAO = 0;
+    GLuint       m_indexVAO      = 0;
     unsigned int m_verticesCount = 0;
 
-    BoundingVolume                   m_boundingVolumeType = BoundingVolume::NONE;
-    std::unique_ptr<GPM::Volume>     m_boundingVolume = nullptr;
-
-protected:
-
-     /**
-     * @brief Load Mesh from CPU to GPU. This operation can be slow but use more faster the Mesh.
-     *
-     */
-    void loadInGPU() noexcept;
-    void unloadFromGPU() noexcept;
+    BoundingVolume               m_boundingVolumeType = BoundingVolume::NONE;
+    std::unique_ptr<GPM::Volume> m_boundingVolume     = nullptr;
 
 private:
-
     void generateBoundingSphere(const std::vector<GPM::Vec3>& vBuffer) noexcept;
 
 public:
@@ -90,7 +80,6 @@ public:
 
     inline unsigned int getVerticesCount() const noexcept;
 
-
     /**
      * @brief Create a plae object of radius 1 and return it mesh. Plane is centered on the origin
      *
@@ -99,8 +88,8 @@ public:
      * @return MeshConstructorArg
      */
     static Mesh::CreateArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f, float textureRepetition = 1.f,
-                                       unsigned int indexTextureX = 0,
-                                       unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y, bool isRectoVerso = false) noexcept;
+                                      unsigned int indexTextureX = 0, unsigned int indexTextureY = 0,
+                                      Axis towardAxis = Axis::Y, bool isRectoVerso = false) noexcept;
 
     /**
      * @brief Create a Cube object of radius 1 and return it mesh. Cube is centered on the origin

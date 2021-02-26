@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <vector> //std::vector
 #include <memory> //std::shared_ptr
+#include <vector> //std::vector
 
 #include "Engine/Intermediate/Component.hpp"
 #include "GPM/Shape3D/Volume.hpp"
@@ -22,7 +22,7 @@ class Model;
 
 struct SubModel
 {
-    Model*    pModel   = nullptr;
+    Model*    pModel    = nullptr;
     Shader*   pShader   = nullptr;
     Material* pMaterial = nullptr;
     Mesh*     pMesh     = nullptr;
@@ -37,7 +37,7 @@ class Model : public Component
 public:
     struct CreateArg
     {
-        std::vector<SubModel>* pSubModels;
+        std::vector<SubModel> subModels;
     };
 
 protected:

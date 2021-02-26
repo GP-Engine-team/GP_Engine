@@ -1,4 +1,4 @@
-#include "Engine/Core/Parsers/ObjParser.hpp"
+﻿#include "Engine/Core/Parsers/ObjParser.hpp"
 
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/postprocess.h> // Post processing flags
@@ -11,7 +11,7 @@
 using namespace GPE;
 using namespace GPM;
 
-std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager) noexcept
+Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager) noexcept
 {
     GPE_ASSERT(assetPath != nullptr, "Void path");
 
@@ -26,8 +26,8 @@ std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceMan
 
     // SubModule initialization
     GPE_ASSERT(scene->HasMeshes(), "File without mesh");
-    std::vector<SubModel> subModuleBuffer;
-    subModuleBuffer.reserve(scene->mNumMeshes);
+    Model::CreateArg modelArg;
+    modelArg.subModels.reserve(scene->mNumMeshes);
 
     // Material and texture
     GPE_ASSERT(scene->HasMaterials(), "Mesh without material not supported");
@@ -99,12 +99,12 @@ std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceMan
 
         bool enableBackFaceCulling = true;
 
-        subModuleBuffer.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
-                                              &materials[scene->mMeshes[i]->mMaterialIndex - 1],
-                                              &resourceManager.add<Mesh>(arg.objName, arg), true});
+        modelArg.subModels.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
+                                                 &materials[scene->mMeshes[i]->mMaterialIndex - 1],
+                                                 &resourceManager.add<Mesh>(arg.objName, arg), true});
     }
 
     Log::logInitializationEnd("Obj parsing");
 
-    return subModuleBuffer;
+    return modelArg;
 }

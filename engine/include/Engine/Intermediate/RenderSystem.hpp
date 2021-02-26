@@ -32,12 +32,21 @@ class Shader;
 class RenderSystem
 {
 public:
+    enum class EDebugShapeMode
+    {
+        POINT = GL_POINT,
+        LINE  = GL_LINE,
+        FILL  = GL_FILL
+    };
+
     struct DebugShape
     {
-        const Mesh*    shape;
-        GPM::Transform transform;
-        ColorRGBA      color;
+        const Mesh*     shape     = nullptr;
+        GPM::Transform  transform = {};
+        ColorRGBA       color     = ColorRGBA{1.f, 0.f, 0.f, 0.5f};
+        EDebugShapeMode mode      = EDebugShapeMode::FILL;
     };
+
     using LocalResourceManager = ResourcesManager<Mesh, Shader, Texture, RenderBuffer, RenderTexture>;
 
     using RenderPipeline = std::function<void(const ResourceManagerType&, const LocalResourceManager&, RenderSystem&,
@@ -91,11 +100,15 @@ public:
     RenderPipeline defaultRenderPipeline() const noexcept;
     void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
 
-    void drawDebugSphere(const GPM::Vec3& position, float radius, const ColorRGBA& color) noexcept;
+    void drawDebugSphere(const GPM::Vec3& position, float radius,
+                         const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                         EDebugShapeMode  mode  = EDebugShapeMode::FILL) noexcept;
     void drawDebugCube(const GPM::Vec3& position, const GPM::Quat& rotation, const GPM::Vec3& scale,
-                       const ColorRGBA& color) noexcept;
+                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                       EDebugShapeMode  mode  = EDebugShapeMode::FILL) noexcept;
     void drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
-                       const ColorRGBA& color) noexcept;
+                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                       EDebugShapeMode  mode  = EDebugShapeMode::FILL) noexcept;
 
 public:
     // TODO: Remove this shit and create variadic templated system

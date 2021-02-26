@@ -43,13 +43,13 @@ void displayBoundingShape(const SubModel* pSubModel)
         dir.z = sin(dt);
         dir.y = cos(dt);
 
-        RenderSystem::getInstance()->drawDebugQuad(pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
+        /*RenderSystem::getInstance()->drawDebugQuad(pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
                                                    dir, Vec3(pBoudingSphere->getRadius() * maxScale),
-                                                   ColorRGBA{0.f, 0.f, 0.f, 0.5f});
+                                                   ColorRGBA{0.f, 0.f, 0.f, 0.5f});*/
 
-        /* RenderSystem::getInstance()->drawDebugSphere(pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
-                                                      pBoudingSphere->getRadius() * maxScale,
-                                                      ColorRGBA{1.f, 1.f, 0.f, 0.5f});*/
+        RenderSystem::getInstance()->drawDebugSphere(
+            pSubModel->pModel->getOwner().getTransform().getGlobalPosition(), pBoudingSphere->getRadius() * maxScale,
+            ColorRGBA{1.f, 1.f, 0.f, 0.5f}, RenderSystem::EDebugShapeMode::LINE);
     }
 }
 
@@ -98,9 +98,6 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, std::vector<Light*> li
 {
     if ((pCurrentShaderUse->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        pCurrentShaderUse->setMat4("view", camToUse.getView().e);
-        pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
-
         std::vector<LightData> lightBuffer;
 
         for (auto&& light : lights)
@@ -110,23 +107,7 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, std::vector<Light*> li
 
         pCurrentShaderUse->setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
     }
-    else
-    {
-        if ((pCurrentShaderUse->getFeature() & SKYBOX) != SKYBOX)
-        {
-            pCurrentShaderUse->setMat4("view", camToUse.getView().e);
-            pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
-        }
-    }
 
-    if ((pCurrentShaderUse->getFeature() & SKYBOX) == SKYBOX)
-    {
-        Mat4 view = camToUse.getView();
-        // suppress translation
-        view.c[3].xyz = {0.f, 0.f, 0.f};
-        pCurrentShaderUse->setMat4("view", view.e);
-        pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
-    }
     /*
     if ((pCurrentShaderUse->getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
     {
@@ -143,17 +124,29 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
 {
     Shader* pShader = subModel.pShader;
 
-    if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    if ((pShader->getFeature() & SKYBOX) == SKYBOX)
     {
-        Mat3 inverseModelMatrix3(toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()));
+        Mat4 view = camToUse.getView();
+        // suppress translation
+        view.c[3].xyz = {0.f, 0.f, 0.f};
+        pShader->setMat4(
+            "projectViewModelMatrix",
+            (camToUse.getProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+    }
+    else
+    {
 
         pShader->setMat4("projectViewModelMatrix", (camToUse.getProjection() * camToUse.getView() *
                                                     subModel.pModel->getOwner().getTransform().getModelMatrix())
                                                        .e);
-        pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
     }
 
-    pShader->setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
+    if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    {
+        Mat3 inverseModelMatrix3(toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()));
+
+        pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
+    }
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
@@ -326,12 +319,14 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 const Shader* shaderToUse = rml.get<Shader>("UniqueColor");
                 glUseProgram(shaderToUse->getID());
-                shaderToUse->setMat4("view", pCameras[0]->getView().e);
-                shaderToUse->setMat4("projection", pCameras[0]->getProjection().e);
 
                 for (auto&& shape : debugShape)
                 {
-                    shaderToUse->setMat4("model", shape.transform.model.e);
+                    glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
+                    shaderToUse->setMat4(
+                        "projectViewModelMatrix",
+                        (pCameras[0]->getProjection() * pCameras[0]->getView() * shape.transform.model).e);
+
                     shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
 
                     rs.tryToBindMesh(shape.shape->getID());
@@ -341,6 +336,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 debugShape.clear();
             }
+
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
 
         // Render to screen
@@ -367,25 +364,27 @@ void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPip
                    m_pLights, m_debugShape);
 }
 
-void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color) noexcept
+void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,
+                                   EDebugShapeMode mode) noexcept
 {
     m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Sphere"),
-                                         toTransform(SplitTransform{Quat::identity(), position, Vec3(radius)}), color});
+                                         toTransform(SplitTransform{Quat::identity(), position, Vec3(radius)}), color,
+                                         mode});
 }
 
-void RenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation, const Vec3& scale,
-                                 const ColorRGBA& color) noexcept
+void RenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation, const Vec3& scale, const ColorRGBA& color,
+                                 EDebugShapeMode mode) noexcept
 {
-    m_debugShape.emplace_back(
-        DebugShape{m_localResources.get<Mesh>("Cube"), toTransform(SplitTransform{rotation, position, scale}), color});
+    m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Cube"),
+                                         toTransform(SplitTransform{rotation, position, scale}), color, mode});
 }
 
-void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale,
-                                 const ColorRGBA& color) noexcept
+void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale, const ColorRGBA& color,
+                                 EDebugShapeMode mode) noexcept
 {
     m_debugShape.emplace_back(DebugShape{
         m_localResources.get<Mesh>("Plane"),
-        toTransform(SplitTransform{toQuaternion(Transform::lookAt(Vec3::zero(), dir)), position, scale}), color});
+        toTransform(SplitTransform{toQuaternion(Transform::lookAt(Vec3::zero(), dir)), position, scale}), color, mode});
 }
 
 void RenderSystem::addRenderer(Renderer* pRenderer) noexcept
