@@ -100,7 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -115,7 +115,7 @@
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+      <Command>C:\Users\Utilisateur\Downloads\GP_Engine_Seria3\GP_Engine\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -126,7 +126,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -139,11 +139,13 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+      <Command>C:\Users\Utilisateur\Downloads\GP_Engine_Seria3\GP_Engine\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -152,7 +154,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -167,7 +169,7 @@
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+      <Command>C:\Users\Utilisateur\Downloads\GP_Engine_Seria3\GP_Engine\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -191,16 +193,20 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+      <Command>C:\Users\Utilisateur\Downloads\GP_Engine_Seria3\GP_Engine\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp" />
     <ClInclude Include="include\Engine\Core\Debug\Log.hpp" />
+    <ClInclude Include="include\Engine\Core\Game\AbstractGame.hpp" />
+    <ClInclude Include="include\Engine\Core\Game\ContextStartup.hpp" />
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp" />
@@ -232,6 +238,8 @@
     <ClInclude Include="include\Engine\Resources\Shader.hpp" />
     <ClInclude Include="include\Engine\Resources\Texture.hpp" />
     <ClInclude Include="include\Engine\Resources\Type.hpp" />
+    <ClInclude Include="include\Engine\Test\Foo.hpp" />
+    <ClInclude Include="include\Engine\Test\Serialize.h" />
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\conversion.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\Matrix3.hpp" />
@@ -265,10 +273,7 @@
     <ClInclude Include="third_party\include\KHR\khrplatform.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\gpm\gpm\src\Intersection.cpp" />
-    <ClCompile Include="..\..\..\gpm\gpm\src\Plane.cpp" />
-    <ClCompile Include="..\..\..\gpm\gpm\src\SegmentPlane.cpp" />
-    <ClCompile Include="..\..\..\gpm\gpm\src\SpherePlane.cpp" />
+    <ClCompile Include="src\AbstractGame.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
@@ -287,7 +292,11 @@
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\WindowGLFW.cpp" />
+    <ClCompile Include="third_party\gpm\src\Intersection.cpp" />
     <ClCompile Include="third_party\gpm\src\main.cpp" />
+    <ClCompile Include="third_party\gpm\src\Plane.cpp" />
+    <ClCompile Include="third_party\gpm\src\SegmentPlane.cpp" />
+    <ClCompile Include="third_party\gpm\src\SpherePlane.cpp" />
     <ClCompile Include="third_party\src\glad.c" />
   </ItemGroup>
   <ItemGroup>
