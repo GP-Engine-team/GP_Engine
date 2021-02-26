@@ -1,4 +1,4 @@
-#include "Engine/Resources/Shader.hpp"
+﻿#include "Engine/Resources/Shader.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -33,7 +33,6 @@ void computNormal(vec3 aNormal)
 {
     normal = normalize(inverseModelMatrix * aNormal);
 }
-
 )";
 
 static const char* lightBlinPhongFragmentShaderStr = R"(#define MAX_LIGHT_NUMBER 15

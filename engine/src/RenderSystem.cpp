@@ -39,17 +39,17 @@ void displayBoundingShape(const SubModel* pSubModel)
 
         static Vec3  dir = Vec3::forward();
         static float dt  = 0.f;
-        dt += 0.01f;
+        dt += 0.001f;
         dir.z = sin(dt);
         dir.y = cos(dt);
 
-        /*RenderSystem::getInstance()->drawDebugQuad(pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
+        RenderSystem::getInstance()->drawDebugQuad(pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
                                                    dir, Vec3(pBoudingSphere->getRadius() * maxScale),
-                                                   ColorRGBA{0.f, 0.f, 0.f, 0.5f});*/
+                                                   ColorRGBA{0.f, 0.f, 0.f, 0.5f});
 
-        RenderSystem::getInstance()->drawDebugSphere(
+        /*RenderSystem::getInstance()->drawDebugSphere(
             pSubModel->pModel->getOwner().getTransform().getGlobalPosition(), pBoudingSphere->getRadius() * maxScale,
-            ColorRGBA{1.f, 1.f, 0.f, 0.5f}, RenderSystem::EDebugShapeMode::LINE);
+            ColorRGBA{1.f, 1.f, 0.f, 0.5f}, RenderSystem::EDebugShapeMode::LINE);*/
     }
 }
 
@@ -143,8 +143,10 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        Mat3 inverseModelMatrix3(toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()));
+        Mat3 inverseModelMatrix3(
+            toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()).transposed());
 
+        pShader->setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
         pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
     }
 
