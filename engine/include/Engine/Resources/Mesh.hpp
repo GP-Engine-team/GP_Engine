@@ -98,7 +98,7 @@ public:
      * @param indexTexture          : index of texture if split
      * @return MeshConstructorArg
      */
-    static Mesh::CreateArg createPlane(float width = 0.5f, float height = 0.5f, float textureRepetition = 1.f,
+    static Mesh::CreateArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f, float textureRepetition = 1.f,
                                        unsigned int indexTextureX = 0,
                                        unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y, bool isRectoVerso = false) noexcept;
 

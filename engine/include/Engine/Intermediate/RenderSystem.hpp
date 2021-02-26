@@ -6,11 +6,12 @@
 
 #pragma once
 
-#include <vector> //std::vector
 #include <functional> //std::function
+#include <vector>     //std::vector
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
+#include "GPM/Transform.hpp"
 
 namespace GPE
 {
@@ -29,22 +30,28 @@ class Shader;
  */
 class RenderSystem
 {
-    public :
-    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>, std::vector<SubModel*>, std::vector<SubModel*>, std::vector<Camera*>, std::vector<Light*>)>;
-    /**
-     * The Singleton's constructor/destructor should always be private to
-     * prevent direct construction/desctruction calls with the `new`/`delete`
-     * operator.
-     */
+public:
+    struct DebugShape
+    {
+        const Mesh*    shape;
+        GPM::Transform transform;
+        ColorRGBA      color;
+    };
+
+    using RenderPipeline =
+        std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>&, std::vector<SubModel*>&,
+                           std::vector<SubModel*>&, std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&)>;
+
 private:
     static RenderSystem* m_pInstance;
 
 protected:
-    std::vector<Renderer*> m_pRenderers;
-    std::vector<SubModel*> m_pOpaqueSubModels;
-    std::vector<SubModel*> m_pTransparenteSubModels;
-    std::vector<Camera*>   m_pCameras;
-    std::vector<Light*>    m_pLights;
+    std::vector<Renderer*>  m_pRenderers;
+    std::vector<SubModel*>  m_pOpaqueSubModels;
+    std::vector<SubModel*>  m_pTransparenteSubModels;
+    std::vector<Camera*>    m_pCameras;
+    std::vector<Light*>     m_pLights;
+    std::vector<DebugShape> m_debugShape;
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
@@ -77,11 +84,14 @@ public:
     void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
-    void draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
+    void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
+
+    void drawDebugSphere(const ResourceManagerType& rm, GPM::Vec3 position, float radius, ColorRGBA color) noexcept;
+    void drawDebugCube(const ResourceManagerType& rm, GPM::Vec3 position, GPM::Quat rotation , GPM::Vec3 scale,
+                       ColorRGBA color) noexcept;
+    void drawDebugQuad(const ResourceManagerType& rm, GPM::Vec3 position, GPM::Quat rotation, GPM::Vec3 scale, ColorRGBA color) noexcept;
 
 public:
-
-
     // TODO: Remove this shit and create variadic templated system
     void addRenderer(Renderer* pRenderer) noexcept;
 
