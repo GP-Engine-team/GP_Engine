@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{7d7a0335-611a-485a-96c6-f9b79d1a08f2}</ProjectGuid>
+    <RootNamespace>GPEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\projects\GPGame\Projects.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\projects\GPGame\Projects.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\projects\GPGame\Projects.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\projects\GPGame\Projects.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\engine\third_party\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\engine\third_party\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\engine\third_party\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\engine\third_party\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <PreBuildEvent>
+      <Command>"$(ProjectDir)\third_party\bin\RefurekuGenerator.exe"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Engine\Core\Debug\Assert.hpp" />
+    <ClInclude Include="include\Engine\Core\Debug\Log.hpp" />
+    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp" />
+    <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp" />
+    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp" />
+    <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp" />
+    <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp" />
+    <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
+    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp" />
+    <ClInclude Include="include\Engine\Core\TimeSystem\TimeSystem.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\Component.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp" />
+    <ClInclude Include="include\Engine\Resources\Camera.hpp" />
+    <ClInclude Include="include\Engine\Resources\Color.hpp" />
+    <ClInclude Include="include\Engine\Resources\Light\DirectionalLight.hpp" />
+    <ClInclude Include="include\Engine\Resources\Light\Light.hpp" />
+    <ClInclude Include="include\Engine\Resources\Light\PointLight.hpp" />
+    <ClInclude Include="include\Engine\Resources\Light\SpotLight.hpp" />
+    <ClInclude Include="include\Engine\Resources\Material.hpp" />
+    <ClInclude Include="include\Engine\Resources\Mesh.hpp" />
+    <ClInclude Include="include\Engine\Resources\Model.hpp" />
+    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp" />
+    <ClInclude Include="include\Engine\Resources\Scene.hpp" />
+    <ClInclude Include="include\Engine\Resources\SceneManager.hpp" />
+    <ClInclude Include="include\Engine\Resources\Shader.hpp" />
+    <ClInclude Include="include\Engine\Resources\Texture.hpp" />
+    <ClInclude Include="include\Engine\Resources\Type.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\constants.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\conversion.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Matrix3.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Matrix4.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Quaternion.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Random.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Referential.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\AABB.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Capsule.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Cylinder.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\InfiniteCylinder.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Line.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\OrientedBox.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Plane.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Quad.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Segment.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Sphere.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Shape3D\Volume.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\ShapeRelation\Intersection.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\ShapeRelation\SegmentPlane.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\ShapeRelation\SpherePlane.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Tools.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Transform.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\types.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Vector2.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Vector3.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Vector4.hpp" />
+    <ClInclude Include="third_party\include\glad\glad.h" />
+    <ClInclude Include="third_party\include\GLFW\glfw3.h" />
+    <ClInclude Include="third_party\include\GLFW\glfw3native.h" />
+    <ClInclude Include="third_party\include\KHR\khrplatform.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\gpm\gpm\src\Intersection.cpp" />
+    <ClCompile Include="..\..\..\gpm\gpm\src\Plane.cpp" />
+    <ClCompile Include="..\..\..\gpm\gpm\src\SegmentPlane.cpp" />
+    <ClCompile Include="..\..\..\gpm\gpm\src\SpherePlane.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\DirectionalLight.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\Log.cpp" />
+    <ClCompile Include="src\Material.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\MTLParser.cpp" />
+    <ClCompile Include="src\ObjParser.cpp" />
+    <ClCompile Include="src\PointLight.cpp" />
+    <ClCompile Include="src\RendererGLFW_GL46.cpp" />
+    <ClCompile Include="src\RenderSystem.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\ShaderParser.cpp" />
+    <ClCompile Include="src\SpotLight.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\TimeSystem.cpp" />
+    <ClCompile Include="src\WindowGLFW.cpp" />
+    <ClCompile Include="third_party\gpm\src\main.cpp" />
+    <ClCompile Include="third_party\src\glad.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".clang-format" />
+    <None Include="ClassDiagram.cd" />
+    <None Include="include\Engine\Core\Debug\Log.inl" />
+    <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl" />
+    <None Include="include\Engine\Core\TimeSystem\TimeSystem.inl" />
+    <None Include="include\Engine\Core\Tools\Format.inl" />
+    <None Include="include\Engine\Intermediate\Component.inl" />
+    <None Include="include\Engine\Intermediate\DataChunk.inl" />
+    <None Include="include\Engine\Intermediate\GameObject.inl" />
+    <None Include="include\Engine\Resources\Camera.inl" />
+    <None Include="include\Engine\Resources\Light\Light.inl" />
+    <None Include="include\Engine\Resources\Material.inl" />
+    <None Include="include\Engine\Resources\Mesh.inl" />
+    <None Include="include\Engine\Resources\Model.inl" />
+    <None Include="include\Engine\Resources\ResourcesManager.inl" />
+    <None Include="include\Engine\Resources\Shader.inl" />
+    <None Include="include\Engine\Resources\Texture.inl" />
+    <None Include="third_party\gpm\include\GPM\Random.inl" />
+    <None Include="third_party\gpm\src\conversion.inl" />
+    <None Include="third_party\gpm\src\Matrix3.inl" />
+    <None Include="third_party\gpm\src\Matrix4.inl" />
+    <None Include="third_party\gpm\src\Quaternion.inl" />
+    <None Include="third_party\gpm\src\Transform.inl" />
+    <None Include="third_party\gpm\src\Vector2.inl" />
+    <None Include="third_party\gpm\src\Vector3.inl" />
+    <None Include="third_party\gpm\src\Vector4.inl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
