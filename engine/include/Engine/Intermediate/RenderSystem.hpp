@@ -11,6 +11,7 @@
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
+#include "Engine/Resources/ResourcesManager.hpp"
 #include "GPM/Transform.hpp"
 
 namespace GPE
@@ -46,12 +47,16 @@ private:
     static RenderSystem* m_pInstance;
 
 protected:
+    ResourcesManager<Mesh, Shader> m_localResources;
+
     std::vector<Renderer*>  m_pRenderers;
     std::vector<SubModel*>  m_pOpaqueSubModels;
     std::vector<SubModel*>  m_pTransparenteSubModels;
     std::vector<Camera*>    m_pCameras;
     std::vector<Light*>     m_pLights;
     std::vector<DebugShape> m_debugShape;
+
+    ResourceManagerType*    m_resourceManager;
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
@@ -60,7 +65,8 @@ protected:
     bool         m_currentBackFaceCullingModeEnable = false;
 
 protected:
-    inline RenderSystem() noexcept = default;
+    RenderSystem() noexcept;
+
     ~RenderSystem() noexcept       = default;
 
 public:
@@ -86,10 +92,10 @@ public:
     RenderPipeline defaultRenderPipeline() const noexcept;
     void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
 
-    void drawDebugSphere(const ResourceManagerType& rm, GPM::Vec3 position, float radius, ColorRGBA color) noexcept;
-    void drawDebugCube(const ResourceManagerType& rm, GPM::Vec3 position, GPM::Quat rotation , GPM::Vec3 scale,
+    void drawDebugSphere(GPM::Vec3 position, float radius, ColorRGBA color) noexcept;
+    void drawDebugCube(GPM::Vec3 position, GPM::Quat rotation , GPM::Vec3 scale,
                        ColorRGBA color) noexcept;
-    void drawDebugQuad(const ResourceManagerType& rm, GPM::Vec3 position, GPM::Quat rotation, GPM::Vec3 scale, ColorRGBA color) noexcept;
+    void drawDebugQuad(GPM::Vec3 position, GPM::Quat rotation, GPM::Vec3 scale, ColorRGBA color) noexcept;
 
 public:
     // TODO: Remove this shit and create variadic templated system

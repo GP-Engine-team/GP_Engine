@@ -26,7 +26,7 @@ using namespace GPM;
 
 RenderSystem* RenderSystem::m_pInstance{nullptr};
 
-void displayBoundingShape(const ResourceManagerType& rm, const SubModel* pSubModel)
+void displayBoundingShape(const SubModel* pSubModel)
 {
     const Volume* pBoudingVolume = pSubModel->pMesh->getBoundingVolume();
 
@@ -37,10 +37,20 @@ void displayBoundingShape(const ResourceManagerType& rm, const SubModel* pSubMod
                                            pSubModel->pModel->getOwner().getTransform().getScale().y),
                                   pSubModel->pModel->getOwner().getTransform().getScale().z);
 
-        RenderSystem::getInstance()->drawDebugSphere(
-            rm, pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
-            pBoudingSphere->getRadius() * maxScale, ColorRGBA{1.f, 1.f, 0.f, 0.5f});
+        RenderSystem::getInstance()->drawDebugSphere( pSubModel->pModel->getOwner().getTransform().getGlobalPosition(), pBoudingSphere->getRadius() * maxScale, ColorRGBA{1.f, 1.f, 0.f, 0.5f});
     }
+}
+
+RenderSystem::RenderSystem() noexcept
+{
+    m_localResources.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
+                                 "./resources/shaders/fSimpleColor.fs");
+
+    m_localResources.add<Mesh>("ScreenPlan", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
+    m_localResources.add<Mesh>("ScreenPlan", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
+    m_localResources.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
+    m_localResources.add<Mesh>("Cube", Mesh::createCube());
+    m_localResources.add<Mesh>("Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Y, true));
 }
 
 bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel)
@@ -247,7 +257,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 {
                     continue;
                 }
-                displayBoundingShape(rm, pSubModel);
+                displayBoundingShape(pSubModel);
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
@@ -282,7 +292,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             std::map<float, SubModel*>::reverse_iterator rEnd = mapElemSortedByDistance.rend();
             for (std::map<float, SubModel*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != rEnd; ++it)
             {
-                displayBoundingShape(rm, it->second);
+                displayBoundingShape(it->second);
 
                 rs.tryToBindShader(*it->second->pShader);
                 rs.tryToBindMesh(it->second->pMesh->getID());
@@ -344,23 +354,22 @@ void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPip
                    m_debugShape);
 }
 
-void RenderSystem::drawDebugSphere(const ResourceManagerType& rm, Vec3 position, float radius, ColorRGBA color) noexcept
+void RenderSystem::drawDebugSphere(Vec3 position, float radius, ColorRGBA color) noexcept
 {
     m_debugShape.emplace_back(DebugShape{
-        rm.get<Mesh>("Sphere"), GPM::toTransform(SplitTransform{Quat::identity(), position, Vec3(radius)}), color});
+        m_localResources.get<Mesh>("Sphere"), GPM::toTransform(SplitTransform{Quat::identity(), position, Vec3(radius)}), color});
 }
 
-void RenderSystem::drawDebugCube(const ResourceManagerType& rm, GPM::Vec3 position, GPM::Quat rotation, GPM::Vec3 scale,
-                   ColorRGBA color) noexcept
+void RenderSystem::drawDebugCube(GPM::Vec3 position, GPM::Quat rotation, GPM::Vec3 scale, ColorRGBA color) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{rm.get<Mesh>("Cube"), GPM::toTransform(SplitTransform{rotation, position, scale}), color});
+    m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Cube"),
+                                         GPM::toTransform(SplitTransform{rotation, position, scale}), color});
 }
 
-void RenderSystem::drawDebugQuad(const ResourceManagerType& rm, GPM::Vec3 position, GPM::Quat rotation, GPM::Vec3 scale,
-                                 ColorRGBA color) noexcept
+void RenderSystem::drawDebugQuad(GPM::Vec3 position, GPM::Quat rotation, GPM::Vec3 scale, ColorRGBA color) noexcept
 {
-    m_debugShape.emplace_back(
-        DebugShape{rm.get<Mesh>("Plane"), GPM::toTransform(SplitTransform{rotation, position, scale}), color});
+    m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Plane"),
+                                         GPM::toTransform(SplitTransform{rotation, position, scale}), color});
 }
 
 void RenderSystem::addRenderer(Renderer* pRenderer) noexcept
