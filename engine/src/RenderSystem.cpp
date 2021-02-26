@@ -46,7 +46,9 @@ RenderSystem::RenderSystem() noexcept
     m_localResources.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                  "./resources/shaders/fSimpleColor.fs");
 
-    m_localResources.add<Mesh>("ScreenPlan", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
+    m_localResources.add<Shader>("PostProcess", "./resources/shaders/vPostProcess.vs",
+                                 "./resources/shaders/fPostProcess.fs");
+
     m_localResources.add<Mesh>("ScreenPlan", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
     m_localResources.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
     m_localResources.add<Mesh>("Cube", Mesh::createCube());
@@ -228,7 +230,8 @@ void RenderSystem::resetCurrentRenderPassKey()
 
 RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
-    return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*>& pRenderers,
+    return [](const ResourceManagerType& rm, const LocalResourceManager& rml, RenderSystem& rs,
+              std::vector<Renderer*>& pRenderers,
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape)
 
@@ -241,7 +244,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         rs.resetCurrentRenderPassKey();
 
         glViewport(0, 0, w, h);
-        glBindFramebuffer(GL_FRAMEBUFFER, rm.get<RenderTexture>("FBO")->getID());
+        glBindFramebuffer(GL_FRAMEBUFFER, rml.get<RenderTexture>("FBO")->getID());
         glEnable(GL_DEPTH_TEST);
 
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
@@ -310,7 +313,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         {
             if (!debugShape.empty())
             {
-                const Shader* shaderToUse = rm.get<Shader>("UniqueColor");
+                const Shader* shaderToUse = rml.get<Shader>("UniqueColor");
                 glUseProgram(shaderToUse->getID());
                 shaderToUse->setMat4("view", pCameras[0]->getView().e);
                 shaderToUse->setMat4("projection", pCameras[0]->getProjection().e);
@@ -335,13 +338,13 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             glViewport(0, 0, w, h);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-            glBindVertexArray(rm.get<Mesh>("ScreenPlan")->getID());
+            glBindVertexArray(rml.get<Mesh>("ScreenPlan")->getID());
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glUseProgram(rm.get<Shader>("PostProcess")->getID());
-            glUniform1i(glGetUniformLocation(rm.get<Shader>("PostProcess")->getID(), "colorTexture"), 0);
+            glUseProgram(rml.get<Shader>("PostProcess")->getID());
+            glUniform1i(glGetUniformLocation(rml.get<Shader>("PostProcess")->getID(), "colorTexture"), 0);
 
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, rm.get<Texture>("ColorBufferFBO")->getID());
+            glBindTexture(GL_TEXTURE_2D, rml.get<Texture>("ColorBufferFBO")->getID());
 
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
@@ -350,7 +353,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
 void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
 {
-    renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
+    renderPipeline(res, m_localResources, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
                    m_debugShape);
 }
 
@@ -375,6 +378,23 @@ void RenderSystem::drawDebugQuad(GPM::Vec3 position, GPM::Quat rotation, GPM::Ve
 void RenderSystem::addRenderer(Renderer* pRenderer) noexcept
 {
     m_pRenderers.push_back(pRenderer);
+
+    int h, w;
+    pRenderer->getWindow()->getSize(w, h);
+
+    Texture::CreateArg textureArg;
+    textureArg.width  = w;
+    textureArg.height = h;
+
+    RenderBuffer::CreateArg depthBufferArg;
+    depthBufferArg.width          = w;
+    depthBufferArg.height         = h;
+    depthBufferArg.internalFormat = RenderBuffer::EInternalFormat::DEPTH_COMPONENT24;
+
+    RenderTexture::CreateArg renderArg;
+    renderArg.colorBuffers.emplace_back(&m_localResources.add<Texture>("ColorBufferFBO", textureArg));
+    renderArg.depthBuffer = &m_localResources.add<RenderBuffer>("depthBufferFBO", depthBufferArg);
+    m_localResources.add<RenderTexture>("FBO", renderArg);
 }
 
 void RenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept

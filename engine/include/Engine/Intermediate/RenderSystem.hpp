@@ -38,16 +38,17 @@ public:
         GPM::Transform transform;
         ColorRGBA      color;
     };
+    using LocalResourceManager = ResourcesManager<Mesh, Shader, Texture, RenderBuffer, RenderTexture>;
 
-    using RenderPipeline =
-        std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>&, std::vector<SubModel*>&,
+    using RenderPipeline = std::function<void(const ResourceManagerType&, const LocalResourceManager&, RenderSystem&,
+                                              std::vector<Renderer*>&, std::vector<SubModel*>&,
                            std::vector<SubModel*>&, std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&)>;
 
 private:
     static RenderSystem* m_pInstance;
 
 protected:
-    ResourcesManager<Mesh, Shader> m_localResources;
+    LocalResourceManager m_localResources;
 
     std::vector<Renderer*>  m_pRenderers;
     std::vector<SubModel*>  m_pOpaqueSubModels;
@@ -55,8 +56,6 @@ protected:
     std::vector<Camera*>    m_pCameras;
     std::vector<Light*>     m_pLights;
     std::vector<DebugShape> m_debugShape;
-
-    ResourceManagerType*    m_resourceManager;
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
