@@ -32,7 +32,7 @@ public:
 
 private:
     std::unordered_map<std::string, std::function<void()>> m_functionMap;
-    int m_key = -1;
+    int                                                    m_key = -1;
 
 public:
     std::unordered_map<std::string, EKeyMode> m_keyModeMap;
@@ -42,8 +42,7 @@ public:
      * @param function
      */
     template <typename T>
-    void bindAction(const std::string& action, const EKeyMode& keyMode, T* owner,
-                    void (T::*function)()) noexcept
+    void bindAction(const std::string& action, const EKeyMode& keyMode, T* owner, void (T::*function)()) noexcept
     {
         m_functionMap.emplace(action, std::bind(function, owner));
         m_keyModeMap.emplace(action, keyMode);

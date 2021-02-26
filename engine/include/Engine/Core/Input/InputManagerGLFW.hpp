@@ -42,77 +42,76 @@ private:
 public:
     /**
      * @brief get a pointeur to the InputManager singleton
-     * @return 
-    */
+     * @return
+     */
     static InputManager* GetInstance();
 
     /**
      * @brief Callback to get the state of any keyboard keys
-     * @param window 
-     * @param key 
-     * @param scancode 
-     * @param action 
-     * @param mods 
-     * @return 
-    */
-    void            keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const noexcept;
-    
+     * @param window
+     * @param key
+     * @param scancode
+     * @param action
+     * @param mods
+     * @return
+     */
+    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const noexcept;
+
     /**
      * @brief Callback to get the new position of the mouse cursor
-     * @param window 
-     * @param xpos 
-     * @param ypos 
-     * @return 
-    */
-    void            cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
+     * @param window
+     * @param xpos
+     * @param ypos
+     * @return
+     */
+    void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
 
     /**
      * @brief Throw events to input components
-     * @param action 
-     * @return 
-    */
-    void            fireInputComponents(const std::string& action, const int& key) const noexcept;
+     * @param action
+     * @return
+     */
+    void fireInputComponents(const std::string& action, const int& key) const noexcept;
 
     /**
      * @brief Setup Callbacks (call it one time to setup callbacks function proprely)
-     * @param window 
-     * @return 
-    */
-    void            setupCallbacks(GLFWwindow* window) noexcept;
+     * @param window
+     * @return
+     */
+    void setupCallbacks(GLFWwindow* window) noexcept;
 
     /**
      * @brief bind a key to an action
-     * @param key 
-     * @param action 
-     * @return 
-    */
-    inline void     bindInput(int key, const std::string& action) noexcept;
+     * @param key
+     * @param action
+     * @return
+     */
+    inline void bindInput(int key, const std::string& action) noexcept;
 
     /**
      * @brief add input component to the component list
-     * @param input 
-     * @return 
-    */
-    inline int      addComponent(InputComponent* input) noexcept;
+     * @param input
+     * @return
+     */
+    inline int addComponent(InputComponent* input) noexcept;
 
     /**
      * @brief remove input component to the component list
-     * @param key 
-     * @return 
-    */
-    inline void     removeComponent(int key) noexcept;
+     * @param key
+     * @return
+     */
+    inline void removeComponent(int key) noexcept;
 
     /**
      * @brief Call it to poll events and update inputs
-     * @return 
-    */
-    void            processInput() noexcept;
-    
-    
+     * @return
+     */
+    void processInput() noexcept;
+
     /**
      * @brief get a reference to the cursor
-     * @return 
-    */
+     * @return
+     */
     [[nodiscard]] inline const Cursor& getCursor() const noexcept;
 };
 

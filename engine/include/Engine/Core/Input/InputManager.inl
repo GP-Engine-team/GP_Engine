@@ -7,7 +7,7 @@ void InputManager::bindInput(int key, const std::string& action) noexcept
 
 int InputManager::addComponent(InputComponent* input) noexcept
 {
-   int key = static_cast<int>(m_inputComponents.size());
+    int key = static_cast<int>(m_inputComponents.size());
     m_inputComponents.emplace(key, input);
 
     return key;
