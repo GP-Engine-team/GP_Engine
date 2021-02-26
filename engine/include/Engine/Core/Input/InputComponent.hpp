@@ -41,12 +41,18 @@ public:
      * @param action
      * @param function
      */
-    void bindAction(const std::string& action, const std::function<void()>& function, const EKeyMode& keyMode);
+    template <typename T>
+    void bindAction(const std::string& action, const EKeyMode& keyMode, T* owner,
+                    void (T::*function)()) noexcept
+    {
+        m_functionMap.emplace(action, std::bind(function, owner));
+        m_keyModeMap.emplace(action, keyMode);
+    }
 
     /**
      * @brief launch an action
      * @param action
      */
-    void fireAction(const std::string& action);
+    void fireAction(const std::string& action) noexcept;
 };
 } // namespace GPE
