@@ -25,20 +25,32 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
     InputManager* input = InputManager::GetInstance();
     if (!action.empty())
     {
-        auto it = input->m_stateMap.find(key);
+        auto stateMapIt = input->m_stateMap.find(key);
+        auto lastStateMapIt = input->m_stateMap.find(key);
         for (int i = 0; i < input->m_inputComponents.size(); i++)
         {
-            auto it2  = input->m_inputComponents[i]->m_keyModeMap.find(action);
-            if (it2->second == EKeyMode::KEY_PRESS && it->second == true)
+            auto keyModeMapIt  = input->m_inputComponents[i]->m_keyModeMap.find(action);
+             if (stateMapIt->second == true)
             {
-                input->m_inputComponents[i]->fireAction(action);
-                input->m_stateMap[key] = false;
+                  switch (keyModeMapIt->second)
+                  {
+                         case  EKeyMode::KEY_PRESS:
+                                          input ->m_inputComponents[i]->fireAction(action);
+                                          input->m_stateMap[key] = false;
+                                          break;
+                         case  EKeyMode::KEY_REPEAT:
+                                          input->m_inputComponents[i]->fireAction(action);
+                                          break;
+                  }
             }
 
-            else if (it2->second == EKeyMode::KEY_REPEAT && it->second == true)
+            /*else if (keyModeMapIt->second == EKeyMode::KEY_RELEASE && stateMapIt->second == false)
             {
-                input->m_inputComponents[i]->fireAction(action);
-            }
+                if (lastStateMapIt->second == true)
+                {
+                    input->m_inputComponents[i]->fireAction(action);
+                }
+            }*/
         }
     }
 }
@@ -49,6 +61,11 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 
     if (action != GLFW_REPEAT)
     {
+        if (input->m_stateMap[key])
+        {
+            auto stateMapIt = input->m_stateMap.find(key);
+            input->m_lastStateMap[key] = stateMapIt->second;
+        }
         input->m_stateMap[key] = action != GLFW_RELEASE;
     }
 }

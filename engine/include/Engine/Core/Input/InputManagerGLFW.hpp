@@ -36,6 +36,7 @@ public:
 private:
     std::unordered_multimap<int, std::string> m_actionMap;
     std::unordered_map<int, bool>             m_stateMap;
+    std::unordered_map<int, bool>             m_lastStateMap;
     std::unordered_map<int, InputComponent*>  m_inputComponents;
     Cursor                                    m_cursor;
 

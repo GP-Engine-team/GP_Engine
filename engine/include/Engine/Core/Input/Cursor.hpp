@@ -8,15 +8,10 @@
 
 namespace GPE
 {
-class Cursor
+struct Cursor
 {
-public:
-    Cursor()  = default;
-    ~Cursor() = default;
-
-public:
-    GPM::Vec2 position = {300, 450};
+    GPM::Vec2 position = {0, 0};
     GPM::Vec2 deltaPos = {0, 0};
-    GPM::Vec2 center   = {300, 450};
+    GPM::Vec2 center   = {0, 0};
 };
 } // namespace GPE
