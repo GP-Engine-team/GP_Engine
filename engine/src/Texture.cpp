@@ -60,24 +60,25 @@ void Texture::loadInGPU(int w, int h, int comp, ETextureMinFilter textureMinFilt
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(textureWrapS));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(textureWrapT));
 
-    if (comp == 1)
+    switch (comp)
     {
+    case 1:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, w, h, 0, GL_RED, GL_UNSIGNED_BYTE, pixels);
-    }
-    else if (comp == 2)
-    {
+        break;
+
+    case 2:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, w, h, 0, GL_RG, GL_UNSIGNED_BYTE, pixels);
-    }
-    else if (comp == 3)
-    {
+        break;
+
+    case 3:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-    }
-    else if (comp == 4)
-    {
+        break;
+
+    case 4:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-    }
-    else
-    {
+        break;
+
+    default:
         FUNCT_WARNING((std::string("Texture component unsuppported with component : ") + std::to_string(comp)).c_str());
         exit(1);
     }

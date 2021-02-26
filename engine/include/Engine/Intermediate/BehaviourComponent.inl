@@ -10,10 +10,10 @@ BehaviourComponent::~BehaviourComponent() noexcept
     BehaviourSystem::getInstance()->removeBehaviour(this);
 
     if (m_isFixedUpdated)
-        BehaviourSystem::getInstance()->removeFixedUpdate(this);
+        BehaviourSystem::getInstance()->removeFixedUpdate(*this);
 
     if (m_isUpdated)
-        BehaviourSystem::getInstance()->removeUpdate(this);
+        BehaviourSystem::getInstance()->removeUpdate(*this);
 }
 
 BehaviourComponent::BehaviourComponent(BehaviourComponent&& other) noexcept
@@ -26,16 +26,22 @@ BehaviourComponent::BehaviourComponent(BehaviourComponent&& other) noexcept
 
 void BehaviourComponent::enableUpdate(bool flag) noexcept
 {
+    if (m_isUpdated == flag)
+        return;
+
     if (m_isUpdated = flag)
-        BehaviourSystem::getInstance()->addUpdate(this);
+        BehaviourSystem::getInstance()->addUpdate(*this);
     else
-        BehaviourSystem::getInstance()->removeUpdate(this);
+        BehaviourSystem::getInstance()->removeUpdate(*this);
 }
 
 void BehaviourComponent::enableFixedUpdate(bool flag) noexcept
 {
+    if (m_isFixedUpdated == flag)
+        return;
+
     if (m_isFixedUpdated = flag)
-        BehaviourSystem::getInstance()->addFixedUpdate(this);
+        BehaviourSystem::getInstance()->addFixedUpdate(*this);
     else
-        BehaviourSystem::getInstance()->removeFixedUpdate(this);
+        BehaviourSystem::getInstance()->removeFixedUpdate(*this);
 }

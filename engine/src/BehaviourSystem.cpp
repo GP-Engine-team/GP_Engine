@@ -7,36 +7,38 @@ using namespace GPE;
 
 BehaviourSystem* BehaviourSystem::m_pInstance{nullptr};
 
-void BehaviourSystem::addUpdate(BehaviourComponent* updateFunction) noexcept
+void BehaviourSystem::addUpdate(BehaviourComponent& updateFunction) noexcept
 {
-    m_updateFunctions.emplace_back(updateFunction);
+    m_updateFunctions.emplace_back(&updateFunction);
 }
 
-void BehaviourSystem::addFixedUpdate(BehaviourComponent* fixedUpdateFunction) noexcept
+void BehaviourSystem::addFixedUpdate(BehaviourComponent& fixedUpdateFunction) noexcept
 {
-    m_updateFunctions.emplace_back(fixedUpdateFunction);
+    m_updateFunctions.emplace_back(&fixedUpdateFunction);
 }
 
-void BehaviourSystem::removeUpdate(BehaviourComponent* updateFunctionToRemove) noexcept
+void BehaviourSystem::removeUpdate(BehaviourComponent& updateFunctionToRemove) noexcept
 {
     for (auto&& function : m_updateFunctions)
     {
-        if (unlikely(function == updateFunctionToRemove))
+        if (unlikely(function == &updateFunctionToRemove))
         {
             std::swap(function, m_updateFunctions.back());
             m_updateFunctions.pop_back();
+            return;
         }
     }
 }
 
-void BehaviourSystem::removeFixedUpdate(BehaviourComponent* fixedUpdateFunctionToRemove) noexcept
+void BehaviourSystem::removeFixedUpdate(BehaviourComponent& fixedUpdateFunctionToRemove) noexcept
 {
     for (auto&& function : m_updateFunctions)
     {
-        if (unlikely(function == fixedUpdateFunctionToRemove))
+        if (unlikely(function == &fixedUpdateFunctionToRemove))
         {
             std::swap(function, m_updateFunctions.back());
             m_updateFunctions.pop_back();
+            return;
         }
     }
 }
@@ -47,9 +49,10 @@ void BehaviourSystem::addBehaviour(BehaviourComponent* pBehaviour) noexcept
 }
 
 void BehaviourSystem::updateBehaviourPointer(BehaviourComponent* newPointorBehaviour,
-                                             BehaviourComponent* exPointorBehaviour) noexcept
+                                             const BehaviourComponent* exPointorBehaviour) noexcept
 {
-    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != m_pBehaviours.end(); it++)
+    const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();
+    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != end; ++it)
     {
         if ((*it) == exPointorBehaviour)
         {
@@ -61,7 +64,8 @@ void BehaviourSystem::updateBehaviourPointer(BehaviourComponent* newPointorBehav
 
 void BehaviourSystem::removeBehaviour(BehaviourComponent* pBehaviour) noexcept
 {
-    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != m_pBehaviours.end(); it++)
+    const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();
+    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != end; ++it)
     {
         if ((*it) == pBehaviour)
         {
