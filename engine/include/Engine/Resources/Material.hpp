@@ -18,35 +18,20 @@ namespace GPE
 class Material
 {
 public:
-    struct CreateArgWithTexture
-    {
-        std::string       name{""};
-        MaterialComponent comp{{1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
-        Texture::LoadArg  diffuseTextureArg;
-    };
-
     struct CreateArg
     {
-        std::string              name{""};
-        MaterialComponent        comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
-        std::unique_ptr<Texture> pTexture{nullptr};
+        std::string       name{""};
+        MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
+        Texture*          pTexture{nullptr};
     };
 
 protected:
-    MaterialComponent        m_comp;
-    std::shared_ptr<Texture> m_pDiffuseTexture;
-    std::string              m_name;
+    std::string       m_name{""};
+    MaterialComponent m_comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f};
+    Texture*          m_pDiffuseTexture{nullptr};
 
 public:
-    Material(const CreateArgWithTexture& arg);
-    inline Material(CreateArg& arg);
-
-    /**
-     * @brief Construct a new Material object after parse mtl files
-     *
-     * @param arg
-     */
-    inline Material(const MaterialAttrib& arg);
+    inline Material(const CreateArg& arg);
 
     Material()                      = default;
     Material(const Material& other) = default;
@@ -67,7 +52,7 @@ public:
      *
      * @return const Texture*
      */
-    inline Texture* getPDiffuseTexture() noexcept;
+    inline const Texture* getDiffuseTexture() const noexcept;
 
     /**
      * @brief Get the Name object
@@ -75,6 +60,11 @@ public:
      * @return const std::string&
      */
     inline const std::string& getName() const noexcept;
+
+    inline bool isOpaque() const noexcept
+    {
+        return false;
+    }
 };
 
 #include "Material.inl"
