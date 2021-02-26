@@ -1,4 +1,4 @@
-#include "Engine/Intermediate/RenderSystem.hpp"
+﻿#include "Engine/Intermediate/RenderSystem.hpp"
 
 #include <algorithm> //std::sort
 #include <cstdio>
@@ -37,7 +37,19 @@ void displayBoundingShape(const SubModel* pSubModel)
                                            pSubModel->pModel->getOwner().getTransform().getScale().y),
                                   pSubModel->pModel->getOwner().getTransform().getScale().z);
 
-        RenderSystem::getInstance()->drawDebugSphere( pSubModel->pModel->getOwner().getTransform().getGlobalPosition(), pBoudingSphere->getRadius() * maxScale, ColorRGBA{1.f, 1.f, 0.f, 0.5f});
+        static Vec3  dir = Vec3::forward();
+        static float dt  = 0.f;
+        dt += 0.01f;
+        dir.z = sin(dt);
+        dir.y = cos(dt);
+
+        RenderSystem::getInstance()->drawDebugQuad(pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
+                                                   dir, Vec3(pBoudingSphere->getRadius() * maxScale),
+                                                   ColorRGBA{0.f, 0.f, 0.f, 0.5f});
+
+        /* RenderSystem::getInstance()->drawDebugSphere(pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
+                                                      pBoudingSphere->getRadius() * maxScale,
+                                                      ColorRGBA{1.f, 1.f, 0.f, 0.5f});*/
     }
 }
 
@@ -52,7 +64,7 @@ RenderSystem::RenderSystem() noexcept
     m_localResources.add<Mesh>("ScreenPlan", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
     m_localResources.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
     m_localResources.add<Mesh>("Cube", Mesh::createCube());
-    m_localResources.add<Mesh>("Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Y, true));
+    m_localResources.add<Mesh>("Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
 }
 
 bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel)
@@ -84,11 +96,11 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
 
 void RenderSystem::sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse)
 {
-    pCurrentShaderUse->setMat4("view", camToUse.getView().e);
-    pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
-
     if ((pCurrentShaderUse->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
+        pCurrentShaderUse->setMat4("view", camToUse.getView().e);
+        pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
+
         std::vector<LightData> lightBuffer;
 
         for (auto&& light : lights)
@@ -133,8 +145,7 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        Mat3 inverseModelMatrix3(
-            GPM::toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()));
+        Mat3 inverseModelMatrix3(toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()));
 
         pShader->setMat4("projectViewModelMatrix", (camToUse.getProjection() * camToUse.getView() *
                                                     subModel.pModel->getOwner().getTransform().getModelMatrix())
@@ -231,9 +242,9 @@ void RenderSystem::resetCurrentRenderPassKey()
 RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
     return [](const ResourceManagerType& rm, const LocalResourceManager& rml, RenderSystem& rs,
-              std::vector<Renderer*>& pRenderers,
-              std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
-              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape)
+              std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
+              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
+              std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape)
 
     {
         int h, w;
@@ -325,7 +336,6 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                     rs.tryToBindMesh(shape.shape->getID());
 
-
                     glDrawArrays(GL_TRIANGLES, 0, shape.shape->getVerticesCount());
                 }
 
@@ -353,26 +363,29 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
 void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
 {
-    renderPipeline(res, m_localResources, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_debugShape);
+    renderPipeline(res, m_localResources, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras,
+                   m_pLights, m_debugShape);
 }
 
-void RenderSystem::drawDebugSphere(Vec3 position, float radius, ColorRGBA color) noexcept
+void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color) noexcept
+{
+    m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Sphere"),
+                                         toTransform(SplitTransform{Quat::identity(), position, Vec3(radius)}), color});
+}
+
+void RenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation, const Vec3& scale,
+                                 const ColorRGBA& color) noexcept
+{
+    m_debugShape.emplace_back(
+        DebugShape{m_localResources.get<Mesh>("Cube"), toTransform(SplitTransform{rotation, position, scale}), color});
+}
+
+void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale,
+                                 const ColorRGBA& color) noexcept
 {
     m_debugShape.emplace_back(DebugShape{
-        m_localResources.get<Mesh>("Sphere"), GPM::toTransform(SplitTransform{Quat::identity(), position, Vec3(radius)}), color});
-}
-
-void RenderSystem::drawDebugCube(GPM::Vec3 position, GPM::Quat rotation, GPM::Vec3 scale, ColorRGBA color) noexcept
-{
-    m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Cube"),
-                                         GPM::toTransform(SplitTransform{rotation, position, scale}), color});
-}
-
-void RenderSystem::drawDebugQuad(GPM::Vec3 position, GPM::Quat rotation, GPM::Vec3 scale, ColorRGBA color) noexcept
-{
-    m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Plane"),
-                                         GPM::toTransform(SplitTransform{rotation, position, scale}), color});
+        m_localResources.get<Mesh>("Plane"),
+        toTransform(SplitTransform{toQuaternion(Transform::lookAt(Vec3::zero(), dir)), position, scale}), color});
 }
 
 void RenderSystem::addRenderer(Renderer* pRenderer) noexcept

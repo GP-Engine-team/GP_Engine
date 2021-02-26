@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -10,8 +10,8 @@
 #include <vector>     //std::vector
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
-#include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/ResourcesManager.hpp"
+#include "Engine/Resources/ResourcesManagerType.hpp"
 #include "GPM/Transform.hpp"
 
 namespace GPE
@@ -41,8 +41,8 @@ public:
     using LocalResourceManager = ResourcesManager<Mesh, Shader, Texture, RenderBuffer, RenderTexture>;
 
     using RenderPipeline = std::function<void(const ResourceManagerType&, const LocalResourceManager&, RenderSystem&,
-                                              std::vector<Renderer*>&, std::vector<SubModel*>&,
-                           std::vector<SubModel*>&, std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&)>;
+                                              std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
+                                              std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&)>;
 
 private:
     static RenderSystem* m_pInstance;
@@ -66,7 +66,7 @@ protected:
 protected:
     RenderSystem() noexcept;
 
-    ~RenderSystem() noexcept       = default;
+    ~RenderSystem() noexcept = default;
 
 public:
     RenderSystem(const RenderSystem& other) noexcept = delete;
@@ -91,10 +91,11 @@ public:
     RenderPipeline defaultRenderPipeline() const noexcept;
     void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
 
-    void drawDebugSphere(GPM::Vec3 position, float radius, ColorRGBA color) noexcept;
-    void drawDebugCube(GPM::Vec3 position, GPM::Quat rotation , GPM::Vec3 scale,
-                       ColorRGBA color) noexcept;
-    void drawDebugQuad(GPM::Vec3 position, GPM::Quat rotation, GPM::Vec3 scale, ColorRGBA color) noexcept;
+    void drawDebugSphere(const GPM::Vec3& position, float radius, const ColorRGBA& color) noexcept;
+    void drawDebugCube(const GPM::Vec3& position, const GPM::Quat& rotation, const GPM::Vec3& scale,
+                       const ColorRGBA& color) noexcept;
+    void drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
+                       const ColorRGBA& color) noexcept;
 
 public:
     // TODO: Remove this shit and create variadic templated system
