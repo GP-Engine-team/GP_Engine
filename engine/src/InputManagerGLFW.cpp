@@ -1,4 +1,4 @@
-#include "Engine/Core/Input/InputManagerGLFW.hpp"
+﻿#include "Engine/Core/Input/InputManagerGLFW.hpp"
 #include "GLFW/glfw3.h"
 
 using namespace std;
@@ -25,32 +25,46 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
     InputManager* input = InputManager::GetInstance();
     if (!action.empty())
     {
-        auto stateMapIt = input->m_stateMap.find(key);
-        auto lastStateMapIt = input->m_stateMap.find(key);
+        auto stateMapIt     = input->m_stateMap.find(key);
+        auto lastStateMapIt = input->m_lastStateMap.find(key);
         for (int i = 0; i < input->m_inputComponents.size(); i++)
         {
-            auto keyModeMapIt  = input->m_inputComponents[i]->m_keyModeMap.find(action);
-             if (stateMapIt->second == true)
+            auto keyModeMapIt = input->m_inputComponents[i]->m_keyModeMap.find(action);
+            if (keyModeMapIt != input->m_inputComponents[i]->m_keyModeMap.end())
             {
-                  switch (keyModeMapIt->second)
-                  {
-                         case  EKeyMode::KEY_PRESS:
-                                          input ->m_inputComponents[i]->fireAction(action);
-                                          input->m_stateMap[key] = false;
-                                          break;
-                         case  EKeyMode::KEY_REPEAT:
-                                          input->m_inputComponents[i]->fireAction(action);
-                                          break;
-                  }
-            }
-
-            /*else if (keyModeMapIt->second == EKeyMode::KEY_RELEASE && stateMapIt->second == false)
-            {
-                if (lastStateMapIt->second == true)
+                if (stateMapIt->second == true)
                 {
-                    input->m_inputComponents[i]->fireAction(action);
+                    switch (keyModeMapIt->second)
+                    {
+                    case EKeyMode::KEY_PRESSED:
+                        if (lastStateMapIt->second == false)
+                        {
+                            input->m_inputComponents[i]->fireAction(action);
+                        }
+                        break;
+                    case EKeyMode::KEY_DOWN:
+                        input->m_inputComponents[i]->fireAction(action);
+                        break;
+                    }
                 }
-            }*/
+
+                else
+                {
+                    switch (keyModeMapIt->second)
+                    {
+                    case EKeyMode::KEY_RELEASED:
+                        if (lastStateMapIt->second == true)
+                        {
+                            lastStateMapIt->second = false;
+                            input->m_inputComponents[i]->fireAction(action);
+                        }
+                        break;
+                    case EKeyMode::KEY_UP:
+                        input->m_inputComponents[i]->fireAction(action);
+                        break;
+                    }
+                }
+            }
         }
     }
 }
@@ -61,10 +75,14 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 
     if (action != GLFW_REPEAT)
     {
-        if (input->m_stateMap[key])
+        if (input->m_stateMap.count(key))
         {
-            auto stateMapIt = input->m_stateMap.find(key);
+            auto stateMapIt            = input->m_stateMap.find(key);
             input->m_lastStateMap[key] = stateMapIt->second;
+        }
+        else
+        {
+            input->m_lastStateMap[key] = false;
         }
         input->m_stateMap[key] = action != GLFW_RELEASE;
     }
@@ -84,6 +102,7 @@ void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, doubl
 
 static void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
+
     InputManager::GetInstance()->cursorPositionCallback(window, xpos, ypos);
 }
 

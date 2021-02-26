@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -14,9 +14,10 @@
 
 enum class EKeyMode
 {
-    KEY_PRESS   = 0,
-    KEY_REPEAT  = 1,
-    KEY_RELEASE = 2,
+    KEY_PRESSED  = 0,
+    KEY_RELEASED = 2,
+    KEY_DOWN     = 3,
+    KEY_UP       = 4,
 };
 
 namespace GPE
@@ -24,7 +25,6 @@ namespace GPE
 class InputComponent : public Component
 {
 public:
-    // InputComponent() = delete;
     InputComponent(const InputComponent& other) noexcept;
     InputComponent(InputComponent&& other) noexcept;
     virtual ~InputComponent() = default;
