@@ -33,7 +33,7 @@ public:
     {
         unsigned int    width          = 0;
         unsigned int    height         = 0;
-        EInternalFormat internalFormat = EInternalFormat::DEPTH_COMPONENT16;
+        EInternalFormat internalFormat = EInternalFormat::DEPTH_COMPONENT24;
     };
 
 protected:

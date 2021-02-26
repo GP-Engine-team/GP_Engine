@@ -72,13 +72,12 @@ public:
 
     struct LoadArg
     {
-        const char*       path             = "";
+        std::string       path             = "";
         ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
         ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
         bool              flipTexture      = true;
-        bool              loadInGPU        = true;
     };
 
     struct CreateArg
@@ -90,7 +89,6 @@ public:
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
         ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
-        bool              loadInGPU        = true;
     };
 
 protected:

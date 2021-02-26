@@ -17,7 +17,7 @@ Texture::Texture(const LoadArg& arg) noexcept
     stbi_set_flip_vertically_on_load(arg.flipTexture);
 
     int            w, h, comp;
-    unsigned char* pixels = stbi_load(arg.path, &w, &h, &comp, 0);
+    unsigned char* pixels = stbi_load(arg.path.c_str(), &w, &h, &comp, 0);
 
     if (pixels == nullptr)
     {
@@ -29,7 +29,7 @@ Texture::Texture(const LoadArg& arg) noexcept
     Texture::loadInGPU(w, h, comp, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT,
                        pixels);
 
-    Log::log((std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path) + "\" load in GPU").c_str());
+    Log::log((std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path.c_str()) + "\" load in GPU").c_str());
     stbi_image_free(pixels);
 }
 

@@ -80,7 +80,7 @@ public:
     void setLightBlock(const std::vector<LightData>& lightBuffer, const GPM::Vec3& viewPos) noexcept;
     void setMaterialBlock(const MaterialComponent& material) const noexcept;
 
-    inline unsigned int getIdProgramm() const noexcept;
+    inline unsigned int getID() const noexcept;
     inline unsigned char getFeature() const noexcept;
 
 private:

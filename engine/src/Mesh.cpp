@@ -10,64 +10,6 @@
 using namespace GPE;
 using namespace GPM;
 
-Mesh::Mesh(const CreateArg& arg, bool isLoadInGPU) noexcept
-    : m_indexVAO(0), m_isLoadInGPU(false), m_objName(arg.objName), m_vBuffer(arg.vBuffer), m_vtBuffer(arg.vtBuffer),
-      m_vnBuffer(arg.vnBuffer), m_iBuffer(arg.iBuffer)
-{
-    if (m_boundingVolumeType == BoundingVolume::SPHERE)
-    {
-        generateBoundingSphere();
-    }
-    else if (m_boundingVolumeType == BoundingVolume::NONE)
-    {
-        m_boundingVolume = nullptr;
-    }
-
-    if (isLoadInGPU)
-        loadInGPU();
-}
-
-Mesh::Mesh(const Attrib& attrib, const std::vector<Shape>& shapes, bool isLoadInGPU,
-           BoundingVolume boundingVolumeType) noexcept
-    : m_indexVAO(0), m_isLoadInGPU(false), m_objName(attrib.objName), m_vBuffer(attrib.vBuffer),
-      m_vtBuffer(attrib.vtBuffer), m_vnBuffer(attrib.vnBuffer), m_iBuffer(),
-      m_idMaterial(), m_boundingVolumeType{boundingVolumeType}
-{
-    m_iBuffer.reserve(shapes.size());
-    m_idMaterial.reserve(shapes.size());
-
-    if (m_vnBuffer.empty())
-    {
-        generateNormalAndLoadIndice(shapes);
-    }
-    else
-    {
-        for (auto&& shape : shapes)
-        {
-            m_iBuffer.push_back({});
-            for (size_t i = 0; i < shape.iv.size(); i++)
-            {
-                m_iBuffer.back().push_back({shape.iv[i], shape.ivt[i], shape.ivn[i]});
-            }
-
-            if (!shape.material_ids.empty())
-                m_idMaterial.push_back(shape.material_ids);
-        }
-    }
-
-     if (m_boundingVolumeType == BoundingVolume::SPHERE)
-    {
-        generateBoundingSphere();
-    }
-    else if (m_boundingVolumeType == BoundingVolume::NONE)
-    {
-        m_boundingVolume = nullptr;
-    }
-
-    if (isLoadInGPU)
-        loadInGPU();
-}
-
 static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, const void* data, int size) noexcept
 {
     glGenBuffers(1, &buffer);
@@ -76,50 +18,61 @@ static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, 
     glBindBuffer(target, 0);
 }
 
-void Mesh::loadInGPU() noexcept
+Mesh::Mesh(const CreateArg& arg) noexcept
 {
-    if (m_isLoadInGPU)
+    if (arg.boundingVolume == BoundingVolume::SPHERE)
     {
-        FUNCT_WARNING((std::string("Mesh name's : ") + m_objName.c_str() + " already load in GPU").c_str());
-        return;
+        m_boundingVolumeType = arg.boundingVolume;
+        generateBoundingSphere(arg.vBuffer);
     }
-
-    std::vector<Vec3> vVBO;
-    std::vector<Vec2> vtVBO;
-    std::vector<Vec3> vnVBO;
-
-    unsigned int nbVertex = 0;
-    for (size_t part = 0; part < m_iBuffer.size(); part++)
+    else if (arg.boundingVolume == BoundingVolume::NONE)
     {
-        nbVertex += static_cast<unsigned int>(m_iBuffer[part].size());
-        ;
-    }
-
-    vVBO.reserve(nbVertex);
-    vtVBO.reserve(nbVertex);
-    vnVBO.reserve(nbVertex);
-
-    for (size_t part = 0; part < m_iBuffer.size(); part++)
-    {
-        for (size_t i = 0; i < m_iBuffer[part].size(); i++)
-        {
-            vVBO.push_back(m_vBuffer[m_iBuffer[part][i].iv]);
-            vtVBO.push_back(m_vtBuffer[m_iBuffer[part][i].ivt]);
-            vnVBO.push_back(m_vnBuffer[m_iBuffer[part][i].ivn]);
-        }
+        m_boundingVolume = nullptr;
     }
 
     // Init VBOs and VAO
     GLuint vertexbuffer;
     GLuint uvbuffer;
     GLuint normalbuffer;
-    // GLuint EBOid;
-    initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vVBO[0],
-                           static_cast<int>(vVBO.size() * sizeof(Vec3)));
-    initializeVertexBuffer(uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vtVBO[0],
-                           static_cast<int>(vtVBO.size() * sizeof(Vec2)));
-    initializeVertexBuffer(normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, &vnVBO[0],
-                           static_cast<int>(vnVBO.size() * sizeof(Vec3)));
+
+    if (arg.iBuffer.empty())
+    {
+        m_verticesCount = static_cast<unsigned int>(arg.vBuffer.size());
+
+        initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vBuffer.data(),
+                               static_cast<int>(arg.vBuffer.size() * sizeof(arg.vBuffer[0])));
+        initializeVertexBuffer(uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vtBuffer.data(),
+                               static_cast<int>(arg.vtBuffer.size() * sizeof(arg.vtBuffer[0])));
+        initializeVertexBuffer(normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vnBuffer.data(),
+                               static_cast<int>(arg.vnBuffer.size() * sizeof(arg.vnBuffer[0])));
+    }
+    else
+    {
+        std::vector<Vec3> vVBO;
+        std::vector<Vec2> vtVBO;
+        std::vector<Vec3> vnVBO;
+
+        m_verticesCount = static_cast<unsigned int>(arg.iBuffer.size());
+
+        vVBO.reserve(arg.iBuffer.size());
+        vtVBO.reserve(arg.iBuffer.size());
+        vnVBO.reserve(arg.iBuffer.size());
+
+        for (size_t i = 0; i < arg.iBuffer.size(); ++i)
+        {
+            vVBO.emplace_back(arg.vBuffer[arg.iBuffer[i].iv]);
+            vtVBO.emplace_back(arg.vtBuffer[arg.iBuffer[i].ivt]);
+            vnVBO.emplace_back(arg.vnBuffer[arg.iBuffer[i].ivn]);
+        }
+
+
+        initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vVBO.data(),
+                               static_cast<int>(vVBO.size() * sizeof(vVBO[0])));
+        initializeVertexBuffer(uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vtVBO.data(),
+                               static_cast<int>(vtVBO.size() * sizeof(vtVBO[0])));
+        initializeVertexBuffer(normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vnVBO.data(),
+                               static_cast<int>(vnVBO.size() * sizeof(vnVBO[0])));
+    }
 
     // Generate VAO
     glGenVertexArrays(1, &m_indexVAO);
@@ -140,18 +93,11 @@ void Mesh::loadInGPU() noexcept
     glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    m_isLoadInGPU = true;
-    Log::log((std::string("Mesh ") + m_objName.c_str() + " load in GPU").c_str());
+    Log::log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU").c_str());
 }
 
-void Mesh::unloadFromGPU() noexcept
+Mesh::~Mesh() noexcept
 {
-    if (!m_isLoadInGPU)
-    {
-        FUNCT_WARNING((std::string("Mesh name's : ") + m_objName.c_str() + " isn't load in GPU").c_str());
-        return;
-    }
-
     // search all VBO attach to the current VAO and destroy it.
     GLint nAttr = 0;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nAttr);
@@ -168,8 +114,6 @@ void Mesh::unloadFromGPU() noexcept
 
     glDeleteBuffers(1, &m_indexVAO);
     m_indexVAO = 0;
-
-    m_isLoadInGPU = false;
 }
 
 void Mesh::draw() const noexcept
@@ -177,11 +121,27 @@ void Mesh::draw() const noexcept
     glBindVertexArray(m_indexVAO);
 
     unsigned int first = 0;
-    for (size_t part = 0; part < m_iBuffer.size(); part++)
+    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_verticesCount));
+}
+
+void Mesh::generateBoundingSphere(const std::vector<GPM::Vec3>& vBuffer) noexcept
+{
+    if (vBuffer.empty())
+        return;
+
+    float farestVertexLengthSquare = std::numeric_limits<float>::min();
+
+    for (auto&& vertex : vBuffer)
     {
-        glDrawArrays(GL_TRIANGLES, first, static_cast<GLsizei>(m_iBuffer[part].size()));
-        first += static_cast<unsigned int>(m_iBuffer[part].size());
+        float newVertexLength = std::fabs(vertex.length2());
+
+        if (farestVertexLengthSquare < newVertexLength)
+        {
+            farestVertexLengthSquare = newVertexLength;
+        }
     }
+
+    m_boundingVolume = std::make_unique<Sphere>(std::sqrt(farestVertexLengthSquare));
 }
 
 Mesh::CreateArg Mesh::createPlane(float width, float height, float textureRepetition, unsigned int indexTextureX,
@@ -194,16 +154,15 @@ Mesh::CreateArg Mesh::createPlane(float width, float height, float textureRepeti
     mesh.vBuffer.reserve(4);
     mesh.vtBuffer.reserve(4);
     mesh.vnBuffer.reserve(isRectoVerso ? 2 : 1);
-    mesh.iBuffer.push_back({});
     mesh.iBuffer.reserve(isRectoVerso ? 12 : 6);
-    
+
     // Face 1
-    mesh.iBuffer[0].emplace_back(Indice{0, 0, 0});
-    mesh.iBuffer[0].emplace_back(Indice{1, 1, 0});
-    mesh.iBuffer[0].emplace_back(Indice{3, 2, 0});
-    mesh.iBuffer[0].emplace_back(Indice{1, 1, 0});
-    mesh.iBuffer[0].emplace_back(Indice{2, 3, 0});
-    mesh.iBuffer[0].emplace_back(Indice{3, 2, 0});
+    mesh.iBuffer.emplace_back(Indice{0, 0, 0});
+    mesh.iBuffer.emplace_back(Indice{1, 1, 0});
+    mesh.iBuffer.emplace_back(Indice{3, 2, 0});
+    mesh.iBuffer.emplace_back(Indice{1, 1, 0});
+    mesh.iBuffer.emplace_back(Indice{2, 3, 0});
+    mesh.iBuffer.emplace_back(Indice{3, 2, 0});
 
     // initialize vertex :
 
@@ -216,7 +175,7 @@ Mesh::CreateArg Mesh::createPlane(float width, float height, float textureRepeti
         mesh.vBuffer.push_back({0.f, -height, width});
         break;
 
-     case Axis::NEG_X:
+    case Axis::NEG_X:
         mesh.vBuffer.push_back({0.f, height, width});
         mesh.vBuffer.push_back({0.f, -height, width});
         mesh.vBuffer.push_back({0.f, -height, -width});
@@ -270,17 +229,16 @@ Mesh::CreateArg Mesh::createPlane(float width, float height, float textureRepeti
     if (isRectoVerso)
     {
         // Face 2
-        mesh.iBuffer[0].emplace_back(Indice{0, 0, 1});
-        mesh.iBuffer[0].emplace_back(Indice{1, 1, 1});
-        mesh.iBuffer[0].emplace_back(Indice{3, 2, 1});
-        mesh.iBuffer[0].emplace_back(Indice{1, 1, 1});
-        mesh.iBuffer[0].emplace_back(Indice{2, 3, 1});
-        mesh.iBuffer[0].emplace_back(Indice{3, 2, 1});
+        mesh.iBuffer.emplace_back(Indice{0, 0, 1});
+        mesh.iBuffer.emplace_back(Indice{1, 1, 1});
+        mesh.iBuffer.emplace_back(Indice{3, 2, 1});
+        mesh.iBuffer.emplace_back(Indice{1, 1, 1});
+        mesh.iBuffer.emplace_back(Indice{2, 3, 1});
+        mesh.iBuffer.emplace_back(Indice{3, 2, 1});
 
-        //normal
+        // normal
         mesh.vnBuffer.push_back({0.f, 1.f, 0.f});
     }
-        
 
     return mesh;
 }
@@ -294,57 +252,56 @@ Mesh::CreateArg Mesh::createCube(float textureRepetition) noexcept
     mesh.vBuffer.reserve(8);
     mesh.vtBuffer.reserve(4);
     mesh.vnBuffer.reserve(6);
-    mesh.iBuffer.push_back({});
     mesh.iBuffer.reserve(6);
 
     // initialize the index of cube :
     // Face 1
-    mesh.iBuffer[0].emplace_back(Indice{0, 0, 0});
-    mesh.iBuffer[0].emplace_back(Indice{1, 1, 0});
-    mesh.iBuffer[0].emplace_back(Indice{2, 2, 0});
-    mesh.iBuffer[0].emplace_back(Indice{2, 2, 0});
-    mesh.iBuffer[0].emplace_back(Indice{1, 1, 0});
-    mesh.iBuffer[0].emplace_back(Indice{3, 3, 0});
+    mesh.iBuffer.emplace_back(Indice{0, 0, 0});
+    mesh.iBuffer.emplace_back(Indice{1, 1, 0});
+    mesh.iBuffer.emplace_back(Indice{2, 2, 0});
+    mesh.iBuffer.emplace_back(Indice{2, 2, 0});
+    mesh.iBuffer.emplace_back(Indice{1, 1, 0});
+    mesh.iBuffer.emplace_back(Indice{3, 3, 0});
 
     // Face 2
-    mesh.iBuffer[0].emplace_back(Indice{2, 0, 1});
-    mesh.iBuffer[0].emplace_back(Indice{3, 1, 1});
-    mesh.iBuffer[0].emplace_back(Indice{4, 2, 1});
-    mesh.iBuffer[0].emplace_back(Indice{4, 2, 1});
-    mesh.iBuffer[0].emplace_back(Indice{3, 1, 1});
-    mesh.iBuffer[0].emplace_back(Indice{5, 3, 1});
+    mesh.iBuffer.emplace_back(Indice{2, 0, 1});
+    mesh.iBuffer.emplace_back(Indice{3, 1, 1});
+    mesh.iBuffer.emplace_back(Indice{4, 2, 1});
+    mesh.iBuffer.emplace_back(Indice{4, 2, 1});
+    mesh.iBuffer.emplace_back(Indice{3, 1, 1});
+    mesh.iBuffer.emplace_back(Indice{5, 3, 1});
 
     // Face 3
-    mesh.iBuffer[0].emplace_back(Indice{4, 3, 2});
-    mesh.iBuffer[0].emplace_back(Indice{5, 2, 2});
-    mesh.iBuffer[0].emplace_back(Indice{6, 1, 2});
-    mesh.iBuffer[0].emplace_back(Indice{6, 1, 2});
-    mesh.iBuffer[0].emplace_back(Indice{5, 2, 2});
-    mesh.iBuffer[0].emplace_back(Indice{7, 0, 2});
+    mesh.iBuffer.emplace_back(Indice{4, 3, 2});
+    mesh.iBuffer.emplace_back(Indice{5, 2, 2});
+    mesh.iBuffer.emplace_back(Indice{6, 1, 2});
+    mesh.iBuffer.emplace_back(Indice{6, 1, 2});
+    mesh.iBuffer.emplace_back(Indice{5, 2, 2});
+    mesh.iBuffer.emplace_back(Indice{7, 0, 2});
 
     // Face 4
-    mesh.iBuffer[0].emplace_back(Indice{6, 0, 3});
-    mesh.iBuffer[0].emplace_back(Indice{7, 1, 3});
-    mesh.iBuffer[0].emplace_back(Indice{0, 2, 3});
-    mesh.iBuffer[0].emplace_back(Indice{0, 2, 3});
-    mesh.iBuffer[0].emplace_back(Indice{7, 1, 3});
-    mesh.iBuffer[0].emplace_back(Indice{1, 3, 3});
+    mesh.iBuffer.emplace_back(Indice{6, 0, 3});
+    mesh.iBuffer.emplace_back(Indice{7, 1, 3});
+    mesh.iBuffer.emplace_back(Indice{0, 2, 3});
+    mesh.iBuffer.emplace_back(Indice{0, 2, 3});
+    mesh.iBuffer.emplace_back(Indice{7, 1, 3});
+    mesh.iBuffer.emplace_back(Indice{1, 3, 3});
 
     // Face 5
-    mesh.iBuffer[0].emplace_back(Indice{1, 0, 4});
-    mesh.iBuffer[0].emplace_back(Indice{7, 1, 4});
-    mesh.iBuffer[0].emplace_back(Indice{3, 2, 4});
-    mesh.iBuffer[0].emplace_back(Indice{3, 2, 4});
-    mesh.iBuffer[0].emplace_back(Indice{7, 1, 4});
-    mesh.iBuffer[0].emplace_back(Indice{5, 3, 4});
+    mesh.iBuffer.emplace_back(Indice{1, 0, 4});
+    mesh.iBuffer.emplace_back(Indice{7, 1, 4});
+    mesh.iBuffer.emplace_back(Indice{3, 2, 4});
+    mesh.iBuffer.emplace_back(Indice{3, 2, 4});
+    mesh.iBuffer.emplace_back(Indice{7, 1, 4});
+    mesh.iBuffer.emplace_back(Indice{5, 3, 4});
 
     // Face 6
-    mesh.iBuffer[0].emplace_back(Indice{6, 0, 5});
-    mesh.iBuffer[0].emplace_back(Indice{0, 1, 5});
-    mesh.iBuffer[0].emplace_back(Indice{4, 2, 5});
-    mesh.iBuffer[0].emplace_back(Indice{4, 2, 5});
-    mesh.iBuffer[0].emplace_back(Indice{0, 1, 5});
-    mesh.iBuffer[0].emplace_back(Indice{2, 3, 5});
+    mesh.iBuffer.emplace_back(Indice{6, 0, 5});
+    mesh.iBuffer.emplace_back(Indice{0, 1, 5});
+    mesh.iBuffer.emplace_back(Indice{4, 2, 5});
+    mesh.iBuffer.emplace_back(Indice{4, 2, 5});
+    mesh.iBuffer.emplace_back(Indice{0, 1, 5});
+    mesh.iBuffer.emplace_back(Indice{2, 3, 5});
 
     // initialize vertex :
     mesh.vBuffer.push_back({-0.5f, -0.5f, 0.5});
@@ -379,7 +336,6 @@ Mesh::CreateArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexce
 
     Mesh::CreateArg mesh;
     mesh.objName = "Sphere";
-    mesh.iBuffer.push_back({});
 
     latitudeCount *= 2;
 
@@ -438,9 +394,9 @@ Mesh::CreateArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexce
                     // ver2
 
                     // to create triangle like shema
-                    mesh.iBuffer[0].push_back(Indice{ver1, ver1, ver1});
-                    mesh.iBuffer[0].push_back(Indice{ver2, ver2, ver2});
-                    mesh.iBuffer[0].push_back(Indice{ver1 + 1, ver1 + 1, ver1 + 1});
+                    mesh.iBuffer.push_back(Indice{ver1, ver1, ver1});
+                    mesh.iBuffer.push_back(Indice{ver2, ver2, ver2});
+                    mesh.iBuffer.push_back(Indice{ver1 + 1, ver1 + 1, ver1 + 1});
                 }
 
                 if (i != static_cast<unsigned int>(longitudeCount) - 1)
@@ -450,9 +406,9 @@ Mesh::CreateArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexce
                     //		 /	  |
                     // ver2	 ->	ver2+1
 
-                    mesh.iBuffer[0].push_back(Indice{ver1 + 1, ver1 + 1, ver1 + 1});
-                    mesh.iBuffer[0].push_back(Indice{ver2, ver2, ver2});
-                    mesh.iBuffer[0].push_back(Indice{ver2 + 1, ver2 + 1, ver2 + 1});
+                    mesh.iBuffer.push_back(Indice{ver1 + 1, ver1 + 1, ver1 + 1});
+                    mesh.iBuffer.push_back(Indice{ver2, ver2, ver2});
+                    mesh.iBuffer.push_back(Indice{ver2 + 1, ver2 + 1, ver2 + 1});
                 }
             }
         }
@@ -467,7 +423,6 @@ Mesh::CreateArg Mesh::createCylindre(unsigned int prescision) noexcept
 
     Mesh::CreateArg mesh;
     mesh.objName = "Cylindre";
-    mesh.iBuffer.push_back({});
 
     // Cylindre contain prescision * 2 + 2
     mesh.vBuffer.reserve(static_cast<size_t>(prescision) * 2 + 2);
@@ -512,104 +467,52 @@ Mesh::CreateArg Mesh::createCylindre(unsigned int prescision) noexcept
     // near face triangle indice
     for (unsigned int i = 1; i < prescision; i++)
     {
-        mesh.iBuffer[0].push_back(Indice{0, 0, 0});
-        mesh.iBuffer[0].push_back(Indice{i, i, i});
-        mesh.iBuffer[0].push_back(Indice{i + 1, i + 1, i + 1});
+        mesh.iBuffer.push_back(Indice{0, 0, 0});
+        mesh.iBuffer.push_back(Indice{i, i, i});
+        mesh.iBuffer.push_back(Indice{i + 1, i + 1, i + 1});
     }
 
-    mesh.iBuffer[0].push_back(Indice{0, 0, 0});
-    mesh.iBuffer[0].push_back(Indice{prescision, prescision, prescision});
-    mesh.iBuffer[0].push_back(Indice{1, 1, 1});
+    mesh.iBuffer.push_back(Indice{0, 0, 0});
+    mesh.iBuffer.push_back(Indice{prescision, prescision, prescision});
+    mesh.iBuffer.push_back(Indice{1, 1, 1});
 
     // side face triangle indice
     for (unsigned int i = 1; i < prescision; i++)
     {
         // face is blit in 2 triangle :
-        mesh.iBuffer[0].push_back(Indice{i, i, i});
-        mesh.iBuffer[0].push_back(Indice{i + 1, i + 1, i + 1});
-        mesh.iBuffer[0].push_back(Indice{i + prescision, i + prescision, i + prescision});
+        mesh.iBuffer.push_back(Indice{i, i, i});
+        mesh.iBuffer.push_back(Indice{i + 1, i + 1, i + 1});
+        mesh.iBuffer.push_back(Indice{i + prescision, i + prescision, i + prescision});
 
         // triangle 2 :
-        mesh.iBuffer[0].push_back(Indice{i + prescision, i + prescision, i + prescision});
-        mesh.iBuffer[0].push_back(Indice{i + prescision + 1, i + prescision + 1, i + prescision + 1});
-        mesh.iBuffer[0].push_back(Indice{i + 1, i + 1, i + 1});
+        mesh.iBuffer.push_back(Indice{i + prescision, i + prescision, i + prescision});
+        mesh.iBuffer.push_back(Indice{i + prescision + 1, i + prescision + 1, i + prescision + 1});
+        mesh.iBuffer.push_back(Indice{i + 1, i + 1, i + 1});
     }
 
     // face is blit in 2 triangle :
-    mesh.iBuffer[0].push_back(Indice{prescision, prescision, prescision});
-    mesh.iBuffer[0].push_back(Indice{1, 1, 1});
-    mesh.iBuffer[0].push_back(Indice{prescision + prescision, prescision + prescision, prescision + prescision});
+    mesh.iBuffer.push_back(Indice{prescision, prescision, prescision});
+    mesh.iBuffer.push_back(Indice{1, 1, 1});
+    mesh.iBuffer.push_back(Indice{prescision + prescision, prescision + prescision, prescision + prescision});
 
     // triangle 2 :
-    mesh.iBuffer[0].push_back(Indice{prescision + prescision, prescision + prescision, prescision + prescision});
-    mesh.iBuffer[0].push_back(Indice{prescision + 1, prescision + 1, prescision + 1});
-    mesh.iBuffer[0].push_back(Indice{1, 1, 1});
+    mesh.iBuffer.push_back(Indice{prescision + prescision, prescision + prescision, prescision + prescision});
+    mesh.iBuffer.push_back(Indice{prescision + 1, prescision + 1, prescision + 1});
+    mesh.iBuffer.push_back(Indice{1, 1, 1});
 
     unsigned int middleFarPointIndice = prescision * 2 + 1;
 
     // far face triangle indice
     for (unsigned int i = prescision + 1; i < prescision + prescision; i++)
     {
-        mesh.iBuffer[0].push_back(Indice{middleFarPointIndice, middleFarPointIndice, middleFarPointIndice});
-        mesh.iBuffer[0].push_back(Indice{i, i, i});
-        mesh.iBuffer[0].push_back(Indice{i + 1, i + 1, i + 1});
+        mesh.iBuffer.push_back(Indice{middleFarPointIndice, middleFarPointIndice, middleFarPointIndice});
+        mesh.iBuffer.push_back(Indice{i, i, i});
+        mesh.iBuffer.push_back(Indice{i + 1, i + 1, i + 1});
     }
 
-    mesh.iBuffer[0].push_back(Indice{middleFarPointIndice, middleFarPointIndice, middleFarPointIndice});
-    mesh.iBuffer[0].push_back(Indice{prescision + prescision, prescision + prescision, prescision + prescision});
-    mesh.iBuffer[0].push_back(Indice{prescision + 1, prescision + 1, prescision + 1});
+    mesh.iBuffer.push_back(Indice{middleFarPointIndice, middleFarPointIndice, middleFarPointIndice});
+    mesh.iBuffer.push_back(Indice{prescision + prescision, prescision + prescision, prescision + prescision});
+    mesh.iBuffer.push_back(Indice{prescision + 1, prescision + 1, prescision + 1});
 
     return mesh;
-}
-
-void Mesh::generateNormalAndLoadIndice(const std::vector<Shape>& shapes) noexcept
-{
-    unsigned int count = 0;
-    for (auto&& shape : shapes)
-    {
-        count++;
-        m_iBuffer.push_back({});
-        for (size_t i = 0; i < shape.iv.size(); i++)
-        {
-            m_iBuffer.back().push_back({shape.iv[i], shape.ivt[i], count});
-        }
-
-        if (!shape.material_ids.empty())
-            m_idMaterial.push_back(shape.material_ids);
-    }
-
-    for (auto&& i : m_iBuffer)
-    {
-        for (size_t i2 = 0; i2 < i.size(); i2 += 3)
-        {
-            Vec3 v1 = m_vBuffer[i[i2 + 0].iv];
-            Vec3 v2 = m_vBuffer[i[i2 + 1].iv];
-            Vec3 v3 = m_vBuffer[i[i2 + 2].iv];
-
-            // comput normal with cross product
-            m_vnBuffer.emplace_back((v2 - v1).cross(v3 - v1).normalized());
-            m_vnBuffer.emplace_back((v1 - v2).cross(v3 - v2).normalized());
-            m_vnBuffer.emplace_back((v1 - v3).cross(v2 - v3).normalized());
-        }
-    }
-}
-
-void Mesh::generateBoundingSphere() noexcept
-{
-    if (m_vBuffer.empty())
-        return;
-
-    float farestVertexLengthSquare = std::numeric_limits<float>::min();
-
-    for (auto&& vertex : m_vBuffer)
-    {
-        float newVertexLength = std::fabs(vertex.length2());
-
-        if (farestVertexLengthSquare < newVertexLength)
-        {
-            farestVertexLengthSquare = newVertexLength;
-        }
-    }
-
-    m_boundingVolume = std::make_unique<Sphere>(std::sqrt(farestVertexLengthSquare));
 }
