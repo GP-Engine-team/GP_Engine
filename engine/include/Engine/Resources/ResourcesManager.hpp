@@ -32,7 +32,7 @@ protected:
     std::unordered_map<std::string, LType> m_resources;
 
 public:
-    ResourcesManager() noexcept = default;
+    ResourcesManager() = default;
     ResourcesManager(const ResourcesManager& other) noexcept = delete;
     ResourcesManager& operator=(const ResourcesManager& other) noexcept = delete;
     ResourcesManager(ResourcesManager&& other) noexcept = default;
@@ -86,7 +86,7 @@ template <class LType, class... RType>
 class ResourcesManager : public ResourcesManager<LType>, public ResourcesManager<RType...>
 {
 public:
-    ResourcesManager() noexcept = default;
+    ResourcesManager() = default;
     ResourcesManager(const ResourcesManager& other) noexcept = delete;
     ResourcesManager& operator=(const ResourcesManager& other) noexcept = delete;
     ResourcesManager(ResourcesManager&& other) noexcept = default;
