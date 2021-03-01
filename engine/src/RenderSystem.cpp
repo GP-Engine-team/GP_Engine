@@ -21,12 +21,15 @@
 #include "GPM/Shape3D/Volume.hpp"
 #include "GPM/ShapeRelation/SpherePlane.hpp"
 
+// TODO:To remove : debug
+#include <glfw/glfw3.h>
+
 using namespace GPE;
 using namespace GPM;
 
 RenderSystem* RenderSystem::m_pInstance{nullptr};
 
-void displayBoundingShape(const SubModel* pSubModel)
+void displayBoundingShape(const SubModel* pSubModel, const ColorRGBA& color)
 {
     const Volume* pBoudingVolume = pSubModel->pMesh->getBoundingVolume();
 
@@ -37,20 +40,24 @@ void displayBoundingShape(const SubModel* pSubModel)
                                            pSubModel->pModel->getOwner().getTransform().getScale().y),
                                   pSubModel->pModel->getOwner().getTransform().getScale().z);
 
-        static Vec3  dir = Vec3::forward();
-        static float dt  = 0.f;
-        dt += 0.001f;
-        dir.z = sin(dt);
-        dir.y = cos(dt);
-
-        RenderSystem::getInstance()->drawDebugQuad(pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
-                                                   dir, Vec3(pBoudingSphere->getRadius() * maxScale),
-                                                   ColorRGBA{0.f, 0.f, 0.f, 0.5f});
-
-        /*RenderSystem::getInstance()->drawDebugSphere(
-            pSubModel->pModel->getOwner().getTransform().getGlobalPosition(), pBoudingSphere->getRadius() * maxScale,
-            ColorRGBA{1.f, 1.f, 0.f, 0.5f}, RenderSystem::EDebugShapeMode::LINE);*/
+        RenderSystem::getInstance()->drawDebugSphere(pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
+                                                     pBoudingSphere->getRadius() * (maxScale / 2.f), color,
+                                                     RenderSystem::EDebugShapeMode::FILL);
     }
+}
+
+void displayGameObjectRef(const GameObject& go, float dist = 100.f, float size = 10.f)
+{
+    const Vec3& pos = go.getTransform().getGlobalPosition();
+
+    RenderSystem::getInstance()->drawDebugSphere(pos + go.getTransform().getVectorRight() * dist, size,
+                                                 ColorRGBA{1.f, 0.f, 0.f, 1.f});
+
+    RenderSystem::getInstance()->drawDebugSphere(pos + go.getTransform().getVectorUp() * dist, size,
+                                                 ColorRGBA{0.f, 1.f, 0.f, 1.f});
+
+    RenderSystem::getInstance()->drawDebugSphere(pos + go.getTransform().getVectorForward() * dist, size,
+                                                 ColorRGBA{0.f, 0.f, 1.f, 1.f});
 }
 
 RenderSystem::RenderSystem() noexcept
@@ -78,17 +85,16 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
                                            pSubModel->pModel->getOwner().getTransform().getScale().y),
                                   pSubModel->pModel->getOwner().getTransform().getScale().z);
 
-        Sphere globalSphere(pBoudingSphere->getRadius() * maxScale,
+        Sphere globalSphere(pBoudingSphere->getRadius() * (maxScale / 2.f),
                             pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
                                 pBoudingSphere->getCenter());
 
-        /*Sort to be more optimized*/
         return (SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.leftFace) &&
                 SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.rightFace) &&
-                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.frontFace) &&
-                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.bottomFace) &&
                 SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.topFace) &&
-                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.backFace));
+                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.bottomFace) &&
+                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.farFace) &&
+                SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.nearFace));
     }
 
     return true;
@@ -244,8 +250,30 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
     {
         int h, w;
         pRenderers[0]->getWindow()->getSize(w, h);
+        int  idCamFrustum            = 1;
+        int  idCamView               = 1;
+        bool displayBoundingDrawed   = false;
+        bool displayBoundingUnDrawed = false;
 
-        Frustum camFrustum = pCameras[0]->getFrustum();
+        if (glfwGetKey(pRenderers[0]->getWindow()->getGLFWWindow(), GLFW_KEY_F1) == GLFW_PRESS)
+        {
+            idCamView = 0;
+        }
+
+        if (glfwGetKey(pRenderers[0]->getWindow()->getGLFWWindow(), GLFW_KEY_F2) == GLFW_PRESS)
+        {
+            displayBoundingDrawed = true;
+        }
+
+        if (glfwGetKey(pRenderers[0]->getWindow()->getGLFWWindow(), GLFW_KEY_F3) == GLFW_PRESS)
+        {
+            displayBoundingUnDrawed = true;
+        }
+
+        Frustum camFrustum = pCameras[idCamFrustum]->getFrustum();
+
+        displayGameObjectRef(*pCameras[idCamFrustum]->getOwner().parent);
+        displayGameObjectRef(pCameras[idCamFrustum]->getOwner());
 
         rs.resetCurrentRenderPassKey();
 
@@ -258,15 +286,21 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
         /*Display opaque element*/
         {
+            int subRender = 0, subAvoid = 0;
             glDisable(GL_BLEND);
 
             for (auto&& pSubModel : pOpaqueSubModels)
             {
                 if (!rs.isOnFrustum(camFrustum, pSubModel))
                 {
+                    if (displayBoundingUnDrawed)
+                        displayBoundingShape(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.1f});
+                    subAvoid++;
                     continue;
                 }
-                displayBoundingShape(pSubModel);
+                subRender++;
+                if (displayBoundingDrawed)
+                    displayBoundingShape(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.5f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
@@ -275,9 +309,10 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[0], *pSubModel);
+                rs.sendModelDataToShader(*pCameras[idCamView], *pSubModel);
                 rs.drawModelPart(*pSubModel);
             }
+            std::cout << subRender << " " << subAvoid << std::endl;
         }
 
         /*Display transparent element*/
@@ -291,7 +326,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 if (rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    float distance = (pCameras[0]->getOwner().getTransform().getGlobalPosition() -
+                    float distance = (pCameras[idCamFrustum]->getOwner().getTransform().getGlobalPosition() -
                                       (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
                                          .length2();
                     mapElemSortedByDistance[distance] = pSubModel;
@@ -301,8 +336,6 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             std::map<float, SubModel*>::reverse_iterator rEnd = mapElemSortedByDistance.rend();
             for (std::map<float, SubModel*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != rEnd; ++it)
             {
-                displayBoundingShape(it->second);
-
                 rs.tryToBindShader(*it->second->pShader);
                 rs.tryToBindMesh(it->second->pMesh->getID());
                 rs.tryToBindTexture(it->second->pMaterial->getDiffuseTexture()->getID());
@@ -310,7 +343,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[0], *it->second);
+                rs.sendModelDataToShader(*pCameras[idCamView], *it->second);
                 rs.drawModelPart(*it->second);
             };
         }
@@ -325,9 +358,12 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 for (auto&& shape : debugShape)
                 {
                     glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
+                    rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
+
                     shaderToUse->setMat4(
                         "projectViewModelMatrix",
-                        (pCameras[0]->getProjection() * pCameras[0]->getView() * shape.transform.model).e);
+                        (pCameras[idCamView]->getProjection() * pCameras[idCamView]->getView() * shape.transform.model)
+                            .e);
 
                     shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
 
@@ -366,27 +402,29 @@ void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPip
                    m_pLights, m_debugShape);
 }
 
-void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,
-                                   EDebugShapeMode mode) noexcept
+void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, EDebugShapeMode mode,
+                                   bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Sphere"),
-                                         toTransform(SplitTransform{Quat::identity(), position, Vec3(radius)}), color,
-                                         mode});
+                                         toTransform(SplitTransform{Quat::identity(), position, Vec3(radius * 2.f)}),
+                                         color, mode, enableBackFaceCullling});
 }
 
 void RenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation, const Vec3& scale, const ColorRGBA& color,
-                                 EDebugShapeMode mode) noexcept
+                                 EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Cube"),
-                                         toTransform(SplitTransform{rotation, position, scale}), color, mode});
+                                         toTransform(SplitTransform{rotation, position, scale}), color, mode,
+                                         enableBackFaceCullling});
 }
 
 void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale, const ColorRGBA& color,
-                                 EDebugShapeMode mode) noexcept
+                                 EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{
-        m_localResources.get<Mesh>("Plane"),
-        toTransform(SplitTransform{toQuaternion(Transform::lookAt(Vec3::zero(), dir)), position, scale}), color, mode});
+    m_debugShape.emplace_back(
+        DebugShape{m_localResources.get<Mesh>("Plane"),
+                   toTransform(SplitTransform{Quaternion::lookAt(Vec3::zero(), dir), position, scale}), color, mode,
+                   enableBackFaceCullling});
 }
 
 void RenderSystem::addRenderer(Renderer* pRenderer) noexcept

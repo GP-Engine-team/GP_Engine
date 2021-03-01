@@ -41,10 +41,11 @@ public:
 
     struct DebugShape
     {
-        const Mesh*     shape     = nullptr;
-        GPM::Transform  transform = {};
-        ColorRGBA       color     = ColorRGBA{1.f, 0.f, 0.f, 0.5f};
-        EDebugShapeMode mode      = EDebugShapeMode::FILL;
+        const Mesh*     shape                  = nullptr;
+        GPM::Transform  transform              = {};
+        ColorRGBA       color                  = ColorRGBA{1.f, 0.f, 0.f, 0.5f};
+        EDebugShapeMode mode                   = EDebugShapeMode::FILL;
+        bool            enableBackFaceCullling = true;
     };
 
     using LocalResourceManager = ResourcesManager<Mesh, Shader, Texture, RenderBuffer, RenderTexture>;
@@ -102,13 +103,13 @@ public:
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
                          const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
-                         EDebugShapeMode  mode  = EDebugShapeMode::FILL) noexcept;
+                         EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
     void drawDebugCube(const GPM::Vec3& position, const GPM::Quat& rotation, const GPM::Vec3& scale,
                        const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
-                       EDebugShapeMode  mode  = EDebugShapeMode::FILL) noexcept;
+                       EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
     void drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
                        const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
-                       EDebugShapeMode  mode  = EDebugShapeMode::FILL) noexcept;
+                       EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
 
 public:
     // TODO: Remove this shit and create variadic templated system
