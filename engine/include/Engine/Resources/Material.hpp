@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -12,6 +12,8 @@
 #include "Engine/Resources/ShaderType.hpp"
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/Resources/Type.hpp"
+
+#include "Engine/Core/Tools/ClassUtility.hpp"
 
 namespace GPE
 {
@@ -40,26 +42,9 @@ public:
     Material& operator=(Material const& other) = default;
     Material& operator=(Material&& other) = default;
 
-    /**
-     * @brief Get the Material Component object
-     *
-     * @return const MaterialComponent&
-     */
-    inline const MaterialComponent& getMaterialComponent() const noexcept;
-
-    /**
-     * @brief Get the pointor to diffuse texture object
-     *
-     * @return const Texture*
-     */
-    inline const Texture* getDiffuseTexture() const noexcept;
-
-    /**
-     * @brief Get the Name object
-     *
-     * @return const std::string&
-     */
-    inline const std::string& getName() const noexcept;
+    DEFAULT_GETTER_SETTER(Name, m_name);
+    DEFAULT_GETTER_SETTER(Component, m_comp);
+    DEFAULT_GETTER_SETTER(DiffuseTexture, m_pDiffuseTexture);
 
     inline bool isOpaque() const noexcept;
 };

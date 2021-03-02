@@ -17,6 +17,8 @@
 #include "GPM/Shape3D/Volume.hpp"
 #include "GPM/Vector3.hpp"
 
+#include "Engine/Core/Tools/ClassUtility.hpp"
+
 namespace GPE
 {
 
@@ -50,7 +52,7 @@ public:
     };
 
 protected:
-    GLuint       m_indexVAO      = 0;
+    unsigned int m_indexVAO      = 0;
     unsigned int m_verticesCount = 0;
 
     BoundingVolume               m_boundingVolumeType = BoundingVolume::NONE;
@@ -72,13 +74,11 @@ public:
      */
     void draw() const noexcept;
 
-    inline unsigned int getID() const noexcept;
-
-    inline BoundingVolume getBoundingVolumeType() const noexcept;
-
     inline const GPM::Volume* getBoundingVolume() const noexcept;
 
-    inline unsigned int getVerticesCount() const noexcept;
+    GETTER_BY_VALUE(ID, m_indexVAO);
+    GETTER_BY_VALUE(VerticesCount, m_verticesCount);
+    DEFAULT_GETTER_SETTER(BoundingVolumeType, m_boundingVolumeType);
 
     /**
      * @brief Create a plae object of radius 1 and return it mesh. Plane is centered on the origin

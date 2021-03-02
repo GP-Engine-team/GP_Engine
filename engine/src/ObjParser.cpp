@@ -68,8 +68,12 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
         materialArg.pTexture = &resourceManager.add<Texture>(str.C_Str(), textureArg);
     }
 
-    std::vector<Material>& materials =
-        resourceManager.add<std::vector<Material>>("Mat", matArgs.begin(), matArgs.end());
+    std::vector<Material>* materials = nullptr;
+
+    if (!matArgs.empty())
+    {
+        materials = &resourceManager.add<std::vector<Material>>("Mat", matArgs.begin(), matArgs.end());
+    }
 
     // Mesh
     for (size_t i = 0; i < scene->mNumMeshes; ++i)
@@ -99,9 +103,10 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
 
         bool enableBackFaceCulling = true;
 
-        modelArg.subModels.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
-                                                 &materials[scene->mMeshes[i]->mMaterialIndex - 1],
-                                                 &resourceManager.add<Mesh>(arg.objName, arg), true});
+        modelArg.subModels.emplace_back(
+            SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
+                     materials ? &(*materials)[scene->mMeshes[i]->mMaterialIndex - 1] : nullptr,
+                     &resourceManager.add<Mesh>(arg.objName, arg), true});
     }
 
     Log::logInitializationEnd("Obj parsing");

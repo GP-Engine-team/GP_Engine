@@ -128,14 +128,20 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
     if ((pShader->getFeature() & SKYBOX) == SKYBOX)
     {
         Mat4 view = camToUse.getView();
+
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
+
+        // TODO : Replace by getProjectionView();
         pShader->setMat4(
             "projectViewModelMatrix",
-            (camToUse.getViewProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+            (camToUse.getProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+        pShader->setMat4("projection", camToUse.getProjection().e);
+        pShader->setMat4("view", view.e);
     }
     else
     {
+        // TODO : Replace by getProjectionView();
         pShader->setMat4("projectViewModelMatrix", (camToUse.getProjection() * camToUse.getView() *
                                                     subModel.pModel->getOwner().getTransform().getModelMatrix())
                                                        .e);
@@ -152,15 +158,14 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        pShader->setMaterialBlock(subModel.pMaterial->getMaterialComponent());
+        pShader->setMaterialBlock(subModel.pMaterial->getComponent());
     }
 
     if ((pShader->getFeature() & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
     {
-        pShader->setVec4("Color", subModel.pMaterial->getMaterialComponent().ambient.kr,
-                         subModel.pMaterial->getMaterialComponent().ambient.kg,
-                         subModel.pMaterial->getMaterialComponent().ambient.kb,
-                         subModel.pMaterial->getMaterialComponent().ambient.ki);
+        pShader->setVec4("Color", subModel.pMaterial->getComponent().ambient.kr,
+                         subModel.pMaterial->getComponent().ambient.kg, subModel.pMaterial->getComponent().ambient.kb,
+                         subModel.pMaterial->getComponent().ambient.ki);
     }
 }
 
@@ -251,7 +256,9 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
         glViewport(0, 0, w, h);
         glBindFramebuffer(GL_FRAMEBUFFER, rml.get<RenderTexture>("FBO")->getID());
+
         glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
 
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
