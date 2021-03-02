@@ -28,8 +28,10 @@ std::string SerializePropertyRule::generateClassFooterCode(kodgen::EntityInfo co
 			auto& fieldProperties = field.properties.complexProperties;
 			if (std::find_if(fieldProperties.begin(), fieldProperties.end(), isPropertyReflected) != fieldProperties.end())
 			{
-				serializeInside += "serializer.serialize(" + ("node, s." + field.name) 
-					+ "FieldInfo{" + field.name + ", " + field.type.getCanonicalName()+ "}"
+				//std::string fieldInfo = "FieldInfo{}";
+				serializeInside += "serializer.serialize(node, s." + field.name + ", "
+					+ "FieldInfo{\"" + field.name + "\", \"" + field.type.getCanonicalName() + "\"}"
+					//+ fieldInfo
 					+ ");";
 			}
 		}
@@ -41,6 +43,7 @@ std::string SerializePropertyRule::generateClassFooterCode(kodgen::EntityInfo co
 			+ serializeInside +
 			"}";
 
+		std::cout << serializeFunction << std::endl;
 		return "public:" + serializeFunction;
 	}
 	return "";

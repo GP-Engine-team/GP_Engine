@@ -1,5 +1,6 @@
 #include "xmlManager.hpp"
 
+#include "rapidxml_print.hpp"
 #include <iostream>
 
 inline XmlManager::Node* XmlManager::getRoot()

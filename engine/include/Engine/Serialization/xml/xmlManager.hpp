@@ -2,9 +2,9 @@
 
 #include "rapidxml.hpp"
 
-#include "xml/xmlLoader.hpp"
-#include "xml/xmlSaver.hpp"
-#include "FieldInfo.hpp"
+#include "Engine/Serialization/xml/xmlLoader.hpp"
+#include "Engine/Serialization/xml/xmlSaver.hpp"
+#include "Engine/Serialization/FieldInfo.hpp"
 
 class XmlManager
 {
