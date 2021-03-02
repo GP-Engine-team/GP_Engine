@@ -32,8 +32,8 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
     // Material and texture
     GPE_ASSERT(scene->HasMaterials(), "Mesh without material not supported");
 
-    std::vector<Material::CreateArg> matArgs;
-    matArgs.reserve(scene->mNumMaterials - 1);
+    std::vector<Material*> pMaterials;
+    pMaterials.reserve(scene->mNumMaterials - 1);
 
     for (size_t i = 1; i < scene->mNumMaterials; ++i)
     {
@@ -42,15 +42,16 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
         GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) < 2,
                    "Multiple diffuse trexture not supported");
 
-        aiString str;
-        scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &str);
+        aiString diffuseTextureName;
+        scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &diffuseTextureName);
 
         Texture::LoadArg textureArg;
         textureArg.path = PATH_TEXTURE_RESOURCE;
-        textureArg.path += str.C_Str();
+        textureArg.path += diffuseTextureName.C_Str();
 
-        matArgs.emplace_back();
-        Material::CreateArg& materialArg = matArgs.back();
+        Material::CreateArg materialArg;
+
+        materialArg.name = scene->mMaterials[i]->GetName().C_Str();
 
         aiColor3D color;
         scene->mMaterials[i]->Get(AI_MATKEY_COLOR_AMBIENT, color);
@@ -65,14 +66,10 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
         scene->mMaterials[i]->Get(AI_MATKEY_SHININESS, materialArg.comp.shininess);
         scene->mMaterials[i]->Get(AI_MATKEY_OPACITY, materialArg.comp.opacity);
 
-        materialArg.pTexture = &resourceManager.add<Texture>(str.C_Str(), textureArg);
-    }
+        materialArg.pTexture = &resourceManager.add<Texture>(diffuseTextureName.C_Str(), textureArg);
 
-    std::vector<Material>* materials = nullptr;
-
-    if (!matArgs.empty())
-    {
-        materials = &resourceManager.add<std::vector<Material>>("Mat", matArgs.begin(), matArgs.end());
+        pMaterials.emplace_back(&resourceManager.add<Material>(materialArg.name, materialArg));
+        std::cout << pMaterials.back() << std::endl;
     }
 
     // Mesh
@@ -101,11 +98,9 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
             arg.vtBuffer.emplace_back(textCoord.x, textCoord.y);
         }
 
-        bool enableBackFaceCulling = true;
-
         modelArg.subModels.emplace_back(
             SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
-                     materials ? &(*materials)[scene->mMeshes[i]->mMaterialIndex - 1] : nullptr,
+                     pMaterials.empty() ? nullptr : pMaterials[scene->mMeshes[i]->mMaterialIndex - 1],
                      &resourceManager.add<Mesh>(arg.objName, arg), true});
     }
 
