@@ -69,7 +69,6 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
         materialArg.pTexture = &resourceManager.add<Texture>(diffuseTextureName.C_Str(), textureArg);
 
         pMaterials.emplace_back(&resourceManager.add<Material>(materialArg.name, materialArg));
-        std::cout << pMaterials.back() << std::endl;
     }
 
     // Mesh
