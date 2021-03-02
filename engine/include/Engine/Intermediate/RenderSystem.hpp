@@ -88,12 +88,11 @@ public:
     void tryToBindShader(Shader& shader);
     void tryToBindTexture(unsigned int textureID);
     void tryToBindMesh(unsigned int meshID);
-    void tryToSetAlphaEnabled(bool alphaEnabled);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
     void resetCurrentRenderPassKey();
 
-    bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel);
+    bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept;
     void drawModelPart(const SubModel& subModel);
     void sendModelDataToShader(Camera& camToUse, SubModel& subModel);
     void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
@@ -110,6 +109,10 @@ public:
     void drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
                        const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
                        EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
+
+    void displayGameObjectRef(const GameObject& go, float dist = 100.f, float size = 10.f) const noexcept;
+
+    void displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) const noexcept;
 
 public:
     // TODO: Remove this shit and create variadic templated system

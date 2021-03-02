@@ -26,7 +26,7 @@ using namespace GPM;
 
 RenderSystem* RenderSystem::m_pInstance{nullptr};
 
-void displayBoundingShape(const SubModel* pSubModel, const ColorRGBA& color)
+void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) const noexcept
 {
     if (pSubModel->pMesh->getBoundingVolumeType() == Mesh::BoundingVolume::SPHERE)
     {
@@ -42,7 +42,7 @@ void displayBoundingShape(const SubModel* pSubModel, const ColorRGBA& color)
     }
 }
 
-void displayGameObjectRef(const GameObject& go, float dist = 100.f, float size = 10.f)
+void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float size) const noexcept
 {
     const Vec3& pos = go.getTransform().getGlobalPosition();
 
@@ -70,7 +70,7 @@ RenderSystem::RenderSystem() noexcept
     m_localResources.add<Mesh>("Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
 }
 
-bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel)
+bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
 {
     if (pSubModel->pMesh->getBoundingVolumeType() == Mesh::BoundingVolume::SPHERE)
     {
@@ -132,11 +132,10 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
         view.c[3].xyz = {0.f, 0.f, 0.f};
         pShader->setMat4(
             "projectViewModelMatrix",
-            (camToUse.getProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+            (camToUse.getViewProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
     }
     else
     {
-
         pShader->setMat4("projectViewModelMatrix", (camToUse.getProjection() * camToUse.getView() *
                                                     subModel.pModel->getOwner().getTransform().getModelMatrix())
                                                        .e);
