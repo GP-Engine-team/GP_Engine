@@ -7,34 +7,47 @@
 
 #include "Engine/Intermediate/GameObject.hpp"
 //#include "Engine/Core/System/TimeSystem.hpp"
+#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Resources/Camera.hpp"
 #include "Engine/Resources/Light/Light.hpp"
+#include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/Model.hpp"
+#include "Engine/Resources/RenderBuffer.hpp"
+#include "Engine/Resources/RenderTexture.hpp"
 #include "Engine/Resources/Shader.hpp"
+#include "GPM/Matrix4.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
 #include "GPM/Shape3D/Volume.hpp"
 #include "GPM/ShapeRelation/SpherePlane.hpp"
-#include "GPM/Matrix4.hpp"
 
 using namespace GPE;
 using namespace GPM;
 
-RenderSystem*     RenderSystem::m_pInstance{nullptr};
+RenderSystem* RenderSystem::m_pInstance{nullptr};
 
-static bool isOnCameraFrustum(const Camera::Frustum& camFrustum, const Model* pModel)
+bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel)
 {
-    std::shared_ptr<Volume> pBoudingVolume = pModel->getpBoudingVolume();
+    const Volume* pBoudingVolume = pSubModel->pMesh->getBoundingVolume();
 
-    Sphere* pBoudingSphere = dynamic_cast<Sphere*>(pBoudingVolume.get());
+    const Sphere* pBoudingSphere = dynamic_cast<const Sphere*>(pBoudingVolume);
     if (pBoudingSphere)
     {
+        float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
+                                           pSubModel->pModel->getOwner().getTransform().getScale().y),
+                                  pSubModel->pModel->getOwner().getTransform().getScale().z);
+
+        Sphere globalSphere(pBoudingSphere->getRadius() * maxScale,
+                            pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
+                                pBoudingSphere->getCenter());
+
         /*Sort to be more optimized*/
-        if (SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.leftFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.rightFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.frontFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.bottomFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.topFace) &&
-            SpherePlane::isSphereOnOrForwardPlaneCollided(*pBoudingSphere, camFrustum.backFace))
+        if (SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.leftFace) &&
+            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.rightFace) &&
+            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.frontFace) &&
+            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.bottomFace) &&
+            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.topFace) &&
+            SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.backFace))
         {
 
             return true;
@@ -45,7 +58,7 @@ static bool isOnCameraFrustum(const Camera::Frustum& camFrustum, const Model* pM
     return true;
 }
 
-void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse)
+void RenderSystem::sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse)
 {
     pCurrentShaderUse->setMat4("view", camToUse.getView().e);
     pCurrentShaderUse->setMat4("projection", camToUse.getProjection().e);
@@ -90,77 +103,73 @@ void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* 
     }*/
 }
 
-void sendModelDataToShader(Camera& camToUse, ModelPart& modelPart)
+void RenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
 {
-    Shader* pShader = modelPart.pModel->getpShader();
+    Shader* pShader = subModel.pShader;
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         Mat3 inverseModelMatrix3(
-            GPM::toMatrix3(modelPart.pModel->getOwner().getTransform().getModelMatrix().inversed()));
+            GPM::toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()));
 
         pShader->setMat4("projectViewModelMatrix", (camToUse.getProjection() * camToUse.getView() *
-                                                    modelPart.pModel->getOwner().getTransform().getModelMatrix())
+                                                    subModel.pModel->getOwner().getTransform().getModelMatrix())
                                                        .e);
         pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
     }
 
-    pShader->setMat4("model", modelPart.pModel->getOwner().getTransform().getModelMatrix().e);
+    pShader->setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        pShader->setMaterialBlock(modelPart.pMaterialToUse->getMaterialComponent());
+        pShader->setMaterialBlock(subModel.pMaterial->getMaterialComponent());
     }
 
     if ((pShader->getFeature() & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
     {
-        pShader->setVec4("Color", modelPart.pMaterialToUse->getMaterialComponent().ambient.kr,
-                         modelPart.pMaterialToUse->getMaterialComponent().ambient.kg,
-                         modelPart.pMaterialToUse->getMaterialComponent().ambient.kb,
-                         modelPart.pMaterialToUse->getMaterialComponent().ambient.ki);
+        pShader->setVec4("Color", subModel.pMaterial->getMaterialComponent().ambient.kr,
+                         subModel.pMaterial->getMaterialComponent().ambient.kg,
+                         subModel.pMaterial->getMaterialComponent().ambient.kb,
+                         subModel.pMaterial->getMaterialComponent().ambient.ki);
     }
 }
 
-void drawModelPart(const ModelPart& modelPart)
+void RenderSystem::drawModelPart(const SubModel& subModel)
 {
-    // TODO : Remove gl functions
-    glDrawArrays(GL_TRIANGLES, modelPart.indexStart, modelPart.indexCount);
+    glDrawArrays(GL_TRIANGLES, 0, subModel.pMesh->getVerticesCount());
 }
 
-void RenderSystem::tryToBindShader(Shader* pShader)
+void RenderSystem::tryToBindShader(Shader& shader)
 {
-    if (m_currentShaderId == pShader->getIdProgramm())
+    if (m_currentShaderID == shader.getID())
         return;
 
-    // TODO : Remove gl functions
-    glUseProgram(pShader->getIdProgramm());
+    glUseProgram(shader.getID());
 
-    m_currentShaderId   = pShader->getIdProgramm();
-    m_currentPShaderUse = pShader;
+    m_currentShaderID   = shader.getID();
+    m_currentPShaderUse = &shader;
 
     sendDataToInitShader(*m_pCameras[0], m_pLights, m_currentPShaderUse);
 }
 
-void RenderSystem::tryToBindTexture(unsigned int textureId)
+void RenderSystem::tryToBindTexture(unsigned int textureID)
 {
-    if (m_currentTextureId == textureId)
+    if (m_currentTextureID == textureID)
         return;
 
-    // TODO : Remove gl functions
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    glBindTexture(GL_TEXTURE_2D, textureID);
 
-    m_currentTextureId = textureId;
+    m_currentTextureID = textureID;
 }
 
-void RenderSystem::tryToBindMesh(unsigned int meshId)
+void RenderSystem::tryToBindMesh(unsigned int meshID)
 {
-    if (m_currentMeshId == meshId)
+    if (m_currentMeshID == meshID)
         return;
 
-    // TODO : Remove gl functions
-    glBindVertexArray(meshId);
+    glBindVertexArray(meshID);
 
-    m_currentMeshId = meshId;
+    m_currentMeshID = meshID;
 }
 
 void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
@@ -170,12 +179,10 @@ void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
 
     if (useBackFaceCulling)
     {
-        // TODO : Remove gl functions
         glEnable(GL_CULL_FACE);
     }
     else
     {
-        // TODO : Remove gl functions
         glDisable(GL_CULL_FACE);
     }
 
@@ -184,13 +191,12 @@ void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
 
 void RenderSystem::resetCurrentRenderPassKey()
 {
-    m_currentShaderId                  = 0;
-    m_currentTextureId                 = 0;
-    m_currentMeshId                    = 0;
+    m_currentShaderID                  = 0;
+    m_currentTextureID                 = 0;
+    m_currentMeshID                    = 0;
     m_currentBackFaceCullingModeEnable = false;
     m_currentPShaderUse                = nullptr;
 
-    // TODO : Remove gl functions
     glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);
     glUseProgram(0);
@@ -198,96 +204,150 @@ void RenderSystem::resetCurrentRenderPassKey()
     glBindVertexArray(0);
 }
 
-void RenderSystem::draw() noexcept
+RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
-    glEnable(GL_DEPTH_TEST);
+    return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*> pRenderers,
+              std::vector<SubModel*> pSubModels, std::vector<Camera*> pCameras, std::vector<Light*> pLights)
 
-    glClearColor(0.3f, 0.3f, 0.3f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    std::list<ModelPart>    modelParts;
-    std::map<float, Model*> mapElemSortedByDistance;
-
-    Camera::Frustum camFrustum = m_pCameras[0]->getFrustum();
-
-    for (auto&& pModel : m_pModels)
     {
-        if (pModel->isActivated() && isOnCameraFrustum(camFrustum, pModel))
+        int h, w;
+        pRenderers[0]->getWindow()->getSize(w, h);
+
+        //std::map<float, Model*> mapElemSortedByDistance;
+
+        Frustum camFrustum = pCameras[0]->getFrustum();
+
+        /*
+        for (auto&& pSubModel : m_pSubModels)
         {
-            if (pModel->isOpaque())
+            if (pSubModel->isActivated() && isOnFrustum(camFrustum, pModel))
             {
-                pModel->insertModelPartsOnContenor(modelParts);
+                if (pSubModel->isOpaque())
+                {
+
+                }
+                else
+                {
+
+                    float distance = (m_pCameras[0]->getGameObject().getTransform().getGlobalPosition() -
+                                      (pModel->getGameObject().getTransform().getGlobalPosition())).length2();
+                    mapElemSortedByDistance[distance] = pModel;
+                }
             }
-            /*else
-            {
+        }*/
 
-                float distance = (m_pCameras[0]->getGameObject().getTransform().getGlobalPosition() -
-                                  (pModel->getGameObject().getTransform().getGlobalPosition())).length2();
-                mapElemSortedByDistance[distance] = pModel;
-            }*/
-        }
-    }
+        rs.resetCurrentRenderPassKey();
+        glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
 
-    modelParts.sort();
+        glViewport(0, 0, w, h);
+        glBindFramebuffer(GL_FRAMEBUFFER, rm.get<RenderTexture>("FBO")->getID());
 
-    resetCurrentRenderPassKey();
-    // TODO : Remove gl functions
-    glDisable(GL_BLEND);
+        glClearColor(0.3f, 0.3f, 0.3f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (auto&& modelPart : modelParts)
-    {
-        tryToBindShader(modelPart.pModel->getpShader());
-        tryToBindMesh(modelPart.key.meshId);
-        tryToBindTexture(modelPart.key.textureId);
-        tryToSetBackFaceCulling(modelPart.useBackFaceCulling);
-
-        // TODO: To optimize ! Use Draw instanced Array
-
-        sendModelDataToShader(*m_pCameras[0], modelPart);
-        drawModelPart(modelPart);
-    }
-
-    // TODO : Remove gl functions
-    glEnable(GL_BLEND);
-
-    /*Display transparent element*/
-    /*for(std::map<float, Model*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it !=
-    mapElemSortedByDistance.rend(); ++it)
-    {
-        it->second->draw();
-    };*/
-
-    resetCurrentRenderPassKey();
-}
-
-void RenderSystem::addModel(Model* pModel) noexcept
-{
-    m_pModels.push_back(pModel);
-}
-
-void RenderSystem::updateModelPointer(Model* newPointorModel, Model* exPointorModel) noexcept
-{
-    for (std::vector<Model*>::iterator it = m_pModels.begin(); it != m_pModels.end(); it++)
-    {
-        if ((*it) == exPointorModel)
+        for (auto&& pSubModel : pSubModels)
         {
-            *it = newPointorModel;
+            if (!rs.isOnFrustum(camFrustum, pSubModel))
+                continue;
+
+            rs.tryToBindShader(*pSubModel->pShader);
+            rs.tryToBindMesh(pSubModel->pMesh->getID());
+            rs.tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());
+            rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
+
+            // TODO: To optimize ! Use Draw instanced Array
+
+            rs.sendModelDataToShader(*pCameras[0], *pSubModel);
+            rs.drawModelPart(*pSubModel);
+        }
+
+        // Render to screen
+        {
+            glViewport(0, 0, w, h);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            glBindVertexArray(rm.get<Mesh>("ScreenPlan")->getID());
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glUseProgram(rm.get<Shader>("PostProcess")->getID());
+            glUniform1i(glGetUniformLocation(rm.get<Shader>("PostProcess")->getID(), "colorTexture"), 0);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, rm.get<Texture>("ColorBufferFBO")->getID());
+
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+
+        glEnable(GL_BLEND);
+
+        /*Display transparent element*/
+        /*for(std::map<float, Model*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it !=
+        mapElemSortedByDistance.rend(); ++it)
+        {
+            it->second->draw();
+        };*/
+
+        rs.resetCurrentRenderPassKey();
+    };
+}
+
+void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
+{
+    renderPipeline(res, *this, m_pRenderers, m_pSubModels, m_pCameras, m_pLights);
+}
+
+void RenderSystem::addRenderer(Renderer* pRenderer) noexcept
+{
+    m_pRenderers.push_back(pRenderer);
+}
+
+void RenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept
+{
+    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != m_pRenderers.end(); it++)
+    {
+        if ((*it) == exPointerRenderer)
+        {
+            *it = newPointerRenderer;
             return;
         }
     }
 }
 
-void RenderSystem::removeModel(Model* pModel) noexcept
+void RenderSystem::removeRenderer(Renderer* pRenderer) noexcept
 {
-    for (std::vector<Model*>::iterator it = m_pModels.begin(); it != m_pModels.end(); it++)
+    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != m_pRenderers.end(); it++)
     {
-        if ((*it) == pModel)
+        if ((*it) == pRenderer)
         {
-            std::swap<Model*>(m_pModels.back(), (*it));
-            m_pModels.pop_back();
+            std::swap<Renderer*>(m_pRenderers.back(), (*it));
+            m_pRenderers.pop_back();
             return;
         }
     }
+}
+
+void RenderSystem::addSubModel(SubModel* pSubModel) noexcept
+{
+    m_pSubModels.insert(
+        std::upper_bound(m_pSubModels.begin(), m_pSubModels.end(), pSubModel, isSubModelHasPriorityOverAnother),
+        pSubModel);
+}
+
+void RenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept
+{
+    for (std::vector<SubModel*>::iterator it = m_pSubModels.begin(); it != m_pSubModels.end(); ++it)
+    {
+        if ((*it) == exPointerSubModel)
+        {
+            *it = newPointerSubModel;
+            return;
+        }
+    }
+}
+
+void RenderSystem::removeSubModel(SubModel* pSubModel) noexcept
+{
+    m_pSubModels.erase(std::remove(m_pSubModels.begin(), m_pSubModels.end(), pSubModel), m_pSubModels.end());
 }
 
 void RenderSystem::addCamera(Camera* pCamera) noexcept
@@ -295,13 +355,13 @@ void RenderSystem::addCamera(Camera* pCamera) noexcept
     m_pCameras.push_back(pCamera);
 }
 
-void RenderSystem::updateCameraPointer(Camera* newPointorCamera, Camera* exPointorCamera) noexcept
+void RenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept
 {
     for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != m_pCameras.end(); it++)
     {
-        if ((*it) == exPointorCamera)
+        if ((*it) == exPointerCamera)
         {
-            *it = newPointorCamera;
+            *it = newPointerCamera;
             return;
         }
     }
@@ -325,13 +385,13 @@ void RenderSystem::addLight(Light* pLight) noexcept
     m_pLights.push_back(pLight);
 }
 
-void RenderSystem::updateLightPointer(Light* newPointorLight, Light* exPointorLight) noexcept
+void RenderSystem::updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept
 {
     for (std::vector<Light*>::iterator it = m_pLights.begin(); it != m_pLights.end(); it++)
     {
-        if ((*it) == exPointorLight)
+        if ((*it) == exPointerLight)
         {
-            *it = newPointorLight;
+            *it = newPointerLight;
             return;
         }
     }

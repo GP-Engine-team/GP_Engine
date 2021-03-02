@@ -100,7 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -115,7 +115,7 @@
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>$(GPEngine)..\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
+      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -126,7 +126,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -139,13 +139,11 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>$(GPEngine)..\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
+      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -154,7 +152,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -169,7 +167,7 @@
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>$(GPEngine)..\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
+      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -193,13 +191,11 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>$(GPEngine)..\generator\bin\GPGenerator.exe $(GPEngineDir) </Command>
+      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -208,7 +204,9 @@
     <ClInclude Include="include\Engine\Core\Game\AbstractGame.hpp" />
     <ClInclude Include="include\Engine\Core\Game\ContextStartup.hpp" />
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp" />
-    <ClInclude Include="include\Engine\Core\Parsers\MTLParser.hpp" />
+    <ClInclude Include="include\Engine\Core\Input\Cursor.hpp" />
+    <ClInclude Include="include\Engine\Core\Input\InputComponent.hpp" />
+    <ClInclude Include="include\Engine\Core\Input\InputManagerGLFW.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp" />
@@ -218,6 +216,8 @@
     <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\BehaviourComponent.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\BehaviourSystem.hpp" />
     <ClInclude Include="include\Engine\Intermediate\Component.hpp" />
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
@@ -232,10 +232,14 @@
     <ClInclude Include="include\Engine\Resources\Material.hpp" />
     <ClInclude Include="include\Engine\Resources\Mesh.hpp" />
     <ClInclude Include="include\Engine\Resources\Model.hpp" />
+    <ClInclude Include="include\Engine\Resources\RenderBuffer.hpp" />
+    <ClInclude Include="include\Engine\Resources\RenderTexture.hpp" />
     <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp" />
+    <ClInclude Include="include\Engine\Resources\ResourcesManagerType.hpp" />
     <ClInclude Include="include\Engine\Resources\Scene.hpp" />
     <ClInclude Include="include\Engine\Resources\SceneManager.hpp" />
     <ClInclude Include="include\Engine\Resources\Shader.hpp" />
+    <ClInclude Include="include\Engine\Resources\ShaderType.hpp" />
     <ClInclude Include="include\Engine\Resources\Texture.hpp" />
     <ClInclude Include="include\Engine\Resources\Type.hpp" />
     <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp" />
@@ -278,18 +282,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AbstractGame.cpp" />
+    <ClCompile Include="src\BehaviourSystem.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\InputComponent.cpp" />
+    <ClCompile Include="src\InputManagerGLFW.cpp" />
     <ClCompile Include="src\Log.cpp" />
-    <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
-    <ClCompile Include="src\MTLParser.cpp" />
     <ClCompile Include="src\ObjParser.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
+    <ClCompile Include="src\ReloadableCpp.cpp" />
+    <ClCompile Include="src\RenderBuffer.cpp" />
     <ClCompile Include="src\RendererGLFW_GL46.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
+    <ClCompile Include="src\RenderTexture.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlLoader.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlSaver.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp" />
@@ -300,7 +308,6 @@
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\WindowGLFW.cpp" />
     <ClCompile Include="third_party\gpm\src\Intersection.cpp" />
-    <ClCompile Include="third_party\gpm\src\main.cpp" />
     <ClCompile Include="third_party\gpm\src\Plane.cpp" />
     <ClCompile Include="third_party\gpm\src\SegmentPlane.cpp" />
     <ClCompile Include="third_party\gpm\src\SpherePlane.cpp" />
@@ -310,9 +317,12 @@
     <None Include=".clang-format" />
     <None Include="ClassDiagram.cd" />
     <None Include="include\Engine\Core\Debug\Log.inl" />
+    <None Include="include\Engine\Core\Input\InputManager.inl" />
+    <None Include="include\Engine\Core\Parsers\ParserTool.inl" />
     <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl" />
     <None Include="include\Engine\Core\TimeSystem\TimeSystem.inl" />
     <None Include="include\Engine\Core\Tools\Format.inl" />
+    <None Include="include\Engine\Intermediate\BehaviourComponent.inl" />
     <None Include="include\Engine\Intermediate\Component.inl" />
     <None Include="include\Engine\Intermediate\DataChunk.inl" />
     <None Include="include\Engine\Intermediate\GameObject.inl" />
@@ -320,22 +330,21 @@
     <None Include="include\Engine\Resources\Light\Light.inl" />
     <None Include="include\Engine\Resources\Material.inl" />
     <None Include="include\Engine\Resources\Mesh.inl" />
-    <None Include="include\Engine\Resources\Model.inl" />
     <None Include="include\Engine\Resources\ResourcesManager.inl" />
     <None Include="include\Engine\Resources\Shader.inl" />
     <None Include="include\Engine\Resources\Texture.inl" />
     <None Include="include\Engine\Serialization\xml\xmlLoader.inl" />
     <None Include="include\Engine\Serialization\xml\xmlManager.inl" />
     <None Include="include\Engine\Serialization\xml\xmlSaver.inl" />
+    <None Include="third_party\gpm\include\GPM\conversion.inl" />
+    <None Include="third_party\gpm\include\GPM\Matrix3.inl" />
+    <None Include="third_party\gpm\include\GPM\Matrix4.inl" />
+    <None Include="third_party\gpm\include\GPM\Quaternion.inl" />
     <None Include="third_party\gpm\include\GPM\Random.inl" />
-    <None Include="third_party\gpm\src\conversion.inl" />
-    <None Include="third_party\gpm\src\Matrix3.inl" />
-    <None Include="third_party\gpm\src\Matrix4.inl" />
-    <None Include="third_party\gpm\src\Quaternion.inl" />
-    <None Include="third_party\gpm\src\Transform.inl" />
-    <None Include="third_party\gpm\src\Vector2.inl" />
-    <None Include="third_party\gpm\src\Vector3.inl" />
-    <None Include="third_party\gpm\src\Vector4.inl" />
+    <None Include="third_party\gpm\include\GPM\Transform.inl" />
+    <None Include="third_party\gpm\include\GPM\Vector2.inl" />
+    <None Include="third_party\gpm\include\GPM\Vector3.inl" />
+    <None Include="third_party\gpm\include\GPM\Vector4.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

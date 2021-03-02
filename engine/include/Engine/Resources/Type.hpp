@@ -35,28 +35,13 @@ typedef AmbiantComponent DiffuseComponent;
 typedef AmbiantComponent SpecularComponent;
 typedef AmbiantComponent Emission;
 
-struct MaterialAttrib
-{
-    AmbiantComponent  ambient;
-    DiffuseComponent  diffuse;
-    SpecularComponent specular;
-    Emission          emission;
-    float             shininess;
-
-    std::string nameAmbiantTexture;
-    std::string nameDiffuseTexture;
-    std::string nameSpecularTexture;
-
-    std::string id;
-};
-
 struct Shape
 {
     std::string               name;
     std::vector<unsigned int> iv;
     std::vector<unsigned int> ivn;
     std::vector<unsigned int> ivt;
-    std::string               material_ids;
+    std::string               IDsMaterial;
 };
 
 struct Attrib

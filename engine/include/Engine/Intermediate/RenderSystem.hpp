@@ -6,14 +6,18 @@
 
 #pragma once
 
-#include <vector>       //std::vector
+#include <vector> //std::vector
+#include <functional> //std::function
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
+#include "Engine/Resources/ResourcesManagerType.hpp"
 
 namespace GPE
 {
+class Renderer;
 class Light;
 class Camera;
+struct Frustum;
 class Model;
 class Shader;
 
@@ -25,6 +29,8 @@ class Shader;
  */
 class RenderSystem
 {
+    public :
+    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>, std::vector<SubModel*>, std::vector<Camera*>, std::vector<Light*>)>;
     /**
      * The Singleton's constructor/destructor should always be private to
      * prevent direct construction/desctruction calls with the `new`/`delete`
@@ -34,25 +40,18 @@ private:
     static RenderSystem* m_pInstance;
 
 protected:
-    std::vector<Model*>  m_pModels;
-    std::vector<Camera*> m_pCameras;
-    std::vector<Light*>  m_pLights;
+    std::vector<Renderer*> m_pRenderers;
+    std::vector<SubModel*> m_pSubModels;
+    std::vector<Camera*>   m_pCameras;
+    std::vector<Light*>    m_pLights;
 
-    unsigned int m_currentShaderId                  = 0;
-    unsigned int m_currentTextureId                 = 0;
-    unsigned int m_currentMeshId                    = 0;
+    unsigned int m_currentShaderID                  = 0;
+    unsigned int m_currentTextureID                 = 0;
+    unsigned int m_currentMeshID                    = 0;
     Shader*      m_currentPShaderUse                = nullptr;
     bool         m_currentBackFaceCullingModeEnable = false;
 
 protected:
-    void tryToBindShader(Shader* pShader);
-    void tryToBindTexture(unsigned int textureId);
-    void tryToBindMesh(unsigned int meshId);
-    void tryToSetAlphaEnabled(bool alphaEnabled);
-    void tryToSetBackFaceCulling(bool useBackFaceCulling);
-
-    void resetCurrentRenderPassKey();
-
     inline RenderSystem() noexcept = default;
     ~RenderSystem() noexcept       = default;
 
@@ -62,19 +61,39 @@ public:
     RenderSystem& operator=(RenderSystem const& other) noexcept = delete;
     RenderSystem& operator=(RenderSystem&& other) noexcept = delete;
 
-    void draw() noexcept;
+public:
+    void tryToBindShader(Shader& shader);
+    void tryToBindTexture(unsigned int textureID);
+    void tryToBindMesh(unsigned int meshID);
+    void tryToSetAlphaEnabled(bool alphaEnabled);
+    void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
-    /**
-     * @brief Add Model (using key word this) on the physic system. This object will be updated by the physic system
-     *
-     * @param pModel
-     */
+    void resetCurrentRenderPassKey();
+
+    bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel);
+    void drawModelPart(const SubModel& subModel);
+    void sendModelDataToShader(Camera& camToUse, SubModel& subModel);
+    void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse);
+
+    RenderPipeline defaultRenderPipeline() const noexcept;
+    void draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
+
+public:
+
+
     // TODO: Remove this shit and create variadic templated system
-    void addModel(Model* pModel) noexcept;
+    void addRenderer(Renderer* pRenderer) noexcept;
 
-    void updateModelPointer(Model* newPointerModel, Model* exPointerModel) noexcept;
+    void updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept;
 
-    void removeModel(Model* pModel) noexcept;
+    void removeRenderer(Renderer* pRenderer) noexcept;
+
+    // TODO: Remove this shit and create variadic templated system
+    void addSubModel(SubModel* pSubModel) noexcept;
+
+    void updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept;
+
+    void removeSubModel(SubModel* pSubModel) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
     void addCamera(Camera* pCamera) noexcept;

@@ -32,7 +32,7 @@ protected:
     std::unordered_map<std::string, LType> m_resources;
 
 public:
-    ResourcesManager() noexcept = default;
+    ResourcesManager() = default;
     ResourcesManager(const ResourcesManager& other) noexcept = delete;
     ResourcesManager& operator=(const ResourcesManager& other) noexcept = delete;
     ResourcesManager(ResourcesManager&& other) noexcept = default;
@@ -47,6 +47,7 @@ public:
      * @return LType&
      */
     LType* get(const std::string& key) noexcept;
+    const LType* get(const std::string& key) const noexcept;
 
     /**
      * @brief add element with argument of constructor in parameter and key. Resource canno't have the same key
@@ -85,7 +86,7 @@ template <class LType, class... RType>
 class ResourcesManager : public ResourcesManager<LType>, public ResourcesManager<RType...>
 {
 public:
-    ResourcesManager() noexcept = default;
+    ResourcesManager() = default;
     ResourcesManager(const ResourcesManager& other) noexcept = delete;
     ResourcesManager& operator=(const ResourcesManager& other) noexcept = delete;
     ResourcesManager(ResourcesManager&& other) noexcept = default;
@@ -101,6 +102,9 @@ public:
      */
     template <class T>
     inline T* get(const std::string& key) noexcept;
+
+    template <class T>
+    inline const T* get(const std::string& key) const noexcept;
 
     /**
      * @brief Remove resource with the corresponding key if key is found

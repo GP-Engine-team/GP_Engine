@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <vector>
 #include <glad/glad.h>
+#include <vector>
 
 namespace GPE
 {
@@ -17,13 +17,12 @@ public:
     struct CreateArg
     {
         std::vector<class Texture*> colorBuffers;
-        class Texture* depthBuffer;
-        class Texture* stencilBuffer;
+        class RenderBuffer*         depthBuffer   = nullptr;
+        class RenderBuffer*         stencilBuffer = nullptr;
     };
 
 protected:
-
-    GLuint m_id         = 0;
+    GLuint m_id = 0;
 
 public:
     RenderTexture(const CreateArg& arg) noexcept;
@@ -39,6 +38,11 @@ public:
     RenderTexture& operator=(RenderTexture const& other) noexcept = delete;
 
     RenderTexture& operator=(RenderTexture&& other) noexcept = delete;
+
+    GLuint getID() const
+    {
+        return m_id;
+    }
 };
 
 } /*namespace GPE*/
