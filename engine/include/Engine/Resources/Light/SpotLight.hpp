@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -8,10 +8,10 @@
 
 #include <vector>
 
+#include "Engine/Core/Tools/ClassUtility.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Light/PointLight.hpp"
 #include "GPM/Vector3.hpp"
-#include "Engine/Core/Tools/ClassUtility.hpp"
 
 namespace GPE
 {
@@ -60,16 +60,15 @@ public:
      * @param cutOffExponent    : in degres : specifies the spotlight's radius attenuation
      * @param name
      */
-    SpotLight(GameObject& owner, const AmbiantComponent& ambient,
-              const DiffuseComponent& diffuse, const SpecularComponent& specular,
-              float constant, float linear, float quadratic, float cutOff, float cutOffExponent);
+    SpotLight(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
+              const SpecularComponent& specular, float constant, float linear, float quadratic, float cutOff,
+              float cutOffExponent);
 
     SpotLight(GameObject& owner, CreateArg arg);
 
     void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept final;
 
-
-    DEFAULT_GETTER_SETTER(CutOff, m_cutOff);
-    DEFAULT_GETTER_SETTER(CutOffExponent, m_cutOffExponent);
+    DEFAULT_GETTER_SETTER_BY_REF(CutOff, m_cutOff);
+    DEFAULT_GETTER_SETTER_BY_REF(CutOffExponent, m_cutOffExponent);
 };
 } /*namespace GPE*/

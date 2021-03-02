@@ -78,7 +78,7 @@ public:
 
     GETTER_BY_VALUE(ID, m_indexVAO);
     GETTER_BY_VALUE(VerticesCount, m_verticesCount);
-    DEFAULT_GETTER_SETTER(BoundingVolumeType, m_boundingVolumeType);
+    DEFAULT_GETTER_SETTER_BY_REF(BoundingVolumeType, m_boundingVolumeType);
 
     /**
      * @brief Create a plae object of radius 1 and return it mesh. Plane is centered on the origin

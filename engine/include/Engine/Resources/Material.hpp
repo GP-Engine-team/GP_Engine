@@ -42,9 +42,9 @@ public:
     Material& operator=(Material const& other) = default;
     Material& operator=(Material&& other) = default;
 
-    DEFAULT_GETTER_SETTER(Name, m_name);
-    DEFAULT_GETTER_SETTER(Component, m_comp);
-    DEFAULT_GETTER_SETTER(DiffuseTexture, m_pDiffuseTexture);
+    DEFAULT_GETTER_SETTER_BY_REF(Name, m_name);
+    DEFAULT_GETTER_SETTER_BY_REF(Component, m_comp);
+    DEFAULT_GETTER_SETTER_BY_REF(DiffuseTexture, m_pDiffuseTexture);
 
     inline bool isOpaque() const noexcept;
 };

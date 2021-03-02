@@ -35,6 +35,10 @@
         variable = in_##variableName;                                                                                  \
     }
 
-#define DEFAULT_GETTER_SETTER(variableName, variable)                                                                  \
+#define DEFAULT_GETTER_SETTER_BY_REF(variableName, variable)                                                           \
     GETTER_BY_CONST_REF(variableName, variable)                                                                        \
     SETTER_BY_CONST_REF(variableName, variable)
+
+#define DEFAULT_GETTER_SETTER_BY_VALUE(variableName, variable)                                                         \
+    GETTER_BY_VALUE(variableName, variable)                                                                            \
+    SETTER_BY_VALUE(variableName, variable)
