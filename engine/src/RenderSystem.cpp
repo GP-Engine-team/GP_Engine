@@ -28,11 +28,10 @@ RenderSystem* RenderSystem::m_pInstance{nullptr};
 
 void displayBoundingShape(const SubModel* pSubModel, const ColorRGBA& color)
 {
-    const Volume* pBoudingVolume = pSubModel->pMesh->getBoundingVolume();
-
-    const Sphere* pBoudingSphere = dynamic_cast<const Sphere*>(pBoudingVolume);
-    if (pBoudingSphere)
+    if (pSubModel->pMesh->getBoundingVolumeType() == Mesh::BoundingVolume::SPHERE)
     {
+        const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
+
         float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
                                            pSubModel->pModel->getOwner().getTransform().getScale().y),
                                   pSubModel->pModel->getOwner().getTransform().getScale().z);
@@ -73,11 +72,10 @@ RenderSystem::RenderSystem() noexcept
 
 bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel)
 {
-    const Volume* pBoudingVolume = pSubModel->pMesh->getBoundingVolume();
-
-    const Sphere* pBoudingSphere = dynamic_cast<const Sphere*>(pBoudingVolume);
-    if (pBoudingSphere)
+    if (pSubModel->pMesh->getBoundingVolumeType() == Mesh::BoundingVolume::SPHERE)
     {
+        const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
+
         float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
                                            pSubModel->pModel->getOwner().getTransform().getScale().y),
                                   pSubModel->pModel->getOwner().getTransform().getScale().z);
