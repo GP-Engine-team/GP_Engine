@@ -96,7 +96,7 @@ public:
     bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel);
     void drawModelPart(const SubModel& subModel);
     void sendModelDataToShader(Camera& camToUse, SubModel& subModel);
-    void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse);
+    void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
     void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;

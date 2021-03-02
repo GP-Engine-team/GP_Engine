@@ -21,9 +21,6 @@
 #include "GPM/Shape3D/Volume.hpp"
 #include "GPM/ShapeRelation/SpherePlane.hpp"
 
-// TODO:To remove : debug
-#include <glfw/glfw3.h>
-
 using namespace GPE;
 using namespace GPM;
 
@@ -100,13 +97,13 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
     return true;
 }
 
-void RenderSystem::sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse)
+void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
 {
     if ((pCurrentShaderUse->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         std::vector<LightData> lightBuffer;
 
-        for (auto&& light : lights)
+        for (auto&& light : m_pLights)
         {
             light->addToLightToUseBuffer(lightBuffer);
         }
@@ -185,7 +182,7 @@ void RenderSystem::tryToBindShader(Shader& shader)
     m_currentShaderID   = shader.getID();
     m_currentPShaderUse = &shader;
 
-    sendDataToInitShader(*m_pCameras[0], m_pLights, m_currentPShaderUse);
+    sendDataToInitShader(*m_pCameras[0], m_currentPShaderUse);
 }
 
 void RenderSystem::tryToBindTexture(unsigned int textureID)
@@ -250,30 +247,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
     {
         int h, w;
         pRenderers[0]->getWindow()->getSize(w, h);
-        int  idCamFrustum            = 1;
-        int  idCamView               = 1;
-        bool displayBoundingDrawed   = false;
-        bool displayBoundingUnDrawed = false;
 
-        if (glfwGetKey(pRenderers[0]->getWindow()->getGLFWWindow(), GLFW_KEY_F1) == GLFW_PRESS)
-        {
-            idCamView = 0;
-        }
-
-        if (glfwGetKey(pRenderers[0]->getWindow()->getGLFWWindow(), GLFW_KEY_F2) == GLFW_PRESS)
-        {
-            displayBoundingDrawed = true;
-        }
-
-        if (glfwGetKey(pRenderers[0]->getWindow()->getGLFWWindow(), GLFW_KEY_F3) == GLFW_PRESS)
-        {
-            displayBoundingUnDrawed = true;
-        }
-
-        Frustum camFrustum = pCameras[idCamFrustum]->getFrustum();
-
-        displayGameObjectRef(*pCameras[idCamFrustum]->getOwner().parent);
-        displayGameObjectRef(pCameras[idCamFrustum]->getOwner());
+        Frustum camFrustum = pCameras[0]->getFrustum();
 
         rs.resetCurrentRenderPassKey();
 
@@ -286,21 +261,12 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
         /*Display opaque element*/
         {
-            int subRender = 0, subAvoid = 0;
             glDisable(GL_BLEND);
 
             for (auto&& pSubModel : pOpaqueSubModels)
             {
                 if (!rs.isOnFrustum(camFrustum, pSubModel))
-                {
-                    if (displayBoundingUnDrawed)
-                        displayBoundingShape(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.1f});
-                    subAvoid++;
                     continue;
-                }
-                subRender++;
-                if (displayBoundingDrawed)
-                    displayBoundingShape(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.5f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
@@ -309,10 +275,9 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[idCamView], *pSubModel);
+                rs.sendModelDataToShader(*pCameras[0], *pSubModel);
                 rs.drawModelPart(*pSubModel);
             }
-            std::cout << subRender << " " << subAvoid << std::endl;
         }
 
         /*Display transparent element*/
@@ -326,7 +291,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 if (rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    float distance = (pCameras[idCamFrustum]->getOwner().getTransform().getGlobalPosition() -
+                    float distance = (pCameras[0]->getOwner().getTransform().getGlobalPosition() -
                                       (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
                                          .length2();
                     mapElemSortedByDistance[distance] = pSubModel;
@@ -343,7 +308,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[idCamView], *it->second);
+                rs.sendModelDataToShader(*pCameras[0], *it->second);
                 rs.drawModelPart(*it->second);
             };
         }
@@ -362,8 +327,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                     shaderToUse->setMat4(
                         "projectViewModelMatrix",
-                        (pCameras[idCamView]->getProjection() * pCameras[idCamView]->getView() * shape.transform.model)
-                            .e);
+                        (pCameras[0]->getProjection() * pCameras[0]->getView() * shape.transform.model).e);
 
                     shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
 
