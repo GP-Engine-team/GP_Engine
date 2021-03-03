@@ -25,7 +25,7 @@ namespace GPE
 class Mesh
 {
 public:
-    enum class BoundingVolume
+    enum class EBoundingVolume
     {
         NONE,
         SPHERE,
@@ -39,7 +39,7 @@ public:
         std::vector<GPM::Vec2>       vtBuffer;
         std::vector<GPM::Vec3>       vnBuffer;
         std::vector<Indice>          iBuffer;
-        BoundingVolume               boundingVolumeType{BoundingVolume::SPHERE};
+        EBoundingVolume              boundingVolumeType{EBoundingVolume::SPHERE};
         std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
     };
 
@@ -57,11 +57,8 @@ protected:
     unsigned int m_indexVAO      = 0;
     unsigned int m_verticesCount = 0;
 
-    BoundingVolume               m_boundingVolumeType = BoundingVolume::NONE;
+    EBoundingVolume              m_boundingVolumeType = EBoundingVolume::NONE;
     std::unique_ptr<GPM::Volume> m_boundingVolume     = nullptr;
-
-private:
-    void generateBoundingSphere(const std::vector<GPM::Vec3>& vBuffer) noexcept;
 
 public:
     Mesh(CreateArg& arg) noexcept;

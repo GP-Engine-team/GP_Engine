@@ -32,22 +32,23 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
 {
     switch (pSubModel->pMesh->getBoundingVolumeType())
     {
-
-    case Mesh::BoundingVolume::SPHERE: {
+    case Mesh::EBoundingVolume::SPHERE: {
         const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
 
         float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
                                            pSubModel->pModel->getOwner().getTransform().getScale().y),
                                   pSubModel->pModel->getOwner().getTransform().getScale().z);
 
-        RenderSystem::getInstance()->drawDebugSphere(
-            pSubModel->pModel->getOwner().getTransform().getGlobalPosition() + pBoudingSphere->getCenter(),
-            pBoudingSphere->getRadius() * (maxScale / 2.f), color, RenderSystem::EDebugShapeMode::FILL);
+        const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
+                          pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
+
+        RenderSystem::getInstance()->drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color,
+                                                     RenderSystem::EDebugShapeMode::FILL);
 
         break;
     }
 
-    case Mesh::BoundingVolume::AABB: {
+    case Mesh::EBoundingVolume::AABB: {
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
@@ -99,7 +100,7 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
     switch (pSubModel->pMesh->getBoundingVolumeType())
     {
 
-    case Mesh::BoundingVolume::SPHERE: {
+    case Mesh::EBoundingVolume::SPHERE: {
         const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
 
         float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
@@ -120,7 +121,7 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
         break;
     }
 
-    case Mesh::BoundingVolume::AABB: {
+    case Mesh::EBoundingVolume::AABB: {
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
@@ -322,10 +323,10 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 if (!rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
+                    rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
                     continue;
                 }
-                // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
+                rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMesh(pSubModel->pMesh->getID());

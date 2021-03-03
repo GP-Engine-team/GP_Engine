@@ -23,26 +23,8 @@ Mesh::Mesh(CreateArg& arg) noexcept
 {
     m_boundingVolumeType = arg.boundingVolumeType;
 
-    if (arg.boundingVolume == nullptr)
-    {
-        if (arg.boundingVolumeType != BoundingVolume::NONE)
-        {
-            switch (arg.boundingVolumeType)
-            {
-            case BoundingVolume::SPHERE:
-
-                generateBoundingSphere(arg.vBuffer);
-                break;
-
-            default:
-                break;
-            }
-        }
-    }
-    else
-    {
+    if (arg.boundingVolume != nullptr)
         m_boundingVolume = std::move(arg.boundingVolume);
-    }
 
     // Init VBOs and VAO
     GLuint vertexbuffer;
@@ -135,26 +117,6 @@ void Mesh::draw() const noexcept
 
     unsigned int first = 0;
     glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_verticesCount));
-}
-
-void Mesh::generateBoundingSphere(const std::vector<GPM::Vec3>& vBuffer) noexcept
-{
-    if (vBuffer.empty())
-        return;
-
-    float farestVertexLengthSquare = std::numeric_limits<float>::min();
-
-    for (auto&& vertex : vBuffer)
-    {
-        float newVertexLength = std::fabs(vertex.length2());
-
-        if (farestVertexLengthSquare < newVertexLength)
-        {
-            farestVertexLengthSquare = newVertexLength;
-        }
-    }
-
-    m_boundingVolume = std::make_unique<Sphere>(std::sqrt(farestVertexLengthSquare));
 }
 
 Mesh::CreateArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition, unsigned int indexTextureX,

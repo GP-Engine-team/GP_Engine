@@ -12,6 +12,7 @@
 namespace GPE
 {
 
-Model::CreateArg importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager) noexcept;
+Model::CreateArg importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager,
+                                    Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE) noexcept;
 
 } // namespace GPE

@@ -9,20 +9,26 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Resources/Texture.hpp"
 #include "GPM/Shape3D/AABB.hpp"
+#include "GPM/Shape3D/Sphere.hpp"
 
 using namespace GPE;
 using namespace GPM;
 
-Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager) noexcept
+Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager,
+                                         Mesh::EBoundingVolume boundingVolumeType) noexcept
 {
     GPE_ASSERT(assetPath != nullptr, "Void path");
 
     Log::logInitializationStart("Obj parsing");
 
+    unsigned int postProcessflags = aiProcess_Triangulate /*| aiProcess_JoinIdenticalVertices*/ |
+                                    aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords;
+
+    if (boundingVolumeType != Mesh::EBoundingVolume::NONE)
+        postProcessflags |= aiProcess_GenBoundingBoxes;
+
     Assimp::Importer importer;
-    const aiScene*   scene = importer.ReadFile(assetPath, aiProcess_Triangulate /*| aiProcess_JoinIdenticalVertices*/ |
-                                                            aiProcess_SortByPType | aiProcess_GenNormals |
-                                                            aiProcess_GenUVCoords | aiProcess_GenBoundingBoxes);
+    const aiScene*   scene = importer.ReadFile(assetPath, postProcessflags);
     if (!scene)
         FUNCT_ERROR(importer.GetErrorString());
 
@@ -102,11 +108,31 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
             arg.vtBuffer.emplace_back(textCoord.x, textCoord.y);
         }
 
-        arg.boundingVolume =
-            std::make_unique<AABB>(Vector3{pMesh->mAABB.mMin.x, pMesh->mAABB.mMin.y, pMesh->mAABB.mMin.z},
-                                   Vector3{pMesh->mAABB.mMax.x, pMesh->mAABB.mMax.y, pMesh->mAABB.mMax.z});
+        arg.boundingVolumeType = boundingVolumeType;
 
-        arg.boundingVolumeType = Mesh::BoundingVolume::AABB;
+        // Generate bounding volume
+        switch (boundingVolumeType)
+        {
+        case Mesh::EBoundingVolume::SPHERE: {
+
+            const Vector3 min{pMesh->mAABB.mMin.x, pMesh->mAABB.mMin.y, pMesh->mAABB.mMin.z};
+            const Vector3 max{pMesh->mAABB.mMax.x, pMesh->mAABB.mMax.y, pMesh->mAABB.mMax.z};
+
+            arg.boundingVolume = std::make_unique<Sphere>(std::max(min.length(), max.length()), (max + min) * 0.5);
+
+            break;
+        }
+
+        case Mesh::EBoundingVolume::AABB: {
+            arg.boundingVolume =
+                std::make_unique<AABB>(Vector3{pMesh->mAABB.mMin.x, pMesh->mAABB.mMin.y, pMesh->mAABB.mMin.z},
+                                       Vector3{pMesh->mAABB.mMax.x, pMesh->mAABB.mMax.y, pMesh->mAABB.mMax.z});
+
+            break;
+        }
+        default:
+            break;
+        }
 
         modelArg.subModels.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
                                                  pMaterials.empty() ? nullptr : pMaterials[pMesh->mMaterialIndex - 1],
