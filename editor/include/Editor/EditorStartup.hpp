@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Engine/Core/Game/ContextStartup.hpp"
+#include "Engine/Core/HotReload/ReloadableCpp.hpp"
 
 #include <functional>
 
@@ -24,6 +25,7 @@ private:
     const std::function<void(double, double)> m_update;
     const std::function<void()>               m_render;
 
+    GPE::ReloadableCpp reloadableCpp;
     AbstractGame* m_game;
     Editor*       m_editor;
 
