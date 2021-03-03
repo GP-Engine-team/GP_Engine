@@ -17,8 +17,10 @@
 #include "Engine/Resources/RenderTexture.hpp"
 #include "Engine/Resources/Shader.hpp"
 #include "GPM/Matrix4.hpp"
+#include "GPM/Shape3D/AABB.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
 #include "GPM/Shape3D/Volume.hpp"
+#include "GPM/ShapeRelation/AABBPlane.hpp"
 #include "GPM/ShapeRelation/SpherePlane.hpp"
 
 using namespace GPE;
@@ -28,17 +30,39 @@ RenderSystem* RenderSystem::m_pInstance{nullptr};
 
 void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) const noexcept
 {
-    if (pSubModel->pMesh->getBoundingVolumeType() == Mesh::BoundingVolume::SPHERE)
+    switch (pSubModel->pMesh->getBoundingVolumeType())
     {
+
+    case Mesh::BoundingVolume::SPHERE: {
         const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
 
         float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
                                            pSubModel->pModel->getOwner().getTransform().getScale().y),
                                   pSubModel->pModel->getOwner().getTransform().getScale().z);
 
-        RenderSystem::getInstance()->drawDebugSphere(pSubModel->pModel->getOwner().getTransform().getGlobalPosition(),
-                                                     pBoudingSphere->getRadius() * (maxScale / 2.f), color,
-                                                     RenderSystem::EDebugShapeMode::FILL);
+        RenderSystem::getInstance()->drawDebugSphere(
+            pSubModel->pModel->getOwner().getTransform().getGlobalPosition() + pBoudingSphere->getCenter(),
+            pBoudingSphere->getRadius() * (maxScale / 2.f), color, RenderSystem::EDebugShapeMode::FILL);
+
+        break;
+    }
+
+    case Mesh::BoundingVolume::AABB: {
+
+        const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
+
+        const Vector3 scale(pSubModel->pModel->getOwner().getTransform().getScale().x * pAABB->getExtI() * 2.f,
+                            pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->getExtJ() * 2.f,
+                            pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->getExtK() * 2.f);
+
+        const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
+                          pAABB->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
+
+        RenderSystem::getInstance()->drawDebugCube(pos, Quat::identity(), scale, color,
+                                                   RenderSystem::EDebugShapeMode::FILL);
+    }
+    default:
+        break;
     }
 }
 
@@ -72,8 +96,10 @@ RenderSystem::RenderSystem() noexcept
 
 bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
 {
-    if (pSubModel->pMesh->getBoundingVolumeType() == Mesh::BoundingVolume::SPHERE)
+    switch (pSubModel->pMesh->getBoundingVolumeType())
     {
+
+    case Mesh::BoundingVolume::SPHERE: {
         const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
 
         float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
@@ -82,7 +108,7 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
 
         Sphere globalSphere(pBoudingSphere->getRadius() * (maxScale / 2.f),
                             pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                                pBoudingSphere->getCenter());
+                                pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
 
         return (SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.leftFace) &&
                 SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.rightFace) &&
@@ -90,9 +116,34 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
                 SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.bottomFace) &&
                 SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.farFace) &&
                 SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.nearFace));
+
+        break;
     }
 
-    return true;
+    case Mesh::BoundingVolume::AABB: {
+
+        const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
+
+        const Vector3 scale(pSubModel->pModel->getOwner().getTransform().getScale().x * pAABB->getExtI() * 2.f,
+                            pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->getExtJ() * 2.f,
+                            pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->getExtK() * 2.f);
+
+        const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
+                          pAABB->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
+
+        AABB globalAABB(pos, scale.x / 2.f, scale.y / 2.f, scale.z / 2.f);
+
+        return (AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.leftFace) &&
+                AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.rightFace) &&
+                AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.topFace) &&
+                AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.bottomFace) &&
+                AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.farFace) &&
+                AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.nearFace));
+    }
+    default:
+        return true;
+        break;
+    }
 }
 
 void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
@@ -270,7 +321,11 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             for (auto&& pSubModel : pOpaqueSubModels)
             {
                 if (!rs.isOnFrustum(camFrustum, pSubModel))
+                {
+                    // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
                     continue;
+                }
+                // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMesh(pSubModel->pMesh->getID());

@@ -3,10 +3,12 @@
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/postprocess.h> // Post processing flags
 #include <assimp/scene.h>       // Output data structure
+#include <memory>               // std::make_unique
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Resources/Texture.hpp"
+#include "GPM/Shape3D/AABB.hpp"
 
 using namespace GPE;
 using namespace GPM;
@@ -18,9 +20,9 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
     Log::logInitializationStart("Obj parsing");
 
     Assimp::Importer importer;
-    const aiScene*   scene =
-        importer.ReadFile(assetPath, aiProcess_Triangulate /*| aiProcess_JoinIdenticalVertices*/ |
-                                         aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords);
+    const aiScene*   scene = importer.ReadFile(assetPath, aiProcess_Triangulate /*| aiProcess_JoinIdenticalVertices*/ |
+                                                            aiProcess_SortByPType | aiProcess_GenNormals |
+                                                            aiProcess_GenUVCoords | aiProcess_GenBoundingBoxes);
     if (!scene)
         FUNCT_ERROR(importer.GetErrorString());
 
@@ -74,33 +76,41 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
     // Mesh
     for (size_t i = 0; i < scene->mNumMeshes; ++i)
     {
+        aiMesh* pMesh = scene->mMeshes[i];
+
         Mesh::CreateArg arg;
-        arg.vBuffer.reserve(scene->mMeshes[i]->mNumVertices);
-        arg.vtBuffer.reserve(scene->mMeshes[i]->mNumVertices);
-        arg.vnBuffer.reserve(scene->mMeshes[i]->mNumVertices);
+        arg.vBuffer.reserve(pMesh->mNumVertices);
+        arg.vtBuffer.reserve(pMesh->mNumVertices);
+        arg.vnBuffer.reserve(pMesh->mNumVertices);
 
-        arg.objName = scene->mMeshes[i]->mName.C_Str();
+        arg.objName = pMesh->mName.C_Str();
 
-        for (size_t verticeId = 0; verticeId < scene->mMeshes[i]->mNumVertices; ++verticeId)
+        for (size_t verticeId = 0; verticeId < pMesh->mNumVertices; ++verticeId)
         {
-            GPE_ASSERT(scene->mMeshes[i]->mVertices != nullptr, "Mesh without vertices");
-            GPE_ASSERT(scene->mMeshes[i]->HasNormals(), "Mesh without Normal");
-            GPE_ASSERT(scene->mMeshes[i]->mTextureCoords != nullptr, "Mesh without UV");
-            GPE_ASSERT(scene->mMeshes[i]->mTextureCoords[0] != nullptr, "Invalid UV");
 
-            const aiVector3D& vertice   = scene->mMeshes[i]->mVertices[verticeId];
-            const aiVector3D& textCoord = scene->mMeshes[i]->mTextureCoords[0][verticeId];
-            const aiVector3D& normal    = scene->mMeshes[i]->mNormals[verticeId];
+            GPE_ASSERT(pMesh->mVertices != nullptr, "Mesh without vertices");
+            GPE_ASSERT(pMesh->HasNormals(), "Mesh without Normal");
+            GPE_ASSERT(pMesh->mTextureCoords != nullptr, "Mesh without UV");
+            GPE_ASSERT(pMesh->mTextureCoords[0] != nullptr, "Invalid UV");
+
+            const aiVector3D& vertice   = pMesh->mVertices[verticeId];
+            const aiVector3D& textCoord = pMesh->mTextureCoords[0][verticeId];
+            const aiVector3D& normal    = pMesh->mNormals[verticeId];
 
             arg.vBuffer.emplace_back(vertice.x, vertice.y, vertice.z);
             arg.vnBuffer.emplace_back(normal.x, normal.y, normal.z);
             arg.vtBuffer.emplace_back(textCoord.x, textCoord.y);
         }
 
-        modelArg.subModels.emplace_back(
-            SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
-                     pMaterials.empty() ? nullptr : pMaterials[scene->mMeshes[i]->mMaterialIndex - 1],
-                     &resourceManager.add<Mesh>(arg.objName, arg), true});
+        arg.boundingVolume =
+            std::make_unique<AABB>(Vector3{pMesh->mAABB.mMin.x, pMesh->mAABB.mMin.y, pMesh->mAABB.mMin.z},
+                                   Vector3{pMesh->mAABB.mMax.x, pMesh->mAABB.mMax.y, pMesh->mAABB.mMax.z});
+
+        arg.boundingVolumeType = Mesh::BoundingVolume::AABB;
+
+        modelArg.subModels.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
+                                                 pMaterials.empty() ? nullptr : pMaterials[pMesh->mMaterialIndex - 1],
+                                                 &resourceManager.add<Mesh>(arg.objName, arg), true});
     }
 
     Log::logInitializationEnd("Obj parsing");

@@ -1,4 +1,5 @@
-#include "Engine/Resources/Mesh.hpp"
+﻿#include "Engine/Resources/Mesh.hpp"
+
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "GPM/Constants.hpp"
@@ -18,16 +19,29 @@ static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, 
     glBindBuffer(target, 0);
 }
 
-Mesh::Mesh(const CreateArg& arg) noexcept
+Mesh::Mesh(CreateArg& arg) noexcept
 {
-    if (arg.boundingVolume == BoundingVolume::SPHERE)
+    m_boundingVolumeType = arg.boundingVolumeType;
+
+    if (arg.boundingVolume == nullptr)
     {
-        m_boundingVolumeType = arg.boundingVolume;
-        generateBoundingSphere(arg.vBuffer);
+        if (arg.boundingVolumeType != BoundingVolume::NONE)
+        {
+            switch (arg.boundingVolumeType)
+            {
+            case BoundingVolume::SPHERE:
+
+                generateBoundingSphere(arg.vBuffer);
+                break;
+
+            default:
+                break;
+            }
+        }
     }
-    else if (arg.boundingVolume == BoundingVolume::NONE)
+    else
     {
-        m_boundingVolume = nullptr;
+        m_boundingVolume = std::move(arg.boundingVolume);
     }
 
     // Init VBOs and VAO
@@ -64,7 +78,6 @@ Mesh::Mesh(const CreateArg& arg) noexcept
             vtVBO.emplace_back(arg.vtBuffer[arg.iBuffer[i].ivt]);
             vnVBO.emplace_back(arg.vnBuffer[arg.iBuffer[i].ivn]);
         }
-
 
         initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vVBO.data(),
                                static_cast<int>(vVBO.size() * sizeof(vVBO[0])));
@@ -145,7 +158,7 @@ void Mesh::generateBoundingSphere(const std::vector<GPM::Vec3>& vBuffer) noexcep
 }
 
 Mesh::CreateArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition, unsigned int indexTextureX,
-                                  unsigned int indexTextureY, Axis towardAxis, bool isRectoVerso) noexcept
+                                 unsigned int indexTextureY, Axis towardAxis, bool isRectoVerso) noexcept
 {
     Mesh::CreateArg mesh;
     mesh.objName = "Plane";

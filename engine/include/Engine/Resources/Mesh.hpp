@@ -28,17 +28,19 @@ public:
     enum class BoundingVolume
     {
         NONE,
-        SPHERE
+        SPHERE,
+        AABB
     };
 
     struct CreateArg
     {
-        std::string            objName;
-        std::vector<GPM::Vec3> vBuffer;
-        std::vector<GPM::Vec2> vtBuffer;
-        std::vector<GPM::Vec3> vnBuffer;
-        std::vector<Indice>    iBuffer;
-        BoundingVolume         boundingVolume{BoundingVolume::SPHERE};
+        std::string                  objName;
+        std::vector<GPM::Vec3>       vBuffer;
+        std::vector<GPM::Vec2>       vtBuffer;
+        std::vector<GPM::Vec3>       vnBuffer;
+        std::vector<Indice>          iBuffer;
+        BoundingVolume               boundingVolumeType{BoundingVolume::SPHERE};
+        std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
     };
 
     enum class Axis
@@ -62,7 +64,7 @@ private:
     void generateBoundingSphere(const std::vector<GPM::Vec3>& vBuffer) noexcept;
 
 public:
-    Mesh(const CreateArg& arg) noexcept;
+    Mesh(CreateArg& arg) noexcept;
 
     Mesh(const Mesh& other) = delete;
     Mesh(Mesh&& other)      = default;
