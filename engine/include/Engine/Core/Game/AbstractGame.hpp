@@ -6,16 +6,10 @@
 
 #pragma once
 
-#include <Kodgen/Misc/DefaultLogger.h>
-#include <RefurekuGenerator/CodeGen/FileGenerationUnit.h>
-#include <RefurekuGenerator/CodeGen/FileGenerator.h>
-#include <RefurekuGenerator/Parsing/FileParser.h>
-#include <RefurekuGenerator/Parsing/FileParserFactory.h>
-
 class AbstractGame
 {
 public:
-    AbstractGame() = default;
+    AbstractGame();
     virtual void update(double unscaledDeltaTime, double deltaTime) = 0;
     virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) = 0;
     virtual void render() = 0;
