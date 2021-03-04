@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -45,11 +45,9 @@ public: // TODO : Protected method ?
     void updateComponentLink(const T* oldPtr, T* newPtr) noexcept;
 
 public:
-    inline
-    GameObject(const CreateArg& arg);
+    inline GameObject(const CreateArg& arg);
 
-    inline
-    GameObject();
+    inline GameObject() noexcept;
 
     inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is available
 

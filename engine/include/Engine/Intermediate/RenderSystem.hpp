@@ -52,7 +52,7 @@ public:
 
     using RenderPipeline = std::function<void(const ResourceManagerType&, const LocalResourceManager&, RenderSystem&,
                                               std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
-                                              std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&)>;
+                                              std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&, unsigned int)>;
 
 private:
     static RenderSystem* m_pInstance;
@@ -98,7 +98,7 @@ public:
     void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
-    void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
+    void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline, unsigned int renderTextureID = 0) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
                          const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},

@@ -1,4 +1,4 @@
-#include "Engine/Intermediate/GameObject.hpp"
+﻿#include "Engine/Intermediate/GameObject.hpp"
 
 GameObject::GameObject(const CreateArg& arg)
     : m_name{arg.name},
@@ -6,8 +6,8 @@ GameObject::GameObject(const CreateArg& arg)
 {
 }
 
-GameObject::GameObject()
-    : m_name{""}, m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
+GameObject::GameObject() noexcept
+    : m_name{"Wolrd"}, m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
 {
 }
 

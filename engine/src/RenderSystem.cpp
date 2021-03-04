@@ -296,7 +296,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
     return [](const ResourceManagerType& rm, const LocalResourceManager& rml, RenderSystem& rs,
               std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
-              std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape)
+              std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape, unsigned int renderTextureID)
 
     {
         int h, w;
@@ -307,7 +307,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         rs.resetCurrentRenderPassKey();
 
         glViewport(0, 0, w, h);
-        glBindFramebuffer(GL_FRAMEBUFFER, rml.get<RenderTexture>("FBO")->getID());
+        glBindFramebuffer(GL_FRAMEBUFFER, renderTextureID);
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
@@ -401,7 +401,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
-
+        /*
         // Render to screen
         {
             glViewport(0, 0, w, h);
@@ -416,14 +416,14 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             glBindTexture(GL_TEXTURE_2D, rml.get<Texture>("ColorBufferFBO")->getID());
 
             glDrawArrays(GL_TRIANGLES, 0, 6);
-        }
+        }*/
     };
 }
 
-void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
+void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline, unsigned int renderTextureID) noexcept
 {
     renderPipeline(res, m_localResources, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras,
-                   m_pLights, m_debugShape);
+                   m_pLights, m_debugShape, renderTextureID);
 }
 
 void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, EDebugShapeMode mode,
