@@ -23,12 +23,6 @@ struct Frustum;
 class Model;
 class Shader;
 
-/**
- * @brief The Singleton class defines the `GetInstance` method that serves as an
- * alternative to constructor and lets clients access the same instance of this
- * class over and over. Thread safe singleton according with link below :
- * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
- */
 class RenderSystem
 {
 public:
@@ -50,12 +44,10 @@ public:
 
     using LocalResourceManager = ResourcesManager<Mesh, Shader, Texture, RenderBuffer, RenderTexture>;
 
-    using RenderPipeline = std::function<void(const ResourceManagerType&, const LocalResourceManager&, RenderSystem&,
-                                              std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
-                                              std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&, unsigned int)>;
-
-private:
-    static RenderSystem* m_pInstance;
+    using RenderPipeline =
+        std::function<void(const ResourceManagerType&, const LocalResourceManager&, RenderSystem&,
+                           std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
+                           std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&, unsigned int)>;
 
 protected:
     LocalResourceManager m_localResources;
@@ -73,18 +65,9 @@ protected:
     Shader*      m_currentPShaderUse                = nullptr;
     bool         m_currentBackFaceCullingModeEnable = false;
 
-protected:
+public:
     RenderSystem() noexcept;
 
-    ~RenderSystem() noexcept = default;
-
-public:
-    RenderSystem(const RenderSystem& other) noexcept = delete;
-    RenderSystem(RenderSystem&& other) noexcept      = delete;
-    RenderSystem& operator=(RenderSystem const& other) noexcept = delete;
-    RenderSystem& operator=(RenderSystem&& other) noexcept = delete;
-
-public:
     void tryToBindShader(Shader& shader);
     void tryToBindTexture(unsigned int textureID);
     void tryToBindMesh(unsigned int meshID);
@@ -98,7 +81,7 @@ public:
     void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
-    void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline, unsigned int renderTextureID = 0) noexcept;
+    void draw(const ResourceManagerType& res, RenderPipeline renderPipeline, unsigned int renderTextureID = 0) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
                          const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
@@ -142,24 +125,6 @@ public:
     void updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept;
 
     void removeLight(Light* pLight) noexcept;
-
-    /**
-     * @brief This is the static method that controls the access to the singleton
-     * instance. On the first run, it creates a singleton object and places it
-     * into the static field. On subsequent runs, it returns the client existing
-     * object stored in the static field.
-     *
-     * @param value
-     * @return RenderSystem*
-     */
-    static RenderSystem* getInstance() noexcept
-    {
-        if (unlikely(m_pInstance == nullptr))
-        {
-            m_pInstance = new RenderSystem();
-        }
-        return m_pInstance;
-    }
 };
 
 } /*namespace GPE*/

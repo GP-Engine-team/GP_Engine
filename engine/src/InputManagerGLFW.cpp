@@ -1,45 +1,35 @@
 #include "Engine/Core/Input/InputManagerGLFW.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "GLFW/glfw3.h"
 
 using namespace std;
 using namespace GPE;
 using namespace GPM;
 
-InputManager* InputManager::m_inputManager = nullptr;
-
-InputManager* InputManager::GetInstance()
+InputManager::InputManager(Window& window) noexcept
 {
-    /**
-     * This is a safer way to create an instance. instance = new Singleton is
-     * dangeruous in case two instance threads wants to access at the same time
-     */
-    if (m_inputManager == nullptr)
-    {
-        m_inputManager = new InputManager();
-    }
-    return m_inputManager;
+    glfwSetWindowUserPointer(window.getGLFWWindow(), this);
 }
 
-void InputManager::fireInputComponents(const std::string& action, const int& key) const noexcept
+void InputManager::fireInputComponents(const std::string& action, const int& key) noexcept
 {
-    InputManager* input = InputManager::GetInstance();
     if (!action.empty())
     {
-        auto stateMapIt = input->m_stateMap.find(key);
-        auto lastStateMapIt = input->m_stateMap.find(key);
-        for (int i = 0; i < input->m_inputComponents.size(); i++)
+        auto stateMapIt = m_stateMap.find(key);
+        auto lastStateMapIt = m_stateMap.find(key);
+        for (int i = 0; i < m_inputComponents.size(); i++)
         {
-            auto keyModeMapIt  = input->m_inputComponents[i]->m_keyModeMap.find(action);
+            auto keyModeMapIt  = m_inputComponents[i]->m_keyModeMap.find(action);
              if (stateMapIt->second == true)
             {
                   switch (keyModeMapIt->second)
                   {
                          case  EKeyMode::KEY_PRESS:
-                                          input ->m_inputComponents[i]->fireAction(action);
-                                          input->m_stateMap[key] = false;
+                                          m_inputComponents[i]->fireAction(action);
+                                          m_stateMap[key] = false;
                                           break;
                          case  EKeyMode::KEY_REPEAT:
-                                          input->m_inputComponents[i]->fireAction(action);
+                                          m_inputComponents[i]->fireAction(action);
                                           break;
                   }
             }
@@ -55,18 +45,16 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
     }
 }
 
-void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const noexcept
+void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
-    InputManager* input = InputManager::GetInstance();
-
     if (action != GLFW_REPEAT)
     {
-        if (input->m_stateMap[key])
+        if (m_stateMap[key])
         {
-            auto stateMapIt = input->m_stateMap.find(key);
-            input->m_lastStateMap[key] = stateMapIt->second;
+            auto stateMapIt = m_stateMap.find(key);
+            m_lastStateMap[key] = stateMapIt->second;
         }
-        input->m_stateMap[key] = action != GLFW_RELEASE;
+        m_stateMap[key] = action != GLFW_RELEASE;
     }
 }
 
@@ -82,14 +70,14 @@ void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, doubl
     glfwSetCursorPos(window, m_cursor.center.x, m_cursor.center.y);
 }
 
-static void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
+void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
-    InputManager::GetInstance()->cursorPositionCallback(window, xpos, ypos);
+    static_cast<InputManager*>(glfwGetWindowUserPointer(window))->cursorPositionCallback(window, xpos, ypos);
 }
 
-static void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
+void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
-    InputManager::GetInstance()->keyCallback(window, key, scancode, action, mods);
+    static_cast<InputManager*>(glfwGetWindowUserPointer(window))->keyCallback(window, key, scancode, action, mods);
 }
 
 void InputManager::setupCallbacks(GLFWwindow* window) noexcept
@@ -104,14 +92,12 @@ void InputManager::processInput() noexcept
     m_cursor.deltaPos = {0, 0};
     glfwPollEvents();
 
-    InputManager* input = InputManager::GetInstance();
-
-    for (auto keyState : input->m_stateMap)
+    for (auto keyState : m_stateMap)
     {
-        auto it = input->m_actionMap.equal_range(keyState.first);
+        auto it = m_actionMap.equal_range(keyState.first);
         for (auto i2 = it.first; i2 != it.second; i2++)
         {
-            input->fireInputComponents(i2->second, keyState.first);
+            fireInputComponents(i2->second, keyState.first);
         }
     }
 }
