@@ -5,6 +5,8 @@
 #include "GPM/Constants.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
 
+#include <glad/glad.h>
+
 #include <iostream>
 #include <limits>
 

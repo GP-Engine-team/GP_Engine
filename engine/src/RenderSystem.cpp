@@ -9,6 +9,7 @@
 //#include "Engine/Core/System/TimeSystem.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/Core/System/SystemsManager.hpp"
 #include "Engine/Resources/Camera.hpp"
 #include "Engine/Resources/Light/Light.hpp"
 #include "Engine/Resources/Mesh.hpp"
@@ -26,8 +27,6 @@
 using namespace GPE;
 using namespace GPM;
 
-RenderSystem* RenderSystem::m_pInstance{nullptr};
-
 void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) const noexcept
 {
     switch (pSubModel->pMesh->getBoundingVolumeType())
@@ -42,8 +41,8 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
                           pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
 
-        RenderSystem::getInstance()->drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color,
-                                                     RenderSystem::EDebugShapeMode::FILL);
+        SystemsManager::getInstance()->renderSystem.drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f),
+                                                                    color, RenderSystem::EDebugShapeMode::FILL);
 
         break;
     }
@@ -59,8 +58,8 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
                           pAABB->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
 
-        RenderSystem::getInstance()->drawDebugCube(pos, Quat::identity(), scale, color,
-                                                   RenderSystem::EDebugShapeMode::FILL);
+        SystemsManager::getInstance()->renderSystem.drawDebugCube(pos, Quat::identity(), scale, color,
+                                                                  RenderSystem::EDebugShapeMode::FILL);
     }
     default:
         break;
@@ -71,14 +70,14 @@ void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float 
 {
     const Vec3& pos = go.getTransform().getGlobalPosition();
 
-    RenderSystem::getInstance()->drawDebugSphere(pos + go.getTransform().getVectorRight() * dist, size,
-                                                 ColorRGBA{1.f, 0.f, 0.f, 1.f});
+    SystemsManager::getInstance()->renderSystem.drawDebugSphere(pos + go.getTransform().getVectorRight() * dist, size,
+                                                                ColorRGBA{1.f, 0.f, 0.f, 1.f});
 
-    RenderSystem::getInstance()->drawDebugSphere(pos + go.getTransform().getVectorUp() * dist, size,
-                                                 ColorRGBA{0.f, 1.f, 0.f, 1.f});
+    SystemsManager::getInstance()->renderSystem.drawDebugSphere(pos + go.getTransform().getVectorUp() * dist, size,
+                                                                ColorRGBA{0.f, 1.f, 0.f, 1.f});
 
-    RenderSystem::getInstance()->drawDebugSphere(pos + go.getTransform().getVectorForward() * dist, size,
-                                                 ColorRGBA{0.f, 0.f, 1.f, 1.f});
+    SystemsManager::getInstance()->renderSystem.drawDebugSphere(pos + go.getTransform().getVectorForward() * dist, size,
+                                                                ColorRGBA{0.f, 0.f, 1.f, 1.f});
 }
 
 RenderSystem::RenderSystem() noexcept
@@ -420,7 +419,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
     };
 }
 
-void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline, unsigned int renderTextureID) noexcept
+void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline,
+                        unsigned int renderTextureID) noexcept
 {
     renderPipeline(res, m_localResources, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras,
                    m_pLights, m_debugShape, renderTextureID);

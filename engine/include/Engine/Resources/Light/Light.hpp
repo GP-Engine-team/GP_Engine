@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -18,7 +18,7 @@
 #include "GPM/Vector4.hpp"
 
 // in inl
-#include "Engine/Intermediate/RenderSystem.hpp"
+#include "Engine/Core/System/SystemsManager.hpp"
 
 namespace GPE
 {
@@ -42,14 +42,11 @@ public:
     inline Light(GameObject& owner, const CreateArg& arg);
 
     inline Light(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
-          const SpecularComponent& specular);
+                 const SpecularComponent& specular);
 
     Light(const Light& other) = delete;
     Light(Light&& other)      = default;
-    virtual ~Light()
-    {
-        RenderSystem::getInstance()->removeLight(this);
-    }
+    inline virtual ~Light();
 
     Light()        = delete;
     Light& operator=(Light const& other) = delete;
@@ -70,11 +67,9 @@ public:
                       0.f});
     }
 
-
     inline const AmbiantComponent&  getAmbient() const noexcept;
     inline const DiffuseComponent&  getDiffuse() const noexcept;
     inline const SpecularComponent& getSpecular() const noexcept;
-
 
     inline void setGlobalComponent(const ColorRGBA& newComponent) noexcept;
     inline void setGlobalComponent(const GPM::Vec4& newComponent) noexcept;

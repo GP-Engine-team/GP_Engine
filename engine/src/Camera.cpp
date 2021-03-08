@@ -4,6 +4,7 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Core/System/SystemsManager.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Intermediate/RenderSystem.hpp"
 #include "GPM/Transform.hpp"
@@ -27,7 +28,7 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
 
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.near, m_projInfo.far);
 
-    RenderSystem::getInstance()->addCamera(this);
+    SystemsManager::getInstance()->renderSystem.addCamera(this);
 
     Log::log((std::string("Perspective projection add with name \"") + arg.name + "\"").c_str());
 }
@@ -49,7 +50,7 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
     m_projection =
         Transform::orthographic(m_projInfo.hSide / 2.f, m_projInfo.vSide / 2.f, m_projInfo.near, m_projInfo.far);
 
-    RenderSystem::getInstance()->addCamera(this);
+    SystemsManager::getInstance()->renderSystem.addCamera(this);
     Log::log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
 }
 

@@ -1,6 +1,7 @@
-#include "Engine/Core/Input/InputManagerGLFW.hpp"
+﻿#include "Engine/Core/Input/InputManagerGLFW.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "GLFW/glfw3.h"
+
+#include <GLFW/glfw3.h>
 
 using namespace std;
 using namespace GPE;
@@ -15,23 +16,23 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
 {
     if (!action.empty())
     {
-        auto stateMapIt = m_stateMap.find(key);
+        auto stateMapIt     = m_stateMap.find(key);
         auto lastStateMapIt = m_stateMap.find(key);
         for (int i = 0; i < m_inputComponents.size(); i++)
         {
-            auto keyModeMapIt  = m_inputComponents[i]->m_keyModeMap.find(action);
-             if (stateMapIt->second == true)
+            auto keyModeMapIt = m_inputComponents[i]->m_keyModeMap.find(action);
+            if (stateMapIt->second == true)
             {
-                  switch (keyModeMapIt->second)
-                  {
-                         case  EKeyMode::KEY_PRESS:
-                                          m_inputComponents[i]->fireAction(action);
-                                          m_stateMap[key] = false;
-                                          break;
-                         case  EKeyMode::KEY_REPEAT:
-                                          m_inputComponents[i]->fireAction(action);
-                                          break;
-                  }
+                switch (keyModeMapIt->second)
+                {
+                case EKeyMode::KEY_PRESS:
+                    m_inputComponents[i]->fireAction(action);
+                    m_stateMap[key] = false;
+                    break;
+                case EKeyMode::KEY_REPEAT:
+                    m_inputComponents[i]->fireAction(action);
+                    break;
+                }
             }
 
             /*else if (keyModeMapIt->second == EKeyMode::KEY_RELEASE && stateMapIt->second == false)
@@ -51,7 +52,7 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
     {
         if (m_stateMap[key])
         {
-            auto stateMapIt = m_stateMap.find(key);
+            auto stateMapIt     = m_stateMap.find(key);
             m_lastStateMap[key] = stateMapIt->second;
         }
         m_stateMap[key] = action != GLFW_RELEASE;

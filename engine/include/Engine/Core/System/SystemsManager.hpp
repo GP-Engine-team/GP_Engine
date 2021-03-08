@@ -23,6 +23,9 @@ namespace GPE
  */
 class SystemsManager
 {
+protected:
+    static SystemsManager* m_instance;
+
 public:
     Window          window;
     Renderer        renderer;
@@ -33,12 +36,11 @@ public:
 
 protected:
     SystemsManager()
-        : window{Window::CreateArg{"window", 800, 900}}, renderer{window}, timeSystem{}, inputManager{window},
+        : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
           behaviourSystem{}, renderSystem{}
     {
+        renderSystem.addRenderer(&renderer);
     }
-
-    static SystemsManager* m_instance;
 
 public:
     /**
@@ -51,9 +53,6 @@ public:
      */
     void operator=(const SystemsManager&) = delete;
 
-    SystemsManager(SystemsManager&& other) noexcept = delete;
-    void operator=(SystemsManager&& other) noexcept = delete;
-
     /**
      * This is the static method that controls the access to the singleton
      * instance. On the first run, it creates a singleton object and places it
@@ -61,26 +60,15 @@ public:
      * object stored in the static field.
      */
 
-    static SystemsManager* getInstance();
-};
-
-SystemsManager* SystemsManager::m_instance = nullptr;
-;
-
-/**
- * Static methods should be defined outside the class.
- */
-SystemsManager* SystemsManager::getInstance()
-{
-    /**
-     * This is a safer way to create an instance. instance = new Singleton is
-     * dangeruous in case two instance threads wants to access at the same time
-     */
-    if (m_instance == nullptr)
+    static SystemsManager* getInstance()
     {
-        m_instance = new SystemsManager();
+        if (m_instance == nullptr)
+        {
+            m_instance = new SystemsManager();
+        }
+
+        return m_instance;
     }
-    return m_instance;
-}
+};
 
 } /*namespace GPE*/
