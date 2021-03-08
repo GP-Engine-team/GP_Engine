@@ -27,13 +27,10 @@ class BehaviourComponent : public Component
 
     BehaviourComponent() noexcept                             = delete;
     BehaviourComponent(const BehaviourComponent& other) noexcept = delete;
-    BehaviourComponent(BehaviourComponent&& other) noexcept;
-    virtual ~BehaviourComponent() noexcept;
+    inline BehaviourComponent(BehaviourComponent&& other) noexcept;
+    inline virtual ~BehaviourComponent() noexcept;
     BehaviourComponent& operator=(BehaviourComponent const& other) noexcept = delete;
     BehaviourComponent& operator=(BehaviourComponent&& other) noexcept = delete;
-
-    virtual void awake()
-    {}
 
     virtual void start()
     {}
@@ -42,11 +39,13 @@ class BehaviourComponent : public Component
     {}
 
     virtual void update(float deltaTime)
-    {}
+    {
+        std::cout << "update behaviour" << std::endl;
+    }
 
-    void enableUpdate(bool flag) noexcept;
+    inline void enableUpdate(bool flag) noexcept;
 
-    void enableFixedUpdate(bool flag) noexcept;
+    inline void enableFixedUpdate(bool flag) noexcept;
 };
 
 #include "BehaviourComponent.inl"

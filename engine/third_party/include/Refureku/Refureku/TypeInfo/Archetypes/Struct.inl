@@ -97,7 +97,7 @@ template <typename Predicate, typename>
 std::vector<Field const*> Struct::getFields(Predicate predicate, bool shouldInspectInherited) const
 {
 	std::vector<Field const*> result;
-
+    //std::cout << "test" << fields.size() << std::endl;
 	for (Field const& field : fields)
 	{
 		/**

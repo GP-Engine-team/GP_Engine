@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 
     Log::logInitializationStart("EditorStartup creation");
 
-    EditorStartup editorStartup;
+    Editor::EditorStartup editorStartup;
     editorStartup.run();
 
     return 0;

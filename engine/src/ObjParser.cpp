@@ -1,256 +1,109 @@
 #include "Engine/Core/Parsers/ObjParser.hpp"
 
-#include <algorithm>
-#include <cctype>
-#include <fstream>
-#include <iostream>
+#include <assimp/Importer.hpp>  // C++ importer interface
+#include <assimp/postprocess.h> // Post processing flags
+#include <assimp/scene.h>       // Output data structure
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Parsers/ParserTool.hpp"
+#include "Engine/Resources/Texture.hpp"
 
 using namespace GPE;
 using namespace GPM;
 
-static void parseVertexPos(const std::string& line, std::vector<Vec3>& vBuffer)
+std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager) noexcept
 {
-    std::size_t cursorStart = line.find_first_not_of(" ", 1);
-    std::size_t cursorEnd   = line.find(" ", cursorStart);
-    float       x           = std::stof(line.substr(cursorStart, cursorEnd - cursorStart));
-
-    cursorStart = line.find_first_not_of(" ", cursorEnd);
-    cursorEnd   = line.find(" ", cursorStart);
-    float y     = std::stof(line.substr(cursorStart, cursorEnd - cursorStart));
-
-    cursorStart = line.find_first_not_of(" ", cursorEnd);
-    cursorEnd   = line.find(" ", cursorStart);
-    float z     = std::stof(line.substr(cursorStart, cursorEnd - cursorStart));
-
-    vBuffer.push_back({x, y, z});
-}
-
-static void parseTexturePos(const std::string& line, std::vector<Vec2>& vtBuffer)
-{
-    std::size_t cursorStart = line.find_first_not_of(" ", 2);
-    std::size_t cursorEnd   = line.find(" ", cursorStart);
-    float       tx          = std::stof(line.substr(cursorStart, cursorEnd - cursorStart));
-
-    cursorStart = line.find_first_not_of(" ", cursorEnd);
-    cursorEnd   = line.find(" ", cursorStart);
-    float ty    = std::stof(line.substr(cursorStart, cursorEnd - cursorStart));
-
-    vtBuffer.push_back({tx, ty});
-}
-
-static void parseNormal(const std::string& line, std::vector<Vec3>& vnBuffer)
-{
-    std::size_t cursorStart = line.find_first_not_of(" ", 2);
-    std::size_t cursorEnd   = line.find(" ", cursorStart);
-    float       x           = std::stof(line.substr(cursorStart, cursorEnd - cursorStart));
-
-    cursorStart = line.find_first_not_of(" ", cursorEnd);
-    cursorEnd   = line.find(" ", cursorStart);
-    float y     = std::stof(line.substr(cursorStart, cursorEnd - cursorStart));
-
-    cursorStart = line.find_first_not_of(" ", cursorEnd);
-    cursorEnd   = line.find(" ", cursorStart);
-    float z     = std::stof(line.substr(cursorStart, cursorEnd - cursorStart));
-
-    vnBuffer.push_back({x, y, z});
-}
-
-inline unsigned int getNumberIndice(const std::string& line, unsigned int numberAttributeByIndice)
-{
-    return numberAttributeByIndice == 1 ? 0 : static_cast<unsigned int>(std::count(line.begin(), line.end(), '/')) / (numberAttributeByIndice - 1);
-}
-
-static unsigned int getNumberAttributeByIndice(const std::string& line)
-{
-    std::size_t cursorStart = line.find_first_not_of(" ", 1);
-    std::string indiceBlock = line.substr(cursorStart, line.find_first_of(" ", cursorStart) - cursorStart);
-
-    return static_cast<unsigned int>(std::count(indiceBlock.begin(), indiceBlock.end(), '/')) + 1;
-}
-
-inline void parseIndice(const std::string& line, std::vector<Shape>& shape)
-{
-    unsigned int firstIv(0), firstIvn(0), firstIvt(0), secondIv(0), secondIvn(0), secondIvt(0);
-    std::size_t  cursorStart, cursorEnd;
-    unsigned int numberAttributeByIndice = getNumberAttributeByIndice(line);
-    unsigned int numberIndice            = getNumberIndice(line, numberAttributeByIndice);
-
-    if (numberIndice == 0)
-    {
-        Log::logWarning((std::string("Indice without vn not accept. Line not read : ") + line).c_str());
-        return;
-    }
-
-    if (shape.empty())
-    {
-        shape.push_back({});
-    }
-
-    // get indices of thirst vertex
-    cursorStart = line.find_first_not_of(" ", 1);
-
-    cursorEnd = line.find('/');
-    firstIv   = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-
-    if (numberAttributeByIndice > 1)
-    {
-        cursorStart = cursorEnd + 1;
-
-        if (numberAttributeByIndice > 2)
-        {
-            cursorEnd   = line.find('/', cursorStart);
-            firstIvt    = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-            cursorStart = cursorEnd + 1;
-            cursorEnd   = line.find(' ', cursorStart);
-            firstIvn    = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-        }
-        else
-        {
-            cursorEnd = line.find(' ', cursorStart);
-            firstIvt  = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-        }
-    }
-
-    // Parse the second index and save it indice
-    cursorStart = cursorEnd + 1;
-    cursorEnd   = line.find('/', cursorStart);
-    secondIv    = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-
-    if (numberAttributeByIndice > 1)
-    {
-        cursorStart = cursorEnd + 1;
-
-        if (numberAttributeByIndice > 2)
-        {
-            cursorEnd   = line.find('/', cursorStart);
-            secondIvt   = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-            cursorStart = cursorEnd + 1;
-            cursorEnd   = line.find(' ', cursorStart);
-            secondIvn   = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-        }
-        else
-        {
-            cursorEnd = line.find(' ', cursorStart);
-            secondIvt = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-        }
-    }
-
-    // Parse all the indices
-    for (size_t i = 0; i < numberIndice - 2; i++)
-    {
-        shape.back().iv.push_back(firstIv);
-        shape.back().ivn.push_back(firstIvn);
-        shape.back().ivt.push_back(firstIvt);
-
-        shape.back().iv.push_back(secondIv);
-        shape.back().ivn.push_back(secondIvn);
-        shape.back().ivt.push_back(secondIvt);
-
-        // get indice of second vertex
-        cursorStart = cursorEnd + 1;
-        cursorEnd   = line.find('/', cursorStart);
-        secondIv    = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-
-        if (numberAttributeByIndice > 1)
-        {
-            cursorStart = cursorEnd + 1;
-
-            if (numberAttributeByIndice > 2)
-            {
-                cursorEnd   = line.find('/', cursorStart);
-                secondIvt   = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-                cursorStart = cursorEnd + 1;
-                cursorEnd   = line.find(' ', cursorStart);
-                secondIvn   = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-            }
-            else
-            {
-                cursorEnd = line.find(' ', cursorStart);
-                secondIvt = std::atoi(line.substr(cursorStart, cursorEnd - cursorStart).c_str()) - 1;
-            }
-        }
-
-        shape.back().iv.push_back(secondIv);
-        shape.back().ivn.push_back(secondIvn);
-        shape.back().ivt.push_back(secondIvt);
-    }
-}
-
-inline void parseMtl(const std::string& line, std::vector<MaterialAttrib>& materials)
-{
-    std::string path;
-    path += PATH_MTL + line.substr(7, line.find_last_of('.') - 7) + EXTENSION_MTL;
-
-    loadMTL(path, materials);
-}
-
-inline void parseUseMtl(const std::string& line, std::vector<Shape>& shape)
-{
-    shape.push_back({});
-    removeUntilFirstSpace(line, shape.back().material_ids);
-}
-
-inline void parseSurfaceName(const std::string& line, std::vector<Shape>& shape)
-{
-    if (!shape.empty())
-        removeUntilFirstSpace(line, shape.back().name);
-}
-
-inline void parseLine(const std::string& line, Attrib* attrib, std::vector<Shape>* shape,
-                      std::vector<MaterialAttrib>* materials)
-{
-    // Detect line type and parse this line
-    if (stringStartsWith(line, "#"))
-        return;
-    else if (stringStartsWith(line, "o") && attrib != nullptr)
-    {
-        removeUntilFirstSpace(line, attrib->objName);
-        Log::log((std::string("Obj name : ") + attrib->objName).c_str());
-    }
-    else if (stringStartsWith(line, "g") && shape != nullptr)
-        parseSurfaceName(line, *shape);
-    else if (stringStartsWith(line, "mtllib") && materials != nullptr)
-        parseMtl(line, *materials);
-    else if (stringStartsWith(line, "usemtl") && shape != nullptr)
-        parseUseMtl(line, *shape);
-    else if (stringStartsWith(line, "vt") && attrib != nullptr)
-        parseTexturePos(line, attrib->vtBuffer);
-    else if (stringStartsWith(line, "vn") && attrib != nullptr)
-        parseNormal(line, attrib->vnBuffer);
-    else if (stringStartsWith(line, "v") && attrib != nullptr)
-        parseVertexPos(line, attrib->vBuffer);
-    else if (stringStartsWith(line, "f") && shape != nullptr)
-        parseIndice(line, *shape);
-    else
-        Log::logWarning(std::string("Obj Parser don't parse this line : " + line).c_str());
-}
-
-void GPE::loadObjWithMTL(const char* objPath, Attrib* attrib, std::vector<Shape>* shape,
-                           std::vector<MaterialAttrib>* materials) noexcept
-{
-    GPE_ASSERT(objPath != nullptr, "Void path");
+    GPE_ASSERT(assetPath != nullptr, "Void path");
 
     Log::logInitializationStart("Obj parsing");
 
-    std::ifstream file(objPath);
+    Assimp::Importer importer;
+    const aiScene*   scene =
+        importer.ReadFile(assetPath, aiProcess_Triangulate /*| aiProcess_JoinIdenticalVertices*/ |
+                                         aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords);
+    if (!scene)
+        FUNCT_ERROR(importer.GetErrorString());
 
-    if (!file)
+    // SubModule initialization
+    GPE_ASSERT(scene->HasMeshes(), "File without mesh");
+    std::vector<SubModel> subModuleBuffer;
+    subModuleBuffer.reserve(scene->mNumMeshes);
+
+    // Material and texture
+    GPE_ASSERT(scene->HasMaterials(), "Mesh without material not supported");
+
+    std::vector<Material::CreateArg> matArgs;
+    matArgs.reserve(scene->mNumMaterials - 1);
+
+    for (size_t i = 1; i < scene->mNumMaterials; ++i)
     {
-        Log::logError((std::string("Error to found or read file : ") + objPath).c_str());
-        exit(1);
+        GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) != 0,
+                   "No diffuse texture not supported");
+        GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) < 2,
+                   "Multiple diffuse trexture not supported");
+
+        aiString str;
+        scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &str);
+
+        Texture::LoadArg textureArg;
+        textureArg.path = PATH_TEXTURE_RESOURCE;
+        textureArg.path += str.C_Str();
+
+        matArgs.emplace_back();
+        Material::CreateArg& materialArg = matArgs.back();
+
+        aiColor3D color;
+        scene->mMaterials[i]->Get(AI_MATKEY_COLOR_AMBIENT, color);
+        materialArg.comp.ambient.rgbi = GPM::Vec4{color.r, color.g, color.b, 1.f};
+
+        scene->mMaterials[i]->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+        materialArg.comp.diffuse.rgbi = GPM::Vec4{color.r, color.g, color.b, 1.f};
+
+        scene->mMaterials[i]->Get(AI_MATKEY_COLOR_SPECULAR, color);
+        materialArg.comp.specular.rgbi = GPM::Vec4{color.r, color.g, color.b, 1.f};
+
+        scene->mMaterials[i]->Get(AI_MATKEY_SHININESS, materialArg.comp.shininess);
+
+        materialArg.pTexture = &resourceManager.add<Texture>(str.C_Str(), textureArg);
     }
 
-    std::string line;
-    while (getline(file >> std::ws, line))
-    {
-        if (line.size() < 2)
-            continue;
+    std::vector<Material>& materials =
+        resourceManager.add<std::vector<Material>>("Mat", matArgs.begin(), matArgs.end());
 
-        parseLine(line, attrib, shape, materials);
+    // Mesh
+    for (size_t i = 0; i < scene->mNumMeshes; ++i)
+    {
+        Mesh::CreateArg arg;
+        arg.vBuffer.reserve(scene->mMeshes[i]->mNumVertices);
+        arg.vtBuffer.reserve(scene->mMeshes[i]->mNumVertices);
+        arg.vnBuffer.reserve(scene->mMeshes[i]->mNumVertices);
+
+        arg.objName = scene->mMeshes[i]->mName.C_Str();
+
+        for (size_t verticeId = 0; verticeId < scene->mMeshes[i]->mNumVertices; ++verticeId)
+        {
+            GPE_ASSERT(scene->mMeshes[i]->mVertices != nullptr, "Mesh without vertices");
+            GPE_ASSERT(scene->mMeshes[i]->HasNormals(), "Mesh without Normal");
+            GPE_ASSERT(scene->mMeshes[i]->mTextureCoords != nullptr, "Mesh without UV");
+            GPE_ASSERT(scene->mMeshes[i]->mTextureCoords[0] != nullptr, "Invalid UV");
+
+            const aiVector3D& vertice   = scene->mMeshes[i]->mVertices[verticeId];
+            const aiVector3D& textCoord = scene->mMeshes[i]->mTextureCoords[0][verticeId];
+            const aiVector3D& normal    = scene->mMeshes[i]->mNormals[verticeId];
+
+            arg.vBuffer.emplace_back(vertice.x, vertice.y, vertice.z);
+            arg.vnBuffer.emplace_back(normal.x, normal.y, normal.z);
+            arg.vtBuffer.emplace_back(textCoord.x, textCoord.y);
+        }
+
+        bool enableBackFaceCulling = true;
+
+        subModuleBuffer.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
+                                              &materials[scene->mMeshes[i]->mMaterialIndex - 1],
+                                              &resourceManager.add<Mesh>(arg.objName, arg), true});
     }
+
     Log::logInitializationEnd("Obj parsing");
+
+    return subModuleBuffer;
 }

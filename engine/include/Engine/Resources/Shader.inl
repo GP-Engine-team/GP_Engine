@@ -1,6 +1,6 @@
 #include "Engine/Resources/Shader.hpp"
 
-unsigned int Shader::getIdProgramm() const noexcept
+unsigned int Shader::getID() const noexcept
 {
     return m_id;
 };

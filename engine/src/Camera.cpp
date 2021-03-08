@@ -106,7 +106,7 @@ void Camera::setAspect(const float newAspect) noexcept
     }
 }
 
-Camera::Frustum Camera::getFrustum() const noexcept
+Frustum Camera::getFrustum() const noexcept
 {
     // TODO: Optimization with furstum matrix ??
     Frustum          frustum;

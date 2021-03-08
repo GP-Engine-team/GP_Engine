@@ -2,7 +2,7 @@
 #include "Editor/Editor.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
-#include "Game/Game.hpp"
+//#include "Game/Game.hpp"
 
 namespace Editor
 {
@@ -38,7 +38,7 @@ EditorStartup::~EditorStartup()
 {
     if (m_game != nullptr)
     {
-        destroyGameInstance(m_game);
+        //destroyGameInstance(m_game);
     }
 
     GPE_ASSERT(m_editor != nullptr, "m_editor should be valid since we've just ran the editor.");
@@ -52,7 +52,7 @@ void EditorStartup::startGame()
     {
         delete m_game;
     }
-    m_game = new Game();
+    //m_game = new Game();
 }
 
 
