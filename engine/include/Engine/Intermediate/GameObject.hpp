@@ -18,14 +18,16 @@
 namespace GPE
 {
 class Component;
+class Scene;
 
 class GameObject
 {
 public:
     struct CreateArg
     {
-        std::string                   name = "";
+        std::string                   name = "World";
         TransformComponent::CreateArg transformArg;
+        GameObject*                   parent = nullptr;
     };
 
 protected:
@@ -37,6 +39,7 @@ protected:
     bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
 public:
+    Scene&                                 scene;
     GameObject*                            parent   = nullptr;
     std::list<std::unique_ptr<GameObject>> children = {};
 
@@ -45,18 +48,14 @@ public: // TODO : Protected method ?
     void updateComponentLink(const T* oldPtr, T* newPtr) noexcept;
 
 public:
-    inline GameObject(const CreateArg& arg);
+    inline GameObject(Scene& scene, const CreateArg& arg = GameObject::CreateArg{});
 
-    inline GameObject() noexcept;
+    GameObject()                        = delete;
+    GameObject(const GameObject& other) = delete;            // TODO: when transform is available
+    GameObject& operator=(GameObject const& other) = delete; // TODO
 
-    inline GameObject(const GameObject& other) noexcept = delete; // TODO: when transform is available
-
-    constexpr inline GameObject(GameObject&& other) = default;
-
-    inline ~GameObject() noexcept = default;
-
-    inline GameObject& operator=(GameObject const& other) noexcept = delete; // TODO
-
+    inline GameObject(GameObject&& other) = default;
+    inline ~GameObject() noexcept         = default;
     inline GameObject& operator=(GameObject&& other) noexcept = default;
 
     /**
