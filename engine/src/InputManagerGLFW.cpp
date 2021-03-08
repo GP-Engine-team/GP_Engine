@@ -7,7 +7,7 @@ using namespace GPM;
 
 InputManager* InputManager::m_inputManager = nullptr;
 
-InputManager* InputManager::GetInstance()
+InputManager* InputManager::getInstance()
 {
     /**
      * This is a safer way to create an instance. instance = new Singleton is
@@ -22,7 +22,7 @@ InputManager* InputManager::GetInstance()
 
 void InputManager::fireInputComponents(const std::string& action, const int& key) const noexcept
 {
-    InputManager* input = InputManager::GetInstance();
+    InputManager* input = InputManager::getInstance();
     if (!action.empty())
     {
         auto stateMapIt     = input->m_stateMap.find(key);
@@ -71,7 +71,7 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
 
 void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const noexcept
 {
-    InputManager* input = InputManager::GetInstance();
+    InputManager* input = InputManager::getInstance();
 
     if (action != GLFW_REPEAT)
     {
@@ -103,12 +103,12 @@ void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, doubl
 static void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
 
-    InputManager::GetInstance()->cursorPositionCallback(window, xpos, ypos);
+    InputManager::getInstance()->cursorPositionCallback(window, xpos, ypos);
 }
 
 static void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
-    InputManager::GetInstance()->keyCallback(window, key, scancode, action, mods);
+    InputManager::getInstance()->keyCallback(window, key, scancode, action, mods);
 }
 
 void InputManager::setupCallbacks(GLFWwindow* window) noexcept
@@ -123,7 +123,7 @@ void InputManager::processInput() noexcept
     m_cursor.deltaPos = {0, 0};
     glfwPollEvents();
 
-    InputManager* input = InputManager::GetInstance();
+    InputManager* input = InputManager::getInstance();
 
     for (auto keyState : input->m_stateMap)
     {

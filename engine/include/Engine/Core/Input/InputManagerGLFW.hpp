@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -41,12 +41,6 @@ private:
     Cursor                                    m_cursor;
 
 public:
-    /**
-     * @brief get a pointeur to the InputManager singleton
-     * @return
-     */
-    static InputManager* GetInstance();
-
     /**
      * @brief Callback to get the state of any keyboard keys
      * @param window
@@ -108,6 +102,12 @@ public:
      * @return
      */
     void processInput() noexcept;
+
+    /**
+     * @brief get a pointeur to the InputManager singleton
+     * @return
+     */
+    static InputManager* getInstance();
 
     /**
      * @brief get a reference to the cursor
