@@ -152,7 +152,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/gpm/include/;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -178,7 +178,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)/third_party/gpm/include/;$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
