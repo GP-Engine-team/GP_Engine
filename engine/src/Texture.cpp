@@ -12,6 +12,11 @@
 
 using namespace GPE;
 
+void Texture::resize()
+{
+    
+}
+
 Texture::Texture(const LoadArg& arg) noexcept
 {
     stbi_set_flip_vertically_on_load(arg.flipTexture);

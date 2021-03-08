@@ -169,6 +169,9 @@ void Editor::renderLevelEditor() const
 {
     ImGui::Begin("Level editor");
         ImGui::Text("Level editor");
+
+        sceneEditor.render();
+
     ImGui::End();
 }
 

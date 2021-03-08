@@ -6,9 +6,10 @@
 
 #pragma once
 
-struct GLFWwindow;
-
 #include "Viewport.hpp"
+#include "Editor/SceneEditor.hpp"
+
+struct GLFWwindow;
 
 namespace Editor
 {
@@ -19,6 +20,8 @@ private:
 	GLFWwindow* m_window;
 	int			m_framebufferWidth;
 	int			m_framebufferHeight;
+
+	SceneEditor sceneEditor;
 
 private:
 	void initGLFW();

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -46,6 +46,7 @@
     <ClInclude Include="..\engine\third_party\include\GLFW\glfw3native.h" />
     <ClInclude Include="include\Editor\Editor.hpp" />
     <ClInclude Include="include\Editor\EditorStartup.hpp" />
+    <ClInclude Include="include\Editor\SceneEditor.hpp" />
     <ClInclude Include="include\Editor\Viewport.hpp" />
   </ItemGroup>
   <ItemGroup>
