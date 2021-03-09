@@ -96,7 +96,6 @@ protected:
     GLuint  m_id   = 0u;
     GLenum  format = 0u;
 
-protected:
     void loadInGPU(int w, int h, EFormat comp, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
                    ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept;
 
