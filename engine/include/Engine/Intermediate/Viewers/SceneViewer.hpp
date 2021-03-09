@@ -32,9 +32,10 @@ private:
 
 public:
     SceneViewer(GPE::Scene& viewed, int width, int height)
-        : scene{viewed}, cameraOwner{scene.addGameObject(scene.getRoot())}, camera{cameraOwner, {}},
-          renderTexture{generatedRenderTextureBuffers()}, texture(width, height), depthBuffer(width, height),
-          stencilBuffer(width, height)
+        : scene{viewed}, cameraOwner{scene.addGameObject(scene.getRoot())}, camera{cameraOwner, Camera::PerspectiveCreateArg()},
+          renderTexture{generatedRenderTextureBuffers()}, texture(Texture::CreateArg{width, height}),
+          depthBuffer(RenderBuffer::CreateArg{width, height}),
+          stencilBuffer(RenderBuffer::CreateArg{width, height, RenderBuffer::EInternalFormat::STENCIL_INDEX8})
     {
 
     }
