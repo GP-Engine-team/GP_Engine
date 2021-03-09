@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -13,19 +13,18 @@ namespace GPE
 {
 class Window
 {
-public: 
+public:
     struct CreateArg
     {
         std::string name   = "";
-        int         height = 0;
         int         width  = 0;
+        int         height = 0;
     };
 
 protected:
     GLFWwindow* m_window = nullptr;
 
 public:
-
     Window(const CreateArg& arg) noexcept;
 
     ~Window() noexcept;
@@ -45,7 +44,7 @@ public:
      * @return
      */
     [[nodiscard]] constexpr inline const GLFWwindow* getGLFWWindow() const noexcept;
-    [[nodiscard]] constexpr inline GLFWwindow* getGLFWWindow() noexcept;
+    [[nodiscard]] constexpr inline GLFWwindow*       getGLFWWindow() noexcept;
 
     /**
      * @brief return the size of the window

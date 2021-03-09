@@ -16,11 +16,11 @@
 namespace GPE
 {
 // feature mask
-#define LIGHT_BLIN_PHONG 1    // 2^0, bit 1
-#define SKYBOX 2              // 2^1, bit 2
-#define AMBIANTE_COLOR_ONLY 4 // 2^2, bit 4
-#define SCALE_TIME_ACC 8      // 2^3, bit 8
-#define UNSCALED_TIME_ACC 16  // 2^4, bit 16
+#define LIGHT_BLIN_PHONG (1 << 0)
+#define SKYBOX (1 << 1)
+#define AMBIANTE_COLOR_ONLY (1 << 2)
+#define SCALE_TIME_ACC (1 << 3)
+#define UNSCALED_TIME_ACC (1 << 4)
 
 // Inspiread about code exemple on learn openGl : https://learnopengl.com/Getting-started/Shaders
 class Shader
@@ -34,8 +34,8 @@ public:
     };
 
 protected:
-    const unsigned char m_featureMask; // feature is shader interger into shader like light, blure etc....
-    unsigned int        m_lightsUniformBuffer; //TODO: no sens to have id of uniform light in any shaders
+    const unsigned char m_featureMask;         // feature is shader interger into shader like light, blure etc....
+    unsigned int        m_lightsUniformBuffer; // TODO: no sens to have id of uniform light in any shaders
 
     std::string m_nameFragment;
     std::string m_nameVertex;
@@ -77,10 +77,10 @@ public:
     inline void setMat4(const char* name, const float* value) const noexcept;
     inline void setpVec3(const char* name, unsigned int count, const float* pV) const noexcept;
     inline void setpVec4(const char* name, unsigned int count, const float* pV) const noexcept;
-    void setLightBlock(const std::vector<LightData>& lightBuffer, const GPM::Vec3& viewPos) noexcept;
-    void setMaterialBlock(const MaterialComponent& material) const noexcept;
+    void        setLightBlock(const std::vector<LightData>& lightBuffer, const GPM::Vec3& viewPos) noexcept;
+    void        setMaterialBlock(const MaterialComponent& material) const noexcept;
 
-    inline unsigned int getID() const noexcept;
+    inline unsigned int  getID() const noexcept;
     inline unsigned char getFeature() const noexcept;
 
 private:

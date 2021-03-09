@@ -120,7 +120,7 @@
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\lib\;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)\RefurekuBin\RefurekuGenerator.exe"</Command>
+      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir) $(GPGameDir)</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -147,7 +147,7 @@
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\lib\;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)\RefurekuBin\RefurekuGenerator.exe"</Command>
+      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir) $(GPGameDir)</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -170,7 +170,7 @@
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\lib\;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)\RefurekuBin\RefurekuGenerator.exe"</Command>
+      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir) $(GPGameDir)</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -193,11 +193,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;GPEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\lib\;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>"$(ProjectDir)\RefurekuBin\RefurekuGenerator.exe"</Command>
+      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir) $(GPGameDir)</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
