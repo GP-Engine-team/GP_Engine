@@ -1,39 +1,47 @@
-#include "Engine/Core/Parsers/ObjParser.hpp"
+﻿#include "Engine/Core/Parsers/ObjParser.hpp"
 
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/postprocess.h> // Post processing flags
 #include <assimp/scene.h>       // Output data structure
+#include <memory>               // std::make_unique
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Resources/Texture.hpp"
+#include "GPM/Shape3D/AABB.hpp"
+#include "GPM/Shape3D/Sphere.hpp"
 
 using namespace GPE;
 using namespace GPM;
 
-std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager) noexcept
+Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager,
+                                         Mesh::EBoundingVolume boundingVolumeType) noexcept
 {
     GPE_ASSERT(assetPath != nullptr, "Void path");
 
     Log::logInitializationStart("Obj parsing");
 
+    unsigned int postProcessflags = aiProcess_Triangulate /*| aiProcess_JoinIdenticalVertices*/ |
+                                    aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords;
+
+    if (boundingVolumeType != Mesh::EBoundingVolume::NONE)
+        postProcessflags |= aiProcess_GenBoundingBoxes;
+
     Assimp::Importer importer;
-    const aiScene*   scene =
-        importer.ReadFile(assetPath, aiProcess_Triangulate /*| aiProcess_JoinIdenticalVertices*/ |
-                                         aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords);
+    const aiScene*   scene = importer.ReadFile(assetPath, postProcessflags);
     if (!scene)
         FUNCT_ERROR(importer.GetErrorString());
 
     // SubModule initialization
     GPE_ASSERT(scene->HasMeshes(), "File without mesh");
-    std::vector<SubModel> subModuleBuffer;
-    subModuleBuffer.reserve(scene->mNumMeshes);
+    Model::CreateArg modelArg;
+    modelArg.subModels.reserve(scene->mNumMeshes);
 
     // Material and texture
     GPE_ASSERT(scene->HasMaterials(), "Mesh without material not supported");
 
-    std::vector<Material::CreateArg> matArgs;
-    matArgs.reserve(scene->mNumMaterials - 1);
+    std::vector<Material*> pMaterials;
+    pMaterials.reserve(scene->mNumMaterials - 1);
 
     for (size_t i = 1; i < scene->mNumMaterials; ++i)
     {
@@ -42,15 +50,16 @@ std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceMan
         GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) < 2,
                    "Multiple diffuse trexture not supported");
 
-        aiString str;
-        scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &str);
+        aiString diffuseTextureName;
+        scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &diffuseTextureName);
 
         Texture::LoadArg textureArg;
         textureArg.path = PATH_TEXTURE_RESOURCE;
-        textureArg.path += str.C_Str();
+        textureArg.path += diffuseTextureName.C_Str();
 
-        matArgs.emplace_back();
-        Material::CreateArg& materialArg = matArgs.back();
+        Material::CreateArg materialArg;
+
+        materialArg.name = scene->mMaterials[i]->GetName().C_Str();
 
         aiColor3D color;
         scene->mMaterials[i]->Get(AI_MATKEY_COLOR_AMBIENT, color);
@@ -63,47 +72,74 @@ std::vector<SubModel> GPE::importeSingleModel(const char* assetPath, ResourceMan
         materialArg.comp.specular.rgbi = GPM::Vec4{color.r, color.g, color.b, 1.f};
 
         scene->mMaterials[i]->Get(AI_MATKEY_SHININESS, materialArg.comp.shininess);
+        scene->mMaterials[i]->Get(AI_MATKEY_OPACITY, materialArg.comp.opacity);
 
-        materialArg.pTexture = &resourceManager.add<Texture>(str.C_Str(), textureArg);
+        materialArg.pTexture = &resourceManager.add<Texture>(diffuseTextureName.C_Str(), textureArg);
+
+        pMaterials.emplace_back(&resourceManager.add<Material>(materialArg.name, materialArg));
     }
-
-    std::vector<Material>& materials =
-        resourceManager.add<std::vector<Material>>("Mat", matArgs.begin(), matArgs.end());
 
     // Mesh
     for (size_t i = 0; i < scene->mNumMeshes; ++i)
     {
+        aiMesh* pMesh = scene->mMeshes[i];
+
         Mesh::CreateArg arg;
-        arg.vBuffer.reserve(scene->mMeshes[i]->mNumVertices);
-        arg.vtBuffer.reserve(scene->mMeshes[i]->mNumVertices);
-        arg.vnBuffer.reserve(scene->mMeshes[i]->mNumVertices);
+        arg.vBuffer.reserve(pMesh->mNumVertices);
+        arg.vtBuffer.reserve(pMesh->mNumVertices);
+        arg.vnBuffer.reserve(pMesh->mNumVertices);
 
-        arg.objName = scene->mMeshes[i]->mName.C_Str();
+        arg.objName = pMesh->mName.C_Str();
 
-        for (size_t verticeId = 0; verticeId < scene->mMeshes[i]->mNumVertices; ++verticeId)
+        for (size_t verticeId = 0; verticeId < pMesh->mNumVertices; ++verticeId)
         {
-            GPE_ASSERT(scene->mMeshes[i]->mVertices != nullptr, "Mesh without vertices");
-            GPE_ASSERT(scene->mMeshes[i]->HasNormals(), "Mesh without Normal");
-            GPE_ASSERT(scene->mMeshes[i]->mTextureCoords != nullptr, "Mesh without UV");
-            GPE_ASSERT(scene->mMeshes[i]->mTextureCoords[0] != nullptr, "Invalid UV");
 
-            const aiVector3D& vertice   = scene->mMeshes[i]->mVertices[verticeId];
-            const aiVector3D& textCoord = scene->mMeshes[i]->mTextureCoords[0][verticeId];
-            const aiVector3D& normal    = scene->mMeshes[i]->mNormals[verticeId];
+            GPE_ASSERT(pMesh->mVertices != nullptr, "Mesh without vertices");
+            GPE_ASSERT(pMesh->HasNormals(), "Mesh without Normal");
+            GPE_ASSERT(pMesh->mTextureCoords != nullptr, "Mesh without UV");
+            GPE_ASSERT(pMesh->mTextureCoords[0] != nullptr, "Invalid UV");
+
+            const aiVector3D& vertice   = pMesh->mVertices[verticeId];
+            const aiVector3D& textCoord = pMesh->mTextureCoords[0][verticeId];
+            const aiVector3D& normal    = pMesh->mNormals[verticeId];
 
             arg.vBuffer.emplace_back(vertice.x, vertice.y, vertice.z);
             arg.vnBuffer.emplace_back(normal.x, normal.y, normal.z);
             arg.vtBuffer.emplace_back(textCoord.x, textCoord.y);
         }
 
-        bool enableBackFaceCulling = true;
+        arg.boundingVolumeType = boundingVolumeType;
 
-        subModuleBuffer.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
-                                              &materials[scene->mMeshes[i]->mMaterialIndex - 1],
-                                              &resourceManager.add<Mesh>(arg.objName, arg), true});
+        // Generate bounding volume
+        switch (boundingVolumeType)
+        {
+        case Mesh::EBoundingVolume::SPHERE: {
+
+            const Vector3 min{pMesh->mAABB.mMin.x, pMesh->mAABB.mMin.y, pMesh->mAABB.mMin.z};
+            const Vector3 max{pMesh->mAABB.mMax.x, pMesh->mAABB.mMax.y, pMesh->mAABB.mMax.z};
+
+            arg.boundingVolume = std::make_unique<Sphere>(std::max(min.length(), max.length()), (max + min) * 0.5);
+
+            break;
+        }
+
+        case Mesh::EBoundingVolume::AABB: {
+            arg.boundingVolume =
+                std::make_unique<AABB>(Vector3{pMesh->mAABB.mMin.x, pMesh->mAABB.mMin.y, pMesh->mAABB.mMin.z},
+                                       Vector3{pMesh->mAABB.mMax.x, pMesh->mAABB.mMax.y, pMesh->mAABB.mMax.z});
+
+            break;
+        }
+        default:
+            break;
+        }
+
+        modelArg.subModels.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
+                                                 pMaterials.empty() ? nullptr : pMaterials[pMesh->mMaterialIndex - 1],
+                                                 &resourceManager.add<Mesh>(arg.objName, arg), true});
     }
 
     Log::logInitializationEnd("Obj parsing");
 
-    return subModuleBuffer;
+    return modelArg;
 }

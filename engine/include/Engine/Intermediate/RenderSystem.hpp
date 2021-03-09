@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -6,11 +6,13 @@
 
 #pragma once
 
-#include <vector> //std::vector
 #include <functional> //std::function
+#include <vector>     //std::vector
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
+#include "Engine/Resources/ResourcesManager.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
+#include "GPM/Transform.hpp"
 
 namespace GPE
 {
@@ -29,21 +31,41 @@ class Shader;
  */
 class RenderSystem
 {
-    public :
-    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>, std::vector<SubModel*>, std::vector<Camera*>, std::vector<Light*>)>;
-    /**
-     * The Singleton's constructor/destructor should always be private to
-     * prevent direct construction/desctruction calls with the `new`/`delete`
-     * operator.
-     */
+public:
+    enum class EDebugShapeMode
+    {
+        POINT = GL_POINT,
+        LINE  = GL_LINE,
+        FILL  = GL_FILL
+    };
+
+    struct DebugShape
+    {
+        const Mesh*     shape                  = nullptr;
+        GPM::Transform  transform              = {};
+        ColorRGBA       color                  = ColorRGBA{1.f, 0.f, 0.f, 0.5f};
+        EDebugShapeMode mode                   = EDebugShapeMode::FILL;
+        bool            enableBackFaceCullling = true;
+    };
+
+    using LocalResourceManager = ResourcesManager<Mesh, Shader, Texture, RenderBuffer, RenderTexture>;
+
+    using RenderPipeline = std::function<void(const ResourceManagerType&, const LocalResourceManager&, RenderSystem&,
+                                              std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
+                                              std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&)>;
+
 private:
     static RenderSystem* m_pInstance;
 
 protected:
-    std::vector<Renderer*> m_pRenderers;
-    std::vector<SubModel*> m_pSubModels;
-    std::vector<Camera*>   m_pCameras;
-    std::vector<Light*>    m_pLights;
+    LocalResourceManager m_localResources;
+
+    std::vector<Renderer*>  m_pRenderers;
+    std::vector<SubModel*>  m_pOpaqueSubModels;
+    std::vector<SubModel*>  m_pTransparenteSubModels;
+    std::vector<Camera*>    m_pCameras;
+    std::vector<Light*>     m_pLights;
+    std::vector<DebugShape> m_debugShape;
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
@@ -52,8 +74,9 @@ protected:
     bool         m_currentBackFaceCullingModeEnable = false;
 
 protected:
-    inline RenderSystem() noexcept = default;
-    ~RenderSystem() noexcept       = default;
+    RenderSystem() noexcept;
+
+    ~RenderSystem() noexcept = default;
 
 public:
     RenderSystem(const RenderSystem& other) noexcept = delete;
@@ -65,22 +88,33 @@ public:
     void tryToBindShader(Shader& shader);
     void tryToBindTexture(unsigned int textureID);
     void tryToBindMesh(unsigned int meshID);
-    void tryToSetAlphaEnabled(bool alphaEnabled);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
     void resetCurrentRenderPassKey();
 
-    bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel);
+    bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept;
     void drawModelPart(const SubModel& subModel);
     void sendModelDataToShader(Camera& camToUse, SubModel& subModel);
-    void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse);
+    void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
-    void draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
+    void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
+
+    void drawDebugSphere(const GPM::Vec3& position, float radius,
+                         const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                         EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
+    void drawDebugCube(const GPM::Vec3& position, const GPM::Quat& rotation, const GPM::Vec3& scale,
+                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                       EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
+    void drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
+                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                       EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
+
+    void displayGameObjectRef(const GameObject& go, float dist = 100.f, float size = 10.f) const noexcept;
+
+    void displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) const noexcept;
 
 public:
-
-
     // TODO: Remove this shit and create variadic templated system
     void addRenderer(Renderer* pRenderer) noexcept;
 
