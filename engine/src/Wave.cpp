@@ -11,7 +11,6 @@ Wave::Wave(const char* filepath)
         // LogError(SeverityEnum::Medium, __FUNCTION__, "couldn't load wav");
     }
 
-    // short* pSampleData = (short*)malloc((unsigned int)wav.totalPCMFrameCount * wav.channels * sizeof(short));
     drwav_int16* pSampleData = (drwav_int16*)malloc(wav.totalPCMFrameCount * wav.channels * sizeof(drwav_int16));
     size_t       numberOfSamplesActuallyDecoded = drwav_read_pcm_frames_s16(&wav, wav.totalPCMFrameCount, pSampleData);
 
