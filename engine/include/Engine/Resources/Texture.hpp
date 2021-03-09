@@ -83,8 +83,8 @@ public:
 
     struct CreateArg
     {
-        unsigned int      width            = 0;
-        unsigned int      height           = 0;
+        int               width            = 0;
+        int               height           = 0;
         EFormat           format           = EFormat::RGBA;
         ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
@@ -94,9 +94,12 @@ public:
 
 protected:
     GLuint  m_id   = 0u;
-    GLenum  format = 0u;
+    EFormat format = EFormat::NONE;
 
-    void loadInGPU(int w, int h, EFormat comp, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
+    void setFormat(int channels);
+    bool checkFormatValidity() const;
+
+    bool loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
                    ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept;
 
 public:

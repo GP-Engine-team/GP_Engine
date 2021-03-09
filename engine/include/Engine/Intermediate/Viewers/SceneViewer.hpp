@@ -1,56 +1,35 @@
 ﻿#pragma once
 
-#include "Engine/Intermediate/GameObject.hpp"
+
 #include "Engine/Intermediate/RenderSystem.hpp"
 #include "Engine/Resources/Camera.hpp"
-#include "Engine/Resources/Scene.hpp"
 
 namespace GPE
 {
 
+class Scene;
+class GameObject;
+
 class SceneViewer
 {
 public:
-    GPE::Scene&        scene;
-    GPE::GameObject&   cameraOwner;
-    GPE::Camera        camera;
-    GPE::RenderTexture renderTexture;
+    Scene&        scene;
+    GameObject&   cameraOwner;
+    Camera        camera;
 
-    Texture      texture;
-    RenderBuffer depthBuffer;
-    RenderBuffer stencilBuffer;
+    Texture       texture;
+    RenderBuffer  depthBuffer;
+    RenderBuffer  stencilBuffer;
 
 private:
-    GPE::RenderTexture::CreateArg generatedRenderTextureBuffers()
-    {
-        GPE::RenderTexture::CreateArg args;
-        args.colorBuffers.emplace_back(&texture);
-        args.depthBuffer   = &depthBuffer;
-        args.stencilBuffer = &stencilBuffer;
-        return args;
-    }
+    GPE::RenderTexture::CreateArg generatedRenderTextureBuffers();
 
 public:
-    SceneViewer(GPE::Scene& viewed, int width, int height)
-        : scene{viewed}, cameraOwner{scene.addGameObject(scene.getRoot())}, camera{cameraOwner, Camera::PerspectiveCreateArg()},
-          renderTexture{generatedRenderTextureBuffers()}, texture(Texture::CreateArg{width, height}),
-          depthBuffer(RenderBuffer::CreateArg{width, height}),
-          stencilBuffer(RenderBuffer::CreateArg{width, height, RenderBuffer::EInternalFormat::STENCIL_INDEX8})
-    {
+    SceneViewer(GPE::Scene& viewed, int width, int height);
 
-    }
+    void resize(int width, int height);
 
-    void resize(int width, int height)
-    {
-        texture.resize(width, height);
-        depthBuffer.resize(width, height);
-        stencilBuffer.resize(width, height);
-    }
-
-    void render() const
-    {
-        GPE::RenderSystem::getInstance()->draw(scene, renderTexture);
-    }
+    void render() const;
 };
 
 } // namespace GPE
