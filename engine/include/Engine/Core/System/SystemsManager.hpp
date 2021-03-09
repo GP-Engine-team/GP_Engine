@@ -10,8 +10,9 @@
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/TimeSystem/TimeSystem.hpp"
+#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/Intermediate/BehaviourSystem.hpp"
-//#include "Engine/Intermediate/RenderSystem.hpp"
+#include "Engine/Resources/ResourcesManagerType.hpp"
 
 namespace GPE
 {
@@ -27,19 +28,20 @@ protected:
     static SystemsManager* m_instance;
 
 public:
-    Window          window;
-    Renderer        renderer;
-    TimeSystem      timeSystem;
-    InputManager    inputManager;
-    BehaviourSystem behaviourSystem;
-    // RenderSystem    renderSystem;
+    Window              window;
+    Renderer            renderer;
+    TimeSystem          timeSystem;
+    InputManager        inputManager;
+    BehaviourSystem     behaviourSystem;
+    ResourceManagerType resourceManager;
+    RenderSystem        renderSystem;
 
 protected:
     SystemsManager()
         : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          behaviourSystem{} //, renderSystem{}
+          behaviourSystem{}, resourceManager{}, renderSystem{}
     {
-        // renderSystem.addRenderer(&renderer);
+        renderSystem.addRenderer(&renderer);
     }
 
 public:

@@ -66,6 +66,7 @@ protected:
 
 public:
     SceneRenderSystem() noexcept;
+    ~SceneRenderSystem() noexcept;
 
     void tryToBindShader(Shader& shader);
     void tryToBindTexture(unsigned int textureID);

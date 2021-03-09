@@ -9,7 +9,9 @@
 //#include "Engine/Core/System/TimeSystem.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/Core/System/SystemsManager.hpp"
 #include "Engine/Core/Tools/BranchPrediction.hpp"
+#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/Resources/Camera.hpp"
 #include "Engine/Resources/Light/Light.hpp"
 #include "Engine/Resources/Mesh.hpp"
@@ -88,6 +90,13 @@ SceneRenderSystem::SceneRenderSystem() noexcept
     m_localResources.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
     m_localResources.add<Mesh>("Cube", Mesh::createCube());
     m_localResources.add<Mesh>("Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
+
+    SystemsManager::getInstance()->renderSystem.addSceneRenderSystem(this);
+}
+
+SceneRenderSystem::~SceneRenderSystem() noexcept
+{
+    SystemsManager::getInstance()->renderSystem.removeSceneRenderSystem(this);
 }
 
 bool SceneRenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
@@ -294,15 +303,11 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
               std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape, unsigned int renderTextureID)
 
     {
-        int h, w;
-        pRenderers[0]->getWindow()->getSize(w, h);
+        glBindFramebuffer(GL_FRAMEBUFFER, renderTextureID);
 
         Frustum camFrustum = pCameras[0]->getFrustum();
 
         rs.resetCurrentRenderPassKey();
-
-        glViewport(0, 0, w, h);
-        glBindFramebuffer(GL_FRAMEBUFFER, renderTextureID);
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
@@ -396,22 +401,6 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
-        /*
-        // Render to screen
-        {
-            glViewport(0, 0, w, h);
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-            glBindVertexArray(rml.get<Mesh>("ScreenPlan")->getID());
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glUseProgram(rml.get<Shader>("PostProcess")->getID());
-            glUniform1i(glGetUniformLocation(rml.get<Shader>("PostProcess")->getID(), "colorTexture"), 0);
-
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, rml.get<Texture>("ColorBufferFBO")->getID());
-
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-        }*/
     };
 }
 
