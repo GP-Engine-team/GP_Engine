@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -46,12 +46,12 @@ public:
     PointLight(GameObject& owner, const CreateArg& arg) noexcept;
 
     PointLight(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
-                      const SpecularComponent& specular, float constant, float linear, float quadratic) noexcept;
+               const SpecularComponent& specular, float constant, float linear, float quadratic) noexcept;
 
     void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
 
-    DEFAULT_GETTER_SETTER(Constant, m_constant);
-    DEFAULT_GETTER_SETTER(Linear, m_linear);
-    DEFAULT_GETTER_SETTER(Quadratic, m_quadratic);
+    DEFAULT_GETTER_SETTER_BY_REF(Constant, m_constant);
+    DEFAULT_GETTER_SETTER_BY_REF(Linear, m_linear);
+    DEFAULT_GETTER_SETTER_BY_REF(Quadratic, m_quadratic);
 };
 } /*namespace GPE*/
