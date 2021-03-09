@@ -37,7 +37,9 @@ public:
     };
 
 protected:
-    unsigned int m_id          = 0;
+    GLuint m_id           = 0u;
+    GLenum internalFormat = 0u;
+    GLenum bufferType     = 0u;
 
 public:
     RenderBuffer()                          = default;
@@ -51,6 +53,8 @@ public:
     {
         return m_id;
     }
+
+    void resize(int width, int height);
 };
 
 } /*namespace GPE*/

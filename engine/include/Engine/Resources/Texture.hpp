@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ *  found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -54,12 +54,13 @@ public:
         MIRROR_CLAMP_TO_EDGE = GL_MIRRORED_REPEAT
     };
 
-    enum class EFormat
+    enum class EFormat : GLenum
     {
-        R    = 1,
-        RG   = 2,
-        RGB  = 3,
-        RGBA = 4
+        NONE = 0u,
+        R    = GL_R32F,
+        RG   = GL_RG,
+        RGB  = GL_RGB,
+        RGBA = GL_RGBA
     };
 
     enum class ERenderBufferType
@@ -92,15 +93,12 @@ public:
     };
 
 protected:
-    GLuint m_id = 0u;
-    GLenum format = 0u;
+    GLuint  m_id   = 0u;
+    GLenum  format = 0u;
 
 protected:
-    void loadInGPU(int w, int h, int comp, ETextureMinFilter textureMinFilter,
-                   ETextureMagFilter textureMagFilter, ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept;
-
-
-    void setFormat()
+    void loadInGPU(int w, int h, EFormat comp, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
+                   ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept;
 
 public:
     Texture()                     = default;
@@ -117,6 +115,8 @@ public:
      *
      */
     inline void use() const noexcept;
+
+    void resize(int width, int height) noexcept;
 };
 
 #include "Texture.inl"
