@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Engine/Core/Debug/Assert.hpp"
+#include "Engine/ECS/System/SceneRenderSystem.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
 #include <sstream> //std::getLine
@@ -19,7 +20,8 @@ class Scene
     friend class SceneManager;
 
 public:
-    GameObject world;
+    GameObject        world;
+    SceneRenderSystem sceneRenderer;
 
 public:
     inline Scene() noexcept : world(*this)

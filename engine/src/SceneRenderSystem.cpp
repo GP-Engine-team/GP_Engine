@@ -1,4 +1,4 @@
-﻿#include "Engine/Intermediate/RenderSystem.hpp"
+﻿#include "Engine/ECS/System/SceneRenderSystem.hpp"
 
 #include <algorithm> //std::sort
 #include <cstdio>
@@ -9,7 +9,7 @@
 //#include "Engine/Core/System/TimeSystem.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/Core/System/SystemsManager.hpp"
+#include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/Resources/Camera.hpp"
 #include "Engine/Resources/Light/Light.hpp"
 #include "Engine/Resources/Mesh.hpp"
@@ -27,7 +27,7 @@
 using namespace GPE;
 using namespace GPM;
 
-void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) const noexcept
+void SceneRenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) noexcept
 {
     switch (pSubModel->pMesh->getBoundingVolumeType())
     {
@@ -41,8 +41,8 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
                           pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
 
-        SystemsManager::getInstance()->renderSystem.drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f),
-                                                                    color, RenderSystem::EDebugShapeMode::FILL);
+        drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color,
+                        SceneRenderSystem::EDebugShapeMode::FILL);
 
         break;
     }
@@ -58,29 +58,25 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
                           pAABB->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
 
-        SystemsManager::getInstance()->renderSystem.drawDebugCube(pos, Quat::identity(), scale, color,
-                                                                  RenderSystem::EDebugShapeMode::FILL);
+        drawDebugCube(pos, Quat::identity(), scale, color, SceneRenderSystem::EDebugShapeMode::FILL);
     }
     default:
         break;
     }
 }
 
-void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float size) const noexcept
+void SceneRenderSystem::displayGameObjectRef(const GameObject& go, float dist, float size) noexcept
 {
     const Vec3& pos = go.getTransform().getGlobalPosition();
 
-    SystemsManager::getInstance()->renderSystem.drawDebugSphere(pos + go.getTransform().getVectorRight() * dist, size,
-                                                                ColorRGBA{1.f, 0.f, 0.f, 1.f});
+    drawDebugSphere(pos + go.getTransform().getVectorRight() * dist, size, ColorRGBA{1.f, 0.f, 0.f, 1.f});
 
-    SystemsManager::getInstance()->renderSystem.drawDebugSphere(pos + go.getTransform().getVectorUp() * dist, size,
-                                                                ColorRGBA{0.f, 1.f, 0.f, 1.f});
+    drawDebugSphere(pos + go.getTransform().getVectorUp() * dist, size, ColorRGBA{0.f, 1.f, 0.f, 1.f});
 
-    SystemsManager::getInstance()->renderSystem.drawDebugSphere(pos + go.getTransform().getVectorForward() * dist, size,
-                                                                ColorRGBA{0.f, 0.f, 1.f, 1.f});
+    drawDebugSphere(pos + go.getTransform().getVectorForward() * dist, size, ColorRGBA{0.f, 0.f, 1.f, 1.f});
 }
 
-RenderSystem::RenderSystem() noexcept
+SceneRenderSystem::SceneRenderSystem() noexcept
 {
     m_localResources.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                  "./resources/shaders/fSimpleColor.fs");
@@ -94,7 +90,7 @@ RenderSystem::RenderSystem() noexcept
     m_localResources.add<Mesh>("Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
 }
 
-bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
+bool SceneRenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
 {
     switch (pSubModel->pMesh->getBoundingVolumeType())
     {
@@ -146,7 +142,7 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
     }
 }
 
-void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
+void SceneRenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
 {
     if ((pCurrentShaderUse->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
@@ -172,7 +168,7 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentShader
     }*/
 }
 
-void RenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
+void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
 {
     Shader* pShader = subModel.pShader;
 
@@ -220,12 +216,12 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
     }
 }
 
-void RenderSystem::drawModelPart(const SubModel& subModel)
+void SceneRenderSystem::drawModelPart(const SubModel& subModel)
 {
     glDrawArrays(GL_TRIANGLES, 0, subModel.pMesh->getVerticesCount());
 }
 
-void RenderSystem::tryToBindShader(Shader& shader)
+void SceneRenderSystem::tryToBindShader(Shader& shader)
 {
     if (m_currentShaderID == shader.getID())
         return;
@@ -238,7 +234,7 @@ void RenderSystem::tryToBindShader(Shader& shader)
     sendDataToInitShader(*m_pCameras[0], m_currentPShaderUse);
 }
 
-void RenderSystem::tryToBindTexture(unsigned int textureID)
+void SceneRenderSystem::tryToBindTexture(unsigned int textureID)
 {
     if (m_currentTextureID == textureID)
         return;
@@ -248,7 +244,7 @@ void RenderSystem::tryToBindTexture(unsigned int textureID)
     m_currentTextureID = textureID;
 }
 
-void RenderSystem::tryToBindMesh(unsigned int meshID)
+void SceneRenderSystem::tryToBindMesh(unsigned int meshID)
 {
     if (m_currentMeshID == meshID)
         return;
@@ -258,7 +254,7 @@ void RenderSystem::tryToBindMesh(unsigned int meshID)
     m_currentMeshID = meshID;
 }
 
-void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
+void SceneRenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
 {
     if (m_currentBackFaceCullingModeEnable == useBackFaceCulling)
         return;
@@ -275,7 +271,7 @@ void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
     m_currentBackFaceCullingModeEnable = useBackFaceCulling;
 }
 
-void RenderSystem::resetCurrentRenderPassKey()
+void SceneRenderSystem::resetCurrentRenderPassKey()
 {
     m_currentShaderID                  = 0;
     m_currentTextureID                 = 0;
@@ -290,9 +286,9 @@ void RenderSystem::resetCurrentRenderPassKey()
     glBindVertexArray(0);
 }
 
-RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
+SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() const noexcept
 {
-    return [](const ResourceManagerType& rm, const LocalResourceManager& rml, RenderSystem& rs,
+    return [](const ResourceManagerType& rm, const LocalResourceManager& rml, SceneRenderSystem& rs,
               std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
               std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape, unsigned int renderTextureID)
@@ -419,31 +415,32 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
     };
 }
 
-void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline,
-                        unsigned int renderTextureID) noexcept
+void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline,
+                             unsigned int renderTextureID) noexcept
 {
     renderPipeline(res, m_localResources, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras,
                    m_pLights, m_debugShape, renderTextureID);
 }
 
-void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, EDebugShapeMode mode,
-                                   bool enableBackFaceCullling) noexcept
+void SceneRenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,
+                                        EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Sphere"),
                                          toTransform(SplitTransform{Quat::identity(), position, Vec3(radius * 2.f)}),
                                          color, mode, enableBackFaceCullling});
 }
 
-void RenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation, const Vec3& scale, const ColorRGBA& color,
-                                 EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
+void SceneRenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation, const Vec3& scale,
+                                      const ColorRGBA& color, EDebugShapeMode mode,
+                                      bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Cube"),
                                          toTransform(SplitTransform{rotation, position, scale}), color, mode,
                                          enableBackFaceCullling});
 }
 
-void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale, const ColorRGBA& color,
-                                 EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
+void SceneRenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale, const ColorRGBA& color,
+                                      EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(
         DebugShape{m_localResources.get<Mesh>("Plane"),
@@ -451,7 +448,7 @@ void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Ve
                    enableBackFaceCullling});
 }
 
-void RenderSystem::addRenderer(Renderer* pRenderer) noexcept
+void SceneRenderSystem::addRenderer(Renderer* pRenderer) noexcept
 {
     m_pRenderers.push_back(pRenderer);
 
@@ -473,7 +470,7 @@ void RenderSystem::addRenderer(Renderer* pRenderer) noexcept
     m_localResources.add<RenderTexture>("FBO", renderArg);
 }
 
-void RenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept
+void SceneRenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept
 {
     for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != m_pRenderers.end(); it++)
     {
@@ -485,7 +482,7 @@ void RenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer*
     }
 }
 
-void RenderSystem::removeRenderer(Renderer* pRenderer) noexcept
+void SceneRenderSystem::removeRenderer(Renderer* pRenderer) noexcept
 {
     for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != m_pRenderers.end(); it++)
     {
@@ -498,7 +495,7 @@ void RenderSystem::removeRenderer(Renderer* pRenderer) noexcept
     }
 }
 
-void RenderSystem::addSubModel(SubModel* pSubModel) noexcept
+void SceneRenderSystem::addSubModel(SubModel* pSubModel) noexcept
 {
     if (pSubModel->pMaterial->isOpaque())
     {
@@ -512,7 +509,7 @@ void RenderSystem::addSubModel(SubModel* pSubModel) noexcept
     }
 }
 
-void RenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept
+void SceneRenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept
 {
     if (newPointerSubModel->pMaterial->isOpaque())
     {
@@ -539,7 +536,7 @@ void RenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel*
     }
 }
 
-void RenderSystem::removeSubModel(SubModel* pSubModel) noexcept
+void SceneRenderSystem::removeSubModel(SubModel* pSubModel) noexcept
 {
     if (pSubModel->pMaterial->isOpaque())
     {
@@ -554,12 +551,12 @@ void RenderSystem::removeSubModel(SubModel* pSubModel) noexcept
     }
 }
 
-void RenderSystem::addCamera(Camera* pCamera) noexcept
+void SceneRenderSystem::addCamera(Camera* pCamera) noexcept
 {
     m_pCameras.push_back(pCamera);
 }
 
-void RenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept
+void SceneRenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept
 {
     for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != m_pCameras.end(); it++)
     {
@@ -571,7 +568,7 @@ void RenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPoint
     }
 }
 
-void RenderSystem::removeCamera(Camera* pCamera) noexcept
+void SceneRenderSystem::removeCamera(Camera* pCamera) noexcept
 {
     for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != m_pCameras.end(); it++)
     {
@@ -584,12 +581,12 @@ void RenderSystem::removeCamera(Camera* pCamera) noexcept
     }
 }
 
-void RenderSystem::addLight(Light* pLight) noexcept
+void SceneRenderSystem::addLight(Light* pLight) noexcept
 {
     m_pLights.push_back(pLight);
 }
 
-void RenderSystem::updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept
+void SceneRenderSystem::updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept
 {
     for (std::vector<Light*>::iterator it = m_pLights.begin(); it != m_pLights.end(); it++)
     {
@@ -601,7 +598,7 @@ void RenderSystem::updateLightPointer(Light* newPointerLight, Light* exPointerLi
     }
 }
 
-void RenderSystem::removeLight(Light* pLight) noexcept
+void SceneRenderSystem::removeLight(Light* pLight) noexcept
 {
     for (std::vector<Light*>::iterator it = m_pLights.begin(); it != m_pLights.end(); it++)
     {

@@ -9,7 +9,6 @@
 #include <functional> //std::function
 #include <vector>     //std::vector
 
-#include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/Resources/ResourcesManager.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
 #include "GPM/Transform.hpp"
@@ -23,7 +22,7 @@ struct Frustum;
 class Model;
 class Shader;
 
-class RenderSystem
+class SceneRenderSystem
 {
 public:
     enum class EDebugShapeMode
@@ -45,7 +44,7 @@ public:
     using LocalResourceManager = ResourcesManager<Mesh, Shader, Texture, RenderBuffer, RenderTexture>;
 
     using RenderPipeline =
-        std::function<void(const ResourceManagerType&, const LocalResourceManager&, RenderSystem&,
+        std::function<void(const ResourceManagerType&, const LocalResourceManager&, SceneRenderSystem&,
                            std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
                            std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&, unsigned int)>;
 
@@ -66,7 +65,7 @@ protected:
     bool         m_currentBackFaceCullingModeEnable = false;
 
 public:
-    RenderSystem() noexcept;
+    SceneRenderSystem() noexcept;
 
     void tryToBindShader(Shader& shader);
     void tryToBindTexture(unsigned int textureID);
@@ -93,9 +92,9 @@ public:
                        const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
                        EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
 
-    void displayGameObjectRef(const GameObject& go, float dist = 100.f, float size = 10.f) const noexcept;
+    void displayGameObjectRef(const GameObject& go, float dist = 100.f, float size = 10.f) noexcept;
 
-    void displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) const noexcept;
+    void displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) noexcept;
 
 public:
     // TODO: Remove this shit and create variadic templated system

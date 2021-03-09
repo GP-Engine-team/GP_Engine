@@ -11,7 +11,7 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/TimeSystem/TimeSystem.hpp"
 #include "Engine/Intermediate/BehaviourSystem.hpp"
-#include "Engine/Intermediate/RenderSystem.hpp"
+//#include "Engine/Intermediate/RenderSystem.hpp"
 
 namespace GPE
 {
@@ -32,14 +32,14 @@ public:
     TimeSystem      timeSystem;
     InputManager    inputManager;
     BehaviourSystem behaviourSystem;
-    RenderSystem    renderSystem;
+    // RenderSystem    renderSystem;
 
 protected:
     SystemsManager()
         : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          behaviourSystem{}, renderSystem{}
+          behaviourSystem{} //, renderSystem{}
     {
-        renderSystem.addRenderer(&renderer);
+        // renderSystem.addRenderer(&renderer);
     }
 
 public:

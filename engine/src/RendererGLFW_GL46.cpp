@@ -153,7 +153,7 @@ Renderer::Renderer(Window& window) noexcept : m_pWindow{&window}
 
 Renderer::~Renderer() noexcept
 {
-    SystemsManager::getInstance()->renderSystem.removeRenderer(this);
+    // SystemsManager::getInstance()->renderSystem.removeRenderer(this);
 
     Log::log("GLFW / OpenGL 4.6 renderer release");
 }

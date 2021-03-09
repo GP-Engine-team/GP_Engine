@@ -18,7 +18,7 @@
 #include "GPM/Vector4.hpp"
 
 // in inl
-#include "Engine/Core/System/SystemsManager.hpp"
+#include "Engine/Resources/Scene.hpp"
 
 namespace GPE
 {
