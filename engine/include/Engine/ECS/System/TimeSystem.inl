@@ -1,4 +1,4 @@
-#include "Engine/Core/TimeSystem/TimeSystem.hpp"
+#include "Engine/ECS/System/TimeSystem.hpp"
 
 inline constexpr double TimeSystem::getFixedDeltaTime() const noexcept
 {

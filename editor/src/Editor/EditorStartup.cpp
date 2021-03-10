@@ -2,7 +2,7 @@
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Editor/Editor.hpp"
 #include "Game.hpp"
-#include "Engine/Core/System/SystemsManager.hpp"
+#include "Engine/ECS/System/SystemsManager.hpp"
 
 using namespace GPE;
 

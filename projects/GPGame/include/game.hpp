@@ -1,16 +1,31 @@
-#pragma once
+﻿#pragma once
 
 
 #include "Engine/Core/Game/AbstractGame.hpp"
+#include "Engine/ECS/System/RenderSystem.hpp"
+#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/ECS/System/TimeSystem.hpp"
+#include "Engine/ECS/System/InputManagerGLFW.hpp"
+#include "Engine/ECS/System/BehaviourSystem.hpp"
+#include "Engine/ECS/System/SystemsManager.hpp"
 #include "GameApiMacros.hpp"
 #include <iostream>
 
 class Game final : public AbstractGame
 {
+protected:
+
+	GPE::Window& win = GPE::SystemsManager::getInstance()->window;
+	/*GPE::Renderer& ren = GPE::SystemsManager::getInstance()->renderer;
+	GPE::TimeSystem& ts = GPE::SystemsManager::getInstance()->timeSystem;
+	GPE::InputManager& iManager = GPE::SystemsManager::getInstance()->inputManager;
+	GPE::BehaviourSystem& bSys = GPE::SystemsManager::getInstance()->behaviourSystem;
+	GPE::RenderSystem& rSys = GPE::SystemsManager::getInstance()->renderSystem;*/
+
 private:
 	virtual void update(double unscaledDeltaTime, double deltaTime) override final
 	{
-
 	}
 
 	virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final

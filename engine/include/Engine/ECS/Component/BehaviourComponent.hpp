@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/Intermediate/Component.hpp"
+#include "Engine/ECS/Component/Component.hpp"
 
 namespace GPE
 {

@@ -10,7 +10,7 @@
 
 #include "Engine/Core/Tools/ClassUtility.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Light/Light.hpp"
+#include "Engine/ECS/Component/Light/Light.hpp"
 #include "Engine/Resources/ShaderType.hpp"
 #include "GPM/Vector3.hpp"
 
