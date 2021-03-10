@@ -1,61 +1,90 @@
 ﻿#include "Engine/Core/Input/InputManagerGLFW.hpp"
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 
 using namespace std;
 using namespace GPE;
 using namespace GPM;
 
-InputManager::InputManager(Window& window) noexcept
+InputManager* InputManager::m_inputManager = nullptr;
+
+InputManager* InputManager::GetInstance()
 {
-    glfwSetWindowUserPointer(window.getGLFWWindow(), this);
+    /**
+     * This is a safer way to create an instance. instance = new Singleton is
+     * dangeruous in case two instance threads wants to access at the same time
+     */
+    if (m_inputManager == nullptr)
+    {
+        m_inputManager = new InputManager();
+    }
+    return m_inputManager;
 }
 
-void InputManager::fireInputComponents(const std::string& action, const int& key) noexcept
+void InputManager::fireInputComponents(const std::string& action, const int& key) const noexcept
 {
+    InputManager* input = InputManager::GetInstance();
     if (!action.empty())
     {
-        auto stateMapIt     = m_stateMap.find(key);
-        auto lastStateMapIt = m_stateMap.find(key);
-        for (int i = 0; i < m_inputComponents.size(); i++)
+        auto stateMapIt     = input->m_stateMap.find(key);
+        auto lastStateMapIt = input->m_lastStateMap.find(key);
+        for (int i = 0; i < input->m_inputComponents.size(); i++)
         {
-            auto keyModeMapIt = m_inputComponents[i]->m_keyModeMap.find(action);
-            if (stateMapIt->second == true)
+            auto keyModeMapIt = input->m_inputComponents[i]->m_keyModeMap.find(action);
+            if (keyModeMapIt != input->m_inputComponents[i]->m_keyModeMap.end())
             {
-                switch (keyModeMapIt->second)
+                if (stateMapIt->second == true)
                 {
-                case EKeyMode::KEY_PRESS:
-                    m_inputComponents[i]->fireAction(action);
-                    m_stateMap[key] = false;
-                    break;
-                case EKeyMode::KEY_REPEAT:
-                    m_inputComponents[i]->fireAction(action);
-                    break;
+                    switch (keyModeMapIt->second)
+                    {
+                    case EKeyMode::KEY_PRESSED:
+                        if (lastStateMapIt->second == false)
+                        {
+                            input->m_inputComponents[i]->fireAction(action);
+                        }
+                        break;
+                    case EKeyMode::KEY_DOWN:
+                        input->m_inputComponents[i]->fireAction(action);
+                        break;
+                    }
+                }
+
+                else
+                {
+                    switch (keyModeMapIt->second)
+                    {
+                    case EKeyMode::KEY_RELEASED:
+                        if (lastStateMapIt->second == true)
+                        {
+                            lastStateMapIt->second = false;
+                            input->m_inputComponents[i]->fireAction(action);
+                        }
+                        break;
+                    case EKeyMode::KEY_UP:
+                        input->m_inputComponents[i]->fireAction(action);
+                        break;
+                    }
                 }
             }
-
-            /*else if (keyModeMapIt->second == EKeyMode::KEY_RELEASE && stateMapIt->second == false)
-            {
-                if (lastStateMapIt->second == true)
-                {
-                    input->m_inputComponents[i]->fireAction(action);
-                }
-            }*/
         }
     }
 }
 
-void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
+void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const noexcept
 {
+    InputManager* input = InputManager::GetInstance();
+
     if (action != GLFW_REPEAT)
     {
-        if (m_stateMap[key])
+        if (input->m_stateMap.count(key))
         {
-            auto stateMapIt     = m_stateMap.find(key);
-            m_lastStateMap[key] = stateMapIt->second;
+            auto stateMapIt            = input->m_stateMap.find(key);
+            input->m_lastStateMap[key] = stateMapIt->second;
         }
-        m_stateMap[key] = action != GLFW_RELEASE;
+        else
+        {
+            input->m_lastStateMap[key] = false;
+        }
+        input->m_stateMap[key] = action != GLFW_RELEASE;
     }
 }
 
@@ -71,14 +100,15 @@ void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, doubl
     glfwSetCursorPos(window, m_cursor.center.x, m_cursor.center.y);
 }
 
-void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
+static void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
-    static_cast<InputManager*>(glfwGetWindowUserPointer(window))->cursorPositionCallback(window, xpos, ypos);
+
+    InputManager::GetInstance()->cursorPositionCallback(window, xpos, ypos);
 }
 
-void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
+static void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
-    static_cast<InputManager*>(glfwGetWindowUserPointer(window))->keyCallback(window, key, scancode, action, mods);
+    InputManager::GetInstance()->keyCallback(window, key, scancode, action, mods);
 }
 
 void InputManager::setupCallbacks(GLFWwindow* window) noexcept
@@ -93,12 +123,14 @@ void InputManager::processInput() noexcept
     m_cursor.deltaPos = {0, 0};
     glfwPollEvents();
 
-    for (auto keyState : m_stateMap)
+    InputManager* input = InputManager::GetInstance();
+
+    for (auto keyState : input->m_stateMap)
     {
-        auto it = m_actionMap.equal_range(keyState.first);
+        auto it = input->m_actionMap.equal_range(keyState.first);
         for (auto i2 = it.first; i2 != it.second; i2++)
         {
-            fireInputComponents(i2->second, keyState.first);
+            input->fireInputComponents(i2->second, keyState.first);
         }
     }
 }
