@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -6,12 +6,13 @@
 
 #pragma once
 
-#include "Engine/Resources/Type.hpp"
+#include <glad/glad.h>
 #include <string>
+
+#include "Engine/Resources/Type.hpp"
 
 // in inl
 #include "Engine/Core/Debug/Assert.hpp"
-#include "glad/glad.h"
 
 namespace GPE
 {
@@ -37,7 +38,7 @@ public:
     };
 
 protected:
-    unsigned int m_id          = 0;
+    unsigned int m_id = 0;
 
 public:
     RenderBuffer()                          = default;

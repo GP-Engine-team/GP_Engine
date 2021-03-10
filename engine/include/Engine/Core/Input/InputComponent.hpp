@@ -5,12 +5,14 @@
  */
 
 #pragma once
-#include "Engine/Intermediate/Component.hpp"
-#include "GPM/Vector3.hpp"
+
 #include <functional>
 #include <iostream>
 #include <string>
 #include <unordered_map>
+
+#include "Engine/Intermediate/Component.hpp"
+#include "GPM/Vector3.hpp"
 
 enum class EKeyMode
 {

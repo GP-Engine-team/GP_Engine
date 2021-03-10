@@ -1,8 +1,10 @@
-#include "Engine/Resources/RenderTexture.hpp"
+﻿#include "Engine/Resources/RenderTexture.hpp"
+
+#include <glad/glad.h>
 
 #include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Resources/Texture.hpp"
 #include "Engine/Resources/RenderBuffer.hpp"
+#include "Engine/Resources/Texture.hpp"
 
 using namespace GPE;
 

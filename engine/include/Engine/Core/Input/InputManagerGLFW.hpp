@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -17,21 +17,6 @@ namespace GPE
 {
 class InputManager
 {
-protected:
-    InputManager() = default;
-
-    static InputManager* m_inputManager;
-
-public:
-    /**
-     * Singletons should not be cloneable.
-     */
-    InputManager(InputManager& other) = delete;
-
-    /**
-     * Singletons should not be assignable.
-     */
-    void operator=(const InputManager&) = delete;
 
 private:
     std::unordered_multimap<int, std::string> m_actionMap;
@@ -40,7 +25,11 @@ private:
     std::unordered_map<int, InputComponent*>  m_inputComponents;
     Cursor                                    m_cursor;
 
+
 public:
+
+    InputManager(class Window& window) noexcept;
+
     /**
      * @brief Callback to get the state of any keyboard keys
      * @param window
@@ -50,7 +39,7 @@ public:
      * @param mods
      * @return
      */
-    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) const noexcept;
+    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept;
 
     /**
      * @brief Callback to get the new position of the mouse cursor
@@ -66,7 +55,7 @@ public:
      * @param action
      * @return
      */
-    void fireInputComponents(const std::string& action, const int& key) const noexcept;
+    void fireInputComponents(const std::string& action, const int& key) noexcept;
 
     /**
      * @brief Setup Callbacks (call it one time to setup callbacks function proprely)
@@ -102,12 +91,6 @@ public:
      * @return
      */
     void processInput() noexcept;
-
-    /**
-     * @brief get a pointeur to the InputManager singleton
-     * @return
-     */
-    static InputManager* getInstance();
 
     /**
      * @brief get a reference to the cursor

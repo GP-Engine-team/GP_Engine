@@ -1,12 +1,13 @@
-#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
+﻿#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <glad/glad.h> //In first
 
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include <GLFW/glfw3.h> //In second
+
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/Core/System/SystemsManager.hpp"
 #include "Engine/Core/Tools/Format.hpp"
-#include "Engine/Intermediate/RenderSystem.hpp"
 
 using namespace GPE;
 using namespace std;
@@ -110,8 +111,7 @@ inline void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint i
     Log::logError(stringFormat("%d: %s of %s severity, raised from %s: %s\n", id, _type, _severity, _source, msg));
 }
 
-Renderer::Renderer(Window& window) noexcept 
-    : m_pWindow {&window}
+Renderer::Renderer(Window& window) noexcept : m_pWindow{&window}
 {
     Log::logInitializationStart("GLFW / OpenGL 4.6 Renderer");
 
@@ -149,13 +149,11 @@ Renderer::Renderer(Window& window) noexcept
     Log::log(stringFormat("GL_VENDOR = %s", glGetString(GL_VENDOR)));
     Log::log(stringFormat("GL_RENDERER = %s", glGetString(GL_RENDERER)));
     Log::log(stringFormat("GL_VERSION = %s", glGetString(GL_VERSION)));
-
-    RenderSystem::getInstance()->addRenderer(this);
 }
 
 Renderer::~Renderer() noexcept
 {
-    RenderSystem::getInstance()->removeRenderer(this);
+    SystemsManager::getInstance()->renderSystem.removeRenderer(this);
 
     Log::log("GLFW / OpenGL 4.6 renderer release");
 }

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include <glad/glad.h>
 #include <vector>
 
 namespace GPE
@@ -22,7 +21,7 @@ public:
     };
 
 protected:
-    GLuint m_id = 0;
+    unsigned int m_id = 0;
 
 public:
     RenderTexture(const CreateArg& arg) noexcept;
@@ -39,7 +38,7 @@ public:
 
     RenderTexture& operator=(RenderTexture&& other) noexcept = delete;
 
-    GLuint getID() const
+    unsigned int getID() const
     {
         return m_id;
     }
