@@ -9,7 +9,6 @@
 #include "Engine/Intermediate/Component.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/Sound.hpp"
-#include <string>
 #include <unordered_map>
 
 namespace GPE
@@ -22,6 +21,9 @@ struct SourceSettings
     ALfloat   position[3] = {0, 0, 0};
     ALfloat   velocity[3] = {0, 0, 0};
     ALboolean loop        = AL_FALSE;
+
+    // SourceSettings() = default;
+    // SourceSettings(ALfloat pitch, ALfloat gain, ALfloat position[3], ALfloat velocity[3], ALboolean loop = AL_FALSE)
 };
 
 class AudioComponent : public Component
@@ -37,7 +39,6 @@ private:
     ALCdevice*  m_device;
     ALCcontext* m_openALContext;
     ALCboolean  m_contextMadeCurrent = false;
-    ALenum      m_format             = 0;
     ALCboolean  m_closed;
     int         m_key = -1;
 
@@ -46,7 +47,6 @@ public:
     {
         ALuint source;
         ALint  state = AL_INITIAL;
-        ALuint buffer;
     };
     std::unordered_map<std::string, SourceData> sources;
 
@@ -55,25 +55,25 @@ public:
      * @param name of the source
      * @return the source
      */
-    [[nodiscard]] SourceData* findSource(const std::string& name) noexcept;
+    [[nodiscard]] SourceData* findSource(const char* name) noexcept;
 
     /**
      * @brief Bind a sound on the current source
      * @param sound
      */
-    void setSound(const Sound& sound, const std::string& sourceName, const SourceSettings& settings) noexcept;
+    void setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept;
 
     /**
      * @brief Play the current bound sound
      */
-    void playSound(SourceData* source) noexcept;
+    void playSound(const char* name) noexcept;
 
     /**
      * @brief Stop the current bound sound
      */
-    void stopSound(SourceData* source) noexcept;
+    void stopSound(const char* name) noexcept;
 
 private:
-    [[nodiscard]] SourceData* getSource(const std::string& name) noexcept;
+    [[nodiscard]] SourceData* getSource(const char* name) noexcept;
 };
 } // namespace GPE

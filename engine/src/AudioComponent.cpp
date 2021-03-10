@@ -1,6 +1,7 @@
 ﻿#include "Engine/Core/Sound/AudioComponent.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Sound/SoundSystem.hpp"
+#include "Engine/Core/System/SystemsManager.hpp"
 
 using namespace GPE;
 using namespace std;
@@ -53,37 +54,22 @@ AudioComponent::AudioComponent(AudioComponent&& other) noexcept : Component(othe
 {
 }
 
-void AudioComponent::setSound(const Sound& sound, const string& sourceName, const SourceSettings& settings) noexcept
+void AudioComponent::setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept
 {
+
     SourceData* source = getSource(sourceName);
 
-    AL_CALL(alGenBuffers, 1, &source->buffer);
-
-    if (sound.channels == 1 && sound.bitsPerSample == 8)
-        m_format = AL_FORMAT_MONO8;
-    else if (sound.channels == 1 && sound.bitsPerSample == 16)
-        m_format = AL_FORMAT_MONO16;
-    else if (sound.channels == 2 && sound.bitsPerSample == 8)
-        m_format = AL_FORMAT_STEREO8;
-    else if (sound.channels == 2 && sound.bitsPerSample == 16)
-        m_format = AL_FORMAT_STEREO16;
-    else
-    {
-        std::cerr << "ERROR: unrecognised wave format: " << sound.channels << " channels, " << sound.bitsPerSample
-                  << " bps" << std::endl;
-    }
-
-    AL_CALL(alBufferData, source->buffer, m_format, sound.data, sound.size, sound.sampleRate);
     AL_CALL(alGenSources, 1, &source->source);
     AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
     AL_CALL(alSourcef, source->source, AL_GAIN, settings.gain);
     AL_CALL(alSource3f, source->source, AL_POSITION, settings.position[0], settings.position[1], settings.position[2]);
     AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity[0], settings.velocity[1], settings.velocity[2]);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
-    AL_CALL(alSourcei, source->source, AL_BUFFER, source->buffer);
+    AL_CALL(alSourcei, source->source, AL_BUFFER,
+            SystemsManager::getInstance()->resourceManager.get<Sound::Buffer>(soundName)->buffer);
 }
 
-AudioComponent::SourceData* AudioComponent::getSource(const string& name) noexcept
+AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept
 {
     if (sources.find(name) != sources.end())
     {
@@ -96,10 +82,10 @@ AudioComponent::SourceData* AudioComponent::getSource(const string& name) noexce
     }
 }
 
-void AudioComponent::playSound(SourceData* source) noexcept
+void AudioComponent::playSound(const char* name) noexcept
 {
+    SourceData* source = findSource(name);
     AL_CALL(alSourcePlay, source->source);
-
     source->state = AL_PLAYING;
 }
 
@@ -113,7 +99,7 @@ AudioComponent::~AudioComponent() noexcept
     ALC_CALL(alcCloseDevice, m_closed, m_device, m_device);
 }
 
-AudioComponent::SourceData* AudioComponent::findSource(const std::string& name) noexcept
+AudioComponent::SourceData* AudioComponent::findSource(const char* name) noexcept
 {
     if (sources.find(name) != sources.end())
     {
@@ -127,9 +113,9 @@ AudioComponent::SourceData* AudioComponent::findSource(const std::string& name) 
     }
 }
 
-void AudioComponent::stopSound(SourceData* source) noexcept
+void AudioComponent::stopSound(const char* name) noexcept
 {
+    SourceData* source = findSource(name);
     AL_CALL(alSourceStop, source->source);
-
     source->state = AL_STOPPED;
 }
