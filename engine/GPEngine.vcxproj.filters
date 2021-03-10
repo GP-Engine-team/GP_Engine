@@ -84,6 +84,7 @@
     </ClCompile>
     <ClCompile Include="third_party\gpm\src\SpherePlane.cpp">
       <Filter>third_party\gpm</Filter>
+    </ClCompile>
     <ClCompile Include="src\Mesh.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -420,34 +421,6 @@
     <None Include="include\Engine\Intermediate\BehaviourComponent.inl">
       <Filter>include</Filter>
     </None>
-<<<<<<< HEAD
-    <None Include="third_party\gpm\include\GPM\conversion.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\include\GPM\Matrix3.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\include\GPM\Matrix4.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\include\GPM\Quaternion.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\include\GPM\Random.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\include\GPM\Transform.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\include\GPM\Vector2.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\include\GPM\Vector3.inl">
-      <Filter>third_party\gpm</Filter>
-    </None>
-    <None Include="third_party\gpm\include\GPM\Vector4.inl">
-      <Filter>third_party\gpm</Filter>
-=======
     <None Include="include\Engine\Intermediate\Component.inl">
       <Filter>include</Filter>
     </None>
@@ -465,7 +438,6 @@
     </None>
     <None Include="include\Engine\Serialization\xml\xmlSaver.inl">
       <Filter>include\Serialization\xml</Filter>
->>>>>>> b9b85a2da0b184177fff89a5c4e5e5677701810b
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -8,13 +8,11 @@ namespace Editor
         template<typename T>
         void draw(T& instance)
         {
-            /*
-            for (rfk::Field& field : T::GetStaticArchetype()->fields)
-            {
-                // Display field.name
-                // Display field.value
-            }
-            */
+            //for (rfk::Field& field : T::GetStaticArchetype()->fields)
+            //{
+            //    // Display field.name
+            //    // Display field.value
+            //}
         }
     };
 }

@@ -1,4 +1,8 @@
-﻿#include "Engine/Serialization/xml/xmlSaver.hpp"
+#include <string>
+#include <iostream>
+#include "Engine/Serialization/xml/xmlSaver.hpp"
+#include "RapidXML/rapidxml.hpp"
+#include "RapidXML/rapidxml_print.hpp"
 #include "Engine/Serialization/FieldInfo.hpp"
 #include "Engine/Serialization/xml/xmlUtilities.hpp"
 #include "RapidXML/rapidxml.hpp"

@@ -19,6 +19,10 @@ launcher/x64
 projects/GPGame/Debug
 projects/GPGame/x64
 
+# Generated
+engine/include/Generated/
+projects/GPGame/include/Generated/
+
 ### C++ ###
 # Prerequisites
 *.d

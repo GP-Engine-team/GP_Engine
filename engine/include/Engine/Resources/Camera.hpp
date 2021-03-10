@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -18,7 +18,8 @@
 namespace GPE
 {
 
-//TODO: Furstum must be inside Camera but is forwarding in file RenderSystem. While camera do not own it's frustum, frustum struct must be outside
+// TODO: Furstum must be inside Camera but is forwarding in file RenderSystem. While camera do not own it's frustum,
+// frustum struct must be outside
 struct Frustum
 {
     GPM::Plane topFace;
@@ -27,8 +28,8 @@ struct Frustum
     GPM::Plane rightFace;
     GPM::Plane leftFace;
 
-    GPM::Plane frontFace;
-    GPM::Plane backFace;
+    GPM::Plane farFace;
+    GPM::Plane nearFace;
 };
 
 class Camera : public Component

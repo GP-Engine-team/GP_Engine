@@ -10,10 +10,12 @@
 #include <string>
 #include <vector>
 
-#include <Windows.h>
-
 #define ADD_PROCESS(rcpp, function) rcpp.addProcess(#function);
 #define GET_PROCESS(rcpp, function) rcpp.getProcess<decltype(function)>(#function);
+
+// Forward Declarations
+typedef struct HINSTANCE__* HINSTANCE;
+typedef HINSTANCE           HMODULE;
 
 namespace GPE
 {

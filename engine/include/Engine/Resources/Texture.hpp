@@ -11,7 +11,7 @@
 
 // in inl
 #include "Engine/Core/Debug/Assert.hpp"
-#include "glad/glad.h"
+#include <glad/glad.h>
 
 namespace GPE
 {

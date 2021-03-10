@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -10,10 +10,8 @@
 #include <string>
 #include <vector>
 
-#include <glad/glad.h>
-
+#include "Engine/Core/Tools/ClassUtility.hpp"
 #include "Engine/Resources/Type.hpp"
-
 #include "GPM/Shape3D/Volume.hpp"
 #include "GPM/Vector3.hpp"
 
@@ -23,20 +21,22 @@ namespace GPE
 class Mesh
 {
 public:
-    enum class BoundingVolume
+    enum class EBoundingVolume
     {
         NONE,
-        SPHERE
+        SPHERE,
+        AABB
     };
 
     struct CreateArg
     {
-        std::string                      objName;
-        std::vector<GPM::Vec3>           vBuffer;
-        std::vector<GPM::Vec2>           vtBuffer;
-        std::vector<GPM::Vec3>           vnBuffer;
-        std::vector<Indice>              iBuffer;
-        BoundingVolume                   boundingVolume{BoundingVolume::SPHERE};
+        std::string                  objName;
+        std::vector<GPM::Vec3>       vBuffer;
+        std::vector<GPM::Vec2>       vtBuffer;
+        std::vector<GPM::Vec3>       vnBuffer;
+        std::vector<Indice>          iBuffer;
+        EBoundingVolume              boundingVolumeType{EBoundingVolume::SPHERE};
+        std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
     };
 
     enum class Axis
@@ -50,27 +50,14 @@ public:
     };
 
 protected:
-    GLuint m_indexVAO = 0;
+    unsigned int m_indexVAO      = 0;
     unsigned int m_verticesCount = 0;
 
-    BoundingVolume                   m_boundingVolumeType = BoundingVolume::NONE;
-    std::unique_ptr<GPM::Volume>     m_boundingVolume = nullptr;
-
-protected:
-
-     /**
-     * @brief Load Mesh from CPU to GPU. This operation can be slow but use more faster the Mesh.
-     *
-     */
-    void loadInGPU() noexcept;
-    void unloadFromGPU() noexcept;
-
-private:
-
-    void generateBoundingSphere(const std::vector<GPM::Vec3>& vBuffer) noexcept;
+    EBoundingVolume              m_boundingVolumeType = EBoundingVolume::NONE;
+    std::unique_ptr<GPM::Volume> m_boundingVolume     = nullptr;
 
 public:
-    Mesh(const CreateArg& arg) noexcept;
+    Mesh(CreateArg& arg) noexcept;
 
     Mesh(const Mesh& other) = delete;
     Mesh(Mesh&& other)      = default;
@@ -82,14 +69,11 @@ public:
      */
     void draw() const noexcept;
 
-    inline unsigned int getID() const noexcept;
-
-    inline BoundingVolume getBoundingVolumeType() const noexcept;
-
     inline const GPM::Volume* getBoundingVolume() const noexcept;
 
-    inline unsigned int getVerticesCount() const noexcept;
-
+    GETTER_BY_VALUE(ID, m_indexVAO);
+    GETTER_BY_VALUE(VerticesCount, m_verticesCount);
+    DEFAULT_GETTER_SETTER_BY_REF(BoundingVolumeType, m_boundingVolumeType);
 
     /**
      * @brief Create a plae object of radius 1 and return it mesh. Plane is centered on the origin
@@ -98,9 +82,9 @@ public:
      * @param indexTexture          : index of texture if split
      * @return MeshConstructorArg
      */
-    static Mesh::CreateArg createPlane(float width = 0.5f, float height = 0.5f, float textureRepetition = 1.f,
-                                       unsigned int indexTextureX = 0,
-                                       unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y, bool isRectoVerso = false) noexcept;
+    static Mesh::CreateArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f, float textureRepetition = 1.f,
+                                      unsigned int indexTextureX = 0, unsigned int indexTextureY = 0,
+                                      Axis towardAxis = Axis::Y, bool isRectoVerso = false) noexcept;
 
     /**
      * @brief Create a Cube object of radius 1 and return it mesh. Cube is centered on the origin

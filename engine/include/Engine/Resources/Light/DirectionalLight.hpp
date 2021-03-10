@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -8,13 +8,13 @@
 
 #include <vector>
 
+#include "Engine/Core/Tools/ClassUtility.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Light/Light.hpp"
 #include "Engine/Resources/ShaderType.hpp"
 #include "GPM/Vector3.hpp"
-#include "Engine/Core/Tools/ClassUtility.hpp"
 
-//in inl
+// in inl
 #include <string>
 
 namespace GPE
@@ -49,6 +49,6 @@ public:
 
     void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept final;
 
-    DEFAULT_GETTER_SETTER(Direction, m_direction);
+    DEFAULT_GETTER_SETTER_BY_REF(Direction, m_direction);
 };
 } /*namespace GPE*/

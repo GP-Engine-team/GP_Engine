@@ -1,5 +1,7 @@
 #include "Engine/Core/HotReload/ReloadableCpp.hpp"
 
+#include <Windows.h>
+
 using namespace GPE;
 
 void ReloadableCpp::load(const char *newFileSuffix)
