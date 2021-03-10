@@ -1,10 +1,16 @@
 ﻿#include "Editor/EditorStartup.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Editor/Editor.hpp"
-#include "Game.hpp"
 #include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Core/Game/AbstractGame.hpp"
 
 using namespace GPE;
+
+/* To make the project compile. */
+/* Should be remplaced by functions loaded by ReloadableCpp. */
+class AbstractGame* createGameInstance() { return nullptr;  }
+void destroyGameInstance(class AbstractGame* game) {}
+
 
 EditorStartup::EditorStartup() : m_editor(new Editor())
 {
@@ -15,16 +21,16 @@ void EditorStartup::EditorStartup::StartGame()
 {
 	if (m_game != nullptr)
 	{
-		delete m_game;
+		destroyGameInstance(m_game);
 	}
-	m_game = new Game();
+	m_game = createGameInstance();
 }
 
 void EditorStartup::CloseGame()
 {
 	if (m_game != nullptr)
 	{
-		delete m_game;
+		destroyGameInstance(m_game);
 		m_game = nullptr;
 	}
 }
