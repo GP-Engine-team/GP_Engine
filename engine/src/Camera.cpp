@@ -1,109 +1,105 @@
 #include "Engine/Resources/Camera.hpp"
 
-#include <iostream>
-
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Intermediate/RenderSystem.hpp"
 #include "GPM/Transform.hpp"
+#include "GPM/Vector3.hpp"
 
-using namespace GPE;
 using namespace GPM;
 
-Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Component(owner)
+namespace GPE
 {
-    GPE_ASSERT(arg.near > 0.f, "Near must be greater than 0");
+
+void Camera::updateProjection()
+{
+    switch (m_projInfo.type)
+    {
+    case EProjectionType::ORTHOGRAPHIC:
+        m_projection = Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
+                                               m_projInfo.znear, m_projInfo.zfar);
+        break;
+
+    case EProjectionType::PERSPECTIVE:
+        m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect,
+                                              m_projInfo.znear, m_projInfo.zfar);
+        break;
+
+    default:
+        FUNCT_WARNING("Other projection not implemented");
+        break;
+    }
+}
+
+
+Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept
+    : Component(owner)
+{
+    GPE_ASSERT(arg.znear > 0.f, "Near must be greater than 0");
 
     ProjectionInfo info;
 
     info.name   = arg.name;
     info.type   = EProjectionType::PERSPECTIVE;
     info.aspect = arg.aspect;
-    info.near   = arg.near;
-    info.far    = arg.far;
+    info.znear   = arg.znear;
+    info.zfar    = arg.zfar;
     info.fovY   = arg.fovY;
     info.fovX   = arg.aspect * arg.fovY;
-    info.hSide  = arg.far * sinf(info.fovX / 2.f);
-    info.vSide  = arg.far * sinf(info.fovY / 2.f);
+    info.hSide  = arg.zfar * sinf(info.fovX * .5f);
+    info.vSide  = arg.zfar * sinf(info.fovY * .5f);
 
     m_projInfo   = info;
-    m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.near, m_projInfo.far);
+    m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect,
+                                          m_projInfo.znear, m_projInfo.zfar);
 
     RenderSystem::getInstance()->addCamera(this);
 
-    Log::log((std::string("Perspective projection add with name \"") + arg.name + "\"").c_str());
+    Log::log((std::string("Perspective projection added with name \"") + arg.name + "\"").c_str());
 }
 
-Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : Component(owner)
+Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept
+    : Component(owner)
 {
-    GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");
+    GPE_ASSERT(arg.znear > 0.f, "Near must be greater than 0");
 
     ProjectionInfo info;
 
     info.name   = arg.name;
     info.type   = EProjectionType::ORTHOGRAPHIC;
     info.aspect = arg.hSide / arg.vSide;
-    info.near   = arg.nearVal;
-    info.far    = arg.farVal;
-    info.fovY   = arg.farVal * asinf(arg.vSide);
-    info.fovX   = arg.farVal * asinf(arg.hSide);
+    info.znear  = arg.znear;
+    info.zfar   = arg.zfar;
+    info.fovY   = arg.zfar * asinf(arg.vSide);
+    info.fovX   = arg.zfar * asinf(arg.hSide);
     info.hSide  = arg.hSide;
     info.vSide  = arg.vSide;
 
     m_projInfo = info;
-    m_projection =
-        Transform::orthographic(m_projInfo.hSide / 2.f, m_projInfo.vSide / 2.f, m_projInfo.near, m_projInfo.far);
+    m_projection = Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
+                                           m_projInfo.znear, m_projInfo.zfar);
 
     RenderSystem::getInstance()->addCamera(this);
-    Log::log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
+    Log::log((std::string("Orthographic projection added with name \"") + arg.name + "\"").c_str());
 }
 
 void Camera::setFovY(const float fovY) noexcept
 {
     m_projInfo.fovY  = fovY;
     m_projInfo.fovX  = m_projInfo.aspect * fovY;
-    m_projInfo.hSide = m_projInfo.far * sinf(m_projInfo.fovX);
-    m_projInfo.vSide = m_projInfo.far * sinf(m_projInfo.fovY);
+    m_projInfo.hSide = m_projInfo.zfar * sinf(m_projInfo.fovX);
+    m_projInfo.vSide = m_projInfo.zfar * sinf(m_projInfo.fovY);
 
-    switch (m_projInfo.type)
-    {
-    case EProjectionType::ORTHOGRAPHIC:
-        m_projection =
-            Transform::orthographic(m_projInfo.hSide / 2.f, m_projInfo.vSide / 2.f, m_projInfo.near, m_projInfo.far);
-        break;
-
-    case EProjectionType::PERSPECTIVE:
-        m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.near, m_projInfo.far);
-        break;
-
-    default:
-        FUNCT_WARNING("Other projection not implemented");
-        break;
-    }
+    updateProjection();
 }
 
 void Camera::setAspect(const float newAspect) noexcept
 {
     m_projInfo.aspect = newAspect;
     m_projInfo.fovX   = m_projInfo.aspect * m_projInfo.fovY;
-    m_projInfo.hSide  = m_projInfo.far * sinf(m_projInfo.fovX);
+    m_projInfo.hSide  = m_projInfo.zfar * sinf(m_projInfo.fovX);
 
-    switch (m_projInfo.type)
-    {
-    case EProjectionType::ORTHOGRAPHIC:
-        m_projection =
-            Transform::orthographic(m_projInfo.hSide / 2.f, m_projInfo.vSide / 2.f, m_projInfo.near, m_projInfo.far);
-        break;
-
-    case EProjectionType::PERSPECTIVE:
-        m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.near, m_projInfo.far);
-        break;
-
-    default:
-        FUNCT_WARNING("Other projection not implemented");
-        break;
-    }
+    updateProjection();
 }
 
 Frustum Camera::getFrustum() const noexcept
@@ -115,18 +111,20 @@ Frustum Camera::getFrustum() const noexcept
     const GPM::Vec3& up             = m_gameObject.getTransform().getVectorUp();
     const GPM::Vec3& globalPosition = m_gameObject.getTransform().getGlobalPosition();
 
-    frustum.backFace  = {globalPosition + m_projInfo.near * forward, forward};
-    frustum.frontFace = {globalPosition + m_projInfo.far * forward, -forward};
+    frustum.backFace  = {globalPosition + m_projInfo.znear * forward, forward};
+    frustum.frontFace = {globalPosition + m_projInfo.zfar * forward, -forward};
 
     frustum.rightFace = {globalPosition,
-                         GPM::Vec3::cross(forward * m_projInfo.far + right * (m_projInfo.hSide / 2.f), up)};
+                         GPM::Vec3::cross(forward * m_projInfo.zfar + right * (m_projInfo.hSide * .5f), up)};
     frustum.leftFace  = {globalPosition,
-                        -GPM::Vec3::cross(forward * m_projInfo.far + right * (-m_projInfo.hSide / 2.f), up)};
+                        -GPM::Vec3::cross(forward * m_projInfo.zfar + right * (-m_projInfo.hSide * .5f), up)};
 
     frustum.topFace    = {globalPosition,
-                       GPM::Vec3::cross(forward * m_projInfo.far + up * (m_projInfo.vSide / 2.f), right)};
+                          GPM::Vec3::cross(forward * m_projInfo.zfar + up * (m_projInfo.vSide * .5f), right)};
     frustum.bottomFace = {globalPosition,
-                          -GPM::Vec3::cross(forward * m_projInfo.far + up * (-m_projInfo.vSide / 2.f), right)};
+                          -GPM::Vec3::cross(forward * m_projInfo.zfar + up * (-m_projInfo.vSide * .5f), right)};
 
     return frustum;
 }
+
+} // End of namespace GPE
