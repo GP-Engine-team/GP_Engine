@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "rapidxml.hpp"
+#include "RapidXML/rapidxml.hpp"
 
 /**
  * @brief Finds the attribute value corresponding to a child with key name.
