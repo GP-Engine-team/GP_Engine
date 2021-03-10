@@ -15,7 +15,5 @@ namespace Editor
 		{
 			sceneViewer.render();
 		}
-
 	};
-
 }
