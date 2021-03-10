@@ -2,8 +2,8 @@
 
 #include <string>
 #include <iostream>
-#include "rapidxml.hpp"
-#include "rapidxml_print.hpp"
+#include "RapidXML/rapidxml.hpp"
+#include "RapidXML/rapidxml_print.hpp"
 
 using namespace rapidxml;
 
