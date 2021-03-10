@@ -7,17 +7,17 @@
 #pragma once
 
 #include "Engine/Intermediate/Component.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
 #include "GPM/Conversion.hpp"
 #include "GPM/Matrix4.hpp"
-#include "GPM/Vector3.hpp"
-#include "GPM/Vector4.hpp"
 #include "GPM/Quaternion.hpp"
+#include "GPM/Vector3.hpp"
 #include "GPM/Transform.hpp"
-#include <vector>
 
 namespace GPE
 {
+
+class GameObject;
+
 class TransformComponent : public Component
 {
 public:
@@ -34,12 +34,7 @@ protected:
     bool                m_isDirty = false;
 
 public:
-    TransformComponent(GameObject& refGameObject, const CreateArg& arg = CreateArg{}) noexcept
-        : Component(refGameObject), m_spaceAttribut{
-                                                       GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)),
-                                                       arg.position, arg.scale},
-          m_transform{GPM::toTransform(m_spaceAttribut)}
-    {}
+    TransformComponent(GameObject& refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
 
     TransformComponent() noexcept                                = delete;
     TransformComponent(const TransformComponent& other) noexcept = delete;
@@ -48,128 +43,58 @@ public:
     TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
     TransformComponent& operator=(TransformComponent&& other) noexcept = default;
 
-    [[nodiscard]] constexpr inline bool isDirty() const
-    {
-        return m_isDirty;
-    }
+    [[nodiscard]] constexpr inline bool isDirty() const;
 
-    GPM::Vec3 getGlobalPosition() const noexcept
-    {
-        return m_transform.translation();
-    }
+    constexpr GPM::Vec3 getGlobalPosition() const noexcept;
 
-    GPM::Vec3 getGlobalScale() const noexcept
-    {
-        return m_transform.scaling();
-    }
+    GPM::Vec3 getGlobalScale() const noexcept;
 
-    GPM::Quaternion getGlobalRotation() const noexcept
-    {
-        return toQuaternion(m_transform.rotation());
-    }
-
+    GPM::Quaternion getGlobalRotation() const noexcept;
 
     /**
      * @brief update Mesh matrix
      *
      */
-    void update() noexcept
-    {
-        if (!m_isDirty)
-            return;
-
-        m_transform = GPM::toTransform(m_spaceAttribut);
-        m_isDirty   = false;
-    }
+    void update() noexcept;
 
     /**
      * @brief update transform if it depend to parent Mesh view (use in inherance in scene graph)
      *
      * @param parentMeshMatrix : Mesh view matrix of parent
      */
-    void update(const GPM::Mat4& parentMeshMatrix) noexcept
-    {
-        m_transform.model = parentMeshMatrix * GPM::toTransform(m_spaceAttribut).model;
-        m_isDirty         = false;
-    }
+    void update(const GPM::Mat4& parentMeshMatrix) noexcept;
 
-     void translate(const GPM::Vec3& translation) noexcept
-    {
-        m_spaceAttribut.position += translation;
-        m_isDirty = true;
-    }
+    void translate(const GPM::Vec3& translation) noexcept;
 
-     void scale(const GPM::Vec3& scale) noexcept
-    {
-        m_spaceAttribut.scale += scale;
-        m_isDirty = true;
-    }
+    void scale(const GPM::Vec3& scale) noexcept;
 
-     void setTranslation(const GPM::Vec3& translation) noexcept
-    {
-        m_spaceAttribut.position = translation;
-        m_isDirty  = true;
-    }
+    void setTranslation(const GPM::Vec3& translation) noexcept;
 
-     void setScale(const GPM::Vec3& scale) noexcept
-    {
-        m_spaceAttribut.scale   = scale;
-        m_isDirty = true;
-    }
+    void setScale(const GPM::Vec3& scale) noexcept;
 
-    void setRotation(const GPM::Quaternion& q) noexcept
-    {
-        m_spaceAttribut.rotation = q;
-        m_isDirty = true;
-    }
+    void setRotation(const GPM::Quaternion& q) noexcept;
 
-    void setRotationZ(const float& z) noexcept
-    {
-        m_spaceAttribut.rotation.z = z;
-        m_isDirty = true;
-    }
+    void setRotationZ(const float& z) noexcept;
 
-    GPM::Vec3 getVectorForward() const noexcept
-    {
-        return m_transform.forward().normalized();
-    }
-    GPM::Vec3 getVectorRight() const noexcept
-    {
-        return m_transform.right().normalized();
-    }
-    GPM::Vec3 getVectorUp() const noexcept
-    {
-        return m_transform.up().normalized();
-    }
+    GPM::Vec3 getVectorForward() const noexcept;
 
-    inline GPM::SplitTransform& getSpacialAttribut()
-    {
-        return m_spaceAttribut;
-    }
+    GPM::Vec3 getVectorRight() const noexcept;
 
-    inline GPM::Transform& get()
-    {
-        return m_transform;
-    }
+    GPM::Vec3 getVectorUp() const noexcept;
 
-    inline const GPM::Mat4& getModelMatrix() const
-    {
-        return m_transform.model;
-    }
+    constexpr GPM::SplitTransform& getSpacialAttribut();
 
-    const GPM::Vec3& getPosition() const noexcept
-    {
-        return m_spaceAttribut.position;
-    }
+    constexpr GPM::Transform& get();
 
-    const GPM::Quaternion& getRotation() const noexcept
-    {
-        return m_spaceAttribut.rotation;
-    }
+    constexpr const GPM::Mat4& getModelMatrix() const;
 
-    const GPM::Vec3& getScale() const noexcept
-    {
-        return m_spaceAttribut.scale;
-    }
+    constexpr const GPM::Vec3& getPosition() const noexcept;
+
+    constexpr const GPM::Quaternion& getRotation() const noexcept;
+
+    constexpr const GPM::Vec3& getScale() const noexcept;
 };
+
+#include "TransformComponent.inl"
+
 } /*namespace GPE*/
