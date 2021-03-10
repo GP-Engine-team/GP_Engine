@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "Viewport.hpp"
 #include "Editor/SceneEditor.hpp"
 
 struct GLFWwindow;
