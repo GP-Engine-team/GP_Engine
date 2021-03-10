@@ -53,12 +53,12 @@ void SceneRenderSystem::displayBoundingVolume(const SubModel* pSubModel, const C
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vector3 scale(pSubModel->pModel->getOwner().getTransform().getScale().x * pAABB->getExtI() * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->getExtJ() * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->getExtK() * 2.f);
+        const Vector3 scale(pSubModel->pModel->getOwner().getTransform().getScale().x * pAABB->extents.x * 2.f,
+                            pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->extents.y * 2.f,
+                            pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->extents.z * 2.f);
 
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                          pAABB->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
+                          pAABB->center * pSubModel->pModel->getOwner().getTransform().getScale());
 
         drawDebugCube(pos, Quat::identity(), scale, color, SceneRenderSystem::EDebugShapeMode::FILL);
     }
@@ -129,12 +129,12 @@ bool SceneRenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* p
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vector3 scale(pSubModel->pModel->getOwner().getTransform().getScale().x * pAABB->getExtI() * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->getExtJ() * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->getExtK() * 2.f);
+        const Vector3 scale(pSubModel->pModel->getOwner().getTransform().getScale().x * pAABB->extents.x * 2.f,
+                            pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->extents.y * 2.f,
+                            pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->extents.z * 2.f);
 
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                          pAABB->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
+                          pAABB->center * pSubModel->pModel->getOwner().getTransform().getScale());
 
         AABB globalAABB(pos, scale.x / 2.f, scale.y / 2.f, scale.z / 2.f);
 
