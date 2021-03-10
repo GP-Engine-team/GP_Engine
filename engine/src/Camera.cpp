@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Resources/Scene.hpp"
 #include "Engine/ECS/System/SceneRenderSystem.hpp"
 #include "GPM/Transform.hpp"
 #include "GPM/Vector3.hpp"
@@ -35,17 +36,17 @@ void Camera::updateProjection()
 Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept
     : Component(owner)
 {
-    GPE_ASSERT(arg.znear > 0.f, "Near must be greater than 0");
+    GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");
 
     m_projInfo.name   = arg.name;
     m_projInfo.type   = EProjectionType::PERSPECTIVE;
     m_projInfo.aspect = arg.aspect;
-    m_projInfo.znear   = arg.znear;
-    m_projInfo.zfar    = arg.zfar;
+    m_projInfo.znear  = arg.nearVal;
+    m_projInfo.zfar   = arg.farVal;
     m_projInfo.fovY   = arg.fovY * PI / 180.f;
     m_projInfo.fovX   = arg.aspect * m_projInfo.fovY;
-    m_projInfo.hSide  = arg.zfar * tanf(m_projInfo.fovX * .5f) * 2.f;
-    m_projInfo.vSide  = arg.zfar * tanf(m_projInfo.fovY * .5f) * 2.f;
+    m_projInfo.hSide  = arg.farVal * tanf(m_projInfo.fovX * .5f) * 2.f;
+    m_projInfo.vSide  = arg.farVal * tanf(m_projInfo.fovY * .5f) * 2.f;
 
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect,
                                           m_projInfo.znear, m_projInfo.zfar);
@@ -58,7 +59,7 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept
 Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept
     : Component(owner)
 {
-    GPE_ASSERT(arg.znear > 0.f, "Near must be greater than 0");
+    GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");
 
     m_projInfo.name   = arg.name;
     m_projInfo.type   = EProjectionType::ORTHOGRAPHIC;
@@ -182,3 +183,5 @@ Frustum Camera::getFrustum() const noexcept
 
     return frustum;
 }*/
+
+} // End of namespace GPE
