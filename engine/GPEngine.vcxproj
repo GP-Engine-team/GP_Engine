@@ -282,6 +282,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AbstractGame.cpp" />
+    <ClCompile Include="src\BehaviourComponent.cpp" />
     <ClCompile Include="src\BehaviourSystem.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
@@ -298,12 +299,14 @@
     <ClCompile Include="src\RendererGLFW_GL46.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\RenderTexture.cpp" />
+    <ClCompile Include="src\SceneRenderSystem.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlLoader.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlSaver.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ShaderParser.cpp" />
     <ClCompile Include="src\SpotLight.cpp" />
+    <ClCompile Include="src\SystemsManager.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\WindowGLFW.cpp" />

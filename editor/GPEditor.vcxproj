@@ -145,13 +145,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir);$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include;$(GPGameDir);$(ProjectDir)/include;$(GPEngineDir)include;$(GPEngineDir)src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include;$(GPGameDir);$(ProjectDir)/include;$(GPEngineDir)include;$(GPEngineDir)src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;GPGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GPEngine.lib;GPGame.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
