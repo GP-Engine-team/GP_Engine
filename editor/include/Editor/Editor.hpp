@@ -20,7 +20,7 @@ private:
 	int			m_framebufferWidth;
 	int			m_framebufferHeight;
 
-	SceneEditor sceneEditor;
+	//SceneEditor sceneEditor;
 
 private:
 	void initGLFW();

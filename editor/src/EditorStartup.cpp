@@ -2,7 +2,7 @@
 #include "Editor/Editor.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
-//#include "Game/Game.hpp"
+#include "Editor/ExternalDeclarations.hpp"
 
 namespace Editor
 {
@@ -31,6 +31,9 @@ EditorStartup::EditorStartup()
       m_editor{new Editor()}, m_game{nullptr}
 {
     GPE_ASSERT(m_editor != nullptr, "m_editor allocation failed");
+
+    ADD_PROCESS(reloadableCpp, createGameInstance);
+    ADD_PROCESS(reloadableCpp, destroyGameInstance);
 }
 
 
@@ -38,6 +41,7 @@ EditorStartup::~EditorStartup()
 {
     if (m_game != nullptr)
     {
+        GET_PROCESS(reloadableCpp, destroyGameInstance)(m_game);
         //destroyGameInstance(m_game);
     }
 
@@ -50,9 +54,12 @@ void EditorStartup::startGame()
 {
     if (m_game != nullptr)
     {
-        delete m_game;
+        //delete m_game;
+        GET_PROCESS(reloadableCpp, destroyGameInstance)(m_game);
     }
-    //m_game = new Game();
+    //m_game = createGameInstance();
+    auto a = GET_PROCESS(reloadableCpp, createGameInstance);
+    m_game = a();
 }
 
 
@@ -60,7 +67,8 @@ void EditorStartup::closeGame()
 {
     if (m_game != nullptr)
     {
-        delete m_game;
+        //destroyGameInstance(m_game);
+        GET_PROCESS(reloadableCpp, destroyGameInstance)(m_game);
         m_game = nullptr;
     }
 }
@@ -68,8 +76,19 @@ void EditorStartup::closeGame()
 
 void EditorStartup::update() 
 {
+    if (m_game != nullptr)
+    {
+        m_game->update(0, 0);
+    }
+
     timeSystem.update(m_update, m_fixedUpdate, m_render);
     isRunning = m_editor->isRunning();
+
+
+    if (reloadableCpp.refresh())
+    {
+        startGame();
+    }
 }
 
 } // End of namespace Editor
