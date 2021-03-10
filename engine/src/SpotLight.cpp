@@ -1,5 +1,4 @@
-
-#include "Engine/Resources/Light/SpotLight.hpp"
+﻿#include "Engine/Resources/Light/SpotLight.hpp"
 #include "GPM/Constants.hpp"
 
 using namespace GPE;

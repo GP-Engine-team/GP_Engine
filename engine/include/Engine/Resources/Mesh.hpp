@@ -10,14 +10,10 @@
 #include <string>
 #include <vector>
 
-#include <glad/glad.h>
-
+#include "Engine/Core/Tools/ClassUtility.hpp"
 #include "Engine/Resources/Type.hpp"
-
 #include "GPM/Shape3D/Volume.hpp"
 #include "GPM/Vector3.hpp"
-
-#include "Engine/Core/Tools/ClassUtility.hpp"
 
 namespace GPE
 {

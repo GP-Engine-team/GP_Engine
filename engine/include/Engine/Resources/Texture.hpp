@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -11,7 +11,7 @@
 
 // in inl
 #include "Engine/Core/Debug/Assert.hpp"
-#include "glad/glad.h"
+#include <glad/glad.h>
 
 namespace GPE
 {
@@ -95,8 +95,8 @@ protected:
     unsigned int m_id = 0;
 
 protected:
-    void loadInGPU(int w, int h, int comp, ETextureMinFilter textureMinFilter,
-                   ETextureMagFilter textureMagFilter, ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept;
+    void loadInGPU(int w, int h, int comp, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
+                   ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept;
 
 public:
     Texture()                     = default;
