@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\GameApiMacros.hpp" />
+    <ClInclude Include="include\myScript.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
