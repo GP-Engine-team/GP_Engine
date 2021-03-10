@@ -21,6 +21,9 @@
     <ClInclude Include="include\GameApiMacros.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\myScript.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
