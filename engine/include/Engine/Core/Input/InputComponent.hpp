@@ -1,16 +1,18 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
  */
 
 #pragma once
-#include "Engine/Intermediate/Component.hpp"
-#include "GPM/Vector3.hpp"
+
 #include <functional>
 #include <iostream>
 #include <string>
 #include <unordered_map>
+
+#include "Engine/Intermediate/Component.hpp"
+#include "GPM/Vector3.hpp"
 
 enum class EKeyMode
 {

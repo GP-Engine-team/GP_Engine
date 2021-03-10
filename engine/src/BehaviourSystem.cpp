@@ -1,11 +1,9 @@
-#include "Engine/Intermediate/BehaviourSystem.hpp"
+﻿#include "Engine/Intermediate/BehaviourSystem.hpp"
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/Intermediate/BehaviourComponent.hpp"
 
 using namespace GPE;
-
-BehaviourSystem* BehaviourSystem::m_pInstance{nullptr};
 
 void BehaviourSystem::addUpdate(BehaviourComponent& updateFunction) noexcept
 {
@@ -48,7 +46,7 @@ void BehaviourSystem::addBehaviour(BehaviourComponent* pBehaviour) noexcept
     m_pBehaviours.push_back(pBehaviour);
 }
 
-void BehaviourSystem::updateBehaviourPointer(BehaviourComponent* newPointorBehaviour,
+void BehaviourSystem::updateBehaviourPointer(BehaviourComponent*       newPointorBehaviour,
                                              const BehaviourComponent* exPointorBehaviour) noexcept
 {
     const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();

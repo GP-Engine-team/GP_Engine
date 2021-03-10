@@ -1,8 +1,11 @@
-#include "Engine/Resources/Mesh.hpp"
+﻿#include "Engine/Resources/Mesh.hpp"
+
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "GPM/Constants.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
+
+#include <glad/glad.h>
 
 #include <iostream>
 #include <limits>
@@ -18,17 +21,12 @@ static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, 
     glBindBuffer(target, 0);
 }
 
-Mesh::Mesh(const CreateArg& arg) noexcept
+Mesh::Mesh(CreateArg& arg) noexcept
 {
-    if (arg.boundingVolume == BoundingVolume::SPHERE)
-    {
-        m_boundingVolumeType = arg.boundingVolume;
-        generateBoundingSphere(arg.vBuffer);
-    }
-    else if (arg.boundingVolume == BoundingVolume::NONE)
-    {
-        m_boundingVolume = nullptr;
-    }
+    m_boundingVolumeType = arg.boundingVolumeType;
+
+    if (arg.boundingVolume != nullptr)
+        m_boundingVolume = std::move(arg.boundingVolume);
 
     // Init VBOs and VAO
     GLuint vertexbuffer;
@@ -64,7 +62,6 @@ Mesh::Mesh(const CreateArg& arg) noexcept
             vtVBO.emplace_back(arg.vtBuffer[arg.iBuffer[i].ivt]);
             vnVBO.emplace_back(arg.vnBuffer[arg.iBuffer[i].ivn]);
         }
-
 
         initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vVBO.data(),
                                static_cast<int>(vVBO.size() * sizeof(vVBO[0])));
@@ -124,28 +121,8 @@ void Mesh::draw() const noexcept
     glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_verticesCount));
 }
 
-void Mesh::generateBoundingSphere(const std::vector<GPM::Vec3>& vBuffer) noexcept
-{
-    if (vBuffer.empty())
-        return;
-
-    float farestVertexLengthSquare = std::numeric_limits<float>::min();
-
-    for (auto&& vertex : vBuffer)
-    {
-        float newVertexLength = std::fabs(vertex.length2());
-
-        if (farestVertexLengthSquare < newVertexLength)
-        {
-            farestVertexLengthSquare = newVertexLength;
-        }
-    }
-
-    m_boundingVolume = std::make_unique<Sphere>(std::sqrt(farestVertexLengthSquare));
-}
-
-Mesh::CreateArg Mesh::createPlane(float width, float height, float textureRepetition, unsigned int indexTextureX,
-                                  unsigned int indexTextureY, Axis towardAxis, bool isRectoVerso) noexcept
+Mesh::CreateArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition, unsigned int indexTextureX,
+                                 unsigned int indexTextureY, Axis towardAxis, bool isRectoVerso) noexcept
 {
     Mesh::CreateArg mesh;
     mesh.objName = "Plane";
@@ -169,45 +146,45 @@ Mesh::CreateArg Mesh::createPlane(float width, float height, float textureRepeti
     switch (towardAxis)
     {
     case Axis::X:
-        mesh.vBuffer.push_back({0.f, -height, -width});
-        mesh.vBuffer.push_back({0.f, height, -width});
-        mesh.vBuffer.push_back({0.f, height, width});
-        mesh.vBuffer.push_back({0.f, -height, width});
+        mesh.vBuffer.push_back({0.f, -halfHeight, -halfWidth});
+        mesh.vBuffer.push_back({0.f, halfHeight, -halfWidth});
+        mesh.vBuffer.push_back({0.f, halfHeight, halfWidth});
+        mesh.vBuffer.push_back({0.f, -halfHeight, halfWidth});
         break;
 
     case Axis::NEG_X:
-        mesh.vBuffer.push_back({0.f, height, width});
-        mesh.vBuffer.push_back({0.f, -height, width});
-        mesh.vBuffer.push_back({0.f, -height, -width});
-        mesh.vBuffer.push_back({0.f, height, -width});
+        mesh.vBuffer.push_back({0.f, halfHeight, halfWidth});
+        mesh.vBuffer.push_back({0.f, -halfHeight, halfWidth});
+        mesh.vBuffer.push_back({0.f, -halfHeight, -halfWidth});
+        mesh.vBuffer.push_back({0.f, halfHeight, -halfWidth});
         break;
 
     case Axis::Y:
-        mesh.vBuffer.push_back({-height, 0.f, -width});
-        mesh.vBuffer.push_back({height, 0.f, -width});
-        mesh.vBuffer.push_back({height, 0.f, width});
-        mesh.vBuffer.push_back({-height, 0.f, width});
+        mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth});
+        mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});
+        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
+        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
         break;
 
     case Axis::NEG_Y:
-        mesh.vBuffer.push_back({height, 0.f, width});
-        mesh.vBuffer.push_back({-height, 0.f, width});
-        mesh.vBuffer.push_back({-height, 0.f, -width});
-        mesh.vBuffer.push_back({height, 0.f, -width});
+        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
+        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
+        mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth});
+        mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});
         break;
 
     case Axis::Z:
-        mesh.vBuffer.push_back({-height, -width, 0.f});
-        mesh.vBuffer.push_back({height, -width, 0.f});
-        mesh.vBuffer.push_back({height, width, 0.f});
-        mesh.vBuffer.push_back({-height, width, 0.f});
+        mesh.vBuffer.push_back({-halfHeight, -halfWidth, 0.f});
+        mesh.vBuffer.push_back({halfHeight, -halfWidth, 0.f});
+        mesh.vBuffer.push_back({halfHeight, halfWidth, 0.f});
+        mesh.vBuffer.push_back({-halfHeight, halfWidth, 0.f});
         break;
 
     case Axis::NEG_Z:
-        mesh.vBuffer.push_back({-height, -width, 0.f});
-        mesh.vBuffer.push_back({height, -width, 0.f});
-        mesh.vBuffer.push_back({height, width, 0.f});
-        mesh.vBuffer.push_back({-height, width, 0.f});
+        mesh.vBuffer.push_back({-halfHeight, -halfWidth, 0.f});
+        mesh.vBuffer.push_back({halfHeight, -halfWidth, 0.f});
+        mesh.vBuffer.push_back({halfHeight, halfWidth, 0.f});
+        mesh.vBuffer.push_back({-halfHeight, halfWidth, 0.f});
         break;
 
     default:
