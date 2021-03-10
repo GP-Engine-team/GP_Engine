@@ -58,19 +58,19 @@ public:
 
     struct PerspectiveCreateArg
     {
-        float       aspect = 16.f / 9.f;
-        float       znear  = 0.001f;
-        float       zfar   = 10.f;
-        float       fovY   = 70.f;
-        const char* name   = "Camera";
+        float       aspect  = 16.f / 9.f;
+        float       nearVal = 0.001f;
+        float       farVal  = 10.f;
+        float       fovY    = 70.f;
+        const char* name    = "Camera";
     };
 
     struct OrthographicCreateArg
     {
         float       hSide   = 1.f;
         float       vSide   = 1.f;
-        float       znear   = 0.001f;
-        float       zfar    = 10.f;
+        float       nearVal = 0.001f;
+        float       farVal  = 10.f;
         const char* name    = "Camera";
     };
 
