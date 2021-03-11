@@ -22,6 +22,7 @@ protected:
 	GPE::InputManager& iManager = GPE::SystemsManager::getInstance()->inputManager;
 	GPE::BehaviourSystem& bSys = GPE::SystemsManager::getInstance()->behaviourSystem;
 	GPE::RenderSystem& rSys = GPE::SystemsManager::getInstance()->renderSystem;
+	GPE::ResourceManagerType& rm = GPE::SystemsManager::getInstance()->resourceManager;
 
 	GPE::Scene scene;
 

@@ -146,8 +146,6 @@ Game::Game()
 	PointLight::CreateArg lightArg{ {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0, 0.0014, 0.000007 };
 	PointLight& light = player.addComponent<PointLight>(lightArg);
 
-	ResourceManagerType rm;
-
 	rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs", AMBIANTE_COLOR_ONLY);
 	rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs", "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
 
@@ -166,4 +164,6 @@ Game::Game()
 			unFixedUpdateFrameCount = 0;
 		},
 		true);
+
+	Log::logInitializationEnd("Game");
 }
