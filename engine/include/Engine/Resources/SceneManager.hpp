@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -32,10 +32,8 @@ class SceneManager
 {
 private:
 protected:
-    void loadScene(const std::string& path);
-
-    std::unordered_map<std::string, std::string> m_scenesPath        = {}; // id / path
-    std::unique_ptr<Scene>                       m_pCurrentSceneLoad = nullptr;
+    std::unordered_map<std::string, Scene> m_scenes            = {};
+    Scene*                                 m_pCurrentSceneLoad = nullptr;
 
 public:
     SceneManager() noexcept = default;
@@ -50,20 +48,34 @@ public:
 
     SceneManager& operator=(SceneManager&& other) noexcept = default;
 
-    void loadNewScene(const std::string&    sceneID,
+    Scene* getCurrentSceneLoad() noexcept
+    {
+        return m_pCurrentSceneLoad;
+    }
+
+    void addEmpty(const std::string& sceneName)
+    {
+        m_scenes.emplace(sceneName);
+    }
+
+    void loadNewScene(const std::string&    sceneName,
                       ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
                       EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING)
     {
         if (!m_pCurrentSceneLoad)
         {
-            loadScene(m_scenesPath[sceneID]); // Initialize m_pCurrentSceneLoad
+            m_pCurrentSceneLoad = &m_scenes[sceneName];
             return;
         }
+
+        // TODO: To remove
+        m_pCurrentSceneLoad = &m_scenes[sceneName];
+        return;
 
         switch (sceneGraphloadType)
         {
         case ESceneGraphManagement::REPLACE: {
-            std::unique_ptr<Scene> newScene;
+            std::unique_ptr<Scene> newScene = std::make_unique<Scene>();
 
             switch (resourcesloadType)
             {
@@ -82,7 +94,6 @@ public:
             default:
                 break;
             }
-            m_pCurrentSceneLoad = std::move(newScene);
             break;
         }
 
