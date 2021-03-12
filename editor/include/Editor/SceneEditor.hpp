@@ -5,15 +5,16 @@
 
 namespace Editor
 {
-	class SceneEditor
-	{
-	public:
-		GPE::SceneViewer sceneViewer;
-		Inspector* inspector;
 
-		void render() const
-		{
-			sceneViewer.render();
-		}
-	};
+class SceneEditor
+{
+public:
+	//GPE::SceneViewer sceneViewer;
+	//Inspector		 inspector;
+
+	SceneEditor(const GPE::Scene& scene);
+
+	void render() const;
+};
+
 }
