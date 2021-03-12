@@ -44,7 +44,10 @@ Generated
 !third_party/lib/
 third_party/lib/*
 !third_party/lib/*.lib
-
+!third_party/libDebug/
+!third_party/libDebug/*.lib
+!third_party/libRelease/
+!third_party/libRelease/*.lib
 # Executables
 *.exe
 *.out
