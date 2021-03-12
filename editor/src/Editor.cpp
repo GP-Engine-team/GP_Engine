@@ -1,6 +1,10 @@
 #include "Editor/Editor.hpp"
 
+#include "Engine/Core/System/SystemsManager.hpp"
+#include "Engine/Resources/SceneManager.hpp"
+
 #include "imgui/imgui.h"
+//#include "imgui/imgui_internal.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
@@ -33,67 +37,18 @@ void windowFramebufferResized(GLFWwindow* window, int newWidth, int newHeight)
 
 
 /* ========================== Private methods ========================== */
-void Editor::initGLFW()
+void Editor::setupGLFWWindow()
 {
-    // Initialization
-    if (!glfwInit())
-    {
-        fprintf(stderr, "GLFW failed to initialize\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // Error callback
-#ifdef _DEBUG
-    glfwSetErrorCallback([](int error, const char* desc) {
-        fprintf(stderr, "GLFW error %d: %s\n", error, desc);
-    });
-#endif
-
-    // OpenGL context
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // Window appearance
-    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-
-    m_window = glfwCreateWindow(1024, 720, "GP engine editor", nullptr, nullptr);
-
-    if (!m_window)
-    {
-        fprintf(stderr, "GLFW window could not be initialized\n");
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-
     glfwSetWindowUserPointer(m_window, this);
     glfwSetFramebufferSizeCallback(m_window, windowFramebufferResized);
     glfwGetFramebufferSize(m_window, &m_framebufferWidth, &m_framebufferHeight);
 
-    glfwMakeContextCurrent(m_window);
     glfwSwapInterval(1);
 }
 
 
-void Editor::initGlad()
+void Editor::setupDearImGui()
 {
-    if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0)
-    {
-        fprintf(stderr, "Failed to initialize OpenGL context\n");
-        glfwDestroyWindow(m_window);
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-}
-
-
-void Editor::initDearImGui()
-{
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
@@ -102,11 +57,6 @@ void Editor::initDearImGui()
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(m_window, true);
-    ImGui_ImplOpenGL3_Init("#version 460");
 }
 
 
@@ -169,8 +119,9 @@ void Editor::renderLevelEditor() const
 {
     ImGui::Begin("Level editor");
         ImGui::Text("Level editor");
-
-        //sceneEditor.render();
+        //ImVec2 v{ImGui::GetCurrentWindowRead()->ContentSize};
+        // sceneEditor.resize(static_cast<int>(v.x), static_cast<int>(v.y));
+        // sceneEditor.render();
 
     ImGui::End();
 }
@@ -225,26 +176,18 @@ void Editor::renderExplorer() const
 
 
 /* ========================== Constructor & destructor ========================== */
-Editor::Editor()
-    : m_window{nullptr}, m_framebufferWidth{0}, m_framebufferHeight{0}
+Editor::Editor(GLFWwindow* window)
+    : sceneView{}, m_window{window}, m_framebufferWidth{0}, m_framebufferHeight{0}
 {
-    initGLFW();
-    initGlad();
-    initDearImGui();
-
-    // Wait for the full context to be initialized to show the window
-    glfwShowWindow(m_window);
+    GPE::SystemsManager::getInstance()->renderSystem.;
+    setupGLFWWindow();
+    setupDearImGui();
 }
 
 
-Editor::~Editor()
+void Editor::setDefaultScene()
 {
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 
-    glfwDestroyWindow(m_window);
-    glfwTerminate();
 }
 
 

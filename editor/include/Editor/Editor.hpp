@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Editor/SceneEditor.hpp"
+#include "Engine/Intermediate/Viewers/SceneViewer.hpp"
 
 struct GLFWwindow;
 
@@ -16,30 +16,28 @@ namespace Editor
 class Editor
 {
 private:
-	GLFWwindow* m_window;
-	int			m_framebufferWidth;
-	int			m_framebufferHeight;
-
-	SceneEditor sceneEditor;
+	GPE::SceneViewer sceneView;
+	GLFWwindow*		 m_window;
+	int				 m_framebufferWidth;
+	int				 m_framebufferHeight;
 
 private:
-	void initGLFW();
-	void initGlad();
-	void initDearImGui();
+	void setupGLFWWindow();
+	void setupDearImGui();
 
-	void renderMenuBar() const;
+	void renderMenuBar    () const;
 	void renderLevelEditor() const;
-	void renderInspector() const;
-	void renderSceneGraph() const;
-	void renderExplorer() const;
+	void renderInspector  () const;
+	void renderSceneGraph () const;
+	void renderExplorer   () const;
 
 public:
-	Editor();
-	~Editor();
+	Editor(GLFWwindow* window);
 
-	void update		();
-	void render		();
-	bool isRunning  ();
+	void setDefaultScene();
+	void update			();
+	void render			();
+	bool isRunning		();
 
 	friend void windowFramebufferResized(GLFWwindow* window, int width, int height);
 };
