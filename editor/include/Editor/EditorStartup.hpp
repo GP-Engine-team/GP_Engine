@@ -12,6 +12,7 @@
 #include <functional>
 
 class AbstractGame;
+struct GLFWwindow;
 
 namespace Editor
 {
@@ -25,9 +26,11 @@ private:
     const std::function<void(double, double)> m_update;
     const std::function<void()>               m_render;
 
-    GPE::ReloadableCpp reloadableCpp{ "./bin/" };
-    AbstractGame* m_game;
-    Editor*       m_editor;
+    GPE::ReloadableCpp m_reloadableCpp;
+    Editor             m_editor;
+    AbstractGame*      m_game;
+
+	void initDearImGui(GLFWwindow* window);
 
 public:
     EditorStartup();

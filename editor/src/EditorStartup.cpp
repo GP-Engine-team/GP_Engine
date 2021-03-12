@@ -2,10 +2,31 @@
 #include "Editor/Editor.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/Core/System/SystemsManager.hpp"
+
+#include "imgui/imgui.h"
+#include "glad/glad.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+#include "GLFW/glfw3.h"
+
 //#include "Game/Game.hpp"
 
 namespace Editor
 {
+
+void EditorStartup::initDearImGui(GLFWwindow* window)
+{
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 460");
+}
+
 
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
@@ -17,20 +38,20 @@ EditorStartup::EditorStartup()
       {
           if (m_game != nullptr)
               m_game->update(fixedUnscaledDeltaTime, deltaTime);
-      
-          //m_editor->update(fixedUnscaledDeltaTime, deltaTime);
       }},
       m_render{[&]()
       {
           if (m_game != nullptr)
               m_game->render();
 
-          m_editor->update();
-          m_editor->render();
+          m_editor.update();
+          m_editor.render();
       }},
-      m_editor{new Editor()}, m_game{nullptr}
+      m_reloadableCpp{"./bin/"},
+      m_editor{GPE::SystemsManager::getInstance()->window.getGLFWWindow()},
+      m_game{nullptr}
 {
-    GPE_ASSERT(m_editor != nullptr, "m_editor allocation failed");
+    initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow());
 }
 
 
@@ -41,8 +62,9 @@ EditorStartup::~EditorStartup()
         //destroyGameInstance(m_game);
     }
 
-    GPE_ASSERT(m_editor != nullptr, "m_editor should be valid since we've just ran the editor.");
-    delete m_editor;
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 
@@ -69,7 +91,8 @@ void EditorStartup::closeGame()
 void EditorStartup::update() 
 {
     timeSystem.update(m_update, m_fixedUpdate, m_render);
-    isRunning = m_editor->isRunning();
+    isRunning = m_editor.isRunning();
+    m_reloadableCpp.refresh();
 }
 
 } // End of namespace Editor
