@@ -22,9 +22,11 @@
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\GameApiMacros.hpp" />
     <ClInclude Include="include\myScript.hpp" />
+    <ClInclude Include="include\SingletonsSync.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\SingletonsSync.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Projects.props" />

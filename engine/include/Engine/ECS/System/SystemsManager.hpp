@@ -71,6 +71,11 @@ public:
 
         return m_instance;
     }
+
+    static void setInstance(SystemsManager& systemManager)
+    {
+        m_instance = &systemManager;
+    }
 };
 
 } /*namespace GPE*/
