@@ -9,16 +9,14 @@ using namespace GPE;
 
 GameStartup::GameStartup()
 {
-	GPE_ASSERT(m_game != nullptr, "m_game should be valid since we're running the game.");
-
 	gameFunctionsPtr.update = std::bind(&AbstractGame::update, m_game, std::placeholders::_1, std::placeholders::_2);
 	gameFunctionsPtr.fixedUpdate = std::bind(&AbstractGame::fixedUpdate, m_game, std::placeholders::_1, std::placeholders::_2);
 	gameFunctionsPtr.render = std::bind(&AbstractGame::render, m_game);
 
-	GPE::SystemsManager* systemManager = GPE::SystemsManager::getInstance();
-	setGameSystemsManagerInstance(*systemManager);
-	
+	setGameSystemsManagerInstance(*GPE::SystemsManager::getInstance());
+
 	m_game = createGameInstance();
+	GPE_ASSERT(m_game != nullptr, "m_game should be valid since we're running the game.");
 }
 
 void GameStartup::update()
