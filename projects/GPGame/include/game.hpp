@@ -33,7 +33,6 @@ protected:
 private:
 	virtual void update(double unscaledDeltaTime, double deltaTime) override final
 	{
-		iManager.processInput();
 		bSys.update(deltaTime);
 		++unFixedUpdateFrameCount;
 
@@ -49,7 +48,6 @@ private:
 	virtual void render() override final
 	{
 		rSys.draw(rSys.defaultRenderPipeline());
-		ren.swapBuffer();
 	}
 
 public:

@@ -42,7 +42,7 @@ protected:
           behaviourSystem{}, resourceManager{}, renderSystem{}
     {
         renderSystem.addRenderer(&renderer);
-        std::cout << "Creation" << std::endl;
+        //std::cout << "Creation" << std::endl;
     }
 
 public:
@@ -65,7 +65,7 @@ public:
 
     static SystemsManager* getInstance()
     {
-        std::cout << "getInstance" << std::endl;
+        //std::cout << "getInstance" << std::endl;
         if (m_instance == nullptr)
         {
             m_instance = new SystemsManager();

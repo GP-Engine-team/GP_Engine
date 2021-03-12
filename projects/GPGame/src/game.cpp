@@ -28,6 +28,7 @@
 #include "Engine/Core/Debug/Log.hpp"
 //#include "GPM/Random.hpp"
 
+#include <glad/glad.h> //In first
 #include <glfw/glfw3.h>
 
 using namespace GPE;
@@ -35,6 +36,13 @@ using namespace GPM;
 
 extern "C" AbstractGame * createGameInstance()
 {
+	// Init glad
+	if (!gladLoadGL())
+	{
+		FUNCT_ERROR("gladLoadGLLoader failed");
+		exit(EXIT_FAILURE);
+	}
+
 	return new Game();
 }
 
@@ -120,7 +128,7 @@ void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
 
 Game::Game()
 {
-	iManager.setupCallbacks(win.getGLFWWindow());
+
 	iManager.bindInput(GLFW_KEY_W, "forward");
 	iManager.bindInput(GLFW_KEY_S, "back");
 	iManager.bindInput(GLFW_KEY_A, "left");
@@ -129,7 +137,7 @@ Game::Game()
 	iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
 	iManager.bindInput(GLFW_KEY_ESCAPE, "exit");
 	iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
-
+	
 	GameObject::CreateArg playerArg{ "Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}} };
 
 	Camera::PerspectiveCreateArg camCreateArg;
