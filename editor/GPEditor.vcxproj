@@ -19,20 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\imgui.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\imgui_demo.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\imgui_tables.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="..\engine\third_party\src\glad.c" />
-    <ClCompile Include="src\Editor.cpp" />
-    <ClCompile Include="src\EditorStartup.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Viewport.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="..\engine\third_party\imgui\imconfig.h" />
@@ -41,16 +27,31 @@
     <ClInclude Include="..\engine\third_party\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\engine\third_party\imgui\imstb_textedit.h" />
     <ClInclude Include="..\engine\third_party\imgui\imstb_truetype.h" />
-    <ClInclude Include="..\engine\third_party\include\glad\glad.h" />
-    <ClInclude Include="..\engine\third_party\include\GLFW\glfw3.h" />
-    <ClInclude Include="..\engine\third_party\include\GLFW\glfw3native.h" />
+    <ClInclude Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="..\engine\third_party\imgui\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="include\Editor\Editor.hpp" />
     <ClInclude Include="include\Editor\EditorStartup.hpp" />
+    <ClInclude Include="include\Editor\Inspectors\Inspector.hpp" />
     <ClInclude Include="include\Editor\SceneEditor.hpp" />
     <ClInclude Include="include\Editor\Viewport.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GPEditor.props" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\imgui.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="src\Editor.cpp" />
+    <ClCompile Include="src\EditorStartup.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\SceneEditor.cpp" />
+    <ClCompile Include="src\Viewport.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -167,7 +168,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party/include;$(GPEngineDir)third_party/imgui;$(GPEngineDir)third_party;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir);$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include;$(GPGameDir);$(ProjectDir)/include;$(GPEngineDir)include;$(GPEngineDir)src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\imgui\backends;$(GPEngineDir)third_party\imgui;$(GPEngineDir)third_party;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir);$(GPEngineDir)third_party\include\Refureku;$(GPGameDir)include;$(GPGameDir);$(ProjectDir)include;$(GPEngineDir)include;$(GPEngineDir)src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
