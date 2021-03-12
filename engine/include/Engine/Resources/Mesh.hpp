@@ -28,13 +28,36 @@ public:
         AABB
     };
 
-    struct CreateArg
+    struct Vertex
+    {
+        GPM::Vec3 vBuffer;
+        GPM::Vec3 vnBuffer;
+        GPM::Vec2 vtBuffer;
+    };
+
+    struct Indice
+    {
+        unsigned int iv, ivt, ivn;
+    };
+
+    // Allow user to construct mesh thank's to EBO
+    struct CreateIndiceBufferArg
+    {
+        std::string                  objName;
+        std::vector<Vertex>          vertices;
+        std::vector<unsigned int>    indices;
+        EBoundingVolume              boundingVolumeType{EBoundingVolume::SPHERE};
+        std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
+    };
+
+    // Allow user to construct mesh thank's to multiple VBO
+    struct CreateContiguteVerticesArg
     {
         std::string                  objName;
         std::vector<GPM::Vec3>       vBuffer;
         std::vector<GPM::Vec2>       vtBuffer;
         std::vector<GPM::Vec3>       vnBuffer;
-        std::vector<Indice>          iBuffer;
+        std::vector<Indice>          iBuffer; // optional
         EBoundingVolume              boundingVolumeType{EBoundingVolume::SPHERE};
         std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
     };
@@ -50,14 +73,15 @@ public:
     };
 
 protected:
-    unsigned int m_indexVAO      = 0;
+    unsigned int m_VAO           = 0;
     unsigned int m_verticesCount = 0;
 
     EBoundingVolume              m_boundingVolumeType = EBoundingVolume::NONE;
     std::unique_ptr<GPM::Volume> m_boundingVolume     = nullptr;
 
 public:
-    Mesh(CreateArg& arg) noexcept;
+    Mesh(CreateIndiceBufferArg& arg) noexcept;
+    Mesh(CreateContiguteVerticesArg& arg) noexcept;
 
     Mesh(const Mesh& other) = delete;
     Mesh(Mesh&& other)      = default;
@@ -71,7 +95,7 @@ public:
 
     inline const GPM::Volume* getBoundingVolume() const noexcept;
 
-    GETTER_BY_VALUE(ID, m_indexVAO);
+    GETTER_BY_VALUE(ID, m_VAO);
     GETTER_BY_VALUE(VerticesCount, m_verticesCount);
     DEFAULT_GETTER_SETTER_BY_REF(BoundingVolumeType, m_boundingVolumeType);
 
@@ -82,16 +106,17 @@ public:
      * @param indexTexture          : index of texture if split
      * @return MeshConstructorArg
      */
-    static Mesh::CreateArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f, float textureRepetition = 1.f,
-                                      unsigned int indexTextureX = 0, unsigned int indexTextureY = 0,
-                                      Axis towardAxis = Axis::Y, bool isRectoVerso = false) noexcept;
+    static CreateContiguteVerticesArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f,
+                                                 float textureRepetition = 1.f, unsigned int indexTextureX = 0,
+                                                 unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y,
+                                                 bool isRectoVerso = false) noexcept;
 
     /**
      * @brief Create a Cube object of radius 1 and return it mesh. Cube is centered on the origin
      *
      * @return MeshConstructorArg
      */
-    static CreateArg createCube(float textureRepetition = 1.f) noexcept;
+    static CreateContiguteVerticesArg createCube(float textureRepetition = 1.f) noexcept;
 
     /**
      * @brief Create a Sphere object of radius 1 and return it mesh. Sphere is centered on the origin
@@ -100,7 +125,7 @@ public:
      * @param longitudeCount    : number of vertex in longitude
      * @return MeshConstructorArg
      */
-    static CreateArg createSphere(int latitudeCount, int longitudeCount) noexcept;
+    static CreateContiguteVerticesArg createSphere(int latitudeCount, int longitudeCount) noexcept;
 
     /**
      * @brief Create a Cylindre object
@@ -108,8 +133,9 @@ public:
      * @param prescision
      * @return MeshConstructorArg
      */
-    static CreateArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace Culling (bad
-                                                                       // normal)
+    static CreateContiguteVerticesArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace
+                                                                                        // Culling (bad
+                                                                                        // normal)
 };
 
 #include "Mesh.inl"
