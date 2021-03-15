@@ -30,9 +30,9 @@ public:
 
     struct Vertex
     {
-        GPM::Vec3 vBuffer;
-        GPM::Vec3 vnBuffer;
-        GPM::Vec2 vtBuffer;
+        GPM::Vec3 v;
+        GPM::Vec3 vn;
+        GPM::Vec2 vt;
     };
 
     struct Indice

@@ -109,9 +109,9 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
         // Indices
         for (size_t i = 0; i < pMesh->mNumFaces; ++i)
         {
-            arg.indices[i * 3]     = pMesh->mFaces[i].mIndices[0];
-            arg.indices[i * 3 + 1] = pMesh->mFaces[i].mIndices[1];
-            arg.indices[i * 3 + 2] = pMesh->mFaces[i].mIndices[2];
+            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[0]);
+            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[1]);
+            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[2]);
         }
 
         arg.boundingVolumeType = boundingVolumeType;

@@ -35,24 +35,25 @@ Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
 
     // define properties of EBO and VBO buffers
     glBindBuffer(GL_ARRAY_BUFFER, buffers.vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(arg.vertices[0]) * arg.vertices.size(), &(arg.vertices[0]), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(arg.vertices[0]) * arg.vertices.size(), arg.vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers.ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(arg.indices[0]) * arg.indices.size(), &(arg.indices[0]),
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(arg.indices[0]) * arg.indices.size(), arg.indices.data(),
                  GL_STATIC_DRAW);
 
     // 1rst attribute buffer : position
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, v));
 
     // 2nd attribute buffer : normals
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(sizeof(Vec3)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vn));
 
     // 3nd attribute buffer : UVs
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(2 * sizeof(Vec3)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vt));
 
+    glBindVertexArray(0);
     glDeleteBuffers(2, &buffers.vbo);
 
     Log::log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with EBO").c_str());
