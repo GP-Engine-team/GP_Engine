@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/Intermediate/Component.hpp"
+#include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "GPM/Conversion.hpp"
 #include "GPM/Matrix4.hpp"

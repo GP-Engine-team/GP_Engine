@@ -1,4 +1,4 @@
-﻿#include "Engine/Core/Input/InputManagerGLFW.hpp"
+﻿#include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include <GLFW/glfw3.h>
 
