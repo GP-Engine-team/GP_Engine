@@ -21,8 +21,8 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
 
     Log::logInitializationStart("Obj parsing");
 
-    unsigned int postProcessflags = aiProcess_Triangulate /*| aiProcess_JoinIdenticalVertices*/ |
-                                    aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords;
+    unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
+                                    aiProcess_GenNormals | aiProcess_GenUVCoords;
 
     if (boundingVolumeType != Mesh::EBoundingVolume::NONE)
         postProcessflags |= aiProcess_GenBoundingBoxes;
@@ -84,16 +84,15 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
     {
         aiMesh* pMesh = scene->mMeshes[i];
 
-        Mesh::CreateArg arg;
-        arg.vBuffer.reserve(pMesh->mNumVertices);
-        arg.vtBuffer.reserve(pMesh->mNumVertices);
-        arg.vnBuffer.reserve(pMesh->mNumVertices);
+        Mesh::CreateIndiceBufferArg arg;
+        arg.vertices.reserve(pMesh->mNumVertices);
+        arg.indices.reserve(pMesh->mNumFaces * 3u);
 
         arg.objName = pMesh->mName.C_Str();
 
+        // Vertices
         for (size_t verticeId = 0; verticeId < pMesh->mNumVertices; ++verticeId)
         {
-
             GPE_ASSERT(pMesh->mVertices != nullptr, "Mesh without vertices");
             GPE_ASSERT(pMesh->HasNormals(), "Mesh without Normal");
             GPE_ASSERT(pMesh->mTextureCoords != nullptr, "Mesh without UV");
@@ -103,9 +102,16 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
             const aiVector3D& textCoord = pMesh->mTextureCoords[0][verticeId];
             const aiVector3D& normal    = pMesh->mNormals[verticeId];
 
-            arg.vBuffer.emplace_back(vertice.x, vertice.y, vertice.z);
-            arg.vnBuffer.emplace_back(normal.x, normal.y, normal.z);
-            arg.vtBuffer.emplace_back(textCoord.x, textCoord.y);
+            arg.vertices.emplace_back(Mesh::Vertex{Vec3{vertice.x, vertice.y, vertice.z},
+                                                   Vec3{normal.x, normal.y, normal.z}, Vec2{textCoord.x, textCoord.y}});
+        }
+
+        // Indices
+        for (size_t i = 0; i < pMesh->mNumFaces; ++i)
+        {
+            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[0]);
+            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[1]);
+            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[2]);
         }
 
         arg.boundingVolumeType = boundingVolumeType;
