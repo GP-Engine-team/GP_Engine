@@ -35,7 +35,7 @@ private:
 		bSys.update(deltaTime);
 		++unFixedUpdateFrameCount;
 
-		sm.getCurrentSceneLoad()->world.updateSelfAndChildren();
+		sm.getCurrentScene()->world.updateSelfAndChildren();
 	}
 
 	virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final

@@ -148,7 +148,7 @@ Game::Game()
 	camCreateArg.far = 3000;
 	camCreateArg.near = 0.01f;
 
-	GameObject& player = sm.getCurrentSceneLoad()->world.addChild<GameObject>(playerArg);
+	GameObject& player = sm.getCurrentScene()->world.addChild<GameObject>(playerArg);
 
 	player.addComponent<Camera>(camCreateArg);
 	player.addComponent<GPG::MyScript>();
@@ -162,8 +162,8 @@ Game::Game()
 	loadSkyboxResource(rm);
 	loadTreeResource(rm);
 
-	loadSkyBox(sm.getCurrentSceneLoad()->world, rm);
-	loadTree(sm.getCurrentSceneLoad()->world, rm, 1000);
+	loadSkyBox(sm.getCurrentScene()->world, rm);
+	loadTree(sm.getCurrentScene()->world, rm, 1000);
 
 	ts.addScaledTimer(
 		FPLogDelay,
