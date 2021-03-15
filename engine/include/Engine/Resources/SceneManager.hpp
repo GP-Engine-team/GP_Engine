@@ -31,8 +31,8 @@ class SceneManager
 {
 private:
 protected:
-    std::unordered_map<std::string, Scene> m_scenes            = {};
-    Scene*                                 m_pCurrentSceneLoad = nullptr;
+    std::unordered_map<std::string, Scene> m_scenes        = {};
+    Scene*                                 m_pCurrentScene = nullptr;
 
 public:
     SceneManager() noexcept = default;
@@ -47,9 +47,9 @@ public:
 
     SceneManager& operator=(SceneManager&& other) noexcept = default;
 
-    Scene* getCurrentSceneLoad() noexcept
+    Scene* getCurrentScene() noexcept
     {
-        return m_pCurrentSceneLoad;
+        return m_pCurrentScene;
     }
 
     void addEmpty(const std::string& sceneName)
@@ -61,14 +61,14 @@ public:
                    ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
                    EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING)
     {
-        if (!m_pCurrentSceneLoad)
+        if (!m_pCurrentScene)
         {
-            m_pCurrentSceneLoad = &m_scenes[sceneName];
+            m_pCurrentScene = &m_scenes[sceneName];
             return;
         }
 
         // TODO: To remove
-        m_pCurrentSceneLoad = &m_scenes[sceneName];
+        m_pCurrentScene = &m_scenes[sceneName];
         return;
 
         switch (sceneGraphloadType)
