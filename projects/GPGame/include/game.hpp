@@ -23,8 +23,7 @@ protected:
 	GPE::BehaviourSystem& bSys = GPE::SystemsManager::getInstance()->behaviourSystem;
 	GPE::RenderSystem& rSys = GPE::SystemsManager::getInstance()->renderSystem;
 	GPE::ResourceManagerType& rm = GPE::SystemsManager::getInstance()->resourceManager;
-
-	GPE::Scene scene;
+	GPE::SceneManager& sm = GPE::SystemsManager::getInstance()->sceneManager;
 
 	int    fixedUpdateFrameCount = 0;
 	int    unFixedUpdateFrameCount = 0;
@@ -36,7 +35,7 @@ private:
 		bSys.update(deltaTime);
 		++unFixedUpdateFrameCount;
 
-		scene.world.updateSelfAndChildren();
+		sm.getCurrentSceneLoad()->world.updateSelfAndChildren();
 	}
 
 	virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final

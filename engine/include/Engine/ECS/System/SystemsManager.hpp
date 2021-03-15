@@ -13,6 +13,7 @@
 #include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
+#include "Engine/Resources/SceneManager.hpp"
 
 namespace GPE
 {
@@ -35,11 +36,12 @@ public:
     BehaviourSystem     behaviourSystem;
     ResourceManagerType resourceManager;
     RenderSystem        renderSystem;
+    SceneManager        sceneManager;
 
 protected:
     SystemsManager()
         : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          behaviourSystem{}, resourceManager{}, renderSystem{}
+          behaviourSystem{}, resourceManager{}, renderSystem{}, sceneManager{}
     {
         renderSystem.addRenderer(&renderer);
     }
