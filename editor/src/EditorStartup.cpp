@@ -16,7 +16,7 @@
 namespace Editor
 {
 
-void EditorStartup::initDearImGui(GLFWwindow* window)
+GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
 {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -25,6 +25,8 @@ void EditorStartup::initDearImGui(GLFWwindow* window)
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 460");
+
+    return window;
 }
 
 
@@ -48,10 +50,9 @@ EditorStartup::EditorStartup()
           m_editor.render();
       }},
       m_reloadableCpp{"./../projects/GPGame/bin/Release/GPGame.dll"},
-      m_editor{GPE::SystemsManager::getInstance()->window.getGLFWWindow()},
+      m_editor{initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow())},
       m_game{nullptr}
 {
-    initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow());
     ADD_PROCESS(m_reloadableCpp, createGameInstance);
     ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
 }
