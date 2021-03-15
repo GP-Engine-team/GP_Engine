@@ -1,18 +1,19 @@
 ﻿#pragma once
 
-#include "Engine/Intermediate/RenderSystem.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Resources/Texture.hpp"
+#include "Engine/Resources/RenderBuffer.hpp"
+#include "glad/glad.h"
 
 namespace GPE
 {
 
 class Scene;
-class GameObject;
 
 class SceneViewer
 {
 public:
-    Scene*            scene;
-    SceneRenderSystem sceneRenderSys;
+    Scene&            scene;
     GameObject        cameraOwner;
 
     Texture           texture;
