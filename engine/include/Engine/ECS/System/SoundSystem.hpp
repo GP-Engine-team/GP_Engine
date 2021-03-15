@@ -16,6 +16,9 @@ protected:
 
     static SoundSystem* m_soundSystem;
 
+private:
+    std::unordered_map<int, AudioComponent*> m_audioComponents;
+
 public:
     /**
      * Singletons should not be cloneable.
@@ -46,9 +49,6 @@ public:
      * @return
      */
     inline void removeComponent(int key) noexcept;
-
-private:
-    std::unordered_map<int, AudioComponent*> m_audioComponent;
 };
 
 #include "Engine/ECS/System/SoundSystem.inl"
