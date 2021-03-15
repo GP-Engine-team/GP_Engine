@@ -6,8 +6,8 @@
 
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/Core/System/SystemsManager.hpp"
 #include "Engine/Core/Tools/Format.hpp"
+#include "Engine/ECS/System/SystemsManager.hpp"
 
 using namespace GPE;
 using namespace std;

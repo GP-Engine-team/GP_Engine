@@ -41,16 +41,11 @@ public:
         bool            enableBackFaceCullling = true;
     };
 
-    using LocalResourceManager = ResourcesManager<Mesh, Shader, Texture, RenderBuffer, RenderTexture>;
-
-    using RenderPipeline =
-        std::function<void(const ResourceManagerType&, const LocalResourceManager&, SceneRenderSystem&,
-                           std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
-                           std::vector<Camera*>&, std::vector<Light*>&, std::vector<DebugShape>&, unsigned int)>;
+    using RenderPipeline = std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
+                                              std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
+                                              std::vector<Light*>&, std::vector<DebugShape>&, unsigned int)>;
 
 protected:
-    LocalResourceManager m_localResources;
-
     std::vector<Renderer*>  m_pRenderers;
     std::vector<SubModel*>  m_pOpaqueSubModels;
     std::vector<SubModel*>  m_pTransparenteSubModels;

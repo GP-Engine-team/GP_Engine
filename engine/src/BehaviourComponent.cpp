@@ -1,7 +1,7 @@
-﻿#include "Engine/Intermediate/BehaviourComponent.hpp"
+﻿#include "Engine/ECS/Component/BehaviourComponent.hpp"
 
-#include "Engine/Core/System/SystemsManager.hpp"
-#include "Engine/Intermediate/BehaviourSystem.hpp"
+#include "Engine/ECS/System/BehaviourSystem.hpp"
+#include "Engine/ECS/System/SystemsManager.hpp"
 
 using namespace GPE;
 
