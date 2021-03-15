@@ -54,12 +54,12 @@ public:
 
     void addEmpty(const std::string& sceneName)
     {
-        m_scenes.emplace(sceneName);
+        static_cast<void>(m_scenes[sceneName]); // emaplce with default constructor of scene
     }
 
-    void loadNewScene(const std::string&    sceneName,
-                      ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
-                      EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING)
+    void loadScene(const std::string&    sceneName,
+                   ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
+                   EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING)
     {
         if (!m_pCurrentSceneLoad)
         {

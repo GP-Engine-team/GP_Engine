@@ -36,12 +36,12 @@ public:
     BehaviourSystem     behaviourSystem;
     ResourceManagerType resourceManager;
     RenderSystem        renderSystem;
-    // SceneManager        sceneManager;
+    SceneManager        sceneManager;
 
 protected:
     SystemsManager()
         : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          behaviourSystem{}, resourceManager{}, renderSystem{} //, sceneManager{}
+          behaviourSystem{}, resourceManager{}, renderSystem{}, sceneManager{}
     {
         renderSystem.addRenderer(&renderer);
     }
