@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -16,14 +16,14 @@ namespace Editor
 class Editor
 {
 private:
-	GPE::SceneViewer sceneView;
+	GPE::SceneViewer m_sceneView;
 	GLFWwindow*		 m_window;
 	int				 m_framebufferWidth;
 	int				 m_framebufferHeight;
 
 private:
-	void setupGLFWWindow();
-	void setupDearImGui();
+	void setupGLFWWindow  ();
+	void setupDearImGui   ();
 
 	void renderMenuBar    () const;
 	void renderLevelEditor() const;

@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "Editor/Editor.hpp"
 #include "Engine/Core/Game/ContextStartup.hpp"
 #include "Engine/Core/HotReload/ReloadableCpp.hpp"
 
@@ -16,8 +17,6 @@ struct GLFWwindow;
 
 namespace Editor
 {
-
-class Editor;
 
 class EditorStartup final : public ContextStartup
 {
