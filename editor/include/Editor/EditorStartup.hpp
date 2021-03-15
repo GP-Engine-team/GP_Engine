@@ -30,7 +30,7 @@ private:
     Editor             m_editor;
     AbstractGame*      m_game;
 
-	void initDearImGui(GLFWwindow* window);
+	GLFWwindow* initDearImGui(GLFWwindow* window);
 
 public:
     EditorStartup();
