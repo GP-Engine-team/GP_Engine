@@ -1,4 +1,4 @@
-﻿#include "Engine/Resources/Model.hpp"
+﻿#include "Engine/ECS/Component/Model.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"

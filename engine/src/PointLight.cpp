@@ -1,4 +1,4 @@
-#include "Engine/Resources/Light/PointLight.hpp"
+﻿#include "Engine/ECS/Component/Light/PointLight.hpp"
 
 using namespace GPE;
 

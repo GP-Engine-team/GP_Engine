@@ -11,7 +11,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "Engine/Intermediate/Component.hpp"
+#include "Engine/ECS/Component/Component.hpp"
 #include "GPM/Vector3.hpp"
 
 enum class EKeyMode
