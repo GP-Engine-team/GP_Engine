@@ -152,7 +152,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/gpm/include/;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -178,7 +178,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)/third_party/gpm/include/;$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -216,7 +216,7 @@
     <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
-    <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp" />
+    <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp" />
     <ClInclude Include="include\Engine\Intermediate\BehaviourComponent.hpp" />
     <ClInclude Include="include\Engine\Intermediate\BehaviourSystem.hpp" />
     <ClInclude Include="include\Engine\Intermediate\Component.hpp" />
@@ -224,7 +224,6 @@
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
     <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp" />
     <ClInclude Include="include\Engine\Intermediate\TransformComponent.hpp" />
-    <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp" />
     <ClInclude Include="include\Engine\Resources\Camera.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
     <ClInclude Include="include\Engine\Resources\Light\DirectionalLight.hpp" />
@@ -284,6 +283,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AbstractGame.cpp" />
+    <ClCompile Include="src\BehaviourComponent.cpp" />
     <ClCompile Include="src\BehaviourSystem.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
@@ -301,15 +301,16 @@
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\RenderTexture.cpp" />
     <ClCompile Include="src\SceneRenderSystem.cpp" />
-    <ClCompile Include="src\SceneViewer.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlLoader.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlSaver.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ShaderParser.cpp" />
     <ClCompile Include="src\SpotLight.cpp" />
+    <ClCompile Include="src\SystemsManager.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
+    <ClCompile Include="src\TransformComponent.cpp" />
     <ClCompile Include="src\WindowGLFW.cpp" />
     <ClCompile Include="third_party\gpm\src\Intersection.cpp" />
     <ClCompile Include="third_party\gpm\src\Plane.cpp" />

@@ -1,9 +1,6 @@
 ﻿#pragma once
 
-
 #include "Engine/Intermediate/RenderSystem.hpp"
-#include "Engine/ECS/System/SceneRenderSystem.hpp"
-#include "Engine/Resources/Camera.hpp"
 
 namespace GPE
 {

@@ -16,7 +16,7 @@ namespace Editor
 class Editor
 {
 private:
-	GPE::SceneViewer m_sceneView;
+	//GPE::SceneViewer m_sceneView;
 	GLFWwindow*		 m_window;
 	int				 m_framebufferWidth;
 	int				 m_framebufferHeight;

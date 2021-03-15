@@ -1,3 +1,5 @@
+#include "Engine/ECS/Component/Component.hpp"
+
 inline Component::Component(GameObject& owner) noexcept : m_gameObject{owner}
 {
 }

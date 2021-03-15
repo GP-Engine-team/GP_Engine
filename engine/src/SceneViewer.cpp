@@ -1,7 +1,9 @@
 #include "Engine/Intermediate/Viewers/SceneViewer.hpp"
 
+#include "Engine/ECS/Components/Camera.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
+
 
 namespace GPE
 {

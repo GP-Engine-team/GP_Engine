@@ -9,7 +9,7 @@
 #include <memory> //std::shared_ptr
 #include <vector> //std::vector
 
-#include "Engine/Intermediate/Component.hpp"
+#include "Engine/ECS/Component/Component.hpp"
 #include "GPM/Shape3D/Volume.hpp"
 
 namespace GPE

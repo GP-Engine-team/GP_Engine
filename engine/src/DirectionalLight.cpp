@@ -1,4 +1,4 @@
-#include "Engine/Resources/Light/DirectionalLight.hpp"
+﻿#include "Engine/ECS/Component/Light/DirectionalLight.hpp"
 
 using namespace GPE;
 

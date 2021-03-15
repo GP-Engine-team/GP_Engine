@@ -16,11 +16,14 @@
     <ClCompile Include="third_party\gpm\src\SpherePlane.cpp">
       <Filter>third_party\gpm</Filter>
     </ClCompile>
-    <ClCompile Include="src\PointLight.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp">
+      <Filter>src\Serialization\xml</Filter>
     </ClCompile>
-    <ClCompile Include="src\ReloadableCpp.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="src\Serialization\xml\xmlLoader.cpp">
+      <Filter>src\Serialization\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\xml\xmlSaver.cpp">
+      <Filter>src\Serialization\xml</Filter>
     </ClCompile>
     <ClCompile Include="src\RenderBuffer.cpp">
       <Filter>src</Filter>
@@ -34,6 +37,9 @@
     <ClCompile Include="src\RenderTexture.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\SceneRenderSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Shader.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -43,6 +49,9 @@
     <ClCompile Include="src\SpotLight.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\SystemsManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -50,6 +59,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\WindowGLFW.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AbstractGame.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BehaviourComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\BehaviourSystem.cpp">
@@ -73,18 +88,6 @@
     <ClCompile Include="src\Log.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="third_party\gpm\src\Intersection.cpp">
-      <Filter>third_party\gpm</Filter>
-    </ClCompile>
-    <ClCompile Include="third_party\gpm\src\Plane.cpp">
-      <Filter>third_party\gpm</Filter>
-    </ClCompile>
-    <ClCompile Include="third_party\gpm\src\SegmentPlane.cpp">
-      <Filter>third_party\gpm</Filter>
-    </ClCompile>
-    <ClCompile Include="third_party\gpm\src\SpherePlane.cpp">
-      <Filter>third_party\gpm</Filter>
-    </ClCompile>
     <ClCompile Include="src\Mesh.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -94,22 +97,13 @@
     <ClCompile Include="src\ObjParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp">
-      <Filter>src\Serialization\xml</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\xml\xmlLoader.cpp">
-      <Filter>src\Serialization\xml</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\xml\xmlSaver.cpp">
-      <Filter>src\Serialization\xml</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AbstractGame.cpp">
+    <ClCompile Include="src\PointLight.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\SceneViewer.cpp">
+    <ClCompile Include="src\ReloadableCpp.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\SceneRenderSystem.cpp">
+    <ClCompile Include="src\TransformComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -354,10 +348,7 @@
     <ClInclude Include="include\Engine\Serialization\xml\xmlUtilities.hpp">
       <Filter>include\Serialization\xml</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp">
+    <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

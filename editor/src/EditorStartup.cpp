@@ -2,7 +2,7 @@
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/Core/System/SystemsManager.hpp"
+#include "Engine/ECS/System/SystemsManager.hpp"
 
 #include "imgui/imgui.h"
 #include "glad/glad.h"
@@ -95,14 +95,14 @@ void EditorStartup::closeGame()
 }
 
 
-void EditorStartup::update() 
+void EditorStartup::update()
 {
     if (m_game != nullptr)
     {
         m_game->update(0, 0);
     }
 
-    timeSystem.update(m_update, m_fixedUpdate, m_render);
+    GPE::SystemsManager::getInstance()->timeSystem.update(m_update, m_fixedUpdate, m_render);
     isRunning = m_editor.isRunning();
 
     if (m_reloadableCpp.refresh())
