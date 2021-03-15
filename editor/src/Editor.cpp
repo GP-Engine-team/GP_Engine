@@ -43,7 +43,7 @@ void Editor::setupGLFWWindow()
     glfwSetFramebufferSizeCallback(m_window, windowFramebufferResized);
     glfwGetFramebufferSize(m_window, &m_framebufferWidth, &m_framebufferHeight);
 
-    glfwSwapInterval(1);
+    glfwMaximizeWindow(m_window);
 }
 
 
@@ -177,7 +177,8 @@ void Editor::renderExplorer() const
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window)
-    : m_sceneView{}, m_window{window}, m_framebufferWidth{0}, m_framebufferHeight{0}
+    : /*m_sceneView{*GPE::SystemsManager::getInstance()->sceneManager.getCurrentScene()}, */
+      m_window{window}, m_framebufferWidth{0}, m_framebufferHeight{0}
 {
     setupGLFWWindow();
     setupDearImGui();
