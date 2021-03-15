@@ -31,11 +31,8 @@
     <ClInclude Include="..\engine\third_party\imgui\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="include\Editor\Editor.hpp" />
     <ClInclude Include="include\Editor\EditorStartup.hpp" />
-<<<<<<< HEAD
     <ClInclude Include="include\Editor\Inspectors\Inspector.hpp" />
-=======
     <ClInclude Include="include\Editor\ExternalDeclarations.hpp" />
->>>>>>> f9c92a2f04f232cee164cdc9567ea99f25afb330
     <ClInclude Include="include\Editor\SceneEditor.hpp" />
     <ClInclude Include="include\Editor\Viewport.hpp" />
   </ItemGroup>

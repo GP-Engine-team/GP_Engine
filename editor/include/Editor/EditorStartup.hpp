@@ -8,6 +8,7 @@
 
 #include "Engine/Core/Game/ContextStartup.hpp"
 #include "Engine/Core/HotReload/ReloadableCpp.hpp"
+#include "Editor.hpp"
 
 #include <functional>
 
@@ -16,8 +17,6 @@ struct GLFWwindow;
 
 namespace Editor
 {
-
-class Editor;
 
 class EditorStartup final : public ContextStartup
 {

@@ -2,7 +2,7 @@
 
 
 #include "Engine/Intermediate/RenderSystem.hpp"
-#include "Engine/Resources/Camera.hpp"
+#include "Engine/ECS/Component/Camera.hpp"
 
 namespace GPE
 {

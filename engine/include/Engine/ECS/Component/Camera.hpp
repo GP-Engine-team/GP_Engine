@@ -8,7 +8,7 @@
 
 #include <string>
 
-#include "Engine/Intermediate/Component.hpp"
+#include "Engine/ECS/Component/Component.hpp"
 #include "GPM/Matrix4.hpp"
 #include "GPM/Shape3D/Plane.hpp"
 

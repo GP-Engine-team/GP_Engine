@@ -1,3 +1,5 @@
+#include "Engine/ECS/Component/Camera.hpp"
+
 inline const Camera::ProjectionInfo& Camera::getProjectionInfo() const noexcept
 {
     return m_projInfo;

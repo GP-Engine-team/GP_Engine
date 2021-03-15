@@ -1,6 +1,6 @@
-﻿#include "Engine/Core/Input/InputComponent.hpp"
-#include "Engine/Core/Input/InputManagerGLFW.hpp"
-#include "Engine/Core/System/SystemsManager.hpp"
+﻿#include "Engine/ECS/Component/InputComponent.hpp"
+#include "Engine/ECS/System/InputManagerGLFW.hpp"
+#include "Engine/ECS/System/SystemsManager.hpp"
 
 #include <functional>
 

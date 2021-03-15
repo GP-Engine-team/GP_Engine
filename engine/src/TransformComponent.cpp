@@ -1,4 +1,4 @@
-#include "Engine/Intermediate/TransformComponent.hpp"
+#include "Engine/ECS/Component/TransformComponent.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
 namespace GPE

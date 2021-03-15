@@ -1,12 +1,12 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
  */
 
 #pragma once
-#include "Engine/Core/Input/Cursor.hpp"
-#include "Engine/Core/Input/InputComponent.hpp"
+#include "Engine/ECS/Component/InputComponent.hpp"
+#include "Engine/Resources/Cursor.hpp"
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -25,9 +25,7 @@ private:
     std::unordered_map<int, InputComponent*>  m_inputComponents;
     Cursor                                    m_cursor;
 
-
 public:
-
     InputManager(class Window& window) noexcept;
 
     /**
@@ -99,5 +97,5 @@ public:
     [[nodiscard]] inline const Cursor& getCursor() const noexcept;
 };
 
-#include "Engine/Core/Input/InputManager.inl"
+#include "Engine/ECS/System/InputManagerGLFW.inl"
 } // namespace GPE

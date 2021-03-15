@@ -1,6 +1,6 @@
 #include "Editor/Editor.hpp"
 
-#include "Engine/Core/System/SystemsManager.hpp"
+#include "Engine/ECS/System/SystemsManager.hpp"
 #include "Engine/Resources/SceneManager.hpp"
 
 #include "imgui/imgui.h"
@@ -179,7 +179,7 @@ void Editor::renderExplorer() const
 Editor::Editor(GLFWwindow* window)
     : sceneView{}, m_window{window}, m_framebufferWidth{0}, m_framebufferHeight{0}
 {
-    GPE::SystemsManager::getInstance()->renderSystem.;
+    //GPE::SystemsManager::getInstance()->renderSystem.;
     setupGLFWWindow();
     setupDearImGui();
 }

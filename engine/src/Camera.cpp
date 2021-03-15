@@ -1,4 +1,4 @@
-﻿#include "Engine/Resources/Camera.hpp"
+﻿#include "Engine/ECS/Component/Camera.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
