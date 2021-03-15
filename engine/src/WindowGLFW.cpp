@@ -17,6 +17,7 @@ Window::Window(const CreateArg& arg) noexcept
     {
         FUNCT_ERROR("glfwInit failed");
         exit(EXIT_FAILURE);
+
     }
 
 #ifdef _DEBUG

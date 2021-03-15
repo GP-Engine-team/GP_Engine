@@ -193,9 +193,6 @@ void Editor::setDefaultScene()
 
 void Editor::update()
 {
-    // Listen to keyboard and mouse
-    glfwPollEvents();
-
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -222,8 +219,6 @@ void Editor::render()
     glClear(GL_COLOR_BUFFER_BIT);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    
-    glfwSwapBuffers(m_window);
 }
 
 
