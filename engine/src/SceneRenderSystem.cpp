@@ -89,7 +89,7 @@ SceneRenderSystem::SceneRenderSystem() noexcept
     SystemsManager::getInstance()->resourceManager.add<Mesh>("ScreenPlan",
                                                              Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
     SystemsManager::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
-    SystemsManager::getInstance()->resourceManager.add<Mesh>("Cube", Mesh::createCube());
+    SystemsManager::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
     SystemsManager::getInstance()->resourceManager.add<Mesh>("Plane",
                                                              Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
 
@@ -425,7 +425,7 @@ void SceneRenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation
                                       const ColorRGBA& color, EDebugShapeMode mode,
                                       bool enableBackFaceCullling) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{SystemsManager::getInstance()->resourceManager.get<Mesh>("Cube"),
+    m_debugShape.emplace_back(DebugShape{SystemsManager::getInstance()->resourceManager.get<Mesh>("CubeDebug"),
                                          toTransform(SplitTransform{rotation, position, scale}), color, mode,
                                          enableBackFaceCullling});
 }
