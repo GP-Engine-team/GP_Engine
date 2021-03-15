@@ -5,7 +5,7 @@
  */
 
 #pragma once
-#include "Engine/Core/Sound/AudioComponent.hpp"
+#include "Engine/ECS/Component/AudioComponent.hpp"
 #include <unordered_map>
 namespace GPE
 {
@@ -51,5 +51,5 @@ private:
     std::unordered_map<int, AudioComponent*> m_audioComponent;
 };
 
-#include "Engine/Core/Sound/SoundSystem.inl"
+#include "Engine/ECS/System/SoundSystem.inl"
 } // namespace GPE

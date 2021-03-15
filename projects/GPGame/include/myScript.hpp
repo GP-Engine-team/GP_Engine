@@ -6,11 +6,13 @@
 
 #pragma once
 
+#include "Engine/ECS/Component/AudioComponent.hpp"
 #include "Engine/ECS/Component/BehaviourComponent.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/ECS/System/SystemsManager.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Resources/Wave.hpp"
 
 #include <iostream>
 
@@ -20,7 +22,8 @@ class MyScript : public GPE::BehaviourComponent
 {
 public:
     inline MyScript(GPE::GameObject& owner) noexcept
-        : GPE::BehaviourComponent(owner), input(owner.addComponent<GPE::InputComponent>())
+        : GPE::BehaviourComponent(owner), input(owner.addComponent<GPE::InputComponent>()),
+          source(owner.addComponent<GPE::AudioComponent>())
     {
         enableUpdate(true);
         input.bindAction("jump", EKeyMode::KEY_PRESSED, this, &MyScript::up);
@@ -30,10 +33,19 @@ public:
         input.bindAction("forward", EKeyMode::KEY_PRESSED, this, &MyScript::forward);
         input.bindAction("back", EKeyMode::KEY_PRESSED, this, &MyScript::back);
         input.bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyScript::leave);
-        input.bindAction("sprintStart", EKeyMode::KEY_DOWN, this, &MyScript::sprintStart);
+        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyScript::sprintStart);
         input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyScript::sprintEnd);
 
-        speed = 1;
+        GPE::Wave testSound("./resources/sounds/RickRoll.wav", "RICKROLL");
+        GPE::Wave testSound2("./resources/sounds/YMCA.wav", "YMCA");
+        GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+
+        GPE::SourceSettings sourceSettings;
+        sourceSettings.pitch = 1;
+        sourceSettings.loop  = AL_TRUE;
+
+        source.setSound("Western", "Western", sourceSettings);
+        source.playSound("Western");
     }
 
     MyScript() noexcept                      = delete;
@@ -44,7 +56,9 @@ public:
     MyScript& operator=(MyScript&& other) noexcept = delete;
 
     GPE::InputComponent& input;
-    float                speed;
+    GPE::AudioComponent& source;
+    float                speed      = 1;
+    float                mouseSpeed = 0.001f;
 
     void rotate(const GPM::Vec2& deltaDisplacement)
     {
@@ -52,9 +66,9 @@ public:
         {
             m_gameObject.getTransform().setRotation(
                 m_gameObject.getTransform().getSpacialAttribut().rotation *
-                GPM::Quaternion::angleAxis(-deltaDisplacement.y * 0.001f, {1, 0, 0}));
+                GPM::Quaternion::angleAxis(-deltaDisplacement.y * mouseSpeed, GPM::Vec3::right()));
             m_gameObject.getTransform().setRotation(
-                GPM::Quaternion::angleAxis(-deltaDisplacement.x * 0.001f, {0, 1, 0}) *
+                GPM::Quaternion::angleAxis(-deltaDisplacement.x * mouseSpeed, GPM::Vec3::up()) *
                 m_gameObject.getTransform().getSpacialAttribut().rotation);
         }
     }
@@ -107,7 +121,6 @@ public:
 
     void update(float deltaTime) final
     {
-        speed = 1;
         rotate(GPE::SystemsManager::getInstance()->inputManager.getCursor().deltaPos);
     }
 };

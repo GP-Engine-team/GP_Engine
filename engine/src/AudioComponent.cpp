@@ -1,7 +1,7 @@
-﻿#include "Engine/Core/Sound/AudioComponent.hpp"
+﻿#include "Engine/ECS/Component/AudioComponent.hpp"
 #include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Sound/SoundSystem.hpp"
-#include "Engine/Core/System/SystemsManager.hpp"
+#include "Engine/ECS/System/SoundSystem.hpp"
+#include "Engine/ECS/System/SystemsManager.hpp"
 
 using namespace GPE;
 using namespace std;
