@@ -185,12 +185,6 @@ Editor::Editor(GLFWwindow* window)
 }
 
 
-void Editor::setDefaultScene()
-{
-
-}
-
-
 void Editor::update()
 {
     // Listen to keyboard and mouse
@@ -222,8 +216,6 @@ void Editor::render()
     glClear(GL_COLOR_BUFFER_BIT);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    
-    glfwSwapBuffers(m_window);
 }
 
 
