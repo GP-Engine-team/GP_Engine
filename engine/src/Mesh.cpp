@@ -67,7 +67,7 @@ static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, 
     glBindBuffer(target, 0);
 }
 
-Mesh::Mesh(CreateContiguteVerticesArg& arg) noexcept
+Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
 {
     m_boundingVolumeType = arg.boundingVolumeType;
 
@@ -167,11 +167,11 @@ void Mesh::draw() const noexcept
     glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_verticesCount));
 }
 
-Mesh::CreateContiguteVerticesArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition,
-                                                  unsigned int indexTextureX, unsigned int indexTextureY,
-                                                  Axis towardAxis, bool isRectoVerso) noexcept
+Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition,
+                                                   unsigned int indexTextureX, unsigned int indexTextureY,
+                                                   Axis towardAxis, bool isRectoVerso) noexcept
 {
-    Mesh::CreateContiguteVerticesArg mesh;
+    Mesh::CreateContiguousVerticesArg mesh;
     mesh.objName = "Plane";
 
     // plane contain 4 triangle, 4 vertex 4 texture coordonate and 2 normal
@@ -267,9 +267,9 @@ Mesh::CreateContiguteVerticesArg Mesh::createQuad(float halfWidth, float halfHei
     return mesh;
 }
 
-Mesh::CreateContiguteVerticesArg Mesh::createCube(float textureRepetition) noexcept
+Mesh::CreateContiguousVerticesArg Mesh::createCube(float textureRepetition) noexcept
 {
-    Mesh::CreateContiguteVerticesArg mesh;
+    Mesh::CreateContiguousVerticesArg mesh;
     mesh.objName = "Cube";
 
     // cube contain 12 triangle, 8 vertex 4 texture coordonate and 6 normal
@@ -354,11 +354,11 @@ Mesh::CreateContiguteVerticesArg Mesh::createCube(float textureRepetition) noexc
     return mesh;
 }
 
-Mesh::CreateContiguteVerticesArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexcept
+Mesh::CreateContiguousVerticesArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexcept
 {
     GPE_ASSERT(latitudeCount > 2 && longitudeCount > 2, "Latitude and Longitude must be greater than 2");
 
-    Mesh::CreateContiguteVerticesArg mesh;
+    Mesh::CreateContiguousVerticesArg mesh;
     mesh.objName = "Sphere";
 
     latitudeCount *= 2;
@@ -441,11 +441,11 @@ Mesh::CreateContiguteVerticesArg Mesh::createSphere(int latitudeCount, int longi
     return mesh;
 }
 
-Mesh::CreateContiguteVerticesArg Mesh::createCylindre(unsigned int prescision) noexcept
+Mesh::CreateContiguousVerticesArg Mesh::createCylindre(unsigned int prescision) noexcept
 {
     GPE_ASSERT(prescision > 2, "Prescision must be greater than 2");
 
-    Mesh::CreateContiguteVerticesArg mesh;
+    Mesh::CreateContiguousVerticesArg mesh;
     mesh.objName = "Cylindre";
 
     // Cylindre contain prescision * 2 + 2

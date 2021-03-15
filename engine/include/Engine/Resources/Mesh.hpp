@@ -51,7 +51,7 @@ public:
     };
 
     // Allow user to construct mesh thank's to multiple VBO
-    struct CreateContiguteVerticesArg
+    struct CreateContiguousVerticesArg
     {
         std::string                  objName;
         std::vector<GPM::Vec3>       vBuffer;
@@ -81,7 +81,7 @@ protected:
 
 public:
     Mesh(CreateIndiceBufferArg& arg) noexcept;
-    Mesh(CreateContiguteVerticesArg& arg) noexcept;
+    Mesh(CreateContiguousVerticesArg& arg) noexcept;
 
     Mesh(const Mesh& other) = delete;
     Mesh(Mesh&& other)      = default;
@@ -106,7 +106,7 @@ public:
      * @param indexTexture          : index of texture if split
      * @return MeshConstructorArg
      */
-    static CreateContiguteVerticesArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f,
+    static CreateContiguousVerticesArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f,
                                                  float textureRepetition = 1.f, unsigned int indexTextureX = 0,
                                                  unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y,
                                                  bool isRectoVerso = false) noexcept;
@@ -116,7 +116,7 @@ public:
      *
      * @return MeshConstructorArg
      */
-    static CreateContiguteVerticesArg createCube(float textureRepetition = 1.f) noexcept;
+    static CreateContiguousVerticesArg createCube(float textureRepetition = 1.f) noexcept;
 
     /**
      * @brief Create a Sphere object of radius 1 and return it mesh. Sphere is centered on the origin
@@ -125,7 +125,7 @@ public:
      * @param longitudeCount    : number of vertex in longitude
      * @return MeshConstructorArg
      */
-    static CreateContiguteVerticesArg createSphere(int latitudeCount, int longitudeCount) noexcept;
+    static CreateContiguousVerticesArg createSphere(int latitudeCount, int longitudeCount) noexcept;
 
     /**
      * @brief Create a Cylindre object
@@ -133,7 +133,7 @@ public:
      * @param prescision
      * @return MeshConstructorArg
      */
-    static CreateContiguteVerticesArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace
+    static CreateContiguousVerticesArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace
                                                                                         // Culling (bad
                                                                                         // normal)
 };
