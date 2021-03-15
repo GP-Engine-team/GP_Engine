@@ -8,9 +8,9 @@
 
 #include <vector>
 
-#include "Engine/Intermediate/Component.hpp"
+#include "Engine/ECS/Component/Camera.hpp"
+#include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Camera.hpp"
 #include "Engine/Resources/Color.hpp"
 #include "Engine/Resources/ShaderType.hpp"
 #include "Engine/Resources/Type.hpp"

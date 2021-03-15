@@ -2,7 +2,7 @@
 
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/Core/System/SystemsManager.hpp"
+#include "Engine/ECS/System/SystemsManager.hpp"
 
 using namespace GPE;
 using namespace GPM;
