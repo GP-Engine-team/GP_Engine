@@ -26,13 +26,13 @@ public:
           source(owner.addComponent<GPE::AudioComponent>())
     {
         enableUpdate(true);
-        input.bindAction("jump", EKeyMode::KEY_PRESSED, this, &MyScript::up);
-        input.bindAction("down", EKeyMode::KEY_PRESSED, this, &MyScript::down);
-        input.bindAction("right", EKeyMode::KEY_PRESSED, this, &MyScript::right);
-        input.bindAction("left", EKeyMode::KEY_PRESSED, this, &MyScript::left);
-        input.bindAction("forward", EKeyMode::KEY_PRESSED, this, &MyScript::forward);
-        input.bindAction("back", EKeyMode::KEY_PRESSED, this, &MyScript::back);
-        input.bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyScript::leave);
+        input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyScript::up);
+        input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyScript::down);
+        input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyScript::right);
+        input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyScript::left);
+        input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyScript::forward);
+        input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyScript::back);
+        input.bindAction("exit", EKeyMode::KEY_DOWN, this, &MyScript::leave);
         input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyScript::sprintStart);
         input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyScript::sprintEnd);
 
