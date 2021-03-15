@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include "Engine/Core/Input/InputManagerGLFW.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/Core/TimeSystem/TimeSystem.hpp"
+#include "Engine/ECS/System/BehaviourSystem.hpp"
+#include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/ECS/System/RenderSystem.hpp"
-#include "Engine/Intermediate/BehaviourSystem.hpp"
+#include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
 
 namespace GPE
@@ -70,6 +70,11 @@ public:
         }
 
         return m_instance;
+    }
+
+    static void setInstance(SystemsManager& systemManager)
+    {
+        m_instance = &systemManager;
     }
 };
 

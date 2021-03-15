@@ -6,7 +6,7 @@
 class GameStartup final : public ContextStartup
 {
 private:
-	class AbstractGame* m_game;
+	class AbstractGame* m_game = nullptr;
 
 	struct
 	{

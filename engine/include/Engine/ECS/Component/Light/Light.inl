@@ -1,4 +1,4 @@
-﻿#include "Engine/Resources/Light/Light.hpp"
+﻿#include "Engine/ECS/Component/Light/Light.hpp"
 
 Light::Light(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
              const SpecularComponent& specular)

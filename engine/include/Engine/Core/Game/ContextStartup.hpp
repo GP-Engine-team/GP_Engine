@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/Core/TimeSystem/TimeSystem.hpp"
+#include "Engine/ECS/System/TimeSystem.hpp"
 
 class ContextStartup
 {
