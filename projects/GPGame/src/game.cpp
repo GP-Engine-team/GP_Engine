@@ -128,6 +128,8 @@ void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
 
 Game::Game()
 {
+	sm.addEmpty("main");
+	sm.loadScene("main");
 
 	iManager.bindInput(GLFW_KEY_W, "forward");
 	iManager.bindInput(GLFW_KEY_S, "back");
@@ -137,7 +139,7 @@ Game::Game()
 	iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
 	iManager.bindInput(GLFW_KEY_ESCAPE, "exit");
 	iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
-	
+
 	GameObject::CreateArg playerArg{ "Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}} };
 
 	Camera::PerspectiveCreateArg camCreateArg;
@@ -146,7 +148,7 @@ Game::Game()
 	camCreateArg.farVal = 3000;
 	camCreateArg.nearVal = 0.01f;
 
-	GameObject& player = scene.world.addChild<GameObject>(playerArg);
+	GameObject& player = sm.getCurrentScene()->world.addChild<GameObject>(playerArg);
 
 	player.addComponent<Camera>(camCreateArg);
 	player.addComponent<GPG::MyScript>();
@@ -160,8 +162,8 @@ Game::Game()
 	loadSkyboxResource(rm);
 	loadTreeResource(rm);
 
-	loadSkyBox(scene.world, rm);
-	loadTree(scene.world, rm, 1000);
+	loadSkyBox(sm.getCurrentScene()->world, rm);
+	loadTree(sm.getCurrentScene()->world, rm, 1000);
 
 	ts.addScaledTimer(
 		FPLogDelay,
