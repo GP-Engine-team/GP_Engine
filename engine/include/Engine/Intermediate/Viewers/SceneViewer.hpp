@@ -2,6 +2,7 @@
 
 
 #include "Engine/Intermediate/RenderSystem.hpp"
+#include "Engine/ECS/System/SceneRenderSystem.hpp"
 #include "Engine/Resources/Camera.hpp"
 
 namespace GPE
@@ -13,13 +14,14 @@ class GameObject;
 class SceneViewer
 {
 public:
-    Scene&        scene;
-    GameObject    cameraOwner;
+    Scene*            scene;
+    SceneRenderSystem sceneRenderSys;
+    GameObject        cameraOwner;
 
-    Texture       texture;
-    RenderBuffer  depthBuffer;
-    RenderBuffer  stencilBuffer;
-    GLuint        framebufferID;
+    Texture           texture;
+    RenderBuffer      depthBuffer;
+    RenderBuffer      stencilBuffer;
+    GLuint            framebufferID;
 
 public:
     SceneViewer(GPE::Scene& viewed, int width, int height);

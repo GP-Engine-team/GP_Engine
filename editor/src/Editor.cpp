@@ -177,9 +177,8 @@ void Editor::renderExplorer() const
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window)
-    : sceneView{}, m_window{window}, m_framebufferWidth{0}, m_framebufferHeight{0}
+    : m_sceneView{}, m_window{window}, m_framebufferWidth{0}, m_framebufferHeight{0}
 {
-    GPE::SystemsManager::getInstance()->renderSystem.;
     setupGLFWWindow();
     setupDearImGui();
 }

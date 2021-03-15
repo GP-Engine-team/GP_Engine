@@ -32,7 +32,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width, int height)
 
 SceneViewer::~SceneViewer()
 {
-    glDeleteFramebuffers(1u, &framebufferID);
+    glDeleteFramebuffers(1, &framebufferID);
 }
 
 
@@ -49,4 +49,4 @@ void SceneViewer::render() const
     //GPE::RenderSystem::getInstance()->draw(scene, renderTexture);
 }
 
-}
+} // End of namespace Editor

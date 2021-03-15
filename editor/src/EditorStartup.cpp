@@ -1,8 +1,6 @@
 #include "Editor/EditorStartup.hpp"
-#include "Editor/Editor.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
-<<<<<<< HEAD
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/System/SystemsManager.hpp"
 
@@ -13,9 +11,7 @@
 #include "GLFW/glfw3.h"
 
 //#include "Game/Game.hpp"
-=======
 #include "Editor/ExternalDeclarations.hpp"
->>>>>>> f9c92a2f04f232cee164cdc9567ea99f25afb330
 
 namespace Editor
 {
@@ -56,8 +52,8 @@ EditorStartup::EditorStartup()
       m_game{nullptr}
 {
     initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow());
-    ADD_PROCESS(reloadableCpp, createGameInstance);
-    ADD_PROCESS(reloadableCpp, destroyGameInstance);
+    ADD_PROCESS(m_reloadableCpp, createGameInstance);
+    ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
 }
 
 
@@ -65,7 +61,7 @@ EditorStartup::~EditorStartup()
 {
     if (m_game != nullptr)
     {
-        GET_PROCESS(reloadableCpp, destroyGameInstance)(m_game);
+        GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
         //destroyGameInstance(m_game);
     }
 
@@ -80,10 +76,10 @@ void EditorStartup::startGame()
     if (m_game != nullptr)
     {
         //delete m_game;
-        GET_PROCESS(reloadableCpp, destroyGameInstance)(m_game);
+        GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
     }
     //m_game = createGameInstance();
-    auto a = GET_PROCESS(reloadableCpp, createGameInstance);
+    auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
     m_game = a();
 }
 
@@ -93,7 +89,7 @@ void EditorStartup::closeGame()
     if (m_game != nullptr)
     {
         //destroyGameInstance(m_game);
-        GET_PROCESS(reloadableCpp, destroyGameInstance)(m_game);
+        GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
         m_game = nullptr;
     }
 }
@@ -107,9 +103,9 @@ void EditorStartup::update()
     }
 
     timeSystem.update(m_update, m_fixedUpdate, m_render);
-    isRunning = m_editor->isRunning();
+    isRunning = m_editor.isRunning();
 
-    if (reloadableCpp.refresh())
+    if (m_reloadableCpp.refresh())
     {
         startGame();
     }
