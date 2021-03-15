@@ -229,7 +229,7 @@ void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subMod
 
 void SceneRenderSystem::drawModelPart(const SubModel& subModel)
 {
-    glDrawArrays(GL_TRIANGLES, 0, subModel.pMesh->getVerticesCount());
+    glDrawElements(GL_TRIANGLES, subModel.pMesh->getVerticesCount(), GL_UNSIGNED_INT, 0);
 }
 
 void SceneRenderSystem::tryToBindShader(Shader& shader)
@@ -260,6 +260,7 @@ void SceneRenderSystem::tryToBindMesh(unsigned int meshID)
     if (m_currentMeshID == meshID)
         return;
 
+    // glBindVertexArray(meshID);
     glBindVertexArray(meshID);
 
     m_currentMeshID = meshID;
