@@ -185,12 +185,6 @@ Editor::Editor(GLFWwindow* window)
 }
 
 
-void Editor::setDefaultScene()
-{
-
-}
-
-
 void Editor::update()
 {
     // Initialize a new frame
