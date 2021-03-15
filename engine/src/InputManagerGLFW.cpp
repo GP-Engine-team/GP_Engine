@@ -29,6 +29,7 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
                     case EKeyMode::KEY_PRESSED:
                         if (lastStateMapIt->second == false)
                         {
+                            lastStateMapIt->second = true;
                             m_inputComponents[i]->fireAction(action);
                         }
                         break;
