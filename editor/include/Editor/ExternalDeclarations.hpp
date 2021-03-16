@@ -11,4 +11,4 @@ void destroyGameInstance(class AbstractGame* game) {}
 /**
  * @brief Signature of setGameSystemsManagerInstance, whose definition should be inside a dll.
 */
-void setGameSystemsManagerInstance(GPE::SystemsManager & systemManager);
+void setGameSystemsManagerInstance(GPE::SystemsManager& systemManager) {}
