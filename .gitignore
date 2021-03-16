@@ -3,3 +3,4 @@ Test/*
 .vs/*
 .vscode/*
 .idea/*
+generator/*

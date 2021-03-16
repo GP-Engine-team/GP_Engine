@@ -6,19 +6,19 @@
 
 #pragma once
 
+#include "Engine/ECS/Component/Component.hpp"
+#include "GPM/Vector3.hpp"
 #include <functional>
 #include <iostream>
 #include <string>
 #include <unordered_map>
 
-#include "Engine/ECS/Component/Component.hpp"
-#include "GPM/Vector3.hpp"
-
 enum class EKeyMode
 {
-    KEY_PRESS   = 0,
-    KEY_REPEAT  = 1,
-    KEY_RELEASE = 2,
+    KEY_PRESSED  = 0,
+    KEY_RELEASED = 2,
+    KEY_DOWN     = 3,
+    KEY_UP       = 4,
 };
 
 namespace GPE
@@ -26,7 +26,6 @@ namespace GPE
 class InputComponent : public Component
 {
 public:
-    // InputComponent() = delete;
     InputComponent(const InputComponent& other) noexcept;
     InputComponent(InputComponent&& other) noexcept;
     virtual ~InputComponent() = default;
