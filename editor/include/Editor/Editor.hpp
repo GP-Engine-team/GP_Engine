@@ -19,13 +19,13 @@ namespace GPE
 namespace Editor
 {
 
-	class Editor
-	{
-	private:
-		GPE::SceneViewer m_sceneView;
-		GLFWwindow* m_window;
-		int				 m_framebufferWidth;
-		int				 m_framebufferHeight;
+class Editor
+{
+private:
+	GPE::SceneViewer m_sceneView;
+	GLFWwindow* m_window;
+	int				 m_framebufferWidth;
+	int				 m_framebufferHeight;
 
 		GPE::Scene& loadDefaultScene() const;
 
@@ -47,14 +47,14 @@ namespace Editor
 		void renderInspector(GPE::GameObject& gameObject) const;
 		void renderExplorer() const;
 
-	public:
-		Editor(GLFWwindow* window);
+public:
+	Editor(GLFWwindow* window);
 
-		void update();
-		void render();
-		bool isRunning();
+	void update();
+	void render();
+	bool isRunning();
 
-		friend void windowFramebufferResized(GLFWwindow* window, int width, int height);
-	};
+	friend void windowFramebufferResized(GLFWwindow* window, int width, int height);
+};
 
 } // End of namespace Editor
