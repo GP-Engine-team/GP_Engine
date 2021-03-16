@@ -40,8 +40,8 @@ void SceneViewer::resize(int width, int height)
 
 void SceneViewer::render() const
 {
-    /*   scene.sceneRenderer.draw(SystemsManager::getInstance()->resourceManager,
-                                scene.sceneRenderer.defaultRenderPipeline(), framebufferID);*/
+    scene.sceneRenderer.draw(SystemsManager::getInstance()->resourceManager,
+                            scene.sceneRenderer.defaultRenderPipeline(), framebufferID);
 }
 
 } // namespace GPE
