@@ -11,7 +11,10 @@
 struct GLFWwindow;
 
 namespace GPE
-{ class Scene; }
+{
+	class Scene;
+	class GameObject;
+}
 
 namespace Editor
 {
@@ -24,16 +27,24 @@ namespace Editor
 		int				 m_framebufferWidth;
 		int				 m_framebufferHeight;
 
-	GPE::Scene& loadDefaultScene() const;
+		GPE::Scene& loadDefaultScene() const;
 
-private:
-	void setupGLFWWindow  ();
-	void setupDearImGui   ();
+		/**
+		 * @brief Function that crate scene graph recursively for each node in imGui window.
+		 * @param gameObject
+		 * @param idElem
+		 * @return the pointer to selected game object. Else return null ptr
+		*/
+		GPE::GameObject* recursifSceneGraphNode(GPE::GameObject& gameObject, int idElem = 0) const;
+
+	private:
+		void setupGLFWWindow();
+		void setupDearImGui();
 
 		void renderMenuBar() const;
 		void renderLevelEditor() const;
-		void renderInspector() const;
-		void renderSceneGraph(const class GPE::Scene& scene) const;
+		void renderSceneGraph(GPE::Scene& scene) const;
+		void renderInspector(GPE::GameObject& gameObject) const;
 		void renderExplorer() const;
 
 	public:

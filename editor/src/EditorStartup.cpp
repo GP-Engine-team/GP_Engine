@@ -1,4 +1,4 @@
-#include "Editor/EditorStartup.hpp"
+﻿#include "Editor/EditorStartup.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
@@ -16,101 +16,100 @@
 namespace Editor
 {
 
-GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
-{
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
+	GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
+	{
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
 
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 460");
+		// Setup Platform/Renderer backends
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		ImGui_ImplOpenGL3_Init("#version 460");
 
-    return window;
-}
-
-
-EditorStartup::EditorStartup()
-    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
-      {        
-          if (m_game != nullptr)
-              m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
-      }},
-      m_update{[&](double fixedUnscaledDeltaTime, double deltaTime)
-      {
-          GPE::SystemsManager::getInstance()->inputManager.processInput();
-          if (m_game != nullptr)
-              m_game->update(fixedUnscaledDeltaTime, deltaTime);
-      }},
-      m_render{[&]()
-      {
-          GPE::SystemsManager::getInstance()->renderer.swapBuffer();
-          if (m_game != nullptr)
-              m_game->render();
-
-          m_editor.update();
-          m_editor.render();
-      }},
-      m_reloadableCpp{"./../projects/GPGame/bin/Debug/GPGame.dll"},
-      m_editor{initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow())},
-      m_game{nullptr}
-{
-    ADD_PROCESS(m_reloadableCpp, createGameInstance);
-    ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
-    ADD_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
-}
+		return window;
+	}
 
 
-EditorStartup::~EditorStartup()
-{
-    if (m_game != nullptr)
-    {
-        GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
-    }
+	EditorStartup::EditorStartup()
+		: m_fixedUpdate{ [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+		  {
+			  if (m_game != nullptr)
+				  m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+		  } },
+		m_update{ [&](double fixedUnscaledDeltaTime, double deltaTime)
+		{
+			GPE::SystemsManager::getInstance()->inputManager.processInput();
+			if (m_game != nullptr)
+				m_game->update(fixedUnscaledDeltaTime, deltaTime);
+		} },
+			  m_render{ [&]()
+			  {
+				  GPE::SystemsManager::getInstance()->renderer.swapBuffer();
+				  if (m_game != nullptr)
+					  m_game->render();
 
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-}
-
-
-void EditorStartup::startGame()
-{
-    if (m_game != nullptr)
-    {
-        GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
-    }
-    auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
-    m_game = a();
-}
-
-
-void EditorStartup::closeGame()
-{
-    if (m_game != nullptr)
-    {
-        GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
-        m_game = nullptr;
-    }
-}
+				  m_editor.update();
+				  m_editor.render();
+			  } },
+			m_reloadableCpp{ "./../projects/GPGame/bin/Debug/GPGame.dll" },
+				  m_editor{ initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow()) },
+				  m_game{ nullptr }
+			  {
+				  ADD_PROCESS(m_reloadableCpp, createGameInstance);
+				  ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
+				  ADD_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
+			  }
 
 
-void EditorStartup::update()
-{
-    if (m_game != nullptr)
-    {
-        m_game->update(0, 0);
-    }
+			  EditorStartup::~EditorStartup()
+			  {
+				  if (m_game != nullptr)
+				  {
+					  GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
+				  }
 
-    GPE::SystemsManager::getInstance()->timeSystem.update(m_update, m_fixedUpdate, m_render);
-    isRunning = m_editor.isRunning();
+				  ImGui_ImplOpenGL3_Shutdown();
+				  ImGui_ImplGlfw_Shutdown();
+				  ImGui::DestroyContext();
+			  }
 
-    if (m_reloadableCpp.refresh())
-    {
-        auto sync = GET_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
-        (*sync)(*GPE::SystemsManager::getInstance());
-        startGame();
-    }
-}
+
+			  void EditorStartup::startGame()
+			  {
+				  if (m_game != nullptr)
+				  {
+					  GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
+				  }
+				  auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
+				  m_game = a();
+			  }
+
+
+			  void EditorStartup::closeGame()
+			  {
+				  if (m_game != nullptr)
+				  {
+					  GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
+					  m_game = nullptr;
+				  }
+			  }
+
+			  void EditorStartup::update()
+			  {
+				  if (m_game != nullptr)
+				  {
+					  m_game->update(0, 0);
+				  }
+
+				  GPE::SystemsManager::getInstance()->timeSystem.update(m_update, m_fixedUpdate, m_render);
+				  isRunning = m_editor.isRunning();
+
+				  if (m_reloadableCpp.refresh())
+				  {
+					  auto sync = GET_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
+					  (*sync)(*GPE::SystemsManager::getInstance());
+					  startGame();
+				  }
+			  }
 
 } // End of namespace Editor
