@@ -36,6 +36,16 @@ void windowFramebufferResized(GLFWwindow* window, int newWidth, int newHeight)
 
 
 /* ========================== Private methods ========================== */
+GPE::Scene& Editor::loadDefaultScene() const
+{
+    GPE::SceneManager& sm = GPE::SystemsManager::getInstance()->sceneManager;
+    sm.addEmpty("Default scene");
+    sm.loadScene("Default scene");
+
+    return *sm.getCurrentScene();
+}
+
+
 void Editor::setupGLFWWindow()
 {
     glfwSetWindowUserPointer(m_window, this);
@@ -174,7 +184,7 @@ void Editor::renderExplorer() const
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window)
-    : m_sceneView{GPE::SystemsManager::getInstance()->sceneManager.addEmpty("Default scene"), 400, 400},
+    : m_sceneView{loadDefaultScene(), 400, 400},
       m_window{window}, m_framebufferWidth{0}, m_framebufferHeight{0}
 {
     setupGLFWWindow();
