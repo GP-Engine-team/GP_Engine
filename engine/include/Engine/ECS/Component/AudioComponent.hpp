@@ -5,7 +5,7 @@
  */
 
 #pragma once
-#include "Engine/Core/Debug/OpenAL_Soft_Debug.hpp"
+#include <OpenAL_Soft_Debug.hpp>
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/Sound.hpp"
