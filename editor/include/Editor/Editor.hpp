@@ -10,6 +10,9 @@
 
 struct GLFWwindow;
 
+namespace GPE
+{ class Scene; }
+
 namespace Editor
 {
 
@@ -20,6 +23,8 @@ private:
 	GLFWwindow*		 m_window;
 	int				 m_framebufferWidth;
 	int				 m_framebufferHeight;
+
+	GPE::Scene& loadDefaultScene() const;
 
 private:
 	void setupGLFWWindow  ();
