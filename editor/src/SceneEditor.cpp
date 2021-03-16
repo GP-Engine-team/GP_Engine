@@ -1,19 +1,19 @@
-#include "Editor/SceneEditor.hpp"
+﻿#include "Editor/SceneEditor.hpp"
 #include "imgui/imgui.h"
 
 namespace Editor
 {
-    /*
-SceneEditor::SceneEditor(const GPE::Scene& scene)
-    : sceneViewer{}, inspector{}
-{
-    
-}
+	/*
+	SceneEditor::SceneEditor(const GPE::Scene& scene)
+		: sceneViewer{}, inspector{}
+	{
+
+	}
 
 
-void SceneEditor::render() const
-{
-    sceneViewer.render();
-}
-*/
+	void SceneEditor::render() const
+	{
+		sceneViewer.render();
+	}
+	*/
 } // End of namespace Editor
