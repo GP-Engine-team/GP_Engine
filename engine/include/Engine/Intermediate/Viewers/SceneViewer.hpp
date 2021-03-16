@@ -17,8 +17,7 @@ public:
     GameObject        cameraOwner;
 
     Texture           texture;
-    RenderBuffer      depthBuffer;
-    RenderBuffer      stencilBuffer;
+    RenderBuffer      depthStencilBuffer;
     GLuint            framebufferID;
 
 public:
