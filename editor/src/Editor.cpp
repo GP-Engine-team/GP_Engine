@@ -31,10 +31,10 @@ namespace Editor
 /* ========================== Friend function ========================== */
 void windowFramebufferResized(GLFWwindow* window, int newWidth, int newHeight)
 {
-    Editor* editor{(Editor*)glfwGetWindowUserPointer(window)};
+	Editor* editor{(Editor*)glfwGetWindowUserPointer(window)};
 
-    editor->m_framebufferWidth  = newWidth;
-    editor->m_framebufferHeight = newHeight;
+	editor->m_framebufferWidth = newWidth;
+	editor->m_framebufferHeight = newHeight;
 }
 
 
@@ -43,115 +43,125 @@ void windowFramebufferResized(GLFWwindow* window, int newWidth, int newHeight)
 /* ========================== Private methods ========================== */
 GPE::Scene& Editor::loadDefaultScene() const
 {
-    GPE::SceneManager& sm = GPE::SystemsManager::getInstance()->sceneManager;
-    sm.addEmpty("Default scene");
-    sm.loadScene("Default scene");
+	GPE::SceneManager& sm = GPE::SystemsManager::getInstance()->sceneManager;
+	sm.addEmpty("Default scene");
+	sm.loadScene("Default scene");
 
-    return *sm.getCurrentScene();
+	return *sm.getCurrentScene();
 }
 
 
 void Editor::setupGLFWWindow()
 {
-    glfwSetWindowUserPointer(m_window, this);
-    glfwSetFramebufferSizeCallback(m_window, windowFramebufferResized);
-    glfwGetFramebufferSize(m_window, &m_framebufferWidth, &m_framebufferHeight);
+	glfwSetWindowUserPointer(m_window, this);
+	glfwSetFramebufferSizeCallback(m_window, windowFramebufferResized);
+	glfwGetFramebufferSize(m_window, &m_framebufferWidth, &m_framebufferHeight);
 
-    glfwMaximizeWindow(m_window);
+	glfwMaximizeWindow(m_window);
 }
 
 
 void Editor::setupDearImGui()
 {
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-    //io.ConfigViewportsNoAutoMerge = true;
-    //io.ConfigViewportsNoTaskBarIcon = true;
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+	//io.ConfigViewportsNoAutoMerge = true;
+	//io.ConfigViewportsNoTaskBarIcon = true;
 
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
 }
 
 
 void Editor::renderMenuBar() const
 {
-    if (ImGui::BeginMainMenuBar())
-    {
-        // File
-        if (ImGui::BeginMenu("File"))
-        {
-            ImGui::MenuItem("New");
-            ImGui::MenuItem("Open");
-            ImGui::MenuItem("Save");
-            ImGui::EndMenu();
-        }
+	if (ImGui::BeginMainMenuBar())
+	{
+		// File
+		if (ImGui::BeginMenu("File"))
+		{
+			ImGui::MenuItem("New");
+			ImGui::MenuItem("Open");
+			ImGui::MenuItem("Save");
+			ImGui::EndMenu();
+		}
 
-        // Edit
-        if (ImGui::BeginMenu("Edit"))
-        {
-            ImGui::MenuItem("Edit something");
-            ImGui::EndMenu();
-        }
+		// Edit
+		if (ImGui::BeginMenu("Edit"))
+		{
+			ImGui::MenuItem("Edit something");
+			ImGui::EndMenu();
+		}
 
-        // View
-        if (ImGui::BeginMenu("View"))
-        {
-            if (ImGui::BeginMenu("Add window"))
-            {
-                ImGui::MenuItem("Viewport");
-                ImGui::MenuItem("Scene graph");
-                ImGui::MenuItem("Project browser");
-                ImGui::MenuItem("Inspector");
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenu();
-        }
+		// View
+		if (ImGui::BeginMenu("View"))
+		{
+			if (ImGui::BeginMenu("Add window"))
+			{
+				ImGui::MenuItem("Viewport");
+				ImGui::MenuItem("Scene graph");
+				ImGui::MenuItem("Project browser");
+				ImGui::MenuItem("Inspector");
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
 
-        // Options
-        if (ImGui::BeginMenu("Options"))
-        {
-            // Menu content
-            ImGui::MenuItem("Preferences");
-            ImGui::EndMenu();
-        }
+		// Options
+		if (ImGui::BeginMenu("Options"))
+		{
+			// Menu content
+			ImGui::MenuItem("Preferences");
+			ImGui::EndMenu();
+		}
 
-        // Help
-        if (ImGui::BeginMenu("Help"))
-        {
-            // Menu content
-            ImGui::MenuItem("Useful links");
-            ImGui::EndMenu();
-        }
+		// Help
+		if (ImGui::BeginMenu("Help"))
+		{
+			// Menu content
+			ImGui::MenuItem("Useful links");
+			ImGui::EndMenu();
+		}
 
-        ImGui::EndMainMenuBar();
-    }
+		ImGui::EndMainMenuBar();
+	}
 }
 
 
 void Editor::renderLevelEditor()
 {
-    ImGui::Begin("Level editor");
-        const ImVec2 levelEditorSize{ImGui::GetCurrentWindow()->ContentRegionRect.GetSize()};
-        //m_sceneView.resize(static_cast<int>(levelEditorSize.x), static_cast<int>(levelEditorSize.y));
-        m_sceneEditor.render();
-        ImGui::Image((void*)(intptr_t)m_sceneEditor.texture.getID(), levelEditorSize);
-    ImGui::End();
+	ImGui::Begin("Level editor");
+	const ImVec2 levelEditorSize{ ImGui::GetCurrentWindow()->ContentRegionRect.GetSize() };
+	//m_sceneView.resize(static_cast<int>(levelEditorSize.x), static_cast<int>(levelEditorSize.y));
+	m_sceneEditor.render();
+	ImGui::Image((void*)(intptr_t)m_sceneEditor.texture.getID(), levelEditorSize);
+	ImGui::End();
 }
 
 
 void Editor::renderInspector() const
 {
-    ImGui::Begin("Inspector");
-        ImGui::Text("Inspector content");
-    ImGui::End();
+	ImGui::Begin("Inspector");
+		if (m_inspectedObject != nullptr)
+		{
+			// Reflexion of m_inspectedObject
+		}
+
+		else
+		{
+			ImGui::Text("Select an object to edit its attributes");
+		}
+	ImGui::End();
 }
 
-static void recursiveTreeCreation(const GameObject& gameObject, int idElem = 0)
+
+GameObject* Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem) const
 {
 	ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	static int nodeClicked = -1;
 	int selectionMask = (1 << 2);
+	GameObject* selectedGameObject = nullptr;
 
 	if (gameObject.children.empty())
 	{
@@ -169,13 +179,16 @@ static void recursiveTreeCreation(const GameObject& gameObject, int idElem = 0)
 
 		bool nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
 		if (ImGui::IsItemClicked())
+		{
 			nodeClicked = idElem;
+			selectedGameObject = &gameObject;
+		}
 
 		if (nodeOpen)
 		{
 			for (auto&& child : gameObject.children)
 			{
-				recursiveTreeCreation(*child.get(), ++idElem);
+				selectedGameObject = recursiveSceneGraphNode(*child.get(), ++idElem);
 			}
 			ImGui::TreePop();
 		}
@@ -190,44 +203,46 @@ static void recursiveTreeCreation(const GameObject& gameObject, int idElem = 0)
 		else //if (!(selectionMask & (1 << nodeClicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
 			selectionMask = (1 << nodeClicked);           // Click to single-select
 	}
+
+	return selectedGameObject;
 }
 
 
-void Editor::renderSceneGraph() const
+void Editor::renderSceneGraph()
 {
 	ImGui::Begin("Scene Graph");
-	    recursiveTreeCreation(m_sceneEditor.scene.world);
-    ImGui::End();
+		m_inspectedObject = recursiveSceneGraphNode(m_sceneEditor.scene.world);
+	ImGui::End();
 }
 
 
 void Editor::renderExplorer() const
 {
-    ImGui::Begin("Explorer");
-        if (ImGui::BeginTabBar("Explorer"))
-        {
-            if (ImGui::BeginTabItem("Project"))
-            {
-                ImGui::Text("Project's content");
-                ImGui::EndTabItem();
-            }
+	ImGui::Begin("Explorer");
+	if (ImGui::BeginTabBar("Explorer"))
+	{
+		if (ImGui::BeginTabItem("Project"))
+		{
+			ImGui::Text("Project's content");
+			ImGui::EndTabItem();
+		}
 
-            if (ImGui::BeginTabItem("Logs"))
-            {
-                ImGui::Text("This is a log");
-                ImGui::Text("And another log");
-                ImGui::EndTabItem();
-            }
-            
-            if (ImGui::BeginTabItem("Profiler"))
-            {
-                ImGui::Text("Plots, and graphs, and numbers...");
-                ImGui::EndTabItem();
-            }
+		if (ImGui::BeginTabItem("Logs"))
+		{
+			ImGui::Text("This is a log");
+			ImGui::Text("And another log");
+			ImGui::EndTabItem();
+		}
 
-            ImGui::EndTabBar();
-        }
-    ImGui::End();
+		if (ImGui::BeginTabItem("Profiler"))
+		{
+			ImGui::Text("Plots, and graphs, and numbers...");
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
+	}
+	ImGui::End();
 }
 
 
@@ -245,38 +260,38 @@ Editor::Editor(GLFWwindow* window)
 
 void Editor::update()
 {
-    // Initialize a new frame
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
+	// Initialize a new frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 
-    // Start drawing
-    renderMenuBar();
+	// Start drawing
+	renderMenuBar();
 
-    ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
+	ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
-    renderLevelEditor();
+	renderLevelEditor();
 	renderSceneGraph();
-    renderExplorer();
-    renderInspector();
+	renderExplorer();
+	renderInspector();
 }
 
 
 void Editor::render()
 {
-    ImGui::Render();
+	ImGui::Render();
 
-    glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
-    glClearColor(1.f, 1.f, 1.f, .0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+	glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
+	glClearColor(1.f, 1.f, 1.f, .0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 
 bool Editor::isRunning()
 {
-    return !glfwWindowShouldClose(m_window);
+	return !glfwWindowShouldClose(m_window);
 }
 
 } // End of namespace Editor
