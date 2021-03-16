@@ -4,6 +4,7 @@
 #include "Engine/Resources/SceneManager.hpp"
 
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
@@ -127,9 +128,9 @@ void Editor::renderMenuBar() const
 void Editor::renderLevelEditor() const
 {
     ImGui::Begin("Level editor");
-        ImGui::Text("Level editor");
         m_sceneView.render();
-        ImGui::Image((void*)(intptr_t)m_sceneView.texture.getID(), ImVec2(400.f, 400.f));
+        const ImVec2 levelEditorSize{ImGui::GetCurrentWindow()->ContentRegionRect.GetSize()};
+        ImGui::Image((void*)(intptr_t)m_sceneView.texture.getID(), levelEditorSize);
     ImGui::End();
 }
 
