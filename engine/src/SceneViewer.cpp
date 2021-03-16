@@ -5,11 +5,13 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
 
+#include <string>
+
 namespace GPE
 {
 
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width, int height)
-    : scene{viewed}, cameraOwner{scene, {"Editor_camera_0", {}, nullptr}}, texture({width, height}),
+    : scene{viewed}, cameraOwner{scene, {"Editor_camera_" + std::to_string((size_t)this), {}, nullptr}}, texture({width, height}),
       depthStencilBuffer({width, height, RenderBuffer::EInternalFormat::DEPTH24_STENCIL8})
 {
     const Camera::PerspectiveCreateArg args{16.f / 9.f, .001f, 1000.f, 90.f, "Editor_camera_0"};
@@ -26,6 +28,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width, int height)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0u);
 }
+
 
 SceneViewer::~SceneViewer()
 {
