@@ -404,6 +404,8 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0u);
     };
 }
 
