@@ -1,17 +1,15 @@
-#include "Engine/Intermediate/Viewers/SceneViewer.hpp"
+﻿#include "Engine/Intermediate/Viewers/SceneViewer.hpp"
 
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/ECS/System/SystemsManager.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
 
-
 namespace GPE
 {
 
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width, int height)
-    : scene{viewed}, cameraOwner{scene, {"Editor_camera_0", {}, nullptr}},
-      texture({width, height}),
+    : scene{viewed}, cameraOwner{scene, {"Editor_camera_0", {}, nullptr}}, texture({width, height}),
       depthStencilBuffer({width, height, RenderBuffer::EInternalFormat::DEPTH24_STENCIL8})
 {
     const Camera::PerspectiveCreateArg args{16.f / 9.f, .001f, 1000.f, 90.f, "Editor_camera_0"};
@@ -29,12 +27,10 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width, int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0u);
 }
 
-
 SceneViewer::~SceneViewer()
 {
     glDeleteFramebuffers(1, &framebufferID);
 }
-
 
 void SceneViewer::resize(int width, int height)
 {
@@ -42,11 +38,10 @@ void SceneViewer::resize(int width, int height)
     depthStencilBuffer.resize(width, height);
 }
 
-
 void SceneViewer::render() const
 {
-    scene.sceneRenderer.draw(SystemsManager::getInstance()->resourceManager,
-                             scene.sceneRenderer.defaultRenderPipeline(), framebufferID);
+    /*   scene.sceneRenderer.draw(SystemsManager::getInstance()->resourceManager,
+                                scene.sceneRenderer.defaultRenderPipeline(), framebufferID);*/
 }
 
-} // End of namespace Editor
+} // namespace GPE

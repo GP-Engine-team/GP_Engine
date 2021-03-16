@@ -1,7 +1,9 @@
-#include "Editor/Editor.hpp"
+﻿#include "Editor/Editor.hpp"
 
 #include "Engine/ECS/System/SystemsManager.hpp"
 #include "Engine/Resources/SceneManager.hpp"
+#include "Engine/Resources/Scene.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
@@ -13,11 +15,13 @@
 #include <cstdio>
 #include <cstdlib>
 
+using namespace GPE;
+
 // Hint to use GPU if available
 extern "C"
 {
-    _declspec(dllexport) int NvOptimusEnablement = 1;
-    _declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+	_declspec(dllexport) int NvOptimusEnablement = 1;
+	_declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 
 
@@ -143,14 +147,59 @@ void Editor::renderInspector() const
     ImGui::End();
 }
 
-
-void Editor::renderSceneGraph() const
+static void recursifTreeCreation(const GameObject& gameObject, int idElem = 0)
 {
-    ImGui::Begin("Scene graph");
-        ImGui::Text("Scene graph hierarchy");
-    ImGui::End();
+	ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	static int nodeClicked = -1;
+	int selectionMask = (1 << 2);
+
+	if (gameObject.children.empty())
+	{
+		nodeFlag |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
+		ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
+		if (ImGui::IsItemClicked())
+			nodeClicked = idElem;
+	}
+	else
+	{
+		const bool isSelected = (selectionMask & (1 << idElem)) != 0;
+
+		if (isSelected)
+			nodeFlag |= ImGuiTreeNodeFlags_Selected;
+
+		bool nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
+		if (ImGui::IsItemClicked())
+			nodeClicked = idElem;
+
+		if (nodeOpen)
+		{
+			for (auto&& child : gameObject.children)
+			{
+				recursifTreeCreation(*child.get(), ++idElem);
+			}
+			ImGui::TreePop();
+		}
+	}
+
+	if (nodeClicked != -1)
+	{
+		// Update selection state
+		// (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
+		if (ImGui::GetIO().KeyCtrl)
+			selectionMask ^= (1 << nodeClicked);          // CTRL+click to toggle
+		else //if (!(selectionMask & (1 << nodeClicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
+			selectionMask = (1 << nodeClicked);           // Click to single-select
+	}
 }
 
+void Editor::renderSceneGraph(const Scene& scene) const
+{
+	ImGui::Begin("Scene Graph");
+
+	recursifTreeCreation(scene.world);
+
+	ImGui::End();
+}
 
 void Editor::renderExplorer() const
 {
@@ -207,7 +256,10 @@ void Editor::update()
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
     renderLevelEditor();
-    renderSceneGraph();
+	
+	if (SystemsManager::getInstance()->sceneManager.getCurrentScene() != nullptr)
+		renderSceneGraph(*SystemsManager::getInstance()->sceneManager.getCurrentScene());
+
     renderExplorer();
     renderInspector();
 }

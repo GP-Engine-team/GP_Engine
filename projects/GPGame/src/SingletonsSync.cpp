@@ -4,6 +4,7 @@
 
 extern "C" void setGameSystemsManagerInstance(GPE::SystemsManager& systemManager)
 {
+	std::cout << "SETTING " << std::endl;
 	GPE::SystemsManager::setInstance(systemManager);
 }
 

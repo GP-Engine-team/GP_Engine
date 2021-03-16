@@ -31,7 +31,7 @@ private:
     size_t lastRefreshTime = 0;
     std::map<std::string, void*> processes; // current successfully loaded processes
 
-private:
+public:
     // Only call this when reloadableCpp.path is pointing towards a valid file.
     void load(const char *newFileSuffix = ".copy.dll");
 
