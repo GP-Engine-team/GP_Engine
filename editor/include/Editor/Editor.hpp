@@ -31,7 +31,7 @@ private:
 	void setupDearImGui   ();
 
 	void renderMenuBar    () const;
-	void renderLevelEditor() const;
+	void renderLevelEditor();
 	void renderInspector  () const;
 	void renderSceneGraph () const;
 	void renderExplorer   () const;
