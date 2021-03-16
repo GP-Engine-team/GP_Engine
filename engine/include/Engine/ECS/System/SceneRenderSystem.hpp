@@ -41,7 +41,7 @@ public:
         bool            enableBackFaceCullling = true;
     };
 
-    using RenderPipeline = std::function<void(SceneRenderSystem&, std::vector<Renderer*>&,
+    using RenderPipeline = std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
                                               std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
                                               std::vector<Light*>&, std::vector<DebugShape>&, unsigned int)>;
 
@@ -76,7 +76,7 @@ public:
     void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
-    void draw(RenderPipeline renderPipeline, unsigned int renderTextureID = 0) noexcept;
+    void draw(const ResourceManagerType& res, RenderPipeline renderPipeline, unsigned int renderTextureID = 0) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
                          const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},

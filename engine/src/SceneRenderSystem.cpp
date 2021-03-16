@@ -300,7 +300,7 @@ void SceneRenderSystem::resetCurrentRenderPassKey()
 
 SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() const noexcept
 {
-    return [](SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
+    return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape,
               unsigned int renderTextureID)
@@ -407,9 +407,10 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
     };
 }
 
-void SceneRenderSystem::draw(RenderPipeline renderPipeline, unsigned int renderTextureID) noexcept
+void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline,
+                             unsigned int renderTextureID) noexcept
 {
-    renderPipeline(*this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
+    renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
                    m_debugShape, renderTextureID);
 }
 
