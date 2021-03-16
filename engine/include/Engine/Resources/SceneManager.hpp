@@ -52,9 +52,9 @@ public:
         return m_pCurrentScene;
     }
 
-    void addEmpty(const std::string& sceneName)
+    Scene& addEmpty(const std::string& sceneName)
     {
-        static_cast<void>(m_scenes[sceneName]); // emaplce with default constructor of scene
+        return m_scenes[sceneName]; // emaplce with default constructor of scene
     }
 
     void loadScene(const std::string&    sceneName,
