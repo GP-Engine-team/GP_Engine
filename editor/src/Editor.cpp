@@ -134,8 +134,8 @@ void Editor::renderLevelEditor()
     ImGui::Begin("Level editor");
         const ImVec2 levelEditorSize{ImGui::GetCurrentWindow()->ContentRegionRect.GetSize()};
         //m_sceneView.resize(static_cast<int>(levelEditorSize.x), static_cast<int>(levelEditorSize.y));
-        m_sceneView.render();
-        ImGui::Image((void*)(intptr_t)m_sceneView.texture.getID(), levelEditorSize);
+        m_sceneEditor.render();
+        ImGui::Image((void*)(intptr_t)m_sceneEditor.texture.getID(), levelEditorSize);
     ImGui::End();
 }
 
@@ -147,7 +147,7 @@ void Editor::renderInspector() const
     ImGui::End();
 }
 
-static void recursifTreeCreation(const GameObject& gameObject, int idElem = 0)
+static void recursiveTreeCreation(const GameObject& gameObject, int idElem = 0)
 {
 	ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	static int nodeClicked = -1;
@@ -175,7 +175,7 @@ static void recursifTreeCreation(const GameObject& gameObject, int idElem = 0)
 		{
 			for (auto&& child : gameObject.children)
 			{
-				recursifTreeCreation(*child.get(), ++idElem);
+				recursiveTreeCreation(*child.get(), ++idElem);
 			}
 			ImGui::TreePop();
 		}
@@ -192,14 +192,14 @@ static void recursifTreeCreation(const GameObject& gameObject, int idElem = 0)
 	}
 }
 
-void Editor::renderSceneGraph(const Scene& scene) const
+
+void Editor::renderSceneGraph() const
 {
 	ImGui::Begin("Scene Graph");
-
-	recursifTreeCreation(scene.world);
-
-	ImGui::End();
+	    recursiveTreeCreation(m_sceneEditor.scene.world);
+    ImGui::End();
 }
+
 
 void Editor::renderExplorer() const
 {
@@ -235,7 +235,7 @@ void Editor::renderExplorer() const
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window)
-    : m_sceneView{loadDefaultScene(), 400, 400},
+    : m_sceneEditor{loadDefaultScene(), 400, 400},
       m_window{window}, m_framebufferWidth{0}, m_framebufferHeight{0}
 {
     setupGLFWWindow();
@@ -256,10 +256,7 @@ void Editor::update()
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
     renderLevelEditor();
-	
-	if (SystemsManager::getInstance()->sceneManager.getCurrentScene() != nullptr)
-		renderSceneGraph(*SystemsManager::getInstance()->sceneManager.getCurrentScene());
-
+	renderSceneGraph();
     renderExplorer();
     renderInspector();
 }

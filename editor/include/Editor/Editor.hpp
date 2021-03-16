@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Engine/Intermediate/Viewers/SceneViewer.hpp"
+#include <vector>
 
 struct GLFWwindow;
 
@@ -19,10 +20,10 @@ namespace Editor
 class Editor
 {
 private:
-	GPE::SceneViewer m_sceneView;
-	GLFWwindow* m_window;
-	int				 m_framebufferWidth;
-	int				 m_framebufferHeight;
+	GPE::SceneViewer			  m_sceneEditor;
+	GLFWwindow*					  m_window;
+	int							  m_framebufferWidth;
+	int							  m_framebufferHeight;
 
 	GPE::Scene& loadDefaultScene() const;
 
@@ -33,7 +34,7 @@ private:
 	void renderMenuBar    () const;
 	void renderLevelEditor();
 	void renderInspector  () const;
-	void renderSceneGraph (const class GPE::Scene& scene) const;
+	void renderSceneGraph () const;
 	void renderExplorer   () const;
 
 public:
