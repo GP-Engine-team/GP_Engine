@@ -106,6 +106,9 @@
     <ClCompile Include="src\TransformComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\SceneViewer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -349,6 +352,12 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

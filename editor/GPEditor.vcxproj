@@ -54,6 +54,11 @@
     <ClCompile Include="src\SceneEditor.cpp" />
     <ClCompile Include="src\Viewport.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\engine\GPEngine.vcxproj">
+      <Project>{7d7a0335-611a-485a-96c6-f9b79d1a08f2}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
