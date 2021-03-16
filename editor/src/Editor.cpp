@@ -4,7 +4,6 @@
 #include "Engine/Resources/SceneManager.hpp"
 
 #include "imgui/imgui.h"
-//#include "imgui/imgui_internal.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
@@ -119,10 +118,8 @@ void Editor::renderLevelEditor() const
 {
     ImGui::Begin("Level editor");
         ImGui::Text("Level editor");
-        //ImVec2 v{ImGui::GetCurrentWindowRead()->ContentSize};
-        // sceneEditor.resize(static_cast<int>(v.x), static_cast<int>(v.y));
-        // sceneEditor.render();
-
+        m_sceneView.render();
+        ImGui::Image((void*)(intptr_t)m_sceneView.texture.getID(), ImVec2(400.f, 400.f));
     ImGui::End();
 }
 
@@ -177,7 +174,7 @@ void Editor::renderExplorer() const
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window)
-    : /*m_sceneView{*GPE::SystemsManager::getInstance()->sceneManager.getCurrentScene()}, */
+    : m_sceneView{GPE::SystemsManager::getInstance()->sceneManager.addEmpty("Default scene"), 400, 400},
       m_window{window}, m_framebufferWidth{0}, m_framebufferHeight{0}
 {
     setupGLFWWindow();
