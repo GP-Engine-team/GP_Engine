@@ -76,7 +76,7 @@ public:
     void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
-    void draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
+    void draw(RenderPipeline renderPipeline) noexcept;
 
 public:
 

@@ -10,6 +10,9 @@
 
 struct GLFWwindow;
 
+namespace GPE
+{ class Scene; }
+
 namespace Editor
 {
 
@@ -21,9 +24,17 @@ namespace Editor
 		int				 m_framebufferWidth;
 		int				 m_framebufferHeight;
 
+<<<<<<< HEAD
 	private:
 		void setupGLFWWindow();
 		void setupDearImGui();
+=======
+	GPE::Scene& loadDefaultScene() const;
+
+private:
+	void setupGLFWWindow  ();
+	void setupDearImGui   ();
+>>>>>>> 59855cc58431c14d0faaa2c8957fe1439f9c7ffd
 
 		void renderMenuBar() const;
 		void renderLevelEditor() const;
