@@ -51,12 +51,13 @@ EditorStartup::EditorStartup()
           m_editor.update();
           m_editor.render();
       }},
-      m_reloadableCpp{"./../projects/GPGame/bin/Release/GPGame.dll"},
-      m_editor{initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow())},
+      m_reloadableCpp{"./../projects/GPGame/bin/Debug/GPGame.dll"},
+      m_editor{initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow()), this},
       m_game{nullptr}
 {
     ADD_PROCESS(m_reloadableCpp, createGameInstance);
     ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
+    ADD_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
 }
 
 
@@ -106,6 +107,8 @@ void EditorStartup::update()
 
     if (m_reloadableCpp.refresh())
     {
+        auto sync = GET_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
+        (*sync)(*GPE::SystemsManager::getInstance());
         startGame();
     }
 }
