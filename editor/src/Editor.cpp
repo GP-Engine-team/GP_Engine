@@ -244,9 +244,6 @@ namespace Editor
 		ImGui::End();
 	}
 
-
-
-
 	/* ========================== Constructor & destructor ========================== */
 	Editor::Editor(GLFWwindow* window)
 		: m_sceneEditor{ loadDefaultScene(), 400, 400 },
@@ -255,7 +252,6 @@ namespace Editor
 		setupGLFWWindow();
 		setupDearImGui();
 	}
-
 
 	void Editor::update()
 	{
@@ -275,7 +271,6 @@ namespace Editor
 		renderInspector();
 	}
 
-
 	void Editor::render()
 	{
 		ImGui::Render();
@@ -286,7 +281,6 @@ namespace Editor
 
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
-
 
 	bool Editor::isRunning()
 	{

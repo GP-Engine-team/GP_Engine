@@ -93,7 +93,7 @@ void Camera::setAspect(const float newAspect) noexcept
 {
     m_projInfo.aspect = newAspect;
     m_projInfo.fovX   = m_projInfo.aspect * m_projInfo.fovY;
-    m_projInfo.hSide  = m_projInfo.zfar * sinf(m_projInfo.fovX);
+    m_projInfo.hSide  = m_projInfo.zfar * tanf(m_projInfo.fovX * .5f) * 2.f;
 
     updateProjection();
 }

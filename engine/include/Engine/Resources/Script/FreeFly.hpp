@@ -57,12 +57,12 @@ public:
 
     inline void down()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorUp() * -1 * m_speed);
+        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorUp() * -m_speed);
     }
 
     inline void forward()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorForward() * -1 * m_speed);
+        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorForward() * -m_speed);
     }
 
     inline void back()
@@ -72,7 +72,7 @@ public:
 
     inline void left()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorRight() * -1 * m_speed);
+        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorRight() * -m_speed);
     }
 
     inline void right()
