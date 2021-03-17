@@ -53,7 +53,7 @@ EditorStartup::EditorStartup()
 	      m_editor.update();
 	      m_editor.render();
 	  }},
-	  m_reloadableCpp{".\\bin\\Debug\\GPGame.dll"},
+	  m_reloadableCpp{gameDllPath},
 	  m_editor{initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow())},
 	  m_game{nullptr}
 {

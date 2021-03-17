@@ -1,4 +1,5 @@
 #include "Engine/Core/HotReload/ReloadableCpp.hpp"
+#include "Engine/Core/Debug/Log.hpp"
 
 #include <Windows.h>
 
@@ -21,6 +22,16 @@ void ReloadableCpp::load(const char *newFileSuffix)
                 p.second = GetProcAddress((HMODULE)module, p.first.c_str());
             }
         }
+        else 
+        {
+        
+            Log::logError("dll not loaded properly : Check if the correct path has been set and if other dll dependencies "
+                            "are in the same place.");
+        }
+    }
+    else 
+    {
+        Log::logError("Couldn't create " + copyFilename + " or copy " + path + " into it.");
     }
 }
 
@@ -56,6 +67,7 @@ bool ReloadableCpp::refresh()
 
     if (fileHandle == INVALID_HANDLE_VALUE)
     {
+        Log::logError("Couldn't open " + path + ". The file must be missing.");
         return false;
     }
 
