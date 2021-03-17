@@ -206,14 +206,12 @@ namespace Editor
 		}
 	}
 
-
 	void Editor::renderSceneGraph()
 	{
 		ImGui::Begin("Scene Graph");
-		recursiveSceneGraphNode(m_sceneEditor.scene.world);
+		recursiveSceneGraphNode(SystemsManager::getInstance()->sceneManager.getCurrentScene()->world);
 		ImGui::End();
 	}
-
 
 	void Editor::renderExplorer() const
 	{

@@ -55,6 +55,7 @@ public:
     void addEmpty(const std::string& sceneName)
     {
         m_scenes[sceneName]; // emaplce with default constructor of scene
+        Log::log("New empty scene create with name : " + sceneName);
     }
 
     void loadScene(const std::string&    sceneName,
@@ -64,11 +65,13 @@ public:
         if (!m_pCurrentScene)
         {
             m_pCurrentScene = &m_scenes[sceneName];
+            Log::log("New empty scene create and load with name : " + sceneName);
             return;
         }
 
         // TODO: To remove
         m_pCurrentScene = &m_scenes[sceneName];
+        Log::log("Scene \"" + sceneName + "\" load");
         return;
 
         switch (sceneGraphloadType)

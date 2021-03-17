@@ -98,6 +98,8 @@ public:
     Camera& operator=(Camera&& other) noexcept = default;
     virtual ~Camera() noexcept                 = default;
 
+    void moveTowardScene(class Scene& newOwner) override;
+
     /**
      * @brief Construct a new perspective camera object
      *
