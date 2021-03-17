@@ -35,16 +35,18 @@ SceneViewer::~SceneViewer()
     glDeleteFramebuffers(1, &framebufferID);
 }
 
+
 void SceneViewer::resize(int width, int height)
 {
     texture.resize(width, height);
     depthStencilBuffer.resize(width, height);
 }
 
+
 void SceneViewer::render() const
 {
     scene.sceneRenderer.draw(SystemsManager::getInstance()->resourceManager,
-                            scene.sceneRenderer.defaultRenderPipeline(), framebufferID);
+                             scene.sceneRenderer.defaultRenderPipeline(), framebufferID);
 }
 
 } // namespace GPE
