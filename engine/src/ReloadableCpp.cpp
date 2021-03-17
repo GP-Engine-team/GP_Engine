@@ -1,10 +1,11 @@
 #include "Engine/Core/HotReload/ReloadableCpp.hpp"
+#include "Engine/Core/Debug/Log.hpp"
 
 #include <Windows.h>
 
 using namespace GPE;
 
-void ReloadableCpp::load(const char *newFileSuffix)
+bool ReloadableCpp::load(const char *newFileSuffix)
 {
     std::string copyFilename = path + newFileSuffix;
 
@@ -21,7 +22,21 @@ void ReloadableCpp::load(const char *newFileSuffix)
                 p.second = GetProcAddress((HMODULE)module, p.first.c_str());
             }
         }
+        else 
+        {
+        
+            Log::logError("dll not loaded properly : Check if the correct path has been set and if other dll dependencies "
+                            "are in the same place.");
+            return false;
+        }
     }
+    else 
+    {
+        Log::logError("Couldn't create " + copyFilename + " or copy " + path + " into it.");
+        return false;
+    }
+
+    return true;
 }
 
 void ReloadableCpp::unload()
@@ -56,6 +71,7 @@ bool ReloadableCpp::refresh()
 
     if (fileHandle == INVALID_HANDLE_VALUE)
     {
+        // Couldn't open file. It might be because the file is currently used.
         return false;
     }
 
@@ -66,8 +82,15 @@ bool ReloadableCpp::refresh()
 
     if (hasFileBeenModified)
     {
+        if (onUnload)
+        {
+            onUnload();
+        }
         unload();
-        load();
+        if (!load())
+        {
+            return false;
+        }
         lastRefreshTime = fileLastWriteTime;
     }
 

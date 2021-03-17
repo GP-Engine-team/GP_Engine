@@ -20,43 +20,43 @@ namespace GPE
 namespace Editor
 {
 
-class Editor
-{
-private:
-	GPE::SceneViewer			  m_sceneEditor;
-	GLFWwindow*					  m_window;
-	GPE::GameObject*			  m_inspectedObject;
-	int							  m_framebufferWidth;
-	int							  m_framebufferHeight;
+	class Editor
+	{
+	private:
+		GPE::SceneViewer			  m_sceneEditor;
+		GLFWwindow* m_window;
+		GPE::GameObject* m_inspectedObject;
+		int							  m_framebufferWidth;
+		int							  m_framebufferHeight;
 
-	GPE::Scene& loadDefaultScene() const;
+		GPE::Scene& loadDefaultScene() const;
 
-private:
-	void setupGLFWWindow  ();
-	void setupDearImGui   ();
+	private:
+		void setupGLFWWindow();
+		void setupDearImGui();
 
-	void renderMenuBar    () const;
-	void renderLevelEditor();
-	void renderInspector  () const;
-	void renderSceneGraph ();
-	void renderExplorer   () const;
+		void renderMenuBar() const;
+		void renderLevelEditor();
+		void renderInspector() const;
+		void renderSceneGraph();
+		void renderExplorer() const;
 
-	/**
-		* @brief Function that crate scene graph recursively for each node in imGui window.
-		* @param gameObject
-		* @param idElem
-		* @return the pointer to selected game object. Else return null ptr
-	*/
-	GPE::GameObject* recursiveSceneGraphNode(GPE::GameObject& gameObject, int idElem = 0) const;
+		/**
+			* @brief Function that crate scene graph recursively for each node in imGui window.
+			* @param gameObject
+			* @param idElem
+			* @return the pointer to selected game object. Else return null ptr
+		*/
+		void recursiveSceneGraphNode(GPE::GameObject& gameObject, int idElem = 0);
 
-public:
-	Editor(GLFWwindow* window);
+	public:
+		Editor(GLFWwindow* window);
 
-	void update();
-	void render();
-	bool isRunning();
+		void update();
+		void render();
+		bool isRunning();
 
-	friend void windowFramebufferResized(GLFWwindow* window, int width, int height);
-};
+		friend void windowFramebufferResized(GLFWwindow* window, int width, int height);
+	};
 
 } // End of namespace Editor

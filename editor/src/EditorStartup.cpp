@@ -38,21 +38,21 @@ namespace Editor
 		  } },
 		m_update{ [&](double fixedUnscaledDeltaTime, double deltaTime)
 		{
-			GPE::SystemsManager::getInstance()->inputManager.processInput();
-
-			if (m_game != nullptr)
-				m_game->update(fixedUnscaledDeltaTime, deltaTime);
+		  GPE::SystemsManager::getInstance()->inputManager.processInput();
+		  if (m_game != nullptr)
+			  m_game->update(fixedUnscaledDeltaTime, deltaTime);
 		} },
 			  m_render{ [&]()
 			  {
 				  GPE::SystemsManager::getInstance()->renderer.swapBuffer();
+
 				  if (m_game != nullptr)
 					  m_game->render();
 
 				  m_editor.update();
 				  m_editor.render();
 			  } },
-			m_reloadableCpp{ "./../projects/GPGame/bin/Debug/GPGame.dll" },
+			m_reloadableCpp{ gameDllPath },
 				  m_editor{ initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow()) },
 				  m_game{ nullptr }
 			  {
@@ -60,14 +60,22 @@ namespace Editor
 				  ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
 				  ADD_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
 
+				  m_reloadableCpp.onUnload = [&]()
+				  {
+					  closeGame();
+				  };
+
+
 				  GPE::SystemsManager::getInstance()->inputManager.setupCallbacks(GPE::SystemsManager::getInstance()->window.getGLFWWindow());
 			  }
+
 
 			  EditorStartup::~EditorStartup()
 			  {
 				  if (m_game != nullptr)
 				  {
-					  GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
+					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+					  destroyer(m_game);
 				  }
 
 				  ImGui_ImplOpenGL3_Shutdown();
@@ -80,18 +88,19 @@ namespace Editor
 			  {
 				  if (m_game != nullptr)
 				  {
-					  GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
+					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+					  destroyer(m_game);
 				  }
 				  auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
 				  m_game = a();
 			  }
 
-
 			  void EditorStartup::closeGame()
 			  {
 				  if (m_game != nullptr)
 				  {
-					  GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
+					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+					  destroyer(m_game);
 					  m_game = nullptr;
 				  }
 			  }

@@ -54,6 +54,7 @@ SceneViewer::~SceneViewer()
     glDeleteFramebuffers(1, &framebufferID);
 }
 
+
 void SceneViewer::resize(int width, int height)
 {
     texture.resize(width, height);
@@ -61,6 +62,7 @@ void SceneViewer::resize(int width, int height)
 
     pCamera->setAspect(Camera::computeAspect(width, height));
 }
+
 
 void SceneViewer::render() const
 {

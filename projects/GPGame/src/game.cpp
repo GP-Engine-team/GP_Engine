@@ -130,7 +130,6 @@ Game::Game()
 {
 	//sm.addEmpty("main");
 	//sm.loadScene("main");
-	std::cout << "reloaded" << std::endl;
 
 	iManager.bindInput(GLFW_KEY_W, "forward");
 	iManager.bindInput(GLFW_KEY_S, "back");
@@ -177,4 +176,5 @@ Game::Game()
 		true);
 
 	Log::logInitializationEnd("Game");
+
 }

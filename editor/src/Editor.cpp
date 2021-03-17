@@ -134,7 +134,8 @@ namespace Editor
 		const ImVec2 levelEditorSize{ ImGui::GetCurrentWindow()->ContentRegionRect.GetSize() };
 		//m_sceneView.resize(static_cast<int>(levelEditorSize.x), static_cast<int>(levelEditorSize.y));
 		m_sceneEditor.render();
-		ImGui::Image((void*)(intptr_t)m_sceneEditor.texture.getID(), levelEditorSize);
+		ImGui::Image((void*)(intptr_t)m_sceneEditor.texture.getID(), levelEditorSize,
+			ImVec2{ .0f, 1.f }, ImVec2{ 1.f, .0f });
 		ImGui::End();
 	}
 
@@ -144,7 +145,7 @@ namespace Editor
 		ImGui::Begin("Inspector");
 		if (m_inspectedObject != nullptr)
 		{
-			// Reflexion of m_inspectedObject
+			ImGui::Text("Object %s selected", m_inspectedObject->getName().c_str());
 		}
 
 		else
@@ -155,11 +156,12 @@ namespace Editor
 	}
 
 
-	GameObject* Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem) const
+	void Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem)
 	{
 		ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 		static int nodeClicked = -1;
 		int selectionMask = (1 << 2);
+
 		GameObject* selectedGameObject = nullptr;
 
 		if (gameObject.children.empty())
@@ -180,14 +182,14 @@ namespace Editor
 			if (ImGui::IsItemClicked())
 			{
 				nodeClicked = idElem;
-				selectedGameObject = &gameObject;
+				m_inspectedObject = &gameObject;
 			}
 
 			if (nodeOpen)
 			{
 				for (auto&& child : gameObject.children)
 				{
-					selectedGameObject = recursiveSceneGraphNode(*child.get(), ++idElem);
+					recursiveSceneGraphNode(*child.get(), ++idElem);
 				}
 				ImGui::TreePop();
 			}
@@ -202,15 +204,13 @@ namespace Editor
 			else //if (!(selectionMask & (1 << nodeClicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
 				selectionMask = (1 << nodeClicked);           // Click to single-select
 		}
-
-		return selectedGameObject;
 	}
 
 
 	void Editor::renderSceneGraph()
 	{
 		ImGui::Begin("Scene Graph");
-		m_inspectedObject = recursiveSceneGraphNode(m_sceneEditor.scene.world);
+		recursiveSceneGraphNode(m_sceneEditor.scene.world);
 		ImGui::End();
 	}
 
