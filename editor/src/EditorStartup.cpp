@@ -58,6 +58,11 @@ namespace Editor
 				  ADD_PROCESS(m_reloadableCpp, createGameInstance);
 				  ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
 				  ADD_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
+
+				  m_reloadableCpp.onUnload = [&]()
+				  {
+					  closeGame();
+				  };
 			  }
 
 
@@ -65,7 +70,8 @@ namespace Editor
 			  {
 				  if (m_game != nullptr)
 				  {
-					  GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
+					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+					  destroyer(m_game);
 				  }
 
 				  ImGui_ImplOpenGL3_Shutdown();
@@ -78,7 +84,8 @@ namespace Editor
 			  {
 				  if (m_game != nullptr)
 				  {
-					  GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
+					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+					  destroyer(m_game);
 				  }
 				  auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
 				  m_game = a();
@@ -89,7 +96,8 @@ namespace Editor
 			  {
 				  if (m_game != nullptr)
 				  {
-					  GET_PROCESS(m_reloadableCpp, destroyGameInstance)(m_game);
+					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+					  destroyer(m_game);
 					  m_game = nullptr;
 				  }
 			  }
