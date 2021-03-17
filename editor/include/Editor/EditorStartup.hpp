@@ -26,7 +26,7 @@ private:
     const std::function<void(double, double)> m_update;
     const std::function<void()>               m_render;
     
-#ifdef NDEBUG 
+#ifdef NDEBUG
     const char* gameDllPath = "./bin/Release/GPGame.dll";
 #else
     const char* gameDllPath = "./bin/Debug/GPGame.dll";
