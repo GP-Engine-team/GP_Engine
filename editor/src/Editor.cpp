@@ -161,21 +161,18 @@ void Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem)
 {
 	ImGuiTreeNodeFlags nodeFlag	   = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	int nodeClicked				   = -1;
-	// TODO: this was for an example with 6 elements, adapt it
-	static int selectionMask	   = (1 << 2);
 	GameObject* selectedGameObject = m_inspectedObject;
+
+	// Is this game object currently selected?
+	if (m_inspectedObject == &gameObject)
+	{
+		nodeFlag |= ImGuiTreeNodeFlags_Selected;
+	}
 
 	if (gameObject.children.empty())
 	{
 		nodeFlag |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 		ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
-
-		const bool isSelected = (selectionMask & (1 << idElem)) != 0;
-
-		if (isSelected)
-		{
-			nodeFlag |= ImGuiTreeNodeFlags_Selected;
-		}
 
 		if (ImGui::IsItemClicked())
 		{
@@ -186,14 +183,7 @@ void Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem)
 
 	else
 	{
-		const bool isSelected = (selectionMask & (1 << idElem)) != 0;
-
-		if (isSelected)
-		{
-			nodeFlag |= ImGuiTreeNodeFlags_Selected;
-		}
-
-		bool nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
+		const bool nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
 		if (ImGui::IsItemClicked())
 		{
 			nodeClicked = idElem;
@@ -211,13 +201,14 @@ void Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem)
 	}
 
 	if (nodeClicked != -1)
-	{
+	{/*
 		// Update selection state
 		// (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
 		if (ImGui::GetIO().KeyCtrl)
 			selectionMask ^= (1 << nodeClicked);          // CTRL+click to toggle
 		else //if (!(selectionMask & (1 << nodeClicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
 			selectionMask = (1 << nodeClicked);           // Click to single-select
+			*/
 	}
 }
 
