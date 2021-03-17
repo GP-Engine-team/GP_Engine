@@ -133,6 +133,8 @@ namespace Editor
 		ImGui::Begin("Level editor");
 		const ImVec2 levelEditorSize{ ImGui::GetCurrentWindow()->ContentRegionRect.GetSize() };
 		//m_sceneView.resize(static_cast<int>(levelEditorSize.x), static_cast<int>(levelEditorSize.y));
+
+		m_sceneEditor.bindScene(*SystemsManager::getInstance()->sceneManager.getCurrentScene());
 		m_sceneEditor.render();
 		ImGui::Image((void*)(intptr_t)m_sceneEditor.texture.getID(), levelEditorSize,
 			ImVec2{ .0f, 1.f }, ImVec2{ 1.f, .0f });

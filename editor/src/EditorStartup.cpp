@@ -46,8 +46,8 @@ namespace Editor
 			  {
 				  GPE::SystemsManager::getInstance()->renderer.swapBuffer();
 
-				  if (m_game != nullptr)
-					  m_game->render();
+				  /*if (m_game != nullptr)
+					  m_game->render();*/
 
 				  m_editor.update();
 				  m_editor.render();

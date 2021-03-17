@@ -64,6 +64,9 @@ void SceneViewer::resize(int width, int height)
 
 void SceneViewer::bindScene(Scene& scene) noexcept
 {
+    if (m_pScene == &scene)
+        return;
+
     cameraOwner.moveTowardScene(scene);
     m_pScene = &scene;
 }
