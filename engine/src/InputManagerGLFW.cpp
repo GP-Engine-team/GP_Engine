@@ -61,6 +61,14 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 
 void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
+    m_cursor.deltaPos =
+        Vec2{m_cursor.position.x - static_cast<GPM::f32>(xpos), m_cursor.position.y - static_cast<GPM::f32>(ypos)};
+    m_cursor.position.x = static_cast<GPM::f32>(xpos);
+    m_cursor.position.y = static_cast<GPM::f32>(ypos);
+}
+
+void InputManager::cursorLockedPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
+{
     int x, y;
     glfwGetWindowSize(window, &x, &y);
     m_cursor.center.x   = x / 2.f;
@@ -76,16 +84,25 @@ void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
     static_cast<InputManager*>(glfwGetWindowUserPointer(window))->cursorPositionCallback(window, xpos, ypos);
 }
 
+void setLockedCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
+{
+    static_cast<InputManager*>(glfwGetWindowUserPointer(window))->cursorLockedPositionCallback(window, xpos, ypos);
+}
+
 void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
     static_cast<InputManager*>(glfwGetWindowUserPointer(window))->keyCallback(window, key, scancode, action, mods);
 }
 
-void InputManager::setupCallbacks(GLFWwindow* window) noexcept
+void InputManager::setupCallbacks(GLFWwindow* window, bool lockMousInCenter) noexcept
 {
     glfwSetKeyCallback(window, setKeycallback);
-    glfwSetCursorPosCallback(window, setCursorCallback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, lockMousInCenter ? setLockedCursorCallback : setCursorCallback);
+}
+
+void InputManager::setCursorMode(GLFWwindow* window, int mode) noexcept
+{
+    glfwSetInputMode(window, GLFW_CURSOR, mode);
 }
 
 void InputManager::processInput() noexcept

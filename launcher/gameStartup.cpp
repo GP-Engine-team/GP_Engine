@@ -27,7 +27,8 @@ GameStartup::GameStartup()
 		m_game->render();
 	};
 
-	GPE::SystemsManager::getInstance()->inputManager.setupCallbacks(GPE::SystemsManager::getInstance()->window.getGLFWWindow());
+	GPE::SystemsManager::getInstance()->inputManager.setupCallbacks(GPE::SystemsManager::getInstance()->window.getGLFWWindow(), true);
+	GPE::SystemsManager::getInstance()->inputManager.setCursorMode(GPE::SystemsManager::getInstance()->window.getGLFWWindow(), GLFW_CURSOR_DISABLED);
 }
 
 void GameStartup::update()

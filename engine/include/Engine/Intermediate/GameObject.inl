@@ -1,9 +1,9 @@
-inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
-    : m_name{arg.name},
-      m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)},
+﻿inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
+    : m_name{arg.name}, m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this,
+                                                                                               arg.transformArg)},
       m_pComponents{}, scene{scene}, parent{arg.parent}
-{}
-
+{
+}
 
 template <typename T>
 inline void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept

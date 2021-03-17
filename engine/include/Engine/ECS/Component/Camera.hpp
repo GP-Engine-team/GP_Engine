@@ -84,6 +84,12 @@ protected:
     void updateProjection();
 
 public:
+    static float computeAspect(float width, float height) noexcept
+    {
+        return width / height;
+    }
+
+public:
     Camera() noexcept                    = delete;
     Camera(const Camera& other) noexcept = delete;
     Camera& operator=(Camera const& other) noexcept = delete;

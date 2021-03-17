@@ -39,6 +39,7 @@ namespace Editor
 		m_update{ [&](double fixedUnscaledDeltaTime, double deltaTime)
 		{
 			GPE::SystemsManager::getInstance()->inputManager.processInput();
+
 			if (m_game != nullptr)
 				m_game->update(fixedUnscaledDeltaTime, deltaTime);
 		} },
@@ -58,8 +59,9 @@ namespace Editor
 				  ADD_PROCESS(m_reloadableCpp, createGameInstance);
 				  ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
 				  ADD_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
-			  }
 
+				  GPE::SystemsManager::getInstance()->inputManager.setupCallbacks(GPE::SystemsManager::getInstance()->window.getGLFWWindow());
+			  }
 
 			  EditorStartup::~EditorStartup()
 			  {

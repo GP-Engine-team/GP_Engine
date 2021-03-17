@@ -144,7 +144,7 @@ Game::Game()
 	GameObject::CreateArg playerArg{ "Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}} };
 
 	Camera::PerspectiveCreateArg camCreateArg;
-	camCreateArg.aspect = 900.f / 600.f;
+	camCreateArg.aspect = Camera::computeAspect(900.f, 600.f);
 
 	camCreateArg.farVal = 3000;
 	camCreateArg.nearVal = 0.01f;

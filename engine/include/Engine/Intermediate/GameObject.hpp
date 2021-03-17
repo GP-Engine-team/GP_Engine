@@ -63,12 +63,14 @@ public:
      *
      */
     void updateSelfAndChildren() noexcept;
+    void updateSelfAndChildren(const GPM::Mat4 parentModelMatrix) noexcept;
 
     /**
      * @brief Force the update of entity without check if entity is dirty
      *
      */
     void forceUpdate() noexcept;
+    void forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept;
 
     /**
      * @brief Get the Name object

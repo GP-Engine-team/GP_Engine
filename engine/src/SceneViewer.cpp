@@ -4,6 +4,9 @@
 #include "Engine/ECS/System/SystemsManager.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
+#include "Engine/Resources/Script/FreeFly.hpp"
+
+#include <GLFW/glfw3.h>
 
 #include <string>
 
@@ -11,11 +14,28 @@ namespace GPE
 {
 
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width, int height)
-    : scene{viewed}, cameraOwner{scene, {"Editor_camera_" + std::to_string((size_t)this), {}, nullptr}}, texture({width, height}),
-      depthStencilBuffer({width, height, RenderBuffer::EInternalFormat::DEPTH24_STENCIL8})
+    : scene{viewed}, cameraOwner{scene, {"Editor_camera_" + std::to_string((size_t)this), {}, nullptr}},
+      texture({width, height}), depthStencilBuffer({width, height, RenderBuffer::EInternalFormat::DEPTH24_STENCIL8})
 {
-    const Camera::PerspectiveCreateArg args{16.f / 9.f, .001f, 1000.f, 90.f, "Editor_camera_0"};
-    cameraOwner.addComponent<Camera>(args);
+    GPE::InputManager& iManager = GPE::SystemsManager::getInstance()->inputManager;
+
+    iManager.bindInput(GLFW_KEY_W, "forward");
+    iManager.bindInput(GLFW_KEY_S, "back");
+    iManager.bindInput(GLFW_KEY_A, "left");
+    iManager.bindInput(GLFW_KEY_D, "right");
+    iManager.bindInput(GLFW_KEY_SPACE, "up");
+    iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
+    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
+
+    {
+        Camera::PerspectiveCreateArg camArg;
+        camArg.name   = "Editor_camera_0";
+        camArg.aspect = Camera::computeAspect(width, height);
+
+        pCamera = &cameraOwner.addComponent<Camera>(camArg);
+    }
+
+    cameraOwner.addComponent<FreeFly>();
 
     glGenFramebuffers(1, &framebufferID);
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
@@ -29,7 +49,6 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width, int height)
     glBindFramebuffer(GL_FRAMEBUFFER, 0u);
 }
 
-
 SceneViewer::~SceneViewer()
 {
     glDeleteFramebuffers(1, &framebufferID);
@@ -39,12 +58,14 @@ void SceneViewer::resize(int width, int height)
 {
     texture.resize(width, height);
     depthStencilBuffer.resize(width, height);
+
+    pCamera->setAspect(Camera::computeAspect(width, height));
 }
 
 void SceneViewer::render() const
 {
     scene.sceneRenderer.draw(SystemsManager::getInstance()->resourceManager,
-                            scene.sceneRenderer.defaultRenderPipeline(), framebufferID);
+                             scene.sceneRenderer.defaultRenderPipeline(), framebufferID);
 }
 
 } // namespace GPE
