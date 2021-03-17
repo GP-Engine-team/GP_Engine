@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <functional>
 
 #define ADD_PROCESS(rcpp, function) rcpp.addProcess(#function);
 #define GET_PROCESS(rcpp, function) rcpp.getProcess<decltype(function)>(#function);
@@ -32,8 +33,11 @@ private:
     std::map<std::string, void*> processes; // current successfully loaded processes
 
 public:
+    std::function<void()> onUnload;
+
+public:
     // Only call this when reloadableCpp.path is pointing towards a valid file.
-    void load(const char *newFileSuffix = ".copy.dll");
+    bool load(const char *newFileSuffix = ".copy.dll");
 
     void unload();
 
