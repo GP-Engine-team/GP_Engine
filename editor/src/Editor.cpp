@@ -159,9 +159,8 @@ void Editor::renderInspector() const
 
 void Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem)
 {
-	ImGuiTreeNodeFlags nodeFlag	   = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	ImGuiTreeNodeFlags nodeFlag	   =  ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick |ImGuiTreeNodeFlags_DefaultOpen;
 	int nodeClicked				   = -1;
-	GameObject* selectedGameObject = m_inspectedObject;
 
 	// Is this game object currently selected?
 	if (m_inspectedObject == &gameObject)
@@ -199,24 +198,16 @@ void Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem)
 			ImGui::TreePop();
 		}
 	}
-
-	if (nodeClicked != -1)
-	{/*
-		// Update selection state
-		// (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
-		if (ImGui::GetIO().KeyCtrl)
-			selectionMask ^= (1 << nodeClicked);          // CTRL+click to toggle
-		else //if (!(selectionMask & (1 << nodeClicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
-			selectionMask = (1 << nodeClicked);           // Click to single-select
-			*/
-	}
 }
 
 
 void Editor::renderSceneGraph()
 {
 	ImGui::Begin("Scene Graph");
+		const GPE::GameObject* prev = m_inspectedObject;
 		recursiveSceneGraphNode(m_sceneEditor.scene.world);
+		if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0) && prev == m_inspectedObject)
+			m_inspectedObject = nullptr;
 	ImGui::End();
 }
 
