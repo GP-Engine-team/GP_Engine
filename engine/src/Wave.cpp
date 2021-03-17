@@ -39,7 +39,8 @@ Wave::Wave(const char* filepath, const char* name)
                   << " bps of files : " << name << std::endl;
     }
 
-    AL_CALL(alBufferData, buffer.buffer, format, data, size, sampleRate);
+    AL_CALL(alBufferData, buffer.buffer, format, static_cast<const ALvoid*>(data), static_cast<ALsizei>(size),
+            static_cast<ALsizei>(sampleRate));
 
     SystemsManager::getInstance()->resourceManager.add<Buffer>(name, buffer);
 
