@@ -28,6 +28,7 @@ namespace Editor
 		GPE::GameObject* m_inspectedObject;
 		int							  m_framebufferWidth;
 		int							  m_framebufferHeight;
+		bool					      m_showAppStyleEditor = false;
 
 		GPE::Scene& loadDefaultScene() const;
 
@@ -35,9 +36,10 @@ namespace Editor
 		void setupGLFWWindow();
 		void setupDearImGui();
 
-		void renderMenuBar() const;
+		void renderStyleEditor();
+		void renderMenuBar();
 		void renderLevelEditor();
-		void renderInspector() const;
+		void renderInspector();
 		void renderSceneGraph();
 		void renderExplorer() const;
 

@@ -72,8 +72,14 @@ namespace Editor
 		ImGui::StyleColorsDark();
 	}
 
+	void Editor::renderStyleEditor()
+	{
+		ImGui::Begin("Style Editor", &m_showAppStyleEditor);
+		ImGui::ShowStyleEditor();
+		ImGui::End();
+	}
 
-	void Editor::renderMenuBar() const
+	void Editor::renderMenuBar()
 	{
 		if (ImGui::BeginMainMenuBar())
 		{
@@ -110,6 +116,9 @@ namespace Editor
 			// Options
 			if (ImGui::BeginMenu("Options"))
 			{
+				//Style editor
+				ImGui::MenuItem("Style Editor", NULL, &m_showAppStyleEditor);
+
 				// Menu content
 				ImGui::MenuItem("Preferences");
 				ImGui::EndMenu();
@@ -142,7 +151,7 @@ namespace Editor
 	}
 
 
-	void Editor::renderInspector() const
+	void Editor::renderInspector()
 	{
 		ImGui::Begin("Inspector");
 		if (m_inspectedObject != nullptr)
@@ -261,6 +270,12 @@ namespace Editor
 		ImGui::NewFrame();
 
 		// Start drawing
+
+		if (m_showAppStyleEditor)
+		{
+			renderStyleEditor();
+		}
+
 		renderMenuBar();
 
 		ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
@@ -273,6 +288,8 @@ namespace Editor
 
 	void Editor::render()
 	{
+		ImGui::ShowDemoWindow(nullptr);
+
 		ImGui::Render();
 
 		glViewport(0, 0, m_framebufferWidth, m_framebufferHeight);
