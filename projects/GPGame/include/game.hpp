@@ -32,7 +32,7 @@ protected:
 private:
 	virtual void update(double unscaledDeltaTime, double deltaTime) override final
 	{
-		bSys.update(deltaTime);
+		bSys.update(static_cast<float>(deltaTime));
 		++unFixedUpdateFrameCount;
 
 		sm.getCurrentScene()->world.updateSelfAndChildren();
@@ -41,7 +41,7 @@ private:
 	virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final
 	{
 		++fixedUpdateFrameCount;
-		bSys.fixedUpdate(fixedDeltaTime);
+		bSys.fixedUpdate(static_cast<float>(fixedDeltaTime));
 	}
 
 	virtual void render() override final

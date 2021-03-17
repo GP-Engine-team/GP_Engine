@@ -5,7 +5,7 @@
  */
 
 #pragma once
-#include "Engine/Core/Debug/OpenAL_Soft_Debug.hpp"
+#include <OpenAL_Soft_Debug.hpp>
 #include <dr_wav/dr_wav.h>
 #include <vector>
 

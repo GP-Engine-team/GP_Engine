@@ -1,4 +1,4 @@
-﻿#include "Engine/Core/Debug/OpenAL_Soft_Debug.hpp"
+﻿#include <OpenAL_Soft_Debug.hpp>
 
 bool checkAlcErrors(const std::string& filename, const std::uint_fast32_t line, ALCdevice* device)
 {
