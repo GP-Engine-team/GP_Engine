@@ -13,6 +13,52 @@
 using namespace GPE;
 using namespace GPM;
 
+Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
+{
+    m_boundingVolumeType = arg.boundingVolumeType;
+
+    if (arg.boundingVolume != nullptr)
+        m_boundingVolume = std::move(arg.boundingVolume);
+
+    m_verticesCount = static_cast<unsigned int>(arg.indices.size());
+
+    struct
+    {
+        GLuint vbo;
+        GLuint ebo;
+    } buffers;
+
+    // Generate buffer and bind VAO
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(2, &buffers.vbo);
+    glBindVertexArray(m_VAO);
+
+    // define properties of EBO and VBO buffers
+    glBindBuffer(GL_ARRAY_BUFFER, buffers.vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(arg.vertices[0]) * arg.vertices.size(), arg.vertices.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers.ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(arg.indices[0]) * arg.indices.size(), arg.indices.data(),
+                 GL_STATIC_DRAW);
+
+    // 1rst attribute buffer : position
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, v));
+
+    // 2nd attribute buffer : normals
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vn));
+
+    // 3nd attribute buffer : UVs
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vt));
+
+    glBindVertexArray(0);
+    glDeleteBuffers(2, &buffers.vbo);
+
+    Log::log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with EBO").c_str());
+}
+
 static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, const void* data, int size) noexcept
 {
     glGenBuffers(1, &buffer);
@@ -21,7 +67,7 @@ static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, 
     glBindBuffer(target, 0);
 }
 
-Mesh::Mesh(CreateArg& arg) noexcept
+Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
 {
     m_boundingVolumeType = arg.boundingVolumeType;
 
@@ -72,8 +118,8 @@ Mesh::Mesh(CreateArg& arg) noexcept
     }
 
     // Generate VAO
-    glGenVertexArrays(1, &m_indexVAO);
-    glBindVertexArray(m_indexVAO);
+    glGenVertexArrays(1, &m_VAO);
+    glBindVertexArray(m_VAO);
 
     // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);
@@ -90,7 +136,7 @@ Mesh::Mesh(CreateArg& arg) noexcept
     glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    Log::log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU").c_str());
+    Log::log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with VBOs").c_str());
 }
 
 Mesh::~Mesh() noexcept
@@ -98,7 +144,7 @@ Mesh::~Mesh() noexcept
     // search all VBO attach to the current VAO and destroy it.
     GLint nAttr = 0;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nAttr);
-    glBindVertexArray(m_indexVAO);
+    glBindVertexArray(m_VAO);
     for (int iAttr = 0; iAttr < nAttr; ++iAttr)
     {
         GLuint vboId = 0;
@@ -109,22 +155,23 @@ Mesh::~Mesh() noexcept
         }
     }
 
-    glDeleteBuffers(1, &m_indexVAO);
-    m_indexVAO = 0;
+    glDeleteBuffers(1, &m_VAO);
+    m_VAO = 0;
 }
 
 void Mesh::draw() const noexcept
 {
-    glBindVertexArray(m_indexVAO);
+    glBindVertexArray(m_VAO);
 
     unsigned int first = 0;
     glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_verticesCount));
 }
 
-Mesh::CreateArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition, unsigned int indexTextureX,
-                                 unsigned int indexTextureY, Axis towardAxis, bool isRectoVerso) noexcept
+Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition,
+                                                   unsigned int indexTextureX, unsigned int indexTextureY,
+                                                   Axis towardAxis, bool isRectoVerso) noexcept
 {
-    Mesh::CreateArg mesh;
+    Mesh::CreateContiguousVerticesArg mesh;
     mesh.objName = "Plane";
 
     // plane contain 4 triangle, 4 vertex 4 texture coordonate and 2 normal
@@ -220,9 +267,9 @@ Mesh::CreateArg Mesh::createQuad(float halfWidth, float halfHeight, float textur
     return mesh;
 }
 
-Mesh::CreateArg Mesh::createCube(float textureRepetition) noexcept
+Mesh::CreateContiguousVerticesArg Mesh::createCube(float textureRepetition) noexcept
 {
-    Mesh::CreateArg mesh;
+    Mesh::CreateContiguousVerticesArg mesh;
     mesh.objName = "Cube";
 
     // cube contain 12 triangle, 8 vertex 4 texture coordonate and 6 normal
@@ -307,11 +354,11 @@ Mesh::CreateArg Mesh::createCube(float textureRepetition) noexcept
     return mesh;
 }
 
-Mesh::CreateArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexcept
+Mesh::CreateContiguousVerticesArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexcept
 {
     GPE_ASSERT(latitudeCount > 2 && longitudeCount > 2, "Latitude and Longitude must be greater than 2");
 
-    Mesh::CreateArg mesh;
+    Mesh::CreateContiguousVerticesArg mesh;
     mesh.objName = "Sphere";
 
     latitudeCount *= 2;
@@ -394,11 +441,11 @@ Mesh::CreateArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexce
     return mesh;
 }
 
-Mesh::CreateArg Mesh::createCylindre(unsigned int prescision) noexcept
+Mesh::CreateContiguousVerticesArg Mesh::createCylindre(unsigned int prescision) noexcept
 {
     GPE_ASSERT(prescision > 2, "Prescision must be greater than 2");
 
-    Mesh::CreateArg mesh;
+    Mesh::CreateContiguousVerticesArg mesh;
     mesh.objName = "Cylindre";
 
     // Cylindre contain prescision * 2 + 2

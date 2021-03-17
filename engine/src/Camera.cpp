@@ -1,4 +1,4 @@
-﻿#include "Engine/Resources/Camera.hpp"
+﻿#include "Engine/ECS/Component/Camera.hpp"
 
 #include <iostream>
 

@@ -6,9 +6,9 @@
 
 #pragma once
 
+#include "Engine/ECS/Component/Model.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
-#include "Engine/Resources/Model.hpp"
 #include "Engine/Resources/RenderBuffer.hpp"
 #include "Engine/Resources/RenderTexture.hpp"
 #include "Engine/Resources/ResourcesManager.hpp"

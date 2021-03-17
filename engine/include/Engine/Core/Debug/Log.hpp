@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -54,12 +54,10 @@
 #define B_WHITE(x) "\033[47m" x RESET
 
 #define FUNCT_ERROR(msg)                                                                                               \
-    Log::logError(                                                                                \
-        stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
+    Log::logError(stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCTION__, msg));
 
 #define FUNCT_WARNING(msg)                                                                                             \
-    Log::logWarning(                                                                              \
-        stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCSIG__, msg));
+    Log::logWarning(stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCTION__, msg));
 
 namespace GPE
 {
@@ -78,16 +76,14 @@ public:
     };
 
 protected:
-
     // Bitfiled of the setting. By default is set to : DISPLAY_HOUR | DISPLAY_WITH_COLOR | PRINT_LOG_FILE_ERROR
     static uint8_t settings;
 
-    static bool releaseLogFile; // true if log file in'st keep
-    static std::string fileLogPath;
+    static bool          releaseLogFile; // true if log file in'st keep
+    static std::string   fileLogPath;
     static std::ofstream fileLog;
 
 public:
-
     constexpr inline Log() noexcept = delete;
 
     inline ~Log() noexcept = delete;

@@ -1,4 +1,4 @@
-#include "Engine/Core/TimeSystem/TimeSystem.hpp"
+﻿#include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include <string>
 #include <thread> // std::this_thread::sleep_for
@@ -6,16 +6,16 @@
 using namespace GPE;
 
 void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double fixedDeltaTime)> fixedUpdateFunction,
-                        std::function<void(double unscaledDeltaTime, double deltaTime)> updateFunction,
+                        std::function<void(double unscaledDeltaTime, double deltaTime)>           updateFunction,
                         std::function<void()> renderFunction) noexcept
 {
     /*First render the current frame*/
     renderFunction();
 
     /*Second, prepar the next frame*/
-    m_tempTime = std::chrono::steady_clock::now();
+    m_tempTime          = std::chrono::steady_clock::now();
     m_unscaledDeltaTime = std::chrono::duration<double>(m_tempTime - m_time).count();
-    m_time = m_tempTime;
+    m_time              = m_tempTime;
 
     /*Apply time scale*/
     m_deltaTime = m_unscaledDeltaTime * m_timeScale;

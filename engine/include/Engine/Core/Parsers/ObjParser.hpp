@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/Resources/Model.hpp"
+#include "Engine/ECS/Component/Model.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
 
 namespace GPE

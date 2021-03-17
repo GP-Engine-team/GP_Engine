@@ -9,13 +9,13 @@
 //#include "Engine/Core/System/TimeSystem.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/Core/System/SystemsManager.hpp"
 #include "Engine/Core/Tools/BranchPrediction.hpp"
+#include "Engine/ECS/Component/Camera.hpp"
+#include "Engine/ECS/Component/Light/Light.hpp"
+#include "Engine/ECS/Component/Model.hpp"
 #include "Engine/ECS/System/RenderSystem.hpp"
-#include "Engine/Resources/Camera.hpp"
-#include "Engine/Resources/Light/Light.hpp"
+#include "Engine/ECS/System/SystemsManager.hpp"
 #include "Engine/Resources/Mesh.hpp"
-#include "Engine/Resources/Model.hpp"
 #include "Engine/Resources/RenderBuffer.hpp"
 #include "Engine/Resources/RenderTexture.hpp"
 #include "Engine/Resources/Shader.hpp"
@@ -80,16 +80,18 @@ void SceneRenderSystem::displayGameObjectRef(const GameObject& go, float dist, f
 
 SceneRenderSystem::SceneRenderSystem() noexcept
 {
-    m_localResources.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
-                                 "./resources/shaders/fSimpleColor.fs");
+    SystemsManager::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
+                                                               "./resources/shaders/fSimpleColor.fs");
 
-    m_localResources.add<Shader>("PostProcess", "./resources/shaders/vPostProcess.vs",
-                                 "./resources/shaders/fPostProcess.fs");
+    SystemsManager::getInstance()->resourceManager.add<Shader>("PostProcess", "./resources/shaders/vPostProcess.vs",
+                                                               "./resources/shaders/fPostProcess.fs");
 
-    m_localResources.add<Mesh>("ScreenPlan", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
-    m_localResources.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
-    m_localResources.add<Mesh>("Cube", Mesh::createCube());
-    m_localResources.add<Mesh>("Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
+    SystemsManager::getInstance()->resourceManager.add<Mesh>("ScreenPlan",
+                                                             Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
+    SystemsManager::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
+    SystemsManager::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
+    SystemsManager::getInstance()->resourceManager.add<Mesh>("Plane",
+                                                             Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
 
     SystemsManager::getInstance()->renderSystem.addSceneRenderSystem(this);
 }
@@ -227,7 +229,7 @@ void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subMod
 
 void SceneRenderSystem::drawModelPart(const SubModel& subModel)
 {
-    glDrawArrays(GL_TRIANGLES, 0, subModel.pMesh->getVerticesCount());
+    glDrawElements(GL_TRIANGLES, subModel.pMesh->getVerticesCount(), GL_UNSIGNED_INT, 0);
 }
 
 void SceneRenderSystem::tryToBindShader(Shader& shader)
@@ -258,6 +260,7 @@ void SceneRenderSystem::tryToBindMesh(unsigned int meshID)
     if (m_currentMeshID == meshID)
         return;
 
+    // glBindVertexArray(meshID);
     glBindVertexArray(meshID);
 
     m_currentMeshID = meshID;
@@ -297,10 +300,10 @@ void SceneRenderSystem::resetCurrentRenderPassKey()
 
 SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() const noexcept
 {
-    return [](const ResourceManagerType& rm, const LocalResourceManager& rml, SceneRenderSystem& rs,
-              std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
-              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
-              std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape, unsigned int renderTextureID)
+    return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
+              std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
+              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape,
+              unsigned int renderTextureID)
 
     {
         glBindFramebuffer(GL_FRAMEBUFFER, renderTextureID);
@@ -377,7 +380,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
         {
             if (!debugShape.empty())
             {
-                const Shader* shaderToUse = rml.get<Shader>("UniqueColor");
+                const Shader* shaderToUse = SystemsManager::getInstance()->resourceManager.get<Shader>("UniqueColor");
                 glUseProgram(shaderToUse->getID());
 
                 for (auto&& shape : debugShape)
@@ -407,14 +410,14 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline,
                              unsigned int renderTextureID) noexcept
 {
-    renderPipeline(res, m_localResources, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras,
-                   m_pLights, m_debugShape, renderTextureID);
+    renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
+                   m_debugShape, renderTextureID);
 }
 
 void SceneRenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,
                                         EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Sphere"),
+    m_debugShape.emplace_back(DebugShape{SystemsManager::getInstance()->resourceManager.get<Mesh>("Sphere"),
                                          toTransform(SplitTransform{Quat::identity(), position, Vec3(radius * 2.f)}),
                                          color, mode, enableBackFaceCullling});
 }
@@ -423,7 +426,7 @@ void SceneRenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation
                                       const ColorRGBA& color, EDebugShapeMode mode,
                                       bool enableBackFaceCullling) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{m_localResources.get<Mesh>("Cube"),
+    m_debugShape.emplace_back(DebugShape{SystemsManager::getInstance()->resourceManager.get<Mesh>("CubeDebug"),
                                          toTransform(SplitTransform{rotation, position, scale}), color, mode,
                                          enableBackFaceCullling});
 }
@@ -432,7 +435,7 @@ void SceneRenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, con
                                       EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(
-        DebugShape{m_localResources.get<Mesh>("Plane"),
+        DebugShape{SystemsManager::getInstance()->resourceManager.get<Mesh>("Plane"),
                    toTransform(SplitTransform{Quaternion::lookAt(Vec3::zero(), dir), position, scale}), color, mode,
                    enableBackFaceCullling});
 }
@@ -454,9 +457,11 @@ void SceneRenderSystem::addRenderer(Renderer* pRenderer) noexcept
     depthBufferArg.internalFormat = RenderBuffer::EInternalFormat::DEPTH_COMPONENT24;
 
     RenderTexture::CreateArg renderArg;
-    renderArg.colorBuffers.emplace_back(&m_localResources.add<Texture>("ColorBufferFBO", textureArg));
-    renderArg.depthBuffer = &m_localResources.add<RenderBuffer>("depthBufferFBO", depthBufferArg);
-    m_localResources.add<RenderTexture>("FBO", renderArg);
+    renderArg.colorBuffers.emplace_back(
+        &SystemsManager::getInstance()->resourceManager.add<Texture>("ColorBufferFBO", textureArg));
+    renderArg.depthBuffer =
+        &SystemsManager::getInstance()->resourceManager.add<RenderBuffer>("depthBufferFBO", depthBufferArg);
+    SystemsManager::getInstance()->resourceManager.add<RenderTexture>("FBO", renderArg);
 }
 
 void SceneRenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept
