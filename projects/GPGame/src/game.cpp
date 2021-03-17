@@ -128,8 +128,8 @@ void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
 
 Game::Game()
 {
-	//sm.addEmpty("main");
-	//sm.loadScene("main");
+	sm.addEmpty("main");
+	sm.loadScene("main");
 
 	iManager.bindInput(GLFW_KEY_W, "forward");
 	iManager.bindInput(GLFW_KEY_S, "back");

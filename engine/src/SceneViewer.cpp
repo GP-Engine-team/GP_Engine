@@ -14,7 +14,7 @@ namespace GPE
 {
 
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width, int height)
-    : scene{viewed}, cameraOwner{scene, {"Editor_camera_" + std::to_string((size_t)this), {}, nullptr}},
+    : m_pScene{&viewed}, cameraOwner{viewed, {"Editor_camera_" + std::to_string((size_t)this), {}, nullptr}},
       texture({width, height}), depthStencilBuffer({width, height, RenderBuffer::EInternalFormat::DEPTH24_STENCIL8})
 {
     GPE::InputManager& iManager = GPE::SystemsManager::getInstance()->inputManager;
@@ -54,7 +54,6 @@ SceneViewer::~SceneViewer()
     glDeleteFramebuffers(1, &framebufferID);
 }
 
-
 void SceneViewer::resize(int width, int height)
 {
     texture.resize(width, height);
@@ -63,11 +62,16 @@ void SceneViewer::resize(int width, int height)
     pCamera->setAspect(Camera::computeAspect(width, height));
 }
 
+void SceneViewer::bindScene(Scene& scene) noexcept
+{
+    cameraOwner.moveTowardScene(scene);
+    m_pScene = &scene;
+}
 
 void SceneViewer::render() const
 {
-    scene.sceneRenderer.draw(SystemsManager::getInstance()->resourceManager,
-                             scene.sceneRenderer.defaultRenderPipeline(), framebufferID);
+    m_pScene->sceneRenderer.draw(SystemsManager::getInstance()->resourceManager,
+                                 m_pScene->sceneRenderer.defaultRenderPipeline(), framebufferID);
 }
 
 } // namespace GPE

@@ -10,6 +10,16 @@
 using namespace GPE;
 using namespace GPM;
 
+void GameObject::moveTowardScene(Scene& newOwner) noexcept
+{
+    for (Component* pComponent : m_pComponents)
+    {
+        pComponent->moveTowardScene(newOwner);
+    }
+
+    pOwnerScene = &newOwner;
+}
+
 void GameObject::updateSelfAndChildren() noexcept
 {
     if (m_transform.isDirty())

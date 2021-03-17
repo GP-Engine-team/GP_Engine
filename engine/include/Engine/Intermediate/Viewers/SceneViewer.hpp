@@ -12,8 +12,10 @@ class Scene;
 
 class SceneViewer
 {
+protected:
+    Scene* m_pScene;
+
 public:
-    Scene&        scene;
     GameObject    cameraOwner;
     class Camera* pCamera;
 
@@ -25,6 +27,8 @@ public:
     SceneViewer(GPE::Scene& viewed, int width, int height);
     ~SceneViewer();
     void resize(int width, int height);
+
+    void bindScene(Scene& scene) noexcept;
 
     void render() const;
 };
