@@ -5,9 +5,13 @@
  */
 
 #pragma once
-#include "Engine/Core/Debug/Log.hpp"
-#include "PxFoundation.h"
-#include "foundation/PxErrorCallback.h"
+#include <Engine/Core/Debug/Log.hpp>
+#include <PxFoundation.h>
+#include <PxPhysics.h>
+#include <cooking/PxCooking.h>
+#include <foundation/PxErrorCallback.h>
+#include <pvd/PxPvd.h>
+
 namespace GPE
 {
 class UserErrorCallback : public physx::PxErrorCallback
@@ -26,7 +30,10 @@ public:
     ~PhysX();
 
 private:
-    physx::PxFoundation* m_foundation;
+    physx::PxFoundation* m_Foundation;
+    physx::PxPvd*        m_Pvd;
+    physx::PxPhysics*    m_Physics;
+    physx::PxCooking*    m_Cooking;
 };
 
 } // namespace GPE
