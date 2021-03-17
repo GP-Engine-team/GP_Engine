@@ -135,7 +135,8 @@ void Editor::renderLevelEditor()
 	const ImVec2 levelEditorSize{ ImGui::GetCurrentWindow()->ContentRegionRect.GetSize() };
 	//m_sceneView.resize(static_cast<int>(levelEditorSize.x), static_cast<int>(levelEditorSize.y));
 	m_sceneEditor.render();
-	ImGui::Image((void*)(intptr_t)m_sceneEditor.texture.getID(), levelEditorSize);
+	ImGui::Image((void*)(intptr_t)m_sceneEditor.texture.getID(), levelEditorSize,
+				 ImVec2{.0f, 1.f}, ImVec2{1.f, .0f});
 	ImGui::End();
 }
 
@@ -145,7 +146,7 @@ void Editor::renderInspector() const
 	ImGui::Begin("Inspector");
 		if (m_inspectedObject != nullptr)
 		{
-			// Reflexion of m_inspectedObject
+			ImGui::Text("Object %s selected", m_inspectedObject->getName().c_str());
 		}
 
 		else
@@ -156,39 +157,54 @@ void Editor::renderInspector() const
 }
 
 
-GameObject* Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem) const
+void Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem)
 {
-	ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-	static int nodeClicked = -1;
-	int selectionMask = (1 << 2);
-	GameObject* selectedGameObject = nullptr;
+	ImGuiTreeNodeFlags nodeFlag	   = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	int nodeClicked				   = -1;
+	// TODO: this was for an example with 6 elements, adapt it
+	static int selectionMask	   = (1 << 2);
+	GameObject* selectedGameObject = m_inspectedObject;
 
 	if (gameObject.children.empty())
 	{
 		nodeFlag |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 		ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
+
+		const bool isSelected = (selectionMask & (1 << idElem)) != 0;
+
+		if (isSelected)
+		{
+			nodeFlag |= ImGuiTreeNodeFlags_Selected;
+		}
+
 		if (ImGui::IsItemClicked())
-			nodeClicked = idElem;
+		{
+			nodeClicked       = idElem;
+			m_inspectedObject = &gameObject;
+		}
 	}
+
 	else
 	{
 		const bool isSelected = (selectionMask & (1 << idElem)) != 0;
 
 		if (isSelected)
+		{
 			nodeFlag |= ImGuiTreeNodeFlags_Selected;
+		}
 
 		bool nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
 		if (ImGui::IsItemClicked())
 		{
 			nodeClicked = idElem;
-			selectedGameObject = &gameObject;
+			m_inspectedObject = &gameObject;
 		}
 
 		if (nodeOpen)
 		{
 			for (auto&& child : gameObject.children)
 			{
-				selectedGameObject = recursiveSceneGraphNode(*child.get(), ++idElem);
+				recursiveSceneGraphNode(*child.get(), ++idElem);
 			}
 			ImGui::TreePop();
 		}
@@ -203,15 +219,13 @@ GameObject* Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem) 
 		else //if (!(selectionMask & (1 << nodeClicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
 			selectionMask = (1 << nodeClicked);           // Click to single-select
 	}
-
-	return selectedGameObject;
 }
 
 
 void Editor::renderSceneGraph()
 {
 	ImGui::Begin("Scene Graph");
-		m_inspectedObject = recursiveSceneGraphNode(m_sceneEditor.scene.world);
+		recursiveSceneGraphNode(m_sceneEditor.scene.world);
 	ImGui::End();
 }
 

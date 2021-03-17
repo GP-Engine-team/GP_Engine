@@ -47,7 +47,7 @@ private:
 		* @param idElem
 		* @return the pointer to selected game object. Else return null ptr
 	*/
-	GPE::GameObject* recursiveSceneGraphNode(GPE::GameObject& gameObject, int idElem = 0) const;
+	void recursiveSceneGraphNode(GPE::GameObject& gameObject, int idElem = 0);
 
 public:
 	Editor(GLFWwindow* window);
