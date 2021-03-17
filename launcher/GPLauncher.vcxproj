@@ -161,7 +161,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>GPEngine.lib;GPGame.lib;glfw3.lib;RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(GPEngineDir)third_party\lib\Refureku;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories);$(GPEngineDir)third_party\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)third_party\lib\Refureku;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories);$(GPEngineDir)third_party\lib;$(GPEngineDir)\third_party\libDebug\Refureku</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -192,7 +192,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>GPEngine.lib;GPGame.lib;glfw3.lib;RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories);$(GPEngineDir)third_party\lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories);$(GPEngineDir)third_party\lib;$(GPEngineDir)\third_party\libRelease\Refureku</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>
