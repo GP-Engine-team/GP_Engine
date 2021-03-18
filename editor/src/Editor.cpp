@@ -5,7 +5,7 @@
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
-#include "imgui/imgui.h"
+
 #include "imgui/imgui_internal.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -14,6 +14,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 using namespace GPE;
 
@@ -36,9 +37,6 @@ namespace Editor
 		editor->m_framebufferWidth = newWidth;
 		editor->m_framebufferHeight = newHeight;
 	}
-
-
-
 
 	/* ========================== Private methods ========================== */
 	GPE::Scene& Editor::loadDefaultScene() const
@@ -224,7 +222,19 @@ namespace Editor
 		ImGui::End();
 	}
 
-	void Editor::renderExplorer() const
+	void Editor::renderLog()
+	{
+		ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+		logApp.Draw("Example: Log");
+
+		ImGui::PopStyleVar();
+		ImGui::EndChild();
+	}
+
+	void Editor::renderExplorer()
 	{
 		ImGui::Begin("Explorer");
 		if (ImGui::BeginTabBar("Explorer"))
@@ -237,13 +247,14 @@ namespace Editor
 
 			if (ImGui::BeginTabItem("Logs"))
 			{
-				ImGui::Text("This is a log");
-				ImGui::Text("And another log");
+				renderLog();
 				ImGui::EndTabItem();
 			}
 
 			if (ImGui::BeginTabItem("Profiler"))
 			{
+				Log::closeAndTryToCreateFile();
+				exit(1);
 				ImGui::Text("Plots, and graphs, and numbers...");
 				ImGui::EndTabItem();
 			}
@@ -260,6 +271,15 @@ namespace Editor
 	{
 		setupGLFWWindow();
 		setupDearImGui();
+
+		Log::logCallBack = [&](const char* msg)
+		{
+			//Log in console
+			std::cout << msg;
+
+			//Log in log inspector
+			logApp.AddLog(msg);
+		};
 	}
 
 	void Editor::update()
