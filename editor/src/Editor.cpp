@@ -6,6 +6,7 @@
 #include "Engine/Intermediate/GameObject.hpp"
 
 
+#include <imgui/imgui.h>
 #include "imgui/imgui_internal.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -228,7 +229,7 @@ namespace Editor
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-		logApp.Draw("Example: Log");
+		m_logInspector.draw("Example: Log");
 
 		ImGui::PopStyleVar();
 		ImGui::EndChild();
@@ -278,7 +279,7 @@ namespace Editor
 			std::cout << msg;
 
 			//Log in log inspector
-			logApp.AddLog(msg);
+			m_logInspector.addLog(msg);
 		};
 	}
 
@@ -308,7 +309,7 @@ namespace Editor
 
 	void Editor::render()
 	{
-		ImGui::ShowDemoWindow(nullptr);
+		//ImGui::ShowDemoWindow(nullptr);
 
 		ImGui::Render();
 

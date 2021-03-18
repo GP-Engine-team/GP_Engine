@@ -33,6 +33,7 @@
     <ClInclude Include="include\Editor\EditorStartup.hpp" />
     <ClInclude Include="include\Editor\Inspectors\Inspector.hpp" />
     <ClInclude Include="include\Editor\ExternalDeclarations.hpp" />
+    <ClInclude Include="include\Editor\LogInspector.hpp" />
     <ClInclude Include="include\Editor\SceneEditor.hpp" />
     <ClInclude Include="include\Editor\Viewport.hpp" />
   </ItemGroup>
