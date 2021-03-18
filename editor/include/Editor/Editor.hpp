@@ -7,6 +7,7 @@
 #pragma once
 
 #include "LogInspector.hpp"
+#include "ProjectContent.hpp"
 #include "Engine/Intermediate/Viewers/SceneViewer.hpp"
 #include <vector>
 
@@ -30,6 +31,7 @@ namespace Editor
 		int							  m_framebufferHeight;
 		bool					      m_showAppStyleEditor = false;
 		LogInspector			      m_logInspector;
+		ProjectContent				  m_projectContent;
 
 		GPE::Scene& loadDefaultScene() const;
 

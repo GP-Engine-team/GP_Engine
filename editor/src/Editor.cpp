@@ -242,7 +242,7 @@ namespace Editor
 		{
 			if (ImGui::BeginTabItem("Project"))
 			{
-				ImGui::Text("Project's content");
+				m_projectContent.render();
 				ImGui::EndTabItem();
 			}
 
@@ -309,7 +309,7 @@ namespace Editor
 
 	void Editor::render()
 	{
-		//ImGui::ShowDemoWindow(nullptr);
+		ImGui::ShowDemoWindow(nullptr);
 
 		ImGui::Render();
 

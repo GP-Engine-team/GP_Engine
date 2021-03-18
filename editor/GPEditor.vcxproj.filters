@@ -72,6 +72,9 @@
     <ClInclude Include="include\Editor\LogInspector.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Editor\ProjectContent.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GPEditor.props" />
