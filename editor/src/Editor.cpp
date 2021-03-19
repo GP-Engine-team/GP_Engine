@@ -254,8 +254,6 @@ namespace Editor
 
 			if (ImGui::BeginTabItem("Profiler"))
 			{
-				Log::closeAndTryToCreateFile();
-				exit(1);
 				ImGui::Text("Plots, and graphs, and numbers...");
 				ImGui::EndTabItem();
 			}
