@@ -1,5 +1,5 @@
-﻿#include "Engine/ECS/System/SystemsManager.hpp"
+﻿#include "Engine/Engine.hpp"
 
 using namespace GPE;
 
-SystemsManager* SystemsManager::m_instance = nullptr;
+Engine* Engine::m_instance = nullptr;

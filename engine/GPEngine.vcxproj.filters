@@ -49,9 +49,6 @@
     <ClCompile Include="src\SpotLight.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\SystemsManager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\Texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -109,6 +106,7 @@
     <ClCompile Include="src\SceneViewer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\SystemsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -303,9 +301,6 @@
     <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -366,6 +361,7 @@
     <ClInclude Include="include\Engine\Resources\Type.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -428,9 +424,6 @@
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\ECS\Component\TransformComponent.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\ECS\System\InputManager.inl">
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\ECS\System\InputManagerGLFW.inl">

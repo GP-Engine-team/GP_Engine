@@ -7,7 +7,7 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/Tools/Format.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 
 using namespace GPE;
 using namespace std;
@@ -153,7 +153,7 @@ Renderer::Renderer(Window& window) noexcept : m_pWindow{&window}
 
 Renderer::~Renderer() noexcept
 {
-    SystemsManager::getInstance()->renderSystem.removeRenderer(this);
+    Engine::getInstance()->renderSystem.removeRenderer(this);
 
     Log::log("GLFW / OpenGL 4.6 renderer release");
 }

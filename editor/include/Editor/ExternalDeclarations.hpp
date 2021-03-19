@@ -9,6 +9,6 @@ class AbstractGame* createGameInstance() { return nullptr; }
 */
 void destroyGameInstance(class AbstractGame* game) {}
 /**
- * @brief Signature of setGameSystemsManagerInstance, whose definition should be inside a dll.
+ * @brief Signature of setGameEngineInstance, whose definition should be inside a dll.
 */
-void setGameSystemsManagerInstance(GPE::SystemsManager& systemManager) {}
+void setGameEngineInstance(GPE::Engine& engine) {}

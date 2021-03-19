@@ -2,7 +2,7 @@
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 
 #include "imgui/imgui.h"
 #include "glad/glad.h"
@@ -38,13 +38,13 @@ namespace Editor
 		  } },
 		m_update{ [&](double fixedUnscaledDeltaTime, double deltaTime)
 		{
-		  GPE::SystemsManager::getInstance()->inputManager.processInput();
+		  GPE::Engine::getInstance()->inputManager.processInput();
 		  if (m_game != nullptr)
 			  m_game->update(fixedUnscaledDeltaTime, deltaTime);
 		} },
 			  m_render{ [&]()
 			  {
-				  GPE::SystemsManager::getInstance()->renderer.swapBuffer();
+				  GPE::Engine::getInstance()->renderer.swapBuffer();
 
 				  /*if (m_game != nullptr)
 					  m_game->render();*/
@@ -53,12 +53,12 @@ namespace Editor
 				  m_editor.render();
 			  } },
 			m_reloadableCpp{ gameDllPath },
-				  m_editor{ initDearImGui(GPE::SystemsManager::getInstance()->window.getGLFWWindow()) },
+				  m_editor{ initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()) },
 				  m_game{ nullptr }
 			  {
 				  ADD_PROCESS(m_reloadableCpp, createGameInstance);
 				  ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
-				  ADD_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
+				  ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
 
 				  m_reloadableCpp.onUnload = [&]()
 				  {
@@ -66,7 +66,7 @@ namespace Editor
 				  };
 
 
-				  GPE::SystemsManager::getInstance()->inputManager.setupCallbacks(GPE::SystemsManager::getInstance()->window.getGLFWWindow());
+				  GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
 			  }
 
 
@@ -112,13 +112,13 @@ namespace Editor
 					  m_game->update(0, 0);
 				  }
 
-				  GPE::SystemsManager::getInstance()->timeSystem.update(m_update, m_fixedUpdate, m_render);
+				  GPE::Engine::getInstance()->timeSystem.update(m_update, m_fixedUpdate, m_render);
 				  isRunning = m_editor.isRunning();
 
 				  if (m_reloadableCpp.refresh())
 				  {
-					  auto sync = GET_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
-					  (*sync)(*GPE::SystemsManager::getInstance());
+					  auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
+					  (*sync)(*GPE::Engine::getInstance());
 					  startGame();
 				  }
 			  }

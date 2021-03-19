@@ -2,14 +2,14 @@
 
 #include "GLFW/glfw3.h"
 
-extern "C" void setGameSystemsManagerInstance(GPE::SystemsManager & systemManager)
+extern "C" void setGameEngineInstance(GPE::Engine & engine)
 {
-	GPE::SystemsManager::setInstance(systemManager);
+	GPE::Engine::setInstance(engine);
 }
 
-extern "C" GPE::SystemsManager & getGameSystemsManagerInstance()
+extern "C" GPE::Engine & getGameEngineInstance()
 {
-	return *GPE::SystemsManager::getInstance();
+	return *GPE::Engine::getInstance();
 }
 
 extern "C" void setContextCurrent(GLFWwindow * window)

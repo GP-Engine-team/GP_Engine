@@ -1,6 +1,6 @@
 ﻿#include "Editor/Editor.hpp"
 
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 #include "Engine/Resources/SceneManager.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
@@ -42,7 +42,7 @@ namespace Editor
 	/* ========================== Private methods ========================== */
 	GPE::Scene& Editor::loadDefaultScene() const
 	{
-		GPE::SceneManager& sm = GPE::SystemsManager::getInstance()->sceneManager;
+		GPE::SceneManager& sm = GPE::Engine::getInstance()->sceneManager;
 		sm.addEmpty("Default scene");
 		sm.loadScene("Default scene");
 
@@ -142,7 +142,7 @@ namespace Editor
 		const ImVec2 levelEditorSize{ ImGui::GetCurrentWindow()->ContentRegionRect.GetSize() };
 		//m_sceneView.resize(static_cast<int>(levelEditorSize.x), static_cast<int>(levelEditorSize.y));
 
-		m_sceneEditor.bindScene(*SystemsManager::getInstance()->sceneManager.getCurrentScene());
+		m_sceneEditor.bindScene(*Engine::getInstance()->sceneManager.getCurrentScene());
 		m_sceneEditor.render();
 		ImGui::Image((void*)(intptr_t)m_sceneEditor.texture.getID(), levelEditorSize,
 			ImVec2{ .0f, 1.f }, ImVec2{ 1.f, .0f });
@@ -219,7 +219,7 @@ namespace Editor
 	void Editor::renderSceneGraph()
 	{
 		ImGui::Begin("Scene Graph");
-		recursiveSceneGraphNode(SystemsManager::getInstance()->sceneManager.getCurrentScene()->world);
+		recursiveSceneGraphNode(Engine::getInstance()->sceneManager.getCurrentScene()->world);
 		ImGui::End();
 	}
 

@@ -9,7 +9,7 @@
 #include "Engine/ECS/Component/BehaviourComponent.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
 #include <iostream>
@@ -96,7 +96,7 @@ public:
     void update(float deltaTime) final
     {
         speed = 1;
-        rotate(GPE::SystemsManager::getInstance()->inputManager.getCursor().deltaPos);
+        rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
     }
 };
 } /*namespace GPG*/

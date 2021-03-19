@@ -14,7 +14,7 @@
 #include "Engine/ECS/Component/Light/Light.hpp"
 #include "Engine/ECS/Component/Model.hpp"
 #include "Engine/ECS/System/RenderSystem.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/RenderBuffer.hpp"
 #include "Engine/Resources/RenderTexture.hpp"
@@ -80,25 +80,25 @@ void SceneRenderSystem::displayGameObjectRef(const GameObject& go, float dist, f
 
 SceneRenderSystem::SceneRenderSystem() noexcept
 {
-    SystemsManager::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
+    Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                                "./resources/shaders/fSimpleColor.fs");
 
-    SystemsManager::getInstance()->resourceManager.add<Shader>("PostProcess", "./resources/shaders/vPostProcess.vs",
+    Engine::getInstance()->resourceManager.add<Shader>("PostProcess", "./resources/shaders/vPostProcess.vs",
                                                                "./resources/shaders/fPostProcess.fs");
 
-    SystemsManager::getInstance()->resourceManager.add<Mesh>("ScreenPlan",
+    Engine::getInstance()->resourceManager.add<Mesh>("ScreenPlan",
                                                              Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
-    SystemsManager::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
-    SystemsManager::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
-    SystemsManager::getInstance()->resourceManager.add<Mesh>("Plane",
+    Engine::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
+    Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
+    Engine::getInstance()->resourceManager.add<Mesh>("Plane",
                                                              Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
 
-    SystemsManager::getInstance()->renderSystem.addSceneRenderSystem(this);
+    Engine::getInstance()->renderSystem.addSceneRenderSystem(this);
 }
 
 SceneRenderSystem::~SceneRenderSystem() noexcept
 {
-    SystemsManager::getInstance()->renderSystem.removeSceneRenderSystem(this);
+    Engine::getInstance()->renderSystem.removeSceneRenderSystem(this);
 }
 
 bool SceneRenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
@@ -380,7 +380,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
         {
             if (!debugShape.empty())
             {
-                const Shader* shaderToUse = SystemsManager::getInstance()->resourceManager.get<Shader>("UniqueColor");
+                const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
                 glUseProgram(shaderToUse->getID());
 
                 for (auto&& shape : debugShape)
@@ -419,7 +419,7 @@ void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline rend
 void SceneRenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,
                                         EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{SystemsManager::getInstance()->resourceManager.get<Mesh>("Sphere"),
+    m_debugShape.emplace_back(DebugShape{Engine::getInstance()->resourceManager.get<Mesh>("Sphere"),
                                          toTransform(SplitTransform{Quat::identity(), position, Vec3(radius * 2.f)}),
                                          color, mode, enableBackFaceCullling});
 }
@@ -428,7 +428,7 @@ void SceneRenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation
                                       const ColorRGBA& color, EDebugShapeMode mode,
                                       bool enableBackFaceCullling) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{SystemsManager::getInstance()->resourceManager.get<Mesh>("CubeDebug"),
+    m_debugShape.emplace_back(DebugShape{Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug"),
                                          toTransform(SplitTransform{rotation, position, scale}), color, mode,
                                          enableBackFaceCullling});
 }
@@ -437,7 +437,7 @@ void SceneRenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, con
                                       EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(
-        DebugShape{SystemsManager::getInstance()->resourceManager.get<Mesh>("Plane"),
+        DebugShape{Engine::getInstance()->resourceManager.get<Mesh>("Plane"),
                    toTransform(SplitTransform{Quaternion::lookAt(Vec3::zero(), dir), position, scale}), color, mode,
                    enableBackFaceCullling});
 }
@@ -460,10 +460,10 @@ void SceneRenderSystem::addRenderer(Renderer* pRenderer) noexcept
 
     RenderTexture::CreateArg renderArg;
     renderArg.colorBuffers.emplace_back(
-        &SystemsManager::getInstance()->resourceManager.add<Texture>("ColorBufferFBO", textureArg));
+        &Engine::getInstance()->resourceManager.add<Texture>("ColorBufferFBO", textureArg));
     renderArg.depthBuffer =
-        &SystemsManager::getInstance()->resourceManager.add<RenderBuffer>("depthBufferFBO", depthBufferArg);
-    SystemsManager::getInstance()->resourceManager.add<RenderTexture>("FBO", renderArg);
+        &Engine::getInstance()->resourceManager.add<RenderBuffer>("depthBufferFBO", depthBufferArg);
+    Engine::getInstance()->resourceManager.add<RenderTexture>("FBO", renderArg);
 }
 
 void SceneRenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept
