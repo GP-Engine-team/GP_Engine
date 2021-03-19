@@ -82,10 +82,11 @@ protected:
 
 protected:
     // Bitfiled of the setting. By default is set to : DISPLAY_HOUR | DISPLAY_WITH_COLOR | PRINT_LOG_FILE_ERROR
-    std::string   fileLogPath;
-    std::ofstream fileLog;
-    uint8_t       settings;
-    bool          releaseLogFile; // true if log file in'st keep
+    std::string              fileLogPath;
+    std::vector<std::string> logs;
+    std::ofstream            fileLog;
+    uint8_t                  settings;
+    bool                     releaseLogFile; // true if log file in'st keep
 
 protected:
     Log();
@@ -127,6 +128,8 @@ public:
     {
         m_instance = &log;
     }
+
+    inline const std::vector<std::string>& getLogs() noexcept;
 
     /**
      * @brief Save log file if error happen else destroy log file

@@ -12,3 +12,4 @@ void destroyGameInstance(class AbstractGame* game) {}
  * @brief Signature of setGameEngineInstance, whose definition should be inside a dll.
 */
 void setGameEngineInstance(GPE::Engine& engine) {}
+void setLogInstance(GPE::Log& log) {}

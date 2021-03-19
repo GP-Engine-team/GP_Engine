@@ -84,7 +84,6 @@ namespace GPG {
 
 		inline void leave()
 		{
-			GPE::Log::getInstance()->closeAndTryToCreateFile();
 			exit(666);
 		}
 

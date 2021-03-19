@@ -1,5 +1,10 @@
 ﻿#include "Engine/Core/Debug/Log.hpp"
 
+inline const std::vector<std::string>& Log::getLogs() noexcept
+{
+    return logs;
+}
+
 inline void Log::closeAndTryToCreateFile() noexcept
 {
     if (!(!getSettingState(ESetting::ALWAYS_PRINT_LOG_FILE) || releaseLogFile))
@@ -14,6 +19,7 @@ inline void Log::logAddMsg(const std::string& msg) noexcept
     if (logCallBack)
         logCallBack(msg.c_str());
 
+    logs.emplace_back(msg);
     fileLog << msg;
 }
 

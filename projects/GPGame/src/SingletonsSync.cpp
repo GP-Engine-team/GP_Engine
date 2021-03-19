@@ -2,6 +2,16 @@
 
 #include "GLFW/glfw3.h"
 
+extern "C" void setLogInstance(GPE::Log & log)
+{
+	GPE::Log::setInstance(log);
+}
+
+extern "C" GPE::Log & getLogInstance()
+{
+	return *GPE::Log::getInstance();
+}
+
 extern "C" void setGameEngineInstance(GPE::Engine & engine)
 {
 	GPE::Engine::setInstance(engine);

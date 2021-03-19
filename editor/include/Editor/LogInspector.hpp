@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "Engine/Core//Debug/Log.hpp"
 #include <imgui/imgui.h>
 
 namespace Editor
@@ -23,6 +24,12 @@ namespace Editor
 		{
 			m_autoScroll = true;
 			clear();
+
+			for (auto&& str : GPE::Log::getInstance()->getLogs())
+			{
+				std::cout << str;
+				addLog(str.c_str());
+			}
 		}
 
 		~LogInspector()

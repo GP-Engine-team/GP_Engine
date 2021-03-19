@@ -29,98 +29,100 @@ namespace Editor
 		return window;
 	}
 
-
 	EditorStartup::EditorStartup()
-		: m_fixedUpdate{ [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+		: m_fixedUpdate{
+		[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
 		  {
 			  if (m_game != nullptr)
 				  m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
 		  } },
-		m_update{ [&](double fixedUnscaledDeltaTime, double deltaTime)
+		m_update{
+		[&](double fixedUnscaledDeltaTime, double deltaTime)
 		{
 		  GPE::Engine::getInstance()->inputManager.processInput();
 		  if (m_game != nullptr)
 			  m_game->update(fixedUnscaledDeltaTime, deltaTime);
 		} },
-			  m_render{ [&]()
-			  {
-				  GPE::Engine::getInstance()->renderer.swapBuffer();
+			  m_render{
+			  [&]()
+				  {
+					  GPE::Engine::getInstance()->renderer.swapBuffer();
 
-				  /*if (m_game != nullptr)
-					  m_game->render();*/
-
-				  m_editor.update();
-				  m_editor.render();
-			  } },
+					  m_editor.update();
+					  m_editor.render();
+				  } },
 			m_reloadableCpp{ gameDllPath },
-				  m_editor{ initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()) },
-				  m_game{ nullptr }
-			  {
-				  ADD_PROCESS(m_reloadableCpp, createGameInstance);
-				  ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
-				  ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
-
-				  m_reloadableCpp.onUnload = [&]()
+					  m_editor{ initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()) },
+					  m_game{ nullptr }
 				  {
-					  closeGame();
-				  };
+					  ADD_PROCESS(m_reloadableCpp, createGameInstance);
+					  ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
+					  ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
+					  ADD_PROCESS(m_reloadableCpp, setLogInstance);
 
+					  m_reloadableCpp.onUnload = [&]()
+					  {
+						  closeGame();
+					  };
 
-				  GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
-			  }
-
-
-			  EditorStartup::~EditorStartup()
-			  {
-				  if (m_game != nullptr)
-				  {
-					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
-					  destroyer(m_game);
+					  GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
 				  }
 
-				  ImGui_ImplOpenGL3_Shutdown();
-				  ImGui_ImplGlfw_Shutdown();
-				  ImGui::DestroyContext();
-			  }
-
-
-			  void EditorStartup::startGame()
-			  {
-				  if (m_game != nullptr)
+				  EditorStartup::~EditorStartup()
 				  {
-					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
-					  destroyer(m_game);
-				  }
-				  auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
-				  m_game = a();
-			  }
+					  if (m_game != nullptr)
+					  {
+						  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+						  destroyer(m_game);
+					  }
 
-			  void EditorStartup::closeGame()
-			  {
-				  if (m_game != nullptr)
-				  {
-					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
-					  destroyer(m_game);
-					  m_game = nullptr;
-				  }
-			  }
-
-			  void EditorStartup::update()
-			  {
-				  if (m_game != nullptr)
-				  {
-					  m_game->update(0, 0);
+					  ImGui_ImplOpenGL3_Shutdown();
+					  ImGui_ImplGlfw_Shutdown();
+					  ImGui::DestroyContext();
 				  }
 
-				  GPE::Engine::getInstance()->timeSystem.update(m_update, m_fixedUpdate, m_render);
-				  isRunning = m_editor.isRunning();
 
-				  if (m_reloadableCpp.refresh())
+				  void EditorStartup::startGame()
 				  {
-					  auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
-					  (*sync)(*GPE::Engine::getInstance());
-					  startGame();
+					  if (m_game != nullptr)
+					  {
+						  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+						  destroyer(m_game);
+					  }
+					  auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
+					  m_game = a();
 				  }
-			  }
+
+				  void EditorStartup::closeGame()
+				  {
+					  if (m_game != nullptr)
+					  {
+						  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+						  destroyer(m_game);
+						  m_game = nullptr;
+					  }
+				  }
+
+				  void EditorStartup::update()
+				  {
+					  if (m_game != nullptr)
+					  {
+						  m_game->update(0, 0);
+					  }
+
+					  GPE::Engine::getInstance()->timeSystem.update(m_update, m_fixedUpdate, m_render);
+					  isRunning = m_editor.isRunning();
+
+					  if (m_reloadableCpp.refresh())
+					  {
+						  auto syncLog = GET_PROCESS(m_reloadableCpp, setLogInstance);
+						  (*syncLog)(*GPE::Log::getInstance());
+
+						  auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
+						  (*sync)(*GPE::Engine::getInstance());
+
+						  startGame();
+					  }
+				  }
 
 } // End of namespace Editor

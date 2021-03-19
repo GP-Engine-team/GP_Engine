@@ -279,6 +279,7 @@ namespace Editor
 			//Log in log inspector
 			m_logInspector.addLog(msg);
 		};
+
 	}
 
 	void Editor::update()

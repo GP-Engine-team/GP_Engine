@@ -54,7 +54,6 @@ public:
 
 	virtual ~Game() final
 	{
-		GPE::Log::getInstance()->closeAndTryToCreateFile();
 	}
 };
 
