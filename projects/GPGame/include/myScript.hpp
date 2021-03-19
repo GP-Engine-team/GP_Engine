@@ -66,9 +66,9 @@ public:
         {
             m_gameObject.getTransform().setRotation(
                 m_gameObject.getTransform().getSpacialAttribut().rotation *
-                GPM::Quaternion::angleAxis(-deltaDisplacement.y * mouseSpeed, GPM::Vec3::right()));
+                GPM::Quaternion::angleAxis(deltaDisplacement.y * mouseSpeed, GPM::Vec3::right()));
             m_gameObject.getTransform().setRotation(
-                GPM::Quaternion::angleAxis(-deltaDisplacement.x * mouseSpeed, GPM::Vec3::up()) *
+                GPM::Quaternion::angleAxis(deltaDisplacement.x * mouseSpeed, GPM::Vec3::up()) *
                 m_gameObject.getTransform().getSpacialAttribut().rotation);
         }
     }

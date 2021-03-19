@@ -40,6 +40,9 @@
     <ClCompile Include="src\ObjParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\PhysXSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\PointLight.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -199,6 +202,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\PhysXSystem.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\System\RenderSystem.hpp">

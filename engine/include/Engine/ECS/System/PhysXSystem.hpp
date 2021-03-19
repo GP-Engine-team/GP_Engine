@@ -6,8 +6,10 @@
 
 #pragma once
 #include <Engine/Core/Debug/Log.hpp>
-#include <PxFoundation.h>
 #include <PxPhysics.h>
+#include <PxScene.h>
+#include <PxSceneDesc.h>
+#include <Pxfoundation.h>
 #include <cooking/PxCooking.h>
 #include <foundation/PxErrorCallback.h>
 #include <pvd/PxPvd.h>
@@ -23,17 +25,20 @@ public:
     }
 };
 
-class PhysX
+class PhysXSystem
 {
 public:
-    PhysX();
-    ~PhysX();
+    PhysXSystem();
+    ~PhysXSystem();
+
+    void advance(const double& deltaTime) noexcept;
 
 private:
     physx::PxFoundation* m_Foundation;
     physx::PxPvd*        m_Pvd;
     physx::PxPhysics*    m_Physics;
     physx::PxCooking*    m_Cooking;
+    physx::PxScene*      m_Scene;
 };
 
 } // namespace GPE

@@ -10,6 +10,7 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
+#include "Engine/ECS/System/PhysXSystem.hpp"
 #include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
@@ -37,11 +38,12 @@ public:
     ResourceManagerType resourceManager;
     RenderSystem        renderSystem;
     SceneManager        sceneManager;
+    PhysXSystem         physXSystem;
 
 protected:
     SystemsManager()
         : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          behaviourSystem{}, resourceManager{}, renderSystem{}, sceneManager{}
+          behaviourSystem{}, resourceManager{}, renderSystem{}, sceneManager{}, physXSystem{}
     {
         renderSystem.addRenderer(&renderer);
     }
