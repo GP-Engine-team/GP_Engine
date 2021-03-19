@@ -25,6 +25,11 @@ namespace Editor
 			clear();
 		}
 
+		~LogInspector()
+		{
+			clear();
+		}
+
 		void clear()
 		{
 			m_buf.clear();
