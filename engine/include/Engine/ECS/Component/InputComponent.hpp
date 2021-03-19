@@ -16,9 +16,10 @@
 
 enum class EKeyMode
 {
-    KEY_PRESS   = 0,
-    KEY_REPEAT  = 1,
-    KEY_RELEASE = 2,
+    KEY_PRESSED  = 0,
+    KEY_RELEASED = 2,
+    KEY_DOWN     = 3,
+    KEY_UP       = 4,
 };
 
 namespace GPE

@@ -334,7 +334,6 @@
     <None Include="include\Engine\ECS\Component\Component.inl" />
     <None Include="include\Engine\ECS\Component\Light\Light.inl" />
     <None Include="include\Engine\ECS\Component\TransformComponent.inl" />
-    <None Include="include\Engine\ECS\System\InputManager.inl" />
     <None Include="include\Engine\ECS\System\InputManagerGLFW.inl" />
     <None Include="include\Engine\ECS\System\TimeSystem.inl" />
     <None Include="include\Engine\Intermediate\DataChunk.inl" />
