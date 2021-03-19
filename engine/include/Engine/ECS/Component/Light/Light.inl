@@ -4,18 +4,18 @@ Light::Light(GameObject& owner, const AmbiantComponent& ambient, const DiffuseCo
              const SpecularComponent& specular)
     : Component{owner}, m_ambientComp(ambient), m_diffuseComp(diffuse), m_specularComp(specular)
 {
-    m_gameObject.scene.sceneRenderer.addLight(this);
+    m_gameObject.pOwnerScene->sceneRenderer.addLight(this);
 }
 
 Light::Light(GameObject& owner, const CreateArg& arg)
     : Component{owner}, m_ambientComp(arg.ambient), m_diffuseComp(arg.diffuse), m_specularComp(arg.specular)
 {
-    m_gameObject.scene.sceneRenderer.addLight(this);
+    m_gameObject.pOwnerScene->sceneRenderer.addLight(this);
 }
 
 Light::~Light()
 {
-    m_gameObject.scene.sceneRenderer.removeLight(this);
+    m_gameObject.pOwnerScene->sceneRenderer.removeLight(this);
 }
 
 const AmbiantComponent& Light::getAmbient() const noexcept

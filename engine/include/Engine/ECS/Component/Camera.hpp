@@ -14,7 +14,6 @@
 
 // in inl
 #include "Engine/Intermediate/GameObject.hpp"
-#include "GPM/Vector3.hpp"
 
 namespace GPE
 {
@@ -45,12 +44,12 @@ public:
 
     struct ProjectionInfo
     {
-        std::string     name = {""};
+        std::string     name = "";
         EProjectionType type = EProjectionType::NONE;
 
         float aspect = 16.f / 9.f;
-        float near   = 0.001f;
-        float far    = 10.f;
+        float znear  = 0.001f;
+        float zfar   = 10.f;
         float hSide  = 1.f;
         float vSide  = 1.f;
         float fovY   = 70.f;
@@ -59,11 +58,11 @@ public:
 
     struct PerspectiveCreateArg
     {
-        float       aspect = 16.f / 9.f;
-        float       near   = 0.001f;
-        float       far    = 10.f;
-        float       fovY   = 70.f;
-        const char* name   = "Camera";
+        float       aspect  = 16.f / 9.f;
+        float       nearVal = 0.001f;
+        float       farVal  = 10.f;
+        float       fovY    = 70.f;
+        const char* name    = "Camera";
     };
 
     struct OrthographicCreateArg
@@ -82,6 +81,14 @@ protected:
     GPM::Mat4 m_viewMatrix;
     GPM::Mat4 m_viewProjectionMatrix;
 
+    void updateProjection();
+
+public:
+    static float computeAspect(float width, float height) noexcept
+    {
+        return width / height;
+    }
+
 public:
     Camera() noexcept                    = delete;
     Camera(const Camera& other) noexcept = delete;
@@ -91,15 +98,16 @@ public:
     Camera& operator=(Camera&& other) noexcept = default;
     virtual ~Camera() noexcept                 = default;
 
+    void moveTowardScene(class Scene& newOwner) override;
+
     /**
      * @brief Construct a new perspective camera object
      *
      * @param position
      * @param rotation
      * @param aspect    : width/height
-     * @param near      : must be > 0
-     * @param far
-     * @param fovY      : by default to 70 (human FovY)
+     * @param znear     : must be > 0
+     * @param zfar     * @param fovY      : by default to 70 (human FovY)
      * @param name
      */
     Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept;
@@ -113,8 +121,8 @@ public:
      * @param right
      * @param bottom
      * @param top
-     * @param nearVal
-     * @param farVal
+     * @param znear
+     * @param zfar
      * @param name
      */
     Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept;

@@ -52,6 +52,12 @@ public:
     Light& operator=(Light const& other) = delete;
     Light& operator=(Light&& other) = default;
 
+    void moveTowardScene(Scene& newOwner) final
+    {
+        m_gameObject.pOwnerScene->sceneRenderer.removeLight(this);
+        newOwner.sceneRenderer.addLight(this);
+    }
+
     virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept
     {
         lb.push_back({m_ambientComp,

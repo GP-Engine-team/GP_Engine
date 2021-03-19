@@ -123,5 +123,5 @@ public:
     {
         rotate(GPE::SystemsManager::getInstance()->inputManager.getCursor().deltaPos);
     }
-};
+}; // namespace GPG
 } /*namespace GPG*/

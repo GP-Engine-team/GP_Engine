@@ -152,7 +152,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;$(GPEngineDir)/third_party/include/PhysX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -163,7 +163,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(GPEngineDir)/third_party/lib/Refureku;$(GPEngineDir)/third_party/libDebug/Refureku</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\libDebug\Refureku;$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
@@ -178,7 +178,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;$(GPEngineDir)/third_party/include/PhysX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -191,7 +191,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(GPEngineDir)/third_party/lib/Refureku;$(GPEngineDir)/third_party/libRelease/Refureku</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\libRelease\Refureku;$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
@@ -207,7 +207,6 @@
     <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp" />
-    <ClInclude Include="include\Engine\Core\Physics\PhysX.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp" />
@@ -233,6 +232,8 @@
     <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp" />
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
     <ClInclude Include="include\Engine\Resources\Cursor.hpp" />
     <ClInclude Include="include\Engine\Resources\Material.hpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="include\Engine\Resources\ResourcesManagerType.hpp" />
     <ClInclude Include="include\Engine\Resources\Scene.hpp" />
     <ClInclude Include="include\Engine\Resources\SceneManager.hpp" />
+    <ClInclude Include="include\Engine\Resources\Script\FreeFly.hpp" />
     <ClInclude Include="include\Engine\Resources\Shader.hpp" />
     <ClInclude Include="include\Engine\Resources\ShaderType.hpp" />
     <ClInclude Include="include\Engine\Resources\Sound.hpp" />
@@ -302,7 +304,6 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\ObjParser.cpp" />
-    <ClCompile Include="src\PhysX.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
     <ClCompile Include="src\ReloadableCpp.cpp" />
     <ClCompile Include="src\RenderBuffer.cpp" />
@@ -310,6 +311,7 @@
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\RenderTexture.cpp" />
     <ClCompile Include="src\SceneRenderSystem.cpp" />
+    <ClCompile Include="src\SceneViewer.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlLoader.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlSaver.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp" />
@@ -320,6 +322,7 @@
     <ClCompile Include="src\SystemsManager.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
+    <ClCompile Include="src\TransformComponent.cpp" />
     <ClCompile Include="src\Wave.cpp" />
     <ClCompile Include="src\WindowGLFW.cpp" />
     <ClCompile Include="third_party\gpm\src\Intersection.cpp" />
@@ -339,6 +342,7 @@
     <None Include="include\Engine\ECS\Component\Camera.inl" />
     <None Include="include\Engine\ECS\Component\Component.inl" />
     <None Include="include\Engine\ECS\Component\Light\Light.inl" />
+    <None Include="include\Engine\ECS\Component\TransformComponent.inl" />
     <None Include="include\Engine\ECS\System\InputManagerGLFW.inl" />
     <None Include="include\Engine\ECS\System\SoundSystem.inl" />
     <None Include="include\Engine\ECS\System\TimeSystem.inl" />

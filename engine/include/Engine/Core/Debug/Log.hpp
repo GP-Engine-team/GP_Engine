@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <ctime>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <string>
 
@@ -79,11 +80,14 @@ protected:
     // Bitfiled of the setting. By default is set to : DISPLAY_HOUR | DISPLAY_WITH_COLOR | PRINT_LOG_FILE_ERROR
     static uint8_t settings;
 
-    static bool          releaseLogFile; // true if log file in'st keep
+    static bool releaseLogFile; // true if log file in'st keep
+
     static std::string   fileLogPath;
     static std::ofstream fileLog;
 
 public:
+    static std::function<void(const char* msg)> logCallBack;
+
     constexpr inline Log() noexcept = delete;
 
     inline ~Log() noexcept = delete;

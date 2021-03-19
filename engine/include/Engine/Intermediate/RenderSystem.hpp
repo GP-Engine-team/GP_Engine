@@ -1,0 +1,131 @@
+﻿/*
+ * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
+ * This file is subject to the LGNU license terms in the LICENSE file
+ *	found in the top-level directory of this distribution.
+ */
+
+#pragma once
+
+#include <vector> //std::vector
+#include <functional> //std::function
+
+#include "Engine/Core/Tools/BranchPrediction.hpp"
+#include "Engine/Resources/ResourcesManagerType.hpp"
+
+namespace GPE
+{
+class Renderer;
+class Light;
+class Camera;
+struct Frustum;
+class Model;
+class Shader;
+
+/**
+ * @brief The Singleton class defines the `GetInstance` method that serves as an
+ * alternative to constructor and lets clients access the same instance of this
+ * class over and over. Thread safe singleton according with link below :
+ * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
+ */
+class RenderSystem
+{
+    public :
+    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>, std::vector<SubModel*>, std::vector<Camera*>, std::vector<Light*>)>;
+    /**
+     * The Singleton's constructor/destructor should always be private to
+     * prevent direct construction/desctruction calls with the `new`/`delete`
+     * operator.
+     */
+private:
+    static RenderSystem* m_pInstance;
+
+protected:
+    std::vector<Renderer*> m_pRenderers;
+    std::vector<SubModel*> m_pSubModels;
+    std::vector<Camera*>   m_pCameras;
+    std::vector<Light*>    m_pLights;
+
+    unsigned int m_currentShaderID                  = 0;
+    unsigned int m_currentTextureID                 = 0;
+    unsigned int m_currentMeshID                    = 0;
+    Shader*      m_currentPShaderUse                = nullptr;
+    bool         m_currentBackFaceCullingModeEnable = false;
+
+protected:
+    inline RenderSystem() noexcept = default;
+    ~RenderSystem() noexcept       = default;
+
+public:
+    RenderSystem(const RenderSystem& other) noexcept = delete;
+    RenderSystem(RenderSystem&& other) noexcept      = delete;
+    RenderSystem& operator=(RenderSystem const& other) noexcept = delete;
+    RenderSystem& operator=(RenderSystem&& other) noexcept = delete;
+
+public:
+    void tryToBindShader(Shader& shader);
+    void tryToBindTexture(unsigned int textureID);
+    void tryToBindMesh(unsigned int meshID);
+    void tryToSetAlphaEnabled(bool alphaEnabled);
+    void tryToSetBackFaceCulling(bool useBackFaceCulling);
+
+    void resetCurrentRenderPassKey();
+
+    bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel);
+    void drawModelPart(const SubModel& subModel);
+    void sendModelDataToShader(Camera& camToUse, SubModel& subModel);
+    void sendDataToInitShader(Camera& camToUse, std::vector<Light*> lights, Shader* pCurrentShaderUse);
+
+    RenderPipeline defaultRenderPipeline() const noexcept;
+    void draw(RenderPipeline renderPipeline) noexcept;
+
+public:
+
+
+    // TODO: Remove this shit and create variadic templated system
+    void addRenderer(Renderer* pRenderer) noexcept;
+
+    void updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept;
+
+    void removeRenderer(Renderer* pRenderer) noexcept;
+
+    // TODO: Remove this shit and create variadic templated system
+    void addSubModel(SubModel* pSubModel) noexcept;
+
+    void updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept;
+
+    void removeSubModel(SubModel* pSubModel) noexcept;
+
+    // TODO: Remove this shit and create variadic templated system
+    void addCamera(Camera* pCamera) noexcept;
+
+    void updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept;
+
+    void removeCamera(Camera* pCamera) noexcept;
+
+    // TODO: Remove this shit and create variadic templated system
+    void addLight(Light* pLight) noexcept;
+
+    void updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept;
+
+    void removeLight(Light* pLight) noexcept;
+
+    /**
+     * @brief This is the static method that controls the access to the singleton
+     * instance. On the first run, it creates a singleton object and places it
+     * into the static field. On subsequent runs, it returns the client existing
+     * object stored in the static field.
+     *
+     * @param value
+     * @return RenderSystem*
+     */
+    static RenderSystem* getInstance() noexcept
+    {
+        if (unlikely(m_pInstance == nullptr))
+        {
+            m_pInstance = new RenderSystem();
+        }
+        return m_pInstance;
+    }
+};
+
+} /*namespace GPE*/
