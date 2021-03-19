@@ -140,8 +140,9 @@ namespace Editor
 			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
 			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
 			ImVec4 tint_col = ImVec4(0.0f, 1.0f, 1.0f, 1.0f);
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
 
-			ImGui::Image(my_tex_id, size, uv0, uv1, tint_col);
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
 		}
 
 		void renderImage(ImVec2& size)
@@ -155,8 +156,9 @@ namespace Editor
 			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
 			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
 			ImVec4 tint_col = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);     
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
 
-			ImGui::Image(my_tex_id, size, uv0, uv1, tint_col);
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
 		}
 
 		void renderModel(ImVec2& size)
@@ -170,8 +172,9 @@ namespace Editor
 			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
 			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
 			ImVec4 tint_col = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);      
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
 
-			ImGui::Image(my_tex_id, size, uv0, uv1, tint_col);
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
 		}
 
 		void renderUnknowFormat(ImVec2& size)
@@ -185,8 +188,9 @@ namespace Editor
 			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
 			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
 			ImVec4 tint_col = ImVec4(1.0f, 0.0f, 1.0f, 1.0f);     
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
 
-			ImGui::Image(my_tex_id, size, uv0, uv1, tint_col);
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
 		}
 
 		void renderSound(ImVec2& size)
@@ -199,9 +203,10 @@ namespace Editor
 			// -1 == uses default padding (style.FramePadding)
 			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
 			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
-			ImVec4 tint_col = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);       
+			ImVec4 tint_col = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);    
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
 
-			ImGui::Image(my_tex_id, size, uv0, uv1, tint_col);
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
 		}
 
 		void renderShader(ImVec2& size)
@@ -215,8 +220,9 @@ namespace Editor
 			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
 			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
 			ImVec4 tint_col = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
 
-			ImGui::Image(my_tex_id, size, uv0, uv1, tint_col);
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
 		}
 
 		void renderfolder(ImVec2& size, DirectoryInfo** pSelectectDir, DirectoryInfo& currentDir)
@@ -341,6 +347,14 @@ namespace Editor
 						ImGui::Text("%lu bytes", pCurrentDirectory->files[i].size);
 						ImGui::PopTextWrapPos();
 						ImGui::EndTooltip();
+					}
+
+					//Drag and drop
+					if (ImGui::BeginDragDropSource())
+					{
+						ImGui::SetDragDropPayload("RESOURCE_PATH", (void*)&pCurrentDirectory->files[i].path, sizeof(&pCurrentDirectory->files[i].path));
+						ImGui::TextUnformatted(pCurrentDirectory->files[i].filename.string().c_str());
+						ImGui::EndDragDropSource();
 					}
 
 					ImGui::TextUnformatted(pCurrentDirectory->files[i].filename.string().c_str());
