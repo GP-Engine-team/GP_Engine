@@ -249,6 +249,12 @@ namespace Editor
 			float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
 			DirectoryInfo* pSelectedDirectory = pCurrentDirectory;
 
+			if (ImGui::Button("Reload"))
+			{
+				refreshResourcesList();
+			}
+			ImGui::SameLine();
+
 			if (pCurrentDirectory->pParent != nullptr)
 			{
 				if (ImGui::Button("Back"))
