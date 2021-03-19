@@ -27,9 +27,9 @@ namespace GPE
     }                                                                                                                  \
     else                                                                                                               \
     {                                                                                                                  \
-        GPE::Log::logError(GPE::stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s",             \
-                                             F_RED("Assertion"), __FUNCTION__, __FILE__, __LINE__, BOLD(#expr), msg)); \
-        GPE::Log::closeAndTryToCreateFile();                                                                           \
+        GPE::Log::getInstance()->logError(                                                                             \
+            GPE::stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s", F_RED("Assertion"),        \
+                              __FUNCTION__, __FILE__, __LINE__, BOLD(#expr), msg));                                    \
         exit(3);                                                                                                       \
     }
 

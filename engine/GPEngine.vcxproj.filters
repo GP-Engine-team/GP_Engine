@@ -106,7 +106,13 @@
     <ClCompile Include="src\SceneViewer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\SystemsManager.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -361,7 +367,9 @@
     <ClInclude Include="include\Engine\Resources\Type.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp" />
+    <ClInclude Include="include\Engine\Engine.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

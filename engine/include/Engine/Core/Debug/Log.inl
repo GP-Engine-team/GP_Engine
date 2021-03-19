@@ -1,10 +1,5 @@
 ﻿#include "Engine/Core/Debug/Log.hpp"
 
-inline void Log::logFileHeader() noexcept
-{
-    logHeading();
-}
-
 inline void Log::closeAndTryToCreateFile() noexcept
 {
     if (!(!getSettingState(ESetting::ALWAYS_PRINT_LOG_FILE) || releaseLogFile))

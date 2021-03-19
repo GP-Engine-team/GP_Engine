@@ -36,8 +36,8 @@ LType& ResourcesManager<LType>::add(std::string key, Args&&... args) noexcept(st
 
     if (rst.second == false)
     {
-        Log::logError(std::string("resource insert with same key as an element existing : ") + key +
-                      ". Resource type : " + typeid(LType).name());
+        Log::getInstance()->logError(std::string("resource insert with same key as an element existing : ") + key +
+                                     ". Resource type : " + typeid(LType).name());
     }
 
     return rst.first->second;

@@ -55,10 +55,11 @@
 #define B_WHITE(x) "\033[47m" x RESET
 
 #define FUNCT_ERROR(msg)                                                                                               \
-    Log::logError(stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCTION__, msg));
+    Log::getInstance()->logError(stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCTION__, msg));
 
 #define FUNCT_WARNING(msg)                                                                                             \
-    Log::logWarning(stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCTION__, msg));
+    Log::getInstance()->logWarning(                                                                                    \
+        stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCTION__, msg));
 
 namespace GPE
 {
@@ -77,85 +78,107 @@ public:
     };
 
 protected:
+    static Log* m_instance;
+
+protected:
     // Bitfiled of the setting. By default is set to : DISPLAY_HOUR | DISPLAY_WITH_COLOR | PRINT_LOG_FILE_ERROR
-    static uint8_t settings;
+    std::string   fileLogPath;
+    std::ofstream fileLog;
+    uint8_t       settings;
+    bool          releaseLogFile; // true if log file in'st keep
 
-    static bool releaseLogFile; // true if log file in'st keep
-
-    static std::string   fileLogPath;
-    static std::ofstream fileLog;
+protected:
+    Log();
 
 public:
-    static std::function<void(const char* msg)> logCallBack;
+    std::function<void(const char* msg)> logCallBack;
 
-    constexpr inline Log() noexcept = delete;
-
-    inline ~Log() noexcept = delete;
-
-    constexpr inline Log(const Log& other) noexcept = delete;
-
-    constexpr inline Log(Log&& other) noexcept = delete;
-
-    constexpr inline Log& operator=(Log const& other) noexcept = delete;
-
-    constexpr inline Log& operator=(Log&& other) noexcept = delete;
+public:
+    ~Log();
 
     /**
-     * @brief Create log file
+     * Singletons should not be cloneable.
      */
-    static inline void logFileHeader() noexcept;
+    Log(Log& other) = delete;
+
+    /**
+     * Singletons should not be assignable.
+     */
+    void operator=(const Log&) = delete;
+
+    /**
+     * This is the static method that controls the access to the singleton
+     * instance. On the first run, it creates a singleton object and places it
+     * into the static field. On subsequent runs, it returns the client existing
+     * object stored in the static field.
+     */
+
+    static Log* getInstance()
+    {
+        if (m_instance == nullptr)
+        {
+            m_instance = new Log();
+        }
+
+        return m_instance;
+    }
+
+    static void setInstance(Log& log)
+    {
+        m_instance = &log;
+    }
 
     /**
      * @brief Save log file if error happen else destroy log file
      */
-    static inline void closeAndTryToCreateFile() noexcept;
+    inline void closeAndTryToCreateFile() noexcept;
 
     /**
      * @brief print message in log event
      *
      * @param os
      */
-    static inline void logAddMsg(const std::string& msg) noexcept;
+    inline void logAddMsg(const std::string& msg) noexcept;
 
     /**
      * @brief display log's heading
      */
-    static inline void logHeading() noexcept;
+    inline void logHeading() noexcept;
 
     /**
      * @brief display message in current stream
      *
      * @param msg
      */
-    static inline void log(const std::string& msg) noexcept;
+    inline void log(const std::string& msg) noexcept;
 
     /**
      * @brief display message with prefix "Error : " in current stream
      *
      * @param msg
      */
-    static inline void logError(const std::string& msg) noexcept;
+    inline void logError(const std::string& msg) noexcept;
 
     /**
      * @brief display message with prefix "Warning : " in current stream
      *
      * @param msg
      */
-    static inline void logWarning(const std::string& msg) noexcept;
+    inline void logWarning(const std::string& msg) noexcept;
 
     /**
      * @brief display message with prefix "Tips : " in current stream
      *
      * @param msg
      */
-    static inline void logTips(const std::string& msg) noexcept;
+    inline void logTips(const std::string& msg) noexcept;
 
     /**
      * @brief display message with elem initialized in current stream
      *
      * @param elem initialized
      */
-    static inline void logInitializationStart(const std::string& elem) noexcept;
+    inline void logInitializationStart(const std::string& elem) noexcept;
 
     /**
      * @brief display message with count of elem initialize in current stream
@@ -163,48 +186,48 @@ public:
      * @param elem
      * @param count in %
      */
-    static inline void logInitializationStep(const std::string& elem, unsigned int count) noexcept;
+    inline void logInitializationStep(const std::string& elem, unsigned int count) noexcept;
 
     /**
      * @brief display message with elem initialized in current stream
      *
      * @param elem initialized
      */
-    static inline void logInitializationEnd(const std::string& elem) noexcept;
+    inline void logInitializationEnd(const std::string& elem) noexcept;
 
     /**
      * @brief Add the Setting object
      *
      * @param flag : use ESetting. For multiple Setting use ESetting::DISPLAY_DATE | ESetting::DISPLAY_HOUR
      */
-    static inline void addSetting(uint8_t flag) noexcept;
+    inline void addSetting(uint8_t flag) noexcept;
 
     /**
      * @brief Remove the Setting object
      *
      * @param flag : use ESetting. For multiple Setting use ESetting::DISPLAY_DATE | ESetting::DISPLAY_HOUR
      */
-    static inline void removeSetting(uint8_t flag) noexcept;
+    inline void removeSetting(uint8_t flag) noexcept;
 
     /**
      * @brief Retrun flag of setting in parameter
      * @param setting
      * @return bool
      */
-    [[nodiscard]] static inline bool getSettingState(ESetting setting) noexcept;
+    [[nodiscard]] inline bool getSettingState(ESetting setting) noexcept;
 
     /**
      * @brief Get the Date And Time Str
      *
      * @return std::string
      */
-    [[nodiscard]] static inline std::string getTimeStr(char delimitator = ':') noexcept;
+    [[nodiscard]] inline std::string getTimeStr(char delimitator = ':') noexcept;
 
-    [[nodiscard]] static inline std::string getDateStr(char delimitator = '-') noexcept;
+    [[nodiscard]] inline std::string getDateStr(char delimitator = '-') noexcept;
 
-    [[nodiscard]] static inline std::string getDateAndTimeStrFileFormat() noexcept;
+    [[nodiscard]] inline std::string getDateAndTimeStrFileFormat() noexcept;
 
-    [[nodiscard]] static inline std::string getDateAndTimeStr() noexcept;
+    [[nodiscard]] inline std::string getDateAndTimeStr() noexcept;
 };
 
 #include "Log.inl"

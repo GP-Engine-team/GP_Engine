@@ -175,6 +175,6 @@ Game::Game()
 		},
 		true);
 
-	Log::logInitializationEnd("Game");
+	Log::getInstance()->logInitializationEnd("Game");
 
 }

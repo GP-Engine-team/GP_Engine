@@ -271,7 +271,7 @@ namespace Editor
 		setupGLFWWindow();
 		setupDearImGui();
 
-		Log::logCallBack = [&](const char* msg)
+		Log::getInstance()->logCallBack = [&](const char* msg)
 		{
 			//Log in console
 			std::cout << msg;

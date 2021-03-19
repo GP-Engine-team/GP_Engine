@@ -2,13 +2,19 @@
 
 using namespace GPE;
 
-uint8_t Log::settings(ESetting::DISPLAY_HOUR | ESetting::DISPLAY_WITH_COLOR | ESetting::PRINT_LOG_FILE_ERROR);
+Log* Log::m_instance = nullptr;
 
-bool Log::releaseLogFile(true);
+Log::Log()
+    : fileLogPath((std::string(LOG_FOLDER) + std::string("log_") + getDateAndTimeStrFileFormat() + std::string(".txt"))
+                      .c_str()),
+      fileLog(fileLogPath.c_str()), logCallBack{},
+      settings(ESetting::DISPLAY_HOUR | ESetting::DISPLAY_WITH_COLOR | ESetting::PRINT_LOG_FILE_ERROR),
+      releaseLogFile(true)
+{
+    logHeading();
+}
 
-std::string Log::fileLogPath(
-    (std::string(LOG_FOLDER) + std::string("log_") + getDateAndTimeStrFileFormat() + std::string(".txt")).c_str());
-
-std::ofstream Log::fileLog(fileLogPath.c_str());
-
-std::function<void(const char* msg)> Log::logCallBack{};
+Log::~Log()
+{
+    closeAndTryToCreateFile();
+}

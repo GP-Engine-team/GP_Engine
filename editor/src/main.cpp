@@ -12,12 +12,10 @@ using namespace GPE;
 
 int main(int argc, char* argv[])
 {
-    Log::logFileHeader();
+	Log::getInstance()->logInitializationStart("EditorStartup creation");
 
-    Log::logInitializationStart("EditorStartup creation");
+	Editor::EditorStartup editorStartup;
+	editorStartup.run();
 
-    Editor::EditorStartup editorStartup;
-    editorStartup.run();
-
-    return 0;
+	return 0;
 }

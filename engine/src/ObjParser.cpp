@@ -19,7 +19,7 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
 {
     GPE_ASSERT(assetPath != nullptr, "Void path");
 
-    Log::logInitializationStart("Obj parsing");
+    Log::getInstance()->logInitializationStart("Obj parsing");
 
     unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
                                     aiProcess_GenNormals | aiProcess_GenUVCoords;
@@ -145,7 +145,7 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
                                                  &resourceManager.add<Mesh>(arg.objName, arg), true});
     }
 
-    Log::logInitializationEnd("Obj parsing");
+    Log::getInstance()->logInitializationEnd("Obj parsing");
 
     return modelArg;
 }

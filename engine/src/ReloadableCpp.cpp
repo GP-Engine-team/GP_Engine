@@ -5,7 +5,7 @@
 
 using namespace GPE;
 
-bool ReloadableCpp::load(const char *newFileSuffix)
+bool ReloadableCpp::load(const char* newFileSuffix)
 {
     std::string copyFilename = path + newFileSuffix;
 
@@ -17,22 +17,23 @@ bool ReloadableCpp::load(const char *newFileSuffix)
         // If loaded successfully :
         if (module = LoadLibrary(copyFilename.c_str()))
         {
-            for (auto &p : processes)
+            for (auto& p : processes)
             {
                 p.second = GetProcAddress((HMODULE)module, p.first.c_str());
             }
         }
-        else 
+        else
         {
-        
-            Log::logError("dll not loaded properly : Check if the correct path has been set and if other dll dependencies "
-                            "are in the same place.");
+
+            Log::getInstance()->logError(
+                "dll not loaded properly : Check if the correct path has been set and if other dll dependencies "
+                "are in the same place.");
             return false;
         }
     }
-    else 
+    else
     {
-        Log::logError("Couldn't create " + copyFilename + " or copy " + path + " into it.");
+        Log::getInstance()->logError("Couldn't create " + copyFilename + " or copy " + path + " into it.");
         return false;
     }
 
@@ -54,7 +55,7 @@ void ReloadableCpp::unload()
     }
 }
 
-ReloadableCpp::ReloadableCpp(const std::string &path) : path(path)
+ReloadableCpp::ReloadableCpp(const std::string& path) : path(path)
 {
 }
 
@@ -76,9 +77,9 @@ bool ReloadableCpp::refresh()
     }
 
     // If the file has been modified since last load :
-    uint64_t fileLastWriteTime;
+    uint64_t   fileLastWriteTime;
     const bool hasFileBeenModified =
-        (GetFileTime(fileHandle, NULL, NULL, (FILETIME *)&fileLastWriteTime) && lastRefreshTime < fileLastWriteTime);
+        (GetFileTime(fileHandle, NULL, NULL, (FILETIME*)&fileLastWriteTime) && lastRefreshTime < fileLastWriteTime);
 
     if (hasFileBeenModified)
     {
@@ -100,7 +101,7 @@ bool ReloadableCpp::refresh()
     return hasFileBeenModified;
 }
 
-void ReloadableCpp::addProcess(const std::string &processName)
+void ReloadableCpp::addProcess(const std::string& processName)
 {
     processes.emplace(std::make_pair(processName, GetProcAddress((HMODULE)module, processName.c_str())));
 }
