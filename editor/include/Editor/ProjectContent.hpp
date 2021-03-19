@@ -302,6 +302,8 @@ namespace Editor
 					switch (hash(pCurrentDirectory->files[i].extention.string().c_str())) //runtime
 					{
 					case hash(".obj"): //compile time
+					case hash(".fbx"): //compile time
+					case hash(".gltf"): //compile time
 						renderModel(size);
 						break;
 
