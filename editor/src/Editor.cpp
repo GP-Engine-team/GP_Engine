@@ -307,7 +307,7 @@ namespace Editor
 
 	void Editor::render()
 	{
-		ImGui::ShowDemoWindow(nullptr);
+		//ImGui::ShowDemoWindow(nullptr);
 
 		ImGui::Render();
 
