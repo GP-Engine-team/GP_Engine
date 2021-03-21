@@ -113,7 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS;GAME_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party/imgui;$(GPEngineDir)third_party/;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -138,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS;GAME_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party/imgui;$(GPEngineDir)third_party/;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -163,7 +163,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS;GAME_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/;$(GPEngineDir)/third_party/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party/imgui;$(GPEngineDir)third_party/;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/;$(GPEngineDir)/third_party/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -188,7 +188,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS;GAME_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/;$(GPEngineDir)/third_party/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party/imgui;$(GPEngineDir)third_party/;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/;$(GPEngineDir)/third_party/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

@@ -159,11 +159,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\InspectPropertyRule.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SerializePropertyRule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\CustomFileParserFactory.hpp" />
+    <ClInclude Include="include\InspectPropertyRule.h" />
     <ClInclude Include="include\SerializePropertyRule.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

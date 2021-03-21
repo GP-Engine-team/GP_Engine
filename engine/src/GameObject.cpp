@@ -65,7 +65,7 @@ GameObject* GameObject::getChild(const std::string& path) noexcept
         }
         if (!isFound)
         {
-            Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
+            Log::logWarning(std::string("Can't find \"") + word + "\" in gameObject \"" +
                                                  m_name + "\"" + " with path : \"" + path + "\"");
             return nullptr;
         }

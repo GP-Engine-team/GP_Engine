@@ -12,13 +12,14 @@
 #include "GPM/Quaternion.hpp"
 #include "GPM/Vector3.hpp"
 #include "GPM/Transform.hpp"
+#include "Generated/TransformComponent.rfk.h"
 
-namespace GPE
+namespace GPE RFKNamespace()
 {
 
 class GameObject;
 
-class TransformComponent : public Component
+class RFKClass(Inspect()) TransformComponent : public Component
 {
 public:
     struct CreateArg
@@ -93,8 +94,12 @@ public:
     constexpr const GPM::Quaternion& getRotation() const noexcept;
 
     constexpr const GPM::Vec3& getScale() const noexcept;
+
+    TransformComponent_GENERATED
 };
 
 #include "TransformComponent.inl"
 
 } /*namespace GPE*/
+
+File_GENERATED

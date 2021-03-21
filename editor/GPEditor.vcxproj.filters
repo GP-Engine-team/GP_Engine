@@ -27,41 +27,8 @@
     <ClInclude Include="include\Editor\Editor.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Editor\Inspectors\Inspector.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Editor\Viewport.hpp">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imconfig.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imgui.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imgui_internal.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imstb_rectpack.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imstb_textedit.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imstb_truetype.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\misc\single_file\imgui_single_file.h">
-      <Filter>third_party</Filter>
     </ClInclude>
     <ClInclude Include="include\Editor\SceneEditor.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
@@ -88,30 +55,6 @@
     </ClCompile>
     <ClCompile Include="src\SceneEditor.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\imgui.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\imgui_demo.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\imgui_draw.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\imgui_tables.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\imgui_widgets.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.cpp">
-      <Filter>third_party</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

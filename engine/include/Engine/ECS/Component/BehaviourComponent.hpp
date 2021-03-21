@@ -7,10 +7,11 @@
 #pragma once
 
 #include "Engine/ECS/Component/Component.hpp"
+#include "Generated/BehaviourComponent.rfk.h"
 
-namespace GPE
+namespace GPE RFKNamespace()
 {
-class BehaviourComponent : public Component
+class RFKClass() BehaviourComponent : public Component
 {
 protected:
     bool m_isUpdated      = false;
@@ -41,6 +42,12 @@ public:
     void enableUpdate(bool flag) noexcept;
 
     void enableFixedUpdate(bool flag) noexcept;
+
+    //virtual bool inspect();
+
+    BehaviourComponent_GENERATED
 };
 
 } /*namespace GPE*/
+
+File_GENERATED

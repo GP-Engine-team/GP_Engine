@@ -60,6 +60,7 @@ EditorStartup::EditorStartup()
 	ADD_PROCESS(m_reloadableCpp, createGameInstance);
 	ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
 	ADD_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
+	ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
 
 	m_reloadableCpp.onUnload = [&]()
 	{
@@ -118,6 +119,10 @@ void EditorStartup::update()
 	{
 		auto sync = GET_PROCESS(m_reloadableCpp, setGameSystemsManagerInstance);
 		(*sync)(*GPE::SystemsManager::getInstance());
+
+		auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+		(*syncImgui)(ImGui::GetCurrentContext());
+
 		startGame();
 	}
 }

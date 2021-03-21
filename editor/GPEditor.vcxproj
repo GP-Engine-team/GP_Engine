@@ -19,19 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.h" />
-    <ClInclude Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.h" />
-    <ClInclude Include="..\engine\third_party\imgui\imconfig.h" />
-    <ClInclude Include="..\engine\third_party\imgui\imgui.h" />
-    <ClInclude Include="..\engine\third_party\imgui\imgui_internal.h" />
-    <ClInclude Include="..\engine\third_party\imgui\imstb_rectpack.h" />
-    <ClInclude Include="..\engine\third_party\imgui\imstb_textedit.h" />
-    <ClInclude Include="..\engine\third_party\imgui\imstb_truetype.h" />
-    <ClInclude Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.h" />
-    <ClInclude Include="..\engine\third_party\imgui\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="include\Editor\Editor.hpp" />
     <ClInclude Include="include\Editor\EditorStartup.hpp" />
-    <ClInclude Include="include\Editor\Inspectors\Inspector.hpp" />
     <ClInclude Include="include\Editor\ExternalDeclarations.hpp" />
     <ClInclude Include="include\Editor\SceneEditor.hpp" />
     <ClInclude Include="include\Editor\Viewport.hpp" />
@@ -40,14 +29,6 @@
     <None Include="GPEditor.props" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\imgui.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\imgui_demo.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\imgui_tables.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\EditorStartup.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -179,8 +160,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;GPGame.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GPEngine.lib;GPGame.lib;glfw3.lib;RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GPEngineDir)third_party\lib\Refureku;$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference />
     <ProjectReference />

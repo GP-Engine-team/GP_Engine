@@ -141,18 +141,18 @@ void Editor::renderLevelEditor()
 }
 
 
-void Editor::renderInspector() const
+void Editor::renderInspector() 
 {
 	ImGui::Begin("Inspector");
-		if (m_inspectedObject != nullptr)
-		{
-			ImGui::Text("Object %s selected", m_inspectedObject->getName().c_str());
-		}
+	if (m_inspectedObject != nullptr)
+	{
+		GPE::DataInspector::inspect(*m_inspectedObject);
+	}
 
-		else
-		{
-			ImGui::Text("Select an object to edit its attributes");
-		}
+	else
+	{
+		ImGui::Text("Select an object to edit its attributes");
+	}
 	ImGui::End();
 }
 

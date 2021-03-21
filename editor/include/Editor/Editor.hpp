@@ -37,7 +37,7 @@ private:
 
 	void renderMenuBar    () const;
 	void renderLevelEditor();
-	void renderInspector  () const;
+	void renderInspector  ();
 	void renderSceneGraph ();
 	void renderExplorer   () const;
 

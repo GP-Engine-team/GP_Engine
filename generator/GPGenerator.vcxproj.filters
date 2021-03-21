@@ -21,12 +21,18 @@
     <ClCompile Include="src\SerializePropertyRule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\InspectPropertyRule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\CustomFileParserFactory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SerializePropertyRule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InspectPropertyRule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

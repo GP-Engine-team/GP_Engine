@@ -2,6 +2,7 @@
 
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/SystemsManager.hpp"
+#include "imgui.h"
 
 using namespace GPE;
 

@@ -12,15 +12,20 @@
 #include <string>                                      //std::string
 #include <vector>                                      //std::vector
 
+#include "Engine/Serialization/Inspect.hpp"
+#include "Engine/Serialization/DataInspector.hpp"
+
+#include "Generated/GameObject.rfk.h"
+
 // in Inl
 #include "Engine/Intermediate/DataChunk.hpp"
 
-namespace GPE
+namespace GPE RFKNamespace()
 {
 class Component;
 class Scene;
 
-class GameObject
+class RFKClass(Inspect()) GameObject
 {
 public:
     struct CreateArg
@@ -31,6 +36,7 @@ public:
     };
 
 protected:
+    RFKField(Inspect())
     std::string         m_name;
     TransformComponent& m_transform;
 
@@ -199,8 +205,12 @@ public:
     [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
     [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
+
+    GameObject_GENERATED
 };
 
 #include "GameObject.inl"
 
 } // namespace GPE
+
+File_GENERATED
