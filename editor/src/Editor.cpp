@@ -1,6 +1,7 @@
 ﻿#include "Editor/Editor.hpp"
 
 #include "Engine/Engine.hpp"
+#include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/Resources/SceneManager.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
@@ -119,15 +120,22 @@ void Editor::renderMenuBar()
 
 void Editor::renderLevelEditor()
 {
-	ImGui::Begin("Level editor", nullptr/*, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse*/);
-		const ImVec2 size{ImGui::GetCurrentWindow()->InnerRect.GetSize()};
+	// Use the whole window content
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
+
+	ImGui::Begin("Level editor", nullptr, ImGuiWindowFlags_NoBackground);
+		const ImVec2 size{ImGui::GetContentRegionAvail()};
+		
 		m_sceneEditor.resize(static_cast<int>(size.x), static_cast<int>(size.y));
 
 		m_sceneEditor.bindScene(*Engine::getInstance()->sceneManager.getCurrentScene());
 		m_sceneEditor.render();
-		ImGui::Image((void*)(intptr_t)m_sceneEditor.textureID, size,
-					 ImVec2{.0f, 1.f}, ImVec2{1.f, .0f});
+
+		ImGui::Image((void*)(intptr_t)m_sceneEditor.textureID, size, {.0f, 1.f}, {1.f, .0f});
 	ImGui::End();
+
+	ImGui::PopStyleVar(2);
 }
 
 
