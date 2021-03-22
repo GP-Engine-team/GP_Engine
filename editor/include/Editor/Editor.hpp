@@ -10,7 +10,6 @@
 #include "ProjectContent.hpp"
 #include "SceneGraph.hpp"
 #include "Engine/Intermediate/Viewers/SceneViewer.hpp"
-#include <vector>
 
 struct GLFWwindow;
 
@@ -25,20 +24,25 @@ namespace Editor
 	class Editor
 	{
 	private:
-		GPE::SceneViewer			  m_sceneEditor;
-		GLFWwindow* m_window;
+		GPE::SceneViewer m_sceneEditor;
+		GLFWwindow*		 m_window;
 		GPE::GameObject* m_inspectedObject;
+<<<<<<< HEAD
 		int							  m_framebufferWidth;
 		int							  m_framebufferHeight;
 		bool					      m_showAppStyleEditor = false;
 		LogInspector			      m_logInspector;
 		ProjectContent				  m_projectContent;
 		SceneGraph					  m_sceneGraph;
+=======
+		bool			 m_showAppStyleEditor = false;
+		LogInspector	 m_logInspector;
+		ProjectContent	 m_projectContent;
+>>>>>>> 44b876b24b1c23175463c313b7bf27dc1d2eaff6
 
 		GPE::Scene& loadDefaultScene() const;
 
 	private:
-		void setupGLFWWindow();
 		void setupDearImGui();
 
 		void renderLog();
@@ -63,8 +67,6 @@ namespace Editor
 		void update();
 		void render();
 		bool isRunning();
-
-		friend void windowFramebufferResized(GLFWwindow* window, int width, int height);
 	};
 
 } // End of namespace Editor
