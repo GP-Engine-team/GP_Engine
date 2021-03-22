@@ -13,13 +13,13 @@ inline void Log::closeAndTryToCreateFile() noexcept
 
 inline void Log::logAddMsg(const std::string& msg) noexcept
 {
-    if (!fileLog.is_open())
-        return;
-
     if (logCallBack)
         logCallBack(msg.c_str());
 
     logs.emplace_back(msg);
+
+    if (!fileLog.is_open())
+        return;
     fileLog << msg;
 }
 
