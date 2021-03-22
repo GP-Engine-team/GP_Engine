@@ -11,13 +11,17 @@
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Serialization/Inspect.hpp"
+#include "Engine/Serialization/Slider.hpp"
+#include "Engine/Serialization/DataInspector.hpp"
 
 #include <iostream>
 
-//#include "Generated/myScript.rfk.h"
+#include "Generated/myScript.rfk.h"
 
 namespace GPG RFKNamespace() 
 {
+
 	class RFKClass(Inspect()) MyScript : public GPE::BehaviourComponent {
 	public:
 		inline MyScript(GPE::GameObject& owner) noexcept
@@ -45,6 +49,8 @@ namespace GPG RFKNamespace()
 		MyScript& operator=(MyScript&& other) noexcept = delete;
 
 		GPE::InputComponent& input;
+
+		RFKField(Inspect(), Slider(0,1))
 		float speed;
 
 		void rotate(const GPM::Vec2& deltaDisplacement)
@@ -101,8 +107,13 @@ namespace GPG RFKNamespace()
 			rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
 		}
 
-		//MyScript_GENERATED
+		virtual const char* getName()
+		{
+			return "myScript";
+		}
+
+		MyScript_GENERATED
 	};
 } /*namespace GPG*/
 
-//File_GENERATED
+File_GENERATED

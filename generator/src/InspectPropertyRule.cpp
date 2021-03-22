@@ -15,7 +15,6 @@ std::string InspectPropertyRule::generateClassFooterCode(kodgen::EntityInfo cons
 	{
 		// Get Struct / Class info to access its fields
 		kodgen::StructClassInfo const& var = static_cast<kodgen::StructClassInfo const&>(entity);
-		var.type.getName();
 		
 		std::string ifParentCalls = "";
 		std::string serializeInside = "";
@@ -34,16 +33,18 @@ std::string InspectPropertyRule::generateClassFooterCode(kodgen::EntityInfo cons
 					+ field.name
 					+ "\")";
 
-				serializeInside = "DataInspector::inspect(" + field.name + ", *" + call1 + ");";
+				serializeInside = "GPE::DataInspector::inspect(" + field.name + ", *" + call1 + ");";
 
 				//serializeInside += "serializer.serialize(node, s." + field.name + ", "
 				//	+ "FieldInfo{\"" + field.name + "\", \"" + field.type.getCanonicalName() + "\"}"
 				//	+ ");";
 			}
 
+			std::cout << "REFUREKU GENERATOR IFPARENT : " << var.name << " >>>> nbParents : " << var.parents.size() << std::endl;
 			ifParentCalls += "if (!(";
 			for (auto& parent : var.parents)
 			{
+				std::cout << "REFUREKU GENERATOR ONPARENT" << std::endl;
 				ifParentCalls += parent.type.getName() + "::inspect() && ";
 			}
 			ifParentCalls += "true))";

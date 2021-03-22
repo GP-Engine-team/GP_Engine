@@ -1,8 +1,10 @@
-﻿#include "Engine/ECS/Component/BehaviourComponent.hpp"
-
-#include "Engine/ECS/System/BehaviourSystem.hpp"
+﻿#include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "imgui.h"
 #include "Engine/Engine.hpp"
+
+#include "Engine/ECS/Component/BehaviourComponent.hpp"
+
+File_GENERATED
 
 using namespace GPE;
 

@@ -13,6 +13,7 @@
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "GPM/Vector3.hpp"
+#include "Generated/InputComponent.rfk.h"
 
 enum class EKeyMode
 {
@@ -22,9 +23,9 @@ enum class EKeyMode
     KEY_UP       = 4,
 };
 
-namespace GPE
+namespace GPE RFKNamespace()
 {
-class InputComponent : public Component
+class RFKClass(/*Inspect()*/) InputComponent : public Component
 {
 public:
     // InputComponent() = delete;
@@ -56,5 +57,9 @@ public:
      * @param action
      */
     void fireAction(const std::string& action) noexcept;
+
+    InputComponent_GENERATED
 };
 } // namespace GPE
+
+File_GENERATED

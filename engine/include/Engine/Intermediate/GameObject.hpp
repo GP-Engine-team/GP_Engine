@@ -15,14 +15,14 @@
 #include "Engine/Serialization/Inspect.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
 
-#include "Generated/GameObject.rfk.h"
 
 // in Inl
 #include "Engine/Intermediate/DataChunk.hpp"
 
+#include "Generated/GameObject.rfk.h"
+
 namespace GPE RFKNamespace()
 {
-class Component;
 class Scene;
 
 class RFKClass(Inspect()) GameObject

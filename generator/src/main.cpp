@@ -23,14 +23,33 @@ void generateEngineFiles(const std::string& engineDir)
     kodgen::FileGenerationSettings& settings = fileGenerator.settings;
     fileParserFactory.parsingSettings.setCompilerExeName("msvc");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/Refureku");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory("C:/Users/t.dallard/Downloads/GPEngine/GP_Engine/engine/third_party/include/RapidXML");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory("C:/Users/t.dallard/Downloads/GPEngine/GP_Engine/engine/third_party/gpm/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir);
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/../projects/GPGame");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/../projects/GPGame/src");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/../projects/GPGame/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/imgui");
+
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory("C:/Users/t.dallard/Downloads/GPEngine/GP_Engine/engine/third_party/include/Refureku");
+
+    for (auto& a : fileParserFactory.parsingSettings.getProjectIncludeDirectories())
+    {
+        std::cout << a.string()  << std::endl;
+    }
+
     settings.setOutputDirectory(engineDir + "/include/Generated/");
     settings.supportedExtensions = { ".h", ".hpp" };
-    settings.addToParseDirectory(engineDir + "/include/Engine/");
+    //settings.addToParseDirectory(engineDir + "/include/Engine/");
+    settings.addToParseDirectory(engineDir);
     settings.addIgnoredDirectory(engineDir + "/include/Generated/");
 
     //You will need to setup parsing settings and generation settings here.
     //Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit);
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, true);
 }
 
 void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
@@ -48,9 +67,24 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
     fileGenerator.logger = &logger;
 
     kodgen::FileGenerationSettings& settings = fileGenerator.settings;
-    fileParserFactory.parsingSettings.setCompilerExeName("msvc");
+    if (fileParserFactory.parsingSettings.setCompilerExeName("msvc"))
+    {
+        std::cout << "Compiler Set" << std::endl;
+    }
+    else
+    {
+        std::cout << "Compiler Not Set" << std::endl;
+    }
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/Refureku");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include/Engine/");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/imgui");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/src");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/../projects/GPGame/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
     settings.setOutputDirectory(gameDir + "/include/Generated/");
     settings.supportedExtensions = { ".h", ".hpp" };
     settings.addToParseDirectory(gameDir + "/include/");
@@ -58,7 +92,7 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
 
     //You will need to setup parsing settings and generation settings here.
     //Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit);
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, true);
 }
 
 

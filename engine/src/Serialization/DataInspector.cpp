@@ -14,9 +14,9 @@ static void GPE::DataInspector::inspect(class GameObject& t)
     for (Component* comp : comps)
     {
         //ImGui::Text("Component : ");
-        //ImGui::PushID(i);
+        ImGui::PushID(i);
         comp->inspect();
-        //ImGui::PopID();
+        ImGui::PopID();
         i++;
     }
 

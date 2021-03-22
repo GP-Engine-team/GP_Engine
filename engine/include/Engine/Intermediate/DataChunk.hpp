@@ -13,7 +13,6 @@
 // In inl
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Tools/BranchPrediction.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
 
 namespace GPE
 {

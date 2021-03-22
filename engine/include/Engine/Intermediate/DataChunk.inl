@@ -21,9 +21,6 @@ void DataChunk<TStoredComponent, TSize>::destroyComponent(const TStoredComponent
         if (unlikely(&m_components[i] == componentToDestroy))
         {
             std::swap(m_components[i], m_components.back());
-
-            m_components[i].getGameObject().updateComponentLink<TStoredComponent>(&m_components.back(),
-                                                                                  &m_components[i]);
             m_components.pop_back();
         }
     }
