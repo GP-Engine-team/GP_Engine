@@ -14,10 +14,10 @@ static void controlPreviousItem(GPE::GameObject& gameObject, GameObject*& select
 
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
 	{
-		ImGui::OpenPopup("SceneGraphContext" + idElem);
+		ImGui::OpenPopup((std::string("SceneGraphContext") + std::to_string(idElem)).c_str());
 	}
 
-	if (ImGui::BeginPopup("SceneGraphContext" + idElem))
+	if (ImGui::BeginPopup((std::string("SceneGraphContext") + std::to_string(idElem)).c_str()))
 	{
 		ImGui::Text(gameObject.getName().c_str());
 		if (ImGui::MenuItem("Add child", NULL, false))

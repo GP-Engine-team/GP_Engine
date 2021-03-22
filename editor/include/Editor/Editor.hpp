@@ -25,20 +25,14 @@ namespace Editor
 	{
 	private:
 		GPE::SceneViewer m_sceneEditor;
-		GLFWwindow*		 m_window;
+		GLFWwindow* m_window;
 		GPE::GameObject* m_inspectedObject;
-<<<<<<< HEAD
 		int							  m_framebufferWidth;
 		int							  m_framebufferHeight;
 		bool					      m_showAppStyleEditor = false;
 		LogInspector			      m_logInspector;
 		ProjectContent				  m_projectContent;
 		SceneGraph					  m_sceneGraph;
-=======
-		bool			 m_showAppStyleEditor = false;
-		LogInspector	 m_logInspector;
-		ProjectContent	 m_projectContent;
->>>>>>> 44b876b24b1c23175463c313b7bf27dc1d2eaff6
 
 		GPE::Scene& loadDefaultScene() const;
 
