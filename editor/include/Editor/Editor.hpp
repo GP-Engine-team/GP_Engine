@@ -9,7 +9,6 @@
 #include "LogInspector.hpp"
 #include "ProjectContent.hpp"
 #include "Engine/Intermediate/Viewers/SceneViewer.hpp"
-#include <vector>
 
 struct GLFWwindow;
 
