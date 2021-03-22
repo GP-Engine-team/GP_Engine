@@ -55,11 +55,12 @@
 #define B_WHITE(x) "\033[47m" x RESET
 
 #define FUNCT_ERROR(msg)                                                                                               \
-    Log::getInstance()->logError(stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCTION__, msg));
+    GPE::Log::getInstance()->logError(                                                                                 \
+        GPE::stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCTION__, msg));
 
 #define FUNCT_WARNING(msg)                                                                                             \
-    Log::getInstance()->logWarning(                                                                                    \
-        stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCTION__, msg));
+    GPE::Log::getInstance()->logWarning(                                                                               \
+        GPE::stringFormat("%s : %d : function \"%s\" : %s", __FILE__, __LINE__, __FUNCTION__, msg));
 
 namespace GPE
 {

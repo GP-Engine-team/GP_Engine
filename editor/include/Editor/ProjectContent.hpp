@@ -60,6 +60,12 @@ namespace Editor
 			resourcesTree.name = RESOURCES_DIR;
 			resourcesTree.path = std::filesystem::current_path() / RESOURCES_DIR;
 
+			if (!std::filesystem::exists(resourcesTree.path))
+			{
+				FUNCT_ERROR((std::string("Path \"") + resourcesTree.path.string() + "\" doesn't exist").c_str());
+				return;
+			}
+
 			refreshResourcesList();
 			pCurrentDirectory = &resourcesTree;
 		}
