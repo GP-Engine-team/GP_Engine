@@ -207,6 +207,7 @@
     <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Shapes.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp" />
