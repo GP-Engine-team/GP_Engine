@@ -1,11 +1,11 @@
 ﻿#include "Engine/ECS/System/InputManagerGLFW.hpp"
 
-void InputManager::bindInput(int key, const std::string& action) noexcept
+inline void InputManager::bindInput(int key, const std::string& action) noexcept
 {
     m_actionMap.emplace(key, action);
 }
 
-int InputManager::addComponent(InputComponent* input) noexcept
+inline int InputManager::addComponent(InputComponent* input) noexcept
 {
     int key = static_cast<int>(m_inputComponents.size());
     m_inputComponents.emplace(key, input);
@@ -13,7 +13,7 @@ int InputManager::addComponent(InputComponent* input) noexcept
     return key;
 }
 
-void InputManager::removeComponent(int key) noexcept
+inline void InputManager::removeComponent(int key) noexcept
 {
     m_inputComponents.erase(key);
 }

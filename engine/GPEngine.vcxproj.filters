@@ -40,6 +40,9 @@
     <ClCompile Include="src\ObjParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Physics\Collisions\SphereCollider.cpp">
+      <Filter>src\Physics\Collisions</Filter>
+    </ClCompile>
     <ClCompile Include="src\PhysXSystem.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -150,9 +153,6 @@
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Physics\Shapes.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -198,6 +198,21 @@
     <ClInclude Include="include\Engine\ECS\Component\Model.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp">
+      <Filter>include\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\CapsuleCollider.hpp">
+      <Filter>include\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\CollisionComponent.hpp">
+      <Filter>include\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\MeshCollider.hpp">
+      <Filter>include\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\SphereCollider.hpp">
+      <Filter>include\Physics\Collisions</Filter>
+    </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -208,7 +223,7 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\System\PhysXSystem.hpp">
-      <Filter>include</Filter>
+      <Filter>include\Physics</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\System\RenderSystem.hpp">
       <Filter>include</Filter>
@@ -427,6 +442,9 @@
     <None Include="include\Engine\ECS\Component\Light\Light.inl">
       <Filter>include</Filter>
     </None>
+    <None Include="include\Engine\ECS\Component\Physics\Collisions\PhysXSystem.inl">
+      <Filter>include\Physics</Filter>
+    </None>
     <None Include="include\Engine\ECS\Component\TransformComponent.inl">
       <Filter>include</Filter>
     </None>
@@ -501,6 +519,12 @@
     <Filter Include="include">
       <UniqueIdentifier>{5e2530e7-0724-4e95-a72d-388f56ce908f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Physics">
+      <UniqueIdentifier>{a8f874fe-9a93-4b9f-9199-77958d8ab04f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Physics\Collisions">
+      <UniqueIdentifier>{01bcb32d-31db-4b48-86aa-05478c16711f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\Serialization">
       <UniqueIdentifier>{ff3b6198-07e8-4978-bce3-299123c781a0}</UniqueIdentifier>
     </Filter>
@@ -509,6 +533,12 @@
     </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{000e1053-6ae7-4555-88fa-1680885403d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Physics">
+      <UniqueIdentifier>{a6af1ba4-826c-4a2d-b373-a4858f4f4bd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Physics\Collisions">
+      <UniqueIdentifier>{1126464d-1fea-40f8-a0d9-bd0f230e9a17}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Serialization">
       <UniqueIdentifier>{9cf1ede9-6de7-451e-81e8-fdde37a019ba}</UniqueIdentifier>

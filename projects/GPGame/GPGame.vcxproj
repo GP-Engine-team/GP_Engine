@@ -163,7 +163,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS;GAME_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/;$(GPEngineDir)/third_party/include;$(GPEngineDir)/third_party/include/PhysX</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/;$(GPEngineDir)/third_party/include;$(GPEngineDir)/third_party/include/PhysX;$(GPEngineDir)/third_party/include/PhysX/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -188,7 +188,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions) LIVE_RELOADED_CODE_EXPORTS;GAME_EXPORTS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/;$(GPEngineDir)/third_party/include/PhysX</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include/;$(GPEngineDir)/src/;$(GPEngineDir)/include/;$(GPEngineDir)/third_party/include/PhysX;$(GPEngineDir)/third_party/include/PhysX/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -197,7 +197,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>GPEngine.lib;glfw3.lib;assimp-vc142-mt.lib;zlibstatic.lib;OpenAL32.lib;RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration)\;$(GPGameDir)\x64\Debug;$(GPEngineDir)\third_party\libRelease\Refureku;$(GPEngineDir)\third_party\libRelease\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\lib;$(SolutionDir)bin\$(Configuration)\;$(GPGameDir)\x64\Debug;$(GPEngineDir)\third_party\libRelease\Refureku;$(GPEngineDir)\third_party\libRelease\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
       <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir) $(GPGameDir)</Command>

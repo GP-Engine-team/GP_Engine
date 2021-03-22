@@ -6,6 +6,7 @@
 
 #pragma once
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/ECS/Component/Physics/Collisions/CollisionComponent.hpp>
 #include <PxPhysics.h>
 #include <PxScene.h>
 #include <PxSceneDesc.h>
@@ -33,12 +34,31 @@ public:
 
     void advance(const double& deltaTime) noexcept;
 
+    void drawDebugScene();
+
+    /**
+     * @brief add input component to the component list
+     * @param input
+     * @return
+     */
+    inline int addComponent(CollisionComponent* colComp) noexcept;
+
+    /**
+     * @brief remove input component to the component list
+     * @param key
+     * @return
+     */
+    inline void removeComponent(int key) noexcept;
+
 private:
-    physx::PxFoundation* m_Foundation;
-    physx::PxPvd*        m_Pvd;
-    physx::PxPhysics*    m_Physics;
-    physx::PxCooking*    m_Cooking;
-    physx::PxScene*      m_Scene;
+    physx::PxFoundation*                         m_Foundation;
+    physx::PxPvd*                                m_Pvd;
+    physx::PxPhysics*                            m_Physics;
+    physx::PxCooking*                            m_Cooking;
+    physx::PxScene*                              m_Scene;
+    std::unordered_map<int, CollisionComponent*> m_CollisionComponents;
 };
+
+#include <Engine/ECS/System/PhysXSystem.inl>
 
 } // namespace GPE

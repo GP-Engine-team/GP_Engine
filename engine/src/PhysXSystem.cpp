@@ -67,3 +67,11 @@ void PhysXSystem::advance(const double& deltaTime) noexcept
 {
     m_Scene->simulate(static_cast<PxReal>(deltaTime));
 }
+
+void PhysXSystem::drawDebugScene()
+{
+    for (unsigned int i = 0; i < m_CollisionComponents.size(); i++)
+    {
+        m_CollisionComponents[i]
+    }
+}
