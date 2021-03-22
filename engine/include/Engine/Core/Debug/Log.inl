@@ -1,16 +1,14 @@
-#include "Engine/Core/Debug/Log.hpp"
+﻿#include "Engine/Core/Debug/Log.hpp"
 
-inline void Log::logFileHeader() noexcept
+inline const std::vector<std::string>& Log::getLogs() noexcept
 {
-    logHeading();
+    return logs;
 }
 
 inline void Log::closeAndTryToCreateFile() noexcept
 {
-    fileLog.close();
-
-    if (!getSettingState(ESetting::ALWAYS_PRINT_LOG_FILE) || releaseLogFile)
-        std::remove(fileLogPath.c_str());
+    if (!(!getSettingState(ESetting::ALWAYS_PRINT_LOG_FILE) || releaseLogFile))
+        fileLog.close();
 }
 
 inline void Log::logAddMsg(const std::string& msg) noexcept
@@ -18,12 +16,11 @@ inline void Log::logAddMsg(const std::string& msg) noexcept
     if (!fileLog.is_open())
         return;
 
-    std::streambuf* coutbuf = std::cout.rdbuf(); // save old buf
-    std::cout.rdbuf(fileLog.rdbuf());            // redirect std::cout to log.txt
+    if (logCallBack)
+        logCallBack(msg.c_str());
 
-    std::cout << msg;
-
-    std::cout.rdbuf(coutbuf); // reset to standard output again
+    logs.emplace_back(msg);
+    fileLog << msg;
 }
 
 inline void Log::logHeading() noexcept
@@ -35,7 +32,6 @@ inline void Log::logHeading() noexcept
     msgLog += getDateStr() + " " + getTimeStr() + "\n";
     msgLog += "================================\n\n";
 
-    std::cout << msgLog;
     logAddMsg(msgLog);
 }
 
@@ -48,7 +44,6 @@ inline void Log::log(const std::string& msg) noexcept
     msgLog += msg;
     msgLog += "\n";
 
-    std::cout << msgLog;
     logAddMsg(msgLog);
 }
 
@@ -62,11 +57,9 @@ inline void Log::logError(const std::string& msg) noexcept
     if (getSettingState(ESetting::DISPLAY_WITH_COLOR))
     {
         logAddMsg(msgLog);
-        std::cerr << msgLog;
         msgLog.clear();
 
         msgLog += F_RED(BOLD("ERROR: "));
-        std::cerr << msgLog;
         msgLog.clear();
 
         msgLog += "ERROR: ";
@@ -84,7 +77,6 @@ inline void Log::logError(const std::string& msg) noexcept
     if (getSettingState(ESetting::PRINT_LOG_FILE_ERROR))
         releaseLogFile = false;
 
-    std::cerr << msgLog;
     logAddMsg(msgLog);
 }
 
@@ -98,11 +90,9 @@ inline void Log::logWarning(const std::string& msg) noexcept
     if (getSettingState(ESetting::DISPLAY_WITH_COLOR))
     {
         logAddMsg(msgLog);
-        std::cerr << msgLog;
         msgLog.clear();
 
         msgLog += F_YELLOW(BOLD("WARNING: "));
-        std::cerr << msgLog;
         msgLog.clear();
 
         msgLog += "WARNING: ";
@@ -114,13 +104,11 @@ inline void Log::logWarning(const std::string& msg) noexcept
         msgLog += "WARNING: ";
     }
 
-    msgLog += msg;
     msgLog += "\n";
 
     if (getSettingState(ESetting::PRINT_LOG_FILE_WARNING))
         releaseLogFile = false;
 
-    std::cerr << msgLog;
     logAddMsg(msgLog);
 }
 
@@ -134,11 +122,9 @@ inline void Log::logTips(const std::string& msg) noexcept
     if (getSettingState(ESetting::DISPLAY_WITH_COLOR))
     {
         logAddMsg(msgLog);
-        std::cout << msgLog;
         msgLog.clear();
 
         msgLog += F_GREEN(BOLD("TIPS: "));
-        std::cout << msgLog;
         msgLog.clear();
 
         msgLog += "TIPS: ";
@@ -156,7 +142,6 @@ inline void Log::logTips(const std::string& msg) noexcept
     if (getSettingState(ESetting::ALWAYS_PRINT_LOG_FILE))
         releaseLogFile = false;
 
-    std::cout << msgLog;
     logAddMsg(msgLog);
 }
 
@@ -203,7 +188,7 @@ inline std::string Log::getDateAndTimeStr() noexcept
 inline std::string Log::getTimeStr(char delimitator) noexcept
 {
     struct tm newtime;
-    time_t now = time(0);
+    time_t    now = time(0);
     localtime_s(&newtime, &now);
 
     std::string rst;
@@ -216,7 +201,7 @@ inline std::string Log::getTimeStr(char delimitator) noexcept
 inline std::string Log::getDateStr(char delimitator) noexcept
 {
     struct tm newtime;
-    time_t now = time(0);
+    time_t    now = time(0);
     localtime_s(&newtime, &now);
 
     std::string rst;

@@ -21,7 +21,7 @@
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 #include "myScript.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
@@ -128,8 +128,8 @@ void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
 
 Game::Game()
 {
-	//sm.addEmpty("main");
-	//sm.loadScene("main");
+	sm.addEmpty("main");
+	sm.loadScene("main");
 
 	iManager.bindInput(GLFW_KEY_W, "forward");
 	iManager.bindInput(GLFW_KEY_S, "back");
@@ -143,7 +143,7 @@ Game::Game()
 	GameObject::CreateArg playerArg{ "Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}} };
 
 	Camera::PerspectiveCreateArg camCreateArg;
-	camCreateArg.aspect = 900.f / 600.f;
+	camCreateArg.aspect = Camera::computeAspect(900.f, 600.f);
 
 	camCreateArg.farVal = 3000;
 	camCreateArg.nearVal = 0.01f;
@@ -175,6 +175,6 @@ Game::Game()
 		},
 		true);
 
-	Log::logInitializationEnd("Game");
+	Log::getInstance()->logInitializationEnd("Game");
 
 }

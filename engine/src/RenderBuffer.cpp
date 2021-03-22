@@ -6,10 +6,9 @@
 
 using namespace GPE;
 
-RenderBuffer::RenderBuffer(const CreateArg& arg) noexcept
-    : internalFormat{(GLenum)arg.internalFormat}
+RenderBuffer::RenderBuffer(const CreateArg& arg) noexcept : internalFormat{(GLenum)arg.internalFormat}
 {
-    switch(internalFormat)
+    switch (internalFormat)
     {
     case GL_DEPTH_COMPONENT16:
     case GL_DEPTH_COMPONENT24:
@@ -41,9 +40,8 @@ RenderBuffer::RenderBuffer(const CreateArg& arg) noexcept
 RenderBuffer::~RenderBuffer() noexcept
 {
     glDeleteRenderbuffers(1, &m_id);
-    Log::log("RenderBuffer released");
+    Log::getInstance()->log("RenderBuffer released");
 }
-
 
 void RenderBuffer::resize(int width, int height)
 {

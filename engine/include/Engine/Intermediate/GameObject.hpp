@@ -45,7 +45,7 @@ protected:
     bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
 public:
-    Scene&                                 scene;
+    Scene*                                 pOwnerScene;
     GameObject*                            parent   = nullptr;
     std::list<std::unique_ptr<GameObject>> children = {};
 
@@ -61,20 +61,24 @@ public:
     GameObject& operator=(GameObject const& other) = delete; // TODO
 
     inline GameObject(GameObject&& other) = default;
-    inline ~GameObject() noexcept         = default;
+    virtual ~GameObject() noexcept        = default;
     inline GameObject& operator=(GameObject&& other) noexcept = default;
+
+    void moveTowardScene(Scene& newOwner) noexcept;
 
     /**
      * @brief update entity and their children if current entity is dirty
      *
      */
     void updateSelfAndChildren() noexcept;
+    void updateSelfAndChildren(const GPM::Mat4 parentModelMatrix) noexcept;
 
     /**
      * @brief Force the update of entity without check if entity is dirty
      *
      */
     void forceUpdate() noexcept;
+    void forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept;
 
     /**
      * @brief Get the Name object

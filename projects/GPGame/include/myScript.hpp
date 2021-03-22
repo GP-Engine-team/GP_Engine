@@ -7,31 +7,29 @@
 #pragma once
 
 #include "Engine/ECS/Component/BehaviourComponent.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
 
 #include <iostream>
 
-namespace GPG
-{
-	class MyScript : public GPE::BehaviourComponent
-	{
+namespace GPG {
+	class MyScript : public GPE::BehaviourComponent {
 	public:
-
 		inline MyScript(GPE::GameObject& owner) noexcept
-			: GPE::BehaviourComponent(owner), input(owner.addComponent<GPE::InputComponent>())
+			: GPE::BehaviourComponent(owner)
+			, input(owner.addComponent<GPE::InputComponent>())
 		{
 			enableUpdate(true);
-			input.bindAction("jump", EKeyMode::KEY_REPEAT, this, &MyScript::up);
-			input.bindAction("down", EKeyMode::KEY_REPEAT, this, &MyScript::down);
-			input.bindAction("right", EKeyMode::KEY_REPEAT, this, &MyScript::right);
-			input.bindAction("left", EKeyMode::KEY_REPEAT, this, &MyScript::left);
-			input.bindAction("forward", EKeyMode::KEY_REPEAT, this, &MyScript::forward);
-			input.bindAction("back", EKeyMode::KEY_REPEAT, this, &MyScript::back);
-			input.bindAction("exit", EKeyMode::KEY_REPEAT, this, &MyScript::leave);
-			input.bindAction("sprint", EKeyMode::KEY_REPEAT, this, &MyScript::sprint);
+			input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyScript::up);
+			input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyScript::down);
+			input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyScript::right);
+			input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyScript::left);
+			input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyScript::forward);
+			input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyScript::back);
+			input.bindAction("exit", EKeyMode::KEY_DOWN, this, &MyScript::leave);
+			input.bindAction("sprint", EKeyMode::KEY_DOWN, this, &MyScript::sprint);
 
 			speed = 1;
 		}
@@ -48,8 +46,7 @@ namespace GPG
 
 		void rotate(const GPM::Vec2& deltaDisplacement)
 		{
-			if (deltaDisplacement.length() > 0.4)
-			{
+			if (deltaDisplacement.length() > 0.4) {
 				m_gameObject.getTransform().setRotation(m_gameObject.getTransform().getSpacialAttribut().rotation * GPM::Quaternion::angleAxis(-deltaDisplacement.y * 0.001f, { 1, 0, 0 }));
 				m_gameObject.getTransform().setRotation(GPM::Quaternion::angleAxis(-deltaDisplacement.x * 0.001f, { 0, 1, 0 }) * m_gameObject.getTransform().getSpacialAttribut().rotation);
 			}
@@ -87,7 +84,6 @@ namespace GPG
 
 		inline void leave()
 		{
-			GPE::Log::closeAndTryToCreateFile();
 			exit(666);
 		}
 
@@ -99,7 +95,7 @@ namespace GPG
 		void update(float deltaTime) final
 		{
 			speed = 1;
-			rotate(GPE::SystemsManager::getInstance()->inputManager.getCursor().deltaPos);
+			rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
 		}
 	};
 } /*namespace GPG*/

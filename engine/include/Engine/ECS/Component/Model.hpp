@@ -53,5 +53,7 @@ public:
     Model()        = delete;
     Model& operator=(Model const& other) = delete;
     Model& operator=(Model&& other) = delete;
+
+    void moveTowardScene(class Scene& newOwner) override;
 };
 } /*namespace GPE*/

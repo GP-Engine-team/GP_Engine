@@ -28,30 +28,27 @@ Texture::Texture(const LoadArg& arg) noexcept
 
     setFormat(comp);
 
-    loadInGPU(w, h, arg.textureMinFilter, arg.textureMagFilter,
-              arg.textureWrapS, arg.textureWrapT, pixels);
+    loadInGPU(w, h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT, pixels);
 
-    Log::log((std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path.c_str()) + "\" loaded to VRAM").c_str());
+    Log::getInstance()->log(
+        (std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path.c_str()) + "\" loaded to VRAM").c_str());
     stbi_image_free(pixels);
 }
 
-Texture::Texture(const CreateArg& arg) noexcept
-    : format{arg.format}
+Texture::Texture(const CreateArg& arg) noexcept : format{arg.format}
 {
-    Texture::loadInGPU(arg.width, arg.height, arg.textureMinFilter,
-                       arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT, nullptr);
+    Texture::loadInGPU(arg.width, arg.height, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS,
+                       arg.textureWrapT, nullptr);
 
-    Log::log((std::to_string(arg.width) + 'x' + std::to_string(arg.height) +
-             " texture loaded in VRAM").c_str());
+    Log::getInstance()->log(
+        (std::to_string(arg.width) + 'x' + std::to_string(arg.height) + " texture loaded in VRAM").c_str());
 }
-
 
 Texture::~Texture() noexcept
 {
     glDeleteTextures(1, &m_id);
-    Log::log("Texture released");
+    Log::getInstance()->log("Texture released");
 }
-
 
 void Texture::setFormat(int channels)
 {
@@ -79,7 +76,6 @@ void Texture::setFormat(int channels)
     }
 }
 
-
 bool Texture::checkFormatValidity() const
 {
     switch (format)
@@ -94,7 +90,6 @@ bool Texture::checkFormatValidity() const
     FUNCT_WARNING((std::string("Unsupported texture format: ") + std::to_string((GLenum)format)).c_str());
     return false;
 }
-
 
 bool Texture::loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
                         ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept
@@ -118,7 +113,6 @@ bool Texture::loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextu
 
     return true;
 }
-
 
 void Texture::resize(int width, int height) noexcept
 {

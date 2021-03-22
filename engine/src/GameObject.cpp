@@ -1,19 +1,41 @@
-#include "Engine/Intermediate/GameObject.hpp"
+﻿#include "Engine/Intermediate/GameObject.hpp"
 
-#include "Engine/Intermediate/DataChunk.hpp" //DataChunk
 #include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Intermediate/DataChunk.hpp" //DataChunk
 #include <iostream>
 #include <istream>
 #include <sstream>
 
 using namespace GPE;
+using namespace GPM;
+
+void GameObject::moveTowardScene(Scene& newOwner) noexcept
+{
+    for (Component* pComponent : m_pComponents)
+    {
+        pComponent->moveTowardScene(newOwner);
+    }
+
+    pOwnerScene = &newOwner;
+}
 
 void GameObject::updateSelfAndChildren() noexcept
 {
-    for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
+    if (m_transform.isDirty())
     {
-        if ((*i)->m_transform.isDirty())
+        // Update self
+        if (parent)
+        {
+            getTransform().update(parent->getTransform().getModelMatrix());
+        }
+        else
+        {
+            getTransform().update(Mat4::identity());
+        }
+
+        // Update children
+        for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
         {
             if ((*i)->m_isDead)
             {
@@ -21,22 +43,84 @@ void GameObject::updateSelfAndChildren() noexcept
                 continue;
             }
 
-            (*i)->getTransform().update(m_transform.getModelMatrix());
-            (*i)->forceUpdate();
+            (*i)->forceUpdate(m_transform.getModelMatrix());
+        }
+    }
+    else
+    {
+        // Update children
+        for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
+        {
+            if ((*i)->m_isDead)
+            {
+                i = children.erase(i);
+                continue;
+            }
+
+            (*i)->updateSelfAndChildren(m_transform.getModelMatrix());
+        }
+    }
+}
+
+void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
+{
+    // Update self
+    getTransform().update(parent->getTransform().getModelMatrix());
+
+    // Update children
+    for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
+    {
+        if ((*i)->m_isDead)
+        {
+            i = children.erase(i);
+            continue;
+        }
+
+        if ((*i)->m_transform.isDirty())
+        {
+            (*i)->forceUpdate(m_transform.getModelMatrix());
         }
         else
         {
-            (*i)->updateSelfAndChildren();
+            (*i)->updateSelfAndChildren(m_transform.getModelMatrix());
         }
     }
 }
 
 void GameObject::forceUpdate() noexcept
 {
+    // Force update self
+    if (parent)
+    {
+        getTransform().update(parent->getTransform().getModelMatrix());
+    }
+    else
+    {
+        getTransform().update(Mat4::identity());
+    }
+
+    // Force update children
     for (auto&& i = children.begin(); i != children.end(); i++)
     {
-        (*i)->getTransform().update(m_transform.getModelMatrix());
-        (*i)->forceUpdate();
+        if ((*i)->m_isDead)
+        {
+            i = children.erase(i);
+            continue;
+        }
+
+        (*i)->forceUpdate(m_transform.getModelMatrix());
+    }
+}
+
+void GameObject::forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept
+{
+    // Force update self
+    getTransform().update(parent->getTransform().getModelMatrix());
+
+    // Force update children
+    for (auto&& i = children.begin(); i != children.end(); i++)
+    {
+        (*i)->forceUpdate(m_transform.getModelMatrix());
     }
 }
 
@@ -45,8 +129,8 @@ GameObject* GameObject::getChild(const std::string& path) noexcept
     GPE_ASSERT(!path.empty(), "Void path");
 
     std::stringstream sPath(path);
-    std::string word;
-    GameObject* currentEntity = this;
+    std::string       word;
+    GameObject*       currentEntity = this;
 
     while (std::getline(sPath, word, '/'))
     {
@@ -59,14 +143,14 @@ GameObject* GameObject::getChild(const std::string& path) noexcept
             if (child->getName() == word)
             {
                 currentEntity = child.get();
-                isFound = true;
+                isFound       = true;
                 break;
             }
         }
         if (!isFound)
         {
-            Log::logWarning(std::string("Can't find \"") + word + "\" in gameObject \"" +
-                                                 m_name + "\"" + " with path : \"" + path + "\"");
+            Log::getInstance()->logWarning(std::string("Can't find \"") + word + "\" in gameObject \"" + m_name +
+                                           "\"" + " with path : \"" + path + "\"");
             return nullptr;
         }
     }
@@ -77,10 +161,10 @@ void GameObject::destroyChild(const std::string& path) noexcept
 {
     GPE_ASSERT(!path.empty(), "Void path");
 
-    std::stringstream sPath(path);
-    std::string word;
-    GameObject* parentEntity = this;
-    GameObject* currentEntity = this;
+    std::stringstream                                sPath(path);
+    std::string                                      word;
+    GameObject*                                      parentEntity  = this;
+    GameObject*                                      currentEntity = this;
     std::list<std::unique_ptr<GameObject>>::iterator it;
 
     while (std::getline(sPath, word, '/'))
@@ -96,15 +180,15 @@ void GameObject::destroyChild(const std::string& path) noexcept
             if ((*it)->getName() == word)
             {
                 currentEntity = it->get();
-                isFound = true;
+                isFound       = true;
                 break;
             }
         }
 
         if (!isFound)
         {
-            Log::logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" +
-                                                 m_name + "\"" + " with path : \"" + path + "\"");
+            Log::getInstance()->logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + m_name +
+                                           "\"" + " with path : \"" + path + "\"");
             return;
         }
     }
@@ -138,12 +222,12 @@ std::list<Component*>::iterator GameObject::destroyComponent(Component* pCompone
 
 std::string GameObject::getAbsolutePath() const noexcept
 {
-    std::string path = this->getName();
+    std::string path     = this->getName();
     GameObject* parentIt = this->parent;
 
     while (parentIt)
     {
-        path = parentIt->getName() + std::string("/") + path;
+        path     = parentIt->getName() + std::string("/") + path;
         parentIt = parentIt->parent;
     }
 

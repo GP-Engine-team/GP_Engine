@@ -1,6 +1,6 @@
 ﻿#include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 
 #include <functional>
 
@@ -9,7 +9,7 @@ using namespace GPE;
 
 InputComponent::InputComponent(GameObject& owner) : Component(owner)
 {
-    m_key = SystemsManager::getInstance()->inputManager.addComponent(this);
+    m_key = Engine::getInstance()->inputManager.addComponent(this);
 }
 
 InputComponent::InputComponent(const InputComponent& other) noexcept : Component(other.m_gameObject)

@@ -1,4 +1,4 @@
-#include "Engine/Resources/ResourcesManager.hpp"
+﻿#include "Engine/Resources/ResourcesManager.hpp"
 
 template <class LType>
 LType* ResourcesManager<LType>::get(const std::string& key) noexcept
@@ -36,9 +36,8 @@ LType& ResourcesManager<LType>::add(std::string key, Args&&... args) noexcept(st
 
     if (rst.second == false)
     {
-        Log::logError(std::string("resource insert with same key as an element existing : ") +
-                                           key + ". Resource type : " + typeid(LType).name());
-        exit(1);
+        Log::getInstance()->logError(std::string("resource insert with same key as an element existing : ") + key +
+                                     ". Resource type : " + typeid(LType).name());
     }
 
     return rst.first->second;
@@ -79,7 +78,8 @@ void ResourcesManager<LType, RType...>::remove(const std::string& key) noexcept(
 
 template <class LType, class... RType>
 template <class T, typename... Args>
-T& ResourcesManager<LType, RType...>::add(const std::string& key, Args&&... args) noexcept(std::is_nothrow_constructible_v<T>)
+T& ResourcesManager<LType, RType...>::add(const std::string& key,
+                                          Args&&... args) noexcept(std::is_nothrow_constructible_v<T>)
 {
     return ResourcesManager<T>::add(key, std::forward<Args>(args)...);
 }

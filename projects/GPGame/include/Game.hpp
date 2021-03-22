@@ -7,7 +7,7 @@
 #include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/ECS/System/BehaviourSystem.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "GameApiMacros.hpp"
 #include <iostream>
@@ -16,14 +16,14 @@ class Game final : public AbstractGame
 {
 protected:
 
-	GPE::Window& win = GPE::SystemsManager::getInstance()->window;
-	GPE::Renderer& ren = GPE::SystemsManager::getInstance()->renderer;
-	GPE::TimeSystem& ts = GPE::SystemsManager::getInstance()->timeSystem;
-	GPE::InputManager& iManager = GPE::SystemsManager::getInstance()->inputManager;
-	GPE::BehaviourSystem& bSys = GPE::SystemsManager::getInstance()->behaviourSystem;
-	GPE::RenderSystem& rSys = GPE::SystemsManager::getInstance()->renderSystem;
-	GPE::ResourceManagerType& rm = GPE::SystemsManager::getInstance()->resourceManager;
-	GPE::SceneManager& sm = GPE::SystemsManager::getInstance()->sceneManager;
+	GPE::Window& win = GPE::Engine::getInstance()->window;
+	GPE::Renderer& ren = GPE::Engine::getInstance()->renderer;
+	GPE::TimeSystem& ts = GPE::Engine::getInstance()->timeSystem;
+	GPE::InputManager& iManager = GPE::Engine::getInstance()->inputManager;
+	GPE::BehaviourSystem& bSys = GPE::Engine::getInstance()->behaviourSystem;
+	GPE::RenderSystem& rSys = GPE::Engine::getInstance()->renderSystem;
+	GPE::ResourceManagerType& rm = GPE::Engine::getInstance()->resourceManager;
+	GPE::SceneManager& sm = GPE::Engine::getInstance()->sceneManager;
 
 	int    fixedUpdateFrameCount = 0;
 	int    unFixedUpdateFrameCount = 0;
@@ -58,7 +58,6 @@ public:
 
 	virtual ~Game() final
 	{
-		GPE::Log::closeAndTryToCreateFile();
 	}
 };
 
