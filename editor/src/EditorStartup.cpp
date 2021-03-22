@@ -106,11 +106,6 @@ namespace Editor
 
 				  void EditorStartup::update()
 				  {
-					  if (m_game != nullptr)
-					  {
-						  m_game->update(0, 0);
-					  }
-
 					  GPE::Engine::getInstance()->timeSystem.update(m_update, m_fixedUpdate, m_render);
 					  isRunning = m_editor.isRunning();
 
