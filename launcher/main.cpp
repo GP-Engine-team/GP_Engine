@@ -17,8 +17,6 @@ extern "C"
 
 int main(int argc, char* argv[])
 {
-	Log::getInstance()->logFileHeader();
-
 	Log::getInstance()->logInitializationStart("GameStartup creation");
 
 	GameStartup gameStartup;
