@@ -13,7 +13,7 @@ class GameObject;
 class Component
 {
 protected:
-    GameObject& m_gameObject;
+    GameObject* m_gameObject; // canno't be ref for move
     bool        m_isActivated{true};
 
 public:

@@ -10,6 +10,16 @@
 using namespace GPE;
 using namespace GPM;
 
+GameObject::~GameObject() noexcept
+{
+    m_transform.~TransformComponent();
+
+    for (auto&& component : m_pComponents)
+    {
+        component->~Component();
+    }
+}
+
 void GameObject::moveTowardScene(Scene& newOwner) noexcept
 {
     for (Component* pComponent : m_pComponents)

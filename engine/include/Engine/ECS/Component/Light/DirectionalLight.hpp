@@ -9,8 +9,8 @@
 #include <vector>
 
 #include "Engine/Core/Tools/ClassUtility.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/ECS/Component/Light/Light.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/ShaderType.hpp"
 #include "GPM/Vector3.hpp"
 
@@ -36,7 +36,7 @@ protected:
 public:
     DirectionalLight(const DirectionalLight& other) = delete;
     DirectionalLight(DirectionalLight&& other)      = default;
-    virtual ~DirectionalLight()                     = default;
+    virtual ~DirectionalLight();
 
     DirectionalLight()        = delete;
     DirectionalLight& operator=(DirectionalLight const& other) = delete;

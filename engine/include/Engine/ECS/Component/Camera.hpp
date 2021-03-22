@@ -90,13 +90,14 @@ public:
     }
 
 public:
+    virtual ~Camera() noexcept;
+
     Camera() noexcept                    = delete;
     Camera(const Camera& other) noexcept = delete;
     Camera& operator=(Camera const& other) noexcept = delete;
 
     Camera(Camera&& other) noexcept = default;
-    Camera& operator=(Camera&& other) noexcept = default;
-    virtual ~Camera() noexcept                 = default;
+    Camera& operator                =(Camera&& other) noexcept;
 
     void moveTowardScene(class Scene& newOwner) override;
 

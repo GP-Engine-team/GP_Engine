@@ -28,10 +28,12 @@ class InputComponent : public Component
 {
 public:
     // InputComponent() = delete;
-    InputComponent(const InputComponent& other) noexcept;
-    InputComponent(InputComponent&& other) noexcept;
-    virtual ~InputComponent() = default;
+    InputComponent(const InputComponent& other) noexcept = delete;
+    InputComponent(InputComponent&& other) noexcept      = default;
+    virtual ~InputComponent();
     InputComponent(GameObject& owner);
+
+    InputComponent& operator=(InputComponent&& other) noexcept;
 
 private:
     std::unordered_map<std::string, std::function<void()>> m_functionMap;

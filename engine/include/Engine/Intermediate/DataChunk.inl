@@ -1,47 +1,47 @@
 #include "Engine/Intermediate/DataChunk.hpp"
 
-template <typename TStoredComponent, int TSize>
-constexpr inline DataChunk<TStoredComponent, TSize>::DataChunk() noexcept
+template <typename TStoredData, int TSize>
+constexpr inline DataChunk<TStoredData, TSize>::DataChunk() noexcept
 {
-    m_components.reserve(TSize / sizeof(TStoredComponent));
+    m_datas.reserve(TSize / sizeof(TStoredData));
 }
 
-template <typename TStoredComponent, int TSize>
+template <typename TStoredData, int TSize>
 template <typename... Args>
-TStoredComponent& DataChunk<TStoredComponent, TSize>::addComponent(Args&&... args) noexcept
+TStoredData& DataChunk<TStoredData, TSize>::add(Args&&... args) noexcept
 {
-    return m_components.emplace_back(std::forward<Args>(args)...);
+    return m_datas.emplace_back(std::forward<Args>(args)...);
 }
 
-template <typename TStoredComponent, int TSize>
-void DataChunk<TStoredComponent, TSize>::destroyComponent(const TStoredComponent* componentToDestroy) noexcept
+template <typename TStoredData, int TSize>
+void DataChunk<TStoredData, TSize>::destroy(const TStoredData* dataToDestroy) noexcept
 {
-    for (size_t i = 0; i < m_components.size(); ++i)
+    for (size_t i = 0; i < m_datas.size(); ++i)
     {
-        if (unlikely(&m_components[i] == componentToDestroy))
+        if (unlikely(&m_datas[i] == dataToDestroy))
         {
-            std::swap(m_components[i], m_components.back());
+            auto tmp       = std::move(m_datas[i]);
+            m_datas[i]     = std::move(m_datas.back());
+            m_datas.back() = std::move(tmp);
 
-            m_components[i].getGameObject().updateComponentLink<TStoredComponent>(&m_components.back(),
-                                                                                  &m_components[i]);
-            m_components.pop_back();
+            m_datas.pop_back();
         }
     }
 }
 
-template <typename TStoredComponent, int TSize>
-DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent, TSize>::getInstance() noexcept
+template <typename TStoredData, int TSize>
+DataChunk<TStoredData, TSize>* DataChunk<TStoredData, TSize>::getInstance() noexcept
 {
     if (unlikely(m_pInstance == nullptr))
     {
-        m_pInstance = new DataChunk<TStoredComponent, TSize>();
+        m_pInstance = new DataChunk<TStoredData, TSize>();
     }
 
     return m_pInstance;
 }
 
-template <typename TStoredComponent, int TSize>
-void DataChunk<TStoredComponent, TSize>::setInstance(DataChunk& ptr) noexcept
+template <typename TStoredData, int TSize>
+void DataChunk<TStoredData, TSize>::setInstance(DataChunk& ptr) noexcept
 {
     m_pInstance = &ptr;
 }

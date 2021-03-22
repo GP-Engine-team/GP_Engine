@@ -1,6 +1,5 @@
 ﻿inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
-    : m_name{arg.name}, m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this,
-                                                                                               arg.transformArg)},
+    : m_name{arg.name}, m_transform{DataChunk<TransformComponent>::getInstance()->add(*this, arg.transformArg)},
       m_pComponents{}, pOwnerScene{&scene}, parent{arg.parent}
 {
 }
@@ -24,7 +23,7 @@ inline void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept
 template <typename T, typename... Args>
 inline T& GameObject::addComponent(Args&&... args) noexcept
 {
-    T& newComponent = DataChunk<T>::getInstance()->addComponent(*this, std::forward<Args>(args)...);
+    T& newComponent = DataChunk<T>::getInstance()->add(*this, std::forward<Args>(args)...);
     m_pComponents.emplace_back(&newComponent);
     return newComponent;
 }
@@ -149,7 +148,10 @@ inline void GameObject::destroy() noexcept
 {
     /*set flag to be delete by it parent*/
     m_isDead = true;
-    // m_isDirty = true;
+
+    // Notify parent to kill it's child
+    if (parent)
+        parent->getTransform().setDirty();
 }
 
 inline void GameObject::destroyNow() noexcept

@@ -4,33 +4,51 @@
 using namespace Editor;
 using namespace GPE;
 
+
+static void controlPreviousItem(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
+{
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+	{
+		selectedGameObject = &gameObject;
+	}
+
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+	{
+		ImGui::OpenPopup("SceneGraphContext" + idElem);
+	}
+
+	if (ImGui::BeginPopup("SceneGraphContext" + idElem))
+	{
+		ImGui::Text(gameObject.getName().c_str());
+		if (ImGui::MenuItem("Add child", NULL, false))
+		{
+			gameObject.addChild<GameObject>(GameObject::CreateArg{ "NewGameObject" });
+		}
+
+		if (ImGui::MenuItem("Remove", NULL, false))
+		{
+			gameObject.destroy();
+		}
+		ImGui::EndPopup();
+	}
+}
+
 void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
 {
-	ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_Selected * (selectedGameObject == &gameObject) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
 	if (gameObject.children.empty())
 	{
-		nodeFlag |= ImGuiTreeNodeFlags_Selected * (selectedGameObject == &gameObject);
-
-		nodeFlag |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
+		nodeFlag |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 		ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
-		if (ImGui::IsItemClicked())
-		{
-			selectedGameObject = &gameObject;
-		}
+
+		controlPreviousItem(gameObject, selectedGameObject, idElem);
 	}
 	else
 	{
-		nodeFlag |= ImGuiTreeNodeFlags_Selected * (selectedGameObject == &gameObject);
 		bool nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
 
-		if (selectedGameObject == &gameObject)
-			nodeFlag |= ImGuiTreeNodeFlags_Selected;
-
-		if (ImGui::IsItemClicked())
-		{
-			selectedGameObject = &gameObject;
-		}
+		controlPreviousItem(gameObject, selectedGameObject, idElem);
 
 		if (nodeOpen)
 		{
@@ -46,14 +64,4 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GameObject
 void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GameObject*& selectedGameObject)
 {
 	recursiveSceneGraphNode(gameObject, selectedGameObject);
-
-	if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
-		ImGui::OpenPopupOnItemClick("SceneGraphContext");
-
-	if (ImGui::BeginPopup("SceneGraphContext"))
-	{
-		if (ImGui::MenuItem("Remove one", NULL, false)) {}
-		if (ImGui::MenuItem("Remove all", NULL, false)) {}
-		ImGui::EndPopup();
-	}
 }

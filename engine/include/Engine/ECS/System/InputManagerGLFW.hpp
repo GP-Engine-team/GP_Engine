@@ -83,6 +83,8 @@ public:
      */
     inline int addComponent(InputComponent* input) noexcept;
 
+    inline void updateComponent(InputComponent* newPointerInputComponent, int key) noexcept;
+
     /**
      * @brief remove input component to the component list
      * @param key
