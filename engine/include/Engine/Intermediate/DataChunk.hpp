@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <array>        //std::array
-#include <utility>      //std::swap
-#include <vector>       //std::vector
+#include <array>   //std::array
+#include <utility> //std::swap
+#include <vector>  //std::vector
 
 // In inl
 #include "Engine/Core/Debug/Assert.hpp"
@@ -35,7 +35,7 @@ class DataChunk
      * operator.
      */
 private:
-    static DataChunk*        m_pInstance;
+    static DataChunk* m_pInstance;
 
 protected:
     std::vector<TStoredComponent> m_components;
@@ -76,6 +76,7 @@ public:
      * @return DataChunk*
      */
     static DataChunk* getInstance() noexcept;
+    static void       setInstance(DataChunk& ptr) noexcept;
 };
 
 template <typename TStoredComponent, int TSize>

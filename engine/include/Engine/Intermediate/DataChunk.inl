@@ -39,3 +39,9 @@ DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent, TSize>::getInsta
 
     return m_pInstance;
 }
+
+template <typename TStoredComponent, int TSize>
+void DataChunk<TStoredComponent, TSize>::setInstance(DataChunk& ptr) noexcept
+{
+    m_pInstance = &ptr;
+}

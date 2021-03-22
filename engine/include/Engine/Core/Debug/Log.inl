@@ -104,6 +104,7 @@ inline void Log::logWarning(const std::string& msg) noexcept
         msgLog += "WARNING: ";
     }
 
+    msgLog += msg;
     msgLog += "\n";
 
     if (getSettingState(ESetting::PRINT_LOG_FILE_WARNING))
