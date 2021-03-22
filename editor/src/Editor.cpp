@@ -165,74 +165,11 @@ namespace Editor
 		ImGui::End();
 	}
 
-
-	void Editor::recursiveSceneGraphNode(GameObject& gameObject, int idElem)
-	{
-		ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-		static int nodeClicked = -1;
-		static int selectionMask = (1 << 2);
-
-		GameObject* selectedGameObject = nullptr;
-
-		const bool isSelected = (selectionMask & (1 << idElem)) != 0;
-
-		if (isSelected)
-			nodeFlag |= ImGuiTreeNodeFlags_Selected;
-
-		if (gameObject.children.empty())
-		{
-			nodeFlag |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
-			ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
-			if (ImGui::IsItemClicked())
-			{
-				nodeClicked = idElem;
-				m_inspectedObject = &gameObject;
-			}
-		}
-		else
-		{
-			bool nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
-			if (ImGui::IsItemClicked())
-			{
-				nodeClicked = idElem;
-				m_inspectedObject = &gameObject;
-			}
-
-			if (nodeOpen)
-			{
-				for (auto&& child : gameObject.children)
-				{
-					recursiveSceneGraphNode(*child.get(), ++idElem);
-				}
-				ImGui::TreePop();
-			}
-		}
-
-		if (nodeClicked != -1)
-		{
-			// Update selection state
-			// (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
-			if (ImGui::GetIO().KeyCtrl)
-				selectionMask ^= (1 << nodeClicked);          // CTRL+click to toggle
-			else //if (!(selectionMask & (1 << nodeClicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
-				selectionMask = (1 << nodeClicked);           // Click to single-select
-		}
-	}
-
 	void Editor::renderSceneGraph()
 	{
 		ImGui::Begin("Scene Graph");
-		recursiveSceneGraphNode(Engine::getInstance()->sceneManager.getCurrentScene()->world);
 
-		if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
-			ImGui::OpenPopupOnItemClick("SceneGraphContext");
-
-		if (ImGui::BeginPopup("SceneGraphContext"))
-		{
-			if (ImGui::MenuItem("Remove one", NULL, false)) {}
-			if (ImGui::MenuItem("Remove all", NULL, false)) {}
-			ImGui::EndPopup();
-		}
+		m_sceneGraph.renderAndGetSelected(Engine::getInstance()->sceneManager.getCurrentScene()->world, m_inspectedObject);
 
 		ImGui::End();
 	}

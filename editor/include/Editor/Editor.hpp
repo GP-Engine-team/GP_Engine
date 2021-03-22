@@ -8,6 +8,7 @@
 
 #include "LogInspector.hpp"
 #include "ProjectContent.hpp"
+#include "SceneGraph.hpp"
 #include "Engine/Intermediate/Viewers/SceneViewer.hpp"
 #include <vector>
 
@@ -32,6 +33,7 @@ namespace Editor
 		bool					      m_showAppStyleEditor = false;
 		LogInspector			      m_logInspector;
 		ProjectContent				  m_projectContent;
+		SceneGraph					  m_sceneGraph;
 
 		GPE::Scene& loadDefaultScene() const;
 
