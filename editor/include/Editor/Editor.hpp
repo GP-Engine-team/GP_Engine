@@ -24,19 +24,16 @@ namespace Editor
 	class Editor
 	{
 	private:
-		GPE::SceneViewer			  m_sceneEditor;
-		GLFWwindow* m_window;
+		GPE::SceneViewer m_sceneEditor;
+		GLFWwindow*		 m_window;
 		GPE::GameObject* m_inspectedObject;
-		int							  m_framebufferWidth;
-		int							  m_framebufferHeight;
-		bool					      m_showAppStyleEditor = false;
-		LogInspector			      m_logInspector;
-		ProjectContent				  m_projectContent;
+		bool			 m_showAppStyleEditor = false;
+		LogInspector	 m_logInspector;
+		ProjectContent	 m_projectContent;
 
 		GPE::Scene& loadDefaultScene() const;
 
 	private:
-		void setupGLFWWindow();
 		void setupDearImGui();
 
 		void renderLog();
@@ -61,8 +58,6 @@ namespace Editor
 		void update();
 		void render();
 		bool isRunning();
-
-		friend void windowFramebufferResized(GLFWwindow* window, int width, int height);
 	};
 
 } // End of namespace Editor
