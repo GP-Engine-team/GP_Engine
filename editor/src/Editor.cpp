@@ -170,24 +170,27 @@ namespace Editor
 	{
 		ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 		static int nodeClicked = -1;
-		int selectionMask = (1 << 2);
+		static int selectionMask = (1 << 2);
 
 		GameObject* selectedGameObject = nullptr;
+
+		const bool isSelected = (selectionMask & (1 << idElem)) != 0;
+
+		if (isSelected)
+			nodeFlag |= ImGuiTreeNodeFlags_Selected;
 
 		if (gameObject.children.empty())
 		{
 			nodeFlag |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 			ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
 			if (ImGui::IsItemClicked())
+			{
 				nodeClicked = idElem;
+				m_inspectedObject = &gameObject;
+			}
 		}
 		else
 		{
-			const bool isSelected = (selectionMask & (1 << idElem)) != 0;
-
-			if (isSelected)
-				nodeFlag |= ImGuiTreeNodeFlags_Selected;
-
 			bool nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
 			if (ImGui::IsItemClicked())
 			{
@@ -220,6 +223,17 @@ namespace Editor
 	{
 		ImGui::Begin("Scene Graph");
 		recursiveSceneGraphNode(Engine::getInstance()->sceneManager.getCurrentScene()->world);
+
+		if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+			ImGui::OpenPopupOnItemClick("SceneGraphContext");
+
+		if (ImGui::BeginPopup("SceneGraphContext"))
+		{
+			if (ImGui::MenuItem("Remove one", NULL, false)) {}
+			if (ImGui::MenuItem("Remove all", NULL, false)) {}
+			ImGui::EndPopup();
+		}
+
 		ImGui::End();
 	}
 
@@ -308,7 +322,7 @@ namespace Editor
 
 	void Editor::render()
 	{
-		//ImGui::ShowDemoWindow(nullptr);
+		ImGui::ShowDemoWindow(nullptr);
 
 		ImGui::Render();
 
