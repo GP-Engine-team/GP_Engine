@@ -10,14 +10,16 @@
 #include <functional> //std::function
 #include <queue>
 
+#include <iostream>
+
 namespace GPE
 {
 struct TimerTask
 {
-    double localTimer = 0.; // if current time egal 1s and local timer egal 0.5 global time egal 1.5
-    double globalTimer = 0.;
-    std::function<void()> task = nullptr;
-    bool isLooping = false;
+    double                localTimer  = 0.; // if current time egal 1s and local timer egal 0.5 global time egal 1.5
+    double                globalTimer = 0.;
+    std::function<void()> task        = nullptr;
+    bool                  isLooping   = false;
 
     bool operator>(const TimerTask& other) const noexcept
     {
@@ -28,17 +30,17 @@ struct TimerTask
 class TimeSystem
 {
 protected:
-    std::chrono::steady_clock::time_point m_time = std::chrono::steady_clock::now();
-    std::chrono::steady_clock::time_point m_tempTime = m_time;
-    double m_fixedUnscaledTimeAcc = 0.;
+    std::chrono::steady_clock::time_point m_time                 = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point m_tempTime             = m_time;
+    double                                m_fixedUnscaledTimeAcc = 0.;
 
-    double m_deltaTime = 0.;
-    double m_unscaledDeltaTime = 0.;
-    double m_timeScale = 1.;
+    double m_deltaTime              = 0.;
+    double m_unscaledDeltaTime      = 0.;
+    double m_timeScale              = 1.;
     double m_fixedUnscaledDeltaTime = 1. / 60.;
-    double m_fixedDeltaTime = m_fixedUnscaledDeltaTime * m_timeScale;
+    double m_fixedDeltaTime         = m_fixedUnscaledDeltaTime * m_timeScale;
 
-    double m_scaledTimeAcc = 0.f;
+    double m_scaledTimeAcc   = 0.f;
     double m_unscaledTimeAcc = 0.f;
 
     std::priority_queue<TimerTask, std::vector<TimerTask>, std::greater<TimerTask>> m_scaledTimerQueue;
@@ -54,15 +56,14 @@ public:
      * @param renderFunction : lambda that contain all render function
      */
     void update(std::function<void(double fixedUnscaledDeltaTime, double fixedDeltaTime)> fixedUpdateFunction,
-                std::function<void(double unscaledDeltaTime, double deltaTime)> updateFunction,
-                std::function<void()> renderFunction) noexcept;
-
+                std::function<void(double unscaledDeltaTime, double deltaTime)>           updateFunction,
+                std::function<void()>                                                     renderFunction) noexcept;
 
     /**
      * @brief Change the fixed delta time used in fixed update. By default this value egales : 1/60 or 60 Hz
-     * @param newFixedUnscaledDeltaTime 
-     * @return 
-    */
+     * @param newFixedUnscaledDeltaTime
+     * @return
+     */
     inline constexpr void setFixedUnscaledDeltaTime(double newFixedUnscaledDeltaTime) noexcept;
 
     [[nodiscard]] inline constexpr double getFixedDeltaTime() const noexcept;
@@ -74,10 +75,11 @@ public:
     [[nodiscard]] inline constexpr double getTimeScale() const noexcept;
 
     /**
-     * @brief Redefine time scale. This value will use to compute scaled delta time and scaled fixed delta time. Useful to change the game speed
-     * @param newtimeScale 
-     * @return 
-    */
+     * @brief Redefine time scale. This value will use to compute scaled delta time and scaled fixed delta time. Useful
+     * to change the game speed
+     * @param newtimeScale
+     * @return
+     */
     inline constexpr void setTimeScale(double newtimeScale) noexcept;
 
     /**
@@ -117,4 +119,3 @@ public:
 #include "TimeSystem.inl"
 
 } // namespace GPE
-
