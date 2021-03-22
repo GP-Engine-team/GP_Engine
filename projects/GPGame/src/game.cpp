@@ -1,31 +1,31 @@
-﻿#include "Game.hpp"
+﻿#include <Game.hpp>
 
-#include "Engine/Core/Debug/Assert.hpp"
+#include <Engine/Core/Debug/Assert.hpp>
 
-#include "Engine/Core/Parsers/ObjParser.hpp"
-#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/ECS/Component/InputComponent.hpp"
-#include "Engine/ECS/Component/Light/DirectionalLight.hpp"
-#include "Engine/ECS/Component/Light/PointLight.hpp"
-#include "Engine/ECS/Component/Model.hpp"
-#include "Engine/ECS/Component/TransformComponent.hpp"
-#include "Engine/ECS/System/BehaviourSystem.hpp"
-#include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
-#include "Engine/ECS/System/TimeSystem.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Material.hpp"
-#include "Engine/Resources/Mesh.hpp"
-#include "Engine/Resources/ResourcesManagerType.hpp"
-#include "Engine/Resources/Shader.hpp"
-#include "Engine/Resources/Texture.hpp"
-#include "myScript.hpp"
+#include <Engine/Core/Parsers/ObjParser.hpp>
+#include <Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp>
+#include <Engine/Core/Rendering/Window/WindowGLFW.hpp>
+#include <Engine/ECS/Component/Camera.hpp>
+#include <Engine/ECS/Component/InputComponent.hpp>
+#include <Engine/ECS/Component/Light/DirectionalLight.hpp>
+#include <Engine/ECS/Component/Light/PointLight.hpp>
+#include <Engine/ECS/Component/Model.hpp>
+#include <Engine/ECS/Component/TransformComponent.hpp>
+#include <Engine/ECS/System/BehaviourSystem.hpp>
+#include <Engine/ECS/System/InputManagerGLFW.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
+#include <Engine/ECS/System/TimeSystem.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Material.hpp>
+#include <Engine/Resources/Mesh.hpp>
+#include <Engine/Resources/ResourcesManagerType.hpp>
+#include <Engine/Resources/Shader.hpp>
+#include <Engine/Resources/Texture.hpp>
+#include <myScript.hpp>
 
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Core/Debug/Log.hpp"
+#include <Engine/Core/Debug/Assert.hpp>
+#include <Engine/Core/Debug/Log.hpp>
 //#include "GPM/Random.hpp"
 
 #include <glad/glad.h> //In first
@@ -138,13 +138,12 @@ Game::Game()
     iManager.bindInput(GLFW_KEY_SPACE, "jump");
     iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
     iManager.bindInput(GLFW_KEY_ESCAPE, "exit");
-    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
-    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
+    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
 
     GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}}};
 
     Camera::PerspectiveCreateArg camCreateArg;
-    camCreateArg.aspect = Camera::computeAspect(900.f, 600.f);
+    camCreateArg.aspect = Camera::computeAspect(900, 600);
 
     camCreateArg.farVal  = 3000;
     camCreateArg.nearVal = 0.01f;
@@ -179,5 +178,5 @@ Game::Game()
         },
         true);
 
-    Log::logInitializationEnd("Game");
+    Log::getInstance()->logInitializationEnd("Game");
 }

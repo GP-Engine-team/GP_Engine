@@ -19,6 +19,9 @@
     <ClCompile Include="src\DirectionalLight.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\GameObject.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -64,6 +67,9 @@
     <ClCompile Include="src\RenderTexture.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\SceneManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\SceneRenderSystem.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -89,9 +95,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\SpotLight.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SystemsManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Texture.cpp">
@@ -234,10 +237,10 @@
     <ClInclude Include="include\Engine\ECS\System\SoundSystem.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp">
+    <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp">
+    <ClInclude Include="include\Engine\Engine.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp">

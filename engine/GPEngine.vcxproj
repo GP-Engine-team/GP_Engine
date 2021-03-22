@@ -234,8 +234,8 @@
     <ClInclude Include="include\Engine\ECS\System\RenderSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\SoundSystem.hpp" />
-    <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp" />
     <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp" />
+    <ClInclude Include="include\Engine\Engine.hpp" />
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
     <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp" />
@@ -303,6 +303,7 @@
     <ClCompile Include="src\BehaviourSystem.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
+    <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\InputComponent.cpp" />
     <ClCompile Include="src\InputManagerGLFW.cpp" />
@@ -318,6 +319,7 @@
     <ClCompile Include="src\RendererGLFW_GL46.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\RenderTexture.cpp" />
+    <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\SceneRenderSystem.cpp" />
     <ClCompile Include="src\SceneViewer.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlLoader.cpp" />
@@ -327,7 +329,6 @@
     <ClCompile Include="src\ShaderParser.cpp" />
     <ClCompile Include="src\SoundSystem.cpp" />
     <ClCompile Include="src\SpotLight.cpp" />
-    <ClCompile Include="src\SystemsManager.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\TransformComponent.cpp" />

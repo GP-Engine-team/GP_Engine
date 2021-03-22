@@ -55,7 +55,7 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
 
     m_gameObject.pOwnerScene->sceneRenderer.addCamera(this);
 
-    Log::log((std::string("Perspective projection added with name \"") + arg.name + "\"").c_str());
+    Log::getInstance()->log((std::string("Perspective projection added with name \"") + arg.name + "\"").c_str());
 }
 
 Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : Component(owner)
@@ -76,7 +76,7 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
         Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
 
     m_gameObject.pOwnerScene->sceneRenderer.addCamera(this);
-    Log::log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
+    Log::getInstance()->log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
 }
 
 void Camera::setFovY(const float fovY) noexcept

@@ -20,14 +20,14 @@ namespace GPE
 {
 
 /**
- * The SystemsManager class defines the `GetInstance` method that serves as an
+ * The Engine class defines the `GetInstance` method that serves as an
  * alternative to constructor and lets clients access the same instance of this
  * class over and over.
  */
-class SystemsManager
+class Engine
 {
 protected:
-    static SystemsManager* m_instance;
+    static Engine* m_instance;
 
 public:
     Window              window;
@@ -41,7 +41,7 @@ public:
     PhysXSystem         physXSystem;
 
 protected:
-    SystemsManager()
+    Engine()
         : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
           behaviourSystem{}, resourceManager{}, renderSystem{}, sceneManager{}, physXSystem{}
     {
@@ -52,12 +52,12 @@ public:
     /**
      * Singletons should not be cloneable.
      */
-    SystemsManager(SystemsManager& other) = delete;
+    Engine(Engine& other) = delete;
 
     /**
      * Singletons should not be assignable.
      */
-    void operator=(const SystemsManager&) = delete;
+    void operator=(const Engine&) = delete;
 
     /**
      * This is the static method that controls the access to the singleton
@@ -66,19 +66,19 @@ public:
      * object stored in the static field.
      */
 
-    static SystemsManager* getInstance()
+    static Engine* getInstance()
     {
         if (m_instance == nullptr)
         {
-            m_instance = new SystemsManager();
+            m_instance = new Engine();
         }
 
         return m_instance;
     }
 
-    static void setInstance(SystemsManager& systemManager)
+    static void setInstance(Engine& engine)
     {
-        m_instance = &systemManager;
+        m_instance = &engine;
     }
 };
 

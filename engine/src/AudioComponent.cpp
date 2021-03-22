@@ -1,7 +1,7 @@
-﻿#include "Engine/ECS/Component/AudioComponent.hpp"
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/ECS/System/SoundSystem.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+﻿#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/ECS/Component/AudioComponent.hpp>
+#include <Engine/ECS/System/SoundSystem.hpp>
+#include <Engine/Engine.hpp>
 
 using namespace GPE;
 using namespace std;
@@ -18,7 +18,7 @@ AudioComponent::AudioComponent(GameObject& owner) noexcept : Component(owner)
 
         else
         {
-            Log::logAddMsg("Enumeration supported ...");
+            Log::getInstance()->logAddMsg("Enumeration supported ...");
         }
     }
 
@@ -66,7 +66,7 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity[0], settings.velocity[1], settings.velocity[2]);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
     AL_CALL(alSourcei, source->source, AL_BUFFER,
-            SystemsManager::getInstance()->resourceManager.get<Sound::Buffer>(soundName)->buffer);
+            Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName)->buffer);
 }
 
 AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept

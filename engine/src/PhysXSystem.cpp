@@ -1,4 +1,6 @@
-﻿#include <Engine/ECS/System/PhysXSystem.hpp>
+﻿#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
+#include <Engine/ECS/System/PhysXSystem.hpp>
+#include <Engine/Engine.hpp>
 #include <PxPhysics.h>
 #include <PxPhysicsVersion.h>
 #include <common/PxTolerancesScale.h>
@@ -72,6 +74,14 @@ void PhysXSystem::drawDebugScene()
 {
     for (unsigned int i = 0; i < m_CollisionComponents.size(); i++)
     {
-        m_CollisionComponents[i]
+        if (m_CollisionComponents[i]->isVisible == true)
+        {
+            if (static_cast<SphereCollider*>(m_CollisionComponents[i]))
+            {
+                SphereCollider* sphereCol = static_cast<SphereCollider*>(m_CollisionComponents[i]);
+                m_CollisionComponents[i]->getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(sphereCol->getCenter(),
+                                                                                                sphereCol->getRadius());
+            }
+        }
     }
 }

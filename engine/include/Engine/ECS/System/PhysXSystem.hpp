@@ -37,26 +37,26 @@ public:
     void drawDebugScene();
 
     /**
-     * @brief add input component to the component list
-     * @param input
+     * @brief add Collision component to the component list
+     * @param colComp
      * @return
      */
-    inline int addComponent(CollisionComponent* colComp) noexcept;
+    inline size_t addComponent(CollisionComponent* colComp) noexcept;
 
     /**
-     * @brief remove input component to the component list
-     * @param key
+     * @brief remove Collision component to the component list
+     * @param colComp
      * @return
      */
-    inline void removeComponent(int key) noexcept;
+    inline void removeComponent(CollisionComponent* colComp) noexcept;
 
 private:
-    physx::PxFoundation*                         m_Foundation;
-    physx::PxPvd*                                m_Pvd;
-    physx::PxPhysics*                            m_Physics;
-    physx::PxCooking*                            m_Cooking;
-    physx::PxScene*                              m_Scene;
-    std::unordered_map<int, CollisionComponent*> m_CollisionComponents;
+    physx::PxFoundation*             m_Foundation;
+    physx::PxPvd*                    m_Pvd;
+    physx::PxPhysics*                m_Physics;
+    physx::PxCooking*                m_Cooking;
+    physx::PxScene*                  m_Scene;
+    std::vector<CollisionComponent*> m_CollisionComponents;
 };
 
 #include <Engine/ECS/System/PhysXSystem.inl>

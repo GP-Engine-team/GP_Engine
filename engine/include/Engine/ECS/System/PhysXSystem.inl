@@ -1,14 +1,22 @@
 ﻿#include <Engine/ECS/System/PhysXSystem.hpp>
 
-int PhysXSystem::addComponent(InputComponent* input) noexcept
+size_t PhysXSystem::addComponent(CollisionComponent* colComp) noexcept
 {
-    int key = static_cast<int>(m_inputComponents.size());
-    m_inputComponents.emplace(key, input);
+    m_CollisionComponents.push_back(colComp);
 
-    return key;
+    return m_CollisionComponents.size();
 }
 
-void PhysXSystem::removeComponent(int key) noexcept
+void PhysXSystem::removeComponent(CollisionComponent* colComp) noexcept
 {
-    m_inputComponents.erase(key);
+    for (std::vector<CollisionComponent*>::iterator it = m_CollisionComponents.begin();
+         it != m_CollisionComponents.end(); it++)
+    {
+        if ((*it) == colComp)
+        {
+            std::swap<CollisionComponent*>(m_CollisionComponents.back(), (*it));
+            m_CollisionComponents.pop_back();
+            return;
+        }
+    }
 }

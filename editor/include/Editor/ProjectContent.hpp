@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include <Imgui/imgui.h>
 #include <vector>
@@ -17,6 +17,16 @@
 
 namespace Editor
 {
+	uint64_t constexpr mix(char m, uint64_t s)
+	{
+		return ((s << 7) + ~(s >> 3)) + ~m;
+	}
+
+	uint64_t constexpr hash(const char* m)
+	{
+		return (*m) ? mix(*m, hash(m + 1)) : 0;
+	}
+
 
 	struct FileInfo
 	{
@@ -49,6 +59,12 @@ namespace Editor
 		{
 			resourcesTree.name = RESOURCES_DIR;
 			resourcesTree.path = std::filesystem::current_path() / RESOURCES_DIR;
+
+			if (!std::filesystem::exists(resourcesTree.path))
+			{
+				FUNCT_ERROR((std::string("Path \"") + resourcesTree.path.string() + "\" doesn't exist").c_str());
+				return;
+			}
 
 			refreshResourcesList();
 			pCurrentDirectory = &resourcesTree;
@@ -106,11 +122,11 @@ namespace Editor
 
 		void explore(DirectoryInfo dir, int tab = 0)
 		{
-			std::cout << doTab(tab) + dir.name.string() + " - Directories : " + std::to_string(dir.directories.size()) + " - Files : " + std::to_string(dir.files.size()) << std::endl;;
+			GPE::Log::getInstance()->log(doTab(tab) + dir.name.string() + " - Directories : " + std::to_string(dir.directories.size()) + " - Files : " + std::to_string(dir.files.size()));
 
 			for (auto&& file : dir.files)
 			{
-				std::cout << doTab(tab + 1) + file.filename.string() + " - " + file.extention.string() + " - " + std::to_string(file.size) + "bytes " << std::endl;
+				GPE::Log::getInstance()->log(doTab(tab + 1) + file.filename.string() + " - " + file.extention.string() + " - " + std::to_string(file.size) + "bytes ");
 			}
 
 			for (auto&& direct : dir.directories)
@@ -119,30 +135,153 @@ namespace Editor
 			}
 		}
 
-		void render()
+		void renderMaterial(ImVec2& size)
 		{
 			ImGuiIO& io = ImGui::GetIO();
 			ImTextureID my_tex_id = io.Fonts->TexID;
 			float my_tex_w = (float)io.Fonts->TexWidth;
 			float my_tex_h = (float)io.Fonts->TexHeight;
+
+			// -1 == uses default padding (style.FramePadding)
+			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
+			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
+			ImVec4 tint_col = ImVec4(0.0f, 1.0f, 1.0f, 1.0f);
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
+
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
+		}
+
+		void renderImage(ImVec2& size)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			ImTextureID my_tex_id = io.Fonts->TexID;
+			float my_tex_w = (float)io.Fonts->TexWidth;
+			float my_tex_h = (float)io.Fonts->TexHeight;
+
+			// -1 == uses default padding (style.FramePadding)
+			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
+			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
+			ImVec4 tint_col = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
+
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
+		}
+
+		void renderModel(ImVec2& size)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			ImTextureID my_tex_id = io.Fonts->TexID;
+			float my_tex_w = (float)io.Fonts->TexWidth;
+			float my_tex_h = (float)io.Fonts->TexHeight;
+
+			// -1 == uses default padding (style.FramePadding)
+			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
+			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
+			ImVec4 tint_col = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
+
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
+		}
+
+		void renderUnknowFormat(ImVec2& size)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			ImTextureID my_tex_id = io.Fonts->TexID;
+			float my_tex_w = (float)io.Fonts->TexWidth;
+			float my_tex_h = (float)io.Fonts->TexHeight;
+
+			// -1 == uses default padding (style.FramePadding)
+			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
+			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
+			ImVec4 tint_col = ImVec4(1.0f, 0.0f, 1.0f, 1.0f);
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
+
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
+		}
+
+		void renderSound(ImVec2& size)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			ImTextureID my_tex_id = io.Fonts->TexID;
+			float my_tex_w = (float)io.Fonts->TexWidth;
+			float my_tex_h = (float)io.Fonts->TexHeight;
+
+			// -1 == uses default padding (style.FramePadding)
+			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
+			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
+			ImVec4 tint_col = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
+
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
+		}
+
+		void renderShader(ImVec2& size)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			ImTextureID my_tex_id = io.Fonts->TexID;
+			float my_tex_w = (float)io.Fonts->TexWidth;
+			float my_tex_h = (float)io.Fonts->TexHeight;
+
+			// -1 == uses default padding (style.FramePadding)
+			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
+			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
+			ImVec4 tint_col = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
+
+			ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
+		}
+
+		void renderfolder(ImVec2& size, DirectoryInfo** pSelectectDir, DirectoryInfo& currentDir)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			ImTextureID my_tex_id = io.Fonts->TexID;
+			float my_tex_w = (float)io.Fonts->TexWidth;
+			float my_tex_h = (float)io.Fonts->TexHeight;
+
+			// -1 == uses default padding (style.FramePadding)
+			ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
+			ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
+			ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
+			ImVec4 tint_col = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+
+			if (ImGui::ImageButton(my_tex_id, size, uv0, uv1, 2, bg_col, tint_col))
+			{
+				*pSelectectDir = &currentDir;
+			}
+		}
+
+		void render()
+		{
 			float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+			DirectoryInfo* pSelectedDirectory = pCurrentDirectory;
+
+			if (ImGui::Button("Reload"))
+			{
+				refreshResourcesList();
+			}
+			ImGui::SameLine();
+
+			if (pCurrentDirectory->pParent != nullptr)
+			{
+				if (ImGui::Button("Back"))
+				{
+					pSelectedDirectory = pCurrentDirectory->pParent;
+				}
+				ImGui::SameLine();
+			}
+
+			ImGui::TextUnformatted(pCurrentDirectory->path.string().c_str());
+
+			ImVec2 size = ImVec2(32.0f, 32.0f);                     // Size of the image we want to make visible
+			ImGuiStyle& style = ImGui::GetStyle();
 
 			for (int i = 0; i < pCurrentDirectory->directories.size(); ++i)
 			{
-				ImVec2 size = ImVec2(32.0f, 32.0f);                     // Size of the image we want to make visible
-				ImGuiStyle& style = ImGui::GetStyle();
-
 				ImGui::PushID(i);
-				if (ImGui::BeginTable((std::to_string(i) + "table").c_str(), 1))
-				{
-					ImGui::TableNextRow();
-					ImGui::TableSetColumnIndex(0);                            // -1 == uses default padding (style.FramePadding)
-					ImVec2 uv0 = ImVec2(0.0f, 0.0f);                        // UV coordinates for lower-left
-					ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);// UV coordinates for (32,32) in our texture
-					ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);         // Black background
-					ImVec4 tint_col = ImVec4(1.0f, 0.0f, 1.0f, 1.0f);       // No tint
 
-					if (ImGui::ImageButton(my_tex_id, size, uv0, uv1, 2, bg_col, tint_col));
+				ImGui::BeginGroup();
+				{
+					renderfolder(size, &pSelectedDirectory, pCurrentDirectory->directories[i]);
 
 					if (ImGui::IsItemHovered())
 					{
@@ -158,26 +297,93 @@ namespace Editor
 						ImGui::EndTooltip();
 					}
 
-					ImGui::TableNextRow();
-					ImGui::TableSetColumnIndex(0);
-
 					ImGui::TextUnformatted(pCurrentDirectory->directories[i].name.string().c_str());
-
-					ImGui::EndTable();
-
 				}
+				ImGui::EndGroup();
 
-				float last_button_x2 = size.x /*ImGui::GetItemRectMax().x*/;
-				std::cout << last_button_x2 << std::endl;
-				float next_button_x2 =
-					last_button_x2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
+				float last_button_x2 = ImGui::GetItemRectMax().x;
+				float next_button_x2 = last_button_x2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
 				if (i + 1 < pCurrentDirectory->directories.size() && next_button_x2 < window_visible_x2)
 				{
-					std::cout << "OK" << std::endl;
 					ImGui::SameLine();
 				}
+
 				ImGui::PopID();
 			}
+
+			for (int i = 0; i < pCurrentDirectory->files.size(); ++i)
+			{
+				ImGui::PushID(i);
+
+				ImGui::BeginGroup();
+				{
+					switch (hash(pCurrentDirectory->files[i].extention.string().c_str())) //runtime
+					{
+					case hash(".obj"): //compile time
+					case hash(".fbx"): //compile time
+					case hash(".gltf"): //compile time
+						renderModel(size);
+						break;
+
+					case hash(".mtl"): //compile time
+						renderMaterial(size);
+						break;
+
+					case hash(".wav"): //compile time
+					case hash(".mp3"): //compile time
+						renderSound(size);
+						break;
+
+					case hash(".fs"): //compile time
+					case hash(".vs"): //compile time
+						renderShader(size);
+						break;
+
+					case hash(".jpg"): //compile time
+					case hash(".png"): //compile time
+					case hash(".jpeg"): //compile time
+					case hash(".bmp"): //compile time
+						renderImage(size);
+						break;
+
+					default:
+						renderUnknowFormat(size);
+						break;
+					}
+
+					if (ImGui::IsItemHovered())
+					{
+						ImGui::BeginTooltip();
+						ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+
+						ImGui::Text("%lu bytes", pCurrentDirectory->files[i].size);
+						ImGui::PopTextWrapPos();
+						ImGui::EndTooltip();
+					}
+
+					//Drag and drop
+					if (ImGui::BeginDragDropSource())
+					{
+						ImGui::SetDragDropPayload("RESOURCE_PATH", (void*)&pCurrentDirectory->files[i].path, sizeof(&pCurrentDirectory->files[i].path));
+						ImGui::TextUnformatted(pCurrentDirectory->files[i].filename.string().c_str());
+						ImGui::EndDragDropSource();
+					}
+
+					ImGui::TextUnformatted(pCurrentDirectory->files[i].filename.string().c_str());
+				}
+				ImGui::EndGroup();
+
+				float last_button_x2 = ImGui::GetItemRectMax().x;
+				float next_button_x2 = last_button_x2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
+				if (i + 1 < pCurrentDirectory->files.size() && next_button_x2 < window_visible_x2)
+				{
+					ImGui::SameLine();
+				}
+
+				ImGui::PopID();
+			}
+
+			pCurrentDirectory = pSelectedDirectory;
 		}
 	};
 

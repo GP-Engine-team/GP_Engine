@@ -84,9 +84,9 @@ protected:
     void updateProjection();
 
 public:
-    static float computeAspect(float width, float height) noexcept
+    static float computeAspect(int width, int height) noexcept
     {
-        return width / height;
+        return width / static_cast<float>(height);
     }
 
 public:

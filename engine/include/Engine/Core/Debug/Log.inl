@@ -1,8 +1,8 @@
 ﻿#include "Engine/Core/Debug/Log.hpp"
 
-inline void Log::logFileHeader() noexcept
+inline const std::vector<std::string>& Log::getLogs() noexcept
 {
-    logHeading();
+    return logs;
 }
 
 inline void Log::closeAndTryToCreateFile() noexcept
@@ -13,12 +13,13 @@ inline void Log::closeAndTryToCreateFile() noexcept
 
 inline void Log::logAddMsg(const std::string& msg) noexcept
 {
-    if (!fileLog.is_open())
-        return;
-
     if (logCallBack)
         logCallBack(msg.c_str());
 
+    logs.emplace_back(msg);
+
+    if (!fileLog.is_open())
+        return;
     fileLog << msg;
 }
 
@@ -103,6 +104,7 @@ inline void Log::logWarning(const std::string& msg) noexcept
         msgLog += "WARNING: ";
     }
 
+    msgLog += msg;
     msgLog += "\n";
 
     if (getSettingState(ESetting::PRINT_LOG_FILE_WARNING))

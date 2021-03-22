@@ -31,16 +31,22 @@ template <typename... Args>
 LType& ResourcesManager<LType>::add(std::string key, Args&&... args) noexcept(std::is_nothrow_constructible_v<LType>)
 {
     // auto for pair of iterator of LType and bool
-    auto rst =
-        m_resources.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple(args...));
 
-    if (rst.second == false)
+    LType* ptr = get(key);
+
+    if (ptr)
     {
-        Log::logError(std::string("resource insert with same key as an element existing : ") + key +
-                      ". Resource type : " + typeid(LType).name());
+        Log::getInstance()->logWarning(std::string("resource insert with same key as an element existing : ") + key +
+                                       ". Resource type : " + typeid(LType).name());
+        return *ptr;
     }
+    else
+    {
+        auto rst =
+            m_resources.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple(args...));
 
-    return rst.first->second;
+        return rst.first->second;
+    }
 }
 
 template <class LType>

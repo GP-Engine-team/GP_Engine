@@ -10,7 +10,7 @@
 
 namespace GPE
 {
-class CollisionComponent : Component
+class CollisionComponent : public Component
 {
 public:
     CollisionComponent(GameObject& owner) noexcept : Component(owner)

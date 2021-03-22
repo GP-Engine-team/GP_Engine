@@ -55,7 +55,7 @@ public:
     GameObject& operator=(GameObject const& other) = delete; // TODO
 
     inline GameObject(GameObject&& other) = default;
-    inline ~GameObject() noexcept         = default;
+    virtual ~GameObject() noexcept        = default;
     inline GameObject& operator=(GameObject&& other) noexcept = default;
 
     void moveTowardScene(Scene& newOwner) noexcept;

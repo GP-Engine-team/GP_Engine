@@ -1,6 +1,6 @@
 ﻿#include "Editor/Editor.hpp"
 
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 #include "Engine/Resources/SceneManager.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
@@ -42,7 +42,7 @@ namespace Editor
 	/* ========================== Private methods ========================== */
 	GPE::Scene& Editor::loadDefaultScene() const
 	{
-		GPE::SceneManager& sm = GPE::SystemsManager::getInstance()->sceneManager;
+		GPE::SceneManager& sm = GPE::Engine::getInstance()->sceneManager;
 		sm.addEmpty("Default scene");
 		sm.loadScene("Default scene");
 
@@ -142,7 +142,7 @@ namespace Editor
 		const ImVec2 levelEditorSize{ ImGui::GetCurrentWindow()->ContentRegionRect.GetSize() };
 		//m_sceneView.resize(static_cast<int>(levelEditorSize.x), static_cast<int>(levelEditorSize.y));
 
-		m_sceneEditor.bindScene(*SystemsManager::getInstance()->sceneManager.getCurrentScene());
+		m_sceneEditor.bindScene(*Engine::getInstance()->sceneManager.getCurrentScene());
 		m_sceneEditor.render();
 		ImGui::Image((void*)(intptr_t)m_sceneEditor.texture.getID(), levelEditorSize,
 			ImVec2{ .0f, 1.f }, ImVec2{ 1.f, .0f });
@@ -170,24 +170,27 @@ namespace Editor
 	{
 		ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 		static int nodeClicked = -1;
-		int selectionMask = (1 << 2);
+		static int selectionMask = (1 << 2);
 
 		GameObject* selectedGameObject = nullptr;
+
+		const bool isSelected = (selectionMask & (1 << idElem)) != 0;
+
+		if (isSelected)
+			nodeFlag |= ImGuiTreeNodeFlags_Selected;
 
 		if (gameObject.children.empty())
 		{
 			nodeFlag |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 			ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
 			if (ImGui::IsItemClicked())
+			{
 				nodeClicked = idElem;
+				m_inspectedObject = &gameObject;
+			}
 		}
 		else
 		{
-			const bool isSelected = (selectionMask & (1 << idElem)) != 0;
-
-			if (isSelected)
-				nodeFlag |= ImGuiTreeNodeFlags_Selected;
-
 			bool nodeOpen = ImGui::TreeNodeEx((void*)(intptr_t)idElem, nodeFlag, gameObject.getName().c_str());
 			if (ImGui::IsItemClicked())
 			{
@@ -219,7 +222,18 @@ namespace Editor
 	void Editor::renderSceneGraph()
 	{
 		ImGui::Begin("Scene Graph");
-		recursiveSceneGraphNode(SystemsManager::getInstance()->sceneManager.getCurrentScene()->world);
+		recursiveSceneGraphNode(Engine::getInstance()->sceneManager.getCurrentScene()->world);
+
+		if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+			ImGui::OpenPopupOnItemClick("SceneGraphContext");
+
+		if (ImGui::BeginPopup("SceneGraphContext"))
+		{
+			if (ImGui::MenuItem("Remove one", NULL, false)) {}
+			if (ImGui::MenuItem("Remove all", NULL, false)) {}
+			ImGui::EndPopup();
+		}
+
 		ImGui::End();
 	}
 
@@ -254,8 +268,6 @@ namespace Editor
 
 			if (ImGui::BeginTabItem("Profiler"))
 			{
-				Log::closeAndTryToCreateFile();
-				exit(1);
 				ImGui::Text("Plots, and graphs, and numbers...");
 				ImGui::EndTabItem();
 			}
@@ -273,7 +285,7 @@ namespace Editor
 		setupGLFWWindow();
 		setupDearImGui();
 
-		Log::logCallBack = [&](const char* msg)
+		Log::getInstance()->logCallBack = [&](const char* msg)
 		{
 			//Log in console
 			std::cout << msg;
@@ -281,6 +293,7 @@ namespace Editor
 			//Log in log inspector
 			m_logInspector.addLog(msg);
 		};
+
 	}
 
 	void Editor::update()

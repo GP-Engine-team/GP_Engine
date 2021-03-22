@@ -1,7 +1,7 @@
 ﻿#include "Engine/Intermediate/Viewers/SceneViewer.hpp"
 
 #include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Resources/Script/FreeFly.hpp"
@@ -17,7 +17,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width, int height)
     : m_pScene{&viewed}, cameraOwner{viewed, {"Editor_camera_" + std::to_string((size_t)this), {}, nullptr}},
       texture({width, height}), depthStencilBuffer({width, height, RenderBuffer::EInternalFormat::DEPTH24_STENCIL8})
 {
-    GPE::InputManager& iManager = GPE::SystemsManager::getInstance()->inputManager;
+    GPE::InputManager& iManager = GPE::Engine::getInstance()->inputManager;
 
     iManager.bindInput(GLFW_KEY_W, "forward");
     iManager.bindInput(GLFW_KEY_S, "back");
@@ -73,7 +73,7 @@ void SceneViewer::bindScene(Scene& scene) noexcept
 
 void SceneViewer::render() const
 {
-    m_pScene->sceneRenderer.draw(SystemsManager::getInstance()->resourceManager,
+    m_pScene->sceneRenderer.draw(Engine::getInstance()->resourceManager,
                                  m_pScene->sceneRenderer.defaultRenderPipeline(), framebufferID);
 }
 
