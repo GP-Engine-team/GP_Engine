@@ -43,8 +43,6 @@ public:
 
     void enableFixedUpdate(bool flag) noexcept;
 
-    //virtual bool inspect();
-
     BehaviourComponent_GENERATED
 };
 

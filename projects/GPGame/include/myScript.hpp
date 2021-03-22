@@ -14,8 +14,11 @@
 
 #include <iostream>
 
-namespace GPG {
-	class MyScript : public GPE::BehaviourComponent {
+//#include "Generated/myScript.rfk.h"
+
+namespace GPG RFKNamespace() 
+{
+	class RFKClass(Inspect()) MyScript : public GPE::BehaviourComponent {
 	public:
 		inline MyScript(GPE::GameObject& owner) noexcept
 			: GPE::BehaviourComponent(owner)
@@ -97,5 +100,9 @@ namespace GPG {
 			speed = 1;
 			rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
 		}
+
+		//MyScript_GENERATED
 	};
 } /*namespace GPG*/
+
+//File_GENERATED

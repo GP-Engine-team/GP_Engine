@@ -123,7 +123,7 @@
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)" "$(GPGameDir)"</Command>
+      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)" "$(GPGameDir)"/</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -150,7 +150,7 @@
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)" "$(GPGameDir)"</Command>
+      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)" "$(GPGameDir)"/</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -173,7 +173,7 @@
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)" "$(GPGameDir)"</Command>
+      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)" "$(GPGameDir)"/</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
@@ -200,7 +200,7 @@
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)" "$(GPGameDir)"</Command>
+      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)" "$(GPGameDir)"/</Command>
     </PreBuildEvent>
     <PreLinkEvent>
       <Command>
