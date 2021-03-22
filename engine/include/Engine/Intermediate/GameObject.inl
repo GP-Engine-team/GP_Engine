@@ -148,10 +148,6 @@ inline void GameObject::destroy() noexcept
 {
     /*set flag to be delete by it parent*/
     m_isDead = true;
-
-    // Notify parent to kill it's child
-    if (parent)
-        parent->getTransform().setDirty();
 }
 
 inline void GameObject::destroyNow() noexcept

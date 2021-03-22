@@ -39,7 +39,7 @@ public:
     TransformComponent() noexcept                                = delete;
     TransformComponent(const TransformComponent& other) noexcept = delete;
     TransformComponent(TransformComponent&& other) noexcept      = default;
-    virtual ~TransformComponent() noexcept;
+    virtual ~TransformComponent() noexcept = default;
     TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
     TransformComponent& operator                                            =(TransformComponent&& other);
 
