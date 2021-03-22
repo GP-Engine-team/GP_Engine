@@ -47,6 +47,7 @@ public:
      * @return
      */
     void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
+    void cursorLockedPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
 
     /**
      * @brief Throw events to input components
@@ -60,7 +61,12 @@ public:
      * @param window
      * @return
      */
-    void setupCallbacks(GLFWwindow* window) noexcept;
+    void setupCallbacks(GLFWwindow* window, bool lockMousInCenter = false) noexcept;
+
+    /**
+     * @brief Set cursor mode using GLFW Enum
+     */
+    void setCursorMode(GLFWwindow* window, int mode) noexcept;
 
     /**
      * @brief bind a key to an action

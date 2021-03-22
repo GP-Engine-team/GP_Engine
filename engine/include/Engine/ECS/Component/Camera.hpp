@@ -84,6 +84,12 @@ protected:
     void updateProjection();
 
 public:
+    static float computeAspect(int width, int height) noexcept
+    {
+        return width / static_cast<float>(height);
+    }
+
+public:
     Camera() noexcept                    = delete;
     Camera(const Camera& other) noexcept = delete;
     Camera& operator=(Camera const& other) noexcept = delete;
@@ -91,6 +97,8 @@ public:
     Camera(Camera&& other) noexcept = default;
     Camera& operator=(Camera&& other) noexcept = default;
     virtual ~Camera() noexcept                 = default;
+
+    void moveTowardScene(class Scene& newOwner) override;
 
     /**
      * @brief Construct a new perspective camera object

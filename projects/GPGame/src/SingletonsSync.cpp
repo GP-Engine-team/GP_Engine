@@ -7,14 +7,24 @@
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 
-extern "C" void setGameSystemsManagerInstance(GPE::SystemsManager & systemManager)
+extern "C" void setLogInstance(GPE::Log & log)
 {
-	GPE::SystemsManager::setInstance(systemManager);
+	GPE::Log::setInstance(log);
 }
 
-extern "C" GPE::SystemsManager & getGameSystemsManagerInstance()
+extern "C" GPE::Log & getLogInstance()
 {
-	return *GPE::SystemsManager::getInstance();
+	return *GPE::Log::getInstance();
+}
+
+extern "C" void setGameEngineInstance(GPE::Engine & engine)
+{
+	GPE::Engine::setInstance(engine);
+}
+
+extern "C" GPE::Engine & getGameEngineInstance()
+{
+	return *GPE::Engine::getInstance();
 }
 
 extern "C" void setContextCurrent(GLFWwindow * window)

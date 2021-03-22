@@ -1,4 +1,3 @@
-#include "Engine/Core/Debug/Log.hpp"
 #include "Editor/EditorStartup.hpp"
 
 #include "imgui/imgui.h"
@@ -12,12 +11,8 @@ using namespace GPE;
 
 int main(int argc, char* argv[])
 {
-    Log::logFileHeader();
+	Editor::EditorStartup editorStartup;
+	editorStartup.run();
 
-    Log::logInitializationStart("EditorStartup creation");
-
-    Editor::EditorStartup editorStartup;
-    editorStartup.run();
-
-    return 0;
+	return 0;
 }

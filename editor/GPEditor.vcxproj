@@ -22,6 +22,8 @@
     <ClInclude Include="include\Editor\Editor.hpp" />
     <ClInclude Include="include\Editor\EditorStartup.hpp" />
     <ClInclude Include="include\Editor\ExternalDeclarations.hpp" />
+    <ClInclude Include="include\Editor\LogInspector.hpp" />
+    <ClInclude Include="include\Editor\ProjectContent.hpp" />
     <ClInclude Include="include\Editor\SceneEditor.hpp" />
     <ClInclude Include="include\Editor\Viewport.hpp" />
   </ItemGroup>

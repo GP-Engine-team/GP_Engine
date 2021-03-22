@@ -16,14 +16,17 @@ TStoredComponent& DataChunk<TStoredComponent, TSize>::addComponent(Args&&... arg
 template <typename TStoredComponent, int TSize>
 void DataChunk<TStoredComponent, TSize>::destroyComponent(const TStoredComponent* componentToDestroy) noexcept
 {
-    GPE_ASSERT((componentToDestroy - m_components.data()) <= (m_components.size() - 1u) * sizeof(TStoredComponent),
-               "Pointer out of range");
+    for (size_t i = 0; i < m_components.size(); ++i)
+    {
+        if (unlikely(&m_components[i] == componentToDestroy))
+        {
+            std::swap(m_components[i], m_components.back());
 
-    // Avoid for each. Pointer allow to access
-    const TStoredComponent& back = m_components.back();
-    back->getGameObject().updateComponentLink<TStoredComponent>(&back, componentToDestroy);
-    std::swap(*componentToDestroy, back);
-    m_components.pop_back();
+            m_components[i].getGameObject().updateComponentLink<TStoredComponent>(&m_components.back(),
+                                                                                  &m_components[i]);
+            m_components.pop_back();
+        }
+    }
 }
 
 template <typename TStoredComponent, int TSize>

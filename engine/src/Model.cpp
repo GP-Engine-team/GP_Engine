@@ -26,20 +26,20 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
 Model::Model(const Model& other) noexcept : Component(other.m_gameObject), m_subModels{other.m_subModels}
 {
     for (SubModel& pSubMesh : m_subModels)
-        m_gameObject.scene.sceneRenderer.addSubModel(&pSubMesh);
+        m_gameObject.pOwnerScene->sceneRenderer.addSubModel(&pSubMesh);
 }
 
 Model::Model(Model&& other) noexcept : Component(other.m_gameObject), m_subModels{other.m_subModels}
 {
     // Access to invalide access memory but pointer is still valid
     for (size_t i = 0; i < m_subModels.size(); ++i)
-        m_gameObject.scene.sceneRenderer.updateSubModelPointer(&m_subModels[i], &other.m_subModels[i]);
+        m_gameObject.pOwnerScene->sceneRenderer.updateSubModelPointer(&m_subModels[i], &other.m_subModels[i]);
 }
 
 Model::~Model()
 {
     for (SubModel& pSubMesh : m_subModels)
-        m_gameObject.scene.sceneRenderer.removeSubModel(&pSubMesh);
+        m_gameObject.pOwnerScene->sceneRenderer.removeSubModel(&pSubMesh);
 }
 
 Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subModels{arg.subModels}
@@ -47,6 +47,18 @@ Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subM
     for (SubModel& pSubMesh : m_subModels)
     {
         pSubMesh.pModel = this;
-        m_gameObject.scene.sceneRenderer.addSubModel(&pSubMesh);
+        m_gameObject.pOwnerScene->sceneRenderer.addSubModel(&pSubMesh);
+    }
+}
+
+void Model::moveTowardScene(class Scene& newOwner)
+{
+    for (SubModel& pSubMesh : m_subModels)
+        m_gameObject.pOwnerScene->sceneRenderer.removeSubModel(&pSubMesh);
+
+    for (SubModel& pSubMesh : m_subModels)
+    {
+        pSubMesh.pModel = this;
+        newOwner.sceneRenderer.addSubModel(&pSubMesh);
     }
 }

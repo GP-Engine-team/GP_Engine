@@ -1,9 +1,9 @@
-inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
-    : m_name{arg.name},
-      m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)},
-      m_pComponents{}, scene{scene}, parent{arg.parent}
-{}
-
+﻿inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
+    : m_name{arg.name}, m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this,
+                                                                                               arg.transformArg)},
+      m_pComponents{}, pOwnerScene{&scene}, parent{arg.parent}
+{
+}
 
 template <typename T>
 inline void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept
@@ -67,7 +67,7 @@ inline constexpr TransformComponent& GameObject::getTransform() noexcept
 template <typename T, typename... Args>
 inline GameObject& GameObject::addChild(Args&&... args) noexcept
 {
-    std::unique_ptr<GameObject>& pChild = this->children.emplace_back(std::make_unique<T>(scene, args...));
+    std::unique_ptr<GameObject>& pChild = this->children.emplace_back(std::make_unique<T>(*pOwnerScene, args...));
     pChild->children                    = std::list<std::unique_ptr<GameObject>>();
     // pChild->update((*this).getModelMatrix());
     pChild->parent = this;
