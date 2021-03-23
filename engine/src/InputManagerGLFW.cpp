@@ -70,8 +70,8 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
         }
         else
         {
-            m_lastStateMap.insert_or_assign(key, false);
-            // m_lastStateMap[key] = false;
+            // m_lastStateMap.insert_or_assign(key, false);
+            m_lastStateMap[key] = false;
         }
         m_stateMap[key] = action != GLFW_RELEASE;
     }
@@ -133,7 +133,7 @@ void InputManager::processInput() noexcept
         auto it = m_actionMap.equal_range(keyState.first);
         for (auto i2 = it.first; i2 != it.second; i2++)
         {
-            // fireInputComponents(i2->second, keyState.first);
+            fireInputComponents(i2->second, keyState.first);
         }
     }
 }

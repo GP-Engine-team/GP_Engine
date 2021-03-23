@@ -5,10 +5,10 @@
  */
 
 #pragma once
-#include <OpenAL_Soft_Debug.hpp>
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/Sound.hpp"
+#include <OpenAL_Soft_Debug.hpp>
 #include <unordered_map>
 
 namespace GPE
@@ -29,7 +29,7 @@ struct SourceSettings
 class AudioComponent : public Component
 {
 public:
-    AudioComponent(const AudioComponent& other) noexcept;
+    AudioComponent(AudioComponent& other) noexcept;
     AudioComponent(AudioComponent&& other) noexcept;
     virtual ~AudioComponent() noexcept;
     AudioComponent(GameObject& owner) noexcept;

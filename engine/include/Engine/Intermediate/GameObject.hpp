@@ -49,13 +49,13 @@ public: // TODO : Protected method ?
 
 public:
     inline GameObject(Scene& scene, const CreateArg& arg = GameObject::CreateArg{});
+    virtual ~GameObject() noexcept;
 
     GameObject()                        = delete;
     GameObject(const GameObject& other) = delete;            // TODO: when transform is available
     GameObject& operator=(GameObject const& other) = delete; // TODO
 
     inline GameObject(GameObject&& other) = default;
-    virtual ~GameObject() noexcept        = default;
     inline GameObject& operator=(GameObject&& other) noexcept = default;
 
     void moveTowardScene(Scene& newOwner) noexcept;

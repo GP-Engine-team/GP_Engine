@@ -13,15 +13,15 @@ class GameObject;
 class Component
 {
 protected:
-    GameObject& m_gameObject;
+    GameObject* m_gameObject; // canno't be ref for move
     bool        m_isActivated{true};
 
 public:
     inline Component(GameObject& owner) noexcept;
-    inline Component() noexcept                       = delete;
-    inline Component(const Component& other) noexcept = delete;
-    inline Component(Component&& other) noexcept      = default;
-    inline virtual ~Component() noexcept              = default;
+    inline Component() noexcept                  = delete;
+    inline Component(const Component& other)     = delete;
+    inline Component(Component&& other) noexcept = default;
+    inline virtual ~Component() noexcept         = default;
     inline Component& operator=(const Component& other) noexcept = delete;
     inline Component& operator=(Component&& other) noexcept = default;
 

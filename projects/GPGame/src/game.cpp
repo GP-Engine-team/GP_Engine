@@ -1,31 +1,32 @@
-﻿#include <Game.hpp>
+﻿#include "Game.hpp"
 
-#include <Engine/Core/Debug/Assert.hpp>
+#include "Engine/Core/Debug/Assert.hpp"
 
-#include <Engine/Core/Parsers/ObjParser.hpp>
-#include <Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp>
-#include <Engine/Core/Rendering/Window/WindowGLFW.hpp>
-#include <Engine/ECS/Component/Camera.hpp>
-#include <Engine/ECS/Component/InputComponent.hpp>
-#include <Engine/ECS/Component/Light/DirectionalLight.hpp>
-#include <Engine/ECS/Component/Light/PointLight.hpp>
-#include <Engine/ECS/Component/Model.hpp>
-#include <Engine/ECS/Component/TransformComponent.hpp>
-#include <Engine/ECS/System/BehaviourSystem.hpp>
-#include <Engine/ECS/System/InputManagerGLFW.hpp>
-#include <Engine/ECS/System/RenderSystem.hpp>
-#include <Engine/ECS/System/TimeSystem.hpp>
-#include <Engine/Engine.hpp>
-#include <Engine/Intermediate/GameObject.hpp>
-#include <Engine/Resources/Material.hpp>
-#include <Engine/Resources/Mesh.hpp>
-#include <Engine/Resources/ResourcesManagerType.hpp>
-#include <Engine/Resources/Shader.hpp>
-#include <Engine/Resources/Texture.hpp>
-#include <myScript.hpp>
+#include "Engine/Core/Parsers/ObjParser.hpp"
+#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/ECS/Component/Camera.hpp"
+#include "Engine/ECS/Component/InputComponent.hpp"
+#include "Engine/ECS/Component/Light/DirectionalLight.hpp"
+#include "Engine/ECS/Component/Light/PointLight.hpp"
+#include "Engine/ECS/Component/Model.hpp"
+#include "Engine/ECS/Component/TransformComponent.hpp"
+#include "Engine/ECS/System/BehaviourSystem.hpp"
+#include "Engine/ECS/System/InputManagerGLFW.hpp"
+#include "Engine/ECS/System/RenderSystem.hpp"
+#include "Engine/ECS/System/TimeSystem.hpp"
+#include "Engine/Engine.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Resources/Material.hpp"
+#include "Engine/Resources/Mesh.hpp"
+#include "Engine/Resources/ResourcesManagerType.hpp"
+#include "Engine/Resources/Shader.hpp"
+#include "Engine/Resources/Texture.hpp"
+#include "myScript.hpp"
+#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 
-#include <Engine/Core/Debug/Assert.hpp>
-#include <Engine/Core/Debug/Log.hpp>
+#include "Engine/Core/Debug/Assert.hpp"
+#include "Engine/Core/Debug/Log.hpp"
 //#include "GPM/Random.hpp"
 
 #include <glad/glad.h> //In first
@@ -141,6 +142,7 @@ Game::Game()
     iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
 
     GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}}};
+    GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 50.f}}};
 
     Camera::PerspectiveCreateArg camCreateArg;
     camCreateArg.aspect = Camera::computeAspect(900, 600);
@@ -148,13 +150,18 @@ Game::Game()
     camCreateArg.farVal  = 3000;
     camCreateArg.nearVal = 0.01f;
 
-    GameObject& player = sm.getCurrentScene()->world.addChild<GameObject>(playerArg);
+    GameObject& player    = sm.getCurrentScene()->world.addChild<GameObject>(playerArg);
+    GameObject& testPhysX = sm.getCurrentScene()->world.addChild<GameObject>(testPhysXArg);
 
     player.addComponent<Camera>(camCreateArg);
     player.addComponent<GPG::MyScript>();
 
+    testPhysX.addComponent<SphereCollider>();
+    testPhysX.getComponent<SphereCollider>()->isVisible = true;
+    testPhysX.getComponent<SphereCollider>()->setRadius(10);
+
     PointLight::CreateArg lightArg{
-        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 0.0014f, 0.000007f};
+        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0, 0.0014, 0.000007};
     PointLight& light = player.addComponent<PointLight>(lightArg);
 
     rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs",

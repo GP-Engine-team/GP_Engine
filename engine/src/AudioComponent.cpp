@@ -46,11 +46,11 @@ AudioComponent::AudioComponent(GameObject& owner) noexcept : Component(owner)
     m_key = SoundSystem::getInstance()->addComponent(this);
 }
 
-AudioComponent::AudioComponent(const AudioComponent& other) noexcept : Component(other.m_gameObject)
+AudioComponent::AudioComponent(AudioComponent& other) noexcept : Component(other.getOwner())
 {
 }
 
-AudioComponent::AudioComponent(AudioComponent&& other) noexcept : Component(other.m_gameObject)
+AudioComponent::AudioComponent(AudioComponent&& other) noexcept : Component(other.getOwner())
 {
 }
 

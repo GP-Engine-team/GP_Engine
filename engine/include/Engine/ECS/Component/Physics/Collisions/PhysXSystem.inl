@@ -1,14 +1,21 @@
 ﻿#include <Engine/ECS/System/PhysXSystem.hpp>
 
-inline int PhysXSystem::addComponent(CollisionComponent* colComp) noexcept
+inline size_t GPE::PhysXSystem::addComponent(RigidbodyStatic* rigidbody) noexcept
 {
-    int key = static_cast<int>(m_CollisionComponents.size());
-    m_CollisionComponents.emplace(key, colComp);
+    m_RigidbodyStatics.push_back(rigidbody);
 
-    return key;
+    return m_RigidbodyStatics.size();
 }
 
-inline void PhysXSystem::removeComponent(int key) noexcept
+inline void GPE::PhysXSystem::removeComponent(RigidbodyStatic* rigidbody) noexcept
 {
-    m_CollisionComponents.erase(key);
+    for (std::vector<RigidbodyStatic*>::iterator it = m_RigidbodyStatics.begin(); it != m_RigidbodyStatics.end(); it++)
+    {
+        if ((*it) == rigidbody)
+        {
+            std::swap<RigidbodyStatic*>(m_RigidbodyStatics.back(), (*it));
+            m_RigidbodyStatics.pop_back();
+            return;
+        }
+    }
 }

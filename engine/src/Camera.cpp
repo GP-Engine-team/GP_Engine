@@ -33,7 +33,7 @@ void Camera::updateProjection()
 
 void Camera::moveTowardScene(class Scene& newOwner)
 {
-    m_gameObject.pOwnerScene->sceneRenderer.removeCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
     newOwner.sceneRenderer.addCamera(this);
 }
 
@@ -53,7 +53,7 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
 
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.znear, m_projInfo.zfar);
 
-    m_gameObject.pOwnerScene->sceneRenderer.addCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.addCamera(this);
 
     Log::getInstance()->log((std::string("Perspective projection added with name \"") + arg.name + "\"").c_str());
 }
@@ -75,8 +75,26 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
     m_projection =
         Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
 
-    m_gameObject.pOwnerScene->sceneRenderer.addCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.addCamera(this);
     Log::getInstance()->log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
+}
+
+Camera::~Camera() noexcept
+{
+    getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
+    DataChunk<Camera>::getInstance()->destroy(this);
+}
+
+Camera& Camera::operator=(Camera&& other) noexcept
+{
+    m_projInfo             = std::move(other.m_projInfo);
+    m_projection           = std::move(other.m_projection);
+    m_viewMatrix           = std::move(other.m_viewMatrix);
+    m_viewProjectionMatrix = std::move(other.m_viewProjectionMatrix);
+
+    getOwner().pOwnerScene->sceneRenderer.updateCameraPointer(this, &other);
+
+    return static_cast<Camera&>(Component::operator=(std::move(other)));
 }
 
 void Camera::setFovY(const float fovY) noexcept
@@ -102,10 +120,10 @@ Frustum Camera::getFrustum() const noexcept
 {
     // TODO: Optimization with furstum matrix ??
     Frustum     frustum;
-    const Vec3& forward        = -m_gameObject.getTransform().getVectorForward();
-    const Vec3& right          = m_gameObject.getTransform().getVectorRight();
-    const Vec3& up             = m_gameObject.getTransform().getVectorUp();
-    const Vec3& globalPosition = -m_gameObject.getTransform().getGlobalPosition();
+    const Vec3& forward        = -getOwner().getTransform().getVectorForward();
+    const Vec3& right          = getOwner().getTransform().getVectorRight();
+    const Vec3& up             = getOwner().getTransform().getVectorUp();
+    const Vec3& globalPosition = -getOwner().getTransform().getGlobalPosition();
     const float halfHSide      = m_projInfo.hSide * .5f;
     const float halfVSide      = m_projInfo.vSide * .5f;
 

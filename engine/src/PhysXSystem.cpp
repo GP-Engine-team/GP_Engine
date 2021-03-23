@@ -72,15 +72,16 @@ void PhysXSystem::advance(const double& deltaTime) noexcept
 
 void PhysXSystem::drawDebugScene()
 {
-    for (unsigned int i = 0; i < m_CollisionComponents.size(); i++)
+    for (unsigned int i = 0; i < m_RigidbodyStatics.size(); i++)
     {
-        if (m_CollisionComponents[i]->isVisible == true)
+        if (m_RigidbodyStatics[i]->collider && m_RigidbodyStatics[i]->collider->isVisible == true)
         {
-            if (static_cast<SphereCollider*>(m_CollisionComponents[i]))
+            Collider* collider = m_RigidbodyStatics[i]->collider;
+            if (static_cast<SphereCollider*>(collider))
             {
-                SphereCollider* sphereCol = static_cast<SphereCollider*>(m_CollisionComponents[i]);
-                m_CollisionComponents[i]->getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(sphereCol->getCenter(),
-                                                                                                sphereCol->getRadius());
+                SphereCollider* sphereCol = static_cast<SphereCollider*>(collider);
+                m_RigidbodyStatics[i]->getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(sphereCol->getCenter(),
+                                                                                             sphereCol->getRadius());
             }
         }
     }

@@ -81,17 +81,16 @@ void SceneRenderSystem::displayGameObjectRef(const GameObject& go, float dist, f
 SceneRenderSystem::SceneRenderSystem() noexcept
 {
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
-                                                               "./resources/shaders/fSimpleColor.fs");
+                                                       "./resources/shaders/fSimpleColor.fs");
 
     Engine::getInstance()->resourceManager.add<Shader>("PostProcess", "./resources/shaders/vPostProcess.vs",
-                                                               "./resources/shaders/fPostProcess.fs");
+                                                       "./resources/shaders/fPostProcess.fs");
 
     Engine::getInstance()->resourceManager.add<Mesh>("ScreenPlan",
-                                                             Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
+                                                     Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
     Engine::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
     Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
-    Engine::getInstance()->resourceManager.add<Mesh>("Plane",
-                                                             Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
+    Engine::getInstance()->resourceManager.add<Mesh>("Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
 
     Engine::getInstance()->renderSystem.addSceneRenderSystem(this);
 }
@@ -326,10 +325,10 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
             {
                 if (!rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
+                    // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
                     continue;
                 }
-                rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
+                // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
@@ -461,8 +460,7 @@ void SceneRenderSystem::addRenderer(Renderer* pRenderer) noexcept
     RenderTexture::CreateArg renderArg;
     renderArg.colorBuffers.emplace_back(
         &Engine::getInstance()->resourceManager.add<Texture>("ColorBufferFBO", textureArg));
-    renderArg.depthBuffer =
-        &Engine::getInstance()->resourceManager.add<RenderBuffer>("depthBufferFBO", depthBufferArg);
+    renderArg.depthBuffer = &Engine::getInstance()->resourceManager.add<RenderBuffer>("depthBufferFBO", depthBufferArg);
     Engine::getInstance()->resourceManager.add<RenderTexture>("FBO", renderArg);
 }
 

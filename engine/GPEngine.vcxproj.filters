@@ -46,6 +46,9 @@
     <ClCompile Include="src\Physics\Collisions\SphereCollider.cpp">
       <Filter>src\Physics\Collisions</Filter>
     </ClCompile>
+    <ClCompile Include="src\Physics\Rigidbody\RigidbodyStatic.cpp">
+      <Filter>src\Physics\Rigidbody</Filter>
+    </ClCompile>
     <ClCompile Include="src\PhysXSystem.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -207,7 +210,7 @@
     <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\CapsuleCollider.hpp">
       <Filter>include\Physics\Collisions</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\CollisionComponent.hpp">
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\Collider.hpp">
       <Filter>include\Physics\Collisions</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\MeshCollider.hpp">
@@ -215,6 +218,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\SphereCollider.hpp">
       <Filter>include\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyStatic.hpp">
+      <Filter>include\Physics\Rigidbody</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp">
       <Filter>include</Filter>
@@ -247,9 +253,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp">
@@ -528,6 +531,9 @@
     <Filter Include="include\Physics\Collisions">
       <UniqueIdentifier>{01bcb32d-31db-4b48-86aa-05478c16711f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Physics\Rigidbody">
+      <UniqueIdentifier>{79f363b4-5a2a-4bd2-88c5-c87472cf2546}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\Serialization">
       <UniqueIdentifier>{ff3b6198-07e8-4978-bce3-299123c781a0}</UniqueIdentifier>
     </Filter>
@@ -542,6 +548,9 @@
     </Filter>
     <Filter Include="src\Physics\Collisions">
       <UniqueIdentifier>{1126464d-1fea-40f8-a0d9-bd0f230e9a17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Physics\Rigidbody">
+      <UniqueIdentifier>{7f59e5e6-5d14-40f1-bcef-a60f9be43980}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Serialization">
       <UniqueIdentifier>{9cf1ede9-6de7-451e-81e8-fdde37a019ba}</UniqueIdentifier>

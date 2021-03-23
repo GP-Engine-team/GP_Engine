@@ -10,14 +10,20 @@
 
 namespace GPE
 {
-class CollisionComponent : public Component
+class Collider : public Component
 {
 public:
-    CollisionComponent(GameObject& owner) noexcept : Component(owner)
+    Collider(GameObject& owner) noexcept : Component(owner)
     {
     }
 
-    ~CollisionComponent() noexcept = default;
+    Collider() noexcept                      = delete;
+    Collider(const Collider& other) noexcept = delete;
+    Collider(Collider&& other) noexcept      = default;
+    Collider& operator=(Collider const& other) noexcept = delete;
+    Collider& operator=(Collider&& other) noexcept = delete;
+
+    virtual ~Collider() noexcept = default;
 
 public:
     physx::PxShape* shape     = nullptr;

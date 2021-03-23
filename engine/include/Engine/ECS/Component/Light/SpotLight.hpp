@@ -39,7 +39,7 @@ protected:
 public:
     SpotLight(const SpotLight& other) = delete;
     SpotLight(SpotLight&& other)      = default;
-    virtual ~SpotLight()              = default;
+    virtual ~SpotLight();
 
     SpotLight()        = delete;
     SpotLight& operator=(SpotLight const& other) = delete;

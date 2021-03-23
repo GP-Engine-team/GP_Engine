@@ -7,16 +7,23 @@
 
 #pragma once
 #include <Engine/Core/Tools/ClassUtility.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/CollisionComponent.hpp>
+#include <Engine/ECS/Component/Physics/Collisions/collider.hpp>
 #include <GPM/Vector3.hpp>
 
 namespace GPE
 {
-class SphereCollider : public CollisionComponent
+class SphereCollider : public Collider
 {
 public:
     SphereCollider(GameObject& owner) noexcept;
-    ~SphereCollider() noexcept;
+
+    virtual ~SphereCollider() noexcept = default;
+
+    SphereCollider() noexcept                            = delete;
+    SphereCollider(const SphereCollider& other) noexcept = delete;
+    SphereCollider(SphereCollider&& other) noexcept      = default;
+    SphereCollider& operator=(SphereCollider const& other) noexcept = delete;
+    SphereCollider& operator=(SphereCollider&& other) noexcept = delete;
 
 private:
     GPM::Vector3 m_center;

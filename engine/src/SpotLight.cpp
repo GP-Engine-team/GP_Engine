@@ -3,6 +3,11 @@
 
 using namespace GPE;
 
+SpotLight::~SpotLight()
+{
+    DataChunk<SpotLight>::getInstance()->destroy(this);
+}
+
 SpotLight::SpotLight(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
                      const SpecularComponent& specular, float constant, float linear, float quadratic, float cutOff,
                      float cutOffExponent)

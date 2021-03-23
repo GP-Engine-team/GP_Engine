@@ -29,9 +29,8 @@ public:
         input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyScript::left);
         input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyScript::forward);
         input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyScript::back);
-        input.bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyScript::leave);
-        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyScript::sprintStart);
-        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyScript::sprintEnd);
+        input.bindAction("exit", EKeyMode::KEY_DOWN, this, &MyScript::leave);
+        input.bindAction("sprint", EKeyMode::KEY_DOWN, this, &MyScript::sprint);
 
         speed = 1;
     }
@@ -50,43 +49,41 @@ public:
     {
         if (deltaDisplacement.length() > 0.4)
         {
-            m_gameObject.getTransform().setRotation(
-                m_gameObject.getTransform().getSpacialAttribut().rotation *
-                GPM::Quaternion::angleAxis(-deltaDisplacement.y * 0.001f, {1, 0, 0}));
-            m_gameObject.getTransform().setRotation(
-                GPM::Quaternion::angleAxis(-deltaDisplacement.x * 0.001f, {0, 1, 0}) *
-                m_gameObject.getTransform().getSpacialAttribut().rotation);
+            getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation *
+                                                  GPM::Quaternion::angleAxis(deltaDisplacement.y * 0.001f, {1, 0, 0}));
+            getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(deltaDisplacement.x * 0.001f, {0, 1, 0}) *
+                                                  getOwner().getTransform().getSpacialAttribut().rotation);
         }
     }
 
     inline void up()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorUp() * speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * speed);
     }
 
     inline void down()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorUp() * -1 * speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -1 * speed);
     }
 
     inline void forward()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorForward() * -1 * speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -1 * speed);
     }
 
     inline void back()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorForward() * speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * speed);
     }
 
     inline void left()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorRight() * -1 * speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -1 * speed);
     }
 
     inline void right()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorRight() * speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * speed);
     }
 
     inline void leave()
@@ -94,18 +91,14 @@ public:
         exit(666);
     }
 
-    inline void sprintStart()
+    inline void sprint()
     {
         speed = 2;
     }
 
-    inline void sprintEnd()
-    {
-        speed = 1;
-    }
-
     void update(float deltaTime) final
     {
+        speed = 1;
         rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
     }
 };

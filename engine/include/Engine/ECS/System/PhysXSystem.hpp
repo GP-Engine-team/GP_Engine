@@ -6,7 +6,7 @@
 
 #pragma once
 #include <Engine/Core/Debug/Log.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/CollisionComponent.hpp>
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <PxPhysics.h>
 #include <PxScene.h>
 #include <PxSceneDesc.h>
@@ -14,6 +14,7 @@
 #include <cooking/PxCooking.h>
 #include <foundation/PxErrorCallback.h>
 #include <pvd/PxPvd.h>
+#include <vector>
 
 namespace GPE
 {
@@ -38,25 +39,25 @@ public:
 
     /**
      * @brief add Collision component to the component list
-     * @param colComp
+     * @param rigidbody
      * @return
      */
-    inline size_t addComponent(CollisionComponent* colComp) noexcept;
+    inline size_t addComponent(RigidbodyStatic* rigidbody) noexcept;
 
     /**
      * @brief remove Collision component to the component list
-     * @param colComp
+     * @param rigidbody
      * @return
      */
-    inline void removeComponent(CollisionComponent* colComp) noexcept;
+    inline void removeComponent(RigidbodyStatic* rigidbody) noexcept;
 
 private:
-    physx::PxFoundation*             m_Foundation;
-    physx::PxPvd*                    m_Pvd;
-    physx::PxPhysics*                m_Physics;
-    physx::PxCooking*                m_Cooking;
-    physx::PxScene*                  m_Scene;
-    std::vector<CollisionComponent*> m_CollisionComponents;
+    physx::PxFoundation*          m_Foundation;
+    physx::PxPvd*                 m_Pvd;
+    physx::PxPhysics*             m_Physics;
+    physx::PxCooking*             m_Cooking;
+    physx::PxScene*               m_Scene;
+    std::vector<RigidbodyStatic*> m_RigidbodyStatics;
 };
 
 #include <Engine/ECS/System/PhysXSystem.inl>

@@ -6,12 +6,13 @@
 
 #pragma once
 
-#include "Engine/ECS/Component/Component.hpp"
-#include "GPM/Vector3.hpp"
 #include <functional>
 #include <iostream>
 #include <string>
 #include <unordered_map>
+
+#include "Engine/ECS/Component/Component.hpp"
+#include "GPM/Vector3.hpp"
 
 enum class EKeyMode
 {
@@ -26,10 +27,13 @@ namespace GPE
 class InputComponent : public Component
 {
 public:
-    InputComponent(const InputComponent& other) noexcept;
-    InputComponent(InputComponent&& other) noexcept;
-    virtual ~InputComponent() = default;
+    // InputComponent() = delete;
+    InputComponent(const InputComponent& other) noexcept = delete;
+    InputComponent(InputComponent&& other);
+    virtual ~InputComponent();
     InputComponent(GameObject& owner);
+
+    InputComponent& operator=(InputComponent&& other) noexcept;
 
 private:
     std::unordered_map<std::string, std::function<void()>> m_functionMap;

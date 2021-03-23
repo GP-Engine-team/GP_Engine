@@ -23,23 +23,19 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
            (lhs->pMaterial->isOpaque() && !rhs->pMaterial->isOpaque());
 }
 
-Model::Model(const Model& other) noexcept : Component(other.m_gameObject), m_subModels{other.m_subModels}
-{
-    for (SubModel& pSubMesh : m_subModels)
-        m_gameObject.pOwnerScene->sceneRenderer.addSubModel(&pSubMesh);
-}
-
-Model::Model(Model&& other) noexcept : Component(other.m_gameObject), m_subModels{other.m_subModels}
+Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{other.m_subModels}
 {
     // Access to invalide access memory but pointer is still valid
     for (size_t i = 0; i < m_subModels.size(); ++i)
-        m_gameObject.pOwnerScene->sceneRenderer.updateSubModelPointer(&m_subModels[i], &other.m_subModels[i]);
+        getOwner().pOwnerScene->sceneRenderer.updateSubModelPointer(&m_subModels[i], &other.m_subModels[i]);
 }
 
 Model::~Model()
 {
     for (SubModel& pSubMesh : m_subModels)
-        m_gameObject.pOwnerScene->sceneRenderer.removeSubModel(&pSubMesh);
+        getOwner().pOwnerScene->sceneRenderer.removeSubModel(&pSubMesh);
+
+    DataChunk<Model>::getInstance()->destroy(this);
 }
 
 Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subModels{arg.subModels}
@@ -47,14 +43,24 @@ Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subM
     for (SubModel& pSubMesh : m_subModels)
     {
         pSubMesh.pModel = this;
-        m_gameObject.pOwnerScene->sceneRenderer.addSubModel(&pSubMesh);
+        getOwner().pOwnerScene->sceneRenderer.addSubModel(&pSubMesh);
     }
+}
+
+Model& Model::operator=(Model&& other)
+{
+    m_subModels = std::move(other.m_subModels);
+
+    for (size_t i = 0; i < m_subModels.size(); i++)
+        getOwner().pOwnerScene->sceneRenderer.updateSubModelPointer(&m_subModels[i], &other.m_subModels[i]);
+
+    return static_cast<Model&>(Component::operator=(std::move(other)));
 }
 
 void Model::moveTowardScene(class Scene& newOwner)
 {
     for (SubModel& pSubMesh : m_subModels)
-        m_gameObject.pOwnerScene->sceneRenderer.removeSubModel(&pSubMesh);
+        getOwner().pOwnerScene->sceneRenderer.removeSubModel(&pSubMesh);
 
     for (SubModel& pSubMesh : m_subModels)
     {

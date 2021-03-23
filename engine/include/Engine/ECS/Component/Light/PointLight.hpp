@@ -37,7 +37,7 @@ protected:
 public:
     PointLight(const PointLight& other) = delete;
     PointLight(PointLight&& other)      = default;
-    virtual ~PointLight()               = default;
+    virtual ~PointLight();
 
     PointLight()        = delete;
     PointLight& operator=(PointLight const& other) = delete;

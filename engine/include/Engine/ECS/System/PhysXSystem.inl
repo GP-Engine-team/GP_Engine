@@ -1,21 +1,20 @@
 ﻿#include <Engine/ECS/System/PhysXSystem.hpp>
 
-size_t PhysXSystem::addComponent(CollisionComponent* colComp) noexcept
+size_t PhysXSystem::addComponent(RigidbodyStatic* colComp) noexcept
 {
-    m_CollisionComponents.push_back(colComp);
+    m_RigidbodyStatics.push_back(colComp);
 
-    return m_CollisionComponents.size();
+    return m_RigidbodyStatics.size();
 }
 
-void PhysXSystem::removeComponent(CollisionComponent* colComp) noexcept
+void PhysXSystem::removeComponent(RigidbodyStatic* colComp) noexcept
 {
-    for (std::vector<CollisionComponent*>::iterator it = m_CollisionComponents.begin();
-         it != m_CollisionComponents.end(); it++)
+    for (std::vector<RigidbodyStatic*>::iterator it = m_RigidbodyStatics.begin(); it != m_RigidbodyStatics.end(); it++)
     {
         if ((*it) == colComp)
         {
-            std::swap<CollisionComponent*>(m_CollisionComponents.back(), (*it));
-            m_CollisionComponents.pop_back();
+            std::swap<RigidbodyStatic*>(m_RigidbodyStatics.back(), (*it));
+            m_RigidbodyStatics.pop_back();
             return;
         }
     }

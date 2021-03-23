@@ -46,13 +46,13 @@ protected:
 public:
     Model(GameObject& owner, const CreateArg& arg);
 
-    Model(const Model& other) noexcept;
+    Model(const Model& other) noexcept = delete;
     Model(Model&& other) noexcept;
     virtual ~Model();
 
     Model()        = delete;
     Model& operator=(Model const& other) = delete;
-    Model& operator=(Model&& other) = delete;
+    Model& operator                      =(Model&& other);
 
     void moveTowardScene(class Scene& newOwner) override;
 };
