@@ -51,13 +51,13 @@ public:
      */
     inline void removeComponent(RigidbodyStatic* rigidbody) noexcept;
 
-private:
-    physx::PxFoundation*          m_Foundation;
-    physx::PxPvd*                 m_Pvd;
-    physx::PxPhysics*             m_Physics;
-    physx::PxCooking*             m_Cooking;
-    physx::PxScene*               m_Scene;
-    std::vector<RigidbodyStatic*> m_RigidbodyStatics;
+public:
+    physx::PxFoundation*          foundation;
+    physx::PxPvd*                 pvd;
+    physx::PxPhysics*             physics;
+    physx::PxCooking*             cooking;
+    physx::PxScene*               scene;
+    std::vector<RigidbodyStatic*> rigidbodyStatics;
 };
 
 #include <Engine/ECS/System/PhysXSystem.inl>

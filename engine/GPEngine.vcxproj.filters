@@ -448,14 +448,14 @@
     <None Include="include\Engine\ECS\Component\Light\Light.inl">
       <Filter>include</Filter>
     </None>
-    <None Include="include\Engine\ECS\Component\Physics\Collisions\PhysXSystem.inl">
-      <Filter>include\Physics</Filter>
-    </None>
     <None Include="include\Engine\ECS\Component\TransformComponent.inl">
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\ECS\System\InputManagerGLFW.inl">
       <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\ECS\System\PhysXSystem.inl">
+      <Filter>include\Physics</Filter>
     </None>
     <None Include="include\Engine\ECS\System\SoundSystem.inl">
       <Filter>include</Filter>

@@ -26,8 +26,9 @@ public:
     virtual ~Collider() noexcept = default;
 
 public:
-    physx::PxShape* shape     = nullptr;
-    bool            isTrigger = false;
-    bool            isVisible = false;
+    physx::PxShape*    shape     = nullptr;
+    physx::PxMaterial* material  = nullptr;
+    bool               isTrigger = false;
+    bool               isVisible = false;
 };
 } // namespace GPE

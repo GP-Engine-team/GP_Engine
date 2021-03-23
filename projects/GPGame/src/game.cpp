@@ -156,9 +156,17 @@ Game::Game()
     player.addComponent<Camera>(camCreateArg);
     player.addComponent<GPG::MyScript>();
 
+    player.addComponent<SphereCollider>();
+    player.getComponent<SphereCollider>()->isVisible = true;
+    player.getComponent<SphereCollider>()->setRadius(50.f);
+    player.addComponent<RigidbodyStatic>();
+    player.getComponent<RigidbodyStatic>()->collider = player.getComponent<SphereCollider>();
+
     testPhysX.addComponent<SphereCollider>();
     testPhysX.getComponent<SphereCollider>()->isVisible = true;
-    testPhysX.getComponent<SphereCollider>()->setRadius(10);
+    testPhysX.getComponent<SphereCollider>()->setRadius(10.f);
+    testPhysX.addComponent<RigidbodyStatic>();
+    testPhysX.getComponent<RigidbodyStatic>()->collider = testPhysX.getComponent<SphereCollider>();
 
     PointLight::CreateArg lightArg{
         {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0, 0.0014, 0.000007};

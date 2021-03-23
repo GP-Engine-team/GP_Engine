@@ -19,31 +19,31 @@ static PxDefaultAllocator gDefaultAllocatorCallback;
 
 PhysXSystem::PhysXSystem()
 {
-    m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
-    if (!m_Foundation)
+    foundation = PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
+    if (!foundation)
         FUNCT_ERROR("PxCreateFoundation failed!");
 
     bool recordMemoryAllocations = true;
 #ifdef ENABLE_PVD
-    m_Pvd                     = PxCreatePvd(*m_Foundation);
+    pvd                       = PxCreatePvd(*foundation);
     PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-    m_Pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+    pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 #endif
     PxTolerancesScale scale;
-    m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, scale, recordMemoryAllocations, m_Pvd);
-    if (!m_Physics)
+    physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, recordMemoryAllocations, pvd);
+    if (!physics)
         FUNCT_ERROR("PxCreatePhysics failed!");
 
-    m_Cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, PxCookingParams(scale));
-    if (!m_Cooking)
+    cooking = PxCreateCooking(PX_PHYSICS_VERSION, *foundation, PxCookingParams(scale));
+    if (!cooking)
         FUNCT_ERROR("PxCreateCooking failed!");
 
-    if (!PxInitExtensions(*m_Physics, m_Pvd))
+    if (!PxInitExtensions(*physics, pvd))
         FUNCT_ERROR("PxInitExtensions failed!");
 
-    PxRegisterHeightFields(*m_Physics);
+    PxRegisterHeightFields(*physics);
 
-    PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
+    PxSceneDesc sceneDesc(physics->getTolerancesScale());
     sceneDesc.gravity      = PxVec3(0.0f, -9.81f, 0.0f);
     sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 
@@ -52,36 +52,36 @@ PhysXSystem::PhysXSystem()
         FUNCT_ERROR("PxDefaultCpuDispatcherCreate failed!");
     sceneDesc.cpuDispatcher = m_CpuDispatcher;
 
-    m_Scene = m_Physics->createScene(sceneDesc);
+    scene = physics->createScene(sceneDesc);
 }
 
 PhysXSystem::~PhysXSystem()
 {
     PxCloseExtensions();
 
-    m_Cooking->release();
-    m_Pvd->release();
-    m_Physics->release();
-    m_Foundation->release();
+    cooking->release();
+    pvd->release();
+    physics->release();
+    foundation->release();
 }
 
 void PhysXSystem::advance(const double& deltaTime) noexcept
 {
-    m_Scene->simulate(static_cast<PxReal>(deltaTime));
+    scene->simulate(static_cast<PxReal>(deltaTime));
 }
 
 void PhysXSystem::drawDebugScene()
 {
-    for (unsigned int i = 0; i < m_RigidbodyStatics.size(); i++)
+    for (unsigned int i = 0; i < rigidbodyStatics.size(); i++)
     {
-        if (m_RigidbodyStatics[i]->collider && m_RigidbodyStatics[i]->collider->isVisible == true)
+        if (rigidbodyStatics[i]->collider && rigidbodyStatics[i]->collider->isVisible == true)
         {
-            Collider* collider = m_RigidbodyStatics[i]->collider;
+            Collider* collider = rigidbodyStatics[i]->collider;
             if (static_cast<SphereCollider*>(collider))
             {
                 SphereCollider* sphereCol = static_cast<SphereCollider*>(collider);
-                m_RigidbodyStatics[i]->getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(sphereCol->getCenter(),
-                                                                                             sphereCol->getRadius());
+                rigidbodyStatics[i]->getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(sphereCol->getCenter(),
+                                                                                           sphereCol->getRadius());
             }
         }
     }

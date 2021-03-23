@@ -1,20 +1,21 @@
 ﻿#include <Engine/ECS/System/PhysXSystem.hpp>
 
-size_t PhysXSystem::addComponent(RigidbodyStatic* colComp) noexcept
+size_t PhysXSystem::addComponent(RigidbodyStatic* rigidbody) noexcept
 {
-    m_RigidbodyStatics.push_back(colComp);
+    rigidbodyStatics.push_back(rigidbody);
+    scene->addActor(*rigidbody->rigidbody);
 
-    return m_RigidbodyStatics.size();
+    return rigidbodyStatics.size();
 }
 
-void PhysXSystem::removeComponent(RigidbodyStatic* colComp) noexcept
+void PhysXSystem::removeComponent(RigidbodyStatic* rigidbody) noexcept
 {
-    for (std::vector<RigidbodyStatic*>::iterator it = m_RigidbodyStatics.begin(); it != m_RigidbodyStatics.end(); it++)
+    for (std::vector<RigidbodyStatic*>::iterator it = rigidbodyStatics.begin(); it != rigidbodyStatics.end(); it++)
     {
-        if ((*it) == colComp)
+        if ((*it) == rigidbody)
         {
-            std::swap<RigidbodyStatic*>(m_RigidbodyStatics.back(), (*it));
-            m_RigidbodyStatics.pop_back();
+            std::swap<RigidbodyStatic*>(rigidbodyStatics.back(), (*it));
+            rigidbodyStatics.pop_back();
             return;
         }
     }

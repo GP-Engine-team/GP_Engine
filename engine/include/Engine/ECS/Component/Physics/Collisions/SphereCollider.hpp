@@ -31,6 +31,7 @@ private:
 
 public:
     DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);
-    DEFAULT_GETTER_SETTER_BY_VALUE(Radius, m_radius);
+    GETTER_BY_VALUE(Radius, m_radius);
+    void setRadius(float newRadius) noexcept;
 };
 } // namespace GPE
