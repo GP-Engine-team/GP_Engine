@@ -11,10 +11,12 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(/*Inspect()*/) BehaviourComponent : public Component
+    class RFKClass(Inspect()) BehaviourComponent : public Component
     {
 protected:
+    RFKField(Inspect())
     bool m_isUpdated      = false;
+    RFKField(Inspect())
     bool m_isFixedUpdated = false;
 
 public:

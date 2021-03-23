@@ -11,11 +11,15 @@
 #include "Engine/ECS/Component/Component.hpp"
 #include "GPM/Matrix4.hpp"
 #include "GPM/Shape3D/Plane.hpp"
+#include "Engine/Serialization/Inspect.hpp"
+#include "Engine/Serialization/DataInspector.hpp"
 
 // in inl
 #include "Engine/Intermediate/GameObject.hpp"
 
-namespace GPE
+#include "Generated/Camera.rfk.h"
+
+namespace GPE RFKNamespace()
 {
 
 // TODO: Furstum must be inside Camera but is forwarding in file RenderSystem. While camera do not own it's frustum,
@@ -32,7 +36,7 @@ struct Frustum
     GPM::Plane nearFace;
 };
 
-class Camera : public Component
+class RFKClass(Inspect()) Camera : public Component
 {
 public:
     enum class EProjectionType
@@ -169,8 +173,12 @@ public:
      * @return
      */
     Frustum getFrustum() const noexcept;
+
+    Camera_GENERATED
 };
 
 #include "Camera.inl"
 
 } /*namespace GPE*/
+
+File_GENERATED
