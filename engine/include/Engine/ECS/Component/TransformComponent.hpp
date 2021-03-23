@@ -10,16 +10,16 @@
 #include "GPM/Conversion.hpp"
 #include "GPM/Matrix4.hpp"
 #include "GPM/Quaternion.hpp"
-#include "GPM/Vector3.hpp"
 #include "GPM/Transform.hpp"
 #include "Generated/TransformComponent.rfk.h"
+#include "GPM/Vector3.hpp"
 
 namespace GPE RFKNamespace()
 {
 
 class GameObject;
 
-class RFKClass(/*Inspect()*/) TransformComponent : public Component
+class RFKClass() TransformComponent : public Component
 {
 public:
     struct CreateArg
@@ -32,7 +32,7 @@ public:
 protected:
     GPM::SplitTransform m_spaceAttribut;
     GPM::Transform      m_transform = GPM::toTransform(m_spaceAttribut);
-    bool                m_isDirty = false;
+    bool                m_isDirty   = false;
 
 public:
     TransformComponent(GameObject& refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
@@ -40,11 +40,12 @@ public:
     TransformComponent() noexcept                                = delete;
     TransformComponent(const TransformComponent& other) noexcept = delete;
     TransformComponent(TransformComponent&& other) noexcept      = default;
-    virtual ~TransformComponent() noexcept                       = default;
+    virtual ~TransformComponent() noexcept = default;
     TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
-    TransformComponent& operator=(TransformComponent&& other) noexcept = default;
+    TransformComponent& operator                                            =(TransformComponent&& other);
 
     [[nodiscard]] constexpr inline bool isDirty() const;
+    constexpr void                      setDirty();
 
     constexpr GPM::Vec3 getGlobalPosition() const noexcept;
 

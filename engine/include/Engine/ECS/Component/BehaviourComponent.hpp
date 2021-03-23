@@ -27,7 +27,7 @@ public:
     BehaviourComponent(BehaviourComponent&& other) noexcept;
     virtual ~BehaviourComponent() noexcept;
     BehaviourComponent& operator=(BehaviourComponent const& other) noexcept = delete;
-    BehaviourComponent& operator=(BehaviourComponent&& other) noexcept = delete;
+    BehaviourComponent& operator                                            =(BehaviourComponent&& other) noexcept;
 
     virtual void start()
     {

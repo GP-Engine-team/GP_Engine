@@ -3,6 +3,11 @@ inline constexpr bool TransformComponent::isDirty() const
     return m_isDirty;
 }
 
+inline constexpr void
+    TransformComponent::setDirty()
+{
+    m_isDirty = true;
+}
 
 inline constexpr GPM::Vec3 TransformComponent::getGlobalPosition() const noexcept
 {

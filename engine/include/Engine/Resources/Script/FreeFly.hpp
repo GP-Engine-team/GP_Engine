@@ -41,43 +41,43 @@ public:
     {
         if (deltaDisplacement.length() > 0.4)
         {
-            m_gameObject.getTransform().setRotation(
-                m_gameObject.getTransform().getSpacialAttribut().rotation *
+            getOwner().getTransform().setRotation(
+                getOwner().getTransform().getSpacialAttribut().rotation *
                 GPM::Quaternion::angleAxis(-deltaDisplacement.y * m_rotationSpeed, {1, 0, 0}));
-            m_gameObject.getTransform().setRotation(
+            getOwner().getTransform().setRotation(
                 GPM::Quaternion::angleAxis(-deltaDisplacement.x * m_rotationSpeed, {0, 1, 0}) *
-                m_gameObject.getTransform().getSpacialAttribut().rotation);
+                getOwner().getTransform().getSpacialAttribut().rotation);
         }
     }
 
     inline void up()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorUp() * m_speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * m_speed);
     }
 
     inline void down()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorUp() * -m_speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -m_speed);
     }
 
     inline void forward()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorForward() * -m_speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -m_speed);
     }
 
     inline void back()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorForward() * m_speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * m_speed);
     }
 
     inline void left()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorRight() * -m_speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -m_speed);
     }
 
     inline void right()
     {
-        m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorRight() * m_speed);
+        getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * m_speed);
     }
 
     inline void sprint()
@@ -90,8 +90,8 @@ public:
         m_speed = 1;
         rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
 
-        if (m_gameObject.getTransform().isDirty())
-            m_gameObject.getTransform().update(GPM::Mat4::identity());
+        if (getOwner().getTransform().isDirty())
+            getOwner().getTransform().update(GPM::Mat4::identity());
     }
 };
 } // namespace GPE

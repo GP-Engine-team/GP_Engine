@@ -56,39 +56,39 @@ namespace GPG RFKNamespace()
 		void rotate(const GPM::Vec2& deltaDisplacement)
 		{
 			if (deltaDisplacement.length() > 0.4) {
-				m_gameObject.getTransform().setRotation(m_gameObject.getTransform().getSpacialAttribut().rotation * GPM::Quaternion::angleAxis(-deltaDisplacement.y * 0.001f, { 1, 0, 0 }));
-				m_gameObject.getTransform().setRotation(GPM::Quaternion::angleAxis(-deltaDisplacement.x * 0.001f, { 0, 1, 0 }) * m_gameObject.getTransform().getSpacialAttribut().rotation);
+				getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation * GPM::Quaternion::angleAxis(-deltaDisplacement.y * 0.001f, { 1, 0, 0 }));
+				getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(-deltaDisplacement.x * 0.001f, { 0, 1, 0 }) * getOwner().getTransform().getSpacialAttribut().rotation);
 			}
 		}
 
 		inline void up()
 		{
-			m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorUp() * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * speed);
 		}
 
 		inline void down()
 		{
-			m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorUp() * -1 * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -1 * speed);
 		}
 
 		inline void forward()
 		{
-			m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorForward() * -1 * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -1 * speed);
 		}
 
 		inline void back()
 		{
-			m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorForward() * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * speed);
 		}
 
 		inline void left()
 		{
-			m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorRight() * -1 * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -1 * speed);
 		}
 
 		inline void right()
 		{
-			m_gameObject.getTransform().translate(m_gameObject.getTransform().getVectorRight() * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * speed);
 		}
 
 		inline void leave()

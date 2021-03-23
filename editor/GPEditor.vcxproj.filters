@@ -42,6 +42,9 @@
     <ClInclude Include="include\Editor\ProjectContent.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Editor\SceneGraph.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GPEditor.props" />
@@ -60,6 +63,33 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneEditor.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\third_party\imgui\imgui.cpp">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\third_party\imgui\imgui_demo.cpp">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\third_party\imgui\imgui_draw.cpp">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\third_party\imgui\imgui_tables.cpp">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\third_party\imgui\imgui_widgets.cpp">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.cpp">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneGraph.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

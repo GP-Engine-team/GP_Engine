@@ -11,6 +11,16 @@
 using namespace GPE;
 using namespace GPM;
 
+GameObject::~GameObject() noexcept
+{
+    DataChunk<TransformComponent>::getInstance()->destroy(&m_transform);
+
+    for (auto&& component : m_pComponents)
+    {
+        component->destroy();
+    }
+}
+
 void GameObject::moveTowardScene(Scene& newOwner) noexcept
 {
     for (Component* pComponent : m_pComponents)
@@ -29,6 +39,12 @@ void GameObject::updateSelfAndChildren() noexcept
         if (parent)
         {
             getTransform().update(parent->getTransform().getModelMatrix());
+
+            if (m_isDead)
+            {
+                parent->destroyChild(this);
+                return;
+            }
         }
         else
         {
@@ -69,7 +85,7 @@ void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
     getTransform().update(parent->getTransform().getModelMatrix());
 
     // Update children
-    for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
+    for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end();)
     {
         if ((*i)->m_isDead)
         {
@@ -85,6 +101,7 @@ void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
         {
             (*i)->updateSelfAndChildren(m_transform.getModelMatrix());
         }
+        ++i;
     }
 }
 

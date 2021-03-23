@@ -49,12 +49,13 @@ public:
     inline virtual ~Light();
 
     Light()        = delete;
-    Light& operator=(Light const& other) = delete;
-    Light& operator=(Light&& other) = default;
+    Light& operator=(const Light& other) = delete;
+
+    inline Light& operator=(Light&& other);
 
     void moveTowardScene(Scene& newOwner) final
     {
-        m_gameObject.pOwnerScene->sceneRenderer.removeLight(this);
+        getOwner().pOwnerScene->sceneRenderer.removeLight(this);
         newOwner.sceneRenderer.addLight(this);
     }
 

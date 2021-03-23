@@ -27,6 +27,9 @@
     <ClCompile Include="src\InspectPropertyRule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ComponentGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\CustomFileParserFactory.hpp">
@@ -541,6 +544,9 @@
     </ClInclude>
     <ClInclude Include="..\engine\third_party\include\Refureku\RefurekuGenerator\Properties\TestPropertyRule.h">
       <Filter>Gen</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ComponentGenerator.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

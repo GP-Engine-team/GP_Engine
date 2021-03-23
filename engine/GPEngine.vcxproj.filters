@@ -394,6 +394,9 @@
     <ClInclude Include="third_party\imgui\imstb_truetype.h" />
     <ClInclude Include="third_party\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="third_party\imgui\misc\single_file\imgui_single_file.h" />
+    <ClInclude Include="include\Engine\Serialization\ComponentGen.h">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

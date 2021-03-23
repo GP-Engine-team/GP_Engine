@@ -1,8 +1,6 @@
 ﻿#pragma once
 
 #include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/RenderBuffer.hpp"
-#include "Engine/Resources/Texture.hpp"
 #include "glad/glad.h"
 
 namespace GPE
@@ -19,12 +17,17 @@ public:
     GameObject    cameraOwner;
     class Camera* pCamera;
 
-    Texture      texture;
-    RenderBuffer depthStencilBuffer;
-    GLuint       framebufferID;
+    GLuint        textureID;
+    GLuint        depthStencilID;
+    GLuint        framebufferID;
+    int           width;
+    int           height;
+
+private:
+    void initializeFramebuffer();
 
 public:
-    SceneViewer(GPE::Scene& viewed, int width, int height);
+    SceneViewer(GPE::Scene& viewed, int width = 1, int height = 1);
     ~SceneViewer();
     void resize(int width, int height);
 

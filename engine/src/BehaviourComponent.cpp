@@ -20,13 +20,25 @@ BehaviourComponent::~BehaviourComponent() noexcept
 
     if (m_isUpdated)
         Engine::getInstance()->behaviourSystem.removeUpdate(*this);
+
+    DataChunk<BehaviourComponent>::getInstance()->destroy(this);
 }
 
 BehaviourComponent::BehaviourComponent(BehaviourComponent&& other) noexcept
-    : Component(other.m_gameObject), m_isUpdated(std::move(other.m_isUpdated)),
+    : Component(*other.m_gameObject), m_isUpdated(std::move(other.m_isUpdated)),
       m_isFixedUpdated(std::move(other.m_isFixedUpdated))
 {
     Engine::getInstance()->behaviourSystem.updateBehaviourPointer(this, &other);
+}
+
+BehaviourComponent& BehaviourComponent::operator=(BehaviourComponent&& other) noexcept
+{
+    m_isUpdated      = std::move(other.m_isUpdated);
+    m_isFixedUpdated = std::move(other.m_isFixedUpdated);
+
+    Engine::getInstance()->behaviourSystem.updateBehaviourPointer(this, &other);
+
+    return static_cast<BehaviourComponent&>(Component::operator=(std::move(other)));
 }
 
 void BehaviourComponent::enableUpdate(bool flag) noexcept

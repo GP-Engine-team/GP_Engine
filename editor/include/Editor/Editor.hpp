@@ -8,8 +8,8 @@
 
 #include "LogInspector.hpp"
 #include "ProjectContent.hpp"
+#include "SceneGraph.hpp"
 #include "Engine/Intermediate/Viewers/SceneViewer.hpp"
-#include <vector>
 
 struct GLFWwindow;
 
@@ -24,7 +24,7 @@ namespace Editor
 	class Editor
 	{
 	private:
-		GPE::SceneViewer			  m_sceneEditor;
+		GPE::SceneViewer m_sceneEditor;
 		GLFWwindow* m_window;
 		GPE::GameObject* m_inspectedObject;
 		int							  m_framebufferWidth;
@@ -32,11 +32,11 @@ namespace Editor
 		bool					      m_showAppStyleEditor = false;
 		LogInspector			      m_logInspector;
 		ProjectContent				  m_projectContent;
+		SceneGraph					  m_sceneGraph;
 
 		GPE::Scene& loadDefaultScene() const;
 
 	private:
-		void setupGLFWWindow();
 		void setupDearImGui();
 
 		void renderLog();
@@ -61,8 +61,6 @@ namespace Editor
 		void update();
 		void render();
 		bool isRunning();
-
-		friend void windowFramebufferResized(GLFWwindow* window, int width, int height);
 	};
 
 } // End of namespace Editor

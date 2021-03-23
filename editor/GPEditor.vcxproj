@@ -25,6 +25,7 @@
     <ClInclude Include="include\Editor\LogInspector.hpp" />
     <ClInclude Include="include\Editor\ProjectContent.hpp" />
     <ClInclude Include="include\Editor\SceneEditor.hpp" />
+    <ClInclude Include="include\Editor\SceneGraph.hpp" />
     <ClInclude Include="include\Editor\Viewport.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -35,6 +36,7 @@
     <ClCompile Include="src\EditorStartup.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SceneEditor.cpp" />
+    <ClCompile Include="src\SceneGraph.cpp" />
     <ClCompile Include="src\Viewport.cpp" />
   </ItemGroup>
   <ItemGroup>

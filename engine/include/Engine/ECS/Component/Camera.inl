@@ -12,7 +12,7 @@ inline const GPM::Mat4& Camera::getViewProjection() const noexcept
 
 inline GPM::Mat4 Camera::getView() const noexcept // TODO: inversed matrix do not made each frame
 {
-    return m_gameObject.getTransform().getModelMatrix().inversed();
+    return getOwner().getTransform().getModelMatrix().inversed();
 }
 
 inline const GPM::Mat4& Camera::getProjection() const noexcept
