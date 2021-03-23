@@ -18,7 +18,7 @@ class GameObject;
 class RFKClass() Component : public rfk::Object
 {
 protected:
-    GameObject* m_gameObject; // canno't be ref for move
+    GameObject* m_gameObject; // can not be ref for move
     RFKField(Inspect())
     bool        m_isActivated{true};
 
