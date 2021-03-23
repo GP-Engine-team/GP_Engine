@@ -34,6 +34,8 @@ public:
     constexpr inline void setActive(bool newState) noexcept;
 
     virtual void moveTowardScene(class Scene& newOwner){};
+
+    virtual void destroy() = 0;
 };
 
 #include "Component.inl"

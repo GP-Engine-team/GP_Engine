@@ -13,13 +13,11 @@ using namespace GPM;
 GameObject::~GameObject() noexcept
 {
     DataChunk<TransformComponent>::getInstance()->destroy(&m_transform);
-    // TODO: Remove when generator create deswtroy function
-    /*
 
     for (auto&& component : m_pComponents)
     {
         component->destroy();
-    }*/
+    }
 }
 
 void GameObject::moveTowardScene(Scene& newOwner) noexcept
@@ -92,7 +90,7 @@ void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
         {
             i = children.erase(i);
             continue;
-        }    
+        }
 
         if ((*i)->m_transform.isDirty())
         {
