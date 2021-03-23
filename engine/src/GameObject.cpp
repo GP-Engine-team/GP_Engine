@@ -16,7 +16,7 @@ GameObject::~GameObject() noexcept
 
     for (auto&& component : m_pComponents)
     {
-        component->destroy();
+        // component->destroy();
     }
 }
 
@@ -35,13 +35,13 @@ void GameObject::updateSelfAndChildren() noexcept
     if (m_transform.isDirty())
     {
         // Update self
-        if (parent)
+        if (m_parent)
         {
-            getTransform().update(parent->getTransform().getModelMatrix());
+            getTransform().update(m_parent->getTransform().getModelMatrix());
 
             if (m_isDead)
             {
-                parent->destroyChild(this);
+                m_parent->destroyChild(this);
                 return;
             }
         }
@@ -81,7 +81,7 @@ void GameObject::updateSelfAndChildren() noexcept
 void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
 {
     // Update self
-    getTransform().update(parent->getTransform().getModelMatrix());
+    getTransform().update(m_parent->getTransform().getModelMatrix());
 
     // Update children
     for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end();)
@@ -107,9 +107,9 @@ void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
 void GameObject::forceUpdate() noexcept
 {
     // Force update self
-    if (parent)
+    if (m_parent)
     {
-        getTransform().update(parent->getTransform().getModelMatrix());
+        getTransform().update(m_parent->getTransform().getModelMatrix());
     }
     else
     {
@@ -132,7 +132,7 @@ void GameObject::forceUpdate() noexcept
 void GameObject::forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept
 {
     // Force update self
-    getTransform().update(parent->getTransform().getModelMatrix());
+    getTransform().update(m_parent->getTransform().getModelMatrix());
 
     // Force update children
     for (auto&& i = children.begin(); i != children.end(); i++)
@@ -240,12 +240,12 @@ std::list<Component*>::iterator GameObject::destroyComponent(Component* pCompone
 std::string GameObject::getAbsolutePath() const noexcept
 {
     std::string path     = this->getName();
-    GameObject* parentIt = this->parent;
+    GameObject* parentIt = this->m_parent;
 
     while (parentIt)
     {
         path     = parentIt->getName() + std::string("/") + path;
-        parentIt = parentIt->parent;
+        parentIt = parentIt->m_parent;
     }
 
     return path;

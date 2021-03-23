@@ -35,7 +35,7 @@ public:
 
     virtual void moveTowardScene(class Scene& newOwner){};
 
-    virtual void destroy() = 0;
+    // virtual void destroy() = 0;
 };
 
 #include "Component.inl"
