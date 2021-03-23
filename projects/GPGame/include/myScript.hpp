@@ -107,11 +107,6 @@ namespace GPG RFKNamespace()
 			rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
 		}
 
-		virtual const char* getName()
-		{
-			return "myScript";
-		}
-
 		MyScript_GENERATED
 	};
 } /*namespace GPG*/

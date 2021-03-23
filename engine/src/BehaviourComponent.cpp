@@ -4,8 +4,6 @@
 
 #include "Engine/ECS/Component/BehaviourComponent.hpp"
 
-File_GENERATED
-
 using namespace GPE;
 
 BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(owner)

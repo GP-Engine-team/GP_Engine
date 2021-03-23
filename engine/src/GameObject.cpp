@@ -6,6 +6,7 @@
 #include <iostream>
 #include <istream>
 #include <sstream>
+#include "imgui.h"
 
 using namespace GPE;
 using namespace GPM;
@@ -232,4 +233,20 @@ std::string GameObject::getAbsolutePath() const noexcept
     }
 
     return path;
+}
+
+template <>
+static void GPE::DataInspector::inspect(class GameObject& inspected)
+{
+    inspected.inspect();
+
+    std::list<Component*>& comps = inspected.getComponents();
+    unsigned int           i     = 0;
+    for (Component* comp : comps)
+    {
+        ImGui::PushID(i);
+        comp->inspect();
+        ImGui::PopID();
+        i++;
+    }
 }

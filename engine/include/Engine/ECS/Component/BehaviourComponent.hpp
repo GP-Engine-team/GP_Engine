@@ -43,23 +43,9 @@ public:
 
     void enableFixedUpdate(bool flag) noexcept;
 
-    virtual const char* getName() override
-    {
-        return "BehaviorComponent Test";
-    }
-
-    //static inline int variab = []() -> int 
-    //{ 
-    //    std::cout << std::boolalpha << rfk::isReflectedClass<BehaviourComponent> << std::endl;
-
-    //    std::cout << rfk::hasField___rfkArchetypeRegisterer<BehaviourComponent, rfk::ArchetypeRegisterer>::value
-    //              << std::endl;
-    //    return 1; 
-    //}();
-
     BehaviourComponent_GENERATED
 };
 
 } /*namespace GPE*/
 
-//File_GENERATED
+File_GENERATED

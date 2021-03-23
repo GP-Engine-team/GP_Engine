@@ -15,7 +15,7 @@ namespace GPE RFKNamespace()
 {
 class GameObject;
 
-class RFKClass(/*Inspect()*/) Component : public rfk::Object
+class RFKClass() Component : public rfk::Object
 {
 protected:
     GameObject& m_gameObject;
@@ -42,11 +42,6 @@ public:
     virtual bool inspect();
 
     virtual void moveTowardScene(class Scene& newOwner){};
-
-    virtual const char* getName()
-    {
-        return "Component Test";
-    }
     
     Component_GENERATED
 };
@@ -55,4 +50,4 @@ public:
 
 } // namespace GPE
 
-//File_GENERATED
+File_GENERATED

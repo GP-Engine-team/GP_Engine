@@ -40,7 +40,6 @@ std::string InspectPropertyRule::generateClassFooterCode(kodgen::EntityInfo cons
 				//	+ ");";
 			}
 
-			std::cout << "REFUREKU GENERATOR IFPARENT : " << var.name << " >>>> nbParents : " << var.parents.size() << std::endl;
 			ifParentCalls += "if (!(";
 			for (auto& parent : var.parents)
 			{
@@ -62,7 +61,6 @@ std::string InspectPropertyRule::generateClassFooterCode(kodgen::EntityInfo cons
 			"return true;"
 			"}";
 
-		std::cout << serializeFunction << std::endl;
 		return "public:" + serializeFunction;
 	}
 	return "";

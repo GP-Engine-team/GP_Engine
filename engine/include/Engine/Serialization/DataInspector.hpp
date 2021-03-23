@@ -22,9 +22,6 @@ public:
 };
 
 template <>
-static void DataInspector::inspect(class GameObject& t);
-
-template <>
 static void DataInspector::inspect(int& t, const rfk::Field& info);
 
 template <>

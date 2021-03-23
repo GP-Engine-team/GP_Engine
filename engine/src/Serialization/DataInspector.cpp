@@ -1,27 +1,7 @@
 #include "Engine/Serialization/DataInspector.hpp"
 
 #include "imgui.h"
-#include "imgui_internal.h"
-
-#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Serialization/Slider.hpp"
-
-template <>
-static void GPE::DataInspector::inspect(class GameObject& t)
-{
-    std::list<Component*>& comps = t.getComponents();
-    unsigned int           i     = 0;
-    for (Component* comp : comps)
-    {
-        //ImGui::Text("Component : ");
-        ImGui::PushID(i);
-        comp->inspect();
-        ImGui::PopID();
-        i++;
-    }
-
-    t.inspect();
-}
 
 template <>
 static void GPE::DataInspector::inspect(int& inspected, const rfk::Field& info)
