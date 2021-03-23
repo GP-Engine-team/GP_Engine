@@ -6,20 +6,14 @@
 
 #pragma once
 
-#include "Engine/Serialization/Inspect.hpp"
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Refureku/Object.h"
-#include "Generated/Component.rfk.h"
-
-namespace GPE RFKNamespace()
+namespace GPE
 {
 class GameObject;
 
-class RFKClass() Component : public rfk::Object
+class Component
 {
 protected:
     GameObject* m_gameObject; // canno't be ref for move
-    RFKField(Inspect())
     bool        m_isActivated{true};
 
 public:
@@ -39,17 +33,11 @@ public:
 
     constexpr inline void setActive(bool newState) noexcept;
 
-    virtual bool inspect();
+    virtual void moveTowardScene(class Scene& newOwner){};
 
-    virtual void moveTowardScene(class Scene& newOwner){};    
-
-    //virtual void destroy() = 0;
-
-    Component_GENERATED
+    // virtual void destroy() = 0;
 };
 
 #include "Component.inl"
 
 } // namespace GPE
-
-File_GENERATED

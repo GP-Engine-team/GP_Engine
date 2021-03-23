@@ -1,11 +1,29 @@
 ﻿#include "Editor/SceneGraph.hpp"
+
+#include "Engine/Resources/Scene.hpp"
 #include <imgui/imgui.h>
 
 using namespace Editor;
 using namespace GPE;
 
+void DeferedSetParent::bind(GameObject& movedGO, GameObject& newParentGO)
+{
+	m_movedGO = &movedGO;
+	m_newParentGO = &newParentGO;
+}
 
-static void controlPreviousItem(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
+void DeferedSetParent::tryExecute()
+{
+	if (m_movedGO == nullptr)
+		return;
+
+	m_movedGO->setParent(*m_newParentGO);
+
+	m_movedGO = nullptr;
+	m_newParentGO = nullptr;
+}
+
+void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
 {
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 	{
@@ -25,10 +43,17 @@ static void controlPreviousItem(GPE::GameObject& gameObject, GameObject*& select
 			gameObject.addChild<GameObject>(GameObject::CreateArg{ "NewGameObject" });
 		}
 
+		if (ImGui::MenuItem("Move to world", NULL, false))
+		{
+			deferedSetParent.bind(gameObject, gameObject.pOwnerScene->world);
+		}
+
 		if (ImGui::MenuItem("Remove", NULL, false))
 		{
 			gameObject.destroy();
 		}
+
+
 		ImGui::EndPopup();
 	}
 }
@@ -64,4 +89,5 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GameObject
 void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GameObject*& selectedGameObject)
 {
 	recursiveSceneGraphNode(gameObject, selectedGameObject);
+	deferedSetParent.tryExecute();
 }
