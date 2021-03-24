@@ -17,7 +17,7 @@ class GameControlBar
 {
 public:
     // Helper used for clarity and readability
-    enum EButtonMask
+    enum EButton
     {
         STOP  = 0u,
         PLAY  = (1u << 0),

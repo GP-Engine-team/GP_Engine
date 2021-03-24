@@ -10,11 +10,11 @@ namespace Editor
 {
 
 GameControlBar::GameControlBar()
-    : playButtonTex {{"..\\..\\editor\\resources\\play.png",  Texture::ETextureMinFilter::LINEAR, Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE, Texture::ETextureWrapT::CLAMP_TO_EDGE, false}},
-      pauseButtonTex{{"..\\..\\editor\\resources\\pause.png", Texture::ETextureMinFilter::LINEAR, Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE, Texture::ETextureWrapT::CLAMP_TO_EDGE, false}},
-      stopButtonTex {{"..\\..\\editor\\resources\\stop.png",  Texture::ETextureMinFilter::LINEAR, Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE, Texture::ETextureWrapT::CLAMP_TO_EDGE, false}},
+    : playButtonTex {{"..\\..\\editor\\resources\\play.png",  Texture::ETextureMinFilter::LINEAR, Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE, Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      pauseButtonTex{{"..\\..\\editor\\resources\\pause.png", Texture::ETextureMinFilter::LINEAR, Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE, Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      stopButtonTex {{"..\\..\\editor\\resources\\stop.png",  Texture::ETextureMinFilter::LINEAR, Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE, Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
       buttonColors  {IM_COL32(66u, 150u, 255u, 102u), IM_COL32(50u, 50u, 50u, 255u)},
-      buttonMask    {EButtonMask::STOP}
+      buttonMask    {EButton::STOP}
 {}
 
 
