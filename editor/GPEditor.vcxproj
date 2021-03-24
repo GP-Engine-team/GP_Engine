@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="include\Editor\Editor.hpp" />
     <ClInclude Include="include\Editor\EditorStartup.hpp" />
+    <ClInclude Include="include\Editor\GameControlBar.hpp" />
+    <ClInclude Include="include\Editor\Inspectors\Inspector.hpp" />
     <ClInclude Include="include\Editor\ExternalDeclarations.hpp" />
     <ClInclude Include="include\Editor\LogInspector.hpp" />
     <ClInclude Include="include\Editor\ProjectContent.hpp" />
@@ -34,6 +36,8 @@
   <ItemGroup>
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\EditorStartup.cpp" />
+    <ClCompile Include="src\LogInspector.cpp" />
+    <ClCompile Include="src\GameControlBar.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SceneEditor.cpp" />
     <ClCompile Include="src\SceneGraph.cpp" />

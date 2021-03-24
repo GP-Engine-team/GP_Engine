@@ -9,6 +9,7 @@
 #include "LogInspector.hpp"
 #include "ProjectContent.hpp"
 #include "SceneGraph.hpp"
+#include "GameControlBar.hpp"
 #include "Engine/Intermediate/Viewers/SceneViewer.hpp"
 
 struct GLFWwindow;
@@ -28,6 +29,7 @@ namespace Editor
 		LogInspector	 m_logInspector;
 		ProjectContent	 m_projectContent;
 		SceneGraph		 m_sceneGraph;
+		GameControlBar   m_gameControlBar;
 		GLFWwindow*		 m_window;
 		GPE::GameObject* m_inspectedObject;
 		bool			 m_showAppStyleEditor;

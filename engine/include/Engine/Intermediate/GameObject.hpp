@@ -17,6 +17,8 @@
 
 
 // in Inl
+#include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Core/Tools/Format.hpp"
 #include "Engine/Intermediate/DataChunk.hpp"
 
 #include "Generated/GameObject.rfk.h"

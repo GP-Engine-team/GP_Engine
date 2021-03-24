@@ -28,7 +28,8 @@ Texture::Texture(const LoadArg& arg) noexcept
 
     setFormat(comp);
 
-    loadInGPU(w, h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT, pixels);
+    loadInGPU(w, h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT,
+              pixels, arg.generateMipmaps);
 
     Log::getInstance()->log(
         (std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path.c_str()) + "\" loaded to VRAM").c_str());
@@ -92,7 +93,7 @@ bool Texture::checkFormatValidity() const
 }
 
 bool Texture::loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
-                        ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept
+                        ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels, bool generateMipmaps) noexcept
 {
     if (!checkFormatValidity())
     {
@@ -109,7 +110,8 @@ bool Texture::loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextu
 
     glTexImage2D(GL_TEXTURE_2D, 0, (GLenum)format, w, h, 0, (GLenum)format, GL_UNSIGNED_BYTE, pixels);
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+    if (generateMipmaps)
+        glGenerateMipmap(GL_TEXTURE_2D);
 
     return true;
 }

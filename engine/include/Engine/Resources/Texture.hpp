@@ -79,6 +79,7 @@ public:
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
         ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
         bool              flipTexture      = true;
+        bool              generateMipmaps  = true;
     };
 
     struct CreateArg
@@ -100,7 +101,7 @@ protected:
     bool checkFormatValidity() const;
 
     bool loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
-                   ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept;
+                   ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels, bool generateMipmaps = true) noexcept;
 
 public:
     Texture()                     = default;
