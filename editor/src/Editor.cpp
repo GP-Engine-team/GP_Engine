@@ -33,11 +33,7 @@ namespace Editor
 /* ========================== Private methods ========================== */
 GPE::Scene& Editor::loadDefaultScene() const
 {
-	GPE::SceneManager& sm = GPE::Engine::getInstance()->sceneManager;
-	sm.addEmpty("Default scene");
-	sm.loadScene("Default scene");
-
-	return *sm.getCurrentScene();
+	return GPE::Engine::getInstance()->sceneManager.loadScene("Empty scene");
 }
 
 
@@ -118,18 +114,28 @@ void Editor::renderMenuBar()
 }
 
 
+void Editor::renderGameControlBar()
+{
+	/*
+	ImGui::ImageButton();
+	ImGui::SameLine();
+	ImGui::ImageButton();
+	ImGui::SameLine();
+	ImGui::ImageButton();
+	*/
+}
+
+
 void Editor::renderLevelEditor()
 {
 	// Use the whole window content
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
-	ImGui::Begin("Level editor", nullptr, ImGuiWindowFlags_NoBackground);
+	ImGui::Begin(m_sceneEditor.m_pScene->world.getName().c_str(), nullptr, ImGuiWindowFlags_NoBackground);
 		const ImVec2 size{ImGui::GetContentRegionAvail()};
-		
-		m_sceneEditor.resize(static_cast<int>(size.x), static_cast<int>(size.y));
 
-		m_sceneEditor.bindScene(*Engine::getInstance()->sceneManager.getCurrentScene());
+		m_sceneEditor.resize(static_cast<int>(size.x), static_cast<int>(size.y));
 		m_sceneEditor.render();
 
 		ImGui::Image((void*)(intptr_t)m_sceneEditor.textureID, size, {.0f, 1.f}, {1.f, .0f});
@@ -207,9 +213,14 @@ void Editor::renderExplorer()
 
 
 /* ========================== Constructor & destructor ========================== */
-Editor::Editor(GLFWwindow* window)
-	: m_sceneEditor{loadDefaultScene()},
-	  m_window{window}
+Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
+	: m_sceneEditor		  {editedScene},
+	  m_logInspector	  {},
+	  m_projectContent	  {},
+	  m_sceneGraph		  {},
+	  m_window			  {window},
+	  m_inspectedObject   {nullptr},
+	  m_showAppStyleEditor{false}
 {
 	glfwMaximizeWindow(window);
 	setupDearImGui();
@@ -222,7 +233,12 @@ Editor::Editor(GLFWwindow* window)
 		// Log in log inspector
 		m_logInspector.addLog(msg);
 	};
+}
 
+
+void Editor::setSceneInEdition(GPE::Scene& scene)
+{
+	m_sceneEditor.bindScene(scene);
 }
 
 

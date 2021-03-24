@@ -25,14 +25,12 @@ namespace Editor
 	{
 	private:
 		GPE::SceneViewer m_sceneEditor;
-		GLFWwindow* m_window;
+		LogInspector	 m_logInspector;
+		ProjectContent	 m_projectContent;
+		SceneGraph		 m_sceneGraph;
+		GLFWwindow*		 m_window;
 		GPE::GameObject* m_inspectedObject;
-		int							  m_framebufferWidth;
-		int							  m_framebufferHeight;
-		bool					      m_showAppStyleEditor = false;
-		LogInspector			      m_logInspector;
-		ProjectContent				  m_projectContent;
-		SceneGraph					  m_sceneGraph;
+		bool			 m_showAppStyleEditor;
 
 		GPE::Scene& loadDefaultScene() const;
 
@@ -42,6 +40,7 @@ namespace Editor
 		void renderLog();
 		void renderStyleEditor();
 		void renderMenuBar();
+		void renderGameControlBar();
 		void renderLevelEditor();
 		void renderInspector();
 		void renderSceneGraph();
@@ -56,8 +55,9 @@ namespace Editor
 		void recursiveSceneGraphNode(GPE::GameObject& gameObject, int idElem = 0);
 
 	public:
-		Editor(GLFWwindow* window);
+		Editor(GLFWwindow* window, GPE::Scene& editedScene);
 
+		void setSceneInEdition(GPE::Scene& scene);
 		void update();
 		void render();
 		bool isRunning();

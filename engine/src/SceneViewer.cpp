@@ -7,7 +7,6 @@
 #include "Engine/Resources/Script/FreeFly.hpp"
 
 #include <GLFW/glfw3.h>
-
 #include <string>
 
 namespace GPE
@@ -91,6 +90,11 @@ SceneViewer::~SceneViewer()
 
 void SceneViewer::resize(int width_, int height_)
 {
+    if (width == width_ && height == height_)
+    {
+        return;
+    }
+
     width  = width_;
     height = height_;
     
