@@ -11,8 +11,10 @@
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "GPM/Shape3D/Volume.hpp"
+#include "Engine/Serialization/ComponentGen.h"
+#include "Generated/Model.rfk.h"
 
-namespace GPE
+namespace GPE RFKNamespace()
 {
 
 class Mesh;
@@ -32,7 +34,7 @@ struct SubModel
 
 bool isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept;
 
-class Model : public Component
+class RFKClass(Inspect(), ComponentGen()) Model : public Component
 {
 public:
     struct CreateArg
@@ -55,5 +57,9 @@ public:
     Model& operator                      =(Model&& other);
 
     void moveTowardScene(class Scene& newOwner) override;
+
+    Model_GENERATED
 };
 } /*namespace GPE*/
+
+File_GENERATED

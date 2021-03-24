@@ -11,15 +11,16 @@
 #include "GPM/Matrix4.hpp"
 #include "GPM/Quaternion.hpp"
 #include "GPM/Transform.hpp"
-#include "Generated/TransformComponent.rfk.h"
 #include "GPM/Vector3.hpp"
+#include "Engine/Serialization/ComponentGen.h"
+#include "Generated/TransformComponent.rfk.h"
 
 namespace GPE RFKNamespace()
 {
 
 class GameObject;
 
-class RFKClass() TransformComponent : public Component
+class RFKClass(Inspect(), ComponentGen()) TransformComponent : public Component
 {
 public:
     struct CreateArg
