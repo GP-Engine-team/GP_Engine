@@ -1,6 +1,6 @@
 #include "Editor/LogInspector.hpp"
-
 #include "Engine/Core//Debug/Log.hpp"
+#include <iostream>
 
 namespace Editor
 {
