@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Engine/Serialization/xml/xmlManager.hpp"
-#include "Generated/ComponentGen.rfk.h"
 #include <Refureku/TypeInfo/Properties/PropertySettings.h>
 #include <string>
+
+#include "Generated/ComponentGen.rfk.h"
 
 struct RFKStruct(PropertySettings(rfk::EEntityKind::Struct | rfk::EEntityKind::Class)) ComponentGen
     : public rfk::Property
