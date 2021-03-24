@@ -18,33 +18,32 @@ struct GLFWwindow;
 
 namespace Editor
 {
-
-	class EditorStartup final : public ContextStartup
-	{
-	private:
-		const std::function<void(double, double)> m_fixedUpdate;
-		const std::function<void(double, double)> m_update;
-		const std::function<void()>               m_render;
+class EditorStartup final : public ContextStartup
+{
+private:
+	const std::function<void(double, double)> m_fixedUpdate;
+	const std::function<void(double, double)> m_update;
+	const std::function<void()>               m_render;
 
 #ifdef NDEBUG
-		const char* gameDllPath = "./bin/Release/GPGame.dll";
+	const char* gameDllPath = "./bin/Release/GPGame.dll";
 #else
-		const char* gameDllPath = "./bin/Debug/GPGame.dll";
+	const char* gameDllPath = "./bin/Debug/GPGame.dll";
 #endif
 
-		GPE::ReloadableCpp m_reloadableCpp;
-		Editor             m_editor;
-		AbstractGame* m_game;
+	GPE::ReloadableCpp m_reloadableCpp;
+	Editor             m_editor;
+	AbstractGame* m_game;
 
-		GLFWwindow* initDearImGui(GLFWwindow* window);
+	GLFWwindow* initDearImGui(GLFWwindow* window);
 
-	public:
-		EditorStartup();
-		virtual ~EditorStartup() final;
+public:
+	EditorStartup();
+	virtual ~EditorStartup() final;
 
-		void startGame();
-		void closeGame();
-		virtual void update() override final;
-	};
+	void startGame();
+	void closeGame();
+	virtual void update() override final;
+};
 
 } // End of namespace Editor
