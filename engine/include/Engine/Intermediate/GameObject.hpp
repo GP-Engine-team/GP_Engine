@@ -13,11 +13,12 @@
 #include <vector>                                      //std::vector
 
 // in Inl
+#include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Core/Tools/Format.hpp"
 #include "Engine/Intermediate/DataChunk.hpp"
 
 namespace GPE
 {
-class Component;
 class Scene;
 
 class GameObject
