@@ -3,7 +3,6 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <GPM/Vector3.hpp>
 #include <PxPhysics.h>
-//#include <foundation/PxTransform.h>
 
 using namespace GPE;
 using namespace physx;

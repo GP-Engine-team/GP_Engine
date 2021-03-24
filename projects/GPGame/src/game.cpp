@@ -139,7 +139,8 @@ Game::Game()
     iManager.bindInput(GLFW_KEY_SPACE, "jump");
     iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
     iManager.bindInput(GLFW_KEY_ESCAPE, "exit");
-    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
+    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
+    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
 
     GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}}};
     GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 50.f}}};
@@ -158,9 +159,9 @@ Game::Game()
 
     player.addComponent<SphereCollider>();
     player.getComponent<SphereCollider>()->isVisible = true;
-    player.getComponent<SphereCollider>()->setRadius(50.f);
-    player.addComponent<RigidbodyStatic>();
-    player.getComponent<RigidbodyStatic>()->collider = player.getComponent<SphereCollider>();
+    player.getComponent<SphereCollider>()->setRadius(100.f);
+    player.addComponent<RigidbodyDynamic>();
+    player.getComponent<RigidbodyDynamic>()->collider = player.getComponent<SphereCollider>();
 
     testPhysX.addComponent<SphereCollider>();
     testPhysX.getComponent<SphereCollider>()->isVisible = true;
@@ -169,7 +170,7 @@ Game::Game()
     testPhysX.getComponent<RigidbodyStatic>()->collider = testPhysX.getComponent<SphereCollider>();
 
     PointLight::CreateArg lightArg{
-        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0, 0.0014, 0.000007};
+        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};
     PointLight& light = player.addComponent<PointLight>(lightArg);
 
     rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs",

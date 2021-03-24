@@ -6,6 +6,7 @@
 
 #pragma once
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <PxPhysics.h>
 #include <PxScene.h>
@@ -38,26 +39,41 @@ public:
     void drawDebugScene();
 
     /**
-     * @brief add Collision component to the component list
+     * @brief add RigidbodyStatic component to the component list
      * @param rigidbody
      * @return
      */
     inline size_t addComponent(RigidbodyStatic* rigidbody) noexcept;
 
     /**
-     * @brief remove Collision component to the component list
+     * @brief remove RigidbodyStatic component to the component list
      * @param rigidbody
      * @return
      */
     inline void removeComponent(RigidbodyStatic* rigidbody) noexcept;
 
+    /**
+     * @brief add RigidbodyDynamic component to the component list
+     * @param rigidbody
+     * @return
+     */
+    inline size_t addComponent(RigidbodyDynamic* rigidbody) noexcept;
+
+    /**
+     * @brief remove RigidbodyDynamic component to the component list
+     * @param rigidbody
+     * @return
+     */
+    inline void removeComponent(RigidbodyDynamic* rigidbody) noexcept;
+
 public:
-    physx::PxFoundation*          foundation;
-    physx::PxPvd*                 pvd;
-    physx::PxPhysics*             physics;
-    physx::PxCooking*             cooking;
-    physx::PxScene*               scene;
-    std::vector<RigidbodyStatic*> rigidbodyStatics;
+    physx::PxFoundation*           foundation;
+    physx::PxPvd*                  pvd;
+    physx::PxPhysics*              physics;
+    physx::PxCooking*              cooking;
+    physx::PxScene*                scene;
+    std::vector<RigidbodyStatic*>  rigidbodyStatics;
+    std::vector<RigidbodyDynamic*> rigidbodyDynamics;
 };
 
 #include <Engine/ECS/System/PhysXSystem.inl>

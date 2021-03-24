@@ -20,3 +20,24 @@ void PhysXSystem::removeComponent(RigidbodyStatic* rigidbody) noexcept
         }
     }
 }
+
+size_t PhysXSystem::addComponent(RigidbodyDynamic* rigidbody) noexcept
+{
+    rigidbodyDynamics.push_back(rigidbody);
+    scene->addActor(*rigidbody->rigidbody);
+
+    return rigidbodyDynamics.size();
+}
+
+void PhysXSystem::removeComponent(RigidbodyDynamic* rigidbody) noexcept
+{
+    for (std::vector<RigidbodyDynamic*>::iterator it = rigidbodyDynamics.begin(); it != rigidbodyDynamics.end(); it++)
+    {
+        if ((*it) == rigidbody)
+        {
+            std::swap<RigidbodyDynamic*>(rigidbodyDynamics.back(), (*it));
+            rigidbodyDynamics.pop_back();
+            return;
+        }
+    }
+}

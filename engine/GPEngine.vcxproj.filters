@@ -46,6 +46,9 @@
     <ClCompile Include="src\Physics\Collisions\SphereCollider.cpp">
       <Filter>src\Physics\Collisions</Filter>
     </ClCompile>
+    <ClCompile Include="src\Physics\Rigidbody\RigidbodyDynamic.cpp">
+      <Filter>src\Physics\Rigidbody</Filter>
+    </ClCompile>
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyStatic.cpp">
       <Filter>src\Physics\Rigidbody</Filter>
     </ClCompile>
@@ -218,6 +221,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\SphereCollider.hpp">
       <Filter>include\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyDynamic.hpp">
+      <Filter>include\Physics\Rigidbody</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyStatic.hpp">
       <Filter>include\Physics\Rigidbody</Filter>

@@ -6,13 +6,13 @@
 
 #pragma once
 
-//#include "Engine/ECS/Component/AudioComponent.hpp"
+#include "Engine/ECS/Component/AudioComponent.hpp"
 #include "Engine/ECS/Component/BehaviourComponent.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
-//#include "Engine/Resources/Wave.hpp"
+#include "Engine/Resources/Wave.hpp"
 
 #include <iostream>
 
@@ -22,8 +22,8 @@ class MyScript : public GPE::BehaviourComponent
 {
 public:
     inline MyScript(GPE::GameObject& owner) noexcept
-        : GPE::BehaviourComponent(owner), input(owner.addComponent<GPE::InputComponent>()) /*,
-      source(owner.addComponent<GPE::AudioComponent>())*/
+        : GPE::BehaviourComponent(owner), input(owner.addComponent<GPE::InputComponent>()),
+          source(owner.addComponent<GPE::AudioComponent>())
     {
         enableUpdate(true);
         input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyScript::up);
@@ -36,7 +36,7 @@ public:
         input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyScript::sprintStart);
         input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyScript::sprintEnd);
 
-        /*GPE::Wave testSound("./resources/sounds/RickRoll.wav", "RICKROLL");
+        GPE::Wave testSound("./resources/sounds/RickRoll.wav", "RICKROLL");
         GPE::Wave testSound2("./resources/sounds/YMCA.wav", "YMCA");
         GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
@@ -45,7 +45,7 @@ public:
         sourceSettings.loop  = AL_TRUE;
 
         source.setSound("Western", "Western", sourceSettings);
-        source.playSound("Western");*/
+        source.playSound("Western");
     }
 
     MyScript() noexcept                      = delete;
@@ -56,8 +56,8 @@ public:
     MyScript& operator=(MyScript&& other) noexcept = delete;
 
     GPE::InputComponent& input;
-    // GPE::AudioComponent& source;
-    float speed;
+    GPE::AudioComponent& source;
+    float                speed = 1;
 
     void rotate(const GPM::Vec2& deltaDisplacement)
     {
@@ -72,6 +72,7 @@ public:
 
     inline void up()
     {
+        // Engine::getInstance()->physXSystem.physics->force
         getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * speed);
     }
 

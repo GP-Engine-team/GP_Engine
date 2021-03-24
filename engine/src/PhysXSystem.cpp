@@ -53,6 +53,11 @@ PhysXSystem::PhysXSystem()
     sceneDesc.cpuDispatcher = m_CpuDispatcher;
 
     scene = physics->createScene(sceneDesc);
+
+    scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.f);
+    scene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.f);
+    scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.f);
+    // scene->setGravity(PxVec3(0, 0, 1));
 }
 
 PhysXSystem::~PhysXSystem()
@@ -67,7 +72,16 @@ PhysXSystem::~PhysXSystem()
 
 void PhysXSystem::advance(const double& deltaTime) noexcept
 {
+    for (size_t i = 0; i < rigidbodyDynamics.size(); i++)
+    {
+        // rigidbodyDynamics[i]->update();
+    }
     scene->simulate(static_cast<PxReal>(deltaTime));
+    scene->fetchResults(true);
+    for (size_t i = 0; i < rigidbodyDynamics.size(); i++)
+    {
+        rigidbodyDynamics[i]->update();
+    }
 }
 
 void PhysXSystem::drawDebugScene()

@@ -16,7 +16,7 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
     if (!action.empty())
     {
         auto stateMapIt     = m_stateMap.find(key);
-        auto lastStateMapIt = m_stateMap.find(key);
+        auto lastStateMapIt = m_lastStateMap.find(key);
         for (int i = 0; i < m_inputComponents.size(); i++)
         {
             auto keyModeMapIt = m_inputComponents[i]->m_keyModeMap.find(action);
@@ -61,7 +61,7 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
 
 void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
-    if (action != GLFW_REPEAT)
+    if (action >= 0 && action != GLFW_REPEAT)
     {
         if (m_stateMap.count(key))
         {
@@ -70,7 +70,6 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
         }
         else
         {
-            // m_lastStateMap.insert_or_assign(key, false);
             m_lastStateMap[key] = false;
         }
         m_stateMap[key] = action != GLFW_RELEASE;
