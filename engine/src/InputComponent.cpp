@@ -21,18 +21,16 @@ InputComponent::InputComponent(InputComponent&& other) : Component(other.getOwne
     Engine::getInstance()->inputManager.updateComponent(this, m_key);
 }
 
-InputComponent& InputComponent::operator=(InputComponent&& other) noexcept
+InputComponent& InputComponent::operator=(InputComponent&& other)
 {
     m_functionMap = std::move(other.m_functionMap);
     m_key         = std::move(other.m_key);
     m_keyModeMap  = std::move(other.m_keyModeMap);
 
-    Engine::getInstance()->inputManager.updateComponent(this, m_key);
-
     return static_cast<InputComponent&>(Component::operator=(std::move(other)));
 }
 
-InputComponent::~InputComponent() noexcept
+InputComponent::~InputComponent()
 {
     Engine::getInstance()->inputManager.removeComponent(m_key);
     DataChunk<InputComponent>::getInstance()->destroy(this);

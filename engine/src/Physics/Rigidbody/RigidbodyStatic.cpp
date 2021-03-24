@@ -1,4 +1,5 @@
 ﻿#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
+#include <Engine/ECS/System/PhysXSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <GPM/Vector3.hpp>
@@ -9,12 +10,12 @@ using namespace physx;
 
 RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner)
 {
-    GPM::Vec3 vector = owner.getTransform().getGlobalPosition();
-    PxQuat    quat   = PxQuat(owner.getTransform().getGlobalRotation().x, owner.getTransform().getGlobalRotation().y,
-                         owner.getTransform().getGlobalRotation().z, owner.getTransform().getGlobalRotation().s);
+    rigidbody = PxGetPhysics().createRigidStatic(
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
+                    PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
 
-    rigidbody = PxGetPhysics().createRigidStatic(PxTransform(vector.x, vector.y, vector.z, quat));
-    collider  = owner.getComponent<Collider>();
+    collider = owner.getComponent<Collider>();
+
     if (!collider)
     {
         FUNCT_ERROR("No collider assigned to the game object!");
@@ -22,6 +23,9 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner)
 
     else
     {
+        rigidbody->attachShape(*collider->shape);
+        collider->shape->release();
+
         Engine::getInstance()->physXSystem.addComponent(this);
     }
 }

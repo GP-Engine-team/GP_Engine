@@ -159,7 +159,7 @@ Game::Game()
 
     player.addComponent<SphereCollider>();
     player.getComponent<SphereCollider>()->isVisible = true;
-    player.getComponent<SphereCollider>()->setRadius(100.f);
+    player.getComponent<SphereCollider>()->setRadius(10.f);
     player.addComponent<RigidbodyDynamic>();
     player.getComponent<RigidbodyDynamic>()->collider = player.getComponent<SphereCollider>();
 

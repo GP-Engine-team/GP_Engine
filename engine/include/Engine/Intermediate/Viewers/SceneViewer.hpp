@@ -10,11 +10,9 @@ class Scene;
 
 class SceneViewer
 {
-protected:
-    Scene* m_pScene;
-
 public:
     GameObject    cameraOwner;
+    Scene*        m_pScene;
     class Camera* pCamera;
 
     GLuint        textureID;
@@ -29,11 +27,10 @@ private:
 public:
     SceneViewer(GPE::Scene& viewed, int width = 1, int height = 1);
     ~SceneViewer();
-    void resize(int width, int height);
 
-    void bindScene(Scene& scene) noexcept;
-
-    void render() const;
+    void resize   (int width, int height);
+    void bindScene(Scene& scene)          noexcept;
+    void render   ()                      const;
 };
 
 } // namespace GPE

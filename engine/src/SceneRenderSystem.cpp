@@ -302,7 +302,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
     return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape,
-              unsigned int renderTextureID)
+              std::vector<DebugLine>& debugLine, unsigned int renderTextureID)
 
     {
         glBindFramebuffer(GL_FRAMEBUFFER, renderTextureID);
@@ -395,10 +395,53 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 
                     rs.tryToBindMesh(shape.shape->getID());
 
-                    glDrawArrays(GL_TRIANGLES, 0, shape.shape->getVerticesCount());
+                    glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
                 }
 
                 debugShape.clear();
+            }
+
+            if (!debugLine.empty())
+            {
+                const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
+                glUseProgram(shaderToUse->getID());
+                rs.tryToSetBackFaceCulling(false);
+
+                for (auto&& line : debugLine)
+                {
+                    GLfloat lineSeg[] = {
+                        line.pt1.x, line.pt1.y, line.pt1.z, // first vertex
+                        line.pt2.x, line.pt2.y, line.pt2.z  // second vertex
+                    };
+
+                    GLuint lineVAO, lineVBO;
+                    glGenVertexArrays(1, &lineVAO);
+                    glGenBuffers(1, &lineVBO);
+                    glBindVertexArray(lineVAO);
+                    glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
+                    glBufferData(GL_ARRAY_BUFFER, sizeof(lineSeg), &lineSeg, GL_STATIC_DRAW);
+                    glEnableVertexAttribArray(0);
+                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+
+                    shaderToUse->setMat4("projectViewModelMatrix",
+                                         (pCameras[0]->getProjection() * pCameras[0]->getView()).e);
+
+                    shaderToUse->setVec4("Color", line.color.r, line.color.g, line.color.b, line.color.a);
+
+                    if (line.smooth)
+                        glEnable(GL_LINE_SMOOTH);
+                    else
+                        glDisable(GL_LINE_SMOOTH);
+
+                    glBindVertexArray(lineVAO);
+                    glLineWidth(line.width);
+                    glDrawArrays(GL_LINES, 0, 2);
+
+                    glLineWidth(1.0f);
+                    glDisable(GL_LINE_SMOOTH);
+                }
+
+                debugLine.clear();
             }
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -412,7 +455,7 @@ void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline rend
                              unsigned int renderTextureID) noexcept
 {
     renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_debugShape, renderTextureID);
+                   m_debugShape, m_debugLine, renderTextureID);
 }
 
 void SceneRenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,
@@ -439,6 +482,12 @@ void SceneRenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, con
         DebugShape{Engine::getInstance()->resourceManager.get<Mesh>("Plane"),
                    toTransform(SplitTransform{Quaternion::lookAt(Vec3::zero(), dir), position, scale}), color, mode,
                    enableBackFaceCullling});
+}
+
+void SceneRenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width, const ColorRGBA& color,
+                                      bool smooth) noexcept
+{
+    m_debugLine.emplace_back(DebugLine{pt1, pt2, width, color, smooth});
 }
 
 void SceneRenderSystem::addRenderer(Renderer* pRenderer) noexcept

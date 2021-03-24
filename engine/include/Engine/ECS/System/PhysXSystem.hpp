@@ -8,12 +8,15 @@
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
+#include <GPM/Quaternion.hpp>
 #include <PxPhysics.h>
 #include <PxScene.h>
 #include <PxSceneDesc.h>
 #include <Pxfoundation.h>
 #include <cooking/PxCooking.h>
 #include <foundation/PxErrorCallback.h>
+#include <foundation/PxQuat.h>
+#include <foundation/PxVec3.h>
 #include <pvd/PxPvd.h>
 #include <vector>
 
@@ -65,6 +68,11 @@ public:
      * @return
      */
     inline void removeComponent(RigidbodyDynamic* rigidbody) noexcept;
+
+    static inline GPM::Vec3     PxVec3ToGPMVec3(const physx::PxVec3& vector) noexcept;
+    static inline physx::PxVec3 GPMVec3ToPxVec3(const GPM::Vec3& vector) noexcept;
+    static inline GPM::Quat     PxQuatToGPMQuat(const physx::PxQuat& quaternion) noexcept;
+    static inline physx::PxQuat GPMQuatToPxQuat(const GPM::Quat& quaternion) noexcept;
 
 public:
     physx::PxFoundation*           foundation;

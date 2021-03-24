@@ -159,10 +159,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ComponentGenerator.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SerializePropertyRule.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ComponentGenerator.h" />
     <ClInclude Include="include\CustomFileParserFactory.hpp" />
     <ClInclude Include="include\SerializePropertyRule.h" />
   </ItemGroup>

@@ -3,6 +3,7 @@
 #include <Engine/Engine.hpp>
 #include <PxPhysics.h>
 #include <PxPhysicsVersion.h>
+#include <common/PxRenderBuffer.h>
 #include <common/PxTolerancesScale.h>
 #include <extensions/PxDefaultAllocator.h>
 #include <extensions/PxDefaultErrorCallback.h>
@@ -56,8 +57,7 @@ PhysXSystem::PhysXSystem()
 
     scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.f);
     scene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.f);
-    scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.f);
-    // scene->setGravity(PxVec3(0, 0, 1));
+    scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 10.f);
 }
 
 PhysXSystem::~PhysXSystem()
@@ -72,10 +72,6 @@ PhysXSystem::~PhysXSystem()
 
 void PhysXSystem::advance(const double& deltaTime) noexcept
 {
-    for (size_t i = 0; i < rigidbodyDynamics.size(); i++)
-    {
-        // rigidbodyDynamics[i]->update();
-    }
     scene->simulate(static_cast<PxReal>(deltaTime));
     scene->fetchResults(true);
     for (size_t i = 0; i < rigidbodyDynamics.size(); i++)
@@ -86,7 +82,7 @@ void PhysXSystem::advance(const double& deltaTime) noexcept
 
 void PhysXSystem::drawDebugScene()
 {
-    for (unsigned int i = 0; i < rigidbodyStatics.size(); i++)
+    /*for (unsigned int i = 0; i < rigidbodyStatics.size(); i++)
     {
         if (rigidbodyStatics[i]->collider && rigidbodyStatics[i]->collider->isVisible == true)
         {
@@ -98,5 +94,13 @@ void PhysXSystem::drawDebugScene()
                                                                                            sphereCol->getRadius());
             }
         }
+    }*/
+
+    const PxRenderBuffer& rb = scene->getRenderBuffer();
+    for (PxU32 i = 0; i < rb.getNbLines(); i++)
+    {
+        const PxDebugLine& line = rb.getLines()[i];
+        Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.drawDebugLine(PxVec3ToGPMVec3(line.pos0),
+                                                                                           PxVec3ToGPMVec3(line.pos1));
     }
 }

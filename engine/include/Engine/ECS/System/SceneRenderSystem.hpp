@@ -32,18 +32,36 @@ public:
         FILL  = GL_FILL
     };
 
-    struct DebugShape
+    enum class EDebugDrawShapeMode
     {
-        const Mesh*     shape                  = nullptr;
-        GPM::Transform  transform              = {};
-        ColorRGBA       color                  = ColorRGBA{1.f, 0.f, 0.f, 0.5f};
-        EDebugShapeMode mode                   = EDebugShapeMode::FILL;
-        bool            enableBackFaceCullling = true;
+        POINTS    = GL_POINTS,
+        LINES     = GL_LINES,
+        TRAINGLES = GL_TRIANGLES
     };
 
-    using RenderPipeline = std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
-                                              std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
-                                              std::vector<Light*>&, std::vector<DebugShape>&, unsigned int)>;
+    struct DebugShape
+    {
+        const Mesh*         shape                  = nullptr;
+        GPM::Transform      transform              = {};
+        ColorRGBA           color                  = ColorRGBA{1.f, 0.f, 0.f, 0.5f};
+        EDebugShapeMode     mode                   = EDebugShapeMode::FILL;
+        bool                enableBackFaceCullling = true;
+        EDebugDrawShapeMode drawMode               = EDebugDrawShapeMode::TRAINGLES;
+    };
+
+    struct DebugLine
+    {
+        GPM::Vec3 pt1;
+        GPM::Vec3 pt2;
+        float     width;
+        ColorRGBA color  = ColorRGBA{1.f, 0.f, 0.f, 0.5f};
+        bool      smooth = true;
+    };
+
+    using RenderPipeline =
+        std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
+                           std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
+                           std::vector<Light*>&, std::vector<DebugShape>&, std::vector<DebugLine>&, unsigned int)>;
 
 protected:
     std::vector<Renderer*>  m_pRenderers;
@@ -52,6 +70,7 @@ protected:
     std::vector<Camera*>    m_pCameras;
     std::vector<Light*>     m_pLights;
     std::vector<DebugShape> m_debugShape;
+    std::vector<DebugLine>  m_debugLine;
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
@@ -87,6 +106,9 @@ public:
     void drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
                        const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
                        EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
+
+    void drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width = 1.f,
+                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, bool smooth = true) noexcept;
 
     void displayGameObjectRef(const GameObject& go, float dist = 100.f, float size = 10.f) noexcept;
 
