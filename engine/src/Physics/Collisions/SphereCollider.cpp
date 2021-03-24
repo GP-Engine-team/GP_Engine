@@ -3,6 +3,7 @@
 
 using namespace GPE;
 using namespace physx;
+using namespace std;
 
 SphereCollider::SphereCollider(GameObject& owner) noexcept : Collider(owner), m_center(0, 0, 0), m_radius(10)
 {
@@ -12,6 +13,6 @@ SphereCollider::SphereCollider(GameObject& owner) noexcept : Collider(owner), m_
 
 void SphereCollider::setRadius(float newRadius) noexcept
 {
-    m_radius                             = newRadius;
-    shape->getGeometry().sphere().radius = m_radius;
+    m_radius = newRadius;
+    shape->setGeometry(PxSphereGeometry(m_radius));
 }

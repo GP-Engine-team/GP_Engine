@@ -16,7 +16,8 @@ RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner
 
     collider = owner.getComponent<Collider>();
 
-    rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+    rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
+    rigidbody->setMass(1);
     // rigidbody->setAngularVelocity(PxVec3(0.f, 0.f, 5.f));
     // rigidbody->setAngularDamping(0.f);
 
@@ -37,4 +38,6 @@ RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner
 void RigidbodyDynamic::update() noexcept
 {
     getOwner().getTransform().setTranslation(PhysXSystem::PxVec3ToGPMVec3(rigidbody->getGlobalPose().p));
+    rigidbody->setLinearVelocity(PxVec3{0, 0, 0});
+    rigidbody->setAngularVelocity(PxVec3{0, 0, 0});
 }

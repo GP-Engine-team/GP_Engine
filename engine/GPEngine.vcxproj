@@ -312,6 +312,7 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\ObjParser.cpp" />
+    <ClCompile Include="src\Physics\Collisions\BoxCollider.cpp" />
     <ClCompile Include="src\Physics\Collisions\SphereCollider.cpp" />
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyDynamic.cpp" />
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyStatic.cpp" />

@@ -2,6 +2,8 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 
+#include "Engine/Core/Debug/Assert.hpp"
+#include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ObjParser.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
@@ -23,10 +25,8 @@
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Texture.hpp"
 #include "myScript.hpp"
+#include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
-
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Core/Debug/Log.hpp"
 //#include "GPM/Random.hpp"
 
 #include <glad/glad.h> //In first
@@ -141,9 +141,12 @@ Game::Game()
     iManager.bindInput(GLFW_KEY_ESCAPE, "exit");
     iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
     iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
+    iManager.bindInput(GLFW_KEY_KP_ADD, "growUpCollider");
+    iManager.bindInput(GLFW_KEY_KP_SUBTRACT, "growDownCollider");
 
     GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}}};
     GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 50.f}}};
+    GameObject::CreateArg groundArg{"GroundArg", TransformComponent::CreateArg{GPM::Vec3{0.f, -50.f, 0.f}}};
 
     Camera::PerspectiveCreateArg camCreateArg;
     camCreateArg.aspect = Camera::computeAspect(900, 600);
@@ -153,6 +156,7 @@ Game::Game()
 
     GameObject& player    = sm.getCurrentScene()->world.addChild<GameObject>(playerArg);
     GameObject& testPhysX = sm.getCurrentScene()->world.addChild<GameObject>(testPhysXArg);
+    GameObject& ground    = sm.getCurrentScene()->world.addChild<GameObject>(groundArg);
 
     player.addComponent<Camera>(camCreateArg);
     player.addComponent<GPG::MyScript>();
@@ -168,6 +172,12 @@ Game::Game()
     testPhysX.getComponent<SphereCollider>()->setRadius(10.f);
     testPhysX.addComponent<RigidbodyStatic>();
     testPhysX.getComponent<RigidbodyStatic>()->collider = testPhysX.getComponent<SphereCollider>();
+
+    ground.addComponent<BoxCollider>();
+    ground.getComponent<BoxCollider>()->isVisible = true;
+    ground.getComponent<BoxCollider>()->setDimensions(Vec3{1000.f, 10.f, 1000.f});
+    ground.addComponent<RigidbodyStatic>();
+    ground.getComponent<RigidbodyStatic>()->collider = ground.getComponent<BoxCollider>();
 
     PointLight::CreateArg lightArg{
         {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};

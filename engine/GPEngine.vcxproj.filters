@@ -43,6 +43,9 @@
     <ClCompile Include="src\ObjParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Physics\Collisions\BoxCollider.cpp">
+      <Filter>src\Physics\Collisions</Filter>
+    </ClCompile>
     <ClCompile Include="src\Physics\Collisions\SphereCollider.cpp">
       <Filter>src\Physics\Collisions</Filter>
     </ClCompile>
