@@ -11,17 +11,33 @@
 namespace Editor
 {
 
+class Editor;
+
 class GameControlBar
 {
+public:
+    // Helper used for clarity and readability
+    enum EButtonMask
+    {
+        STOP  = 0u,
+        PLAY  = (1u << 0),
+        PAUSE = (1u << 1),
+    };
+
 private:
+    // Data members
     GPE::Texture playButtonTex;
     GPE::Texture pauseButtonTex;
     GPE::Texture stopButtonTex;
+    unsigned int buttonColors[2];
 
 public:
+    unsigned char buttonMask;
+
     GameControlBar();
 
-    void render();
+    // Methods
+    void render(class Editor& editor);
 };
 
 } // End of namespace Editor
