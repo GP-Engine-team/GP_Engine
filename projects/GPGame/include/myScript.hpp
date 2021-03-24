@@ -57,7 +57,7 @@ public:
 
     GPE::InputComponent& input;
     // GPE::AudioComponent& source;
-    float speed;
+    float speed = 1;
 
     void rotate(const GPM::Vec2& deltaDisplacement)
     {
