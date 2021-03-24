@@ -52,11 +52,13 @@ public:
         return m_pCurrentScene;
     }
 
-    void addEmpty(const std::string& sceneName);
+    Scene& addEmpty(const std::string& sceneName);
 
-    void loadScene(const std::string&    sceneName,
-                   ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
-                   EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING);
+    Scene& loadScene(const std::string&    sceneName,
+                     ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
+                     EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING);
+
+    void removeScene(const std::string& sceneName);
 };
 
 } /*namespace GPE*/
