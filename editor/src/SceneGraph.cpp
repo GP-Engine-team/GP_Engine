@@ -25,6 +25,26 @@ void DeferedSetParent::tryExecute()
 
 void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
 {
+	//Drag
+	if (ImGui::BeginDragDropSource())
+	{
+		GPE::GameObject* pGameObject = &gameObject;
+		ImGui::SetDragDropPayload("_GAMEOBJECT", &pGameObject, sizeof(pGameObject));
+		ImGui::TextUnformatted(gameObject.getName().c_str());
+		ImGui::EndDragDropSource();
+	}
+
+	//Drop
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
+		{
+			IM_ASSERT(payload->DataSize == sizeof(&gameObject));
+			deferedSetParent.bind(**static_cast<GPE::GameObject**>(payload->Data), gameObject);
+		}
+		ImGui::EndDragDropTarget();
+	}
+
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 	{
 		selectedGameObject = &gameObject;

@@ -498,7 +498,6 @@ MigrationBackup/
 #dir Vs
 x64/
 
-#Ressource Dir
-resources/
-
-# End of https://www.toptal.com/developers/gitignore/api/c++,vs,vscode,rider
+# Resource dir
+*resources/
+!engine/include/Engine/Resources

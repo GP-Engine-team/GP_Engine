@@ -29,13 +29,14 @@ namespace GPE RFKNamespace()
     class RFKClass(ComponentGen()) InputComponent : public Component
     {
 public:
-    // InputComponent() = delete;
-    InputComponent(const InputComponent& other) noexcept = delete;
-    InputComponent(InputComponent&& other) noexcept      = default;
-    virtual ~InputComponent();
     InputComponent(GameObject& owner);
 
-    InputComponent& operator=(InputComponent&& other) noexcept;
+    InputComponent()                            = delete;
+    InputComponent(const InputComponent& other) = delete;
+    InputComponent& operator=(InputComponent const& other) = delete;
+    virtual ~InputComponent();
+    InputComponent(InputComponent&& other);
+    InputComponent& operator=(InputComponent&& other);
 
 private:
     std::unordered_map<std::string, std::function<void()>> m_functionMap;

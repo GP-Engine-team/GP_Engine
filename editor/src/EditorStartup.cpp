@@ -50,7 +50,8 @@ EditorStartup::EditorStartup()
 	  	    m_editor.render();
 	  }},
 	  m_reloadableCpp{gameDllPath},
-	  m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow())},
+	  m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
+			   GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
 	  m_game{nullptr}
 {
 	ADD_PROCESS(m_reloadableCpp, createGameInstance);
@@ -89,8 +90,12 @@ void EditorStartup::startGame()
 		auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
 		destroyer(m_game);
 	}
+
 	auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
 	m_game = a();
+
+	m_editor.setSceneInEdition(*GPE::Engine::getInstance()->sceneManager.getCurrentScene());
+	GPE::Engine::getInstance()->sceneManager.removeScene("Default scene");
 }
 
 void EditorStartup::closeGame()

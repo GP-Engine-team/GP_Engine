@@ -61,11 +61,17 @@ inline GameObject* GameObject::getParent() noexcept
 inline void GameObject::setParent(GameObject& newParent) noexcept
 {
     GPE_ASSERT(m_parent, "You cannot move gameObject without parent");
+    GPE_ASSERT(newParent.getParent() != this,
+               "You cannot associate new parent if it's the chilf of the current entity (leak)");
 
-    for (std::list<std::unique_ptr<GameObject>>::iterator it = m_parent->children.begin(); it != m_parent->children.end(); it++)
+    for (std::list<std::unique_ptr<GameObject>>::iterator it = m_parent->children.begin();
+         it != m_parent->children.end(); it++)
     {
-        if ((*it).get() == this)
+        if (it->get() == this)
         {
+            Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
+                                                 newParent.getName().c_str()));
+
             newParent.children.emplace_back(std::move(*it)); // move the
             m_parent->children.erase(it);
             break;
@@ -95,6 +101,7 @@ inline GameObject& GameObject::addChild(Args&&... args) noexcept
 {
     std::unique_ptr<GameObject>& pChild = this->children.emplace_back(std::make_unique<T>(*pOwnerScene, args...));
     pChild->children                    = std::list<std::unique_ptr<GameObject>>();
+
     // pChild->update((*this).getModelMatrix());
     pChild->m_parent = this;
     return *pChild;

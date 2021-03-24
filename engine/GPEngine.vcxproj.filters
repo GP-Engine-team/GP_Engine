@@ -324,9 +324,6 @@
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp">
       <Filter>include</Filter>
     </ClInclude>

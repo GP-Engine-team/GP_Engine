@@ -232,7 +232,6 @@
     <ClInclude Include="include\Engine\Engine.hpp" />
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
-    <ClInclude Include="include\Engine\Intermediate\RenderSystem.hpp" />
     <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
     <ClInclude Include="include\Engine\Resources\Cursor.hpp" />
