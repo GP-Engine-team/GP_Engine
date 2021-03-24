@@ -53,6 +53,7 @@
     <ClCompile Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\EditorStartup.cpp" />
+    <ClCompile Include="src\LogInspector.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SceneEditor.cpp" />
     <ClCompile Include="src\SceneGraph.cpp" />
