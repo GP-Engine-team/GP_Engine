@@ -14,8 +14,6 @@
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 
-#include <cstdio>
-#include <cstdlib>
 #include <string>
 
 using namespace GPE;
@@ -116,13 +114,7 @@ void Editor::renderMenuBar()
 
 void Editor::renderGameControlBar()
 {
-	/*
-	ImGui::ImageButton();
-	ImGui::SameLine();
-	ImGui::ImageButton();
-	ImGui::SameLine();
-	ImGui::ImageButton();
-	*/
+	m_gameControlBar.render(*this);
 }
 
 
@@ -218,6 +210,7 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
 	  m_logInspector	  {},
 	  m_projectContent	  {},
 	  m_sceneGraph		  {},
+	  m_gameControlBar    {},
 	  m_window			  {window},
 	  m_inspectedObject   {nullptr},
 	  m_showAppStyleEditor{false}
@@ -259,6 +252,7 @@ void Editor::update()
 
 	ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
+	renderGameControlBar();
 	renderLevelEditor();
 	renderSceneGraph();
 	renderExplorer();
