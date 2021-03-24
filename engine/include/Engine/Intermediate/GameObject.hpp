@@ -41,6 +41,7 @@ public:
 protected:
     RFKField(Inspect())
     std::string         m_name;
+    RFKField(Inspect())
     TransformComponent& m_transform;
 
     std::list<Component*> m_pComponents;

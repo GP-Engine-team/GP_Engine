@@ -114,7 +114,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Component.cpp" />
-    <ClCompile Include="src\Serialization\DataInspector.cpp" />
     <ClCompile Include="third_party\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="third_party\imgui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="third_party\imgui\imgui.cpp" />
@@ -124,6 +123,9 @@
     <ClCompile Include="third_party\imgui\imgui_widgets.cpp" />
     <ClCompile Include="third_party\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="third_party\imgui\misc\fonts\binary_to_compressed_c.cpp" />
+    <ClCompile Include="src\Serialization\STDDataInspector.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -335,7 +337,6 @@
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp" />
     <ClInclude Include="include\Engine\Intermediate\BehaviourSystem.hpp" />
-    <ClInclude Include="include\Engine\Serialization\DataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\Inspect.hpp" />
     <ClInclude Include="include\Engine\Serialization\Serialize.hpp" />
     <ClInclude Include="include\Engine\Serialization\Slider.hpp" />
@@ -393,6 +394,15 @@
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp">
       <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\DataInspector.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\GPMDataInspector.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\STDDataInspector.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-#include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/STDDataInspector.hpp"
 
 #include "imgui.h"
 #include "Engine/Serialization/Slider.hpp"
