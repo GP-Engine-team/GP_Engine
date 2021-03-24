@@ -36,11 +36,11 @@ protected:
 
     std::list<Component*> m_pComponents;
     std::string           m_tag{"GameObject"};
-    bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
+    bool        m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
+    GameObject* m_parent = nullptr;
 
 public:
     Scene*                                 pOwnerScene;
-    GameObject*                            parent   = nullptr;
     std::list<std::unique_ptr<GameObject>> children = {};
 
 public: // TODO : Protected method ?
@@ -79,6 +79,15 @@ public:
      * @return const char*
      */
     [[nodiscard]] inline const std::string& getName() const noexcept;
+
+    [[nodiscard]] inline const GameObject* getParent() const noexcept;
+    [[nodiscard]] inline GameObject*       getParent() noexcept;
+
+    /**
+     * @brief Set the parent and remove to parent the child
+     * @param newName
+     */
+    inline void setParent(GameObject& newParent) noexcept;
 
     /**
      * @brief Set the Name object

@@ -1,6 +1,6 @@
 ﻿inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
     : m_name{arg.name}, m_transform{DataChunk<TransformComponent>::getInstance()->add(*this, arg.transformArg)},
-      m_pComponents{}, pOwnerScene{&scene}, parent{arg.parent}
+      m_pComponents{}, pOwnerScene{&scene}, m_parent{arg.parent}
 {
 }
 
@@ -48,6 +48,39 @@ inline const std::string& GameObject::getName() const noexcept
     return m_name;
 }
 
+inline const GameObject* GameObject::getParent() const noexcept
+{
+    return m_parent;
+}
+
+inline GameObject* GameObject::getParent() noexcept
+{
+    return m_parent;
+}
+
+inline void GameObject::setParent(GameObject& newParent) noexcept
+{
+    GPE_ASSERT(m_parent, "You cannot move gameObject without parent");
+    GPE_ASSERT(newParent.getParent() != this,
+               "You cannot associate new parent if it's the chilf of the current entity (leak)");
+
+    for (std::list<std::unique_ptr<GameObject>>::iterator it = m_parent->children.begin();
+         it != m_parent->children.end(); it++)
+    {
+        if (it->get() == this)
+        {
+            Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
+                                                 newParent.getName().c_str()));
+
+            newParent.children.emplace_back(std::move(*it)); // move the
+            m_parent->children.erase(it);
+            break;
+        }
+    }
+
+    m_parent = &newParent;
+}
+
 inline void GameObject::setName(const char* newName) noexcept
 {
     m_name = newName;
@@ -68,8 +101,9 @@ inline GameObject& GameObject::addChild(Args&&... args) noexcept
 {
     std::unique_ptr<GameObject>& pChild = this->children.emplace_back(std::make_unique<T>(*pOwnerScene, args...));
     pChild->children                    = std::list<std::unique_ptr<GameObject>>();
+
     // pChild->update((*this).getModelMatrix());
-    pChild->parent = this;
+    pChild->m_parent = this;
     return *pChild;
 }
 
@@ -152,7 +186,7 @@ inline void GameObject::destroy() noexcept
 
 inline void GameObject::destroyNow() noexcept
 {
-    parent->destroyChild(this);
+    m_parent->destroyChild(this);
 }
 
 inline constexpr bool GameObject::operator==(GameObject const& other) noexcept

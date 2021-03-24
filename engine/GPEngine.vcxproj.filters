@@ -370,6 +370,9 @@
     <ClInclude Include="include\Engine\Engine.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\ComponentGen.h">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

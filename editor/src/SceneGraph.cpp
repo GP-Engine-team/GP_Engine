@@ -1,12 +1,50 @@
 ﻿#include "Editor/SceneGraph.hpp"
+
+#include "Engine/Resources/Scene.hpp"
 #include <imgui/imgui.h>
 
 using namespace Editor;
 using namespace GPE;
 
-
-static void controlPreviousItem(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
+void DeferedSetParent::bind(GameObject& movedGO, GameObject& newParentGO)
 {
+	m_movedGO = &movedGO;
+	m_newParentGO = &newParentGO;
+}
+
+void DeferedSetParent::tryExecute()
+{
+	if (m_movedGO == nullptr)
+		return;
+
+	m_movedGO->setParent(*m_newParentGO);
+
+	m_movedGO = nullptr;
+	m_newParentGO = nullptr;
+}
+
+void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
+{
+	//Drag
+	if (ImGui::BeginDragDropSource())
+	{
+		GPE::GameObject* pGameObject = &gameObject;
+		ImGui::SetDragDropPayload("_GAMEOBJECT", &pGameObject, sizeof(pGameObject));
+		ImGui::TextUnformatted(gameObject.getName().c_str());
+		ImGui::EndDragDropSource();
+	}
+
+	//Drop
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
+		{
+			IM_ASSERT(payload->DataSize == sizeof(&gameObject));
+			deferedSetParent.bind(**static_cast<GPE::GameObject**>(payload->Data), gameObject);
+		}
+		ImGui::EndDragDropTarget();
+	}
+
 	if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 	{
 		selectedGameObject = &gameObject;
@@ -25,10 +63,17 @@ static void controlPreviousItem(GPE::GameObject& gameObject, GameObject*& select
 			gameObject.addChild<GameObject>(GameObject::CreateArg{ "NewGameObject" });
 		}
 
+		if (ImGui::MenuItem("Move to world", NULL, false))
+		{
+			deferedSetParent.bind(gameObject, gameObject.pOwnerScene->world);
+		}
+
 		if (ImGui::MenuItem("Remove", NULL, false))
 		{
 			gameObject.destroy();
 		}
+
+
 		ImGui::EndPopup();
 	}
 }
@@ -64,4 +109,5 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GameObject
 void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GameObject*& selectedGameObject)
 {
 	recursiveSceneGraphNode(gameObject, selectedGameObject);
+	deferedSetParent.tryExecute();
 }

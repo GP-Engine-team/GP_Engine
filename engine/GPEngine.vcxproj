@@ -247,6 +247,7 @@
     <ClInclude Include="include\Engine\Resources\ShaderType.hpp" />
     <ClInclude Include="include\Engine\Resources\Texture.hpp" />
     <ClInclude Include="include\Engine\Resources\Type.hpp" />
+    <ClInclude Include="include\Engine\Serialization\ComponentGen.h" />
     <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp" />
     <ClInclude Include="include\Engine\Serialization\Serialize.h" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlLoader.hpp" />
