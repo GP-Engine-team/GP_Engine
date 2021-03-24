@@ -71,7 +71,7 @@ void GameControlBar::render(Editor& editor)
             if (buttonMask & PAUSE)
             {
                 buttonMask = PLAY;
-                // TODO: "Pause" is on. Tell the editor the game should be paused
+                // TODO: "Pause" is on. Tell the editor the game should be launch then immediatly paused
             }
             else
             {
