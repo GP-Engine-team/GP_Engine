@@ -7,11 +7,12 @@
 #pragma once
 
 #include "Engine/ECS/Component/Component.hpp"
+#include "Engine/Serialization/ComponentGen.h"
 #include "Generated/BehaviourComponent.rfk.h"
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect()) BehaviourComponent : public Component
+    class RFKClass(Inspect(), ComponentGen()) BehaviourComponent : public Component
     {
 protected:
     RFKField(Inspect())

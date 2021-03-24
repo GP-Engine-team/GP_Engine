@@ -9,6 +9,7 @@
 #include "Engine/Serialization/Inspect.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Refureku/Object.h"
+#include "Engine/Serialization/ComponentGen.h"
 #include "Generated/Component.rfk.h"
 
 namespace GPE RFKNamespace()
@@ -43,7 +44,7 @@ public:
 
     virtual void moveTowardScene(class Scene& newOwner){};    
 
-    //virtual void destroy() = 0;
+    virtual void destroy() = 0;
 
     Component_GENERATED
 };

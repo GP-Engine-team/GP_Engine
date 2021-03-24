@@ -13,6 +13,7 @@
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "GPM/Vector3.hpp"
+#include "Engine/Serialization/ComponentGen.h"
 #include "Generated/InputComponent.rfk.h"
 
 enum class EKeyMode
@@ -25,8 +26,8 @@ enum class EKeyMode
 
 namespace GPE RFKNamespace()
 {
-class RFKClass(/*Inspect()*/) InputComponent : public Component
-{
+    class RFKClass(ComponentGen()) InputComponent : public Component
+    {
 public:
     // InputComponent() = delete;
     InputComponent(const InputComponent& other) noexcept = delete;

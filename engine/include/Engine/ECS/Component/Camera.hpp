@@ -13,6 +13,7 @@
 #include "GPM/Shape3D/Plane.hpp"
 #include "Engine/Serialization/Inspect.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/ComponentGen.h"
 
 // in inl
 #include "Engine/Intermediate/GameObject.hpp"
@@ -36,7 +37,7 @@ struct Frustum
     GPM::Plane nearFace;
 };
 
-class RFKClass(Inspect()) Camera : public Component
+class RFKClass(Inspect(), ComponentGen()) Camera : public Component
 {
 public:
     enum class EProjectionType
