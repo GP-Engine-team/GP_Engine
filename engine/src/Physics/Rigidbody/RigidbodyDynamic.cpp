@@ -44,5 +44,5 @@ void RigidbodyDynamic::update() noexcept
     GPM::Quat tempQuat = getOwner().getTransform().getGlobalRotation();
     PxQuat    quat     = PxQuat(tempQuat.x, tempQuat.y, tempQuat.z, tempQuat.s);
     // rigidbody->setGlobalPose(PxTransform(vector.x, vector.y, vector.z, quat));
-    // getOwner().getTransform().setTranslation(PxVec3FromVec3(rigidbody->getGlobalPose().p));
+    getOwner().getTransform().setTranslation(PxVec3FromVec3(rigidbody->getGlobalPose().p));
 }
