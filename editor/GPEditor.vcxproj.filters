@@ -27,41 +27,8 @@
     <ClInclude Include="include\Editor\Editor.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Editor\Inspectors\Inspector.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Editor\Viewport.hpp">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imconfig.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imgui.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imgui_internal.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imstb_rectpack.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imstb_textedit.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\imstb_truetype.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\third_party\imgui\misc\single_file\imgui_single_file.h">
-      <Filter>third_party</Filter>
     </ClInclude>
     <ClInclude Include="include\Editor\SceneEditor.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
@@ -126,6 +93,9 @@
       <Filter>third_party</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneGraph.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LogInspector.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\GameControlBar.cpp">

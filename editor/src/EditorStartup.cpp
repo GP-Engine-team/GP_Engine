@@ -58,6 +58,7 @@ EditorStartup::EditorStartup()
 	ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
 	ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
 	ADD_PROCESS(m_reloadableCpp, setLogInstance);
+	ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
 
 	m_reloadableCpp.onUnload = [&]()
 	{
@@ -97,7 +98,6 @@ void EditorStartup::startGame()
 	GPE::Engine::getInstance()->sceneManager.removeScene("Default scene");
 }
 
-
 void EditorStartup::closeGame()
 {
 	if (m_game != nullptr)
@@ -107,7 +107,6 @@ void EditorStartup::closeGame()
 		m_game = nullptr;
 	}
 }
-
 
 void EditorStartup::update()
 {
@@ -126,6 +125,9 @@ void EditorStartup::update()
 
 		auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
 		(*sync)(*GPE::Engine::getInstance());
+
+		auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+		(*syncImgui)(ImGui::GetCurrentContext());
 
 		startGame();
 	}

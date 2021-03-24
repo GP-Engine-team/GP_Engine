@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Engine/Intermediate/Viewers/SceneViewer.hpp"
-#include "Editor/Inspectors/Inspector.hpp"
 
 namespace Editor
 {

@@ -7,40 +7,48 @@
 #pragma once
 
 #include "Engine/ECS/Component/Component.hpp"
+#include "Engine/Serialization/ComponentGen.h"
 
-namespace GPE
+// Generated
+#include "Generated/BehaviourComponent.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class BehaviourComponent : public Component
-{
-protected:
-    bool m_isUpdated      = false;
-    bool m_isFixedUpdated = false;
-
-public:
-    BehaviourComponent(GameObject& owner) noexcept;
-
-    BehaviourComponent() noexcept                                = delete;
-    BehaviourComponent(const BehaviourComponent& other) noexcept = delete;
-    BehaviourComponent(BehaviourComponent&& other) noexcept;
-    virtual ~BehaviourComponent() noexcept;
-    BehaviourComponent& operator=(BehaviourComponent const& other) noexcept = delete;
-    BehaviourComponent& operator                                            =(BehaviourComponent&& other) noexcept;
-
-    virtual void start()
+    class RFKClass(Inspect(), ComponentGen()) BehaviourComponent : public Component
     {
-    }
+    protected:
+        RFKField(Inspect()) bool m_isUpdated      = false;
+        RFKField(Inspect()) bool m_isFixedUpdated = false;
 
-    virtual void fixedUpdate(float deltaTime)
-    {
-    }
+    public:
+        BehaviourComponent(GameObject & owner) noexcept;
 
-    virtual void update(float deltaTime)
-    {
-    }
+        BehaviourComponent() noexcept                                = delete;
+        BehaviourComponent(const BehaviourComponent& other) noexcept = delete;
+        BehaviourComponent(BehaviourComponent && other) noexcept;
+        virtual ~BehaviourComponent() noexcept;
+        BehaviourComponent& operator=(BehaviourComponent const& other) noexcept = delete;
+        BehaviourComponent& operator                                            =(BehaviourComponent&& other) noexcept;
 
-    void enableUpdate(bool flag) noexcept;
+        virtual void start()
+        {
+        }
 
-    void enableFixedUpdate(bool flag) noexcept;
-};
+        virtual void fixedUpdate(float deltaTime)
+        {
+        }
 
-} /*namespace GPE*/
+        virtual void update(float deltaTime)
+        {
+        }
+
+        void enableUpdate(bool flag) noexcept;
+
+        void enableFixedUpdate(bool flag) noexcept;
+
+        BehaviourComponent_GENERATED
+    };
+
+} // namespace )
+
+File_GENERATED

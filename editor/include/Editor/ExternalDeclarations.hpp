@@ -12,4 +12,7 @@ void destroyGameInstance(class AbstractGame* game) {}
  * @brief Signature of setGameEngineInstance, whose definition should be inside a dll.
 */
 void setGameEngineInstance(GPE::Engine& engine) {}
+
+void setImguiCurrentContext(struct ImGuiContext* ctx) {}
+
 void setLogInstance(GPE::Log& log) {}

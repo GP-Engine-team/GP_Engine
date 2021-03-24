@@ -17,38 +17,46 @@
 // in inl
 #include <string>
 
-namespace GPE
+// Generated
+#include "Generated/DirectionalLight.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class DirectionalLight : public Light
-{
-public:
-    struct CreateArg
+    class RFKClass(Inspect(), ComponentGen()) DirectionalLight : public Light
     {
-        const GPM::Vec3&         direction;
-        const AmbiantComponent&  ambient;
-        const DiffuseComponent&  diffuse;
-        const SpecularComponent& specular;
+    public:
+        struct CreateArg
+        {
+            const GPM::Vec3&         direction;
+            const AmbiantComponent&  ambient;
+            const DiffuseComponent&  diffuse;
+            const SpecularComponent& specular;
+        };
+
+    protected:
+        GPM::Vec3 m_direction;
+
+    public:
+        DirectionalLight(const DirectionalLight& other) = delete;
+        DirectionalLight(DirectionalLight && other)     = default;
+        virtual ~DirectionalLight();
+
+        DirectionalLight()        = delete;
+        DirectionalLight& operator=(DirectionalLight const& other) = delete;
+        DirectionalLight& operator=(DirectionalLight&& other) = default;
+
+        DirectionalLight(GameObject & owner, const CreateArg& arg) noexcept;
+
+        DirectionalLight(GameObject & owner, const GPM::Vec3& direction, const AmbiantComponent& ambient,
+                         const DiffuseComponent& diffuse, const SpecularComponent& specular) noexcept;
+
+        void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept final;
+
+        DEFAULT_GETTER_SETTER_BY_REF(Direction, m_direction);
+
+        DirectionalLight_GENERATED
     };
 
-protected:
-    GPM::Vec3 m_direction;
+} // namespace )
 
-public:
-    DirectionalLight(const DirectionalLight& other) = delete;
-    DirectionalLight(DirectionalLight&& other)      = default;
-    virtual ~DirectionalLight();
-
-    DirectionalLight()        = delete;
-    DirectionalLight& operator=(DirectionalLight const& other) = delete;
-    DirectionalLight& operator=(DirectionalLight&& other) = default;
-
-    DirectionalLight(GameObject& owner, const CreateArg& arg) noexcept;
-
-    DirectionalLight(GameObject& owner, const GPM::Vec3& direction, const AmbiantComponent& ambient,
-                     const DiffuseComponent& diffuse, const SpecularComponent& specular) noexcept;
-
-    void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept final;
-
-    DEFAULT_GETTER_SETTER_BY_REF(Direction, m_direction);
-};
-} /*namespace GPE*/
+File_GENERATED

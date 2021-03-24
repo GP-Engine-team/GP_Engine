@@ -6,11 +6,8 @@
 
 #pragma once
 
-#include <cstdio>
-#include <ctime>
-#include <fstream>
+#include <vector>
 #include <functional>
-#include <iostream>
 #include <string>
 
 #include "Engine/Core/Tools/Format.hpp"
@@ -85,7 +82,6 @@ protected:
     // Bitfiled of the setting. By default is set to : DISPLAY_HOUR | DISPLAY_WITH_COLOR | PRINT_LOG_FILE_ERROR
     std::string              fileLogPath;
     std::vector<std::string> logs;
-    std::ofstream            fileLog;
     uint8_t                  settings;
     bool                     releaseLogFile; // true if log file in'st keep
 
@@ -135,47 +131,47 @@ public:
     /**
      * @brief Save log file if error happen else destroy log file
      */
-    inline void closeAndTryToCreateFile() noexcept;
+    void closeAndTryToCreateFile() noexcept;
 
     /**
      * @brief print message in log event
      *
      * @param os
      */
-    inline void logAddMsg(const std::string& msg) noexcept;
+    void logAddMsg(const std::string& msg) noexcept;
 
     /**
      * @brief display log's heading
      */
-    inline void logHeading() noexcept;
+    void logHeading() noexcept;
 
     /**
      * @brief display message in current stream
      *
      * @param msg
      */
-    inline void log(const std::string& msg) noexcept;
+    void log(const std::string& msg) noexcept;
 
     /**
      * @brief display message with prefix "Error : " in current stream
      *
      * @param msg
      */
-    inline void logError(const std::string& msg) noexcept;
+    void logError(const std::string& msg) noexcept;
 
     /**
      * @brief display message with prefix "Warning : " in current stream
      *
      * @param msg
      */
-    inline void logWarning(const std::string& msg) noexcept;
+    void logWarning(const std::string& msg) noexcept;
 
     /**
      * @brief display message with prefix "Tips : " in current stream
      *
      * @param msg
      */
-    inline void logTips(const std::string& msg) noexcept;
+    void logTips(const std::string& msg) noexcept;
 
     /**
      * @brief display message with elem initialized in current stream
@@ -225,9 +221,9 @@ public:
      *
      * @return std::string
      */
-    [[nodiscard]] inline std::string getTimeStr(char delimitator = ':') noexcept;
+    [[nodiscard]] std::string getTimeStr(char delimitator = ':') noexcept;
 
-    [[nodiscard]] inline std::string getDateStr(char delimitator = '-') noexcept;
+    [[nodiscard]] std::string getDateStr(char delimitator = '-') noexcept;
 
     [[nodiscard]] inline std::string getDateAndTimeStrFileFormat() noexcept;
 

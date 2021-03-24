@@ -1,23 +1,22 @@
-#include "SerializePropertyRule.h"
+#include "InspectPropertyRule.h"
 #include <Kodgen/InfoStructures/StructClassInfo.h>
 #include <algorithm>
 
-SerializePropertyRule::SerializePropertyRule() noexcept :
+InspectPropertyRule::InspectPropertyRule() noexcept :
 	rfk::DefaultComplexPropertyRule(propertyName, kodgen::EEntityType::Class | kodgen::EEntityType::Struct | kodgen::EEntityType::Variable | kodgen::EEntityType::Field)
 {
 
 }
 
-std::string SerializePropertyRule::generateClassFooterCode(kodgen::EntityInfo const& entity, kodgen::ComplexProperty const& property, rfk::PropertyCodeGenClassFooterData& data) const noexcept
+std::string InspectPropertyRule::generateClassFooterCode(kodgen::EntityInfo const& entity, kodgen::ComplexProperty const& property, rfk::PropertyCodeGenClassFooterData& data) const noexcept
 {
 	// If entity is a class or a struct :
 	if ((entity.entityType & (kodgen::EEntityType::Class | kodgen::EEntityType::Struct)) != kodgen::EEntityType::Undefined)
 	{
 		// Get Struct / Class info to access its fields
 		kodgen::StructClassInfo const& var = static_cast<kodgen::StructClassInfo const&>(entity);
-		var.type.getName();
 		
-		std::string serializeInside = "";
+		std::string inspectInside = "";
 
 		// For each fields of the Reflected Class :
 		for (auto& field : var.fields)
@@ -29,17 +28,31 @@ std::string SerializePropertyRule::generateClassFooterCode(kodgen::EntityInfo co
 			auto& fieldProperties = field.properties.complexProperties;
 			if (std::find_if(fieldProperties.begin(), fieldProperties.end(), isPropertyReflected) != fieldProperties.end())
 			{
-				serializeInside += "serializer.serialize(node, s." + field.name + ", "
-					+ "FieldInfo{\"" + field.name + "\", \"" + field.type.getCanonicalName() + "\"}"
-					+ ");";
+				std::string call1 = "c.getField(\""
+					+ field.name
+					+ "\")";
+
+				inspectInside += "GPE::DataInspector::inspect(" + field.name + ", *" + call1 + ");";
 			}
 		}
 
-		std::string serializeFunction = "\
-			template<typename SELF, typename SERIALIZER, typename NODE>				\
-			static void serialize(SELF & s, SERIALIZER & serializer, NODE * node)	\
-			{"
-			+ serializeInside +
+		std::string ifParentCalls = "if (!(";
+		for (auto& parent : var.parents)
+		{
+			ifParentCalls += parent.type.getName() + "::inspect() && ";
+		}
+		ifParentCalls += "true))";
+		ifParentCalls += "return false;";
+
+		std::string getArchetype = "rfk::Class const& c = " + entity.name + "::staticGetArchetype();";
+
+		std::string serializeFunction = 
+			"virtual bool inspect()"
+			"{"
+			+ ifParentCalls
+			+ getArchetype
+			+ inspectInside +
+			"return true;"
 			"}";
 
 		return "public:" + serializeFunction;
