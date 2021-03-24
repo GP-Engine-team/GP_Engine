@@ -31,6 +31,7 @@
     <ClInclude Include="..\engine\third_party\imgui\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="include\Editor\Editor.hpp" />
     <ClInclude Include="include\Editor\EditorStartup.hpp" />
+    <ClInclude Include="include\Editor\GameControlBar.hpp" />
     <ClInclude Include="include\Editor\Inspectors\Inspector.hpp" />
     <ClInclude Include="include\Editor\ExternalDeclarations.hpp" />
     <ClInclude Include="include\Editor\LogInspector.hpp" />
@@ -53,6 +54,7 @@
     <ClCompile Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\EditorStartup.cpp" />
+    <ClCompile Include="src\GameControlBar.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SceneEditor.cpp" />
     <ClCompile Include="src\SceneGraph.cpp" />

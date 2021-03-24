@@ -78,6 +78,9 @@
     <ClInclude Include="include\Editor\SceneGraph.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Editor\GameControlBar.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GPEditor.props" />
@@ -123,6 +126,9 @@
       <Filter>third_party</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneGraph.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameControlBar.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
