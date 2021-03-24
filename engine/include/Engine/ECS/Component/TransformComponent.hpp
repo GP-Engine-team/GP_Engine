@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "Engine/Core/Tools/Callback.hpp" //Event
 #include "Engine/ECS/Component/Component.hpp"
 #include "GPM/Conversion.hpp"
 #include "GPM/Matrix4.hpp"
@@ -34,12 +35,15 @@ protected:
     bool                m_isDirty   = false;
 
 public:
+    Event OnUpdate;
+
+public:
     TransformComponent(GameObject& refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
 
     TransformComponent() noexcept                                = delete;
     TransformComponent(const TransformComponent& other) noexcept = delete;
     TransformComponent(TransformComponent&& other) noexcept      = default;
-    virtual ~TransformComponent() noexcept = default;
+    virtual ~TransformComponent() noexcept                       = default;
     TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
     TransformComponent& operator                                            =(TransformComponent&& other);
 

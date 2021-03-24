@@ -81,7 +81,8 @@ void GameObject::updateSelfAndChildren() noexcept
 void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
 {
     // Update self
-    getTransform().update(m_parent->getTransform().getModelMatrix());
+    if (m_transform.isDirty())
+        getTransform().update(m_parent->getTransform().getModelMatrix());
 
     // Update children
     for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end();)

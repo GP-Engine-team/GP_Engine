@@ -129,6 +129,11 @@ public:
     Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept;
 
     /**
+     * @brief Update the view matrix in function of model matrix of it's parent
+     */
+    void updateView();
+
+    /**
      * @brief Set the Fov Y object
      *
      * @param fovY
@@ -156,7 +161,7 @@ public:
      *
      * @return const GPM::Mat4&
      */
-    inline GPM::Mat4 getView() const noexcept;
+    inline const GPM::Mat4& getView() const noexcept;
 
     /**
      * @brief Get the projection matrix

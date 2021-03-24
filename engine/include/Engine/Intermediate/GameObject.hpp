@@ -6,11 +6,12 @@
 
 #pragma once
 
+#include <list>   //std::list
+#include <memory> //std::unique_ptr
+#include <string> //std::string
+#include <vector> //std::vector
+
 #include "Engine/ECS/Component/TransformComponent.hpp" //TransformComponent
-#include <list>                                        //std::list
-#include <memory>                                      //std::unique_ptr
-#include <string>                                      //std::string
-#include <vector>                                      //std::vector
 
 // in Inl
 #include "Engine/Core/Debug/Log.hpp"

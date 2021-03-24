@@ -95,7 +95,9 @@ namespace GPG {
 		void update(float deltaTime) final
 		{
 			speed = 1;
-			rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
+
+			if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.length2() > 0.00001)
+				rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
 		}
 	};
 } /*namespace GPG*/
