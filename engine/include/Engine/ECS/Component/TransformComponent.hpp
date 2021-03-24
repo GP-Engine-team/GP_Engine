@@ -32,7 +32,7 @@ public:
         };
 
 protected:
-        //RFKField(Inspect())
+        RFKField(Inspect())
         GPM::SplitTransform m_spaceAttribut;
         GPM::Transform      m_transform = GPM::toTransform(m_spaceAttribut);
         bool                m_isDirty   = false;
