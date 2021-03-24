@@ -154,12 +154,22 @@ Game::Game()
     camCreateArg.farVal  = 3000;
     camCreateArg.nearVal = 0.01f;
 
+    PointLight::CreateArg lightArg{
+        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};
+
+    rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs",
+                   AMBIANTE_COLOR_ONLY);
+    rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
+                   "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
+
     GameObject& player    = sm.getCurrentScene()->world.addChild<GameObject>(playerArg);
     GameObject& testPhysX = sm.getCurrentScene()->world.addChild<GameObject>(testPhysXArg);
     GameObject& ground    = sm.getCurrentScene()->world.addChild<GameObject>(groundArg);
 
     player.addComponent<Camera>(camCreateArg);
     player.addComponent<GPG::MyScript>();
+    PointLight& light = player.addComponent<PointLight>(lightArg);
+    loadSkyboxResource(rm);
 
     player.addComponent<SphereCollider>();
     player.getComponent<SphereCollider>()->isVisible = true;
@@ -173,22 +183,27 @@ Game::Game()
     testPhysX.addComponent<RigidbodyStatic>();
     testPhysX.getComponent<RigidbodyStatic>()->collider = testPhysX.getComponent<SphereCollider>();
 
+    /*Model::CreateArg modelArg;
+    modelArg.subModels.emplace_back(SubModel{nullptr, Engine::getInstance()->resourceManager.get<Shader>("TextureOnly"),
+                                             Engine::getInstance()->resourceManager.get<Material>("SkyboxMaterial"),
+                                             Engine::getInstance()->resourceManager.get<Mesh>("Sphere")});
+
+    testPhysX.addComponent<Model>(modelArg);*/
+
     ground.addComponent<BoxCollider>();
     ground.getComponent<BoxCollider>()->isVisible = true;
     ground.getComponent<BoxCollider>()->setDimensions(Vec3{1000.f, 10.f, 1000.f});
     ground.addComponent<RigidbodyStatic>();
     ground.getComponent<RigidbodyStatic>()->collider = ground.getComponent<BoxCollider>();
 
-    PointLight::CreateArg lightArg{
-        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};
-    PointLight& light = player.addComponent<PointLight>(lightArg);
+    /*Model::CreateArg modelArg2;
+    modelArg2.subModels.emplace_back(SubModel{nullptr,
+                                              Engine::getInstance()->resourceManager.get<Shader>("TextureOnly"),
+                                              Engine::getInstance()->resourceManager.get<Material>("SkyboxMaterial"),
+                                              Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug")});
 
-    rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs",
-                   AMBIANTE_COLOR_ONLY);
-    rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
-                   "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
+    ground.addComponent<Model>(modelArg2);*/
 
-    loadSkyboxResource(rm);
     loadTreeResource(rm);
 
     loadSkyBox(sm.getCurrentScene()->world, rm);
