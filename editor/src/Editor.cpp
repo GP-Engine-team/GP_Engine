@@ -150,11 +150,7 @@ void Editor::renderInspector()
 	ImGui::Begin("Inspector");
 	if (m_inspectedObject != nullptr)
 	{
-		ImGui::Begin("Inspector");
-		if (m_inspectedObject != nullptr)
-		{
-			GPE::DataInspector::inspect(*m_inspectedObject);
-		}
+		GPE::DataInspector::inspect(*m_inspectedObject);
 	}
 	else
 	{
