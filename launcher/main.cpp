@@ -1,8 +1,6 @@
 ﻿#include "Engine/Core/Debug/Log.hpp"
 #include "GameStartup.hpp"
 
-#include "Refureku/Refureku.h"
-
 using namespace GPE;
 
 #ifdef _WIN32
@@ -19,13 +17,10 @@ extern "C"
 
 int main(int argc, char* argv[])
 {
-	auto a = rfk::Database::getNamespace("GPE");
-	//std::cout << a->getClass("BehaviourComponent")->getField("speed") << std::endl;
+	Log::getInstance()->logInitializationStart("GameStartup creation");
 
-	//Log::getInstance()->logInitializationStart("GameStartup creation");
-
-	//GameStartup gameStartup;
-	//gameStartup.run();
+	GameStartup gameStartup;
+	gameStartup.run();
 
 	return 0;
 }
