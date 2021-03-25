@@ -124,7 +124,21 @@ void Editor::renderLevelEditor()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
-	ImGui::Begin(m_sceneEditor.m_pScene->world.getName().c_str(), nullptr, ImGuiWindowFlags_NoBackground);
+	ImGui::Begin(m_sceneEditor.pScene->world.getName().c_str(), nullptr, ImGuiWindowFlags_NoBackground);
+		/*
+		if (ImGui::IsMouseClicked(0))
+		{
+			if (ImGui::IsWindowHovered())
+			{
+				m_sceneEditor.captureInputs();
+			}
+
+			else
+			{
+				m_sceneEditor.releaseInputs();
+			}
+		}
+		*/
 		const ImVec2 size{ImGui::GetContentRegionAvail()};
 
 		m_sceneEditor.resize(static_cast<int>(size.x), static_cast<int>(size.y));
