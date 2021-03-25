@@ -58,6 +58,8 @@ PhysXSystem::PhysXSystem()
     scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.f);
     scene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.f);
     scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 10.f);
+    scene->setFlag(PxSceneFlag::eENABLE_ACTIVE_ACTORS, true);
+    // scene->setFlag(PxSceneFlag::eENABLE_GPU_DYNAMICS, true);
 }
 
 PhysXSystem::~PhysXSystem()
@@ -74,10 +76,22 @@ void PhysXSystem::advance(const double& deltaTime) noexcept
 {
     scene->simulate(static_cast<PxReal>(deltaTime));
     scene->fetchResults(true);
-    for (size_t i = 0; i < rigidbodyDynamics.size(); i++)
+
+    /*for (size_t i = 0; i < rigidbodyDynamics.size(); i++)
     {
         rigidbodyDynamics[i]->update();
+    }*/
+
+    PxU32     nbActiveActors;
+    PxActor** activeActors = scene->getActiveActors(nbActiveActors);
+
+    for (PxU32 i = 0; i < nbActiveActors; ++i)
+    {
+        RigidbodyDynamic* rigidbody = static_cast<RigidbodyDynamic*>(activeActors[i]->userData);
+        rigidbody->update();
     }
+
+    drawDebugScene();
 }
 
 void PhysXSystem::drawDebugScene()

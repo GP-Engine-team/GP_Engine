@@ -24,9 +24,9 @@
 #include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Texture.hpp"
-#include "myScript.hpp"
 #include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
+#include <myFpsScript.hpp>
 //#include "GPM/Random.hpp"
 
 #include <glad/glad.h> //In first
@@ -167,15 +167,9 @@ Game::Game()
     GameObject& ground    = sm.getCurrentScene()->world.addChild<GameObject>(groundArg);
 
     player.addComponent<Camera>(camCreateArg);
-    player.addComponent<GPG::MyScript>();
+    player.addComponent<GPG::MyFpsScript>();
     PointLight& light = player.addComponent<PointLight>(lightArg);
     loadSkyboxResource(rm);
-
-    player.addComponent<SphereCollider>();
-    player.getComponent<SphereCollider>()->isVisible = true;
-    player.getComponent<SphereCollider>()->setRadius(10.f);
-    player.addComponent<RigidbodyDynamic>();
-    player.getComponent<RigidbodyDynamic>()->collider = player.getComponent<SphereCollider>();
 
     testPhysX.addComponent<SphereCollider>();
     testPhysX.getComponent<SphereCollider>()->isVisible = true;

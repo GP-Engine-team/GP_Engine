@@ -56,7 +56,7 @@
       <Filter>src\Physics\Rigidbody</Filter>
     </ClCompile>
     <ClCompile Include="src\PhysXSystem.cpp">
-      <Filter>src</Filter>
+      <Filter>src\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\PointLight.cpp">
       <Filter>src</Filter>

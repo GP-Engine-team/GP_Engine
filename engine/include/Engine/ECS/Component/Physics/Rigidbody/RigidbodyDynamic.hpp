@@ -31,5 +31,12 @@ public:
 public:
     physx::PxRigidDynamic* rigidbody;
     Collider*              collider;
+
+private:
+    bool m_isKinematic = false;
+
+public:
+    void setKinematic(bool state) noexcept;
+    GETTER_BY_VALUE(KinematicState, m_isKinematic);
 };
 } // namespace GPE

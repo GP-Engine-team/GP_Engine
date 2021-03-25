@@ -21,7 +21,9 @@
   <ItemGroup>
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\GameApiMacros.hpp" />
-    <ClInclude Include="include\myScript.hpp" />
+    <ClInclude Include="include\myFpsScript.hpp" />
+    <ClInclude Include="include\myFreeFlyScript.hpp" />
+    <ClInclude Include="include\myFreeFlyWithCollisionScript.hpp" />
     <ClInclude Include="include\SingletonsSync.hpp" />
   </ItemGroup>
   <ItemGroup>

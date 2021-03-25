@@ -22,25 +22,27 @@
 
 namespace GPG
 {
-class MyScript : public GPE::BehaviourComponent
+class MyFreeFlyWithCollisionScript : public GPE::BehaviourComponent
 {
 public:
-    inline MyScript(GPE::GameObject& owner) noexcept
+    inline MyFreeFlyWithCollisionScript(GPE::GameObject& owner) noexcept
         : GPE::BehaviourComponent(owner), input(owner.addComponent<GPE::InputComponent>()),
           source(owner.addComponent<GPE::AudioComponent>())
     {
         enableUpdate(true);
-        input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyScript::up);
-        input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyScript::down);
-        input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyScript::right);
-        input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyScript::left);
-        input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyScript::forward);
-        input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyScript::back);
-        input.bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyScript::leave);
-        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyScript::sprintStart);
-        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyScript::sprintEnd);
-        input.bindAction("growUpCollider", EKeyMode::KEY_DOWN, this, &MyScript::growUpSphereCollider);
-        input.bindAction("growDownCollider", EKeyMode::KEY_DOWN, this, &MyScript::growDownSphereCollider);
+        input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::up);
+        input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::down);
+        input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::right);
+        input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::left);
+        input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::forward);
+        input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::back);
+        input.bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyFreeFlyWithCollisionScript::leave);
+        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyFreeFlyWithCollisionScript::sprintStart);
+        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyFreeFlyWithCollisionScript::sprintEnd);
+        input.bindAction("growUpCollider", EKeyMode::KEY_DOWN, this,
+                         &MyFreeFlyWithCollisionScript::growUpSphereCollider);
+        input.bindAction("growDownCollider", EKeyMode::KEY_DOWN, this,
+                         &MyFreeFlyWithCollisionScript::growDownSphereCollider);
 
         GPE::Wave testSound("./resources/sounds/RickRoll.wav", "RICKROLL");
         GPE::Wave testSound2("./resources/sounds/YMCA.wav", "YMCA");
@@ -54,12 +56,12 @@ public:
         source.playSound("Western");
     }
 
-    MyScript() noexcept                      = delete;
-    MyScript(const MyScript& other) noexcept = delete;
-    MyScript(MyScript&& other) noexcept      = default;
-    virtual ~MyScript() noexcept             = default;
-    MyScript& operator=(MyScript const& other) noexcept = delete;
-    MyScript& operator=(MyScript&& other) noexcept = delete;
+    MyFreeFlyWithCollisionScript() noexcept                                          = delete;
+    MyFreeFlyWithCollisionScript(const MyFreeFlyWithCollisionScript& other) noexcept = delete;
+    MyFreeFlyWithCollisionScript(MyFreeFlyWithCollisionScript&& other) noexcept      = default;
+    virtual ~MyFreeFlyWithCollisionScript() noexcept                                 = default;
+    MyFreeFlyWithCollisionScript& operator=(MyFreeFlyWithCollisionScript const& other) noexcept = delete;
+    MyFreeFlyWithCollisionScript& operator=(MyFreeFlyWithCollisionScript&& other) noexcept = delete;
 
     GPE::InputComponent& input;
     GPE::AudioComponent& source;

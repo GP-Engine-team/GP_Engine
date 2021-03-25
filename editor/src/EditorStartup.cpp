@@ -31,7 +31,7 @@ GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
 
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
-          GPE::Engine::getInstance()->physXSystem.drawDebugScene();
+          // GPE::Engine::getInstance()->physXSystem.drawDebugScene();
           if (m_game != nullptr)
               m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
       }},
