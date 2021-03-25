@@ -11,9 +11,6 @@ void inspect(std::vector<T>& inspected, const rfk::Field& info);
 
 //template <typename T, typename SIZE>
 //void inspect(std::array<T, SIZE>& inspected, const rfk::Field& info);
-//
-//template <typename T>
-//void inspect(std::vector<T>& inspected, const rfk::Field& info);
 }
 
 template <>

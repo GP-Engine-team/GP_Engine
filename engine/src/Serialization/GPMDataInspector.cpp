@@ -8,6 +8,8 @@ void GPE::DataInspector::inspect(GPM::SplitTransform& inspected, const rfk::Fiel
 {
     DataInspector::inspect(inspected.position, "Position");
     DataInspector::inspect(inspected.scale,    "Scale");
+    DataInspector::inspect(inspected.rotation, "Rotation");
+
     //static inline bool DragFloat3(const char* label, float v[3], float v_speed, float v_min, float v_max,
     //                              const char* format, float power)
     //{
@@ -44,5 +46,16 @@ void GPE::DataInspector::inspect(GPM::Vector3& inspected, const char* name)
     ImGui::Text(name);
     ImGui::SameLine();
     ImGui::DragFloat3(name, inspected.e);
+    // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
+}
+
+template <>
+void GPE::DataInspector::inspect(GPM::Quaternion& inspected, const char* name)
+{
+    ImGui::Text(name);
+    ImGui::SameLine();
+    //inspected.to
+
+    //ImGui::DragFloat3(name, inspected.e);
     // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
 }
