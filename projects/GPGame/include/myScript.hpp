@@ -104,7 +104,9 @@ namespace GPG RFKNamespace()
 		void update(float deltaTime) final
 		{
 			speed = 1;
-			rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
+
+			if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.00001)
+				rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
 		}
 
 		MyScript_GENERATED

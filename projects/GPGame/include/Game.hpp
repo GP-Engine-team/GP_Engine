@@ -32,13 +32,9 @@ protected:
 private:
 	virtual void update(double unscaledDeltaTime, double deltaTime) override final
 	{
-		// If the deltatime is 0, it crashes.
-		// This is a work around.
-		// TODO : Fix the real issue, that must be inside behavior system. 
-		if (deltaTime != 0)
-			bSys.update(deltaTime);
 		++unFixedUpdateFrameCount;
 
+		bSys.update(deltaTime);
 		sm.getCurrentScene()->world.updateSelfAndChildren();
 	}
 

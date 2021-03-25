@@ -355,7 +355,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                 {
                     float distance = (pCameras[0]->getOwner().getTransform().getGlobalPosition() -
                                       (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
-                                         .length2();
+                                         .sqrLength();
                     mapElemSortedByDistance[distance] = pSubModel;
                 }
             }

@@ -22,7 +22,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen()) DirectionalLight : public Light
+    class RFKClass(Inspect(),ComponentGen) DirectionalLight : public Light
     {
     public:
         struct CreateArg

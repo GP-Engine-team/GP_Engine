@@ -18,9 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Editor\SceneEditor.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Editor\EditorStartup.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -46,6 +43,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Editor\GameControlBar.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Editor\SceneEditor.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

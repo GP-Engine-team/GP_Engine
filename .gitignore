@@ -499,5 +499,5 @@ MigrationBackup/
 x64/
 
 # Resource dir
-*resources/
+resources/*
 !engine/include/Engine/Resources

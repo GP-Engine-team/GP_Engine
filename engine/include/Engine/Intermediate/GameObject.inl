@@ -158,7 +158,7 @@ inline void GameObject::destroyUniqueComponentNow() noexcept
 
         if (unlikely(checkedCompPtr != nullptr))
         {
-            DataChunk<TUniqueComponentType>::getInstance()->destroyComponent(checkedCompPtr);
+            DataChunk<TUniqueComponentType>::getInstance()->destroy(checkedCompPtr);
             m_pComponents.erase(it);
             return;
         }

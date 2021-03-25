@@ -18,9 +18,9 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen()) SpotLight : public PointLight
+    class RFKClass(Inspect(),ComponentGen) SpotLight : public PointLight
     {
-public:
+    public:
         struct CreateArg
         {
             const AmbiantComponent&  ambient;
@@ -35,11 +35,11 @@ public:
             float cutOffExponent;
         };
 
-protected:
+    protected:
         float m_cutOff; // specifies the spotlight's radius.
         float m_cutOffExponent;
 
-public:
+    public:
         SpotLight(const SpotLight& other) = delete;
         SpotLight(SpotLight && other)     = default;
         virtual ~SpotLight();

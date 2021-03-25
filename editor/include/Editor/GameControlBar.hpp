@@ -21,7 +21,7 @@ public:
     {
         STOP  = 0u,
         PLAY  = (1u << 0),
-        PAUSE = (1u << 1),
+        PAUSE = (1u << 1)
     };
 
 private:

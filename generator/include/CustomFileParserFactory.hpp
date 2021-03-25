@@ -19,6 +19,6 @@ public:
     {
         parsingSettings.propertyParsingSettings.complexPropertyRules.emplace_back(&serializePropertyRule);
         parsingSettings.propertyParsingSettings.complexPropertyRules.emplace_back(&inspectPropertyRule);
-		parsingSettings.propertyParsingSettings.complexPropertyRules.emplace_back(&componentGenerator);
+		parsingSettings.propertyParsingSettings.simplePropertyRules.emplace_back(&componentGenerator);
     }
 };

@@ -19,7 +19,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen()) PointLight : public Light
+    class RFKClass(Inspect(),ComponentGen) PointLight : public Light
     {
     public:
         struct CreateArg

@@ -210,6 +210,7 @@
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\Callback.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp" />
