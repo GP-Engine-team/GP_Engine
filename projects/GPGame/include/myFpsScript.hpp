@@ -56,7 +56,9 @@ public:
         collider.isVisible = true;
         collider.setRadius(10.f);
         rigidbody.collider = &collider;
-        // collider.material  = physx::PxMaterial(0, 0, 0);
+        rigidbody.rigidbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
+        rigidbody.rigidbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
+        rigidbody.rigidbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
     }
 
     MyFpsScript() noexcept                         = delete;
@@ -85,7 +87,7 @@ public:
 
     inline void jump()
     {
-        getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(physx::PxVec3{0, 1, 0} * speed * 100,
+        getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(physx::PxVec3{0, 1, 0} * speed,
                                                                               physx::PxForceMode::eFORCE);
     }
 

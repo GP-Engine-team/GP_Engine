@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/Component/Component.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <PxRigidDynamic.h>

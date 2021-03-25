@@ -1,10 +1,13 @@
 ﻿#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <Engine/ECS/System/PhysXSystem.hpp>
 #include <Engine/Engine.hpp>
+#include <PhysX/gpu/PxGpu.h>
 #include <PxPhysics.h>
 #include <PxPhysicsVersion.h>
 #include <common/PxRenderBuffer.h>
 #include <common/PxTolerancesScale.h>
+#include <cudamanager/PxCudaContextManager.h>
+#include <cudamanager/PxCudaMemoryManager.h>
 #include <extensions/PxDefaultAllocator.h>
 #include <extensions/PxDefaultErrorCallback.h>
 #include <extensions/PxDefaultSimulationFilterShader.h>
@@ -53,13 +56,21 @@ PhysXSystem::PhysXSystem()
         FUNCT_ERROR("PxDefaultCpuDispatcherCreate failed!");
     sceneDesc.cpuDispatcher = m_CpuDispatcher;
 
+    PxCudaContextManagerDesc cudaContextManagerDesc;
+
+    sceneDesc.cudaContextManager =
+        PxCreateCudaContextManager(*foundation, cudaContextManagerDesc, PxGetProfilerCallback());
+
+    sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
+    sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
+    sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+    sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+
     scene = physics->createScene(sceneDesc);
 
     scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.f);
     scene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.f);
     scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 10.f);
-    scene->setFlag(PxSceneFlag::eENABLE_ACTIVE_ACTORS, true);
-    // scene->setFlag(PxSceneFlag::eENABLE_GPU_DYNAMICS, true);
 }
 
 PhysXSystem::~PhysXSystem()
@@ -76,11 +87,6 @@ void PhysXSystem::advance(const double& deltaTime) noexcept
 {
     scene->simulate(static_cast<PxReal>(deltaTime));
     scene->fetchResults(true);
-
-    /*for (size_t i = 0; i < rigidbodyDynamics.size(); i++)
-    {
-        rigidbodyDynamics[i]->update();
-    }*/
 
     PxU32     nbActiveActors;
     PxActor** activeActors = scene->getActiveActors(nbActiveActors);
