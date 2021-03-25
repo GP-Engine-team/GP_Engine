@@ -56,7 +56,7 @@ Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
     glBindVertexArray(0);
     glDeleteBuffers(2, &buffers.vbo);
 
-    Log::log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with EBO").c_str());
+    Log::getInstance()->log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with EBO").c_str());
 }
 
 static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, const void* data, int size) noexcept
@@ -136,7 +136,7 @@ Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
     glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    Log::log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with VBOs").c_str());
+    Log::getInstance()->log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with VBOs").c_str());
 }
 
 Mesh::~Mesh() noexcept

@@ -1,16 +1,18 @@
-#include "Engine/Core/Debug/Log.hpp"
 #include "Editor/EditorStartup.hpp"
+
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+
+#include "include/glad/glad.h"
+#include "include/GLFW/glfw3.h"
 
 using namespace GPE;
 
 int main(int argc, char* argv[])
 {
-    Log::logFileHeader();
+	Editor::EditorStartup editorStartup;
+	editorStartup.run();
 
-    Log::logInitializationStart("EditorStartup creation");
-
-    EditorStartup editorStartup;
-    editorStartup.run();
-
-    return 0;
+	return 0;
 }

@@ -21,7 +21,7 @@
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 #include "myScript.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
@@ -143,10 +143,10 @@ Game::Game()
 	GameObject::CreateArg playerArg{ "Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}} };
 
 	Camera::PerspectiveCreateArg camCreateArg;
-	camCreateArg.aspect = 900.f / 600.f;
+	camCreateArg.aspect = Camera::computeAspect(900.f, 600.f);
 
-	camCreateArg.far = 3000;
-	camCreateArg.near = 0.01f;
+	camCreateArg.farVal = 3000;
+	camCreateArg.nearVal = 0.01f;
 
 	GameObject& player = sm.getCurrentScene()->world.addChild<GameObject>(playerArg);
 
@@ -175,5 +175,5 @@ Game::Game()
 		},
 		true);
 
-	Log::logInitializationEnd("Game");
+	Log::getInstance()->logInitializationEnd("Game");
 }

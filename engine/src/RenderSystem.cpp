@@ -2,7 +2,7 @@
 
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 
 using namespace GPE;
 using namespace GPM;
@@ -16,7 +16,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         int h, w;
         pRenderers[0]->getWindow()->getSize(w, h);
 
-        pSceneRenderSystems[0]->draw(SystemsManager::getInstance()->resourceManager,
+        pSceneRenderSystems[0]->draw(Engine::getInstance()->resourceManager,
                                      pSceneRenderSystems[0]->defaultRenderPipeline(), 0);
     };
 }

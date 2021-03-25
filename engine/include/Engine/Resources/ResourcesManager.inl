@@ -1,4 +1,4 @@
-#include "Engine/Resources/ResourcesManager.hpp"
+﻿#include "Engine/Resources/ResourcesManager.hpp"
 
 template <class LType>
 LType* ResourcesManager<LType>::get(const std::string& key) noexcept
@@ -20,6 +20,7 @@ const LType* ResourcesManager<LType>::get(const std::string& key) const noexcept
     auto it = m_resources.find(key);
     if (it == m_resources.end())
     {
+        Log::getInstance()->logWarning(stringFormat("Resource insert with key \"%s\" doesn't exist", key.c_str()));
         return nullptr;
     }
 
@@ -31,17 +32,22 @@ template <typename... Args>
 LType& ResourcesManager<LType>::add(std::string key, Args&&... args) noexcept(std::is_nothrow_constructible_v<LType>)
 {
     // auto for pair of iterator of LType and bool
-    auto rst =
-        m_resources.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple(args...));
 
-    if (rst.second == false)
+    LType* ptr = get(key);
+
+    if (ptr)
     {
-        Log::logError(std::string("resource insert with same key as an element existing : ") +
-                                           key + ". Resource type : " + typeid(LType).name());
-        exit(1);
+        Log::getInstance()->logWarning(std::string("resource insert with same key as an element existing : ") + key +
+                                       ". Resource type : " + typeid(LType).name());
+        return *ptr;
     }
+    else
+    {
+        auto rst =
+            m_resources.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple(args...));
 
-    return rst.first->second;
+        return rst.first->second;
+    }
 }
 
 template <class LType>
@@ -79,7 +85,8 @@ void ResourcesManager<LType, RType...>::remove(const std::string& key) noexcept(
 
 template <class LType, class... RType>
 template <class T, typename... Args>
-T& ResourcesManager<LType, RType...>::add(const std::string& key, Args&&... args) noexcept(std::is_nothrow_constructible_v<T>)
+T& ResourcesManager<LType, RType...>::add(const std::string& key,
+                                          Args&&... args) noexcept(std::is_nothrow_constructible_v<T>)
 {
     return ResourcesManager<T>::add(key, std::forward<Args>(args)...);
 }

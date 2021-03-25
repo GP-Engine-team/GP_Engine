@@ -52,58 +52,13 @@ public:
         return m_pCurrentScene;
     }
 
-    void addEmpty(const std::string& sceneName)
-    {
-        static_cast<void>(m_scenes[sceneName]); // emaplce with default constructor of scene
-    }
+    Scene& addEmpty(const std::string& sceneName);
 
-    void loadScene(const std::string&    sceneName,
-                   ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
-                   EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING)
-    {
-        if (!m_pCurrentScene)
-        {
-            m_pCurrentScene = &m_scenes[sceneName];
-            return;
-        }
+    Scene& loadScene(const std::string&    sceneName,
+                     ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
+                     EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING);
 
-        // TODO: To remove
-        m_pCurrentScene = &m_scenes[sceneName];
-        return;
-
-        switch (sceneGraphloadType)
-        {
-        case ESceneGraphManagement::REPLACE: {
-            std::unique_ptr<Scene> newScene = std::make_unique<Scene>();
-
-            switch (resourcesloadType)
-            {
-            case EResourceManagement::RECYCLING:
-
-                break;
-
-            case EResourceManagement::KEEP_IN_MEMORY:
-
-                break;
-
-            case EResourceManagement::BYPASS_RECYLCING:
-
-                break;
-
-            default:
-                break;
-            }
-            break;
-        }
-
-        case ESceneGraphManagement::MERGE:
-
-            break;
-
-        default:
-            break;
-        }
-    }
+    void removeScene(const std::string& sceneName);
 };
 
 } /*namespace GPE*/

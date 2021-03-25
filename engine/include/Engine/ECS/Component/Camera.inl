@@ -1,21 +1,21 @@
 #include "Engine/ECS/Component/Camera.hpp"
 
-const Camera::ProjectionInfo& Camera::getProjectionInfo() const noexcept
+inline const Camera::ProjectionInfo& Camera::getProjectionInfo() const noexcept
 {
     return m_projInfo;
 }
 
-const GPM::Mat4& Camera::getViewProjection() const noexcept
+inline const GPM::Mat4& Camera::getViewProjection() const noexcept
 {
     return m_viewProjectionMatrix;
 }
 
-GPM::Mat4 Camera::getView() const noexcept // TODO: inversed matrix do not made each frame
+inline const GPM::Mat4& Camera::getView() const noexcept
 {
-    return m_gameObject.getTransform().getModelMatrix().inversed();
+    return m_viewMatrix;
 }
 
-const GPM::Mat4& Camera::getProjection() const noexcept
+inline const GPM::Mat4& Camera::getProjection() const noexcept
 {
     return m_projection;
 }

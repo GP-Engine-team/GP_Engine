@@ -13,6 +13,11 @@ int InputManager::addComponent(InputComponent* input) noexcept
     return key;
 }
 
+void InputManager::updateComponent(InputComponent* newPointerInputComponent, int key) noexcept
+{
+    m_inputComponents[key] = newPointerInputComponent;
+}
+
 void InputManager::removeComponent(int key) noexcept
 {
     m_inputComponents.erase(key);

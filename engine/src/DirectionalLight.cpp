@@ -2,6 +2,11 @@
 
 using namespace GPE;
 
+DirectionalLight::~DirectionalLight()
+{
+    DataChunk<DirectionalLight>::getInstance()->destroy(this);
+}
+
 DirectionalLight::DirectionalLight(GameObject& owner, const CreateArg& arg) noexcept
     : Light{owner, arg.ambient, arg.diffuse, arg.specular}, m_direction{arg.direction.normalized()}
 {

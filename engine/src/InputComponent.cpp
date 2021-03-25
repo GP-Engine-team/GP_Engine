@@ -1,6 +1,6 @@
 ﻿#include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 
 #include <functional>
 
@@ -9,15 +9,31 @@ using namespace GPE;
 
 InputComponent::InputComponent(GameObject& owner) : Component(owner)
 {
-    m_key = SystemsManager::getInstance()->inputManager.addComponent(this);
+    m_key = Engine::getInstance()->inputManager.addComponent(this);
 }
 
-InputComponent::InputComponent(const InputComponent& other) noexcept : Component(other.m_gameObject)
+InputComponent::InputComponent(InputComponent&& other) : Component(other.getOwner())
 {
+    m_functionMap = std::move(other.m_functionMap);
+    m_key         = std::move(other.m_key);
+    m_keyModeMap  = std::move(other.m_keyModeMap);
+
+    Engine::getInstance()->inputManager.updateComponent(this, m_key);
 }
 
-InputComponent::InputComponent(InputComponent&& other) noexcept : Component(other.m_gameObject)
+InputComponent& InputComponent::operator=(InputComponent&& other)
 {
+    m_functionMap = std::move(other.m_functionMap);
+    m_key         = std::move(other.m_key);
+    m_keyModeMap  = std::move(other.m_keyModeMap);
+
+    return static_cast<InputComponent&>(Component::operator=(std::move(other)));
+}
+
+InputComponent::~InputComponent()
+{
+    Engine::getInstance()->inputManager.removeComponent(m_key);
+    DataChunk<InputComponent>::getInstance()->destroy(this);
 }
 
 void InputComponent::fireAction(const std::string& action) noexcept

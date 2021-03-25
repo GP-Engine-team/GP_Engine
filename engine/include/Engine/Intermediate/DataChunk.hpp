@@ -6,14 +6,12 @@
 
 #pragma once
 
-#include <array>        //std::array
-#include <utility>      //std::swap
-#include <vector>       //std::vector
+#include <array>  //std::array
+#include <vector> //std::vector
 
 // In inl
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Tools/BranchPrediction.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
 
 namespace GPE
 {
@@ -26,7 +24,7 @@ namespace GPE
  * @tparam T : Component stored type
  */
 // TODO: Remove multiplicator
-template <typename TStoredComponent, int TSize = 65536 * 1000> // 64KiB = 65,536Ko
+template <typename TStoredData, int TSize = 65536 * 1000> // 64KiB = 65,536Ko
 class DataChunk
 {
     /**
@@ -35,10 +33,10 @@ class DataChunk
      * operator.
      */
 private:
-    static DataChunk*        m_pInstance;
+    static DataChunk* m_pInstance;
 
 protected:
-    std::vector<TStoredComponent> m_components;
+    std::vector<TStoredData> m_datas;
 
 protected:
     constexpr DataChunk() noexcept;
@@ -62,9 +60,9 @@ public:
      * @return T&
      */
     template <typename... Args>
-    TStoredComponent& addComponent(Args&&... args) noexcept;
+    TStoredData& add(Args&&... args) noexcept;
 
-    void destroyComponent(const TStoredComponent* componentToDestroy) noexcept;
+    void destroy(const TStoredData* dataToDestroy) noexcept;
 
     /**
      * @brief This is the static method that controls the access to the singleton
@@ -76,10 +74,11 @@ public:
      * @return DataChunk*
      */
     static DataChunk* getInstance() noexcept;
+    static void       setInstance(DataChunk& ptr) noexcept;
 };
 
-template <typename TStoredComponent, int TSize>
-DataChunk<TStoredComponent, TSize>* DataChunk<TStoredComponent, TSize>::m_pInstance{nullptr};
+template <typename TStoredData, int TSize>
+DataChunk<TStoredData, TSize>* DataChunk<TStoredData, TSize>::m_pInstance{nullptr};
 
 #include "DataChunk.inl"
 

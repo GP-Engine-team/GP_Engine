@@ -6,12 +6,17 @@
 
 #pragma once
 
-#include "Engine/ECS/Component/Component.hpp"
-#include "GPM/Vector3.hpp"
 #include <functional>
 #include <iostream>
 #include <string>
 #include <unordered_map>
+
+#include "Engine/ECS/Component/Component.hpp"
+#include "Engine/Serialization/ComponentGen.h"
+#include "GPM/Vector3.hpp"
+
+// Generated
+#include "Generated/InputComponent.rfk.h"
 
 enum class EKeyMode
 {
@@ -21,38 +26,46 @@ enum class EKeyMode
     KEY_UP       = 4,
 };
 
-namespace GPE
+namespace GPE RFKNamespace()
 {
-class InputComponent : public Component
-{
-public:
-    InputComponent(const InputComponent& other) noexcept;
-    InputComponent(InputComponent&& other) noexcept;
-    virtual ~InputComponent() = default;
-    InputComponent(GameObject& owner);
-
-private:
-    std::unordered_map<std::string, std::function<void()>> m_functionMap;
-    int                                                    m_key = -1;
-
-public:
-    std::unordered_map<std::string, EKeyMode> m_keyModeMap;
-    /**
-     * @brief Bind a function to an action
-     * @param action
-     * @param function
-     */
-    template <typename T>
-    void bindAction(const std::string& action, const EKeyMode& keyMode, T* owner, void (T::*function)()) noexcept
+    class RFKClass(ComponentGen()) InputComponent : public Component
     {
-        m_functionMap.emplace(action, std::bind(function, owner));
-        m_keyModeMap.emplace(action, keyMode);
-    }
+    public:
+        InputComponent(GameObject & owner);
 
-    /**
-     * @brief launch an action
-     * @param action
-     */
-    void fireAction(const std::string& action) noexcept;
-};
-} // namespace GPE
+        InputComponent()                            = delete;
+        InputComponent(const InputComponent& other) = delete;
+        InputComponent& operator=(InputComponent const& other) = delete;
+        virtual ~InputComponent();
+        InputComponent(InputComponent && other);
+        InputComponent& operator=(InputComponent&& other);
+
+    private:
+        std::unordered_map<std::string, std::function<void()>> m_functionMap;
+        int                                                    m_key = -1;
+
+    public:
+        std::unordered_map<std::string, EKeyMode> m_keyModeMap;
+        /**
+         * @brief Bind a function to an action
+         * @param action
+         * @param function
+         */
+        template <typename T>
+        void bindAction(const std::string& action, const EKeyMode& keyMode, T* owner, void (T::*function)()) noexcept
+        {
+            m_functionMap.emplace(action, std::bind(function, owner));
+            m_keyModeMap.emplace(action, keyMode);
+        }
+
+        /**
+         * @brief launch an action
+         * @param action
+         */
+        void fireAction(const std::string& action) noexcept;
+
+        InputComponent_GENERATED
+    };
+} // namespace )
+
+File_GENERATED

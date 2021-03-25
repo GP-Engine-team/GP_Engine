@@ -4,18 +4,29 @@ Light::Light(GameObject& owner, const AmbiantComponent& ambient, const DiffuseCo
              const SpecularComponent& specular)
     : Component{owner}, m_ambientComp(ambient), m_diffuseComp(diffuse), m_specularComp(specular)
 {
-    m_gameObject.scene.sceneRenderer.addLight(this);
+    getOwner().pOwnerScene->sceneRenderer.addLight(this);
 }
 
 Light::Light(GameObject& owner, const CreateArg& arg)
     : Component{owner}, m_ambientComp(arg.ambient), m_diffuseComp(arg.diffuse), m_specularComp(arg.specular)
 {
-    m_gameObject.scene.sceneRenderer.addLight(this);
+    getOwner().pOwnerScene->sceneRenderer.addLight(this);
 }
 
 Light::~Light()
 {
-    m_gameObject.scene.sceneRenderer.removeLight(this);
+    getOwner().pOwnerScene->sceneRenderer.removeLight(this);
+}
+
+Light& Light::operator=(Light&& other)
+{
+    m_ambientComp  = std::move(other.m_ambientComp);
+    m_diffuseComp  = std::move(other.m_diffuseComp);
+    m_specularComp = std::move(other.m_specularComp);
+
+    getOwner().pOwnerScene->sceneRenderer.updateLightPointer(this, &other);
+
+    return static_cast<Light&>(Component::operator=(std::move(other)));
 }
 
 const AmbiantComponent& Light::getAmbient() const noexcept
