@@ -12,6 +12,12 @@ using namespace GPM;
 namespace GPE
 {
 
+void Camera::updateView()
+{
+    m_viewMatrix           = getOwner().getTransform().getModelMatrix().inversed();
+    m_viewProjectionMatrix = m_viewMatrix * m_projection;
+}
+
 void Camera::updateProjection()
 {
     switch (m_projInfo.type)
@@ -54,6 +60,8 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.znear, m_projInfo.zfar);
 
     getOwner().pOwnerScene->sceneRenderer.addCamera(this);
+    getOwner().getTransform().OnUpdate += std::bind(&Camera::updateView, this);
+    updateView();
 
     Log::getInstance()->log((std::string("Perspective projection added with name \"") + arg.name + "\"").c_str());
 }
@@ -76,6 +84,9 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
         Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
 
     getOwner().pOwnerScene->sceneRenderer.addCamera(this);
+    getOwner().getTransform().OnUpdate += std::bind(&Camera::updateView, this);
+    updateView();
+
     Log::getInstance()->log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
 }
 

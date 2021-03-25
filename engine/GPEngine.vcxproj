@@ -100,7 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include;$(GPEngineDir)third_party/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -115,7 +115,7 @@
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir)</Command>
+      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -126,7 +126,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories);C:\Users\Utilisateur\PROG\Isart\GP_Engine\engine\include;$(GPEngineDir)third_party/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -143,7 +143,7 @@
       <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir)</Command>
+      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -152,7 +152,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPGameDir)src;$(GPGameDir)include;$(SolutionDir)third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;%(AdditionalIncludeDirectories);$(GPEngineDir)third_party/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -167,7 +167,7 @@
       <AdditionalDependencies>RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir)</Command>
+      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -178,7 +178,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(SolutionDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;$(SolutionDir)src;$(SolutionDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/third_party/include/RapidXML;$(ProjectDir)/third_party/gpm\include;$(ProjectDir);$(ProjectDir)/src;$(ProjectDir)/third_party/include/Refureku;$(ProjectDir)/third_party/include/;$(ProjectDir)/include;%(AdditionalIncludeDirectories);$(GPEngineDir)third_party/imgui</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -195,7 +195,7 @@
       <AdditionalDependencies>RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
-      <Command>$(GPEngineDir)..\generator\bin\GPGenerator.exe $(GPEngineDir)</Command>
+      <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -210,11 +210,12 @@
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\Callback.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Camera.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Component.hpp" />
+    <ClInclude Include="include\Engine\ECS\Component\Camera.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\InputComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Light\DirectionalLight.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Light\Light.hpp" />
@@ -226,6 +227,8 @@
     <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp" />
     <ClInclude Include="include\Engine\ECS\System\RenderSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp" />
+    <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp" />
+    <ClInclude Include="include\Engine\Intermediate\BehaviourSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp" />
     <ClInclude Include="include\Engine\Engine.hpp" />
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
@@ -247,8 +250,13 @@
     <ClInclude Include="include\Engine\Resources\Texture.hpp" />
     <ClInclude Include="include\Engine\Resources\Type.hpp" />
     <ClInclude Include="include\Engine\Serialization\ComponentGen.h" />
+    <ClInclude Include="include\Engine\Serialization\DataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp" />
-    <ClInclude Include="include\Engine\Serialization\Serialize.h" />
+    <ClInclude Include="include\Engine\Serialization\GPMDataInspector.hpp" />
+    <ClInclude Include="include\Engine\Serialization\Inspect.hpp" />
+    <ClInclude Include="include\Engine\Serialization\Serialize.hpp" />
+    <ClInclude Include="include\Engine\Serialization\Slider.hpp" />
+    <ClInclude Include="include\Engine\Serialization\STDDataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlLoader.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlManager.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlSaver.hpp" />
@@ -280,6 +288,16 @@
     <ClInclude Include="third_party\gpm\include\GPM\Vector2.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\Vector3.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\Vector4.hpp" />
+    <ClInclude Include="third_party\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="third_party\imgui\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="third_party\imgui\imconfig.h" />
+    <ClInclude Include="third_party\imgui\imgui.h" />
+    <ClInclude Include="third_party\imgui\imgui_internal.h" />
+    <ClInclude Include="third_party\imgui\imstb_rectpack.h" />
+    <ClInclude Include="third_party\imgui\imstb_textedit.h" />
+    <ClInclude Include="third_party\imgui\imstb_truetype.h" />
+    <ClInclude Include="third_party\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="third_party\imgui\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="third_party\include\glad\glad.h" />
     <ClInclude Include="third_party\include\GLFW\glfw3.h" />
     <ClInclude Include="third_party\include\GLFW\glfw3native.h" />
@@ -290,6 +308,7 @@
     <ClCompile Include="src\BehaviourComponent.cpp" />
     <ClCompile Include="src\BehaviourSystem.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\InputComponent.cpp" />
@@ -308,6 +327,7 @@
     <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\SceneRenderSystem.cpp" />
     <ClCompile Include="src\SceneViewer.cpp" />
+    <ClCompile Include="src\Serialization\STDDataInspector.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlLoader.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlSaver.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp" />
@@ -323,6 +343,15 @@
     <ClCompile Include="third_party\gpm\src\Plane.cpp" />
     <ClCompile Include="third_party\gpm\src\SegmentPlane.cpp" />
     <ClCompile Include="third_party\gpm\src\SpherePlane.cpp" />
+    <ClCompile Include="third_party\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="third_party\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="third_party\imgui\imgui.cpp" />
+    <ClCompile Include="third_party\imgui\imgui_demo.cpp" />
+    <ClCompile Include="third_party\imgui\imgui_draw.cpp" />
+    <ClCompile Include="third_party\imgui\imgui_tables.cpp" />
+    <ClCompile Include="third_party\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="third_party\imgui\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="third_party\imgui\misc\fonts\binary_to_compressed_c.cpp" />
     <ClCompile Include="third_party\src\glad.c" />
   </ItemGroup>
   <ItemGroup>

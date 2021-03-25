@@ -20,6 +20,7 @@ const LType* ResourcesManager<LType>::get(const std::string& key) const noexcept
     auto it = m_resources.find(key);
     if (it == m_resources.end())
     {
+        Log::getInstance()->logWarning(stringFormat("Resource insert with key \"%s\" doesn't exist", key.c_str()));
         return nullptr;
     }
 

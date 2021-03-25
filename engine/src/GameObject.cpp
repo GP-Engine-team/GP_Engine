@@ -6,6 +6,7 @@
 #include <iostream>
 #include <istream>
 #include <sstream>
+#include "imgui.h"
 
 using namespace GPE;
 using namespace GPM;
@@ -81,7 +82,8 @@ void GameObject::updateSelfAndChildren() noexcept
 void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
 {
     // Update self
-    getTransform().update(m_parent->getTransform().getModelMatrix());
+    if (m_transform.isDirty())
+        getTransform().update(m_parent->getTransform().getModelMatrix());
 
     // Update children
     for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end();)
@@ -166,7 +168,7 @@ GameObject* GameObject::getChild(const std::string& path) noexcept
         }
         if (!isFound)
         {
-            Log::getInstance()->logWarning(std::string("Canno't found \"") + word + "\" in gameObject \"" + m_name +
+            Log::getInstance()->logWarning(std::string("Can't find \"") + word + "\" in gameObject \"" + m_name +
                                            "\"" + " with path : \"" + path + "\"");
             return nullptr;
         }
@@ -249,4 +251,20 @@ std::string GameObject::getAbsolutePath() const noexcept
     }
 
     return path;
+}
+
+template <>
+static void GPE::DataInspector::inspect(class GameObject& inspected)
+{
+    inspected.inspect();
+
+    std::list<Component*>& comps = inspected.getComponents();
+    unsigned int           i     = 0;
+    for (Component* comp : comps)
+    {
+        ImGui::PushID(i);
+        comp->inspect();
+        ImGui::PopID();
+        i++;
+    }
 }

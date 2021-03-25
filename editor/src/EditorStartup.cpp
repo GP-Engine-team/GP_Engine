@@ -16,119 +16,116 @@
 namespace Editor
 {
 
-GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
-{
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-
-	// Setup Platform/Renderer backends
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	ImGui_ImplOpenGL3_Init("#version 460");
-
-	return window;
-}
-
-
-EditorStartup::EditorStartup()
-	: m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
-	  {
-	      if (m_game != nullptr)
-	  	      m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
-	  }},
-	  m_update{[&](double fixedUnscaledDeltaTime, double deltaTime)
-	  {
-	      GPE::Engine::getInstance()->inputManager.processInput();
-	  	  if (m_game != nullptr)
-	  		  m_game->update(fixedUnscaledDeltaTime, deltaTime);
-	  }},
-	  m_render{[&]()
-	  {
-	  		GPE::Engine::getInstance()->renderer.swapBuffer();
-	  
-	  		m_editor.update();
-	  	    m_editor.render();
-	  }},
-	  m_reloadableCpp{gameDllPath},
-	  m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
-			   GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
-	  m_game{nullptr}
-{
-	ADD_PROCESS(m_reloadableCpp, createGameInstance);
-	ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
-	ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
-	ADD_PROCESS(m_reloadableCpp, setLogInstance);
-
-	m_reloadableCpp.onUnload = [&]()
+	GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
 	{
-		closeGame();
-	};
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
 
-	GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
-}
+		// Setup Platform/Renderer backends
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		ImGui_ImplOpenGL3_Init("#version 460");
 
-
-EditorStartup::~EditorStartup()
-{
-	if (m_game != nullptr)
-	{
-		auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
-		destroyer(m_game);
+		return window;
 	}
 
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-}
+
+	EditorStartup::EditorStartup()
+		: m_fixedUpdate{ [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+		  {
+			  if (m_game != nullptr)
+				  m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+		  } },
+		m_update{ [&](double fixedUnscaledDeltaTime, double deltaTime)
+		{
+			GPE::Engine::getInstance()->inputManager.processInput();
+			if (m_game != nullptr)
+				m_game->update(fixedUnscaledDeltaTime, deltaTime);
+		} },
+			  m_render{ [&]()
+			  {
+					m_editor.update();
+					m_editor.render();
+					GPE::Engine::getInstance()->renderer.swapBuffer();
+
+			  } },
+			m_reloadableCpp{ gameDllPath },
+				  m_editor{ initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
+						   GPE::Engine::getInstance()->sceneManager.loadScene("Default scene") },
+				  m_game{ nullptr }
+			  {
+				  ADD_PROCESS(m_reloadableCpp, createGameInstance);
+				  ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
+				  ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
+				  ADD_PROCESS(m_reloadableCpp, setLogInstance);
+				  ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+
+				  m_reloadableCpp.onUnload = [&]()
+				  {
+					  closeGame();
+				  };
+
+				  GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
+			  }
 
 
-void EditorStartup::startGame()
-{
-	if (m_game != nullptr)
-	{
-		auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
-		destroyer(m_game);
-	}
+			  EditorStartup::~EditorStartup()
+			  {
+				  if (m_game != nullptr)
+				  {
+					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+					  destroyer(m_game);
+				  }
 
-	auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
-	m_game = a();
-
-	m_editor.setSceneInEdition(*GPE::Engine::getInstance()->sceneManager.getCurrentScene());
-	GPE::Engine::getInstance()->sceneManager.removeScene("Default scene");
-}
+				  ImGui_ImplOpenGL3_Shutdown();
+				  ImGui_ImplGlfw_Shutdown();
+				  ImGui::DestroyContext();
+			  }
 
 
-void EditorStartup::closeGame()
-{
-	if (m_game != nullptr)
-	{
-		auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
-		destroyer(m_game);
-		m_game = nullptr;
-	}
-}
+			  void EditorStartup::startGame()
+			  {
+				  if (m_game != nullptr)
+				  {
+					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+					  destroyer(m_game);
+				  }
 
+				  auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
+				  m_game = a();
 
-void EditorStartup::update()
-{
-	if (m_game != nullptr)
-	{
-		m_game->update(0, 0);
-	}
+				  m_editor.setSceneInEdition(*GPE::Engine::getInstance()->sceneManager.getCurrentScene());
+				  GPE::Engine::getInstance()->sceneManager.removeScene("Default scene");
+			  }
 
-	GPE::Engine::getInstance()->timeSystem.update(m_update, m_fixedUpdate, m_render);
-	isRunning = m_editor.isRunning();
+			  void EditorStartup::closeGame()
+			  {
+				  if (m_game != nullptr)
+				  {
+					  auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
+					  destroyer(m_game);
+					  m_game = nullptr;
+				  }
+			  }
 
-	if (m_reloadableCpp.refresh())
-	{
-		auto syncLog = GET_PROCESS(m_reloadableCpp, setLogInstance);
-		(*syncLog)(*GPE::Log::getInstance());
+			  void EditorStartup::update()
+			  {
+				  GPE::Engine::getInstance()->timeSystem.update(m_fixedUpdate, m_update, m_render);
+				  isRunning = m_editor.isRunning();
 
-		auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
-		(*sync)(*GPE::Engine::getInstance());
+				  if (m_reloadableCpp.refresh())
+				  {
+					  auto syncLog = GET_PROCESS(m_reloadableCpp, setLogInstance);
+					  (*syncLog)(*GPE::Log::getInstance());
 
-		startGame();
-	}
-}
+					  auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
+					  (*sync)(*GPE::Engine::getInstance());
+
+					  auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+					  (*syncImgui)(ImGui::GetCurrentContext());
+
+					  startGame();
+				  }
+			  }
 
 } // End of namespace Editor

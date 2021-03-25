@@ -6,21 +6,32 @@
 
 #pragma once
 
+#include <list>   //std::list
+#include <memory> //std::unique_ptr
+#include <string> //std::string
+#include <vector> //std::vector
+
 #include "Engine/ECS/Component/TransformComponent.hpp" //TransformComponent
-#include <list>                                        //std::list
-#include <memory>                                      //std::unique_ptr
-#include <string>                                      //std::string
-#include <vector>                                      //std::vector
+
+#include "Engine/Serialization/Inspect.hpp"
+#include "Engine/Serialization/DataInspector.hpp"
+
 
 // in Inl
+#include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Core/Tools/Format.hpp"
 #include "Engine/Intermediate/DataChunk.hpp"
 
-namespace GPE
+#include "Generated/GameObject.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class Component;
+template <>
+static void DataInspector::inspect(class GameObject& inspected);
+
 class Scene;
 
-class GameObject
+class RFKClass(Inspect()) GameObject
 {
 public:
     struct CreateArg
@@ -31,7 +42,9 @@ public:
     };
 
 protected:
+    RFKField(Inspect())
     std::string         m_name;
+    RFKField(Inspect())
     TransformComponent& m_transform;
 
     std::list<Component*> m_pComponents;
@@ -212,8 +225,12 @@ public:
     [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
     [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
+
+    GameObject_GENERATED
 };
 
 #include "GameObject.inl"
 
 } // namespace GPE
+
+File_GENERATED

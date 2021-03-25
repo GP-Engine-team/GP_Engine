@@ -32,9 +32,9 @@ protected:
 private:
 	virtual void update(double unscaledDeltaTime, double deltaTime) override final
 	{
-		bSys.update(deltaTime);
 		++unFixedUpdateFrameCount;
 
+		bSys.update(deltaTime);
 		sm.getCurrentScene()->world.updateSelfAndChildren();
 	}
 
