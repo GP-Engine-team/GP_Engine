@@ -17,6 +17,7 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
 #include <PxForceMode.h>
+#include <characterkinematic/PxCapsuleController.h>
 
 #include <iostream>
 
@@ -59,6 +60,10 @@ public:
         rigidbody.rigidbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
         rigidbody.rigidbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
         rigidbody.rigidbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
+
+        physx::PxCapsuleControllerDesc desc;
+
+        controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
     }
 
     MyFpsScript() noexcept                         = delete;
@@ -72,6 +77,7 @@ public:
     GPE::AudioComponent&   source;
     GPE::SphereCollider&   collider;
     GPE::RigidbodyDynamic& rigidbody;
+    physx::PxController*   controller;
     float                  speed = 100;
 
     void rotate(const GPM::Vec2& deltaDisplacement)

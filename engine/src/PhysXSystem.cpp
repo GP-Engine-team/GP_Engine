@@ -71,12 +71,18 @@ PhysXSystem::PhysXSystem()
     scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.f);
     scene->setVisualizationParameter(PxVisualizationParameter::eACTOR_AXES, 1.f);
     scene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 10.f);
+
+    manager = PxCreateControllerManager(*scene);
+    manager->setOverlapRecoveryModule(true);
+    manager->setPreciseSweeps(false);
 }
 
 PhysXSystem::~PhysXSystem()
 {
     PxCloseExtensions();
 
+    manager->release();
+    scene->release();
     cooking->release();
     pvd->release();
     physics->release();

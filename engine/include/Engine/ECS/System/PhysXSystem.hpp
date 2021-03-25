@@ -13,6 +13,7 @@
 #include <PxScene.h>
 #include <PxSceneDesc.h>
 #include <Pxfoundation.h>
+#include <characterkinematic/PxControllerManager.h>
 #include <cooking/PxCooking.h>
 #include <foundation/PxErrorCallback.h>
 #include <foundation/PxQuat.h>
@@ -80,6 +81,7 @@ public:
     physx::PxPhysics*              physics;
     physx::PxCooking*              cooking;
     physx::PxScene*                scene;
+    physx::PxControllerManager*    manager;
     std::vector<RigidbodyStatic*>  rigidbodyStatics;
     std::vector<RigidbodyDynamic*> rigidbodyDynamics;
 };

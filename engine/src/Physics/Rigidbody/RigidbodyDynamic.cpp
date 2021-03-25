@@ -37,8 +37,8 @@ RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner
 void RigidbodyDynamic::update() noexcept
 {
     getOwner().getTransform().setTranslation(PhysXSystem::PxVec3ToGPMVec3(rigidbody->getGlobalPose().p));
-    rigidbody->setLinearVelocity(PxVec3{0, 0, 0});
-    rigidbody->setAngularVelocity(PxVec3{0, 0, 0});
+    // rigidbody->setLinearVelocity(PxVec3{0, 0, 0});
+    // rigidbody->setAngularVelocity(PxVec3{0, 0, 0});
 }
 
 void RigidbodyDynamic::setKinematic(bool state) noexcept
