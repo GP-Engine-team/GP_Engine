@@ -15,6 +15,9 @@
 #include "GPM/Transform.hpp"
 #include "GPM/Vector3.hpp"
 
+#include "Engine/Serialization/DataInspector.hpp"
+#include "Refureku/Refureku.h"
+
 // Generated
 #include "Generated/TransformComponent.rfk.h"
 
@@ -22,7 +25,7 @@ namespace GPE RFKNamespace()
 {
     class GameObject;
 
-    class RFKClass(Inspect(),ComponentGen) TransformComponent : public Component
+    class RFKClass(ComponentGen) TransformComponent : public Component
     {
     public:
         struct CreateArg
@@ -103,6 +106,8 @@ namespace GPE RFKNamespace()
         constexpr const GPM::Quaternion& getRotation() const noexcept;
 
         constexpr const GPM::Vec3& getScale() const noexcept;
+
+        virtual bool inspect();
 
         TransformComponent_GENERATED
     };
