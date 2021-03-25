@@ -89,7 +89,7 @@ public:
     {
         m_speed = 1;
 
-        if (Engine::getInstance()->inputManager.getCursor().deltaPos.length2() > 0.1)
+        if (Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.1)
         {
             rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
         }
