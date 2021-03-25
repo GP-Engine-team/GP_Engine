@@ -4,20 +4,31 @@
 
 namespace GPE
 {
+namespace DataInspector
+{
+template <typename T>
+void inspect(std::vector<T>& inspected, const rfk::Field& info);
+
+//template <typename T, typename SIZE>
+//void inspect(std::array<T, SIZE>& inspected, const rfk::Field& info);
+//
+//template <typename T>
+//void inspect(std::vector<T>& inspected, const rfk::Field& info);
+}
 
 template <>
-static void DataInspector::inspect(int& t, const rfk::Field& info);
+void DataInspector::inspect(int& inspected, const rfk::Field& info);
 
 template <>
-static void DataInspector::inspect(float& t, const rfk::Field& info);
+void DataInspector::inspect(float& inspected, const rfk::Field& info);
 
 template <>
-static void DataInspector::inspect(std::string& t, const rfk::Field& info);
+void DataInspector::inspect(std::string& inspected, const rfk::Field& info);
 
 template <>
-static void DataInspector::inspect(bool& t, const rfk::Field& info);
+void DataInspector::inspect(bool& inspected, const rfk::Field& info);
 
 template <>
-static void DataInspector::inspect(std::string& t);
+void DataInspector::inspect(std::string& inspected);
 
 } // namespace GPE

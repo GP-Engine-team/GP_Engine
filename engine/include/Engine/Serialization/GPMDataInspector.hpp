@@ -12,9 +12,12 @@ namespace GPE
 {
 
 template <>
-static void DataInspector::inspect(GPM::SplitTransform& inspected, const rfk::Field& info);
+void DataInspector::inspect(GPM::SplitTransform& inspected, const rfk::Field& info);
 
 template <>
-static void DataInspector::inspect(GPM::Vector3& inspected, const rfk::Field& info);
+void DataInspector::inspect(GPM::Vector3& inspected, const rfk::Field& info);
+
+template <>
+void DataInspector::inspect(GPM::Vector3& inspected, const char* name);
 
 } // namespace GPE
