@@ -3,6 +3,8 @@
 
 void GPE::DataInspector::startProperty(const char* name)
 {
+    ImGui::PushID(name);
+
     ImGui::Text(name);
 
     ImGuiStyle& style = ImGui::GetStyle();
@@ -17,4 +19,5 @@ void GPE::DataInspector::startProperty(const char* name)
 void GPE::DataInspector::endProperty()
 {
     ImGui::PopItemWidth();
+    ImGui::PopID();
 }

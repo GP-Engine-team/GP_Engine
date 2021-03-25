@@ -44,7 +44,7 @@ template <>
 void GPE::DataInspector::inspect(GPM::Vector3& inspected, const char* name)
 {
     startProperty(name);
-    ImGui::DragFloat3(name, inspected.e);
+    ImGui::DragFloat3("", inspected.e);
     // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
     endProperty();
 }

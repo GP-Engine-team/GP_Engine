@@ -12,7 +12,15 @@ void GPE::DataInspector::inspect(std::vector<T>& inspected, const rfk::Field& in
 template <>
 void GPE::DataInspector::inspect(int& inspected, const rfk::Field& info)
 {
-    ImGui::InputInt(info.name.c_str(), &inspected);
+    GPE::DataInspector::inspect(inspected, info.name.c_str());
+}
+
+template <>
+void GPE::DataInspector::inspect(int& inspected, const char* name)
+{
+    startProperty(name);
+    ImGui::InputInt("", &inspected);
+    endProperty();
 }
 
 template <>
@@ -21,29 +29,57 @@ void GPE::DataInspector::inspect(float& inspected, const rfk::Field& info)
     Slider const* property = info.getProperty<Slider>();
     if (property)
     {
+        startProperty(info.name.c_str());
         ImGui::SliderFloat(info.name.c_str(), &inspected, property->min, property->max);
+        endProperty();
     }
     else
     {
-        ImGui::InputFloat(info.name.c_str(), &inspected, 0.1);
+        GPE::DataInspector::inspect(inspected, info.name.c_str());
     }
 }
 
 template <>
-void GPE::DataInspector::inspect(std::string& t, const rfk::Field& info)
+void GPE::DataInspector::inspect(float& inspected, const char* name)
 {
-    // TODO : to optimize / remove fixed size
-    constexpr size_t bufferSize = 256;
-    char             buffer[bufferSize];
-    strcpy_s(buffer, t.c_str());
-    ImGui::InputText(info.name.c_str(), buffer, bufferSize);
-    t = buffer;
+    startProperty(name);
+    ImGui::InputFloat("", &inspected);
+    endProperty();
 }
 
 template <>
-void GPE::DataInspector::inspect(bool& t, const rfk::Field& info)
+void GPE::DataInspector::inspect(std::string& inspected, const rfk::Field& info)
 {
-    ImGui::Checkbox(info.name.c_str(), &t);
+    GPE::DataInspector::inspect(inspected, info.name.c_str());
+}
+
+template <>
+void GPE::DataInspector::inspect(std::string& inspected, const char* name)
+{
+    startProperty(name);
+
+    // TODO : to optimize / remove fixed size
+    constexpr size_t bufferSize = 256;
+    char             buffer[bufferSize];
+    strcpy_s(buffer, inspected.c_str());
+    ImGui::InputText("", buffer, bufferSize);
+    inspected = buffer;
+
+    endProperty();
+}
+
+template <>
+void GPE::DataInspector::inspect(bool& inspected, const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(inspected, info.name.c_str());
+}
+
+template <>
+void GPE::DataInspector::inspect(bool& inspected, const char* name)
+{
+    startProperty(name);
+    ImGui::Checkbox("", &inspected);
+    endProperty();
 }
 
 template <>
