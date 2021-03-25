@@ -26,7 +26,7 @@
 namespace GPE RFKNamespace()
 {
     // TODO: Can be more optimize change information only when light is update
-    class RFKClass(Inspect(), ComponentGen()) Light : public Component
+    class RFKClass(Inspect(),ComponentGen) Light : public Component
     {
     public:
         struct CreateArg

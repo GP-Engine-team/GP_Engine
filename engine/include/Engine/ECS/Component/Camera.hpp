@@ -38,7 +38,7 @@ namespace GPE RFKNamespace()
         GPM::Plane nearFace;
     };
 
-    class RFKClass(Inspect(), ComponentGen()) Camera : public Component
+    class RFKClass(Inspect(),ComponentGen) Camera : public Component
     {
     public:
         enum class EProjectionType
