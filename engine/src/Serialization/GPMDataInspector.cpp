@@ -6,24 +6,15 @@
 template <>
 void GPE::DataInspector::inspect(GPM::SplitTransform& inspected, const rfk::Field& info)
 {
-    DataInspector::inspect(inspected.position, "Position");
-    DataInspector::inspect(inspected.scale,    "Scale");
-    DataInspector::inspect(inspected.rotation, "Rotation");
+    GPE::DataInspector::inspect(inspected, info.name.c_str());
+}
 
-    //static inline bool DragFloat3(const char* label, float v[3], float v_speed, float v_min, float v_max,
-    //                              const char* format, float power)
-    //{
-    //    return DragScalarN(label, ImGuiDataType_Float, v, 3, v_speed, &v_min, &v_max, format, power);
-    //}
-
-    //static inline bool SliderFloat3(const char* label, float v[3], float v_min, float v_max, const char* format,
-    //                            float power)
-
-    //ImGui::DragFloat3();
-    //ImGui::SliderFloat3();
-
-    //ImGui::DragVec3
-    //ImGui::InputInt(info.name.c_str(), &inspected);
+template <>
+void GPE::DataInspector::inspect(GPM::SplitTransform& inspected, const char* name)
+{
+    DataInspector::inspect(inspected.position,  "Position");
+    DataInspector::inspect(inspected.scale,     "Scale");
+    DataInspector::inspect(inspected.rotation,  "Rotation");
 }
 
 template <>
@@ -50,10 +41,16 @@ void GPE::DataInspector::inspect(GPM::Vector3& inspected, const char* name)
 }
 
 template <>
+void GPE::DataInspector::inspect(GPM::Quaternion& inspected, const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(inspected, info.name.c_str());
+}
+
+
+template <>
 void GPE::DataInspector::inspect(GPM::Quaternion& inspected, const char* name)
 {
-    GPM::Vec3 asRotation = inspected.eulerAngles() * 180.f / PI; // to degrees
-
-    GPE::DataInspector::inspect(asRotation, name);
+    GPM::Vec3 asRotation = inspected.eulerAngles() * 180.f / PI;     // to degrees
+    GPE::DataInspector::inspect(asRotation, name);                   // display as euler angles
     inspected = GPM::Quaternion::fromEuler(asRotation * PI / 180.f); // to radians
 }
