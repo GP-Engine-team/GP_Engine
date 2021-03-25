@@ -43,19 +43,17 @@ void GPE::DataInspector::inspect(GPM::Vector3& inspected, const rfk::Field& info
 template <>
 void GPE::DataInspector::inspect(GPM::Vector3& inspected, const char* name)
 {
-    ImGui::Text(name);
-    ImGui::SameLine();
+    startProperty(name);
     ImGui::DragFloat3(name, inspected.e);
     // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
+    endProperty();
 }
 
 template <>
 void GPE::DataInspector::inspect(GPM::Quaternion& inspected, const char* name)
 {
-    ImGui::Text(name);
-    ImGui::SameLine();
-    //inspected.to
+    GPM::Vec3 asRotation = inspected.eulerAngles() * 180.f / PI; // to degrees
 
-    //ImGui::DragFloat3(name, inspected.e);
-    // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
+    GPE::DataInspector::inspect(asRotation, name);
+    inspected = GPM::Quaternion::fromEuler(asRotation * PI / 180.f); // to radians
 }

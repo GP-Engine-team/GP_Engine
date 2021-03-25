@@ -6,6 +6,9 @@ namespace GPE
 {
 namespace DataInspector
 {
+    void startProperty(const char* name);
+    void endProperty();
+
     template <typename T>
     void inspect(T& inspected)
     {
@@ -13,9 +16,11 @@ namespace DataInspector
     }
 
     template <typename T>
-    void inspect(T& inspected, const char* info)
+    void inspect(T& inspected, const char* name)
     {
-        inspected.inspect();
+        startProperty(name);
+        GPE::DataInspector::inspect(inspected);
+        endProperty();
     }
 
     template <typename T>
