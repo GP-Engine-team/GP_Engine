@@ -4,20 +4,30 @@
 
 namespace GPE
 {
-class DataInspector
+namespace DataInspector
 {
-public:
-
     template <typename T>
-    static void inspect(T& t)
+    void inspect(T& inspected)
     {
-        t.inspect();
+        inspected.inspect();
     }
 
     template <typename T>
-    static void inspect(T& t, const rfk::Field& info)
+    void inspect(T& inspected, const char* info)
     {
-        t.inspect();
+        inspected.inspect();
+    }
+
+    template <typename T>
+    void inspect(T& inspected, const std::string& name)
+    {
+        DataInspector::inspect(inspected, name.c_str());
+    }
+
+    template <typename T>
+    void inspect(T& inspected, const rfk::Field& info)
+    {
+        inspected.inspect();
     }
 };
 

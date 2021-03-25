@@ -3,14 +3,20 @@
 #include "imgui.h"
 #include "Engine/Serialization/Slider.hpp"
 
+template <typename T>
+void GPE::DataInspector::inspect(std::vector<T>& inspected, const rfk::Field& info)
+{
+    
+}
+
 template <>
-static void GPE::DataInspector::inspect(int& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(int& inspected, const rfk::Field& info)
 {
     ImGui::InputInt(info.name.c_str(), &inspected);
 }
 
 template <>
-static void GPE::DataInspector::inspect(float& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(float& inspected, const rfk::Field& info)
 {
     Slider const* property = info.getProperty<Slider>();
     if (property)
@@ -24,7 +30,7 @@ static void GPE::DataInspector::inspect(float& inspected, const rfk::Field& info
 }
 
 template <>
-static void GPE::DataInspector::inspect(std::string& t, const rfk::Field& info)
+void GPE::DataInspector::inspect(std::string& t, const rfk::Field& info)
 {
     // TODO : to optimize / remove fixed size
     constexpr size_t bufferSize = 256;
@@ -35,13 +41,13 @@ static void GPE::DataInspector::inspect(std::string& t, const rfk::Field& info)
 }
 
 template <>
-static void GPE::DataInspector::DataInspector::inspect(bool& t, const rfk::Field& info)
+void GPE::DataInspector::inspect(bool& t, const rfk::Field& info)
 {
     ImGui::Checkbox(info.name.c_str(), &t);
 }
 
 template <>
-static void GPE::DataInspector::inspect(std::string& t)
+void GPE::DataInspector::inspect(std::string& t)
 {
     ImGui::Text(t.c_str());
 }
