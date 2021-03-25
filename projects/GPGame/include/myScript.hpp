@@ -105,7 +105,7 @@ namespace GPG RFKNamespace()
 		{
 			speed = 1;
 
-			if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.length2() > 0.00001)
+			if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.00001)
 				rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
 		}
 
