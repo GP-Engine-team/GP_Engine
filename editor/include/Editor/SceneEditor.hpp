@@ -8,10 +8,9 @@ namespace Editor
 class SceneEditor
 {
 public:
-	//GPE::SceneViewer sceneViewer;
-	//Inspector		 inspector;
+	GPE::SceneViewer sceneViewer;
 
-	SceneEditor(const GPE::Scene& scene);
+	SceneEditor(GPE::Scene& scene);
 
 	void render() const;
 };
