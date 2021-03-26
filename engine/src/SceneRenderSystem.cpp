@@ -260,7 +260,6 @@ void SceneRenderSystem::tryToBindMesh(unsigned int meshID)
     if (m_currentMeshID == meshID)
         return;
 
-    // glBindVertexArray(meshID);
     glBindVertexArray(meshID);
 
     m_currentMeshID = meshID;
@@ -326,7 +325,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
             {
                 if (!rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
+                    // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
                     continue;
                 }
                 rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});

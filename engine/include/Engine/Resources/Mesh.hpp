@@ -76,6 +76,17 @@ protected:
     unsigned int m_VAO           = 0;
     unsigned int m_verticesCount = 0;
 
+    // TODO: To remove for EBO only buffer
+    unsigned int m_vertexbuffer = 0;
+    unsigned int m_uvbuffer     = 0;
+    unsigned int m_normalbuffer = 0;
+
+    struct
+    {
+        unsigned int vbo = 0;
+        unsigned int ebo = 0;
+    } m_EBOBuffers;
+
     EBoundingVolume              m_boundingVolumeType = EBoundingVolume::NONE;
     std::unique_ptr<GPM::Volume> m_boundingVolume     = nullptr;
 
@@ -107,9 +118,9 @@ public:
      * @return MeshConstructorArg
      */
     static CreateContiguousVerticesArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f,
-                                                 float textureRepetition = 1.f, unsigned int indexTextureX = 0,
-                                                 unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y,
-                                                 bool isRectoVerso = false) noexcept;
+                                                  float textureRepetition = 1.f, unsigned int indexTextureX = 0,
+                                                  unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y,
+                                                  bool isRectoVerso = false) noexcept;
 
     /**
      * @brief Create a Cube object of radius 1 and return it mesh. Cube is centered on the origin
@@ -134,8 +145,8 @@ public:
      * @return MeshConstructorArg
      */
     static CreateContiguousVerticesArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace
-                                                                                        // Culling (bad
-                                                                                        // normal)
+                                                                                         // Culling (bad
+                                                                                         // normal)
 };
 
 #include "Mesh.inl"
