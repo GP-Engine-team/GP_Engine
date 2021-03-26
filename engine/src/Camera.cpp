@@ -15,7 +15,7 @@ namespace GPE
 void Camera::updateView()
 {
     m_viewMatrix           = getOwner().getTransform().getModelMatrix().inversed();
-    m_viewProjectionMatrix = m_viewMatrix * m_projection;
+    m_projectionViewMatrix = m_projection * m_viewMatrix;
 }
 
 void Camera::updateProjection()
@@ -101,7 +101,7 @@ Camera& Camera::operator=(Camera&& other) noexcept
     m_projInfo             = std::move(other.m_projInfo);
     m_projection           = std::move(other.m_projection);
     m_viewMatrix           = std::move(other.m_viewMatrix);
-    m_viewProjectionMatrix = std::move(other.m_viewProjectionMatrix);
+    m_projectionViewMatrix = std::move(other.m_projectionViewMatrix);
 
     getOwner().pOwnerScene->sceneRenderer.updateCameraPointer(this, &other);
 
