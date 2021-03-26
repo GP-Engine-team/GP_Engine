@@ -1,5 +1,5 @@
 ﻿inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
-    : m_name{arg.name}, m_transform{DataChunk<TransformComponent>::getInstance()->add(*this, arg.transformArg)},
+    : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->add(*this, arg.transformArg)},
       m_pComponents{}, pOwnerScene{&scene}, m_parent{arg.parent}
 {
 }
@@ -48,15 +48,14 @@ inline void GameObject::setParent(GameObject& newParent) noexcept
     GPE_ASSERT(newParent.getParent() != this,
                "You cannot associate new parent if it's the chilf of the current entity (leak)");
 
-    for (std::list<std::unique_ptr<GameObject>>::iterator it = m_parent->children.begin();
-         it != m_parent->children.end(); it++)
+    for (std::list<GameObject*>::iterator it = m_parent->children.begin(); it != m_parent->children.end(); it++)
     {
-        if (it->get() == this)
+        if (*it == this)
         {
             Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
                                                  newParent.getName().c_str()));
 
-            newParent.children.emplace_back(std::move(*it)); // move the
+            newParent.children.emplace_back(std::move(*it));
             m_parent->children.erase(it);
             break;
         }
@@ -72,23 +71,21 @@ inline void GameObject::setName(const char* newName) noexcept
 
 inline constexpr const TransformComponent& GameObject::getTransform() const noexcept
 {
-    return m_transform;
+    return *m_pTransform;
 }
 
 inline constexpr TransformComponent& GameObject::getTransform() noexcept
 {
-    return m_transform;
+    return *m_pTransform;
 }
 
-template <typename T, typename... Args>
+template <typename... Args>
 inline GameObject& GameObject::addChild(Args&&... args) noexcept
 {
-    // TODO : replace by data chunk
-    std::unique_ptr<GameObject>& pChild = this->children.emplace_back(std::make_unique<T>(*pOwnerScene, args...));
-    pChild->children                    = std::list<std::unique_ptr<GameObject>>();
+    GameObject* pChild = children.emplace_back(&DataChunk<GameObject>::getInstance()->add(*pOwnerScene, args...));
 
-    // pChild->update((*this).getModelMatrix());
     pChild->m_parent = this;
+    pChild->getTransform().setDirty();
     return *pChild;
 }
 
@@ -128,9 +125,9 @@ inline constexpr const std::string& GameObject::getTag() const noexcept
     return m_tag;
 }
 
-inline std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild(
-    const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept
+inline std::list<GameObject*>::iterator GameObject::destroyChild(const std::list<GameObject*>::iterator& it) noexcept
 {
+    DataChunk<GameObject>::getInstance()->destroy(*it);
     return children.erase(it);
 }
 
@@ -160,6 +157,7 @@ inline void GameObject::setActive(bool newState)
 
 inline std::list<Component*>::iterator GameObject::destroyComponent(const std::list<Component*>::iterator& it) noexcept
 {
+    DataChunk<Component>::getInstance()->destroy(*it);
     return m_pComponents.erase(it);
 }
 

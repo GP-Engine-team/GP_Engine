@@ -1,8 +1,18 @@
 #include "Engine/Resources/Scene.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
+#include "Engine/Intermediate/DataChunk.hpp"
 
 using namespace GPE;
+
+Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*this))
+{
+}
+
+Scene::~Scene() noexcept
+{
+    DataChunk<GameObject>::getInstance()->destroy(m_pWorld);
+}
 
 GameObject* Scene::getGameObject(const std::string& path) noexcept
 {
@@ -10,7 +20,7 @@ GameObject* Scene::getGameObject(const std::string& path) noexcept
 
     std::stringstream sPath(path);
     std::string       word;
-    GameObject*       currentEntity = &world;
+    GameObject*       currentEntity = m_pWorld;
 
     while (std::getline(sPath, word, '/'))
     {
@@ -22,7 +32,7 @@ GameObject* Scene::getGameObject(const std::string& path) noexcept
         {
             if (child->getName() == word)
             {
-                currentEntity = child.get();
+                currentEntity = child;
                 isFound       = true;
                 break;
             }
@@ -35,4 +45,9 @@ GameObject* Scene::getGameObject(const std::string& path) noexcept
         }
     }
     return currentEntity;
+}
+
+GameObject& Scene::getWorld() noexcept
+{
+    return *m_pWorld;
 }

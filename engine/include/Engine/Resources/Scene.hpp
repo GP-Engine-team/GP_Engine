@@ -18,16 +18,15 @@ class Scene
 {
     friend class SceneManager;
 
+protected:
+    GameObject* m_pWorld = nullptr;
+
 public:
-    GameObject        world;
     SceneRenderSystem sceneRenderer;
 
 public:
-    inline Scene() noexcept : world(*this)
-    {
-    }
-
-    inline ~Scene() noexcept = default;
+    Scene() noexcept;
+    ~Scene() noexcept;
 
     // TODO: Can scene be copied ? How to manage resource
     constexpr inline Scene(const Scene& other) noexcept = delete;
@@ -48,5 +47,7 @@ public:
      * @return GraphEntity&
      */
     GameObject* getGameObject(const std::string& path) noexcept;
+
+    GameObject& getWorld() noexcept;
 };
 } /*namespace GPE*/

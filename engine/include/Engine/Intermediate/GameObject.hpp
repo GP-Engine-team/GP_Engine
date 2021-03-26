@@ -41,28 +41,28 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect()) std::string         m_name;
-        RFKField(Inspect()) TransformComponent& m_transform;
+        RFKField(Inspect()) std::string m_name;
+        TransformComponent*             m_pTransform;
 
         std::list<Component*> m_pComponents;
         std::string           m_tag{"GameObject"};
-        bool        m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
-        GameObject* m_parent = nullptr;
+        GameObject*           m_parent = nullptr;
+        bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
     public:
-        Scene*                                 pOwnerScene;
-        std::list<std::unique_ptr<GameObject>> children = {};
+        Scene*                 pOwnerScene;
+        std::list<GameObject*> children = {};
 
     public:
         inline GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
-        virtual ~GameObject() noexcept;
+        ~GameObject() noexcept;
 
         GameObject()                        = delete;
         GameObject(const GameObject& other) = delete;            // TODO: when transform is available
         GameObject& operator=(GameObject const& other) = delete; // TODO
 
-        inline GameObject(GameObject && other) = default;
-        inline GameObject& operator=(GameObject&& other) noexcept = default;
+        GameObject(GameObject && other) = default;
+        GameObject& operator=(GameObject&& other) = default;
 
         void moveTowardScene(Scene & newOwner) noexcept;
 
@@ -141,7 +141,7 @@ namespace GPE RFKNamespace()
         [[nodiscard]] GameObject* getChild(const std::string& path) noexcept;
 
         /**
-         * @brief Destroye the first gameObject with path in arg
+         * @brief Destroy the first gameObject with path in arg
          *
          * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3
          * @return GraphEntity&
@@ -153,12 +153,11 @@ namespace GPE RFKNamespace()
          *
          * @param GameObject
          */
-        std::list<std::unique_ptr<GameObject>>::iterator destroyChild(
-            GameObject * pGameObject) noexcept; // TODO: Destroy immediate may be dangerous
+        std::list<GameObject*>::iterator destroyChild(GameObject *
+                                                      pGameObject) noexcept; // TODO: Destroy immediate may be dangerous
 
-        inline std::list<std::unique_ptr<GameObject>>::iterator destroyChild(
-            const std::list<std::unique_ptr<GameObject>>::iterator&
-                it) noexcept; // TODO: Destroy immediate may be dangerous
+        inline std::list<GameObject*>::iterator destroyChild(
+            const std::list<GameObject*>::iterator& it) noexcept; // TODO: Destroy immediate may be dangerous
 
         template <typename TUniqueComponentType>
         void destroyUniqueComponentNow() noexcept;
@@ -193,13 +192,11 @@ namespace GPE RFKNamespace()
         /**
          * @brief add specific entity to the graph with arg to construct it and return his id
          *
-         * @tparam T
-         * @tparam Args
          * @param args
          * @param dependenceEntity&
          * @return GameObject&
          */
-        template <typename T, typename... Args>
+        template <typename... Args>
         GameObject& addChild(Args && ... args) noexcept;
 
         [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;

@@ -3,17 +3,17 @@
 #include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Intermediate/DataChunk.hpp" //DataChunk
+#include "imgui.h"
 #include <iostream>
 #include <istream>
 #include <sstream>
-#include "imgui.h"
 
 using namespace GPE;
 using namespace GPM;
 
 GameObject::~GameObject() noexcept
 {
-    DataChunk<TransformComponent>::getInstance()->destroy(&m_transform);
+    DataChunk<TransformComponent>::getInstance()->destroy(m_pTransform);
 
     for (auto&& component : m_pComponents)
     {
@@ -33,7 +33,7 @@ void GameObject::moveTowardScene(Scene& newOwner) noexcept
 
 void GameObject::updateSelfAndChildren() noexcept
 {
-    if (m_transform.isDirty())
+    if (m_pTransform->isDirty())
     {
         // Update self
         if (m_parent)
@@ -52,29 +52,29 @@ void GameObject::updateSelfAndChildren() noexcept
         }
 
         // Update children
-        for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
+        for (std::list<GameObject*>::iterator i = children.begin(); i != children.end(); i++)
         {
             if ((*i)->m_isDead)
             {
-                i = children.erase(i);
+                i = destroyChild(i);
                 continue;
             }
 
-            (*i)->forceUpdate(m_transform.getModelMatrix());
+            (*i)->forceUpdate(m_pTransform->getModelMatrix());
         }
     }
     else
     {
         // Update children
-        for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end(); i++)
+        for (std::list<GameObject*>::iterator i = children.begin(); i != children.end(); i++)
         {
             if ((*i)->m_isDead)
             {
-                i = children.erase(i);
+                i = destroyChild(i);
                 continue;
             }
 
-            (*i)->updateSelfAndChildren(m_transform.getModelMatrix());
+            (*i)->updateSelfAndChildren(m_pTransform->getModelMatrix());
         }
     }
 }
@@ -82,25 +82,25 @@ void GameObject::updateSelfAndChildren() noexcept
 void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
 {
     // Update self
-    if (m_transform.isDirty())
+    if (m_pTransform->isDirty())
         getTransform().update(m_parent->getTransform().getModelMatrix());
 
     // Update children
-    for (std::list<std::unique_ptr<GameObject>>::iterator i = children.begin(); i != children.end();)
+    for (std::list<GameObject*>::iterator i = children.begin(); i != children.end();)
     {
         if ((*i)->m_isDead)
         {
-            i = children.erase(i);
+            i = destroyChild(i);
             continue;
         }
 
-        if ((*i)->m_transform.isDirty())
+        if ((*i)->m_pTransform->isDirty())
         {
-            (*i)->forceUpdate(m_transform.getModelMatrix());
+            (*i)->forceUpdate(m_pTransform->getModelMatrix());
         }
         else
         {
-            (*i)->updateSelfAndChildren(m_transform.getModelMatrix());
+            (*i)->updateSelfAndChildren(m_pTransform->getModelMatrix());
         }
         ++i;
     }
@@ -123,11 +123,11 @@ void GameObject::forceUpdate() noexcept
     {
         if ((*i)->m_isDead)
         {
-            i = children.erase(i);
+            i = destroyChild(i);
             continue;
         }
 
-        (*i)->forceUpdate(m_transform.getModelMatrix());
+        (*i)->forceUpdate(m_pTransform->getModelMatrix());
     }
 }
 
@@ -139,7 +139,7 @@ void GameObject::forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept
     // Force update children
     for (auto&& i = children.begin(); i != children.end(); i++)
     {
-        (*i)->forceUpdate(m_transform.getModelMatrix());
+        (*i)->forceUpdate(m_pTransform->getModelMatrix());
     }
 }
 
@@ -161,15 +161,15 @@ GameObject* GameObject::getChild(const std::string& path) noexcept
         {
             if (child->getName() == word)
             {
-                currentEntity = child.get();
+                currentEntity = child;
                 isFound       = true;
                 break;
             }
         }
         if (!isFound)
         {
-            Log::getInstance()->logWarning(std::string("Can't find \"") + word + "\" in gameObject \"" + m_name +
-                                           "\"" + " with path : \"" + path + "\"");
+            Log::getInstance()->logWarning(std::string("Can't find \"") + word + "\" in gameObject \"" + m_name + "\"" +
+                                           " with path : \"" + path + "\"");
             return nullptr;
         }
     }
@@ -180,11 +180,11 @@ void GameObject::destroyChild(const std::string& path) noexcept
 {
     GPE_ASSERT(!path.empty(), "Void path");
 
-    std::stringstream                                sPath(path);
-    std::string                                      word;
-    GameObject*                                      parentEntity  = this;
-    GameObject*                                      currentEntity = this;
-    std::list<std::unique_ptr<GameObject>>::iterator it;
+    std::stringstream                sPath(path);
+    std::string                      word;
+    GameObject*                      parentEntity  = this;
+    GameObject*                      currentEntity = this;
+    std::list<GameObject*>::iterator it;
 
     while (std::getline(sPath, word, '/'))
     {
@@ -198,7 +198,7 @@ void GameObject::destroyChild(const std::string& path) noexcept
         {
             if ((*it)->getName() == word)
             {
-                currentEntity = it->get();
+                currentEntity = *it;
                 isFound       = true;
                 break;
             }
@@ -215,13 +215,13 @@ void GameObject::destroyChild(const std::string& path) noexcept
     parentEntity->children.erase(it);
 }
 
-std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild(GameObject* pGameObject) noexcept
+std::list<GameObject*>::iterator GameObject::destroyChild(GameObject* pGameObject) noexcept
 {
-    for (std::list<std::unique_ptr<GameObject>>::iterator it = children.begin(); it != children.end(); it++)
+    for (std::list<GameObject*>::iterator it = children.begin(); it != children.end(); it++)
     {
-        if ((*it).get() == pGameObject)
+        if (*it == pGameObject)
         {
-            return children.erase(it);
+            return destroyChild(it);
         }
     }
     return children.end();
@@ -259,12 +259,11 @@ void GPE::DataInspector::inspect(class GameObject& inspected)
     inspected.inspect();
 
     std::list<Component*>& comps = inspected.getComponents();
-    unsigned int           i     = 0;
+
     for (Component* comp : comps)
     {
-        ImGui::PushID(i);
+        ImGui::PushID(comp);
         comp->inspect();
         ImGui::PopID();
-        i++;
     }
 }

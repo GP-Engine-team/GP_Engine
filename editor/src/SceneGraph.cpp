@@ -60,12 +60,12 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
         ImGui::Text(gameObject.getName().c_str());
         if (ImGui::MenuItem("Add child", NULL, false))
         {
-            gameObject.addChild<GameObject>(GameObject::CreateArg{"NewGameObject"});
+            gameObject.addChild(GameObject::CreateArg{"NewGameObject"});
         }
 
         if (ImGui::MenuItem("Move to world", NULL, false))
         {
-            deferedSetParent.bind(gameObject, gameObject.pOwnerScene->world);
+            deferedSetParent.bind(gameObject, gameObject.pOwnerScene->getWorld());
         }
 
         if (ImGui::MenuItem("Remove", NULL, false))
@@ -100,7 +100,7 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GameObject
         {
             for (auto&& child : gameObject.children)
             {
-                recursiveSceneGraphNode(*child.get(), selectedGameObject, ++idElem);
+                recursiveSceneGraphNode(*child, selectedGameObject, ++idElem);
             }
             ImGui::TreePop();
         }
