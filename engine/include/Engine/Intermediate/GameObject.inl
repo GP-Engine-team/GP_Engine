@@ -4,22 +4,6 @@
 {
 }
 
-template <typename T>
-inline void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept
-{
-    GPE_ASSERT(oldPtr != nullptr, "oldPtr cannot be nullptr");
-    GPE_ASSERT(newPtr != nullptr, "newPtr cannot be nullptr");
-
-    for (Component* pComponent : m_pComponents)
-    {
-        if (unlikely(pComponent == oldPtr))
-        {
-            pComponent = newPtr;
-            return;
-        }
-    };
-}
-
 template <typename T, typename... Args>
 inline T& GameObject::addComponent(Args&&... args) noexcept
 {
