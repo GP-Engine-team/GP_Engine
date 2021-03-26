@@ -126,6 +126,9 @@
     <ClCompile Include="src\Serialization\STDDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Serialization\xml\xmlManager.cpp">
+      <Filter>include\Serialization\xml</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -404,6 +407,7 @@
     <ClInclude Include="include\Engine\Serialization\STDDataInspector.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Callback.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

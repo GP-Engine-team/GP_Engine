@@ -329,6 +329,7 @@
     <ClCompile Include="src\SceneViewer.cpp" />
     <ClCompile Include="src\Serialization\STDDataInspector.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlLoader.cpp" />
+    <ClCompile Include="src\Serialization\xml\xmlManager.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlSaver.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp" />
     <ClCompile Include="src\Shader.cpp" />
