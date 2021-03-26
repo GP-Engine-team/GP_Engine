@@ -85,7 +85,7 @@ void GPE::DataInspector::inspect(SubModel& inspected)
     ImGui::SameLine();
     if (ImGui::Button(GPE::Engine::getInstance()->resourceManager.getKey<Mesh>(inspected.pMesh)->c_str()))
     {
-        resourceExplorerMesh = true;
+        resourceExplorerMesh = !resourceExplorerMesh;
     }
 
     if (resourceExplorerMesh)
@@ -108,7 +108,7 @@ void GPE::DataInspector::inspect(SubModel& inspected)
     ImGui::SameLine();
     if (ImGui::Button(GPE::Engine::getInstance()->resourceManager.getKey<Shader>(inspected.pShader)->c_str()))
     {
-        resourceExplorerShader = true;
+        resourceExplorerShader = !resourceExplorerShader;
     }
 
     if (resourceExplorerShader)
