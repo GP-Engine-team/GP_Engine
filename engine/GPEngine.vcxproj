@@ -213,6 +213,7 @@
     <ClInclude Include="include\Engine\Core\Tools\Callback.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Format.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\Hash.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Component.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Camera.hpp" />
@@ -227,8 +228,6 @@
     <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp" />
     <ClInclude Include="include\Engine\ECS\System\RenderSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp" />
-    <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp" />
-    <ClInclude Include="include\Engine\Intermediate\BehaviourSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp" />
     <ClInclude Include="include\Engine\Engine.hpp" />
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
@@ -357,7 +356,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
-    <None Include="ClassDiagram.cd" />
     <None Include="include\Engine\Core\Debug\Log.inl" />
     <None Include="include\Engine\Core\Parsers\ParserTool.inl" />
     <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl" />
@@ -375,6 +373,7 @@
     <None Include="include\Engine\Resources\ResourcesManager.inl" />
     <None Include="include\Engine\Resources\Shader.inl" />
     <None Include="include\Engine\Resources\Texture.inl" />
+    <None Include="include\Engine\Serialization\STDDataInspector.inl" />
     <None Include="include\Engine\Serialization\xml\xmlLoader.inl" />
     <None Include="include\Engine\Serialization\xml\xmlManager.inl" />
     <None Include="include\Engine\Serialization\xml\xmlSaver.inl" />

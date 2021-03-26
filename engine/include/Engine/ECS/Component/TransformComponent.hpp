@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "Engine/Core/Tools/Callback.hpp" //Event
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
 #include "GPM/Conversion.hpp"
@@ -21,9 +22,9 @@ namespace GPE RFKNamespace()
 {
     class GameObject;
 
-    class RFKClass(Inspect(), ComponentGen()) TransformComponent : public Component
+    class RFKClass(Inspect(), ComponentGen) TransformComponent : public Component
     {
-public:
+    public:
         struct CreateArg
         {
             GPM::Vec3 position      = GPM::Vec3::zero();
@@ -31,13 +32,15 @@ public:
             GPM::Vec3 scale         = GPM::Vec3::one();
         };
 
-protected:
-        RFKField(Inspect())
-        GPM::SplitTransform m_spaceAttribut;
-        GPM::Transform      m_transform = GPM::toTransform(m_spaceAttribut);
-        bool                m_isDirty   = false;
+    protected:
+        RFKField(Inspect()) GPM::SplitTransform m_spaceAttribut;
+        GPM::Transform                          m_transform = GPM::toTransform(m_spaceAttribut);
+        bool                                    m_isDirty   = false;
 
-public:
+    public:
+        Event OnUpdate;
+
+    public:
         TransformComponent(GameObject & refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
 
         TransformComponent() noexcept                                = delete;

@@ -34,9 +34,12 @@ namespace GPE RFKNamespace()
         bool enableBackFaceCulling = true;
     };
 
+    template <>
+    void DataInspector::inspect(SubModel & inspected);
+
     bool isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept;
 
-    class RFKClass(Inspect(),ComponentGen) Model : public Component
+    class RFKClass(Inspect(), ComponentGen) Model : public Component
     {
     public:
         struct CreateArg
@@ -45,7 +48,7 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        std::vector<SubModel> m_subModels;
+        RFKField(Inspect()) std::vector<SubModel> m_subModels;
 
     public:
         Model(GameObject & owner, const CreateArg& arg);

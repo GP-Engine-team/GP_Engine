@@ -2,16 +2,22 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Core/Tools/Hash.hpp"
 #include "Engine/ECS/System/SceneRenderSystem.hpp"
+#include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
+#include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Texture.hpp"
 #include "GPM/Matrix3.hpp"
 #include "GPM/Matrix4.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
+
+#include <filesystem>
+#include <imgui.h>
 
 using namespace GPE;
 using namespace GPM;
@@ -66,5 +72,83 @@ void Model::moveTowardScene(class Scene& newOwner)
     {
         pSubMesh.pModel = this;
         newOwner.sceneRenderer.addSubModel(&pSubMesh);
+    }
+}
+
+template <>
+void GPE::DataInspector::inspect(SubModel& inspected)
+{
+    static bool resourceExplorerMesh   = false;
+    static bool resourceExplorerShader = false;
+
+    ImGui::Text("Mesh");
+    ImGui::SameLine();
+    if (ImGui::Button(GPE::Engine::getInstance()->resourceManager.getKey<Mesh>(inspected.pMesh)->c_str()))
+    {
+        resourceExplorerMesh = true;
+    }
+
+    if (resourceExplorerMesh)
+    {
+        ImGui::Begin("Resource explorer", &resourceExplorerMesh, ImGuiWindowFlags_HorizontalScrollbar);
+
+        for (auto&& res : GPE::Engine::getInstance()->resourceManager.getAll<Mesh>())
+        {
+            if (ImGui::Button(res.first.c_str()))
+            {
+                resourceExplorerMesh = false;
+                inspected.pMesh      = &res.second;
+            }
+        }
+
+        ImGui::End();
+    }
+
+    ImGui::Text("Shader");
+    ImGui::SameLine();
+    if (ImGui::Button(GPE::Engine::getInstance()->resourceManager.getKey<Shader>(inspected.pShader)->c_str()))
+    {
+        resourceExplorerShader = true;
+    }
+
+    if (resourceExplorerShader)
+    {
+        ImGui::Begin("Resource explorer", &resourceExplorerShader, ImGuiWindowFlags_HorizontalScrollbar);
+
+        for (auto&& res : GPE::Engine::getInstance()->resourceManager.getAll<Shader>())
+        {
+            if (ImGui::Button(res.first.c_str()))
+            {
+                resourceExplorerShader = false;
+                inspected.pShader      = &res.second;
+            }
+        }
+
+        ImGui::End();
+    }
+
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        const ImGuiPayload* payload = ImGui::GetDragDropPayload();
+
+        if (payload->IsDataType("RESOURCE_PATH"))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            size_t hasedExtention = hash(path.extension().string().c_str());
+            if (hasedExtention == hash(".obj"))
+            {
+                // Can drop
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RESOURCE_PATH"))
+                {
+                    IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+                    std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+                    // Engine::getInstance()->resourceManager.add(path.string(), )
+                }
+            }
+        }
     }
 }

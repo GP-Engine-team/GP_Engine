@@ -99,6 +99,7 @@ inline constexpr TransformComponent& GameObject::getTransform() noexcept
 template <typename T, typename... Args>
 inline GameObject& GameObject::addChild(Args&&... args) noexcept
 {
+    // TODO : replace by data chunk
     std::unique_ptr<GameObject>& pChild = this->children.emplace_back(std::make_unique<T>(*pOwnerScene, args...));
     pChild->children                    = std::list<std::unique_ptr<GameObject>>();
 

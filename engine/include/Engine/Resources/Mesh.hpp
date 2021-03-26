@@ -46,7 +46,7 @@ public:
         std::string                  objName;
         std::vector<Vertex>          vertices;
         std::vector<unsigned int>    indices;
-        EBoundingVolume              boundingVolumeType{EBoundingVolume::SPHERE};
+        EBoundingVolume              boundingVolumeType{EBoundingVolume::NONE};
         std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
     };
 
@@ -58,7 +58,7 @@ public:
         std::vector<GPM::Vec2>       vtBuffer;
         std::vector<GPM::Vec3>       vnBuffer;
         std::vector<Indice>          iBuffer; // optional
-        EBoundingVolume              boundingVolumeType{EBoundingVolume::SPHERE};
+        EBoundingVolume              boundingVolumeType{EBoundingVolume::NONE};
         std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
     };
 

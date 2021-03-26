@@ -1,13 +1,6 @@
 #include "Engine/Serialization/STDDataInspector.hpp"
 
-#include "imgui.h"
 #include "Engine/Serialization/Slider.hpp"
-
-template <typename T>
-void GPE::DataInspector::inspect(std::vector<T>& inspected, const rfk::Field& info)
-{
-    
-}
 
 template <>
 void GPE::DataInspector::inspect(int& inspected, const rfk::Field& info)
