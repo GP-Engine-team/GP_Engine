@@ -79,6 +79,10 @@ protected:
     Shader*      m_currentPShaderUse                = nullptr;
     bool         m_currentBackFaceCullingModeEnable = false;
 
+    Mesh* m_planeMesh  = nullptr;
+    Mesh* m_sphereMesh = nullptr;
+    Mesh* m_cubeMesh   = nullptr;
+
 public:
     SceneRenderSystem() noexcept;
     ~SceneRenderSystem() noexcept;
