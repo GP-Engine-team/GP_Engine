@@ -49,7 +49,7 @@ void generateEngineFiles(const std::string& engineDir)
 
     //You will need to setup parsing settings and generation settings here.
     //Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, true);
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit);
 }
 
 void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
@@ -92,7 +92,7 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
 
     //You will need to setup parsing settings and generation settings here.
     //Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, true);
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit);
 }
 
 
