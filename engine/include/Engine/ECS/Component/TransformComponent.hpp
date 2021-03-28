@@ -25,7 +25,7 @@ namespace GPE RFKNamespace()
 {
     class GameObject;
 
-    class RFKClass(Inspect(), ComponentGen) TransformComponent : public Component
+    class RFKClass(ComponentGen) TransformComponent : public Component
     {
     public:
         struct CreateArg

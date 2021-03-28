@@ -258,6 +258,8 @@ void GPE::DataInspector::inspect(class GameObject& inspected)
 {
     inspected.inspect();
 
+    inspected.getTransform().inspect();
+
     std::list<Component*>& comps = inspected.getComponents();
 
     for (Component* comp : comps)

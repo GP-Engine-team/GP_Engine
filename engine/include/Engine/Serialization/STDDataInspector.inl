@@ -1,4 +1,4 @@
-#include "STDDataInspector.hpp"
+#include "Engine/Serialization/STDDataInspector.hpp"
 
 template <typename T>
 void GPE::DataInspector::inspect(std::vector<T>& inspected, const rfk::Field& info)

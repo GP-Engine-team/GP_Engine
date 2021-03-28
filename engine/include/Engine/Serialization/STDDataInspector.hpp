@@ -1,48 +1,41 @@
 #pragma once
 
-#include "DataInspector.hpp"
+#include "Engine/Serialization/DataInspector.hpp"
 
 // in inl
 #include "imgui.h"
 
-namespace GPE
-{
-namespace DataInspector
+namespace GPE::DataInspector
 {
 template <typename T>
-bool inspect(std::vector<T>& inspected, const rfk::Field& info);
+void inspect(std::vector<T>& inspected, const rfk::Field& info);
 
 // template <typename T, typename SIZE>
-// void inspect(std::array<T, SIZE>& inspected, const rfk::Field& info);
-//
-// template <typename T>
-// void inspect(std::vector<T>& inspected, const rfk::Field& info);
+// void  inspect(std::array<T, SIZE>& inspected, const rfk::Field& info);
+
+template <>
+bool inspect(int& inspected, const rfk::Field& info);
+template <>
+bool inspect(int& inspected, const char* name);
+
+template <>
+bool inspect(float& inspected, const rfk::Field& info);
+template <>
+bool inspect(float& inspected, const char* name);
+
+template <>
+bool inspect(std::string& inspected, const rfk::Field& info);
+template <>
+bool inspect(std::string& inspected, const char* name);
+
+template <>
+bool inspect(bool& inspected, const rfk::Field& info);
+template <>
+bool inspect(bool& inspected, const char* name);
+
+template <>
+void inspect(std::string& inspected);
+
+} // namespace GPE::DataInspector
 
 #include "Engine/Serialization/STDDataInspector.inl"
-
-} // namespace DataInspector
-
-template <>
-bool DataInspector::inspect(int& inspected, const rfk::Field& info);
-template <>
-bool DataInspector::inspect(int& inspected, const char* name);
-
-template <>
-bool DataInspector::inspect(float& inspected, const rfk::Field& info);
-template <>
-bool DataInspector::inspect(float& inspected, const char* name);
-
-template <>
-bool DataInspector::inspect(std::string& inspected, const rfk::Field& info);
-template <>
-bool DataInspector::inspect(std::string& inspected, const char* name);
-
-template <>
-bool DataInspector::inspect(bool& inspected, const rfk::Field& info);
-template <>
-bool DataInspector::inspect(bool& inspected, const char* name);
-
-template <>
-void DataInspector::inspect(std::string& inspected);
-
-} // namespace GPE
