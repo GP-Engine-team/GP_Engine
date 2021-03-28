@@ -4,20 +4,36 @@
 
 namespace GPE
 {
+namespace DataInspector
+{
+template <typename T>
+bool inspect(std::vector<T>& inspected, const rfk::Field& info);
+
+//template <typename T, typename SIZE>
+//void inspect(std::array<T, SIZE>& inspected, const rfk::Field& info);
+}
 
 template <>
-static void DataInspector::inspect(int& t, const rfk::Field& info);
+bool DataInspector::inspect(int& inspected, const rfk::Field& info);
+template <>
+bool DataInspector::inspect(int& inspected, const char* name);
 
 template <>
-static void DataInspector::inspect(float& t, const rfk::Field& info);
+bool DataInspector::inspect(float& inspected, const rfk::Field& info);
+template <>
+bool DataInspector::inspect(float& inspected, const char* name);
 
 template <>
-static void DataInspector::inspect(std::string& t, const rfk::Field& info);
+bool DataInspector::inspect(std::string& inspected, const rfk::Field& info);
+template <>
+bool DataInspector::inspect(std::string& inspected, const char* name);
 
 template <>
-static void DataInspector::inspect(bool& t, const rfk::Field& info);
+bool DataInspector::inspect(bool& inspected, const rfk::Field& info);
+template <>
+bool DataInspector::inspect(bool& inspected, const char* name);
 
 template <>
-static void DataInspector::inspect(std::string& t);
+void DataInspector::inspect(std::string& inspected);
 
 } // namespace GPE

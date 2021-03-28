@@ -106,28 +106,56 @@
     <ClCompile Include="src\SceneViewer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\Scene.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Component.cpp" />
-    <ClCompile Include="third_party\imgui\backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="third_party\imgui\backends\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="third_party\imgui\imgui.cpp" />
-    <ClCompile Include="third_party\imgui\imgui_demo.cpp" />
-    <ClCompile Include="third_party\imgui\imgui_draw.cpp" />
-    <ClCompile Include="third_party\imgui\imgui_tables.cpp" />
-    <ClCompile Include="third_party\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="third_party\imgui\misc\cpp\imgui_stdlib.cpp" />
-    <ClCompile Include="third_party\imgui\misc\fonts\binary_to_compressed_c.cpp" />
     <ClCompile Include="src\Serialization\STDDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="src\Serialization\xml\xmlManager.cpp">
       <Filter>include\Serialization\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\imgui\imgui.cpp">
+      <Filter>third_party\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\imgui\imgui_demo.cpp">
+      <Filter>third_party\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\imgui\imgui_draw.cpp">
+      <Filter>third_party\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>third_party\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>third_party\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\imgui\misc\cpp\imgui_stdlib.cpp">
+      <Filter>third_party\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\imgui\imgui_tables.cpp">
+      <Filter>third_party\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\imgui\imgui_widgets.cpp">
+      <Filter>third_party\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\imgui\misc\fonts\binary_to_compressed_c.cpp">
+      <Filter>third_party\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\DataInspector.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\GPMDataInspector.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,21 +366,6 @@
     <ClInclude Include="include\Engine\Engine.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\SystemsManager.hpp" />
-    <ClInclude Include="include\Engine\Intermediate\BehaviourSystem.hpp" />
-    <ClInclude Include="include\Engine\Serialization\Inspect.hpp" />
-    <ClInclude Include="include\Engine\Serialization\Serialize.hpp" />
-    <ClInclude Include="include\Engine\Serialization\Slider.hpp" />
-    <ClInclude Include="third_party\imgui\backends\imgui_impl_glfw.h" />
-    <ClInclude Include="third_party\imgui\backends\imgui_impl_opengl3.h" />
-    <ClInclude Include="third_party\imgui\imconfig.h" />
-    <ClInclude Include="third_party\imgui\imgui.h" />
-    <ClInclude Include="third_party\imgui\imgui_internal.h" />
-    <ClInclude Include="third_party\imgui\imstb_rectpack.h" />
-    <ClInclude Include="third_party\imgui\imstb_textedit.h" />
-    <ClInclude Include="third_party\imgui\imstb_truetype.h" />
-    <ClInclude Include="third_party\imgui\misc\cpp\imgui_stdlib.h" />
-    <ClInclude Include="third_party\imgui\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="include\Engine\Serialization\ComponentGen.h">
       <Filter>include\Serialization</Filter>
     </ClInclude>
@@ -407,11 +420,51 @@
     <ClInclude Include="include\Engine\Serialization\STDDataInspector.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\Callback.hpp" />
+    <ClInclude Include="third_party\imgui\imconfig.h">
+      <Filter>third_party\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\imgui.h">
+      <Filter>third_party\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\backends\imgui_impl_glfw.h">
+      <Filter>third_party\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\backends\imgui_impl_opengl3.h">
+      <Filter>third_party\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\imgui_internal.h">
+      <Filter>third_party\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\misc\single_file\imgui_single_file.h">
+      <Filter>third_party\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\misc\cpp\imgui_stdlib.h">
+      <Filter>third_party\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\imstb_rectpack.h">
+      <Filter>third_party\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\imstb_textedit.h">
+      <Filter>third_party\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\imstb_truetype.h">
+      <Filter>third_party\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\Inspect.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\Serialize.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\Slider.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Callback.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
-    <None Include="ClassDiagram.cd" />
     <None Include="third_party\gpm\include\GPM\conversion.inl">
       <Filter>third_party\gpm</Filter>
     </None>
@@ -536,6 +589,9 @@
     </Filter>
     <Filter Include="include\ECS\Component\Light">
       <UniqueIdentifier>{12e7d638-ac6c-4838-abe4-4f8409f47aae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\ImGui">
+      <UniqueIdentifier>{c1a6a7bc-bd1c-49bd-850c-a5d63c26be01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
