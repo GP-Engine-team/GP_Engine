@@ -43,6 +43,10 @@ void Camera::moveTowardScene(class Scene& newOwner)
     newOwner.sceneRenderer.addCamera(this);
 }
 
+Camera::Camera(GameObject& owner) noexcept : Camera(owner, PerspectiveCreateArg{})
+{
+}
+
 Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Component(owner)
 {
     GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");

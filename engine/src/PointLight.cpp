@@ -7,6 +7,10 @@ PointLight::~PointLight()
     DataChunk<PointLight>::getInstance()->destroy(this);
 }
 
+PointLight::PointLight(GameObject& owner) noexcept : PointLight(owner, CreateArg{})
+{
+}
+
 PointLight::PointLight(GameObject& owner, const CreateArg& arg) noexcept
     : Light(owner, arg.ambient, arg.diffuse, arg.specular), m_constant(arg.constant), m_linear(arg.linear),
       m_quadratic(arg.quadratic)

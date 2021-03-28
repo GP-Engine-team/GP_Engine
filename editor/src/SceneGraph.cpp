@@ -1,5 +1,17 @@
 ﻿#include "Editor/SceneGraph.hpp"
 
+// Components
+// TODO: Generat this automatically
+#include "Engine/ECS/Component/Camera.hpp"
+#include "Engine/ECS/Component/Model.hpp"
+
+#include "Engine/ECS/Component/AudioComponent.hpp"
+#include "Engine/ECS/Component/InputComponent.hpp"
+
+#include "Engine/ECS/Component/Light/DirectionalLight.hpp"
+#include "Engine/ECS/Component/Light/PointLight.hpp"
+#include "Engine/ECS/Component/Light/SpotLight.hpp"
+
 #include "Engine/Resources/Scene.hpp"
 #include <imgui/imgui.h>
 
@@ -61,6 +73,37 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
         if (ImGui::MenuItem("Add child", NULL, false))
         {
             gameObject.addChild(GameObject::CreateArg{"NewGameObject"});
+        }
+
+        if (ImGui::BeginMenu("Add component"))
+        {
+            if (ImGui::MenuItem("Camera"))
+                gameObject.addComponent<Camera>();
+
+            if (ImGui::MenuItem("Model"))
+                gameObject.addComponent<Model>();
+
+            // if (ImGui::MenuItem("Audio component"))
+            //    gameObject.addComponent<AudioComponent>();
+
+            if (ImGui::MenuItem("Input component"))
+                gameObject.addComponent<InputComponent>();
+
+            if (ImGui::BeginMenu("Lights"))
+            {
+                if (ImGui::MenuItem("Dircetional light"))
+                    gameObject.addComponent<DirectionalLight>();
+
+                if (ImGui::MenuItem("PointLight"))
+                    gameObject.addComponent<PointLight>();
+
+                // if (ImGui::MenuItem("Spot light"))
+                // gameObject.addComponent<SpotLight>();
+
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMenu();
         }
 
         if (ImGui::MenuItem("Move to world", NULL, false))

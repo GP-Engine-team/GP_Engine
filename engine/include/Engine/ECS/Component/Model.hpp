@@ -51,6 +51,8 @@ namespace GPE RFKNamespace()
         RFKField(Inspect()) std::vector<SubModel> m_subModels;
 
     public:
+        Model(GameObject & owner);
+
         Model(GameObject & owner, const CreateArg& arg);
 
         Model(const Model& other) noexcept = delete;

@@ -113,6 +113,13 @@ namespace GPE RFKNamespace()
         void updateView();
 
         /**
+         * @brief Default constructor. Call perspective constructor by default
+         * @param owner
+         * @return
+         */
+        Camera(GameObject & owner) noexcept;
+
+        /**
          * @brief Construct a new perspective camera object
          *
          * @param position

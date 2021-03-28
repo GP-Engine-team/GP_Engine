@@ -18,21 +18,21 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(),ComponentGen) SpotLight : public PointLight
+    class RFKClass(Inspect(), ComponentGen) SpotLight : public PointLight
     {
     public:
         struct CreateArg
         {
-            const AmbiantComponent&  ambient;
-            const DiffuseComponent&  diffuse;
-            const SpecularComponent& specular;
+            AmbiantComponent  ambient  = AmbiantComponent{0.f, 0.f, 0.f, 1.f};
+            DiffuseComponent  diffuse  = DiffuseComponent{0.5f, 0.5f, 0.5f, 1.f};
+            SpecularComponent specular = SpecularComponent{0.5f, 0.5f, 0.5f, 1.f};
 
-            float constant;
-            float linear;
-            float quadratic;
+            float constant  = 1.f;
+            float linear    = 0.09f;
+            float quadratic = 0.032f;
 
-            float cutOff;
-            float cutOffExponent;
+            float cutOff         = 45.f; // in degres
+            float cutOffExponent = 50.f; // in degres;
         };
 
     protected:
@@ -67,7 +67,7 @@ namespace GPE RFKNamespace()
                   const SpecularComponent& specular, float constant, float linear, float quadratic, float cutOff,
                   float cutOffExponent);
 
-        SpotLight(GameObject & owner, CreateArg arg);
+        SpotLight(GameObject & owner, const CreateArg& arg);
 
         void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept final;
 
