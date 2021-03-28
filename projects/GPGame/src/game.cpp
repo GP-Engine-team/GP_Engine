@@ -125,12 +125,9 @@ void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
 
 	parent.addChild<GameObject>(skyboxArgGameObject).addComponent<Model>(*resourceManager.get<Model::CreateArg>("SkyboxModel"));
 }
-#include "Refureku/Refureku/Refureku.h"
 
 Game::Game()
 {
-    GPG::MyScript::staticGetArchetype().getField("a");
-
 	sm.addEmpty("main");
 	sm.loadScene("main");
 
