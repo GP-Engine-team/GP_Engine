@@ -254,7 +254,7 @@ std::string GameObject::getAbsolutePath() const noexcept
 }
 
 template <>
-static void GPE::DataInspector::inspect(class GameObject& inspected)
+void GPE::DataInspector::inspect(class GameObject& inspected)
 {
     inspected.inspect();
 

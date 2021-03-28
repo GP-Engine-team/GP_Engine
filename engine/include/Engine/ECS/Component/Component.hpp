@@ -9,25 +9,18 @@
 #include "Engine/Serialization/ComponentGen.h"
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/Inspect.hpp"
-#include "Generated/Component.rfk.h"
+#include "Engine/Serialization/IInspect.hpp"
 #include "Refureku/Object.h"
+#include "Generated/Component.rfk.h"
 
 namespace GPE RFKNamespace()
 {
     template <>
-    static void DataInspector::inspect(class Component & inspected);
+    void DataInspector::inspect(class Component & inspected);
 
     class GameObject;
 
-    class k : public ::rfk::Object
-    {
-    public:
-        virtual void inspect()
-        {
-        }
-    };
-
-    class RFKClass(Inspect()) Component : public k
+    class RFKClass(Inspect()) Component : public IInspect
     {
     protected:
         GameObject*              m_gameObject; // can not be ref for move
@@ -49,8 +42,6 @@ namespace GPE RFKNamespace()
         [[nodiscard]] constexpr inline bool isActivated() const noexcept;
 
         constexpr inline void setActive(bool newState) noexcept;
-
-        //virtual bool inspect();
 
         virtual void moveTowardScene(class Scene & newOwner){};
 

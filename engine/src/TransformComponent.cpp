@@ -1,5 +1,6 @@
 #include "Engine/ECS/Component/TransformComponent.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Serialization/Inspect.hpp"
 
 namespace GPE
 {
@@ -18,6 +19,16 @@ TransformComponent& TransformComponent::operator=(TransformComponent&& other)
     m_isDirty       = std::move(other.m_isDirty);
 
     return static_cast<TransformComponent&>(Component::operator=(std::move(other)));
+}
+
+void TransformComponent::inspect()
+{
+    Component::inspect();
+
+    if (::GPE::DataInspector::inspect(m_spaceAttribut, "Transform"))
+    {
+        m_isDirty = true;
+    }
 }
 
 } // End of namespace GPE

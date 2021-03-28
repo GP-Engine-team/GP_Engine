@@ -1,16 +1,8 @@
 ﻿#include "xmlManager.hpp"
 
-#include "RapidXML/rapidxml_print.hpp"
-#include <iostream>
-
 inline XmlManager::Node* XmlManager::getRoot()
 {
     return &doc;
-}
-
-inline void XmlManager::print()
-{
-    std::cout << doc << std::endl;
 }
 
 template <typename T>
