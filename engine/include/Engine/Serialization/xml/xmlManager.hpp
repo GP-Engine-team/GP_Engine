@@ -27,7 +27,7 @@ public:
     /**
      * @brief Display the content of the xml file.
      */
-    inline void print();
+    void print();
 
     /**
      * @brief Save the data into parentNode.

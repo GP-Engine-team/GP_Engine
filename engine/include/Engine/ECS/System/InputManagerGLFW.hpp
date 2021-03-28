@@ -7,7 +7,6 @@
 #pragma once
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/Resources/Cursor.hpp"
-#include <iostream>
 #include <string>
 #include <unordered_map>
 

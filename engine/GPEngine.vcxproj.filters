@@ -115,8 +115,8 @@
     <ClCompile Include="src\Serialization\STDDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\Serialization\GPMDataInspector.cpp">
-      <Filter>src\Serialization</Filter>
+    <ClCompile Include="src\Serialization\xml\xmlManager.cpp">
+      <Filter>include\Serialization\xml</Filter>
     </ClCompile>
     <ClCompile Include="third_party\imgui\imgui.cpp">
       <Filter>third_party\ImGui</Filter>
@@ -148,10 +148,13 @@
     <ClCompile Include="src\Component.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Serialization\DataInspector.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Material.cpp">
+    <ClCompile Include="src\Serialization\GPMDataInspector.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -459,9 +462,6 @@
     <ClInclude Include="include\Engine\Core\Tools\Callback.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\Hash.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -552,9 +552,6 @@
     <None Include="include\Engine\ECS\Component\Light\Light.inl">
       <Filter>include\ECS\Component\Light</Filter>
     </None>
-    <None Include="include\Engine\Serialization\STDDataInspector.inl">
-      <Filter>include\Serialization</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
@@ -594,7 +591,7 @@
       <UniqueIdentifier>{12e7d638-ac6c-4838-abe4-4f8409f47aae}</UniqueIdentifier>
     </Filter>
     <Filter Include="third_party\ImGui">
-      <UniqueIdentifier>{a6541fc1-9c97-417b-b14f-7d506edfe45d}</UniqueIdentifier>
+      <UniqueIdentifier>{c1a6a7bc-bd1c-49bd-850c-a5d63c26be01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
