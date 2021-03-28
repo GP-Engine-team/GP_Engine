@@ -4,20 +4,50 @@
 
 namespace GPE
 {
-class DataInspector
+namespace DataInspector
 {
-public:
+    void startProperty(const char* name);
+    void endProperty();
 
     template <typename T>
-    static void inspect(T& t)
+    void inspect(T& inspected)
     {
-        t.inspect();
+        inspected.inspect();
+    }
+
+    /**
+     * @brief Shows the content of the inspected object.
+     * @tparam T The type of the inspected element.
+     * @param inspected The inspected element.
+     * @param name The displayed name of the inspected element.
+     * @return True if the inspected element has been modified, false otherwise.
+    */
+    template <typename T>
+    bool inspect(T& inspected, const char* name)
+    {
+        startProperty(name);
+        const bool hasBeenModified = GPE::DataInspector::inspect(inspected);
+        endProperty();
+        return hasBeenModified;
     }
 
     template <typename T>
-    static void inspect(T& t, const rfk::Field& info)
+    void inspect(T& inspected, const std::string& name)
     {
-        t.inspect();
+        DataInspector::inspect(inspected, name.c_str());
+    }
+
+    /**
+     * @brief Shows the content of the inspected object.
+     * @tparam T T The type of the inspected element.
+     * @param inspected The inspected element.
+     * @param info The information about the inspected element (its name, its properties, etc).
+     * @return True if the inspected element has been modified, false otherwise.
+    */
+    template <typename T>
+    bool inspect(T& inspected, const rfk::Field& info)
+    {
+        return inspected.inspect();
     }
 };
 
