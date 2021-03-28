@@ -76,11 +76,29 @@ void Model::moveTowardScene(class Scene& newOwner)
     }
 }
 
+template <typename T>
+void renderResourceExplorer(T*& inRes, bool& souldStayOpen)
+{
+    ImGui::Begin("Resource explorer", &souldStayOpen, ImGuiWindowFlags_HorizontalScrollbar);
+
+    for (auto&& res : GPE::Engine::getInstance()->resourceManager.getAll<T>())
+    {
+        if (ImGui::Button(res.first.c_str()))
+        {
+            inRes         = &res.second;
+            souldStayOpen = false;
+        }
+    }
+
+    ImGui::End();
+}
+
 template <>
 void GPE::DataInspector::inspect(SubModel& inspected)
 {
-    static bool resourceExplorerMesh   = false;
-    static bool resourceExplorerShader = false;
+    static bool resourceExplorerMesh     = false;
+    static bool resourceExplorerShader   = false;
+    static bool resourceExplorerMaterial = false;
 
     ImGui::Text("Mesh");
     ImGui::SameLine();
@@ -91,18 +109,7 @@ void GPE::DataInspector::inspect(SubModel& inspected)
 
     if (resourceExplorerMesh)
     {
-        ImGui::Begin("Resource explorer", &resourceExplorerMesh, ImGuiWindowFlags_HorizontalScrollbar);
-
-        for (auto&& res : GPE::Engine::getInstance()->resourceManager.getAll<Mesh>())
-        {
-            if (ImGui::Button(res.first.c_str()))
-            {
-                resourceExplorerMesh = false;
-                inspected.pMesh      = &res.second;
-            }
-        }
-
-        ImGui::End();
+        renderResourceExplorer<Mesh>(inspected.pMesh, resourceExplorerMesh);
     }
 
     ImGui::Text("Shader");
@@ -114,18 +121,19 @@ void GPE::DataInspector::inspect(SubModel& inspected)
 
     if (resourceExplorerShader)
     {
-        ImGui::Begin("Resource explorer", &resourceExplorerShader, ImGuiWindowFlags_HorizontalScrollbar);
+        renderResourceExplorer<Shader>(inspected.pShader, resourceExplorerShader);
+    }
 
-        for (auto&& res : GPE::Engine::getInstance()->resourceManager.getAll<Shader>())
-        {
-            if (ImGui::Button(res.first.c_str()))
-            {
-                resourceExplorerShader = false;
-                inspected.pShader      = &res.second;
-            }
-        }
+    ImGui::Text("Material");
+    ImGui::SameLine();
+    if (ImGui::Button(GPE::Engine::getInstance()->resourceManager.getKey<Material>(inspected.pMaterial)->c_str()))
+    {
+        resourceExplorerMaterial = !resourceExplorerMaterial;
+    }
 
-        ImGui::End();
+    if (resourceExplorerMaterial)
+    {
+        renderResourceExplorer<Material>(inspected.pMaterial, resourceExplorerMaterial);
     }
 
     // Drop
