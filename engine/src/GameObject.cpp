@@ -263,7 +263,8 @@ static void GPE::DataInspector::inspect(class GameObject& inspected)
     for (Component* comp : comps)
     {
         ImGui::PushID(i);
-        comp->inspect();
+        //comp->inspect();
+        GPE::DataInspector::inspect(*comp);
         ImGui::PopID();
         i++;
     }

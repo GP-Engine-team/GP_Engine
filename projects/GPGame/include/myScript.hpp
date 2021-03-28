@@ -13,6 +13,7 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Serialization/Inspect.hpp"
 #include "Engine/Serialization/Slider.hpp"
+#include "Engine/Serialization/Serialize.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
 
 #include <iostream>
@@ -22,12 +23,13 @@
 namespace GPG RFKNamespace() 
 {
 
-	class RFKClass(Inspect()) MyScript : public GPE::BehaviourComponent {
+	class RFKClass(Inspect()/*, Serialize()*/) MyScript : public GPE::BehaviourComponent {
 	public:
 		inline MyScript(GPE::GameObject& owner) noexcept
 			: GPE::BehaviourComponent(owner)
 			, input(owner.addComponent<GPE::InputComponent>())
 		{
+
 			enableUpdate(true);
 			input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyScript::up);
 			input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyScript::down);

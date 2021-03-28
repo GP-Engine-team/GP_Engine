@@ -96,7 +96,7 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
 }
 
 
-// First Arg : Engine  (default : "../enigne/") 
+// First Arg : Engine  (default : "../engine/") 
 // Second Arg : Game   (default : "../projects/GPGame/")
 int main(int argc, char** argv)
 {
@@ -119,6 +119,11 @@ int main(int argc, char** argv)
         std::cout << "invalid number of arguments" << std::endl;
         break;
     }
+
+    //const char* p2 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/../../engine/";
+    //const char* p1 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/";
+
+    //generateGameFiles(p1, p2);
 
     return 0;
 }

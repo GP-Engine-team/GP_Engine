@@ -14,9 +14,20 @@
 
 namespace GPE RFKNamespace()
 {
+    template <>
+    static void DataInspector::inspect(class Component & inspected);
+
     class GameObject;
 
-    class RFKClass() Component : public rfk::Object
+    class k : public ::rfk::Object
+    {
+    public:
+        virtual void inspect()
+        {
+        }
+    };
+
+    class RFKClass(Inspect()) Component : public k
     {
     protected:
         GameObject*              m_gameObject; // can not be ref for move
@@ -39,7 +50,7 @@ namespace GPE RFKNamespace()
 
         constexpr inline void setActive(bool newState) noexcept;
 
-        virtual bool inspect();
+        //virtual bool inspect();
 
         virtual void moveTowardScene(class Scene & newOwner){};
 

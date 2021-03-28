@@ -36,23 +36,20 @@ std::string InspectPropertyRule::generateClassFooterCode(kodgen::EntityInfo cons
 			}
 		}
 
-		std::string ifParentCalls = "if (!(";
-		for (auto& parent : var.parents)
-		{
-			ifParentCalls += parent.type.getName() + "::inspect() && ";
-		}
-		ifParentCalls += "true))";
-		ifParentCalls += "return false;";
+		std::string ifParentCalls = "";
+        for (auto& parent : var.parents)
+        {
+        	ifParentCalls += parent.type.getName() + "::inspect();";
+        }
 
 		std::string getArchetype = "rfk::Class const& c = " + entity.name + "::staticGetArchetype();";
 
 		std::string serializeFunction = 
-			"virtual bool inspect()"
+			"virtual void inspect()"
 			"{"
 			+ ifParentCalls
 			+ getArchetype
 			+ inspectInside +
-			"return true;"
 			"}";
 
 		return "public:" + serializeFunction;
