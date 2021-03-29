@@ -162,12 +162,11 @@ public:
      *
      * @param GameObject
      */
-    std::list<std::unique_ptr<GameObject>>::iterator destroyChild(
+    Children::iterator destroyChild(
         GameObject* pGameObject) noexcept; // TODO: Destroy immediate may be dangerous
 
-    inline std::list<std::unique_ptr<GameObject>>::iterator destroyChild(
-        const std::list<std::unique_ptr<GameObject>>::iterator&
-            it) noexcept; // TODO: Destroy immediate may be dangerous
+    // TODO: Destroy immediate may be dangerous
+    inline Children::iterator destroyChild(const Children::iterator& it) noexcept;
 
     template <typename TUniqueComponentType>
     void destroyUniqueComponentNow() noexcept;
