@@ -44,11 +44,11 @@ namespace GPE RFKNamespace()
     public:
         struct CreateArg
         {
-            std::vector<SubModel> subModels;
+            std::list<SubModel> subModels;
         };
 
     protected:
-        RFKField(Inspect()) std::vector<SubModel> m_subModels;
+        RFKField(Inspect()) std::list<SubModel> m_subModels;
 
     public:
         Model(GameObject & owner);

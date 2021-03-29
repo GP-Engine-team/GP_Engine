@@ -32,9 +32,12 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
 
 Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{other.m_subModels}
 {
-    // Access to invalide access memory but pointer is still valid
-    for (size_t i = 0; i < m_subModels.size(); ++i)
-        getOwner().pOwnerScene->sceneRenderer.updateSubModelPointer(&m_subModels[i], &other.m_subModels[i]);
+    auto&& itNew = m_subModels.begin();
+    auto&& itOld = other.m_subModels.begin();
+    for (; itNew != m_subModels.end(); ++itNew, ++itOld)
+    {
+        getOwner().pOwnerScene->sceneRenderer.updateSubModelPointer(&(*itNew), &(*itOld));
+    }
 }
 
 Model::~Model()
@@ -62,8 +65,12 @@ Model& Model::operator=(Model&& other)
 {
     m_subModels = std::move(other.m_subModels);
 
-    for (size_t i = 0; i < m_subModels.size(); i++)
-        getOwner().pOwnerScene->sceneRenderer.updateSubModelPointer(&m_subModels[i], &other.m_subModels[i]);
+    auto&& itNew = m_subModels.begin();
+    auto&& itOld = other.m_subModels.begin();
+    for (; itNew != m_subModels.end(); ++itNew, ++itOld)
+    {
+        getOwner().pOwnerScene->sceneRenderer.updateSubModelPointer(&(*itNew), &(*itOld));
+    }
 
     return static_cast<Model&>(Component::operator=(std::move(other)));
 }
@@ -119,9 +126,28 @@ void renderResourceExplorer(const char* name, T*& inRes)
 template <>
 void GPE::DataInspector::inspect(SubModel& inspected)
 {
+    const bool isPreviousElementVoid =
+        !((size_t)inspected.pMesh & (size_t)inspected.pShader & (size_t)inspected.pMaterial);
+
     renderResourceExplorer<Mesh>("Mesh", inspected.pMesh);
     renderResourceExplorer<Shader>("Shader", inspected.pShader);
     renderResourceExplorer<Material>("Material", inspected.pMaterial);
+
+    const bool isCurrentlementVoid =
+        !((size_t)inspected.pMesh & (size_t)inspected.pShader & (size_t)inspected.pMaterial);
+
+    // This operation check if element must be added or remove from the the scene render system
+    if (isPreviousElementVoid != isCurrentlementVoid)
+    {
+        if (isPreviousElementVoid)
+        {
+            inspected.pModel->getOwner().pOwnerScene->sceneRenderer.addSubModel(&inspected);
+        }
+        else
+        {
+            inspected.pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(&inspected);
+        }
+    }
 
     /*
     // Drop
@@ -176,7 +202,6 @@ bool Model::inspect()
                 m_subModels.emplace_back(m_subModels.back());
             }
             m_subModels.back().pModel = this;
-            // getOwner().pOwnerScene->sceneRenderer.addSubModel(&m_subModels.back());
         }
 
         ImGui::EndPopup();
@@ -201,7 +226,9 @@ bool Model::inspect()
             {
                 if (ImGui::MenuItem("Remove"))
                 {
-                    it->pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(&(*it));
+                    if ((size_t)it->pMesh & (size_t)it->pShader & (size_t)it->pMaterial) // If not nullptr detectedhh
+                        it->pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(&(*it));
+
                     it        = m_subModels.erase(it);
                     isDestroy = true;
                     --i;

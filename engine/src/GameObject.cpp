@@ -52,7 +52,7 @@ void GameObject::updateSelfAndChildren() noexcept
         }
 
         // Update children
-        for (std::list<GameObject*>::iterator i = children.begin(); i != children.end(); i++)
+        for (std::list<GameObject*>::iterator i = children.begin(); i != children.end();)
         {
             if ((*i)->m_isDead)
             {
@@ -61,12 +61,13 @@ void GameObject::updateSelfAndChildren() noexcept
             }
 
             (*i)->forceUpdate(m_pTransform->getModelMatrix());
+            ++i;
         }
     }
     else
     {
         // Update children
-        for (std::list<GameObject*>::iterator i = children.begin(); i != children.end(); i++)
+        for (std::list<GameObject*>::iterator i = children.begin(); i != children.end();)
         {
             if ((*i)->m_isDead)
             {
@@ -75,6 +76,7 @@ void GameObject::updateSelfAndChildren() noexcept
             }
 
             (*i)->updateSelfAndChildren(m_pTransform->getModelMatrix());
+            ++i;
         }
     }
 }
@@ -119,7 +121,7 @@ void GameObject::forceUpdate() noexcept
     }
 
     // Force update children
-    for (auto&& i = children.begin(); i != children.end(); i++)
+    for (auto&& i = children.begin(); i != children.end();)
     {
         if ((*i)->m_isDead)
         {
@@ -128,6 +130,7 @@ void GameObject::forceUpdate() noexcept
         }
 
         (*i)->forceUpdate(m_pTransform->getModelMatrix());
+        ++i;
     }
 }
 

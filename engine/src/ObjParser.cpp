@@ -35,7 +35,7 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerT
     // SubModule initialization
     GPE_ASSERT(scene->HasMeshes(), "File without mesh");
     Model::CreateArg modelArg;
-    modelArg.subModels.reserve(scene->mNumMeshes);
+    // modelArg.subModels.reserve(scene->mNumMeshes); //Only if std::vector
 
     // Material and texture
     GPE_ASSERT(scene->HasMaterials(), "Mesh without material not supported");

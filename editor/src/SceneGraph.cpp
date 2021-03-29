@@ -106,11 +106,6 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
             ImGui::EndMenu();
         }
 
-        if (ImGui::MenuItem("Move to world", NULL, false))
-        {
-            deferedSetParent.bind(gameObject, gameObject.pOwnerScene->getWorld());
-        }
-
         if (ImGui::MenuItem("Remove", NULL, false))
         {
             gameObject.destroy();
