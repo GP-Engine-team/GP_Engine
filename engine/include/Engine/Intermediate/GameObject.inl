@@ -1,8 +1,7 @@
 ﻿inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
     : m_name{arg.name}, m_transform{DataChunk<TransformComponent>::getInstance()->add(*this, arg.transformArg)},
       m_pComponents{}, pOwnerScene{&scene}, m_parent{arg.parent}
-{
-}
+{}
 
 template <typename T>
 inline void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept
@@ -152,7 +151,9 @@ inline std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild
 template <typename TUniqueComponentType>
 inline void GameObject::destroyUniqueComponentNow() noexcept
 {
-    for (auto&& it = m_pComponents.begin(); it != m_pComponents.end(); ++it)
+    const std::list<Component*>::const_iterator end = m_pComponents.end();
+
+    for (std::list<Component*>::iterator it = m_pComponents.begin(); it != end; ++it)
     {
         TUniqueComponentType* checkedCompPtr = dynamic_cast<TUniqueComponentType*>(*it);
 
