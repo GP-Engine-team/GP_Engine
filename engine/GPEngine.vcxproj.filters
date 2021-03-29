@@ -463,9 +463,6 @@
     <ClInclude Include="include\Engine\Core\Tools\Callback.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\IInspect.hpp">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Serialization\InspectContext.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>

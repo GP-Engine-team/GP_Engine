@@ -16,6 +16,7 @@
 
 #include <string>
 #include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/InspectContext.hpp"
 
 using namespace GPE;
 
@@ -158,7 +159,8 @@ void Editor::renderInspector()
     ImGui::Begin("Inspector");
     if (m_inspectedObject != nullptr)
     {
-        GPE::DataInspector::inspect(*m_inspectedObject);
+        GPE::InspectContext context;
+        GPE::DataInspector::inspect(context, *m_inspectedObject);
     }
     else
     {

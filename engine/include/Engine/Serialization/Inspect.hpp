@@ -9,6 +9,7 @@ struct RFKStruct(PropertySettings(rfk::EEntityKind::Struct | rfk::EEntityKind::C
                                   rfk::EEntityKind::Variable)) Inspect : public rfk::Property
 {
     Inspect() noexcept = default;
+    Inspect(bool callParents) noexcept {};
 
     Inspect_GENERATED
 };

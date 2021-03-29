@@ -255,7 +255,6 @@
     <ClInclude Include="include\Engine\Serialization\DataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPMDataInspector.hpp" />
-    <ClInclude Include="include\Engine\Serialization\IInspect.hpp" />
     <ClInclude Include="include\Engine\Serialization\Inspect.hpp" />
     <ClInclude Include="include\Engine\Serialization\InspectContext.hpp" />
     <ClInclude Include="include\Engine\Serialization\Serialize.hpp" />

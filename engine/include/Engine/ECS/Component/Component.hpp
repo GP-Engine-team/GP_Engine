@@ -9,7 +9,8 @@
 #include "Engine/Serialization/ComponentGen.h"
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/Inspect.hpp"
-#include "Engine/Serialization/IInspect.hpp"
+#include "Engine/Serialization/Serialize.hpp"
+#include "Engine/Serialization/InspectContext.hpp"
 #include "Refureku/Object.h"
 #include "Generated/Component.rfk.h"
 
@@ -20,7 +21,7 @@ namespace GPE RFKNamespace()
 
     class GameObject;
 
-    class RFKClass(Inspect()) Component : public IInspect
+    class RFKClass(Inspect(false)) Component : rfk::Object
     {
     protected:
         GameObject*              m_gameObject; // can not be ref for move
