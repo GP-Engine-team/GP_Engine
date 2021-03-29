@@ -33,9 +33,11 @@ private:
 
 	GPE::ReloadableCpp m_reloadableCpp;
 	Editor             m_editor;
-	AbstractGame* m_game;
+	AbstractGame*	   m_game;
 
 	GLFWwindow* initDearImGui(GLFWwindow* window);
+
+	void initializeDefaultInputs() const;
 
 public:
 	EditorStartup();
