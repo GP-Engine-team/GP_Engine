@@ -39,7 +39,7 @@ namespace GPE RFKNamespace()
 
     bool isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept;
 
-    class RFKClass(Inspect(), ComponentGen) Model : public Component
+    class RFKClass(ComponentGen) Model : public Component
     {
     public:
         struct CreateArg
@@ -64,6 +64,8 @@ namespace GPE RFKNamespace()
         Model& operator                      =(Model&& other);
 
         void moveTowardScene(class Scene & newOwner) override;
+
+        virtual bool inspect();
 
         Model_GENERATED
     };

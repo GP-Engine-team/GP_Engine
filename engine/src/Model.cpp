@@ -106,8 +106,6 @@ void renderResourceExplorer(const char* name, T*& inRes)
 
         inRes = &it->second;
     }
-
-    // GPE::Engine::getInstance()->resourceManager.getKey<Mesh>(inspected.pMesh)->c_str()
 }
 
 template <>
@@ -117,6 +115,7 @@ void GPE::DataInspector::inspect(SubModel& inspected)
     renderResourceExplorer<Shader>("Shader", inspected.pShader);
     renderResourceExplorer<Material>("Material", inspected.pMaterial);
 
+    /*
     // Drop
     if (ImGui::BeginDragDropTarget())
     {
@@ -135,10 +134,88 @@ void GPE::DataInspector::inspect(SubModel& inspected)
                 {
                     IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
                     std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-                    // Engine::getInstance()->resourceManager.add(path.string(), )
                 }
             }
         }
+    }*/
+}
+
+bool Model::inspect()
+{
+    if (!Component::inspect())
+        return false;
+
+    ImGuiTreeNodeFlags nodeFlag =
+        ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+    const bool arrayIsOpen = ImGui::TreeNodeEx((void*)&m_subModels, nodeFlag, "SubModel");
+
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+    {
+        ImGui::OpenPopup(std::string("VectorOption").c_str());
     }
+
+    if (ImGui::BeginPopup(std::string("VectorOption").c_str()))
+    {
+        if (ImGui::MenuItem("Emplace back"))
+        {
+            if (m_subModels.empty())
+            {
+                m_subModels.emplace_back();
+            }
+            else
+            {
+                m_subModels.emplace_back(m_subModels.back());
+            }
+            m_subModels.back().pModel = this;
+            // getOwner().pOwnerScene->sceneRenderer.addSubModel(&m_subModels.back());
+        }
+
+        ImGui::EndPopup();
+    }
+
+    if (arrayIsOpen)
+    {
+        size_t i = 0;
+        for (auto&& it = m_subModels.begin(); it != m_subModels.end(); ++i)
+        {
+            const bool treeIsOpen =
+                ImGui::TreeNodeEx((void*)(intptr_t)i, nodeFlag, std::string("Element " + std::to_string(i)).c_str());
+
+            // Check if user want to remove current element
+            bool isDestroy = false;
+            if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+            {
+                ImGui::OpenPopup(std::string("InternalVectorOption").c_str());
+            }
+
+            if (ImGui::BeginPopup(std::string("InternalVectorOption").c_str()))
+            {
+                if (ImGui::MenuItem("Remove"))
+                {
+                    it->pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(&(*it));
+                    it        = m_subModels.erase(it);
+                    isDestroy = true;
+                    --i;
+                }
+
+                ImGui::EndPopup();
+            }
+
+            if (!isDestroy)
+            {
+                // Check if user inspect the current element
+                if (treeIsOpen)
+                {
+                    DataInspector::inspect(*it);
+                    ImGui::TreePop();
+                }
+
+                ++it;
+            }
+        }
+        ImGui::TreePop();
+    }
+
+    return true;
 }
