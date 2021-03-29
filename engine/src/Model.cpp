@@ -93,10 +93,18 @@ void renderResourceExplorer(const char* name, T*& inRes)
         items.emplace_back(res.first.c_str());
     }
 
-    // Init current position
-    int itemCurrent = 0;
-    for (auto&& it = resourceContainer.begin(); &it->second != inRes; ++itemCurrent, ++it)
-        ;
+    // Init position of the combo box cursor
+    int itemCurrent;
+    if (inRes == nullptr)
+    {
+        itemCurrent = -1;
+    }
+    else
+    {
+        itemCurrent = 0;
+        for (auto&& it = resourceContainer.begin(); &it->second != inRes; ++itemCurrent, ++it)
+            ;
+    }
 
     if (ImGui::Combo(name, &itemCurrent, items.data(), items.size()))
     {
