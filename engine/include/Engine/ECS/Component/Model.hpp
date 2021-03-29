@@ -35,7 +35,7 @@ namespace GPE RFKNamespace()
     };
 
     template <>
-    void DataInspector::inspect(SubModel & inspected);
+    void DataInspector::inspect(GPE::InspectContext & context, SubModel & inspected);
 
     bool isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept;
 
@@ -65,7 +65,7 @@ namespace GPE RFKNamespace()
 
         void moveTowardScene(class Scene & newOwner) override;
 
-        virtual bool inspect();
+        virtual bool inspect(GPE::InspectContext & context);
 
         Model_GENERATED
     };

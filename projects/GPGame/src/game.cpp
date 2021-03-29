@@ -111,11 +111,11 @@ void loadSkyboxResource(ResourceManagerType& resourceManager)
     matSkybox.name     = "Skybox";
     matSkybox.pTexture = &resourceManager.add<Texture>("SkyboxTexture", textureArg);
 
-    modelArg.subModels[0].pMaterial = &resourceManager.add<Material>("SkyboxMaterial", matSkybox);
-    modelArg.subModels[0].pShader   = &resourceManager.add<Shader>("SkyboxShader", "./resources/shaders/vSkybox.vs",
-                                                                 "./resources/shaders/fSkybox.fs", SKYBOX);
-    modelArg.subModels[0].pMesh->setBoundingVolumeType(Mesh::EBoundingVolume::NONE);
-    modelArg.subModels[0].enableBackFaceCulling = false;
+    modelArg.subModels.front().pMaterial = &resourceManager.add<Material>("SkyboxMaterial", matSkybox);
+    modelArg.subModels.front().pShader = &resourceManager.add<Shader>("SkyboxShader", "./resources/shaders/vSkybox.vs",
+                                                                      "./resources/shaders/fSkybox.fs", SKYBOX);
+    modelArg.subModels.front().pMesh->setBoundingVolumeType(Mesh::EBoundingVolume::NONE);
+    modelArg.subModels.front().enableBackFaceCulling = false;
 }
 
 void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)

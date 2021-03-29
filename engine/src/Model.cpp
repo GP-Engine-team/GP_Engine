@@ -124,7 +124,7 @@ void renderResourceExplorer(const char* name, T*& inRes)
 }
 
 template <>
-void GPE::DataInspector::inspect(SubModel& inspected)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspected)
 {
     const bool isPreviousElementVoid =
         !((size_t)inspected.pMesh & (size_t)inspected.pShader & (size_t)inspected.pMaterial);
@@ -174,9 +174,9 @@ void GPE::DataInspector::inspect(SubModel& inspected)
     }*/
 }
 
-bool Model::inspect()
+bool Model::inspect(GPE::InspectContext& context)
 {
-    if (!Component::inspect())
+    if (!Component::inspect(context))
         return false;
 
     ImGuiTreeNodeFlags nodeFlag =
@@ -242,7 +242,7 @@ bool Model::inspect()
                 // Check if user inspect the current element
                 if (treeIsOpen)
                 {
-                    DataInspector::inspect(*it);
+                    DataInspector::inspect(context, *it);
                     ImGui::TreePop();
                 }
 
