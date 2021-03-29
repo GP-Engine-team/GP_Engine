@@ -56,8 +56,8 @@ namespace GPG RFKNamespace()
 		void rotate(const GPM::Vec2& deltaDisplacement)
 		{
 			if (deltaDisplacement.sqrLength() > .16f) {
-				getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation * GPM::Quaternion::angleAxis(-deltaDisplacement.y * .001f, {1.f, .0f, .0f}));
-				getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(-deltaDisplacement.x * .001f, {.0f, 1.f, .0f}) * getOwner().getTransform().getSpacialAttribut().rotation);
+				getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation * GPM::Quaternion::angleAxis(deltaDisplacement.y * .001f, {1.f, .0f, .0f}));
+				getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(deltaDisplacement.x * .001f, {.0f, 1.f, .0f}) * getOwner().getTransform().getSpacialAttribut().rotation);
 			}
 		}
 
