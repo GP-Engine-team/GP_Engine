@@ -1,5 +1,7 @@
 ﻿#include "Editor/Editor.hpp"
 
+#include <string>
+
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
@@ -14,7 +16,7 @@
 #include <imgui/imgui.h>
 
 #include "Engine/Serialization/DataInspector.hpp"
-#include <string>
+#include "Engine/Serialization/InspectContext.hpp"
 
 using namespace GPE;
 
@@ -152,7 +154,8 @@ void Editor::renderInspector()
     ImGui::Begin("Inspector");
     if (m_inspectedObject != nullptr)
     {
-        GPE::DataInspector::inspect(*m_inspectedObject);
+        GPE::InspectContext context;
+        GPE::DataInspector::inspect(context, *m_inspectedObject);
     }
     else
     {

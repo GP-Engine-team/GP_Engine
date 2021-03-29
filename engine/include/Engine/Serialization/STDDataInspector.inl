@@ -1,7 +1,7 @@
 #include "Engine/Serialization/STDDataInspector.hpp"
 
 template <typename T>
-void GPE::DataInspector::inspect(std::vector<T>& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const rfk::Field& info)
 {
     ImGuiTreeNodeFlags nodeFlag =
         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;

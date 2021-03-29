@@ -49,7 +49,7 @@ void generateEngineFiles(const std::string& engineDir)
 
     //You will need to setup parsing settings and generation settings here.
     //Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, true);
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit);
 }
 
 void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
@@ -92,11 +92,11 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
 
     //You will need to setup parsing settings and generation settings here.
     //Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, true);
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit);
 }
 
 
-// First Arg : Engine  (default : "../enigne/") 
+// First Arg : Engine  (default : "../engine/") 
 // Second Arg : Game   (default : "../projects/GPGame/")
 int main(int argc, char** argv)
 {
@@ -119,6 +119,11 @@ int main(int argc, char** argv)
         std::cout << "invalid number of arguments" << std::endl;
         break;
     }
+
+    //const char* p2 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/../../engine/";
+    //const char* p1 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/";
+
+    //generateGameFiles(p1, p2);
 
     return 0;
 }

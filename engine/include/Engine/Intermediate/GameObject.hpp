@@ -14,7 +14,7 @@
 #include "Engine/ECS/Component/TransformComponent.hpp" //TransformComponent
 
 #include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/Inspect.hpp"
+#include "Engine/Serialization/InspectContext.hpp"
 
 // in Inl
 #include "Engine/Core/Debug/Log.hpp"
@@ -25,8 +25,8 @@
 
 namespace GPE RFKNamespace()
 {
-    template <>
-    void DataInspector::inspect(class GameObject & inspected);
+template <>
+void DataInspector::inspect(GPE::InspectContext& context, class GameObject& inspected);
 
     class Scene;
 

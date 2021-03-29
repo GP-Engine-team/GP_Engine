@@ -13,18 +13,18 @@ namespace GPE
 {
 
 template <>
-bool DataInspector::inspect(GPM::SplitTransform& inspected, const rfk::Field& info);
+bool DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const rfk::Field& info);
 template <>
-bool DataInspector::inspect(GPM::SplitTransform& inspected, const char* name);
+bool DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const char* name);
 
 template <>
-bool DataInspector::inspect(GPM::Vector3& inspected, const rfk::Field& info);
+bool DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const rfk::Field& info);
 template <>
-bool DataInspector::inspect(GPM::Vector3& inspected, const char* name);
+bool DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const char* name);
 
 template <>
-bool DataInspector::inspect(GPM::Quaternion& inspected, const rfk::Field& info);
+bool DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const rfk::Field& info);
 template <>
-bool DataInspector::inspect(GPM::Quaternion& inspected, const char* name);
+bool DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const char* name);
 
 } // namespace GPE
