@@ -6,23 +6,23 @@
 #include <windows.h>
 
 template <>
-bool GPE::DataInspector::inspect(GPM::SplitTransform& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(inspected, info.name.c_str());
+    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPM::SplitTransform& inspected, const char* name)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const char* name)
 {
     bool b = false;
-    b |= DataInspector::inspect(inspected.position,  "Position");
-    b |= DataInspector::inspect(inspected.scale, "Scale");
-    b |= DataInspector::inspect(inspected.rotation, "Rotation");
+    b |= DataInspector::inspect(context, inspected.position,  "Position");
+    b |= DataInspector::inspect(context, inspected.scale, "Scale");
+    b |= DataInspector::inspect(context, inspected.rotation, "Rotation");
     return b;
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPM::Vector3& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const rfk::Field& info)
 {
     Slider const* property = info.getProperty<Slider>();
     if (property)
@@ -31,12 +31,12 @@ bool GPE::DataInspector::inspect(GPM::Vector3& inspected, const rfk::Field& info
     }
     else
     {
-        return DataInspector::inspect(inspected, info.name.c_str());
+        return DataInspector::inspect(context, inspected, info.name.c_str());
     }
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPM::Vector3& inspected, const char* name)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const char* name)
 {
     startProperty(name);
     bool hasChanged = ImGui::DragFloat3("", inspected.e);
@@ -46,17 +46,17 @@ bool GPE::DataInspector::inspect(GPM::Vector3& inspected, const char* name)
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPM::Quaternion& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(inspected, info.name.c_str());
+    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 
 template <>
-bool GPE::DataInspector::inspect(GPM::Quaternion& inspected, const char* name)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const char* name)
 {
     GPM::Vec3 asRotation = inspected.eulerAngles() * 180.f / PI;     // to degrees
-    bool hasChanged = GPE::DataInspector::inspect(asRotation, name); // display as euler angles
+    bool hasChanged = GPE::DataInspector::inspect(context, asRotation, name); // display as euler angles
     inspected = GPM::Quaternion::fromEuler(asRotation * PI / 180.f); // to radians
 
     return hasChanged;

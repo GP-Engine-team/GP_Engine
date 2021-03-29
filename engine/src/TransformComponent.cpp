@@ -21,11 +21,11 @@ TransformComponent& TransformComponent::operator=(TransformComponent&& other)
     return static_cast<TransformComponent&>(Component::operator=(std::move(other)));
 }
 
-void TransformComponent::inspect()
+void TransformComponent::inspect(GPE::InspectContext& context)
 {
-    Component::inspect();
+    Component::inspect(context);
 
-    if (::GPE::DataInspector::inspect(m_spaceAttribut, "Transform"))
+    if (::GPE::DataInspector::inspect(context, m_spaceAttribut, "Transform"))
     {
         m_isDirty = true;
     }

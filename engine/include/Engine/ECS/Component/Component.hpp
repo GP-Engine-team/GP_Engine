@@ -16,7 +16,7 @@
 namespace GPE RFKNamespace()
 {
     template <>
-    void DataInspector::inspect(class Component & inspected);
+    void DataInspector::inspect(GPE::InspectContext& context, class Component & inspected);
 
     class GameObject;
 

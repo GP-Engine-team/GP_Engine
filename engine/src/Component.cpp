@@ -4,7 +4,7 @@
 #include "Engine/ECS/Component/Component.hpp"
 
 template <>
-void GPE::DataInspector::inspect(Component& inspected)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, Component& inspected)
 {
     const char* name = inspected.getArchetype().name.c_str();
 
@@ -12,6 +12,6 @@ void GPE::DataInspector::inspect(Component& inspected)
         return;
     else
     {
-        inspected.inspect();
+        inspected.inspect(context);
     }
 }

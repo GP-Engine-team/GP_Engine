@@ -15,8 +15,8 @@ protected:
     std::string generateClassFooterCode(kodgen::EntityInfo const& entity, kodgen::ComplexProperty const& property,
                                         rfk::PropertyCodeGenClassFooterData& data) const noexcept override;
 
-    static std::string generateSerializeFunction(const std::string&             argClassName,
-                                                 const kodgen::StructClassInfo& entity) noexcept;
+    //static std::string generateSerializeFunction(const std::string&             argClassName,
+    //                                             const kodgen::StructClassInfo& entity) noexcept;
 
 public:
     SerializePropertyRule() noexcept;

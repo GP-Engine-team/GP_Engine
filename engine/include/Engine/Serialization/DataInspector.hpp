@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Refureku/TypeInfo/Variables/Field.h"
+#include "Engine/Serialization/InspectContext.hpp"
 
 namespace GPE
 {
@@ -10,7 +11,7 @@ namespace DataInspector
     void endProperty();
 
     template <typename T>
-    void inspect(T& inspected)
+    void inspect(GPE::InspectContext& context, T& inspected)
     {
         inspected.inspect();
     }
@@ -23,7 +24,7 @@ namespace DataInspector
      * @return True if the inspected element has been modified, false otherwise.
     */
     template <typename T>
-    bool inspect(T& inspected, const char* name)
+    bool inspect(GPE::InspectContext& context, T& inspected, const char* name)
     {
         startProperty(name);
         const bool hasBeenModified = GPE::DataInspector::inspect(inspected);
@@ -32,7 +33,7 @@ namespace DataInspector
     }
 
     template <typename T>
-    void inspect(T& inspected, const std::string& name)
+    void inspect(GPE::InspectContext& context, T& inspected, const std::string& name)
     {
         DataInspector::inspect(inspected, name.c_str());
     }
@@ -45,9 +46,9 @@ namespace DataInspector
      * @return True if the inspected element has been modified, false otherwise.
     */
     template <typename T>
-    bool inspect(T& inspected, const rfk::Field& info)
+    bool inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
     {
-        inspected.inspect();
+        inspected.inspect(context);
         return true;
     }
 };
