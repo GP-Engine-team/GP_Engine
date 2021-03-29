@@ -15,7 +15,7 @@ namespace GPE
 void Camera::updateView()
 {
     m_viewMatrix           = getOwner().getTransform().getModelMatrix().inversed();
-    m_viewProjectionMatrix = m_viewMatrix * m_projection;
+    m_viewProjectionMatrix = m_projection * m_viewMatrix;
 }
 
 void Camera::updateProjection()
