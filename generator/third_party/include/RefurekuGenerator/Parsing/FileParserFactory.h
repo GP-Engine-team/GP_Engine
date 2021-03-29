@@ -11,7 +11,7 @@
 
 #include "RefurekuGenerator/Properties/CustomInstantiatorPropertyRule.h"
 #include "RefurekuGenerator/Properties/PropertySettingsPropertyRule.h"
-//#include "RefurekuGenerator/Properties/TestPropertyRule.h"
+#include "RefurekuGenerator/Properties/TestPropertyRule.h"
 
 namespace rfk
 {
@@ -22,7 +22,10 @@ namespace rfk
 			/** Native properties. */
 			CustomInstantiatorPropertyRule	_customInstantiatorPropertyRule;
 			PropertySettingsPropertyRule	_propertySettingsPropertyRule;
-			//TestPropertyRule				_testPropertyRule;
+			
+			TestPropertyRule				_testPropertyRule;
+			TestPropertyRule2				_testPropertyRule2;
+			TestPropertyRule3				_testPropertyRule3;
 
 		public:
 			FileParserFactory()							noexcept;

@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ComponentGenerator.cpp" />
+    <ClCompile Include="src\GenerationUtilities.cpp" />
     <ClCompile Include="src\InspectPropertyRule.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SerializePropertyRule.cpp" />
@@ -339,6 +340,7 @@
     <ClInclude Include="..\engine\third_party\include\Refureku\Refureku\Utility\TypeTraitsMacros.h" />
     <ClInclude Include="include\ComponentGenerator.h" />
     <ClInclude Include="include\CustomFileParserFactory.hpp" />
+    <ClInclude Include="include\GenerationUtilities.hpp" />
     <ClInclude Include="include\InspectPropertyRule.h" />
     <ClInclude Include="include\SerializePropertyRule.h" />
   </ItemGroup>

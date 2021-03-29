@@ -420,6 +420,7 @@
     <ClInclude Include="include\Engine\Serialization\STDDataInspector.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Callback.hpp" />
     <ClInclude Include="third_party\imgui\imconfig.h">
       <Filter>third_party\ImGui</Filter>
     </ClInclude>
@@ -461,6 +462,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Tools\Callback.hpp">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\InspectContext.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

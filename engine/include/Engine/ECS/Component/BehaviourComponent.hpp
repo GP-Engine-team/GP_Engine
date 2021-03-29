@@ -14,7 +14,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(),ComponentGen) BehaviourComponent : public Component
+    class RFKClass(Inspect(), ComponentGen, Serialize()) BehaviourComponent : public Component
     {
     protected:
         RFKField(Inspect()) bool m_isUpdated      = false;

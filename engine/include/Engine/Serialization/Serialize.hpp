@@ -9,6 +9,7 @@ struct RFKStruct(PropertySettings(rfk::EEntityKind::Struct | rfk::EEntityKind::C
                                   rfk::EEntityKind::Variable)) Serialize : public rfk::Property
 {
     Serialize() noexcept = default;
+    Serialize(bool callParents) noexcept {};
 
     Serialize_GENERATED
 };

@@ -254,16 +254,17 @@ std::string GameObject::getAbsolutePath() const noexcept
 }
 
 template <>
-void GPE::DataInspector::inspect(class GameObject& inspected)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, class GameObject& inspected)
 {
-    inspected.inspect();
+    inspected.inspect(context);
 
     std::list<Component*>& comps = inspected.getComponents();
     unsigned int           i     = 0;
     for (Component* comp : comps)
     {
         ImGui::PushID(i);
-        comp->inspect();
+        //comp->inspect();
+        GPE::DataInspector::inspect(context, *comp);
         ImGui::PopID();
         i++;
     }
