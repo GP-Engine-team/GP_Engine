@@ -29,16 +29,16 @@ namespace GPG RFKNamespace()
 			, input(owner.addComponent<GPE::InputComponent>())
 		{
 			enableUpdate(true);
-			input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyScript::up);
+			input.bindAction("up", EKeyMode::KEY_DOWN, this, &MyScript::up);
 			input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyScript::down);
 			input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyScript::right);
 			input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyScript::left);
 			input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyScript::forward);
-			input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyScript::back);
+			input.bindAction("backward", EKeyMode::KEY_DOWN, this, &MyScript::backward);
 			input.bindAction("exit", EKeyMode::KEY_DOWN, this, &MyScript::leave);
 			input.bindAction("sprint", EKeyMode::KEY_DOWN, this, &MyScript::sprint);
 
-			speed = 1;
+			speed = 1.f;
 		}
 
 		MyScript() noexcept = delete;
@@ -55,9 +55,9 @@ namespace GPG RFKNamespace()
 
 		void rotate(const GPM::Vec2& deltaDisplacement)
 		{
-			if (deltaDisplacement.length() > 0.4) {
-				getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation * GPM::Quaternion::angleAxis(-deltaDisplacement.y * 0.001f, { 1, 0, 0 }));
-				getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(-deltaDisplacement.x * 0.001f, { 0, 1, 0 }) * getOwner().getTransform().getSpacialAttribut().rotation);
+			if (deltaDisplacement.sqrLength() > .16f) {
+				getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation * GPM::Quaternion::angleAxis(-deltaDisplacement.y * .001f, {1.f, .0f, .0f}));
+				getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(-deltaDisplacement.x * .001f, {.0f, 1.f, .0f}) * getOwner().getTransform().getSpacialAttribut().rotation);
 			}
 		}
 
@@ -68,22 +68,22 @@ namespace GPG RFKNamespace()
 
 		inline void down()
 		{
-			getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -1 * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -speed);
 		}
 
 		inline void forward()
 		{
-			getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -1 * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -speed);
 		}
 
-		inline void back()
+		inline void backward()
 		{
 			getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * speed);
 		}
 
 		inline void left()
 		{
-			getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -1 * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -speed);
 		}
 
 		inline void right()
@@ -98,14 +98,14 @@ namespace GPG RFKNamespace()
 
 		inline void sprint()
 		{
-			speed = 2;
+			speed = 2.f;
 		}
 
 		void update(float deltaTime) final
 		{
-			speed = 1;
+			speed = 1.f;
 
-			if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.length2() > 0.00001)
+			if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > .00001f)
 				rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
 		}
 
