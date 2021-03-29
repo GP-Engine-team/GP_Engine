@@ -310,6 +310,7 @@
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
+    <ClCompile Include="src\FreeFly.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\InputComponent.cpp" />
     <ClCompile Include="src\InputManagerGLFW.cpp" />
@@ -372,6 +373,7 @@
     <None Include="include\Engine\Resources\Material.inl" />
     <None Include="include\Engine\Resources\Mesh.inl" />
     <None Include="include\Engine\Resources\ResourcesManager.inl" />
+    <None Include="include\Engine\Resources\Script\FreeFly.inl" />
     <None Include="include\Engine\Resources\Shader.inl" />
     <None Include="include\Engine\Resources\Texture.inl" />
     <None Include="include\Engine\Serialization\xml\xmlLoader.inl" />

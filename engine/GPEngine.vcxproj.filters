@@ -126,6 +126,9 @@
     <ClCompile Include="src\Serialization\STDDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\FreeFly.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -404,6 +407,7 @@
     <ClInclude Include="include\Engine\Serialization\STDDataInspector.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Callback.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -494,6 +498,9 @@
     </None>
     <None Include="include\Engine\ECS\Component\Light\Light.inl">
       <Filter>include\ECS\Component\Light</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Script\FreeFly.inl">
+      <Filter>include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
