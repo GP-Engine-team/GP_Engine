@@ -62,7 +62,7 @@ public:
     template <typename... Args>
     TStoredData& add(Args&&... args) noexcept;
 
-    void destroy(const TStoredData* dataToDestroy) noexcept;
+    void destroy(TStoredData* const dataToDestroy) noexcept;
 
     /**
      * @brief This is the static method that controls the access to the singleton
