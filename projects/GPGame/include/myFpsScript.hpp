@@ -9,15 +9,12 @@
 #include <Engine/ECS/Component/AudioComponent.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/ECS/Component/InputComponent.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
-#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/ECS/System/InputManagerGLFW.hpp>
 #include <Engine/ECS/System/PhysXSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
-#include <PxForceMode.h>
-#include <characterkinematic/PxCapsuleController.h>
+#include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 
 #include <iostream>
 
@@ -28,11 +25,10 @@ class MyFpsScript : public GPE::BehaviourComponent
 public:
     inline MyFpsScript(GPE::GameObject& owner) noexcept
         : GPE::BehaviourComponent(owner), input(owner.addComponent<GPE::InputComponent>()),
-          source(owner.addComponent<GPE::AudioComponent>()), collider(owner.addComponent<GPE::SphereCollider>()),
-          rigidbody(owner.addComponent<GPE::RigidbodyDynamic>())
+        source(owner.addComponent<GPE::AudioComponent>()), controller(owner.addComponent<GPE::CharacterController>())
     {
         enableUpdate(true);
-        input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyFpsScript::jump);
+        input.bindAction("jump", EKeyMode::KEY_PRESSED, this, &MyFpsScript::jump);
         input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyFpsScript::right);
         input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyFpsScript::left);
         input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyFpsScript::forward);
@@ -54,31 +50,23 @@ public:
         source.setSound("Western", "Western", sourceSettings);
         source.playSound("Western");
 
-        collider.isVisible = true;
-        collider.setRadius(10.f);
-        rigidbody.collider = &collider;
-        rigidbody.rigidbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, true);
-        rigidbody.rigidbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
-        rigidbody.rigidbody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, true);
-
-        physx::PxCapsuleControllerDesc desc;
-
-        controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
+        controller.setHasGravity(true);
+        controller.setSpeed(0.1);
     }
 
     MyFpsScript() noexcept                         = delete;
     MyFpsScript(const MyFpsScript& other) noexcept = delete;
     MyFpsScript(MyFpsScript&& other) noexcept      = default;
-    virtual ~MyFpsScript() noexcept                = default;
+    virtual ~MyFpsScript() noexcept = default;
+
     MyFpsScript& operator=(MyFpsScript const& other) noexcept = delete;
     MyFpsScript& operator=(MyFpsScript&& other) noexcept = delete;
 
     GPE::InputComponent&   input;
     GPE::AudioComponent&   source;
-    GPE::SphereCollider&   collider;
-    GPE::RigidbodyDynamic& rigidbody;
-    physx::PxController*   controller;
-    float                  speed = 100;
+    GPE::CharacterController& controller;
+
+    
 
     void rotate(const GPM::Vec2& deltaDisplacement)
     {
@@ -93,36 +81,43 @@ public:
 
     inline void jump()
     {
-        getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(physx::PxVec3{0, 1, 0} * speed,
-                                                                              physx::PxForceMode::eFORCE);
+        /*getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(physx::PxVec3{0, 1, 0} * speed,
+                                                                              physx::PxForceMode::eFORCE);*/
+        /*GPM::Vec3 vec = getOwner().getTransform().getVectorUp();
+        controller.move(vec,100);*/
+        controller.controller->getActor()->addForce(physx::PxVec3{ 0, 1, 0 } *10000,physx::PxForceMode::eFORCE);
     }
 
     inline void forward()
     {
-        physx::PxVec3 vec = GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorForward());
+        GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
         vec.y             = 0;
-        rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
+        controller.move(-vec);
+        //rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
     }
 
     inline void back()
     {
-        physx::PxVec3 vec = GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorForward());
-        vec.y             = 0;
-        rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
+        GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
+        vec.y = 0;
+        controller.move(vec);
+        //rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
 
     inline void left()
     {
-        physx::PxVec3 vec = GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorRight());
-        vec.y             = 0;
-        rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
+        GPM::Vec3 vec = getOwner().getTransform().getVectorRight();
+        vec.y = 0;
+        controller.move(-vec);
+        //rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
     }
 
     inline void right()
     {
-        physx::PxVec3 vec = GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorRight());
-        vec.y             = 0;
-        rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
+        GPM::Vec3 vec = getOwner().getTransform().getVectorRight();
+        vec.y = 0;
+        controller.move(vec);
+        //rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
 
     inline void leave()
@@ -132,27 +127,28 @@ public:
 
     inline void sprintStart()
     {
-        speed *= 2.f;
+        controller.setSpeed(controller.getSpeed() * 2.f);
     }
 
     inline void sprintEnd()
     {
-        speed /= 2.f;
+        controller.setSpeed(controller.getSpeed() / 2.f);
     }
 
     inline void growUpSphereCollider()
     {
-        collider.setRadius(collider.getRadius() + 1);
+        //collider.setRadius(collider.getRadius() + 1);
     }
 
     inline void growDownSphereCollider()
     {
-        collider.setRadius(collider.getRadius() - 1);
+        //collider.setRadius(collider.getRadius() - 1);
     }
 
     void update(float deltaTime) final
     {
         rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
+        controller.update(deltaTime);
     }
 };
 } /*namespace GPG*/

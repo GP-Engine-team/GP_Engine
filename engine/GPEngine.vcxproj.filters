@@ -139,6 +139,9 @@
     <ClCompile Include="third_party\src\OpenAL_Soft_Debug.cpp">
       <Filter>third_party</Filter>
     </ClCompile>
+    <ClCompile Include="src\Physics\CharacterController\CharacterController.cpp">
+      <Filter>src\Physics\CharacterController</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
@@ -432,6 +435,9 @@
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp">
       <Filter>third_party</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\CharacterController\CharacterController.hpp">
+      <Filter>include\Physics\CharacterController</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -572,6 +578,12 @@
     </Filter>
     <Filter Include="third_party\gpm">
       <UniqueIdentifier>{a2407ea9-052e-4dda-94fb-8a6a09d22eba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Physics\CharacterController">
+      <UniqueIdentifier>{316718b7-fbdb-47d7-9c33-5efe87ec9f4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Physics\CharacterController">
+      <UniqueIdentifier>{67371112-0edc-4f27-b001-58415d8398de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

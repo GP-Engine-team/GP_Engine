@@ -100,7 +100,10 @@ void PhysXSystem::advance(const double& deltaTime) noexcept
     for (PxU32 i = 0; i < nbActiveActors; ++i)
     {
         RigidbodyDynamic* rigidbody = static_cast<RigidbodyDynamic*>(activeActors[i]->userData);
-        rigidbody->update();
+        if (rigidbody)
+        {
+            rigidbody->update();
+        }
     }
 
     drawDebugScene();

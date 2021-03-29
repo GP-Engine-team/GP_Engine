@@ -144,9 +144,9 @@ Game::Game()
     iManager.bindInput(GLFW_KEY_KP_ADD, "growUpCollider");
     iManager.bindInput(GLFW_KEY_KP_SUBTRACT, "growDownCollider");
 
-    GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}}};
+    GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 50.f, 0.f}}};
     GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 50.f}}};
-    GameObject::CreateArg groundArg{"GroundArg", TransformComponent::CreateArg{GPM::Vec3{0.f, -50.f, 0.f}}};
+    GameObject::CreateArg groundArg{"GroundArg", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}}};
 
     Camera::PerspectiveCreateArg camCreateArg;
     camCreateArg.aspect = Camera::computeAspect(900, 600);
@@ -162,9 +162,9 @@ Game::Game()
     rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
                    "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
 
+    GameObject& ground    = sm.getCurrentScene()->world.addChild<GameObject>(groundArg);
     GameObject& player    = sm.getCurrentScene()->world.addChild<GameObject>(playerArg);
     GameObject& testPhysX = sm.getCurrentScene()->world.addChild<GameObject>(testPhysXArg);
-    GameObject& ground    = sm.getCurrentScene()->world.addChild<GameObject>(groundArg);
 
     player.addComponent<Camera>(camCreateArg);
     player.addComponent<GPG::MyFpsScript>();
