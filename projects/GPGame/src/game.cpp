@@ -152,10 +152,6 @@ Game::Game()
     player.addComponent<Camera>(camCreateArg);
     player.addComponent<GPG::MyScript>();
 
-    PointLight::CreateArg lightArg{
-        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0, 0.0014, 0.000007};
-    PointLight& light = player.addComponent<PointLight>(lightArg);
-
     rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs",
                    AMBIANTE_COLOR_ONLY);
     rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",

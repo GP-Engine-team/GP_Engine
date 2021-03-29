@@ -328,7 +328,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                     // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
                     continue;
                 }
-                rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
+                // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMaterial(*pSubModel->pShader, *pSubModel->pMaterial);
