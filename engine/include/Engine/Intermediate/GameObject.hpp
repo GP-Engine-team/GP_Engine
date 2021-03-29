@@ -34,6 +34,8 @@ class Scene;
 class RFKClass(Inspect()) GameObject
 {
 public:
+    using Children = std::list<std::unique_ptr<GameObject>>;
+
     struct CreateArg
     {
         std::string                   name = "World";
