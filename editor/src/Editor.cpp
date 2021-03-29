@@ -15,6 +15,7 @@
 #include "GLFW/glfw3.h"
 
 #include <string>
+#include "Engine/Serialization/DataInspector.hpp"
 
 using namespace GPE;
 

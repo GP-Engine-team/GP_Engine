@@ -7,13 +7,11 @@
 #pragma once
 
 #include <functional>
-#include <iostream>
 #include <string>
 #include <unordered_map>
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
-#include "GPM/Vector3.hpp"
 
 // Generated
 #include "Generated/InputComponent.rfk.h"

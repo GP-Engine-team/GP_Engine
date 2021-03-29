@@ -34,8 +34,6 @@ public:
     inline void right();
     inline void sprint();
 
-    void disable();
-
     void update(float deltaTime) final;
 
     FreeFly& operator=(FreeFly&& other) noexcept;

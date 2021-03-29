@@ -3,45 +3,93 @@
 #include "imgui.h"
 #include "Engine/Serialization/Slider.hpp"
 
-template <>
-static void GPE::DataInspector::inspect(int& inspected, const rfk::Field& info)
+template <typename T>
+bool GPE::DataInspector::inspect(std::vector<T>& inspected, const rfk::Field& info)
 {
-    ImGui::InputInt(info.name.c_str(), &inspected);
+    
+    return false;
 }
 
 template <>
-static void GPE::DataInspector::inspect(float& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(int& inspected, const rfk::Field& info)
+{
+    return GPE::DataInspector::inspect(inspected, info.name.c_str());
+}
+
+template <>
+bool GPE::DataInspector::inspect(int& inspected, const char* name)
+{
+    startProperty(name);
+    bool hasChanged = ImGui::InputInt("", &inspected);
+    endProperty();
+    return hasChanged;
+}
+
+template <>
+bool GPE::DataInspector::inspect(float& inspected, const rfk::Field& info)
 {
     Slider const* property = info.getProperty<Slider>();
     if (property)
     {
-        ImGui::SliderFloat(info.name.c_str(), &inspected, property->min, property->max);
+        startProperty(info.name.c_str());
+        bool hasChanged = ImGui::SliderFloat(info.name.c_str(), &inspected, property->min, property->max);
+        endProperty();
+        return hasChanged;
     }
     else
     {
-        ImGui::InputFloat(info.name.c_str(), &inspected, 0.1);
+        return GPE::DataInspector::inspect(inspected, info.name.c_str());
     }
 }
 
 template <>
-static void GPE::DataInspector::inspect(std::string& t, const rfk::Field& info)
+bool GPE::DataInspector::inspect(float& inspected, const char* name)
 {
+    startProperty(name);
+    bool hasChanged = ImGui::InputFloat("", &inspected);
+    endProperty();
+    return hasChanged;
+}
+
+template <>
+bool GPE::DataInspector::inspect(std::string& inspected, const rfk::Field& info)
+{
+    return GPE::DataInspector::inspect(inspected, info.name.c_str());
+}
+
+template <>
+bool GPE::DataInspector::inspect(std::string& inspected, const char* name)
+{
+    startProperty(name);
+
     // TODO : to optimize / remove fixed size
     constexpr size_t bufferSize = 256;
     char             buffer[bufferSize];
-    strcpy_s(buffer, t.c_str());
-    ImGui::InputText(info.name.c_str(), buffer, bufferSize);
-    t = buffer;
+    strcpy_s(buffer, inspected.c_str());
+    bool hasChanged = ImGui::InputText("", buffer, bufferSize);
+    inspected = buffer;
+
+    endProperty();
+    return hasChanged;
 }
 
 template <>
-static void GPE::DataInspector::DataInspector::inspect(bool& t, const rfk::Field& info)
+bool GPE::DataInspector::inspect(bool& inspected, const rfk::Field& info)
 {
-    ImGui::Checkbox(info.name.c_str(), &t);
+    return GPE::DataInspector::inspect(inspected, info.name.c_str());
 }
 
 template <>
-static void GPE::DataInspector::inspect(std::string& t)
+bool GPE::DataInspector::inspect(bool& inspected, const char* name)
 {
-    ImGui::Text(t.c_str());
+    startProperty(name);
+    bool hasChanged = ImGui::Checkbox("", &inspected);
+    endProperty();
+    return hasChanged;
+}
+
+template <>
+void GPE::DataInspector::inspect(std::string& t)
+{
+    return ImGui::Text(t.c_str());
 }
