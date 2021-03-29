@@ -6,13 +6,10 @@
 
 #pragma once
 
-#include <string> //std::string
-#include <vector> //std::vectorA
+#include <vector> //std::vector
 
 #include "Engine/Core/Tools/ClassUtility.hpp"
 #include "Engine/ECS/Component/Light/Light.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "GPM/Vector3.hpp"
 
 // Generated
 #include "Generated/PointLight.rfk.h"
@@ -46,11 +43,11 @@ namespace GPE RFKNamespace()
         PointLight& operator=(PointLight const& other) = delete;
         PointLight& operator=(PointLight&& other) = default;
 
-        PointLight(GameObject & owner) noexcept;
+        PointLight(class GameObject & owner) noexcept;
 
-        PointLight(GameObject & owner, const CreateArg& arg) noexcept;
+        PointLight(class GameObject & owner, const CreateArg& arg) noexcept;
 
-        PointLight(GameObject & owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
+        PointLight(class GameObject & owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
                    const SpecularComponent& specular, float constant, float linear, float quadratic) noexcept;
 
         void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept override;

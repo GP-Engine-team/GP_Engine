@@ -1,7 +1,7 @@
 ﻿#include "Engine/ECS/Component/AudioComponent.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/ECS/System/SoundSystem.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+#include "Engine/Engine.hpp"
 
 using namespace GPE;
 using namespace std;
@@ -18,7 +18,7 @@ AudioComponent::AudioComponent(GameObject& owner) noexcept : Component(owner)
 
         else
         {
-            Log::logAddMsg("Enumeration supported ...");
+            Log::getInstance()->logAddMsg("Enumeration supported ...");
         }
     }
 
@@ -46,12 +46,20 @@ AudioComponent::AudioComponent(GameObject& owner) noexcept : Component(owner)
     m_key = SoundSystem::getInstance()->addComponent(this);
 }
 
-AudioComponent::AudioComponent(const AudioComponent& other) noexcept : Component(other.m_gameObject)
+AudioComponent& AudioComponent::operator=(AudioComponent&& other) noexcept
 {
-}
+    m_enumeration        = std::move(other.m_enumeration);
+    m_device             = std::move(other.m_device);
+    m_openALContext      = std::move(other.m_openALContext);
+    m_contextMadeCurrent = std::move(other.m_contextMadeCurrent);
+    m_closed             = std::move(other.m_closed);
+    m_key                = std::move(other.m_key);
+    sources              = std::move(other.sources);
 
-AudioComponent::AudioComponent(AudioComponent&& other) noexcept : Component(other.m_gameObject)
-{
+    SoundSystem::getInstance()->updateComponent(this);
+
+    Component::operator=(std::move(other));
+    return *this;
 }
 
 void AudioComponent::setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept
@@ -66,7 +74,7 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity[0], settings.velocity[1], settings.velocity[2]);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
     AL_CALL(alSourcei, source->source, AL_BUFFER,
-            SystemsManager::getInstance()->resourceManager.get<Sound::Buffer>(soundName)->buffer);
+            Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName)->buffer);
 }
 
 AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept

@@ -84,7 +84,7 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
                 gameObject.addComponent<Model>();
 
             // if (ImGui::MenuItem("Audio component"))
-            //    gameObject.addComponent<AudioComponent>();
+            // gameObject.addComponent<AudioComponent>();
 
             if (ImGui::MenuItem("Input component"))
                 gameObject.addComponent<InputComponent>();
@@ -97,8 +97,8 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
                 if (ImGui::MenuItem("PointLight"))
                     gameObject.addComponent<PointLight>();
 
-                // if (ImGui::MenuItem("Spot light"))
-                // gameObject.addComponent<SpotLight>();
+                if (ImGui::MenuItem("Spot light"))
+                    gameObject.addComponent<SpotLight>();
 
                 ImGui::EndMenu();
             }

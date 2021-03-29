@@ -308,6 +308,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AbstractGame.cpp" />
+    <ClCompile Include="src\AudioComponent.cpp" />
     <ClCompile Include="src\BehaviourComponent.cpp" />
     <ClCompile Include="src\BehaviourSystem.cpp" />
     <ClCompile Include="src\Camera.cpp" />

@@ -10,8 +10,6 @@
 
 #include "Engine/Core/Tools/ClassUtility.hpp"
 #include "Engine/ECS/Component/Light/PointLight.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "GPM/Vector3.hpp"
 
 // Generated
 #include "Generated/SpotLight.rfk.h"
@@ -48,6 +46,8 @@ namespace GPE RFKNamespace()
         SpotLight& operator=(SpotLight const& other) = delete;
         SpotLight& operator=(SpotLight&& other) = default;
 
+        SpotLight(class GameObject & owner) noexcept;
+
         /**
          * @brief Construct a new Spot Light object
          *
@@ -63,11 +63,11 @@ namespace GPE RFKNamespace()
          * @param cutOffExponent    : in degres : specifies the spotlight's radius attenuation
          * @param name
          */
-        SpotLight(GameObject & owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
+        SpotLight(class GameObject & owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
                   const SpecularComponent& specular, float constant, float linear, float quadratic, float cutOff,
                   float cutOffExponent);
 
-        SpotLight(GameObject & owner, const CreateArg& arg);
+        SpotLight(class GameObject & owner, const CreateArg& arg);
 
         void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept final;
 

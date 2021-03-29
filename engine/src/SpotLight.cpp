@@ -1,4 +1,6 @@
 ﻿#include "Engine/ECS/Component/Light/SpotLight.hpp"
+#include "Engine/Intermediate/DataChunk.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
 #include "GPM/Constants.hpp"
 
 using namespace GPE;
@@ -6,6 +8,10 @@ using namespace GPE;
 SpotLight::~SpotLight()
 {
     DataChunk<SpotLight>::getInstance()->destroy(this);
+}
+
+SpotLight::SpotLight(GameObject& owner) noexcept : SpotLight(owner, CreateArg{})
+{
 }
 
 SpotLight::SpotLight(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,

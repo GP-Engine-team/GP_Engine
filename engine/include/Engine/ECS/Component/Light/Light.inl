@@ -26,7 +26,8 @@ Light& Light::operator=(Light&& other)
 
     getOwner().pOwnerScene->sceneRenderer.updateLightPointer(this, &other);
 
-    return static_cast<Light&>(Component::operator=(std::move(other)));
+    Component::operator=(std::move(other));
+    return *this;
 }
 
 const AmbiantComponent& Light::getAmbient() const noexcept

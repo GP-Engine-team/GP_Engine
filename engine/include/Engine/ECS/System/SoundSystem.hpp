@@ -40,6 +40,8 @@ public:
      */
     inline int addComponent(AudioComponent* input) noexcept;
 
+    void updateComponent(AudioComponent* newPointorBehaviour) noexcept;
+
     /**
      * @brief remove input component to the component list
      * @param key

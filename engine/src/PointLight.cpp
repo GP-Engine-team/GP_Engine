@@ -1,5 +1,8 @@
 ﻿#include "Engine/ECS/Component/Light/PointLight.hpp"
 
+#include "Engine/Intermediate/DataChunk.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
+
 using namespace GPE;
 
 PointLight::~PointLight()
