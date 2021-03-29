@@ -23,7 +23,7 @@
 namespace GPG RFKNamespace() 
 {
 
-	class RFKClass(Inspect()/*, Serialize()*/) MyScript : public GPE::BehaviourComponent {
+	class RFKClass(Inspect(), Serialize()) MyScript : public GPE::BehaviourComponent {
 	public:
 		inline MyScript(GPE::GameObject& owner) noexcept
 			: GPE::BehaviourComponent(owner)
@@ -52,7 +52,7 @@ namespace GPG RFKNamespace()
 
 		GPE::InputComponent& input;
 
-		RFKField(Inspect(), Slider(0,1))
+		RFKField(Serialize(), Inspect(), Slider(0, 1))
 		float speed;
 
 		void rotate(const GPM::Vec2& deltaDisplacement)

@@ -62,7 +62,8 @@ std::string SerializePropertyRule::generateClassFooterCode(kodgen::EntityInfo co
         //    generateSerializeFunction(p, var);
         //}
         return "public:" +
-               generateSerializationFunction(var, property, "inspect", "InspectContext", "GPE::DataInspector::inspect");
+               generateSerializationFunction(var, property, "save", "XmlSaver", "GPE::save") +
+               generateSerializationFunction(var, property, "load", "XmlLoader", "GPE::load");
     }
     return "";
 }

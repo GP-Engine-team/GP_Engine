@@ -9,12 +9,15 @@ std::string generateSerializationFunction(const kodgen::StructClassInfo& entity,
 {
     std::string serializeInside = "";
 
-    std::string callParents = "";
-    for (auto& parent : entity.parents)
+    if (property.subProperties.empty() || property.subProperties[0] == "true")
     {
-        callParents += parent.type.getName() + "::" + functionName + "(serializer);";
+        std::string callParents = "";
+        for (auto& parent : entity.parents)
+        {
+            callParents += parent.type.getName() + "::" + functionName + "(serializer);";
+        }
+        serializeInside += callParents;
     }
-    serializeInside += callParents;
 
     std::string getArchetype = "rfk::Class const& c = " + entity.name + "::staticGetArchetype();";
     serializeInside += getArchetype;
