@@ -355,7 +355,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                 {
                     float distance = (pCameras[0]->getOwner().getTransform().getGlobalPosition() -
                                       (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
-                                         .length2();
+                                         .sqrLength();
                     mapElemSortedByDistance[distance] = pSubModel;
                 }
             }
@@ -515,7 +515,8 @@ void SceneRenderSystem::addRenderer(Renderer* pRenderer) noexcept
 
 void SceneRenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept
 {
-    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != m_pRenderers.end(); it++)
+    const std::vector<Renderer*>::const_iterator end{m_pRenderers.end()};
+    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != end; it++)
     {
         if ((*it) == exPointerRenderer)
         {
@@ -527,7 +528,8 @@ void SceneRenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Rend
 
 void SceneRenderSystem::removeRenderer(Renderer* pRenderer) noexcept
 {
-    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != m_pRenderers.end(); it++)
+    const std::vector<Renderer*>::const_iterator end{m_pRenderers.end()};
+    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != end; it++)
     {
         if ((*it) == pRenderer)
         {
@@ -554,27 +556,19 @@ void SceneRenderSystem::addSubModel(SubModel* pSubModel) noexcept
 
 void SceneRenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept
 {
-    if (newPointerSubModel->pMaterial->isOpaque())
+    const std::vector<SubModel*>::const_iterator end
     {
-        for (std::vector<SubModel*>::iterator it = m_pOpaqueSubModels.begin(); it != m_pOpaqueSubModels.end(); ++it)
-        {
-            if ((*it) == exPointerSubModel)
-            {
-                *it = newPointerSubModel;
-                return;
-            }
-        }
-    }
-    else
+        newPointerSubModel->pMaterial->isOpaque() ?
+        m_pOpaqueSubModels.end() : m_pTransparenteSubModels.end()
+    };
+
+    for (std::vector<SubModel*>::iterator it = m_pTransparenteSubModels.begin();
+         it != end; ++it)
     {
-        for (std::vector<SubModel*>::iterator it = m_pTransparenteSubModels.begin();
-             it != m_pTransparenteSubModels.end(); ++it)
+        if ((*it) == exPointerSubModel)
         {
-            if ((*it) == exPointerSubModel)
-            {
-                *it = newPointerSubModel;
-                return;
-            }
+            *it = newPointerSubModel;
+            return;
         }
     }
 }
@@ -601,7 +595,8 @@ void SceneRenderSystem::addCamera(Camera* pCamera) noexcept
 
 void SceneRenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept
 {
-    for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != m_pCameras.end(); it++)
+    const std::vector<Camera*>::const_iterator end{m_pCameras.end()};
+    for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != end; it++)
     {
         if ((*it) == exPointerCamera)
         {
@@ -613,7 +608,8 @@ void SceneRenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* ex
 
 void SceneRenderSystem::removeCamera(Camera* pCamera) noexcept
 {
-    for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != m_pCameras.end(); it++)
+    const std::vector<Camera*>::const_iterator end{m_pCameras.end()};
+    for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != end; it++)
     {
         if ((*it) == pCamera)
         {
@@ -631,7 +627,8 @@ void SceneRenderSystem::addLight(Light* pLight) noexcept
 
 void SceneRenderSystem::updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept
 {
-    for (std::vector<Light*>::iterator it = m_pLights.begin(); it != m_pLights.end(); it++)
+    const std::vector<Light*>::const_iterator end{m_pLights.end()};
+    for (std::vector<Light*>::iterator it = m_pLights.begin(); it != end; it++)
     {
         if ((*it) == exPointerLight)
         {
@@ -643,7 +640,8 @@ void SceneRenderSystem::updateLightPointer(Light* newPointerLight, Light* exPoin
 
 void SceneRenderSystem::removeLight(Light* pLight) noexcept
 {
-    for (std::vector<Light*>::iterator it = m_pLights.begin(); it != m_pLights.end(); it++)
+    std::vector<Light*>::const_iterator end{m_pLights.end()};
+    for (std::vector<Light*>::iterator it = m_pLights.begin(); it != end; it++)
     {
         if ((*it) == pLight)
         {
