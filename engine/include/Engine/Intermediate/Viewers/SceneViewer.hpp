@@ -1,33 +1,30 @@
 ﻿#pragma once
 
-
 #include "Engine/Intermediate/GameObject.hpp"
-#include "glad/glad.h"
-
-#include <iostream>
-#include <stdlib.h>
 
 namespace GPE
 {
 
+class FreeFly;
 class Scene;
+class Camera;
 
 class SceneViewer
 {
 public:
     GameObject    cameraOwner;
+    FreeFly&      freeFly;
+    Camera&       camera;
     Scene*        pScene;
-    class Camera* pCamera;
+    GameObject::Children::iterator it;
 
-    GLuint        textureID;
-    GLuint        depthStencilID;
-    GLuint        framebufferID;
+    unsigned int  textureID;
+    unsigned int  depthStencilID;
+    unsigned int  framebufferID;
     int           width;
     int           height;
 
 private:
-    bool          m_captureInputs;
-
     void initializeFramebuffer();
 
 public:
@@ -37,8 +34,7 @@ public:
     void resize   (int width, int height);
     void bindScene(Scene& scene)          noexcept;
     void render   ()                      const;
-    void captureInputs();
-    void releaseInputs();
+    void captureInputs(bool shouldCapture);
 };
 
 } // namespace GPE

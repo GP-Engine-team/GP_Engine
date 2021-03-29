@@ -5,10 +5,11 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Resources/Script/FreeFly.hpp"
-#include "Engine/Core/Debug/Log.hpp"
+#include "GPM/DebugOutput.hpp"
 
+#include "glad/glad.h"
 #include <GLFW/glfw3.h>
-#include <string>
+#include <memory>
 
 namespace GPE
 {
@@ -52,26 +53,28 @@ void SceneViewer::initializeFramebuffer()
 
 
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : pScene{&viewed},
-      cameraOwner{viewed, {"Editor_camera_" + std::to_string((size_t)this), {}, nullptr}},
-      textureID{0u}, depthStencilID{0u}, framebufferID{0u},
-      width{width_}, height{height_},
-      m_captureInputs{false}
+    : cameraOwner   {viewed, {"Editor_camera", {}, &viewed.world}},
+      freeFly       {cameraOwner.addComponent<FreeFly>()},
+      camera        {cameraOwner.addComponent<Camera>(Camera::PerspectiveCreateArg{width_ / (float)height_, .001f, 1000.f, 90.f})},
+      pScene        {&viewed},
+      textureID     {0u},
+      depthStencilID{0u},
+      framebufferID {0u},
+      width         {width_},
+      height        {height_},
+      it            {viewed.world.children.emplace(viewed.world.children.end(), &cameraOwner)}
 {
-    {
-        Camera::PerspectiveCreateArg camArg;
-        camArg.name   = cameraOwner.getName().c_str();
-        camArg.aspect = Camera::computeAspect(width, height);
-
-        pCamera = &cameraOwner.addComponent<Camera>(camArg);
-    }
-
     initializeFramebuffer();
 }
 
 
 SceneViewer::~SceneViewer()
 {
+    //cameraOwner.destroyUniqueComponentNow<Camera>();
+    //cameraOwner.destroyUniqueComponentNow<FreeFly>();
+    it->release();
+    pScene->world.destroyChild(&cameraOwner);
+
     glDeleteFramebuffers(1, &framebufferID);
     glDeleteTextures(1, &textureID);
     glDeleteRenderbuffers(1, &depthStencilID);
@@ -95,7 +98,7 @@ void SceneViewer::resize(int width_, int height_)
     glBindRenderbuffer(GL_RENDERBUFFER, depthStencilID);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, width, height);
 
-    pCamera->setAspect(Camera::computeAspect(width, height));
+    camera.setAspect(width / (float)height);
 }
 
 
@@ -106,41 +109,38 @@ void SceneViewer::bindScene(Scene& scene) noexcept
         return;
     }
 
-    cameraOwner.moveTowardScene(scene);
+    { // Move cameraOwner to the other scene
+        // Transfer ownership of &cameraOwner to the new scene
+        using iterator = GameObject::Children::iterator;
+        const iterator newIt = scene.world.children.emplace(scene.world.children.end(), it->release());
+
+        // Update the previous scene and the iterator to cameraOwner's parent's children list
+        pScene->world.children.erase(it);
+        it = newIt;
+    }
+
+    // Update the Camera component and cameraOwner scene and parent
+    camera.moveTowardScene(scene);
+    cameraOwner.setParent(scene.world);
+    cameraOwner.pOwnerScene = &scene;
     pScene = &scene;
 }
 
 
 void SceneViewer::render() const
 {
+    // TODO: make sure camera.updateView() is called outside of this scope,
+    // then remove it here
+    camera.updateView();
     pScene->sceneRenderer.draw(Engine::getInstance()->resourceManager,
                                pScene->sceneRenderer.defaultRenderPipeline(), framebufferID);
 }
 
 
-void SceneViewer::captureInputs()
+void SceneViewer::captureInputs(bool shouldCapture)
 {
-    if (m_captureInputs)
-    {
-        return;
-    }
-
-    m_captureInputs = true;
-    cameraOwner.addComponent<FreeFly>();
-    //cameraOwner.addComponent<GPE::InputComponent>();
-}
-
-
-void SceneViewer::releaseInputs()
-{
-    if (!m_captureInputs)
-    {
-        return;
-    }
-
-    m_captureInputs = false;
-    cameraOwner.destroyUniqueComponentNow<FreeFly>();
-    //cameraOwner.destroyUniqueComponentNow<GPE::InputComponent>();
+    freeFly.enableUpdate(shouldCapture);
+    freeFly.setActive(shouldCapture);
 }
 
 } // namespace GPE
