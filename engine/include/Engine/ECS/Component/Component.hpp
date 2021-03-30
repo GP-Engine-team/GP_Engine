@@ -48,7 +48,7 @@ namespace GPE RFKNamespace()
 
         virtual void moveTowardScene(class Scene & newOwner){};
 
-        // virtual void destroy() = 0;
+        virtual void destroy(){};
 
         Component_GENERATED
     };

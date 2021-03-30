@@ -581,17 +581,14 @@ void SceneRenderSystem::removeSubModel(SubModel* pSubModel) noexcept
 {
     if (pSubModel->pMaterial->isOpaque())
     {
-        m_pOpaqueSubModels.erase(std::remove(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel),
-                                 m_pOpaqueSubModels.end());
+        m_pOpaqueSubModels.erase(std::find(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel));
     }
     else
     {
         m_pTransparenteSubModels.erase(
-            std::remove(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), pSubModel),
-            m_pTransparenteSubModels.end());
+            std::find(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), pSubModel));
     }
 }
-
 void SceneRenderSystem::addCamera(Camera* pCamera) noexcept
 {
     m_pCameras.push_back(pCamera);

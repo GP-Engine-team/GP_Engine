@@ -1,8 +1,8 @@
 #include <Kodgen/Misc/DefaultLogger.h>
+#include <RefurekuGenerator/CodeGen/FileGenerationUnit.h>
+#include <RefurekuGenerator/CodeGen/FileGenerator.h>
 #include <RefurekuGenerator/Parsing/FileParser.h>
 #include <RefurekuGenerator/Parsing/FileParserFactory.h>
-#include <RefurekuGenerator/CodeGen/FileGenerator.h>
-#include <RefurekuGenerator/CodeGen/FileGenerationUnit.h>
 
 #include "CustomFileParserFactory.hpp"
 
@@ -14,11 +14,11 @@ void generateEngineFiles(const std::string& engineDir)
     rfk::FileGenerator      fileGenerator;
     rfk::FileGenerationUnit fileGenerationUnit;
 
-    //Set logger
+    // Set logger
     kodgen::DefaultLogger logger;
 
     fileParserFactory.logger = &logger;
-    fileGenerator.logger = &logger;
+    fileGenerator.logger     = &logger;
 
     kodgen::FileGenerationSettings& settings = fileGenerator.settings;
     fileParserFactory.parsingSettings.setCompilerExeName("msvc");
@@ -34,22 +34,22 @@ void generateEngineFiles(const std::string& engineDir)
 
     for (auto& a : fileParserFactory.parsingSettings.getProjectIncludeDirectories())
     {
-        std::cout << a.string()  << std::endl;
+        std::cout << a.string() << std::endl;
     }
 
     settings.setOutputDirectory(engineDir + "/include/Generated/");
 
-    settings.supportedExtensions = { ".h", ".hpp" };
+    settings.supportedExtensions = {".h", ".hpp"};
 
     settings.addToParseDirectory(engineDir + "/include/engine");
 
     settings.addIgnoredDirectory(engineDir + "/include/Generated");
     settings.addIgnoredDirectory(engineDir + "/include/engine/Core");
-    //settings.addIgnoredDirectory(engineDir + "/include/engine/Serialization");
+    // settings.addIgnoredDirectory(engineDir + "/include/engine/Serialization");
 
-    //You will need to setup parsing settings and generation settings here.
-    //Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit);
+    // You will need to setup parsing settings and generation settings here.
+    // Either load settings from a settings file, or set them by calling the appropriate methods.
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, false);
 }
 
 void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
@@ -60,11 +60,11 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
     rfk::FileGenerator      fileGenerator;
     rfk::FileGenerationUnit fileGenerationUnit;
 
-    //Set logger
+    // Set logger
     kodgen::DefaultLogger logger;
 
     fileParserFactory.logger = &logger;
-    fileGenerator.logger = &logger;
+    fileGenerator.logger     = &logger;
 
     kodgen::FileGenerationSettings& settings = fileGenerator.settings;
     if (fileParserFactory.parsingSettings.setCompilerExeName("msvc"))
@@ -86,17 +86,16 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
     settings.setOutputDirectory(gameDir + "/include/Generated/");
-    settings.supportedExtensions = { ".h", ".hpp" };
+    settings.supportedExtensions = {".h", ".hpp"};
     settings.addToParseDirectory(gameDir + "/include/");
     settings.addIgnoredDirectory(gameDir + "/include/Generated/");
 
-    //You will need to setup parsing settings and generation settings here.
-    //Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit);
+    // You will need to setup parsing settings and generation settings here.
+    // Either load settings from a settings file, or set them by calling the appropriate methods.
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, false);
 }
 
-
-// First Arg : Engine  (default : "../engine/") 
+// First Arg : Engine  (default : "../engine/")
 // Second Arg : Game   (default : "../projects/GPGame/")
 int main(int argc, char** argv)
 {
@@ -120,10 +119,10 @@ int main(int argc, char** argv)
         break;
     }
 
-    //const char* p2 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/../../engine/";
-    //const char* p1 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/";
+    // const char* p2 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/../../engine/";
+    // const char* p1 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/";
 
-    //generateGameFiles(p1, p2);
+    // generateGameFiles(p1, p2);
 
     return 0;
 }
