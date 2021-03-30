@@ -131,6 +131,9 @@ Game::Game()
 	sm.addEmpty("main");
 	sm.loadScene("main");
 
+	// NOTE (Sami): commenting this and the camera component is for now the only way to have a
+	// non-moving level editor view when clicking outside it
+	
 	iManager.bindInput(GLFW_KEY_W, "forward");
 	iManager.bindInput(GLFW_KEY_S, "back");
 	iManager.bindInput(GLFW_KEY_A, "left");
@@ -139,15 +142,15 @@ Game::Game()
 	iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
 	iManager.bindInput(GLFW_KEY_ESCAPE, "exit");
 	iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
-
+	
 	GameObject::CreateArg playerArg{ "Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}} };
-
+	
 	Camera::PerspectiveCreateArg camCreateArg;
 	camCreateArg.aspect = Camera::computeAspect(900.f, 600.f);
-
-	camCreateArg.farVal = 3000;
+	
+	camCreateArg.farVal = 3000.f;
 	camCreateArg.nearVal = 0.01f;
-
+	
 	GameObject& player = sm.getCurrentScene()->world.addChild<GameObject>(playerArg);
 
 	player.addComponent<Camera>(camCreateArg);
