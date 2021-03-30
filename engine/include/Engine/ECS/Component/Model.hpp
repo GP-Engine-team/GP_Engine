@@ -34,20 +34,25 @@ namespace GPE RFKNamespace()
         bool enableBackFaceCulling = true;
     };
 
+    template <>
+    void DataInspector::inspect(GPE::InspectContext & context, SubModel & inspected);
+
     bool isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept;
 
-    class RFKClass(Inspect(),ComponentGen) Model : public Component
+    class RFKClass(ComponentGen) Model : public Component
     {
     public:
         struct CreateArg
         {
-            std::vector<SubModel> subModels;
+            std::list<SubModel> subModels;
         };
 
     protected:
-        std::vector<SubModel> m_subModels;
+        RFKField(Inspect()) std::list<SubModel> m_subModels;
 
     public:
+        Model(GameObject & owner);
+
         Model(GameObject & owner, const CreateArg& arg);
 
         Model(const Model& other) noexcept = delete;
@@ -59,6 +64,8 @@ namespace GPE RFKNamespace()
         Model& operator                      =(Model&& other);
 
         void moveTowardScene(class Scene & newOwner) override;
+
+        virtual void inspect(InspectContext & context);
 
         Model_GENERATED
     };

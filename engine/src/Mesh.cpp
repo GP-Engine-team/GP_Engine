@@ -22,22 +22,16 @@ Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
 
     m_verticesCount = static_cast<unsigned int>(arg.indices.size());
 
-    struct
-    {
-        GLuint vbo;
-        GLuint ebo;
-    } buffers;
-
     // Generate buffer and bind VAO
     glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(2, &buffers.vbo);
+    glGenBuffers(2, &m_EBOBuffers.vbo);
     glBindVertexArray(m_VAO);
 
     // define properties of EBO and VBO buffers
-    glBindBuffer(GL_ARRAY_BUFFER, buffers.vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_EBOBuffers.vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(arg.vertices[0]) * arg.vertices.size(), arg.vertices.data(), GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers.ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBOBuffers.ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(arg.indices[0]) * arg.indices.size(), arg.indices.data(),
                  GL_STATIC_DRAW);
 
@@ -54,7 +48,6 @@ Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vt));
 
     glBindVertexArray(0);
-    glDeleteBuffers(2, &buffers.vbo);
 
     Log::getInstance()->log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with EBO").c_str());
 }
@@ -74,20 +67,15 @@ Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
     if (arg.boundingVolume != nullptr)
         m_boundingVolume = std::move(arg.boundingVolume);
 
-    // Init VBOs and VAO
-    GLuint vertexbuffer;
-    GLuint uvbuffer;
-    GLuint normalbuffer;
-
     if (arg.iBuffer.empty())
     {
         m_verticesCount = static_cast<unsigned int>(arg.vBuffer.size());
 
-        initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vBuffer.data(),
+        initializeVertexBuffer(m_vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vBuffer.data(),
                                static_cast<int>(arg.vBuffer.size() * sizeof(arg.vBuffer[0])));
-        initializeVertexBuffer(uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vtBuffer.data(),
+        initializeVertexBuffer(m_uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vtBuffer.data(),
                                static_cast<int>(arg.vtBuffer.size() * sizeof(arg.vtBuffer[0])));
-        initializeVertexBuffer(normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vnBuffer.data(),
+        initializeVertexBuffer(m_normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vnBuffer.data(),
                                static_cast<int>(arg.vnBuffer.size() * sizeof(arg.vnBuffer[0])));
     }
     else
@@ -109,11 +97,11 @@ Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
             vnVBO.emplace_back(arg.vnBuffer[arg.iBuffer[i].ivn]);
         }
 
-        initializeVertexBuffer(vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vVBO.data(),
+        initializeVertexBuffer(m_vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vVBO.data(),
                                static_cast<int>(vVBO.size() * sizeof(vVBO[0])));
-        initializeVertexBuffer(uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vtVBO.data(),
+        initializeVertexBuffer(m_uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vtVBO.data(),
                                static_cast<int>(vtVBO.size() * sizeof(vtVBO[0])));
-        initializeVertexBuffer(normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vnVBO.data(),
+        initializeVertexBuffer(m_normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vnVBO.data(),
                                static_cast<int>(vnVBO.size() * sizeof(vnVBO[0])));
     }
 
@@ -123,17 +111,17 @@ Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
 
     // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertexbuffer);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
     // 2nd attribute buffer : normals
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_normalbuffer);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
     // 3nd attribute buffer : UVs
     glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_uvbuffer);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
     Log::getInstance()->log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with VBOs").c_str());
@@ -141,22 +129,18 @@ Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
 
 Mesh::~Mesh() noexcept
 {
-    // search all VBO attach to the current VAO and destroy it.
-    GLint nAttr = 0;
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nAttr);
-    glBindVertexArray(m_VAO);
-    for (int iAttr = 0; iAttr < nAttr; ++iAttr)
+    if (m_vertexbuffer == 0)
     {
-        GLuint vboId = 0;
-        glGetVertexAttribiv(iAttr, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, (GLint*)&vboId);
-        if (vboId > 0)
-        {
-            glDeleteBuffers(1, &vboId);
-        }
+        glDeleteBuffers(2, &m_EBOBuffers.vbo);
+    }
+    else
+    {
+        glDeleteBuffers(1, &m_vertexbuffer);
+        glDeleteBuffers(1, &m_normalbuffer);
+        glDeleteBuffers(1, &m_uvbuffer);
     }
 
     glDeleteBuffers(1, &m_VAO);
-    m_VAO = 0;
 }
 
 void Mesh::draw() const noexcept

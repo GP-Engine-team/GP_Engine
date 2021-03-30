@@ -9,23 +9,21 @@
 #include "Engine/Serialization/ComponentGen.h"
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/Inspect.hpp"
-#include "Engine/Serialization/Serialize.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
+#include "Engine/Serialization/Serialize.hpp"
 #include "Engine/Serialization/xml/xmlLoader.hpp"
 #include "Engine/Serialization/xml/xmlSaver.hpp"
-#include "Refureku/Object.h"
-#include "Engine/Serialization/xml/xmlSaver.hpp"
-#include "Engine/Serialization/xml/xmlLoader.hpp"
 #include "Generated/Component.rfk.h"
+#include "Refureku/Object.h"
 
 namespace GPE RFKNamespace()
 {
     template <>
-    void DataInspector::inspect(GPE::InspectContext& context, class Component & inspected);
+    void DataInspector::inspect(GPE::InspectContext & context, class Component & inspected);
 
     class GameObject;
 
-    class RFKClass(Inspect(false), Serialize(false)) Component : rfk::Object
+    class RFKClass(Inspect(false), Serialize(false)) Component : public rfk::Object
     {
     protected:
         GameObject*              m_gameObject; // can not be ref for move
@@ -50,7 +48,7 @@ namespace GPE RFKNamespace()
 
         virtual void moveTowardScene(class Scene & newOwner){};
 
-        //virtual void destroy() = 0;
+        // virtual void destroy() = 0;
 
         Component_GENERATED
     };

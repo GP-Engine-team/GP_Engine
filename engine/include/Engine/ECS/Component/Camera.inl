@@ -5,9 +5,9 @@ inline const Camera::ProjectionInfo& Camera::getProjectionInfo() const noexcept
     return m_projInfo;
 }
 
-inline const GPM::Mat4& Camera::getViewProjection() const noexcept
+inline const GPM::Mat4& Camera::getProjectionView() const noexcept
 {
-    return m_viewProjectionMatrix;
+    return m_projectionViewMatrix;
 }
 
 inline const GPM::Mat4& Camera::getView() const noexcept
