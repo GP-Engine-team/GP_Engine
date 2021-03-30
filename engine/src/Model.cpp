@@ -174,11 +174,8 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
     }*/
 }
 
-bool Model::inspect(GPE::InspectContext& context)
+void Model::inspect(InspectContext& context)
 {
-    if (!Component::inspect(context))
-        return false;
-
     ImGuiTreeNodeFlags nodeFlag =
         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
@@ -252,5 +249,5 @@ bool Model::inspect(GPE::InspectContext& context)
         ImGui::TreePop();
     }
 
-    return true;
+    return;
 }

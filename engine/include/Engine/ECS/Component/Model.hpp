@@ -65,7 +65,7 @@ namespace GPE RFKNamespace()
 
         void moveTowardScene(class Scene & newOwner) override;
 
-        virtual bool inspect(GPE::InspectContext & context);
+        virtual void inspect(InspectContext & context);
 
         Model_GENERATED
     };

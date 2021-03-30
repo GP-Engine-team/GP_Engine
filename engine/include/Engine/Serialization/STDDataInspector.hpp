@@ -4,7 +4,7 @@
 #include "Engine/Serialization/InspectContext.hpp"
 
 // in inl
-#include <imgui.h>
+#include <imgui/imgui.h>
 
 namespace GPE::DataInspector
 {
