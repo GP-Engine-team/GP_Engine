@@ -46,8 +46,11 @@ public:
      * @param key
      * @return LType&
      */
-    LType*       get(const std::string& key) noexcept;
-    const LType* get(const std::string& key) const noexcept;
+    LType*                                  get(const std::string& key) noexcept;
+    const LType*                            get(const std::string& key) const noexcept;
+    std::unordered_map<std::string, LType>& getAll() noexcept;
+
+    const std::string* getKey(const LType* data) const noexcept;
 
     /**
      * @brief add element with argument of constructor in parameter and key. Resource canno't have the same key
@@ -105,6 +108,12 @@ public:
 
     template <class T>
     inline const T* get(const std::string& key) const noexcept;
+
+    template <class T>
+    inline std::unordered_map<std::string, T>& getAll() noexcept;
+
+    template <class T>
+    inline const std::string* getKey(const T* data) const noexcept;
 
     /**
      * @brief Remove resource with the corresponding key if key is found

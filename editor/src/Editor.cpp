@@ -1,20 +1,20 @@
 ﻿#include "Editor/Editor.hpp"
 
-#include "Engine/Engine.hpp"
+#include <string>
+
 #include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/Resources/SceneManager.hpp"
-#include "Engine/Resources/Scene.hpp"
+#include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Resources/Scene.hpp"
+#include "Engine/Resources/SceneManager.hpp"
 
-
-#include <imgui/imgui.h>
-#include "imgui/imgui_internal.h"
+#include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
-#include "GLFW/glfw3.h"
+#include "imgui/imgui_internal.h"
+#include <imgui/imgui.h>
 
-#include <string>
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
 
@@ -23,10 +23,9 @@ using namespace GPE;
 // Hint to use GPU if available
 extern "C"
 {
-	_declspec(dllexport) int NvOptimusEnablement = 1;
-	_declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+    _declspec(dllexport) int NvOptimusEnablement                  = 1;
+    _declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
-
 
 namespace Editor
 {
@@ -37,14 +36,13 @@ GPE::Scene& Editor::loadDefaultScene() const
     return GPE::Engine::getInstance()->sceneManager.loadScene("Empty scene");
 }
 
-
 void Editor::setupDearImGui()
 {
     ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-    //io.ConfigViewportsNoAutoMerge = true;
-    //io.ConfigViewportsNoTaskBarIcon = true;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
+    // io.ConfigViewportsNoAutoMerge = true;
+    // io.ConfigViewportsNoTaskBarIcon = true;
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -94,7 +92,7 @@ void Editor::renderMenuBar()
         // Options
         if (ImGui::BeginMenu("Options"))
         {
-            //Style editor
+            // Style editor
             ImGui::MenuItem("Style Editor", NULL, &m_showAppStyleEditor);
 
             // Menu content
@@ -114,12 +112,10 @@ void Editor::renderMenuBar()
     }
 }
 
-
 void Editor::renderGameControlBar()
 {
     m_gameControlBar.render(*this);
 }
-
 
 void Editor::renderLevelEditor()
 {
@@ -127,7 +123,7 @@ void Editor::renderLevelEditor()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
-ImGui::Begin(m_sceneEditor.pScene->world.getName().c_str(), nullptr, ImGuiWindowFlags_NoBackground);
+    ImGui::Begin(m_sceneEditor.pScene->getWorld().getName().c_str(), nullptr, ImGuiWindowFlags_NoBackground);
     /*
     if (ImGui::IsMouseClicked(0))
     {
@@ -153,7 +149,6 @@ ImGui::Begin(m_sceneEditor.pScene->world.getName().c_str(), nullptr, ImGuiWindow
     ImGui::PopStyleVar(2);
 }
 
-
 void Editor::renderInspector()
 {
     ImGui::Begin("Inspector");
@@ -173,7 +168,8 @@ void Editor::renderSceneGraph()
 {
     ImGui::Begin("Scene Graph");
 
-    m_sceneGraph.renderAndGetSelected(Engine::getInstance()->sceneManager.getCurrentScene()->world, m_inspectedObject);
+    m_sceneGraph.renderAndGetSelected(Engine::getInstance()->sceneManager.getCurrentScene()->getWorld(),
+                                      m_inspectedObject);
 
     ImGui::End();
 }
@@ -218,25 +214,15 @@ void Editor::renderExplorer()
     ImGui::End();
 }
 
-
-
-
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor{ editedScene },
-    m_logInspector{},
-    m_projectContent{},
-    m_sceneGraph{},
-    m_gameControlBar{},
-    m_window{ window },
-    m_inspectedObject{ nullptr },
-    m_showAppStyleEditor{ false }
+    : m_sceneEditor{editedScene}, m_logInspector{}, m_projectContent{}, m_sceneGraph{},
+      m_gameControlBar{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
 
-    Log::getInstance()->logCallBack = [&](const char* msg)
-    {
+    Log::getInstance()->logCallBack = [&](const char* msg) {
         // Log in console
         std::cout << msg;
 
@@ -245,12 +231,10 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
     };
 }
 
-
 void Editor::setSceneInEdition(GPE::Scene& scene)
 {
     m_sceneEditor.bindScene(scene);
 }
-
 
 void Editor::update()
 {

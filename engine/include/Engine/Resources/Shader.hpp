@@ -34,13 +34,15 @@ public:
     };
 
 protected:
-    const unsigned char m_featureMask;         // feature is shader interger into shader like light, blure etc....
-    unsigned int        m_lightsUniformBuffer; // TODO: no sens to have id of uniform light in any shaders
+    unsigned char m_featureMask         = 0; // feature is shader interger into shader like light, blure etc....
+    unsigned int  m_lightsUniformBuffer = 0; // TODO: no sens to have id of uniform light in any shaders
 
     std::string m_nameFragment;
     std::string m_nameVertex;
 
-    unsigned int m_id;
+    unsigned int m_id         = 0;
+    unsigned int m_idVertex   = 0; // TODO: move in fragmentShader class to optimize recycling
+    unsigned int m_idFragment = 0; // TODO: move in vertexShader class to optimize recycling
 
 public:
     /**
@@ -52,6 +54,10 @@ public:
      * @param featureMask           : LIGHT_BLIN_PHONG | FEATURE_2 | [...]
      */
     Shader(const char* vertexPath, const char* fragmentPath, unsigned char featureMask = 0);
+
+    // TODO:
+    Shader(const char* shaderPath);
+
     Shader(const Shader& other) = delete;
     Shader(Shader&& other)      = default;
     ~Shader() noexcept;
@@ -102,6 +108,8 @@ private:
      * @param fragmentCode
      */
     void compile(std::string& vertexCode, std::string& fragmentCode);
+    void compileVertex(std::string& vertexCode);
+    void compileFragment(std::string& fragmentCode);
 
     /**
      * @brief Use log function for checking shader compilation/linking errors

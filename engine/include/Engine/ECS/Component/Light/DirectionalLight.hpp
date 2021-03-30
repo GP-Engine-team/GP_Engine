@@ -22,15 +22,15 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(),ComponentGen) DirectionalLight : public Light
+    class RFKClass(Inspect(), ComponentGen) DirectionalLight : public Light
     {
     public:
         struct CreateArg
         {
-            const GPM::Vec3&         direction;
-            const AmbiantComponent&  ambient;
-            const DiffuseComponent&  diffuse;
-            const SpecularComponent& specular;
+            GPM::Vec3         direction = -GPM::Vec3::up();
+            AmbiantComponent  ambient   = AmbiantComponent{0.f, 0.f, 0.f, 1.f};
+            DiffuseComponent  diffuse   = DiffuseComponent{0.5f, 0.5f, 0.5f, 1.f};
+            SpecularComponent specular  = SpecularComponent{0.5f, 0.5f, 0.5f, 1.f};
         };
 
     protected:
@@ -45,10 +45,9 @@ namespace GPE RFKNamespace()
         DirectionalLight& operator=(DirectionalLight const& other) = delete;
         DirectionalLight& operator=(DirectionalLight&& other) = default;
 
-        DirectionalLight(GameObject & owner, const CreateArg& arg) noexcept;
+        DirectionalLight(GameObject & owner) noexcept;
 
-        DirectionalLight(GameObject & owner, const GPM::Vec3& direction, const AmbiantComponent& ambient,
-                         const DiffuseComponent& diffuse, const SpecularComponent& specular) noexcept;
+        DirectionalLight(GameObject & owner, const CreateArg& arg) noexcept;
 
         void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept final;
 

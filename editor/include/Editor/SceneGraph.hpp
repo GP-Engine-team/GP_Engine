@@ -4,32 +4,28 @@
 
 namespace Editor
 {
-	class DeferedSetParent
-	{
-		GPE::GameObject* m_movedGO = nullptr;
-		GPE::GameObject* m_newParentGO = nullptr;
+class DeferedSetParent
+{
+    GPE::GameObject* m_movedGO     = nullptr;
+    GPE::GameObject* m_newParentGO = nullptr;
 
-	public:
+public:
+    void bind(GPE::GameObject& movedGO, GPE::GameObject& newParentGO);
 
-		void bind(GPE::GameObject& movedGO, GPE::GameObject& newParentGO);
+    void tryExecute();
+};
 
-		void tryExecute();
-	};
+class SceneGraph
+{
+protected:
+    DeferedSetParent deferedSetParent;
 
-	class SceneGraph
-	{
-	protected:
-		DeferedSetParent deferedSetParent;
+protected:
+    void controlPreviousItem(GPE::GameObject& gameObject, GPE::GameObject*& selectedGameObject, int idElem);
 
-	protected:
+    void recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::GameObject*& selectedGameObject, int idElem = 0);
 
-		void controlPreviousItem(GPE::GameObject& gameObject, GPE::GameObject*& selectedGameObject, int idElem);
-
-		void recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::GameObject*& selectedGameObject, int idElem = 0);
-
-	public:
-
-		void renderAndGetSelected(GPE::GameObject& gameObject, GPE::GameObject*& selectedGameObject);
-	};
-
-}
+public:
+    void renderAndGetSelected(GPE::GameObject& gameObject, GPE::GameObject*& selectedGameObject);
+};
+} // namespace Editor
