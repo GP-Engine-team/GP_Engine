@@ -29,9 +29,11 @@ namespace GPE RFKNamespace()
 template <>
 void DataInspector::inspect(GPE::InspectContext& context, class GameObject& inspected);
 
+void save(XmlSaver& context, class GameObject*& inspected);
+
 class Scene;
 
-class RFKClass(Inspect()) GameObject
+class RFKClass(Inspect(), Serialize(false)) GameObject
 {
 public:
     struct CreateArg

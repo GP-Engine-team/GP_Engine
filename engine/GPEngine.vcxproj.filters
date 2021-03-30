@@ -466,6 +466,9 @@
     <ClInclude Include="include\Engine\Serialization\InspectContext.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\STDSave.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -555,6 +558,9 @@
     </None>
     <None Include="include\Engine\ECS\Component\Light\Light.inl">
       <Filter>include\ECS\Component\Light</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\STDSave.inl">
+      <Filter>include\Serialization</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

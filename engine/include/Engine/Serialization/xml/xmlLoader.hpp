@@ -1,16 +1,16 @@
 ﻿#pragma once
 
 //#include "Engine/Serialization/FieldInfo.hpp"
-//#include "Engine/Serialization/xml/xmlUtilities.hpp"
-//#include "RapidXML/rapidxml.hpp"
+#include "Engine/Serialization/xml/xmlUtilities.hpp"
+#include "RapidXML/rapidxml.hpp"
 //#include <string>
 //
-// class XmlLoader
+//class XmlLoader
 //{
-// public:
+//public:
 //    using Node = rapidxml::xml_node<>;
 //
-// protected:
+//protected:
 //    rapidxml::xml_document<>& doc;
 //
 //    /**
@@ -20,9 +20,19 @@
 //     * @param askedValue The value of the attribute you want to be equal.
 //     * @return The node with same same askedValue for the given attribute. Returns nullptr if not found.
 //     */
-//    static rapidxml::xml_node<>* findNodeWithMatchingAttribValue(rapidxml::xml_node<>* parentNode,
-//                                                                 const std::string&    attribName,
-//                                                                 const std::string&    askedValue);
+//    static XmlLoader::Node* XmlLoader::findNodeWithMatchingAttribValue(Node* parentNode, const std::string& attribName,
+//                                                                       const std::string& askedValue)
+//    {
+//        for (Node* child = parentNode->first_node(); child; child = child->next_sibling())
+//        {
+//            std::string value = findAttribValue(child, attribName);
+//            if (value == askedValue)
+//            {
+//                return child;
+//            }
+//        }
+//        return nullptr;
+//    }
 //
 //    /**
 //     * @brief Verify if the type of the node is the same as the given type.
@@ -53,7 +63,7 @@
 //     */
 //    static std::string getType(Node* node);
 //
-// public:
+//public:
 //    XmlLoader(rapidxml::xml_document<>& d) : doc(d)
 //    {
 //    }
@@ -109,17 +119,121 @@
 //#include "Engine/Serialization/xml/xmlLoader.inl"
 
 #include "Refureku/TypeInfo/Variables/Field.h"
+#include <stack>
 
 class XmlLoader
 {
+public:
+    using Node = rapidxml::xml_node<>;
+
+protected:
+    rapidxml::xml_document<>& doc;
+
+    std::stack<Node*> hierarchy;
+
+protected:
+    /**
+     * @brief Get the value as a string of an instance serialized into an xml node.
+     * @param node An instance saved as a node, containing the class information data.
+     * @return The type as a string.
+     */
+    static std::string getValue(Node* node)
+    {
+        return findAttribValue(node, "value");
+    }
+
+    /**
+     * @brief Returns a node having the same attrib value as the one asked.
+     * @param parentNode The parent node of the searched node.
+     * @param attribName The attribute you want to verify.
+     * @param askedValue The value of the attribute you want to be equal.
+     * @return The node with same same askedValue for the given attribute. Returns nullptr if not found.
+     */
+    static rapidxml::xml_node<>* findNodeWithMatchingAttribValue(rapidxml::xml_node<>* parentNode,
+                                                                 const std::string&    attribName,
+                                                                 const std::string&    askedValue)
+    {
+        for (Node* child = parentNode->first_node(); child; child = child->next_sibling())
+        {
+            std::string value = findAttribValue(child, attribName);
+            if (value == askedValue)
+            {
+        	    return child;
+            }
+        }
+        return nullptr;
+    }
+
+    static Node* findSubNode(Node* parentNode, const rfk::Field& info)
+    {
+        return findNodeWithMatchingAttribValue(parentNode, "name", info.name);
+    }
+
+    Node* findSubNode(const rfk::Field& info)
+    {
+        return findSubNode(hierarchy.top(), info);
+    }
+
+public:
+    /**
+     * @brief Load the string corresponding to the data value.
+     * @param str The loaded string will be put here.
+     * @param fieldInfo The class information about the data you want to load.
+     * @return True if the data was loaded successfully, false otherwise.
+     */
+    bool loadFromStr(std::string& str, const rfk::Field& info);
+
+    bool goToSubChild(const rfk::Field& info)
+    {
+        Node* child = findSubNode(info);
+        if (child)
+        {
+            hierarchy.push(child);
+            return true;
+        }
+        else
+        {
+            std::cout << "Node not found" << std::endl;
+            return false;
+        }
+    }
+
+    void pop()
+    {
+        hierarchy.pop();
+    }
 };
 
 namespace GPE
 {
 
 template <typename T>
-void load(XmlLoader& context, T& inspected, const rfk::Field& info)
-{
-}
+void load(XmlLoader& context, T& inspected, const rfk::Field& info);
+
+/**
+ * @brief Specialization for int data. See the original function for more comments.
+ */
+template <>
+void load(XmlLoader& context, int& data, const rfk::Field& info);
+
+/**
+ * @brief Specialization for char data. See the original function for more comments.
+ */
+template <>
+void load(XmlLoader& context, char& data, const rfk::Field& info);
+
+/**
+ * @brief Specialization for float data. See the original function for more comments.
+ */
+template <>
+void load(XmlLoader& context, float& data, const rfk::Field& info);
+
+/**
+ * @brief Specialization for bool data. See the original function for more comments.
+ */
+template <>
+void load(XmlLoader& context, bool& data, const rfk::Field& info);
 
 } // namespace GPE
+
+#include "Engine/Serialization/xml/xmlLoader.inl"

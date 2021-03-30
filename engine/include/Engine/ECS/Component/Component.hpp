@@ -29,7 +29,7 @@ namespace GPE RFKNamespace()
     {
     protected:
         GameObject*              m_gameObject; // can not be ref for move
-        RFKField(Inspect()) bool m_isActivated{true};
+        RFKField(Inspect(), Serialize()) bool m_isActivated{true};
 
     public:
         inline Component(GameObject & owner) noexcept;

@@ -263,9 +263,20 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, class GameObject&
     for (Component* comp : comps)
     {
         ImGui::PushID(i);
-        //comp->inspect();
         GPE::DataInspector::inspect(context, *comp);
         ImGui::PopID();
         i++;
     }
+}
+
+void GPE::save(XmlSaver& context, GameObject*& inspected)
+{
+    const rfk::Class& archetype = GameObject::staticGetArchetype();
+
+    // TODO : Replace "gameObject" by unique name.
+    context.push("gameObject", archetype.name, archetype.id);
+
+    inspected->save(context);
+
+    context.pop();
 }

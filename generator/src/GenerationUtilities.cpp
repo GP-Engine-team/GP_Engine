@@ -16,6 +16,7 @@ std::string generateSerializationFunction(const kodgen::StructClassInfo& entity,
         {
             callParents += parent.type.getName() + "::" + functionName + "(serializer);";
         }
+
         serializeInside += callParents;
     }
 

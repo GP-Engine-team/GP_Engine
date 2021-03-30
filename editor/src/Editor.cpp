@@ -161,6 +161,19 @@ void Editor::renderInspector()
     {
         GPE::InspectContext context;
         GPE::DataInspector::inspect(context, *m_inspectedObject);
+
+        //rapidxml::xml_document<> doc;
+        //XmlSaver saver(doc);
+        //GPE::save(saver, m_inspectedObject);
+
+        //m_inspectedObject->save(saver);
+        //for (auto& a : m_inspectedObject->getComponents())
+        //{
+
+        //    a->save(saver);
+        //}
+
+        //saver.print();
     }
     else
     {

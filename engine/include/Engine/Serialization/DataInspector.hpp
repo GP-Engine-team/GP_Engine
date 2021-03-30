@@ -13,7 +13,7 @@ namespace DataInspector
     template <typename T>
     void inspect(GPE::InspectContext& context, T& inspected)
     {
-        inspected.inspect();
+        inspected.inspect(context);
     }
 
     /**
