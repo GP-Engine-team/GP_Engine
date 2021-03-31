@@ -92,6 +92,7 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
 
 Camera::~Camera() noexcept
 {
+    getOwner().getTransform().OnUpdate -= std::bind(&Camera::updateView, this);
     getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
     DataChunk<Camera>::getInstance()->destroy(this);
 }
