@@ -10,8 +10,8 @@ namespace GPE
 {
 struct Cursor
 {
-    GPM::Vec2 position = {0, 0};
-    GPM::Vec2 deltaPos = {0, 0};
-    GPM::Vec2 center   = {0, 0};
+    GPM::Vec2 position{.0f, .0f};
+    GPM::Vec2 deltaPos{.0f, .0f};
+    GPM::Vec2 center  {.0f, .0f};
 };
 } // namespace GPE
