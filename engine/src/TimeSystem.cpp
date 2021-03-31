@@ -1,7 +1,7 @@
 ﻿#include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+
 #include <string>
-#include <thread> // std::this_thread::sleep_for
 
 using namespace GPE;
 
@@ -16,6 +16,9 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
     m_tempTime          = std::chrono::steady_clock::now();
     m_unscaledDeltaTime = std::chrono::duration<double>(m_tempTime - m_time).count();
     m_time              = m_tempTime;
+
+    if (m_unscaledDeltaTime > 0.25)
+        m_unscaledDeltaTime = 0.25;
 
     /*Apply time scale*/
     m_deltaTime = m_unscaledDeltaTime * m_timeScale;
