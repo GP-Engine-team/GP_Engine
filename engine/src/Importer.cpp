@@ -124,7 +124,7 @@ void GPE::createTextureFile()
 void GPE::createMaterialFile()
 {
 }
-
+/*
 struct CreateIndiceBufferArg
 {
     std::string                  objName;
@@ -139,11 +139,11 @@ struct Vertex
     GPM::Vec3 v;
     GPM::Vec3 vn;
     GPM::Vec2 vt;
-};
+};*/
 
 void GPE::createMeshFile(const char* outPath, const Mesh::CreateIndiceBufferArg& arg)
 {
-
+    /*
     std::ofstream fd(outPath, std::ios::binary | std::ios::out);
 
     fd << 0;                   // Asset ID
@@ -151,9 +151,10 @@ void GPE::createMeshFile(const char* outPath, const Mesh::CreateIndiceBufferArg&
     fd << arg.objName;         // name
     fd << arg.vertices.size(); // number of vertices
     {                          // vertices
-        std::ostream_iterator<Mesh::Vertex> oi(fd);
+        std::ostream_iterator<char> oi(fd);
         std::copy(arg.vertices.begin(), arg.vertices.end(), oi);
     }
-    fd << arg.vertices.size();
-    fd.close();
+    fd << arg.vertices.size(); // number of indice
+
+    fd.close();*/
 }
