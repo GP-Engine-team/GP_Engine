@@ -97,7 +97,6 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
 Camera::~Camera() noexcept
 {
     getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
-    DataChunk<Camera>::getInstance()->destroy(this);
 }
 
 Camera& Camera::operator=(Camera&& other) noexcept

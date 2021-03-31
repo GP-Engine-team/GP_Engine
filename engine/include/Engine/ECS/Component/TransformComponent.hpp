@@ -106,7 +106,7 @@ namespace GPE RFKNamespace()
 
         constexpr const GPM::Vec3& getScale() const noexcept;
 
-        virtual void inspect(GPE::InspectContext& context);
+        virtual void inspect(GPE::InspectContext & context);
 
         TransformComponent_GENERATED
     };

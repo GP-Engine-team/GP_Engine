@@ -125,9 +125,35 @@ inline constexpr const std::string& GameObject::getTag() const noexcept
     return m_tag;
 }
 
+static void updateGameObjectPtrAftereDelete(GameObject* newPtr)
+{
+    GameObject* previousLocalization = &DataChunk<GameObject>::getInstance()->getData().back();
+    previousLocalization++;
+
+    // Update manually the pointer of the parent. In DataChunk, gameObject is swap with last to optimize std::vector
+    // erase.
+    for (auto&& child : newPtr->getParent()->children)
+    {
+        if (child == previousLocalization)
+        {
+            child = newPtr; // Reminber that this will be swapping with back. First operation update and don't change
+                            // hierachy. Only the pointer (memory space) is importante to remain is this operation.
+            break;
+        }
+    }
+}
+
 inline std::list<GameObject*>::iterator GameObject::destroyChild(const std::list<GameObject*>::iterator& it) noexcept
 {
+    for (auto&& child : (*it)->children)
+    {
+        DataChunk<GameObject>::getInstance()->destroy(child);
+        updateGameObjectPtrAftereDelete(child);
+    }
+
     DataChunk<GameObject>::getInstance()->destroy(*it);
+    updateGameObjectPtrAftereDelete(*it);
+
     return children.erase(it);
 }
 

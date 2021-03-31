@@ -44,8 +44,6 @@ Model::~Model()
 {
     for (SubModel& pSubMesh : m_subModels)
         getOwner().pOwnerScene->sceneRenderer.removeSubModel(&pSubMesh);
-
-    DataChunk<Model>::getInstance()->destroy(this);
 }
 
 Model::Model(GameObject& owner) : Model(owner, CreateArg{})
@@ -63,7 +61,7 @@ Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subM
 
 Model& Model::operator=(Model&& other)
 {
-    m_subModels = std::move(other.m_subModels);
+    m_subModels = other.m_subModels;
 
     auto&& itNew = m_subModels.begin();
     auto&& itOld = other.m_subModels.begin();
@@ -132,6 +130,8 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
     renderResourceExplorer<Mesh>("Mesh", inspected.pMesh);
     renderResourceExplorer<Shader>("Shader", inspected.pShader);
     renderResourceExplorer<Material>("Material", inspected.pMaterial);
+
+    ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
 
     const bool isCurrentlementVoid =
         !((size_t)inspected.pMesh & (size_t)inspected.pShader & (size_t)inspected.pMaterial);

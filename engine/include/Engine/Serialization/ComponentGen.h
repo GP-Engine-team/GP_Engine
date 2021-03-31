@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Engine/Intermediate/DataChunk.hpp"
 #include "Engine/Serialization/xml/xmlManager.hpp"
 #include <Refureku/TypeInfo/Properties/PropertySettings.h>
-#include <string>
 
 #include "Generated/ComponentGen.rfk.h"
 

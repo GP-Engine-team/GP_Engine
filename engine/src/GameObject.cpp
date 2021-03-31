@@ -13,11 +13,11 @@ using namespace GPM;
 
 GameObject::~GameObject() noexcept
 {
-    DataChunk<TransformComponent>::getInstance()->destroy(m_pTransform);
+    m_pTransform->destroy();
 
     for (auto&& component : m_pComponents)
     {
-        // component->destroy();
+        component->destroy();
     }
 }
 
@@ -72,11 +72,12 @@ void GameObject::updateSelfAndChildren() noexcept
             if ((*i)->m_isDead)
             {
                 i = destroyChild(i);
-                continue;
             }
-
-            (*i)->updateSelfAndChildren(m_pTransform->getModelMatrix());
-            ++i;
+            else
+            {
+                (*i)->updateSelfAndChildren(m_pTransform->getModelMatrix());
+                ++i;
+            }
         }
     }
 }
@@ -93,18 +94,19 @@ void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
         if ((*i)->m_isDead)
         {
             i = destroyChild(i);
-            continue;
-        }
-
-        if ((*i)->m_pTransform->isDirty())
-        {
-            (*i)->forceUpdate(m_pTransform->getModelMatrix());
         }
         else
         {
-            (*i)->updateSelfAndChildren(m_pTransform->getModelMatrix());
+            if ((*i)->m_pTransform->isDirty())
+            {
+                (*i)->forceUpdate(m_pTransform->getModelMatrix());
+            }
+            else
+            {
+                (*i)->updateSelfAndChildren(m_pTransform->getModelMatrix());
+            }
+            ++i;
         }
-        ++i;
     }
 }
 

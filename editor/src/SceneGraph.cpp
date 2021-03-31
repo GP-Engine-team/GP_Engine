@@ -108,6 +108,7 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
 
         if (ImGui::MenuItem("Remove", NULL, false))
         {
+            selectedGameObject = nullptr;
             gameObject.destroy();
         }
 
