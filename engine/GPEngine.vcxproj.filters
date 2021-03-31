@@ -163,6 +163,9 @@
     <ClCompile Include="src\AudioComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Serialization\STDReflect.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -478,6 +481,9 @@
     <ClInclude Include="include\Engine\Serialization\STDSave.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\STDReflect.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -569,7 +575,7 @@
       <Filter>include\ECS\Component\Light</Filter>
     </None>
     <None Include="include\Engine\Serialization\STDSave.inl">
-	      <Filter>include\Serialization</Filter>
+      <Filter>include\Serialization</Filter>
     </None>
     <None Include="include\Engine\Serialization\STDDataInspector.inl">
       <Filter>include\Serialization</Filter>

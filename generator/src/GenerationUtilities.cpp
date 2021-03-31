@@ -5,7 +5,8 @@
 
 std::string generateSerializationFunction(const kodgen::StructClassInfo& entity,
                                           kodgen::ComplexProperty const& property, const std::string& functionName,
-                                          const std::string& argClassName, const std::string& fieldCallingFunction)
+                                          const std::string& argClassName, const std::string& fieldCallingFunction,
+                                          std::string extraQualifier)
 {
     std::string serializeInside = "";
 
@@ -37,15 +38,15 @@ std::string generateSerializationFunction(const kodgen::StructClassInfo& entity,
         {
             std::string constructField = "c.getField(\"" + field.name + "\")";
 
-            serializeInside +=
-                fieldCallingFunction + "(serializer, " + field.name + ", *" + constructField + ");";
+            serializeInside += fieldCallingFunction + "(serializer, " + field.name + ", *" + constructField + ");";
         }
     }
 
     std::string serializeFunction = "\
-			virtual void " + functionName +
-                                    '(' + argClassName + "& serializer)\
-			{" + serializeInside + "}";
+			virtual void " + functionName + '(' + argClassName + "& serializer)" + extraQualifier 
+           + "{" + serializeInside + "}";
 
+    std::cout << "Generated in " << entity.name << " : " << std::endl;
+    std::cout << serializeFunction << std::endl;
     return serializeFunction;
 }

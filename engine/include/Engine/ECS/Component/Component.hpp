@@ -31,7 +31,7 @@ namespace GPE RFKNamespace()
 
     public:
         inline Component(GameObject & owner) noexcept;
-        inline Component() noexcept                       = delete;
+        inline Component() noexcept                       = default;
         inline Component(const Component& other) noexcept = delete;
         inline Component(Component && other) noexcept     = default;
         inline virtual ~Component() noexcept              = default;

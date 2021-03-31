@@ -15,6 +15,7 @@
 
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
+#include "Engine/Serialization/STDReflect.hpp"
 
 // in Inl
 #include "Engine/Core/Debug/Log.hpp"
@@ -25,14 +26,15 @@
 
 namespace GPE RFKNamespace()
 {
-    template <>
-    void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
+template <>
+void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
 
 void save(XmlSaver& context, class GameObject*& inspected);
+void load(XmlLoader& context, class GameObject*& sinspected);
 
 class Scene;
 
-class RFKClass(Inspect(), Serialize(false)) GameObject
+class RFKClass(Inspect()/*, Serialize(false)*/) GameObject
 {
     public:
         struct CreateArg
@@ -46,11 +48,12 @@ class RFKClass(Inspect(), Serialize(false)) GameObject
         RFKField(Inspect()) std::string m_name;
         TransformComponent*             m_pTransform;
 
+        RFKField(Serialize())
         std::list<Component*> m_pComponents;
+        //List<Component*>      m_pComponents;
         std::string           m_tag{"GameObject"};
         GameObject*           m_parent = nullptr;
         bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
-
 
     public:
         Scene*                 pOwnerScene;
@@ -218,6 +221,9 @@ class RFKClass(Inspect(), Serialize(false)) GameObject
         [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
+
+        virtual void save(XmlSaver&);
+        virtual void load(XmlLoader&);
 
         GameObject_GENERATED
     };

@@ -285,3 +285,33 @@ void GPE::save(XmlSaver& context, GameObject*& inspected)
 
     context.pop();
 }
+
+void GPE::load(XmlLoader& context, class GameObject*& inspected)
+{
+    const rfk::Class& archetype = GameObject::staticGetArchetype();
+
+    // TODO : Replace "gameObject" by unique name.
+    XmlLoader::LoadInfo info{"gameObject", archetype.name, archetype.id};
+    if (context.goToSubChild(info))
+    {
+        inspected->load(context);
+        context.pop();
+    }
+}
+
+
+
+void GameObject::save(XmlSaver& context)
+{
+    rfk::Class const& c = GameObject::staticGetArchetype();
+
+    // GPE::save(context, field.name, + c.getField("");
+
+    GPE::save(context, m_pComponents, XmlSaver::SaveInfo{"m_pComponents", "std::list<Component*>", 0});
+}
+void GameObject::load(XmlLoader& context)
+{
+    rfk::Class const& c = GameObject::staticGetArchetype();
+
+    GPE::load(context, m_pComponents, XmlLoader::LoadInfo{"m_pComponents", "std::list<Component*>", 0});
+}

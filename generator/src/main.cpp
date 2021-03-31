@@ -101,29 +101,38 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
 int main(int argc, char** argv)
 {
     std::cout << "=== Refureku Generator Running" << std::endl;
-    for (int i = 0; i < argc; i++)
+
+    if (argc != 0)
     {
-        std::cout << "argv[" << i << "] = " << argv[i] << std::endl;
+
+        for (int i = 0; i < argc; i++)
+        {
+            std::cout << "argv[" << i << "] = " << argv[i] << std::endl;
+        }
+        switch (argc)
+        {
+        case 2:
+            generateEngineFiles(argv[1]);
+            break;
+
+        case 3:
+            generateGameFiles(argv[2], argv[1]);
+            break;
+
+        default:
+            std::cout << "invalid number of arguments" << std::endl;
+            break;
+        }
     }
-    switch (argc)
+    else
     {
-    case 2:
-        generateEngineFiles(argv[1]);
-        break;
+        const char* p2 =
+            "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/../../engine/";
+        const char* p1 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/";
 
-    case 3:
-        generateGameFiles(argv[2], argv[1]);
-        break;
-
-    default:
-        std::cout << "invalid number of arguments" << std::endl;
-        break;
+        generateGameFiles(p1, p2);
+        generateEngineFiles(p2);
     }
-
-    //const char* p2 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/../../engine/";
-    //const char* p1 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/";
-
-    //generateGameFiles(p1, p2);
 
     return 0;
 }

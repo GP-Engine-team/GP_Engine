@@ -60,7 +60,14 @@ void XmlSaver::appendAttribute(Node* node, const std::string& name, const std::s
 void XmlSaver::saveAsString(const std::string& saved, const rfk::Field& info)
 {
     push(info);
-    appendAttribute(hierarchy.top(), "value", saved);
+    appendAttribute(top(), "value", saved);
+    pop();
+}
+
+void XmlSaver::saveAsString(const std::string& saved, const XmlSaver::SaveInfo& info)
+{
+    push(info);
+    appendAttribute(top(), "value", saved);
     pop();
 }
 
@@ -102,7 +109,15 @@ void save(XmlSaver& context, const bool& inspected, const rfk::Field& info)
     context.saveAsString(inspected ? "true" : "false", info);
 }
 
-void save(XmlSaver& context, const rfk::Object*& inspected, const rfk::Field& info)
+template <>
+void save(XmlSaver& context, rfk::Object* const & inspected, const rfk::Field& info)
+{
+    auto i = reinterpret_cast<std::uintptr_t>(inspected);
+    context.saveAsString(std::to_string(i), info);
+}
+
+template <>
+void save(XmlSaver& context, rfk::Object* const& inspected, const XmlSaver::SaveInfo& info)
 {
     auto i = reinterpret_cast<std::uintptr_t>(inspected);
     context.saveAsString(std::to_string(i), info);

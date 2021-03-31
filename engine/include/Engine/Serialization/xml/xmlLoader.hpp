@@ -3,14 +3,16 @@
 //#include "Engine/Serialization/FieldInfo.hpp"
 #include "Engine/Serialization/xml/xmlUtilities.hpp"
 #include "RapidXML/rapidxml.hpp"
+#include <set>
+#include <stack>
 //#include <string>
 //
-//class XmlLoader
+// class XmlLoader
 //{
-//public:
+// public:
 //    using Node = rapidxml::xml_node<>;
 //
-//protected:
+// protected:
 //    rapidxml::xml_document<>& doc;
 //
 //    /**
@@ -20,7 +22,8 @@
 //     * @param askedValue The value of the attribute you want to be equal.
 //     * @return The node with same same askedValue for the given attribute. Returns nullptr if not found.
 //     */
-//    static XmlLoader::Node* XmlLoader::findNodeWithMatchingAttribValue(Node* parentNode, const std::string& attribName,
+//    static XmlLoader::Node* XmlLoader::findNodeWithMatchingAttribValue(Node* parentNode, const std::string&
+//    attribName,
 //                                                                       const std::string& askedValue)
 //    {
 //        for (Node* child = parentNode->first_node(); child; child = child->next_sibling())
@@ -63,7 +66,7 @@
 //     */
 //    static std::string getType(Node* node);
 //
-//public:
+// public:
 //    XmlLoader(rapidxml::xml_document<>& d) : doc(d)
 //    {
 //    }
@@ -119,6 +122,7 @@
 //#include "Engine/Serialization/xml/xmlLoader.inl"
 
 #include "Refureku/TypeInfo/Variables/Field.h"
+#include <map>
 #include <stack>
 
 class XmlLoader
@@ -126,10 +130,25 @@ class XmlLoader
 public:
     using Node = rapidxml::xml_node<>;
 
+    struct LoadInfo
+    {
+        std::string name;
+        std::string typeName;
+        size_t      typeId;
+    };
+
 protected:
     rapidxml::xml_document<>& doc;
 
     std::stack<Node*> hierarchy;
+
+    struct LoadedPtr
+    {
+        LoadInfo info;
+        void*    data = nullptr;
+    };
+    // key is the saved ptr
+    std::map<size_t, LoadedPtr> alreadyLoadedPtrs;
 
 protected:
     /**
@@ -158,7 +177,7 @@ protected:
             std::string value = findAttribValue(child, attribName);
             if (value == askedValue)
             {
-        	    return child;
+                return child;
             }
         }
         return nullptr;
@@ -169,12 +188,27 @@ protected:
         return findNodeWithMatchingAttribValue(parentNode, "name", info.name);
     }
 
+    static Node* findSubNode(Node* parentNode, const LoadInfo& info)
+    {
+        return findNodeWithMatchingAttribValue(parentNode, "name", info.name);
+    }
+
     Node* findSubNode(const rfk::Field& info)
     {
         return findSubNode(hierarchy.top(), info);
     }
 
+    Node* findSubNode(const LoadInfo& info)
+    {
+        return findSubNode(hierarchy.top(), info);
+    }
+
 public:
+    XmlLoader(rapidxml::xml_document<>& d) : doc(d)
+    {
+        hierarchy.push(&d);
+    }
+
     /**
      * @brief Load the string corresponding to the data value.
      * @param str The loaded string will be put here.
@@ -182,6 +216,22 @@ public:
      * @return True if the data was loaded successfully, false otherwise.
      */
     bool loadFromStr(std::string& str, const rfk::Field& info);
+    bool loadFromStr(std::string& str, const LoadInfo& info);
+
+    bool goToSubChild(const LoadInfo& info)
+    {
+        Node* child = findSubNode(info);
+        if (child)
+        {
+            hierarchy.push(child);
+            return true;
+        }
+        else
+        {
+            std::cout << "Node not found" << std::endl;
+            return false;
+        }
+    }
 
     bool goToSubChild(const rfk::Field& info)
     {
@@ -202,6 +252,14 @@ public:
     {
         hierarchy.pop();
     }
+
+    Node* top()
+    {
+        return hierarchy.top();
+    }
+
+    template <typename T>
+    void loadPtrData(T*& data, const LoadInfo& info, std::size_t key);
 };
 
 namespace GPE
@@ -209,6 +267,12 @@ namespace GPE
 
 template <typename T>
 void load(XmlLoader& context, T& inspected, const rfk::Field& info);
+
+template <typename T>
+void load(XmlLoader& context, T& inspected, const XmlLoader::LoadInfo& info);
+
+template <typename T>
+void load(XmlLoader& context, T*& inspected, const XmlLoader::LoadInfo& info);
 
 /**
  * @brief Specialization for int data. See the original function for more comments.
@@ -236,4 +300,29 @@ void load(XmlLoader& context, bool& data, const rfk::Field& info);
 
 } // namespace GPE
 
+#include <Refureku/Refureku.h>
+
+template <typename T>
+void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, std::size_t key)
+{
+    auto pair = alreadyLoadedPtrs.insert({key, LoadedPtr{info}});
+    if (pair.second) // Has been inserted ?
+    {
+        // data            = new T(); // TODO : Call custom instantiator
+        // data = DataCh
+        std::string       idStr     = findAttribValue(top(), "typeID");
+        rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(std::stoull(idStr)));
+        data                        = archetype->makeInstance<T>();
+        pair.first->second.data     = data;
+
+        LoadInfo newInfo{std::to_string(key), info.typeName, info.typeId};
+        GPE::load(*this, *data, newInfo);
+    }
+    else
+    {
+        data = static_cast<T*>(pair.first->second.data); // CAST
+    }
+}
+
+#include "Engine/Serialization/STDSave.hpp"
 #include "Engine/Serialization/xml/xmlLoader.inl"

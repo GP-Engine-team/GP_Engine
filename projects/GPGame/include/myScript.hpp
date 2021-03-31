@@ -43,7 +43,7 @@ namespace GPG RFKNamespace()
 			speed = 1;
 		}
 
-		MyScript() noexcept = delete;
+		MyScript() noexcept = default;
 		MyScript(const MyScript& other) noexcept = delete;
 		MyScript(MyScript&& other) noexcept = default;
 		virtual ~MyScript() noexcept = default;

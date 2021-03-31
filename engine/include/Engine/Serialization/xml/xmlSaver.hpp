@@ -74,18 +74,45 @@
 
 #include "Refureku/TypeInfo/Variables/Field.h"
 #include <stack>
+#include <set>
 
 class XmlSaver
 {
 public:
     using Node = rapidxml::xml_node<>;
 
+    struct SaveInfo
+    {
+        std::string name;
+        std::string typeName;
+        size_t      typeId;
+    };
+
+
 protected:
     rapidxml::xml_document<>& doc;
 
     std::stack<Node*> hierarchy;
 
+    struct LoadedPtr
+    {
+        SaveInfo info;
+        void* data;
+
+        bool operator<(const LoadedPtr& rhs) const
+        {
+            return data < rhs.data;
+        }
+
+        bool operator==(const LoadedPtr& rhs) const
+        {
+            return data == rhs.data;
+        }
+    };
+    std::set<LoadedPtr> alreadySavedPtrs;
+
 public:
+
     XmlSaver(rapidxml::xml_document<>& d) : doc(d)
     {
         hierarchy.push(&d);
@@ -98,6 +125,7 @@ public:
      * @param fieldInfo The class information about the data you want to save.
      */
     void saveAsString(const std::string& saved, const rfk::Field& info);
+    void saveAsString(const std::string& saved, const SaveInfo& info);
 
     void appendAttribute(Node* node, const std::string& name, const std::string& value);
 
@@ -110,7 +138,7 @@ public:
     {
         Node* newNode = doc.allocate_node(rapidxml::node_element, "field");
 
-        hierarchy.top()->append_node(newNode);
+        top()->append_node(newNode);
         hierarchy.push(newNode);
 
         appendAttribute(newNode, "name", name);
@@ -120,12 +148,25 @@ public:
         return newNode;
     }
 
+    Node* push(const SaveInfo& info)
+    {
+        return push(info.name, info.typeName, info.typeId);
+    }
+
     Node* push(const rfk::Field& info)
     {
         return push(info.name, info.type.archetype->name, info.type.archetype->id);
     }
 
+    Node* top()
+    {
+        return hierarchy.top();
+    }
+
     void print();
+
+    template<typename T>
+    bool savePtrData(T* data, const SaveInfo& info);
 };
 
 namespace GPE
@@ -136,7 +177,28 @@ void save(XmlSaver& context, const T& inspected, const rfk::Field& info)
 {
     context.push(info);
 
-    inspected.load(context);
+    inspected.save(context);
+
+    context.pop();
+}
+
+template <typename T>
+void save(XmlSaver& context, const T& inspected, const XmlSaver::SaveInfo& info)
+{
+    context.push(info);
+
+    inspected.save(context);
+
+    context.pop();
+}
+
+template <typename T>
+void save(XmlSaver& context, T* const & inspected, const XmlSaver::SaveInfo& info)
+{
+    context.push(info);
+
+    context.saveAsString(std::to_string(size_t(inspected)), info);
+    context.savePtrData(inspected, info);
 
     context.pop();
 }
@@ -171,6 +233,32 @@ void save(XmlSaver& context, const float& inspected, const rfk::Field& info);
 template <>
 void save(XmlSaver& context, const bool& inspected, const rfk::Field& info);
 
-void save(XmlSaver& context, const rfk::Object*& inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, rfk::Object* const & inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, rfk::Object* const& inspected, const XmlSaver::SaveInfo& info);
 
 } // namespace GPE
+
+template <typename T>
+bool XmlSaver::savePtrData(T* data, const SaveInfo& info)
+{
+    bool hasBeenInserted = alreadySavedPtrs.insert(LoadedPtr{info, data}).second;
+    if (hasBeenInserted)
+    {
+        std::stack<Node*> otherContextHierarchy;
+        otherContextHierarchy.push(&doc);
+
+        std::swap(otherContextHierarchy, hierarchy);
+
+        SaveInfo newInfo{std::to_string(std::size_t(data)), info.typeName, info.typeId};
+        GPE::save(*this, *data, newInfo);
+
+        hierarchy = std::move(otherContextHierarchy);
+
+        return true;
+    }
+    return false;
+}
+
+#include "Engine/Serialization/STDSave.hpp"

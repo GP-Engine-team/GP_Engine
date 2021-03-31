@@ -81,6 +81,17 @@ bool XmlLoader::loadFromStr(std::string& str, const rfk::Field& info)
     return false;
 }
 
+bool XmlLoader::loadFromStr(std::string& str, const LoadInfo& info)
+{
+    if (goToSubChild(info))
+    {
+        str = getValue(hierarchy.top());
+        pop();
+        return true;
+    }
+    return false;
+}
+
 namespace GPE
 {
 
