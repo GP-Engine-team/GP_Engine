@@ -83,9 +83,9 @@ public:
     {
         /*getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(physx::PxVec3{0, 1, 0} * speed,
                                                                               physx::PxForceMode::eFORCE);*/
-        /*GPM::Vec3 vec = getOwner().getTransform().getVectorUp();
-        controller.move(vec,100);*/
-        controller.controller->getActor()->addForce(physx::PxVec3{ 0, 1, 0 } *10000,physx::PxForceMode::eFORCE);
+        GPM::Vec3 vec = getOwner().getTransform().getVectorUp();
+        controller.move(vec,100);
+        //controller.controller->getActor()->addForce(physx::PxVec3{ 0, 1, 0 } *10000,physx::PxForceMode::eFORCE);
     }
 
     inline void forward()
