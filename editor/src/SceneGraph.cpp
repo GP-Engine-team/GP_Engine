@@ -1,5 +1,9 @@
 ﻿#include "Editor/SceneGraph.hpp"
 
+#include <filesystem>
+
+#include "Engine/Core/Tools/Hash.hpp"
+
 // Components
 // TODO: Generat this automatically
 #include "Engine/ECS/Component/Camera.hpp"
@@ -55,6 +59,34 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
             deferedSetParent.bind(**static_cast<GPE::GameObject**>(payload->Data), gameObject);
         }
         ImGui::EndDragDropTarget();
+    }
+
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        const ImGuiPayload* payload = ImGui::GetDragDropPayload();
+
+        if (payload->IsDataType("RESOURCE_PATH"))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            size_t hasedExtention = hash(path.extension().string().c_str());
+            if (hasedExtention == hash(".obj"))
+            {
+                // Can drop
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RESOURCE_PATH"))
+                {
+                    IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+                    std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+                    gameObject.pOwnerScene->addLoadedResourcePath(path.string().c_str());
+                    gameObject.addComponent<Model>();
+
+                    std::cout << gameObject.getName() << "  " << path.string() << std::endl;
+                }
+            }
+        }
     }
 
     if (ImGui::IsItemClicked(ImGuiMouseButton_Left))

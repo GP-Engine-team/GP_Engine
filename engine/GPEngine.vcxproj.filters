@@ -166,6 +166,9 @@
     <ClCompile Include="src\ResourceImporter.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Importer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -479,6 +482,9 @@
       <Filter>include\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\ResourceImporter.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

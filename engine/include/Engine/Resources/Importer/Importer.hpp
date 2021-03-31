@@ -11,7 +11,11 @@
 
 namespace GPE
 {
-Model::CreateArg importeSingleModel(const char*           assetPath,
-                                    Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE) noexcept;
+
+void importeModel(const char* assetPath) noexcept;
+
+void createTextureFile();
+void createMaterialFile();
+void createMeshFile(const char* outPath, const Mesh::CreateIndiceBufferArg& arg);
 
 } // namespace GPE

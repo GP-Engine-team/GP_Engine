@@ -189,6 +189,7 @@ void Editor::renderLog()
 void Editor::renderExplorer()
 {
     ImGui::Begin("Explorer");
+
     if (ImGui::BeginTabBar("Explorer"))
     {
         if (ImGui::BeginTabItem("Project"))

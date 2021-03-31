@@ -239,6 +239,7 @@
     <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
     <ClInclude Include="include\Engine\Resources\Cursor.hpp" />
+    <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp" />
     <ClInclude Include="include\Engine\Resources\Material.hpp" />
     <ClInclude Include="include\Engine\Resources\Mesh.hpp" />
     <ClInclude Include="include\Engine\Resources\RenderBuffer.hpp" />
@@ -317,6 +318,7 @@
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\Importer.cpp" />
     <ClCompile Include="src\InputComponent.cpp" />
     <ClCompile Include="src\InputManagerGLFW.cpp" />
     <ClCompile Include="src\Log.cpp" />

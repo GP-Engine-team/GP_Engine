@@ -65,7 +65,11 @@ void Scene::addLoadedResourcePath(const char* path) noexcept
     // Unordered pair of iterator and result
     auto itRst = m_loadedResourcesPath.try_emplace(path, 1);
 
-    if (!itRst.second)
+    if (itRst.second)
+    {
+        importeResource(path);
+    }
+    else
     {
         itRst.first->second++;
     }

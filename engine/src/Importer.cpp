@@ -1,9 +1,10 @@
-﻿#include "Engine/Core/Parsers/ObjParser.hpp"
+﻿#include "Engine/Resources/Importer/Importer.hpp"
 
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/postprocess.h> // Post processing flags
 #include <assimp/scene.h>       // Output data structure
-#include <memory>               // std::make_unique
+#include <fstream>
+#include <memory> // std::make_unique
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
@@ -16,7 +17,7 @@
 using namespace GPE;
 using namespace GPM;
 
-Model::CreateArg GPE::importeSingleModel(const char* assetPath, Mesh::EBoundingVolume boundingVolumeType) noexcept
+void GPE::importeModel(const char* assetPath) noexcept
 {
     GPE_ASSERT(assetPath != nullptr, "Void path");
 
@@ -27,9 +28,6 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, Mesh::EBoundingV
     unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
                                     aiProcess_GenNormals | aiProcess_GenUVCoords;
 
-    if (boundingVolumeType != Mesh::EBoundingVolume::NONE)
-        postProcessflags |= aiProcess_GenBoundingBoxes;
-
     Assimp::Importer importer;
     const aiScene*   scene = importer.ReadFile(assetPath, postProcessflags);
     if (!scene)
@@ -37,8 +35,6 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, Mesh::EBoundingV
 
     // SubModule initialization
     GPE_ASSERT(scene->HasMeshes(), "File without mesh");
-    Model::CreateArg modelArg;
-    // modelArg.subModels.reserve(scene->mNumMeshes); //Only if std::vector
 
     // Material and texture
     GPE_ASSERT(scene->HasMaterials(), "Mesh without material not supported");
@@ -116,39 +112,48 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, Mesh::EBoundingV
             arg.indices.emplace_back(pMesh->mFaces[i].mIndices[1]);
             arg.indices.emplace_back(pMesh->mFaces[i].mIndices[2]);
         }
-
-        arg.boundingVolumeType = boundingVolumeType;
-
-        // Generate bounding volume
-        switch (boundingVolumeType)
-        {
-        case Mesh::EBoundingVolume::SPHERE: {
-
-            const Vector3 min{pMesh->mAABB.mMin.x, pMesh->mAABB.mMin.y, pMesh->mAABB.mMin.z};
-            const Vector3 max{pMesh->mAABB.mMax.x, pMesh->mAABB.mMax.y, pMesh->mAABB.mMax.z};
-
-            arg.boundingVolume = std::make_unique<Sphere>(std::max(min.length(), max.length()), (max + min) * 0.5);
-
-            break;
-        }
-
-        case Mesh::EBoundingVolume::AABB: {
-            arg.boundingVolume =
-                std::make_unique<AABB>(Vector3{pMesh->mAABB.mMin.x, pMesh->mAABB.mMin.y, pMesh->mAABB.mMin.z},
-                                       Vector3{pMesh->mAABB.mMax.x, pMesh->mAABB.mMax.y, pMesh->mAABB.mMax.z});
-
-            break;
-        }
-        default:
-            break;
-        }
-
-        modelArg.subModels.emplace_back(SubModel{nullptr, resourceManager.get<Shader>("TextureWithLihghts"),
-                                                 pMaterials.empty() ? nullptr : pMaterials[pMesh->mMaterialIndex - 1],
-                                                 &resourceManager.add<Mesh>(arg.objName, arg), true});
     }
 
     Log::getInstance()->logInitializationEnd("Obj parsing");
+}
 
-    return modelArg;
+void GPE::createTextureFile()
+{
+}
+
+void GPE::createMaterialFile()
+{
+}
+
+struct CreateIndiceBufferArg
+{
+    std::string                  objName;
+    std::vector<Vertex>          vertices;
+    std::vector<unsigned int>    indices;
+    EBoundingVolume              boundingVolumeType{EBoundingVolume::NONE};
+    std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
+};
+
+struct Vertex
+{
+    GPM::Vec3 v;
+    GPM::Vec3 vn;
+    GPM::Vec2 vt;
+};
+
+void GPE::createMeshFile(const char* outPath, const Mesh::CreateIndiceBufferArg& arg)
+{
+
+    std::ofstream fd(outPath, std::ios::binary | std::ios::out);
+
+    fd << 0;                   // Asset ID
+    fd << arg.objName.size();  // name lenght
+    fd << arg.objName;         // name
+    fd << arg.vertices.size(); // number of vertices
+    {                          // vertices
+        std::ostream_iterator<Mesh::Vertex> oi(fd);
+        std::copy(arg.vertices.begin(), arg.vertices.end(), oi);
+    }
+    fd << arg.vertices.size();
+    fd.close();
 }
