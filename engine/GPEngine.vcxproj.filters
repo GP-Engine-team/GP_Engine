@@ -163,6 +163,9 @@
     <ClCompile Include="src\AudioComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ResourceImporter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\include\glad\glad.h">
@@ -474,6 +477,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\InspectContext.hpp">
       <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ResourceImporter.hpp">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

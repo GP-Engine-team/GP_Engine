@@ -55,7 +55,7 @@ extern "C" void destroyGameInstance(AbstractGame* game)
 void loadTreeResource(ResourceManagerType& resourceManager)
 {
     resourceManager.add<Model::CreateArg>(
-        "TreeModel", importeSingleModel("./resources/meshs/Tree.obj", resourceManager, Mesh::EBoundingVolume::AABB));
+        "TreeModel", importeSingleModel("./resources/meshs/Tree.obj", Mesh::EBoundingVolume::AABB));
 }
 
 template <typename T = float>
@@ -98,8 +98,8 @@ void loadTree(GameObject& parent, ResourceManagerType& resourceManager, unsigned
 
 void loadSkyboxResource(ResourceManagerType& resourceManager)
 {
-    Model::CreateArg& modelArg = resourceManager.add<Model::CreateArg>(
-        "SkyboxModel", importeSingleModel("./resources/meshs/Skybox.obj", resourceManager));
+    Model::CreateArg& modelArg =
+        resourceManager.add<Model::CreateArg>("SkyboxModel", importeSingleModel("./resources/meshs/Skybox.obj"));
 
     Texture::LoadArg textureArg;
     textureArg.path             = "./resources/textures/Skybox/skb.bmp";

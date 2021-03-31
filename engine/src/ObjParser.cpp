@@ -7,6 +7,8 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Engine.hpp"
+#include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/Texture.hpp"
 #include "GPM/Shape3D/AABB.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
@@ -14,12 +16,13 @@
 using namespace GPE;
 using namespace GPM;
 
-Model::CreateArg GPE::importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager,
-                                         Mesh::EBoundingVolume boundingVolumeType) noexcept
+Model::CreateArg GPE::importeSingleModel(const char* assetPath, Mesh::EBoundingVolume boundingVolumeType) noexcept
 {
     GPE_ASSERT(assetPath != nullptr, "Void path");
 
     Log::getInstance()->logInitializationStart("Obj parsing");
+
+    ResourceManagerType& resourceManager = Engine::getInstance()->resourceManager;
 
     unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
                                     aiProcess_GenNormals | aiProcess_GenUVCoords;

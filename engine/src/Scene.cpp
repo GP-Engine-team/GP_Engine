@@ -2,13 +2,19 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Intermediate/DataChunk.hpp"
+#include "Engine/Resources/ResourceImporter.hpp"
 
-#include <sstream> //std::sstream, std::getline
+#include <filesystem> //std::path
+#include <sstream>    //std::sstream, std::getline
 
 using namespace GPE;
 
 Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*this))
 {
+    for (auto&& elem : m_loadedResourcesPath)
+    {
+        importeResource(elem.first.c_str());
+    }
 }
 
 Scene::~Scene() noexcept

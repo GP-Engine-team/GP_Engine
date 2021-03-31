@@ -166,8 +166,8 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>RefurekuDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib;$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc142-mt.lib;RefurekuDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
       <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)"</Command>
@@ -195,8 +195,8 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>RefurekuRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib;$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc142-mt.lib;RefurekuRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
       <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)"</Command>
@@ -243,6 +243,7 @@
     <ClInclude Include="include\Engine\Resources\Mesh.hpp" />
     <ClInclude Include="include\Engine\Resources\RenderBuffer.hpp" />
     <ClInclude Include="include\Engine\Resources\RenderTexture.hpp" />
+    <ClInclude Include="include\Engine\Resources\ResourceImporter.hpp" />
     <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp" />
     <ClInclude Include="include\Engine\Resources\ResourcesManagerType.hpp" />
     <ClInclude Include="include\Engine\Resources\Scene.hpp" />
@@ -329,6 +330,7 @@
     <ClCompile Include="src\RendererGLFW_GL46.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\RenderTexture.cpp" />
+    <ClCompile Include="src\ResourceImporter.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\SceneRenderSystem.cpp" />
