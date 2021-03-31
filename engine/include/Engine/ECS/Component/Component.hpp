@@ -6,38 +6,55 @@
 
 #pragma once
 
-namespace GPE
+#include "Engine/Serialization/ComponentGen.h"
+#include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/Inspect.hpp"
+#include "Engine/Serialization/InspectContext.hpp"
+#include "Engine/Serialization/Serialize.hpp"
+#include "Engine/Serialization/xml/xmlLoader.hpp"
+#include "Engine/Serialization/xml/xmlSaver.hpp"
+#include "Generated/Component.rfk.h"
+#include "Refureku/Object.h"
+
+namespace GPE RFKNamespace()
 {
-class GameObject;
+    template <>
+    void DataInspector::inspect(GPE::InspectContext & context, class Component & inspected);
 
-class Component
-{
-protected:
-    GameObject* m_gameObject; // canno't be ref for move
-    bool        m_isActivated{true};
+    class GameObject;
 
-public:
-    inline Component(GameObject& owner) noexcept;
-    inline Component() noexcept                  = delete;
-    inline Component(const Component& other)     = delete;
-    inline Component(Component&& other) noexcept = default;
-    inline virtual ~Component() noexcept         = default;
-    inline Component& operator=(const Component& other) noexcept = delete;
-    inline Component& operator=(Component&& other) noexcept = default;
+    class RFKClass(Inspect(false), Serialize(false)) Component : public rfk::Object
+    {
+    protected:
+        GameObject*              m_gameObject; // can not be ref for move
+        RFKField(Inspect()) bool m_isActivated{true};
 
-    [[nodiscard]] constexpr inline GameObject& getOwner() noexcept;
+    public:
+        inline Component(GameObject & owner) noexcept;
+        inline Component() noexcept                       = delete;
+        inline Component(const Component& other) noexcept = delete;
+        inline Component(Component && other) noexcept     = default;
+        inline virtual ~Component() noexcept              = default;
+        inline Component& operator=(const Component& other) noexcept = delete;
+        inline Component& operator=(Component&& other) noexcept = default;
 
-    [[nodiscard]] constexpr inline const GameObject& getOwner() const noexcept;
+        [[nodiscard]] constexpr inline GameObject& getOwner() noexcept;
 
-    [[nodiscard]] constexpr inline bool isActivated() const noexcept;
+        [[nodiscard]] constexpr inline const GameObject& getOwner() const noexcept;
 
-    constexpr inline void setActive(bool newState) noexcept;
+        [[nodiscard]] constexpr inline bool isActivated() const noexcept;
 
-    virtual void moveTowardScene(class Scene& newOwner){};
+        constexpr inline void setActive(bool newState) noexcept;
 
-    // virtual void destroy() = 0;
-};
+        virtual void moveTowardScene(class Scene & newOwner){};
+
+        virtual void destroy(){};
+
+        Component_GENERATED
+    };
 
 #include "Component.inl"
 
-} // namespace GPE
+} // namespace )
+
+File_GENERATED

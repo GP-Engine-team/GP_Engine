@@ -8,6 +8,11 @@ int SoundSystem::addComponent(AudioComponent* input) noexcept
     return key;
 }
 
+void SoundSystem::updateComponent(AudioComponent* newPointorBehaviour) noexcept
+{
+    m_audioComponents[newPointorBehaviour->getKey()] = newPointorBehaviour;
+}
+
 void SoundSystem::removeComponent(int key) noexcept
 {
     m_audioComponents.erase(key);

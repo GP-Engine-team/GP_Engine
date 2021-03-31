@@ -54,12 +54,12 @@ physx::PxVec3 PhysXSystem::GPMVec3ToPxVec3(const GPM::Vec3& vector) noexcept
 
 GPM::Vec3 PhysXSystem::PxExtendedVec3ToGPMVec3(const physx::PxExtendedVec3& vector) noexcept
 {
-    return GPM::Vec3{ static_cast<GPM::f32>(vector.x) , static_cast<GPM::f32>(vector.y), static_cast<GPM::f32>(vector.z) };
+    return GPM::Vec3{static_cast<GPM::f32>(vector.x), static_cast<GPM::f32>(vector.y), static_cast<GPM::f32>(vector.z)};
 }
 
 physx::PxExtendedVec3 PhysXSystem::GPMVec3ToPxExtendedVec3(const GPM::Vec3& vector) noexcept
 {
-    return physx::PxExtendedVec3{ vector.x, vector.y, vector.z };
+    return physx::PxExtendedVec3{vector.x, vector.y, vector.z};
 }
 
 GPM::Quat PhysXSystem::PxQuatToGPMQuat(const physx::PxQuat& quaternion) noexcept
@@ -69,5 +69,5 @@ GPM::Quat PhysXSystem::PxQuatToGPMQuat(const physx::PxQuat& quaternion) noexcept
 
 physx::PxQuat PhysXSystem::GPMQuatToPxQuat(const GPM::Quat& quaternion) noexcept
 {
-    return physx::PxQuat{quaternion.x, quaternion.y, quaternion.z, quaternion.s};
+    return physx::PxQuat{quaternion.x, quaternion.y, quaternion.z, quaternion.w};
 }

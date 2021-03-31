@@ -31,7 +31,6 @@ GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
 
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
-          // GPE::Engine::getInstance()->physXSystem.drawDebugScene();
           if (m_game != nullptr)
               m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
       }},
@@ -40,11 +39,11 @@ EditorStartup::EditorStartup()
           if (m_game != nullptr)
               m_game->update(fixedUnscaledDeltaTime, deltaTime);
       }},
-      m_render{[&]() {
-          GPE::Engine::getInstance()->renderer.swapBuffer();
 
+      m_render{[&]() {
           m_editor.update();
           m_editor.render();
+          GPE::Engine::getInstance()->renderer.swapBuffer();
       }},
       m_reloadableCpp{gameDllPath}, m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
                                              GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
@@ -54,6 +53,7 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
     ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
     ADD_PROCESS(m_reloadableCpp, setLogInstance);
+    ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
@@ -80,6 +80,7 @@ void EditorStartup::startGame()
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
         destroyer(m_game);
     }
+
     auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
     m_game = a();
 
@@ -99,12 +100,7 @@ void EditorStartup::closeGame()
 
 void EditorStartup::update()
 {
-    if (m_game != nullptr)
-    {
-        m_game->update(0, 0);
-    }
-
-    GPE::Engine::getInstance()->timeSystem.update(m_update, m_fixedUpdate, m_render);
+    GPE::Engine::getInstance()->timeSystem.update(m_fixedUpdate, m_update, m_render);
     isRunning = m_editor.isRunning();
 
     if (m_reloadableCpp.refresh())
@@ -114,6 +110,9 @@ void EditorStartup::update()
 
         auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
         (*sync)(*GPE::Engine::getInstance());
+
+        auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+        (*syncImgui)(ImGui::GetCurrentContext());
 
         startGame();
     }

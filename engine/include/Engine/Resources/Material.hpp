@@ -28,9 +28,13 @@ public:
     };
 
 protected:
+    static unsigned int materialCount;
+
+protected:
     std::string       m_name{""};
     MaterialComponent m_comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
     Texture*          m_pDiffuseTexture{nullptr};
+    unsigned int      m_ID = 0;
 
 public:
     inline Material(const CreateArg& arg);
@@ -47,6 +51,10 @@ public:
     DEFAULT_GETTER_SETTER_BY_REF(DiffuseTexture, m_pDiffuseTexture);
 
     inline bool isOpaque() const noexcept;
+
+    inline unsigned int getID() const;
+
+    inline void generateNewMaterial();
 };
 
 #include "Material.inl"

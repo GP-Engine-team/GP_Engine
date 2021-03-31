@@ -88,10 +88,11 @@ public:
     void update(float deltaTime) final
     {
         m_speed = 1;
-        rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
 
-        if (getOwner().getTransform().isDirty())
-            getOwner().getTransform().update(GPM::Mat4::identity());
+        if (Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.1)
+        {
+            rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
+        }
     }
 };
 } // namespace GPE

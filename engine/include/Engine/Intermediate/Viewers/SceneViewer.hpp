@@ -1,7 +1,11 @@
 ﻿#pragma once
 
+
 #include "Engine/Intermediate/GameObject.hpp"
 #include "glad/glad.h"
+
+#include <iostream>
+#include <stdlib.h>
 
 namespace GPE
 {
@@ -12,7 +16,7 @@ class SceneViewer
 {
 public:
     GameObject    cameraOwner;
-    Scene*        m_pScene;
+    Scene*        pScene;
     class Camera* pCamera;
 
     GLuint        textureID;
@@ -22,6 +26,8 @@ public:
     int           height;
 
 private:
+    bool          m_captureInputs;
+
     void initializeFramebuffer();
 
 public:
@@ -31,6 +37,8 @@ public:
     void resize   (int width, int height);
     void bindScene(Scene& scene)          noexcept;
     void render   ()                      const;
+    void captureInputs();
+    void releaseInputs();
 };
 
 } // namespace GPE

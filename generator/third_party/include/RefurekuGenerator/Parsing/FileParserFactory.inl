@@ -36,5 +36,7 @@ FileParserFactory<FileParserType>::FileParserFactory() noexcept:
 	//Setup property rules
 	this->parsingSettings.propertyParsingSettings.simplePropertyRules.emplace_back(&_customInstantiatorPropertyRule);
 	this->parsingSettings.propertyParsingSettings.complexPropertyRules.emplace_back(&_propertySettingsPropertyRule);
-	//this->parsingSettings.propertyParsingSettings.complexPropertyRules.emplace_back(&_testPropertyRule);
+	this->parsingSettings.propertyParsingSettings.complexPropertyRules.emplace_back(&_testPropertyRule);
+	this->parsingSettings.propertyParsingSettings.complexPropertyRules.emplace_back(&_testPropertyRule2);
+	this->parsingSettings.propertyParsingSettings.complexPropertyRules.emplace_back(&_testPropertyRule3);
 }

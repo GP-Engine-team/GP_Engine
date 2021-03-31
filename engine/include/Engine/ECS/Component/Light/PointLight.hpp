@@ -6,52 +6,59 @@
 
 #pragma once
 
-#include <string> //std::string
-#include <vector> //std::vectorA
+#include <vector> //std::vector
 
 #include "Engine/Core/Tools/ClassUtility.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/ECS/Component/Light/Light.hpp"
-#include "GPM/Vector3.hpp"
 
-namespace GPE
+// Generated
+#include "Generated/PointLight.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class PointLight : public Light
-{
-public:
-    struct CreateArg
+    class RFKClass(Inspect(), ComponentGen) PointLight : public Light
     {
-        const AmbiantComponent&  ambient;
-        const DiffuseComponent&  diffuse;
-        const SpecularComponent& specular;
+    public:
+        struct CreateArg
+        {
+            AmbiantComponent  ambient  = AmbiantComponent{0.f, 0.f, 0.f, 1.f};
+            DiffuseComponent  diffuse  = DiffuseComponent{0.5f, 0.5f, 0.5f, 1.f};
+            SpecularComponent specular = SpecularComponent{0.5f, 0.5f, 0.5f, 1.f};
 
-        float constant;
-        float linear;
-        float quadratic;
-        bool  isEnable{true};
+            float constant  = 1.f;
+            float linear    = 0.09f;
+            float quadratic = 0.032f;
+            bool  isEnable{true};
+        };
+
+    protected:
+        float m_constant, m_linear, m_quadratic;
+
+    public:
+        PointLight(const PointLight& other) = delete;
+        PointLight(PointLight && other)     = default;
+        virtual ~PointLight();
+
+        PointLight()        = delete;
+        PointLight& operator=(PointLight const& other) = delete;
+        PointLight& operator=(PointLight&& other) = default;
+
+        PointLight(class GameObject & owner) noexcept;
+
+        PointLight(class GameObject & owner, const CreateArg& arg) noexcept;
+
+        PointLight(class GameObject & owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
+                   const SpecularComponent& specular, float constant, float linear, float quadratic) noexcept;
+
+        void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept override;
+
+        DEFAULT_GETTER_SETTER_BY_REF(Constant, m_constant);
+        DEFAULT_GETTER_SETTER_BY_REF(Linear, m_linear);
+        DEFAULT_GETTER_SETTER_BY_REF(Quadratic, m_quadratic);
+
+        PointLight_GENERATED
     };
 
-protected:
-    float m_constant, m_linear, m_quadratic;
+} // namespace )
 
-public:
-    PointLight(const PointLight& other) = delete;
-    PointLight(PointLight&& other)      = default;
-    virtual ~PointLight();
-
-    PointLight()        = delete;
-    PointLight& operator=(PointLight const& other) = delete;
-    PointLight& operator=(PointLight&& other) = default;
-
-    PointLight(GameObject& owner, const CreateArg& arg) noexcept;
-
-    PointLight(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
-               const SpecularComponent& specular, float constant, float linear, float quadratic) noexcept;
-
-    void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept override;
-
-    DEFAULT_GETTER_SETTER_BY_REF(Constant, m_constant);
-    DEFAULT_GETTER_SETTER_BY_REF(Linear, m_linear);
-    DEFAULT_GETTER_SETTER_BY_REF(Quadratic, m_quadratic);
-};
-} /*namespace GPE*/
+File_GENERATED

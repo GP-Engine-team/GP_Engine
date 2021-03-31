@@ -20,76 +20,83 @@
 // in inl
 #include "Engine/Resources/Scene.hpp"
 
-namespace GPE
+// Generated
+#include "Generated/Light.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class Light // TODO: Can be more optimize change information only when light is update
-    : public Component
-{
-public:
-    struct CreateArg
+    // TODO: Can be more optimize change information only when light is update
+    class RFKClass(Inspect(), ComponentGen()) Light : public Component
     {
-        const AmbiantComponent&  ambient;
-        const DiffuseComponent&  diffuse;
-        const SpecularComponent& specular;
+    public:
+        struct CreateArg
+        {
+            AmbiantComponent  ambient  = AmbiantComponent{0.f, 0.f, 0.f, 1.f};
+            DiffuseComponent  diffuse  = DiffuseComponent{0.5f, 0.5f, 0.5f, 1.f};
+            SpecularComponent specular = SpecularComponent{0.5f, 0.5f, 0.5f, 1.f};
+        };
+
+    protected:
+        AmbiantComponent  m_ambientComp;
+        DiffuseComponent  m_diffuseComp;
+        SpecularComponent m_specularComp;
+
+    public:
+        inline Light(GameObject & owner, const CreateArg& arg);
+
+        inline Light(GameObject & owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
+                     const SpecularComponent& specular);
+
+        Light(const Light& other) = delete;
+        Light(Light && other)     = default;
+        inline virtual ~Light();
+
+        Light()        = delete;
+        Light& operator=(const Light& other) = delete;
+
+        inline Light& operator=(Light&& other);
+
+        void moveTowardScene(Scene & newOwner) final
+        {
+            getOwner().pOwnerScene->sceneRenderer.removeLight(this);
+            newOwner.sceneRenderer.addLight(this);
+        }
+
+        virtual void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept
+        {
+            lb.push_back({m_ambientComp,
+                          m_diffuseComp,
+                          m_specularComp,
+                          getOwner().getTransform().getGlobalPosition(),
+                          0.f,
+                          0.f,
+                          0.f,
+                          0.f,
+                          0.f,
+                          {0.f, 0.f, 0.f},
+                          0.f});
+        }
+
+        inline const AmbiantComponent&  getAmbient() const noexcept;
+        inline const DiffuseComponent&  getDiffuse() const noexcept;
+        inline const SpecularComponent& getSpecular() const noexcept;
+
+        inline void setGlobalComponent(const ColorRGBA& newComponent) noexcept;
+        inline void setGlobalComponent(const GPM::Vec4& newComponent) noexcept;
+
+        inline void setAmbient(const AmbiantComponent& newAmbient) noexcept;
+        inline void setDiffuse(const DiffuseComponent& newDiffuse) noexcept;
+        inline void setSpecular(const SpecularComponent& newSpecular) noexcept;
+
+        inline void setAmbient(const GPM::Vec4& newAmbient) noexcept;
+        inline void setDiffuse(const GPM::Vec4& newDiffuse) noexcept;
+        inline void setSpecular(const GPM::Vec4& newSpecular) noexcept;
+
+        Light_GENERATED
     };
-
-protected:
-    AmbiantComponent  m_ambientComp;
-    DiffuseComponent  m_diffuseComp;
-    SpecularComponent m_specularComp;
-
-public:
-    inline Light(GameObject& owner, const CreateArg& arg);
-
-    inline Light(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
-                 const SpecularComponent& specular);
-
-    Light(const Light& other) = delete;
-    Light(Light&& other)      = default;
-    inline virtual ~Light();
-
-    Light()        = delete;
-    Light& operator=(const Light& other) = delete;
-
-    inline Light& operator=(Light&& other);
-
-    void moveTowardScene(Scene& newOwner) final
-    {
-        getOwner().pOwnerScene->sceneRenderer.removeLight(this);
-        newOwner.sceneRenderer.addLight(this);
-    }
-
-    virtual void addToLightToUseBuffer(std::vector<LightData>& lb) noexcept
-    {
-        lb.push_back({m_ambientComp,
-                      m_diffuseComp,
-                      m_specularComp,
-                      getOwner().getTransform().getGlobalPosition(),
-                      0.f,
-                      0.f,
-                      0.f,
-                      0.f,
-                      0.f,
-                      {0.f, 0.f, 0.f},
-                      0.f});
-    }
-
-    inline const AmbiantComponent&  getAmbient() const noexcept;
-    inline const DiffuseComponent&  getDiffuse() const noexcept;
-    inline const SpecularComponent& getSpecular() const noexcept;
-
-    inline void setGlobalComponent(const ColorRGBA& newComponent) noexcept;
-    inline void setGlobalComponent(const GPM::Vec4& newComponent) noexcept;
-
-    inline void setAmbient(const AmbiantComponent& newAmbient) noexcept;
-    inline void setDiffuse(const DiffuseComponent& newDiffuse) noexcept;
-    inline void setSpecular(const SpecularComponent& newSpecular) noexcept;
-
-    inline void setAmbient(const GPM::Vec4& newAmbient) noexcept;
-    inline void setDiffuse(const GPM::Vec4& newDiffuse) noexcept;
-    inline void setSpecular(const GPM::Vec4& newSpecular) noexcept;
-};
 
 #include "Light.inl"
 
-} /*namespace GPE*/
+} // namespace )
+
+File_GENERATED

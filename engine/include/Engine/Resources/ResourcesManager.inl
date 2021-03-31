@@ -20,10 +20,28 @@ const LType* ResourcesManager<LType>::get(const std::string& key) const noexcept
     auto it = m_resources.find(key);
     if (it == m_resources.end())
     {
+        Log::getInstance()->logWarning(stringFormat("Resource insert with key \"%s\" doesn't exist", key.c_str()));
         return nullptr;
     }
 
     return &it->second;
+}
+
+template <class LType>
+std::unordered_map<std::string, LType>& ResourcesManager<LType>::getAll() noexcept
+{
+    return m_resources;
+}
+
+template <class LType>
+const std::string* ResourcesManager<LType>::getKey(const LType* data) const noexcept
+{
+    for (auto&& res : m_resources)
+    {
+        if (&res.second == data)
+            return &res.first;
+    }
+    return nullptr;
 }
 
 template <class LType>
@@ -73,6 +91,20 @@ template <class T>
 const T* ResourcesManager<LType, RType...>::get(const std::string& key) const noexcept
 {
     return ResourcesManager<T>::get(key);
+}
+
+template <class LType, class... RType>
+template <class T>
+std::unordered_map<std::string, T>& ResourcesManager<LType, RType...>::getAll() noexcept
+{
+    return ResourcesManager<T>::getAll();
+}
+
+template <class LType, class... RType>
+template <class T>
+const std::string* ResourcesManager<LType, RType...>::getKey(const T* data) const noexcept
+{
+    return ResourcesManager<T>::getKey(data);
 }
 
 template <class LType, class... RType>

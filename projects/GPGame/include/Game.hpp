@@ -31,18 +31,18 @@ protected:
 private:
     virtual void update(double unscaledDeltaTime, double deltaTime) override final
     {
-        // AbstractGame::update(unscaledDeltaTime, deltaTime);
-        bSys.update(static_cast<float>(deltaTime));
         ++unFixedUpdateFrameCount;
 
-        sm.getCurrentScene()->world.updateSelfAndChildren();
+        bSys.update(deltaTime);
+        sm.getCurrentScene()->getWorld().updateSelfAndChildren();
     }
 
     virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final
     {
         AbstractGame::fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+        // GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
         ++fixedUpdateFrameCount;
-        bSys.fixedUpdate(static_cast<float>(fixedDeltaTime));
+        bSys.fixedUpdate(fixedDeltaTime);
     }
 
     virtual void render() override final

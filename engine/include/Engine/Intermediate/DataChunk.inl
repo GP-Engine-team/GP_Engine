@@ -4,6 +4,7 @@ template <typename TStoredData, int TSize>
 constexpr inline DataChunk<TStoredData, TSize>::DataChunk() noexcept
 {
     m_datas.reserve(TSize / sizeof(TStoredData));
+    std::cout << __FUNCSIG__ << std::endl;
 }
 
 template <typename TStoredData, int TSize>
@@ -21,10 +22,11 @@ void DataChunk<TStoredData, TSize>::destroy(const TStoredData* dataToDestroy) no
         if (unlikely(&m_datas[i] == dataToDestroy))
         {
             TStoredData tmp = std::move(m_datas[i]);
-            m_datas[i]     = std::move(m_datas.back());
-            m_datas.back() = std::move(tmp);
+            m_datas[i]      = std::move(m_datas.back());
+            m_datas.back()  = std::move(tmp);
 
             m_datas.pop_back();
+            return;
         }
     }
 }

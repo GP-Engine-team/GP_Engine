@@ -83,14 +83,10 @@ SceneRenderSystem::SceneRenderSystem() noexcept
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
 
-    Engine::getInstance()->resourceManager.add<Shader>("PostProcess", "./resources/shaders/vPostProcess.vs",
-                                                       "./resources/shaders/fPostProcess.fs");
-
-    Engine::getInstance()->resourceManager.add<Mesh>("ScreenPlan",
-                                                     Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::NEG_Z));
-    Engine::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
-    Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
-    Engine::getInstance()->resourceManager.add<Mesh>("Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
+    m_sphereMesh = &Engine::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
+    m_cubeMesh   = &Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
+    m_planeMesh  = &Engine::getInstance()->resourceManager.add<Mesh>(
+        "Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
 
     Engine::getInstance()->renderSystem.addSceneRenderSystem(this);
 }
@@ -189,7 +185,6 @@ void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subMod
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
 
-        // TODO : Replace by getProjectionView();
         pShader->setMat4(
             "projectViewModelMatrix",
             (camToUse.getProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
@@ -198,10 +193,9 @@ void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subMod
     }
     else
     {
-        // TODO : Replace by getProjectionView();
-        pShader->setMat4("projectViewModelMatrix", (camToUse.getProjection() * camToUse.getView() *
-                                                    subModel.pModel->getOwner().getTransform().getModelMatrix())
-                                                       .e);
+        pShader->setMat4(
+            "projectViewModelMatrix",
+            (camToUse.getProjectionView() * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
     }
 
     if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
@@ -211,18 +205,6 @@ void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subMod
 
         pShader->setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
         pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
-    }
-
-    if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
-    {
-        pShader->setMaterialBlock(subModel.pMaterial->getComponent());
-    }
-
-    if ((pShader->getFeature() & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
-    {
-        pShader->setVec4("Color", subModel.pMaterial->getComponent().ambient.kr,
-                         subModel.pMaterial->getComponent().ambient.kg, subModel.pMaterial->getComponent().ambient.kb,
-                         subModel.pMaterial->getComponent().ambient.ki);
     }
 }
 
@@ -244,6 +226,25 @@ void SceneRenderSystem::tryToBindShader(Shader& shader)
     sendDataToInitShader(*m_pCameras[0], m_currentPShaderUse);
 }
 
+void SceneRenderSystem::tryToBindMaterial(Shader& shader, Material& material)
+{
+    if (m_currentMaterialID == material.getID())
+        return;
+
+    if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    {
+        shader.setMaterialBlock(material.getComponent());
+    }
+
+    if ((shader.getFeature() & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
+    {
+        shader.setVec4("Color", material.getComponent().ambient.kr, material.getComponent().ambient.kg,
+                       material.getComponent().ambient.kb, material.getComponent().ambient.ki);
+    }
+
+    m_currentMaterialID = material.getID();
+}
+
 void SceneRenderSystem::tryToBindTexture(unsigned int textureID)
 {
     if (m_currentTextureID == textureID)
@@ -259,7 +260,6 @@ void SceneRenderSystem::tryToBindMesh(unsigned int meshID)
     if (m_currentMeshID == meshID)
         return;
 
-    // glBindVertexArray(meshID);
     glBindVertexArray(meshID);
 
     m_currentMeshID = meshID;
@@ -331,6 +331,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                 // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
+                rs.tryToBindMaterial(*pSubModel->pShader, *pSubModel->pMaterial);
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
@@ -355,7 +356,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                 {
                     float distance = (pCameras[0]->getOwner().getTransform().getGlobalPosition() -
                                       (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
-                                         .length2();
+                                         .sqrLength();
                     mapElemSortedByDistance[distance] = pSubModel;
                 }
             }
@@ -364,6 +365,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
             for (std::map<float, SubModel*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != rEnd; ++it)
             {
                 rs.tryToBindShader(*it->second->pShader);
+                rs.tryToBindMaterial(*it->second->pShader, *it->second->pMaterial);
                 rs.tryToBindMesh(it->second->pMesh->getID());
                 rs.tryToBindTexture(it->second->pMaterial->getDiffuseTexture()->getID());
                 rs.tryToSetBackFaceCulling(it->second->enableBackFaceCulling);
@@ -387,9 +389,8 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                     glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
                     rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
 
-                    shaderToUse->setMat4(
-                        "projectViewModelMatrix",
-                        (pCameras[0]->getProjection() * pCameras[0]->getView() * shape.transform.model).e);
+                    shaderToUse->setMat4("projectViewModelMatrix",
+                                         (pCameras[0]->getProjectionView() * shape.transform.model).e);
 
                     shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
 
@@ -423,8 +424,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                     glEnableVertexAttribArray(0);
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 
-                    shaderToUse->setMat4("projectViewModelMatrix",
-                                         (pCameras[0]->getProjection() * pCameras[0]->getView()).e);
+                    shaderToUse->setMat4("projectViewModelMatrix", pCameras[0]->getProjectionView().e);
 
                     shaderToUse->setVec4("Color", line.color.r, line.color.g, line.color.b, line.color.a);
 
@@ -461,7 +461,7 @@ void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline rend
 void SceneRenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,
                                         EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{Engine::getInstance()->resourceManager.get<Mesh>("Sphere"),
+    m_debugShape.emplace_back(DebugShape{m_sphereMesh,
                                          toTransform(SplitTransform{Quat::identity(), position, Vec3(radius * 2.f)}),
                                          color, mode, enableBackFaceCullling});
 }
@@ -470,18 +470,16 @@ void SceneRenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation
                                       const ColorRGBA& color, EDebugShapeMode mode,
                                       bool enableBackFaceCullling) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug"),
-                                         toTransform(SplitTransform{rotation, position, scale}), color, mode,
-                                         enableBackFaceCullling});
+    m_debugShape.emplace_back(DebugShape{m_cubeMesh, toTransform(SplitTransform{rotation, position, scale}), color,
+                                         mode, enableBackFaceCullling});
 }
 
 void SceneRenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale, const ColorRGBA& color,
                                       EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(
-        DebugShape{Engine::getInstance()->resourceManager.get<Mesh>("Plane"),
-                   toTransform(SplitTransform{Quaternion::lookAt(Vec3::zero(), dir), position, scale}), color, mode,
-                   enableBackFaceCullling});
+        DebugShape{m_planeMesh, toTransform(SplitTransform{Quaternion::lookAt(Vec3::zero(), dir), position, scale}),
+                   color, mode, enableBackFaceCullling});
 }
 
 void SceneRenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width, const ColorRGBA& color,
@@ -583,17 +581,14 @@ void SceneRenderSystem::removeSubModel(SubModel* pSubModel) noexcept
 {
     if (pSubModel->pMaterial->isOpaque())
     {
-        m_pOpaqueSubModels.erase(std::remove(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel),
-                                 m_pOpaqueSubModels.end());
+        m_pOpaqueSubModels.erase(std::find(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel));
     }
     else
     {
         m_pTransparenteSubModels.erase(
-            std::remove(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), pSubModel),
-            m_pTransparenteSubModels.end());
+            std::find(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), pSubModel));
     }
 }
-
 void SceneRenderSystem::addCamera(Camera* pCamera) noexcept
 {
     m_pCameras.push_back(pCamera);

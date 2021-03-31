@@ -5,6 +5,7 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Resources/Script/FreeFly.hpp"
+#include "Engine/Core/Debug/Log.hpp"
 
 #include <GLFW/glfw3.h>
 #include <string>
@@ -51,21 +52,12 @@ void SceneViewer::initializeFramebuffer()
 
 
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : m_pScene{&viewed},
+    : pScene{&viewed},
       cameraOwner{viewed, {"Editor_camera_" + std::to_string((size_t)this), {}, nullptr}},
       textureID{0u}, depthStencilID{0u}, framebufferID{0u},
-      width{width_}, height{height_}
+      width{width_}, height{height_},
+      m_captureInputs{false}
 {
-    GPE::InputManager& iManager = GPE::Engine::getInstance()->inputManager;
-
-    iManager.bindInput(GLFW_KEY_W, "forward");
-    iManager.bindInput(GLFW_KEY_S, "back");
-    iManager.bindInput(GLFW_KEY_A, "left");
-    iManager.bindInput(GLFW_KEY_D, "right");
-    iManager.bindInput(GLFW_KEY_SPACE, "up");
-    iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
-
     {
         Camera::PerspectiveCreateArg camArg;
         camArg.name   = cameraOwner.getName().c_str();
@@ -73,8 +65,6 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
 
         pCamera = &cameraOwner.addComponent<Camera>(camArg);
     }
-
-    cameraOwner.addComponent<FreeFly>();
 
     initializeFramebuffer();
 }
@@ -111,18 +101,46 @@ void SceneViewer::resize(int width_, int height_)
 
 void SceneViewer::bindScene(Scene& scene) noexcept
 {
-    if (m_pScene == &scene)
+    if (pScene == &scene)
+    {
         return;
+    }
 
     cameraOwner.moveTowardScene(scene);
-    m_pScene = &scene;
+    pScene = &scene;
 }
 
 
 void SceneViewer::render() const
 {
-    m_pScene->sceneRenderer.draw(Engine::getInstance()->resourceManager,
-                                 m_pScene->sceneRenderer.defaultRenderPipeline(), framebufferID);
+    pScene->sceneRenderer.draw(Engine::getInstance()->resourceManager,
+                               pScene->sceneRenderer.defaultRenderPipeline(), framebufferID);
+}
+
+
+void SceneViewer::captureInputs()
+{
+    if (m_captureInputs)
+    {
+        return;
+    }
+
+    m_captureInputs = true;
+    cameraOwner.addComponent<FreeFly>();
+    //cameraOwner.addComponent<GPE::InputComponent>();
+}
+
+
+void SceneViewer::releaseInputs()
+{
+    if (!m_captureInputs)
+    {
+        return;
+    }
+
+    m_captureInputs = false;
+    cameraOwner.destroyUniqueComponentNow<FreeFly>();
+    //cameraOwner.destroyUniqueComponentNow<GPE::InputComponent>();
 }
 
 } // namespace GPE

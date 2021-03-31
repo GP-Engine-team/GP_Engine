@@ -1,12 +1,11 @@
-﻿#include <Engine/Core/Debug/Log.hpp>
+﻿#include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Engine.hpp"
 #include <Engine/ECS/Component/AudioComponent.hpp>
-#include <Engine/ECS/System/SoundSystem.hpp>
-#include <Engine/Engine.hpp>
 
 using namespace GPE;
 using namespace std;
 
-AudioComponent::AudioComponent(GameObject& owner) noexcept : Component(owner)
+AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
 {
     // Check if OpenAL Soft handle m_enumeration
     {
@@ -43,15 +42,23 @@ AudioComponent::AudioComponent(GameObject& owner) noexcept : Component(owner)
         FUNCT_ERROR("ERROR: Could not create audio context");
     }
 
-    m_key = SoundSystem::getInstance()->addComponent(this);
+    m_key = Engine::getInstance()->soundSystem.addComponent(this);
 }
 
-AudioComponent::AudioComponent(AudioComponent& other) noexcept : Component(other.getOwner())
+AudioComponent& AudioComponent::operator=(AudioComponent&& other)
 {
-}
+    m_enumeration        = std::move(other.m_enumeration);
+    m_device             = std::move(other.m_device);
+    m_openALContext      = std::move(other.m_openALContext);
+    m_contextMadeCurrent = std::move(other.m_contextMadeCurrent);
+    m_closed             = std::move(other.m_closed);
+    m_key                = std::move(other.m_key);
+    sources              = std::move(other.sources);
 
-AudioComponent::AudioComponent(AudioComponent&& other) noexcept : Component(other.getOwner())
-{
+    Engine::getInstance()->soundSystem.updateComponent(this);
+
+    Component::operator=(std::move(other));
+    return *this;
 }
 
 void AudioComponent::setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept
@@ -89,7 +96,7 @@ void AudioComponent::playSound(const char* name) noexcept
     source->state = AL_PLAYING;
 }
 
-AudioComponent::~AudioComponent() noexcept
+AudioComponent::~AudioComponent()
 {
     // AL_CALL(alDeleteSources, 1, &sources[i].source);
     // AL_CALL(alDeleteBuffers, 1, &buffer);

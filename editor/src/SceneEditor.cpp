@@ -3,17 +3,17 @@
 
 namespace Editor
 {
-	/*
-	SceneEditor::SceneEditor(const GPE::Scene& scene)
-		: sceneViewer{}, inspector{}
-	{
 
-	}
+SceneEditor::SceneEditor(GPE::Scene& scene)
+	: sceneViewer{scene}
+{
+
+}
 
 
-	void SceneEditor::render() const
-	{
-		sceneViewer.render();
-	}
-	*/
+void SceneEditor::render() const
+{
+	sceneViewer.render();
+}
+
 } // End of namespace Editor

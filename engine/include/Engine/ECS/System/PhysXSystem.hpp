@@ -9,6 +9,7 @@
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <GPM/Quaternion.hpp>
+#include <PhysX/characterkinematic/PxExtended.h>
 #include <PxPhysics.h>
 #include <PxScene.h>
 #include <PxSceneDesc.h>
@@ -20,7 +21,6 @@
 #include <foundation/PxVec3.h>
 #include <pvd/PxPvd.h>
 #include <vector>
-#include <PhysX/characterkinematic/PxExtended.h>
 
 namespace GPE
 {
@@ -39,7 +39,7 @@ public:
     PhysXSystem();
     ~PhysXSystem();
 
-    void advance(const double& deltaTime) noexcept;
+    void advance(double deltaTime) noexcept;
 
     void drawDebugScene();
 
@@ -71,12 +71,12 @@ public:
      */
     inline void removeComponent(RigidbodyDynamic* rigidbody) noexcept;
 
-    static inline GPM::Vec3     PxVec3ToGPMVec3(const physx::PxVec3& vector) noexcept;
-    static inline physx::PxVec3 GPMVec3ToPxVec3(const GPM::Vec3& vector) noexcept;
-    static inline GPM::Vec3     PxExtendedVec3ToGPMVec3(const physx::PxExtendedVec3& vector) noexcept;
+    static inline GPM::Vec3             PxVec3ToGPMVec3(const physx::PxVec3& vector) noexcept;
+    static inline physx::PxVec3         GPMVec3ToPxVec3(const GPM::Vec3& vector) noexcept;
+    static inline GPM::Vec3             PxExtendedVec3ToGPMVec3(const physx::PxExtendedVec3& vector) noexcept;
     static inline physx::PxExtendedVec3 GPMVec3ToPxExtendedVec3(const GPM::Vec3& vector) noexcept;
-    static inline GPM::Quat     PxQuatToGPMQuat(const physx::PxQuat& quaternion) noexcept;
-    static inline physx::PxQuat GPMQuatToPxQuat(const GPM::Quat& quaternion) noexcept;
+    static inline GPM::Quat             PxQuatToGPMQuat(const physx::PxQuat& quaternion) noexcept;
+    static inline physx::PxQuat         GPMQuatToPxQuat(const GPM::Quat& quaternion) noexcept;
 
 public:
     physx::PxFoundation*           foundation;

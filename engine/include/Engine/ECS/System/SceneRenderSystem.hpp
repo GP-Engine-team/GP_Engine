@@ -74,15 +74,21 @@ protected:
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
+    unsigned int m_currentMaterialID                = 0;
     unsigned int m_currentMeshID                    = 0;
     Shader*      m_currentPShaderUse                = nullptr;
     bool         m_currentBackFaceCullingModeEnable = false;
+
+    Mesh* m_planeMesh  = nullptr;
+    Mesh* m_sphereMesh = nullptr;
+    Mesh* m_cubeMesh   = nullptr;
 
 public:
     SceneRenderSystem() noexcept;
     ~SceneRenderSystem() noexcept;
 
     void tryToBindShader(Shader& shader);
+    void tryToBindMaterial(Shader& shader, Material& material);
     void tryToBindTexture(unsigned int textureID);
     void tryToBindMesh(unsigned int meshID);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);

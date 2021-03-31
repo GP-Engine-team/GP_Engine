@@ -12,6 +12,12 @@ using namespace GPM;
 namespace GPE
 {
 
+void Camera::updateView()
+{
+    m_viewMatrix           = getOwner().getTransform().getModelMatrix().inversed();
+    m_projectionViewMatrix = m_projection * m_viewMatrix;
+}
+
 void Camera::updateProjection()
 {
     switch (m_projInfo.type)
@@ -37,6 +43,10 @@ void Camera::moveTowardScene(class Scene& newOwner)
     newOwner.sceneRenderer.addCamera(this);
 }
 
+Camera::Camera(GameObject& owner) noexcept : Camera(owner, PerspectiveCreateArg{})
+{
+}
+
 Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Component(owner)
 {
     GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");
@@ -54,6 +64,8 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.znear, m_projInfo.zfar);
 
     getOwner().pOwnerScene->sceneRenderer.addCamera(this);
+    getOwner().getTransform().OnUpdate += std::bind(&Camera::updateView, this);
+    updateView();
 
     Log::getInstance()->log((std::string("Perspective projection added with name \"") + arg.name + "\"").c_str());
 }
@@ -76,13 +88,15 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
         Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
 
     getOwner().pOwnerScene->sceneRenderer.addCamera(this);
+    getOwner().getTransform().OnUpdate += std::bind(&Camera::updateView, this);
+    updateView();
+
     Log::getInstance()->log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
 }
 
 Camera::~Camera() noexcept
 {
     getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
-    DataChunk<Camera>::getInstance()->destroy(this);
 }
 
 Camera& Camera::operator=(Camera&& other) noexcept
@@ -90,7 +104,7 @@ Camera& Camera::operator=(Camera&& other) noexcept
     m_projInfo             = std::move(other.m_projInfo);
     m_projection           = std::move(other.m_projection);
     m_viewMatrix           = std::move(other.m_viewMatrix);
-    m_viewProjectionMatrix = std::move(other.m_viewProjectionMatrix);
+    m_projectionViewMatrix = std::move(other.m_projectionViewMatrix);
 
     getOwner().pOwnerScene->sceneRenderer.updateCameraPointer(this, &other);
 
