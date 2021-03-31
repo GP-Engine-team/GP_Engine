@@ -9,8 +9,7 @@
 #include "Engine/ECS/System/SceneRenderSystem.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
-#include <sstream> //std::getLine
-#include <string>  // std::string
+#include <string> // std::string
 
 namespace GPE
 {
@@ -20,6 +19,9 @@ class Scene
 
 protected:
     GameObject* m_pWorld = nullptr;
+
+    std::unordered_map<std::string, unsigned int>
+        m_loadedResourcesPath; // Indicate witch resource is loaded with counter
 
 public:
     SceneRenderSystem sceneRenderer;
@@ -49,5 +51,8 @@ public:
     GameObject* getGameObject(const std::string& path) noexcept;
 
     GameObject& getWorld() noexcept;
+
+    void addLoadedResourcePath(const char* path) noexcept;
+    void removeLoadedResourcePath(const char* path) noexcept;
 };
 } /*namespace GPE*/
