@@ -1,10 +1,10 @@
 #include "Engine/Resources/Texture.hpp"
 
 #include <utility>
-
+/*
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
-
+*/
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ParserTool.hpp"
@@ -13,7 +13,7 @@
 using namespace GPE;
 
 Texture::Texture(const LoadArg& arg) noexcept
-{
+{ /*
     stbi_set_flip_vertically_on_load(arg.flipTexture);
 
     int            w, h, comp;
@@ -33,7 +33,7 @@ Texture::Texture(const LoadArg& arg) noexcept
 
     Log::getInstance()->log(
         (std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path.c_str()) + "\" loaded to VRAM").c_str());
-    stbi_image_free(pixels);
+    stbi_image_free(pixels);*/
 }
 
 Texture::Texture(const CreateArg& arg) noexcept : format{arg.format}
@@ -93,7 +93,8 @@ bool Texture::checkFormatValidity() const
 }
 
 bool Texture::loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
-                        ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels, bool generateMipmaps) noexcept
+                        ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels,
+                        bool generateMipmaps) noexcept
 {
     if (!checkFormatValidity())
     {

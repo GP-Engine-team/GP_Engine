@@ -71,6 +71,11 @@ public:
         STENCIL_INDEX8     = 4
     };
 
+    struct ImportArg
+    {
+        std::string path = "";
+    };
+
     struct LoadArg
     {
         std::string       path             = "";
@@ -101,7 +106,8 @@ protected:
     bool checkFormatValidity() const;
 
     bool loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
-                   ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels, bool generateMipmaps = true) noexcept;
+                   ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels,
+                   bool generateMipmaps = true) noexcept;
 
 public:
     Texture()                     = default;

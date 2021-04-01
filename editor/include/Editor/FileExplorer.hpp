@@ -10,16 +10,16 @@
 #include <shobjidl.h>
 #endif
 
-#include <string>
+#include <filesystem>
 
 namespace Editor
 {
 
 #ifdef _WIN64
 
-std::string openFileExplorer()
+std::filesystem::path openFileExplorer()
 {
-    std::string rst;
+    std::filesystem::path src;
 
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
     if (SUCCEEDED(hr))
@@ -48,8 +48,7 @@ std::string openFileExplorer()
                     // Display the file name to the user.
                     if (SUCCEEDED(hr))
                     {
-                        std::wstring ws(pszFilePath);
-                        rst = std::string(ws.begin(), ws.end()); // convert LPWSTR to string
+                        src = pszFilePath;
                         CoTaskMemFree(pszFilePath);
                     }
                     pItem->Release();
@@ -59,7 +58,7 @@ std::string openFileExplorer()
         }
         CoUninitialize();
     }
-    return rst;
+    return src;
 }
 #endif
 

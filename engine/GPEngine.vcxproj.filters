@@ -487,6 +487,15 @@
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_image.h">
+      <Filter>third_party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_image_write.h">
+      <Filter>third_party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_perlin.h">
+      <Filter>third_party\stb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -620,6 +629,9 @@
     </Filter>
     <Filter Include="third_party\ImGui">
       <UniqueIdentifier>{c1a6a7bc-bd1c-49bd-850c-a5d63c26be01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\stb">
+      <UniqueIdentifier>{537c2f3b-e0ca-4e7b-aa4c-1badd1d88423}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

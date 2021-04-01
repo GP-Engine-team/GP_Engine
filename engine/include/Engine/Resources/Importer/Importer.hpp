@@ -7,15 +7,34 @@
 #pragma once
 
 #include "Engine/ECS/Component/Model.hpp"
+#include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
+
+#define ENGINE_ASSET_EXTENSION ".GPAsset"
 
 namespace GPE
 {
+enum class EFileType
+{
+    MESH     = 0,
+    MATERIAL = 1,
+    TEXTURE  = 2
+};
 
-void importeModel(const char* assetPath) noexcept;
+struct TextureImportDataConfig
+{
+    std::string srcPath;
+};
 
-void createTextureFile();
-void createMaterialFile();
-void createMeshFile(const char* outPath, const Mesh::CreateIndiceBufferArg& arg);
+void importeModel(const char* srcPath, const char* dstPath) noexcept;
+
+void writeTextureFile(const char* dst, const TextureImportDataConfig& arg);
+void readTextureFile(const char* src, Texture::ImportArg& arg);
+
+void writeMaterialFile(const char* dst, const Material::ImporteArg& arg);
+void readMaterialFile(const char* src, Material::ImporteArg& arg);
+
+void writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
+void readMeshFile(const char* src, Mesh::CreateIndiceBufferArg& arg);
 
 } // namespace GPE

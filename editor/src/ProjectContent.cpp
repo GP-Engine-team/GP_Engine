@@ -1,6 +1,7 @@
 ﻿#include "Editor/ProjectContent.hpp"
 
 #include "Editor/FileExplorer.hpp"
+#include "Engine/Resources/Importer/Importer.hpp"
 
 #include <Imgui/imgui.h>
 #include <string>
@@ -10,6 +11,7 @@
 #include "Engine/Engine.hpp"
 
 using namespace Editor;
+using namespace GPE;
 
 ProjectContent::ProjectContent()
 {
@@ -218,8 +220,10 @@ void ProjectContent::render()
 
     if (ImGui::Button("Importe"))
     {
-        std::string g = Editor::openFileExplorer();
+        std::string srcPath = Editor::openFileExplorer().string();
+        importeModel(srcPath.c_str(), pCurrentDirectory->path.string().c_str());
     }
+
     ImGui::SameLine();
 
     if (ImGui::Button("Reload"))

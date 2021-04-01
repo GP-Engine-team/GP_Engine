@@ -20,6 +20,13 @@ namespace GPE
 class Material
 {
 public:
+    struct ImporteArg
+    {
+        std::string       name{""};
+        MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
+        std::string       diffuseTextureName;
+    };
+
     struct CreateArg
     {
         std::string       name{""};
