@@ -12,7 +12,7 @@ void BehaviourSystem::addUpdate(BehaviourComponent& updateFunction) noexcept
 
 void BehaviourSystem::addFixedUpdate(BehaviourComponent& fixedUpdateFunction) noexcept
 {
-    m_updateFunctions.emplace_back(&fixedUpdateFunction);
+    m_fixedUpdateFunctions.emplace_back(&fixedUpdateFunction);
 }
 
 void BehaviourSystem::removeUpdate(BehaviourComponent& updateFunctionToRemove) noexcept
@@ -30,12 +30,12 @@ void BehaviourSystem::removeUpdate(BehaviourComponent& updateFunctionToRemove) n
 
 void BehaviourSystem::removeFixedUpdate(BehaviourComponent& fixedUpdateFunctionToRemove) noexcept
 {
-    for (auto&& function : m_updateFunctions)
+    for (auto&& function : m_fixedUpdateFunctions)
     {
         if (unlikely(function == &fixedUpdateFunctionToRemove))
         {
-            std::swap(function, m_updateFunctions.back());
-            m_updateFunctions.pop_back();
+            std::swap(function, m_fixedUpdateFunctions.back());
+            m_fixedUpdateFunctions.pop_back();
             return;
         }
     }
