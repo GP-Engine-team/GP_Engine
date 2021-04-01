@@ -27,7 +27,7 @@ public:
         : GPE::BehaviourComponent(owner), input(owner.addComponent<GPE::InputComponent>()),
           source(owner.addComponent<GPE::AudioComponent>()), controller(owner.addComponent<GPE::CharacterController>())
     {
-        enableUpdate(true);
+        enableFixedUpdate(true);
         input.bindAction("jump", EKeyMode::KEY_PRESSED, this, &MyFpsScript::jump);
         input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyFpsScript::right);
         input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyFpsScript::left);
@@ -143,7 +143,7 @@ public:
         // collider.setRadius(collider.getRadius() - 1);
     }
 
-    void update(float deltaTime) final
+    void fixedUpdate(float deltaTime) final
     {
         rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
         controller.update(deltaTime);
