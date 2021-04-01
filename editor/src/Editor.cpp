@@ -157,25 +157,20 @@ void Editor::renderInspector()
         GPE::InspectContext context;
         GPE::DataInspector::inspect(context, *m_inspectedObject);
 
-        //auto a = GameObject::staticGetArchetype().getField("m_pComponents");
-        //auto a = GameObject::staticGetArchetype().getField("MyCustomClass");
-        //std::cout << a->type.archetype->name << std::endl;
+        //static float s = 0;
 
-        //rapidxml::xml_document<> doc;
-        //XmlSaver saver(doc);
-        //GPE::save(saver, m_inspectedObject);
-        //saver.print();
-        //XmlLoader loader(doc);
-        //GPE::load(loader, m_inspectedObject);
+        //s += 1.f/30.f;
 
-        //m_inspectedObject = nullptr;
-
-        //rfk::Archetype const * arch = rfk::getArchetype<GPE::BehaviourComponent>();
-        //rfk::Class const*     c    = (rfk::Class const*)(arch);
-        //auto i = c->makeInstance();
-
-
-        //int ijk = 2;
+        //if (s > 2)
+        //{
+        //    rapidxml::xml_document<> doc;
+        //    XmlSaver saver(doc);
+        //    GPE::save(saver, m_inspectedObject);
+        //    saver.print();
+        //    XmlLoader loader(doc);
+        //    GPE::load(loader, m_inspectedObject);
+        //    s = 0;
+        //}
     }
     else
     {

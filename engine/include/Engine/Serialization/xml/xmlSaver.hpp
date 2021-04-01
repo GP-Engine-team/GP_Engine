@@ -248,7 +248,6 @@ bool XmlSaver::savePtrData(T* data, const SaveInfo& info)
     {
         std::stack<Node*> otherContextHierarchy;
         otherContextHierarchy.push(&doc);
-
         std::swap(otherContextHierarchy, hierarchy);
 
         SaveInfo newInfo{std::to_string(std::size_t(data)), info.typeName, info.typeId};

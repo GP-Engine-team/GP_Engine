@@ -12,6 +12,12 @@ InputComponent::InputComponent(GameObject& owner) : Component(owner)
     m_key = Engine::getInstance()->inputManager.addComponent(this);
 }
 
+InputComponent::InputComponent() 
+{
+    m_key = Engine::getInstance()->inputManager.addComponent(this);
+}
+
+
 InputComponent::InputComponent(InputComponent&& other) : Component(other.getOwner())
 {
     m_functionMap = std::move(other.m_functionMap);

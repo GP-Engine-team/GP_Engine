@@ -11,6 +11,11 @@ BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(o
     Engine::getInstance()->behaviourSystem.addBehaviour(this);
 }
 
+BehaviourComponent::BehaviourComponent() noexcept
+{
+    Engine::getInstance()->behaviourSystem.addBehaviour(this);
+}
+
 BehaviourComponent::~BehaviourComponent() noexcept
 {
     Engine::getInstance()->behaviourSystem.removeBehaviour(this);

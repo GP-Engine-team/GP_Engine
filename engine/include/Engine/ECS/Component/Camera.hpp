@@ -98,7 +98,7 @@ namespace GPE RFKNamespace()
     public:
         virtual ~Camera() noexcept;
 
-        Camera() noexcept                    = delete;
+        Camera() noexcept                    = default;
         Camera(const Camera& other) noexcept = delete;
         Camera& operator=(Camera const& other) noexcept = delete;
 

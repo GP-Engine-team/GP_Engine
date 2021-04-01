@@ -32,7 +32,7 @@ namespace GPE RFKNamespace()
     public:
         InputComponent(GameObject & owner);
 
-        InputComponent()                            = delete;
+        InputComponent();
         InputComponent(const InputComponent& other) = delete;
         InputComponent& operator=(InputComponent const& other) = delete;
         virtual ~InputComponent();

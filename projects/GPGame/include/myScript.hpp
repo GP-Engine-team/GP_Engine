@@ -27,18 +27,18 @@ namespace GPG RFKNamespace()
 	public:
 		inline MyScript(GPE::GameObject& owner) noexcept
 			: GPE::BehaviourComponent(owner)
-			, input(owner.addComponent<GPE::InputComponent>())
+			, input(&owner.addComponent<GPE::InputComponent>())
 		{
 
 			enableUpdate(true);
-			input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyScript::up);
-			input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyScript::down);
-			input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyScript::right);
-			input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyScript::left);
-			input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyScript::forward);
-			input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyScript::back);
-			input.bindAction("exit", EKeyMode::KEY_DOWN, this, &MyScript::leave);
-			input.bindAction("sprint", EKeyMode::KEY_DOWN, this, &MyScript::sprint);
+			input->bindAction("jump", EKeyMode::KEY_DOWN, this, &MyScript::up);
+			input->bindAction("down", EKeyMode::KEY_DOWN, this, &MyScript::down);
+			input->bindAction("right", EKeyMode::KEY_DOWN, this, &MyScript::right);
+			input->bindAction("left", EKeyMode::KEY_DOWN, this, &MyScript::left);
+			input->bindAction("forward", EKeyMode::KEY_DOWN, this, &MyScript::forward);
+			input->bindAction("back", EKeyMode::KEY_DOWN, this, &MyScript::back);
+			input->bindAction("exit", EKeyMode::KEY_DOWN, this, &MyScript::leave);
+			input->bindAction("sprint", EKeyMode::KEY_DOWN, this, &MyScript::sprint);
 
 			speed = 1;
 		}
@@ -50,7 +50,7 @@ namespace GPG RFKNamespace()
 		MyScript& operator=(MyScript const& other) noexcept = delete;
 		MyScript& operator=(MyScript&& other) noexcept = delete;
 
-		GPE::InputComponent& input;
+		GPE::InputComponent* input = nullptr;
 
 		RFKField(Serialize(), Inspect(), Slider(0, 1))
 		float speed;

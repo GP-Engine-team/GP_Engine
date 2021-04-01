@@ -59,6 +59,12 @@ void load(XmlLoader& context, std::list<T*>& inspected, const XmlLoader::LoadInf
     {
         size_t size = std::stoll(findAttribValue(context.top(), "size"));
 
+        //for (T* elem : inspected)
+        //{
+        //    //delete elem;
+        //    elem->destroy();
+        //}
+
         inspected.clear();
 
         for (size_t i = 0; i < size; i++)
@@ -67,9 +73,8 @@ void load(XmlLoader& context, std::list<T*>& inspected, const XmlLoader::LoadInf
             //GPE::load(context, *elem, XmlSaver::SaveInfo{std::to_string(i), "T", 0});
 
             T* elem;
-            GPE::load(context, elem, XmlLoader::LoadInfo{std::to_string(i), "T", 0});
+            GPE::load(context, elem, XmlLoader::LoadInfo{std::to_string(i), info.typeName, info.typeId});
             inspected.emplace_back(elem);
-            i++;
         }
 
         context.pop();

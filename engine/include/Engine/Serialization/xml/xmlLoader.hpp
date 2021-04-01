@@ -308,15 +308,22 @@ void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, std::size_t key)
     auto pair = alreadyLoadedPtrs.insert({key, LoadedPtr{info}});
     if (pair.second) // Has been inserted ?
     {
-        // data            = new T(); // TODO : Call custom instantiator
-        // data = DataCh
         std::string       idStr     = findAttribValue(top(), "typeID");
         rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(std::stoull(idStr)));
-        data                        = archetype->makeInstance<T>();
+        data                        = archetype->makeInstance<T>(); // TODO : Call custom instantiator
         pair.first->second.data     = data;
+
+        assert(archetype != 0);  // Type is not complete.
+        assert(data != nullptr); // Type is not default constructible.
+
+        std::stack<Node*> otherContextHierarchy;
+        otherContextHierarchy.push(&doc);
+        std::swap(otherContextHierarchy, hierarchy);
 
         LoadInfo newInfo{std::to_string(key), info.typeName, info.typeId};
         GPE::load(*this, *data, newInfo);
+
+        hierarchy = std::move(otherContextHierarchy);
     }
     else
     {
