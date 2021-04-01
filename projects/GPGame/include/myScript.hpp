@@ -39,8 +39,6 @@ namespace GPG RFKNamespace()
 			input->bindAction("back", EKeyMode::KEY_DOWN, this, &MyScript::back);
 			input->bindAction("exit", EKeyMode::KEY_DOWN, this, &MyScript::leave);
 			input->bindAction("sprint", EKeyMode::KEY_DOWN, this, &MyScript::sprint);
-
-			speed = 1;
 		}
 
 		MyScript() noexcept = default;
@@ -52,8 +50,14 @@ namespace GPG RFKNamespace()
 
 		GPE::InputComponent* input = nullptr;
 
-		RFKField(Serialize(), Inspect(), Slider(0, 1))
-		float speed;
+		RFKField(Serialize(), Inspect(), Slider(0, 10)) 
+		float sprintSpeed = 2;
+
+		RFKField(Serialize(), Inspect(), Slider(0, 10)) 
+		float defaultSpeed = 1;
+
+		RFKField(Serialize())
+		float speed = defaultSpeed;
 
 		void rotate(const GPM::Vec2& deltaDisplacement)
 		{
@@ -100,12 +104,12 @@ namespace GPG RFKNamespace()
 
 		inline void sprint()
 		{
-			speed = 2;
+			speed = sprintSpeed;
 		}
 
 		void update(float deltaTime) final
 		{
-			speed = 1;
+			speed = defaultSpeed;
 
 			if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.00001)
 				rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);

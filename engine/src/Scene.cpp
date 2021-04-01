@@ -3,6 +3,8 @@
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Intermediate/DataChunk.hpp"
 
+#include <sstream> //std::sstream, std::getline
+
 using namespace GPE;
 
 Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*this))
@@ -50,4 +52,23 @@ GameObject* Scene::getGameObject(const std::string& path) noexcept
 GameObject& Scene::getWorld() noexcept
 {
     return *m_pWorld;
+}
+
+void Scene::addLoadedResourcePath(const char* path) noexcept
+{
+    // Unordered pair of iterator and result
+    auto itRst = m_loadedResourcesPath.try_emplace(path, 1);
+
+    if (!itRst.second)
+    {
+        itRst.first->second++;
+    }
+}
+
+void Scene::removeLoadedResourcePath(const char* path) noexcept
+{
+    if (--m_loadedResourcesPath[path] == 0)
+    {
+        m_loadedResourcesPath.erase(path);
+    }
 }
