@@ -51,7 +51,7 @@ public:
         source.playSound("Western");
 
         controller.setHasGravity(true);
-        controller.setSpeed(0.1);
+        controller.setSpeed(0.3);
     }
 
     MyFpsScript() noexcept                         = delete;
