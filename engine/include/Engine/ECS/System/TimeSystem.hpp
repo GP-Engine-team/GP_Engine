@@ -37,7 +37,7 @@ protected:
     double m_deltaTime              = 0.;
     double m_unscaledDeltaTime      = 0.;
     double m_timeScale              = 1.;
-    double m_fixedUnscaledDeltaTime = 1. / 120.;
+    double m_fixedUnscaledDeltaTime = 1. / 60.;
     double m_fixedDeltaTime         = m_fixedUnscaledDeltaTime * m_timeScale;
 
     double m_scaledTimeAcc   = 0.f;

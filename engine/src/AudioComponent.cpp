@@ -14,11 +14,6 @@ AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
         {
             FUNCT_ERROR("Enumeration not supported !");
         }
-
-        else
-        {
-            Log::getInstance()->logAddMsg("Enumeration supported ...");
-        }
     }
 
     // Gen device

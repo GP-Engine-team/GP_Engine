@@ -4,7 +4,6 @@ template <typename TStoredData, int TSize>
 constexpr inline DataChunk<TStoredData, TSize>::DataChunk() noexcept
 {
     m_datas.reserve(TSize / sizeof(TStoredData));
-    std::cout << __FUNCSIG__ << std::endl;
 }
 
 template <typename TStoredData, int TSize>

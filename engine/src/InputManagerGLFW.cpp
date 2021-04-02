@@ -1,8 +1,8 @@
 ﻿#include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include <GLFW/glfw3.h>
-#include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
+#include <imgui.h>
 
 using namespace std;
 using namespace GPE;
@@ -81,7 +81,7 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
     m_cursor.deltaPos =
-        Vec2{m_cursor.position.x - static_cast<GPM::f32>(xpos), m_cursor.position.y - static_cast<GPM::f32>(ypos)};
+        Vec2{static_cast<GPM::f32>(xpos) - m_cursor.position.x, static_cast<GPM::f32>(ypos) - m_cursor.position.y};
     m_cursor.position.x = static_cast<GPM::f32>(xpos);
     m_cursor.position.y = static_cast<GPM::f32>(ypos);
 }
@@ -110,7 +110,8 @@ void setLockedCursorCallback(GLFWwindow* window, double xpos, double ypos) noexc
 
 void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
-    ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+    if (ImGui::GetCurrentContext() != nullptr)
+        ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
     static_cast<InputManager*>(glfwGetWindowUserPointer(window))->keyCallback(window, key, scancode, action, mods);
 }
 
