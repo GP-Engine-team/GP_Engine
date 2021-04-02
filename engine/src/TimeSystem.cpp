@@ -16,6 +16,8 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
     m_tempTime          = std::chrono::steady_clock::now();
     m_unscaledDeltaTime = std::chrono::duration<double>(m_tempTime - m_time).count();
     m_time              = m_tempTime;
+
+    // This is temporary
     if (m_unscaledDeltaTime > 0.25)
         m_unscaledDeltaTime = 0.25;
 
