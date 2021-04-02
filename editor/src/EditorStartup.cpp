@@ -62,6 +62,9 @@ EditorStartup::EditorStartup()
 
 EditorStartup::~EditorStartup()
 {
+    GPE::Engine::getInstance()->timeSystem.clearScaledTimer();
+    GPE::Engine::getInstance()->timeSystem.clearUnscaledTimer();
+
     if (m_game != nullptr)
     {
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);

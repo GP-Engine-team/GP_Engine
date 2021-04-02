@@ -82,6 +82,11 @@ public:
     {
         m_instance = &engine;
     }
+
+    void destroy()
+    {
+        delete (m_instance);
+    }
 };
 
 } /*namespace GPE*/

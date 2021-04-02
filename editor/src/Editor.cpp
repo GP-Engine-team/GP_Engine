@@ -227,7 +227,8 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
         std::cout << msg;
 
         // Log in log inspector
-        m_logInspector.addLog(msg);
+        if (ImGui::GetCurrentContext() != nullptr)
+            m_logInspector.addLog(msg);
     };
 }
 
@@ -262,7 +263,7 @@ void Editor::update()
 
 void Editor::render()
 {
-    //ImGui::ShowDemoWindow(nullptr);
+    // ImGui::ShowDemoWindow(nullptr);
 
     ImGui::Render();
 

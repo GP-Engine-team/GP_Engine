@@ -27,8 +27,6 @@
 #include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <myFpsScript.hpp>
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Core/Debug/Log.hpp"
 //#include "GPM/Random.hpp"
 
 #include <glad/glad.h> //In first
@@ -163,9 +161,9 @@ Game::Game()
     rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
                    "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
 
-    GameObject& ground      = sm.getCurrentScene()->getWorld().addChild(groundArg);
-    GameObject& player      = sm.getCurrentScene()->getWorld().addChild(playerArg);
-    GameObject& testPhysX   = sm.getCurrentScene()->getWorld().addChild(testPhysXArg);
+    GameObject& ground    = sm.getCurrentScene()->getWorld().addChild(groundArg);
+    GameObject& player    = sm.getCurrentScene()->getWorld().addChild(playerArg);
+    GameObject& testPhysX = sm.getCurrentScene()->getWorld().addChild(testPhysXArg);
 
     player.addComponent<Camera>(camCreateArg);
     player.addComponent<GPG::MyFpsScript>();

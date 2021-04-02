@@ -15,10 +15,10 @@ using namespace GPM;
 
 Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
 {
-    m_boundingVolumeType = arg.boundingVolumeType;
+    // m_boundingVolumeType = arg.boundingVolumeType;
 
-    if (arg.boundingVolume != nullptr)
-        m_boundingVolume = std::move(arg.boundingVolume);
+    // if (arg.boundingVolume != nullptr)
+    //  m_boundingVolume = std::move(arg.boundingVolume);
 
     m_verticesCount = static_cast<unsigned int>(arg.indices.size());
 
@@ -62,10 +62,10 @@ static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, 
 
 Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
 {
-    m_boundingVolumeType = arg.boundingVolumeType;
+    // m_boundingVolumeType = arg.boundingVolumeType;
 
-    if (arg.boundingVolume != nullptr)
-        m_boundingVolume = std::move(arg.boundingVolume);
+    //  if (arg.boundingVolume != nullptr)
+    //      m_boundingVolume = std::move(arg.boundingVolume);
 
     if (arg.iBuffer.empty())
     {
