@@ -42,6 +42,28 @@ void PhysXSystem::removeComponent(RigidbodyDynamic* rigidbody) noexcept
     }
 }
 
+size_t PhysXSystem::addComponent(CharacterController* characterController) noexcept
+{
+    characterControllers.push_back(characterController);
+    scene->addActor(*characterController->controller->getActor());
+
+    return characterControllers.size();
+}
+
+void PhysXSystem::removeComponent(CharacterController* characterController) noexcept
+{
+    for (std::vector<CharacterController*>::iterator it = characterControllers.begin();
+         it != characterControllers.end(); it++)
+    {
+        if ((*it) == characterController)
+        {
+            std::swap<CharacterController*>(characterControllers.back(), (*it));
+            characterControllers.pop_back();
+            return;
+        }
+    }
+}
+
 GPM::Vec3 PhysXSystem::PxVec3ToGPMVec3(const physx::PxVec3& vector) noexcept
 {
     return GPM::Vec3{vector.x, vector.y, vector.z};

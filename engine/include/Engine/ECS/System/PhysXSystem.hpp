@@ -6,6 +6,7 @@
 
 #pragma once
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <GPM/Quaternion.hpp>
@@ -71,6 +72,20 @@ public:
      */
     inline void removeComponent(RigidbodyDynamic* rigidbody) noexcept;
 
+    /**
+     * @brief add CharacterController component to the component list
+     * @param characterController
+     * @return
+     */
+    inline size_t addComponent(CharacterController* characterController) noexcept;
+
+    /**
+     * @brief remove CharacterController component to the component list
+     * @param characterController
+     * @return
+     */
+    inline void removeComponent(CharacterController* characterController) noexcept;
+
     static inline GPM::Vec3             PxVec3ToGPMVec3(const physx::PxVec3& vector) noexcept;
     static inline physx::PxVec3         GPMVec3ToPxVec3(const GPM::Vec3& vector) noexcept;
     static inline GPM::Vec3             PxExtendedVec3ToGPMVec3(const physx::PxExtendedVec3& vector) noexcept;
@@ -79,14 +94,15 @@ public:
     static inline physx::PxQuat         GPMQuatToPxQuat(const GPM::Quat& quaternion) noexcept;
 
 public:
-    physx::PxFoundation*           foundation;
-    physx::PxPvd*                  pvd;
-    physx::PxPhysics*              physics;
-    physx::PxCooking*              cooking;
-    physx::PxScene*                scene;
-    physx::PxControllerManager*    manager;
-    std::vector<RigidbodyStatic*>  rigidbodyStatics;
-    std::vector<RigidbodyDynamic*> rigidbodyDynamics;
+    physx::PxFoundation*              foundation;
+    physx::PxPvd*                     pvd;
+    physx::PxPhysics*                 physics;
+    physx::PxCooking*                 cooking;
+    physx::PxScene*                   scene;
+    physx::PxControllerManager*       manager;
+    std::vector<RigidbodyStatic*>     rigidbodyStatics;
+    std::vector<RigidbodyDynamic*>    rigidbodyDynamics;
+    std::vector<CharacterController*> characterControllers;
 };
 
 #include <Engine/ECS/System/PhysXSystem.inl>

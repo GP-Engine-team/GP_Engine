@@ -8,13 +8,13 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
 {
     physx::PxCapsuleControllerDesc desc;
 
-    desc.height = 1;
+    desc.height   = 1;
     desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
     desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition());
-    desc.radius = 1;
+    desc.radius   = 1;
 
     controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
-    GPE::Engine::getInstance()->physXSystem.scene->addActor(*controller->getActor());
+    GPE::Engine::getInstance()->physXSystem.addComponent(this);
 }
 
 void CharacterController::update(float deltaTime) noexcept
@@ -22,10 +22,10 @@ void CharacterController::update(float deltaTime) noexcept
     physx::PxControllerFilters filters;
     if (m_hasGravity)
     {
-        move({0,-1.f,0}, m_gravity);
+        move({0, -1.f, 0}, m_gravity);
     }
     controller->move(GPE::PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, deltaTime, filters);
-    m_displacement = { 0,0,0 };
+    m_displacement = {0, 0, 0};
     getOwner().getTransform().setTranslation(GPE::PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()));
 }
 
