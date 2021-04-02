@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -6,12 +6,13 @@
 
 #pragma once
 
-#include "Engine/Resources/Type.hpp"
+#include <glad/glad.h>
 #include <string>
+
+#include "Engine/Resources/Type.hpp"
 
 // in inl
 #include "Engine/Core/Debug/Assert.hpp"
-#include "glad/glad.h"
 
 namespace GPE
 {
@@ -31,13 +32,15 @@ public:
 
     struct CreateArg
     {
-        unsigned int    width          = 0;
-        unsigned int    height         = 0;
+        int    width                   = 0;
+        int    height                  = 0;
         EInternalFormat internalFormat = EInternalFormat::DEPTH_COMPONENT24;
     };
 
 protected:
-    unsigned int m_id          = 0;
+    GLuint m_id           = 0u;
+    GLenum internalFormat = 0u;
+    GLenum bufferType     = 0u;
 
 public:
     RenderBuffer()                          = default;
@@ -51,6 +54,8 @@ public:
     {
         return m_id;
     }
+
+    void resize(int width, int height);
 };
 
 } /*namespace GPE*/

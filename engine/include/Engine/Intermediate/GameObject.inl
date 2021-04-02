@@ -1,42 +1,19 @@
-#include "Engine/Intermediate/GameObject.hpp"
-
-GameObject::GameObject(const CreateArg& arg)
-    : m_name{arg.name},
-      m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this, arg.transformArg)}, m_pComponents{}
+﻿inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
+    : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->add(*this, arg.transformArg)},
+      m_pComponents{}, pOwnerScene{&scene}, m_parent{arg.parent}
 {
-}
-
-GameObject::GameObject()
-    : m_name{""}, m_transform{DataChunk<TransformComponent>::getInstance()->addComponent(*this)}, m_pComponents{}
-{
-}
-
-template <typename T>
-void GameObject::updateComponentLink(const T* oldPtr, T* newPtr) noexcept
-{
-    GPE_ASSERT(oldPtr != nullptr, "oldPtr cannot be nullptr");
-    GPE_ASSERT(newPtr != nullptr, "newPtr cannot be nullptr");
-
-    for (Component* pComponent : m_pComponents)
-    {
-        if (unlikely(pComponent == oldPtr))
-        {
-            pComponent = newPtr;
-            return;
-        }
-    };
 }
 
 template <typename T, typename... Args>
-T& GameObject::addComponent(Args&&... args) noexcept
+inline T& GameObject::addComponent(Args&&... args) noexcept
 {
-    T& newComponent = DataChunk<T>::getInstance()->addComponent(*this, std::forward<Args>(args)...);
+    T& newComponent = DataChunk<T>::getInstance()->add(*this, std::forward<Args>(args)...);
     m_pComponents.emplace_back(&newComponent);
     return newComponent;
 }
 
 template <typename T>
-T* GameObject::getComponent() noexcept
+inline T* GameObject::getComponent() noexcept
 {
     for (auto&& pComponent : m_pComponents)
     {
@@ -50,38 +27,70 @@ T* GameObject::getComponent() noexcept
     return nullptr;
 }
 
-const std::string& GameObject::getName() const noexcept
+inline const std::string& GameObject::getName() const noexcept
 {
     return m_name;
 }
 
-void GameObject::setName(const char* newName) noexcept
+inline const GameObject* GameObject::getParent() const noexcept
+{
+    return m_parent;
+}
+
+inline GameObject* GameObject::getParent() noexcept
+{
+    return m_parent;
+}
+
+inline void GameObject::setParent(GameObject& newParent) noexcept
+{
+    GPE_ASSERT(m_parent, "You cannot move gameObject without parent");
+    GPE_ASSERT(newParent.getParent() != this,
+               "You cannot associate new parent if it's the chilf of the current entity (leak)");
+
+    for (std::list<GameObject*>::iterator it = m_parent->children.begin(); it != m_parent->children.end(); it++)
+    {
+        if (*it == this)
+        {
+            Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
+                                                 newParent.getName().c_str()));
+
+            newParent.children.emplace_back(std::move(*it));
+            m_parent->children.erase(it);
+            break;
+        }
+    }
+
+    m_parent = &newParent;
+}
+
+inline void GameObject::setName(const char* newName) noexcept
 {
     m_name = newName;
 }
 
-constexpr const TransformComponent& GameObject::getTransform() const noexcept
+inline constexpr const TransformComponent& GameObject::getTransform() const noexcept
 {
-    return m_transform;
+    return *m_pTransform;
 }
 
-constexpr TransformComponent& GameObject::getTransform() noexcept
+inline constexpr TransformComponent& GameObject::getTransform() noexcept
 {
-    return m_transform;
+    return *m_pTransform;
 }
 
-template <typename T, typename... Args>
-GameObject& GameObject::addChild(Args&&... args) noexcept
+template <typename... Args>
+inline GameObject& GameObject::addChild(Args&&... args) noexcept
 {
-    std::unique_ptr<GameObject>& pChild = this->children.emplace_back(std::make_unique<T>(args...));
-    pChild->children                    = std::list<std::unique_ptr<GameObject>>();
-    // pChild->update((*this).getModelMatrix());
-    pChild->parent = this;
+    GameObject* pChild = children.emplace_back(&DataChunk<GameObject>::getInstance()->add(*pOwnerScene, args...));
+
+    pChild->m_parent = this;
+    pChild->getTransform().setDirty();
     return *pChild;
 }
 
 template <typename T>
-std::vector<T*> GameObject::getComponents() noexcept
+inline std::vector<T*> GameObject::getComponents() noexcept
 {
     std::vector<T*> toReturn;
     for (auto&& pComponent : m_pComponents)
@@ -96,34 +105,60 @@ std::vector<T*> GameObject::getComponents() noexcept
     return toReturn;
 }
 
-constexpr std::list<Component*>& GameObject::getComponents() noexcept
+inline constexpr std::list<Component*>& GameObject::getComponents() noexcept
 {
     return m_pComponents;
 }
 
-constexpr const std::list<Component*>& GameObject::getComponents() const noexcept
+inline constexpr const std::list<Component*>& GameObject::getComponents() const noexcept
 {
     return m_pComponents;
 }
 
-void GameObject::setTag(const std::string& newTag) noexcept
+inline void GameObject::setTag(const std::string& newTag) noexcept
 {
     m_tag = newTag;
 }
 
-constexpr const std::string& GameObject::getTag() const noexcept
+inline constexpr const std::string& GameObject::getTag() const noexcept
 {
     return m_tag;
 }
 
-std::list<std::unique_ptr<GameObject>>::iterator GameObject::destroyChild(
-    const std::list<std::unique_ptr<GameObject>>::iterator& it) noexcept
+static void updateGameObjectPtrAftereDelete(GameObject* newPtr)
 {
+    GameObject* previousLocalization = &DataChunk<GameObject>::getInstance()->getData().back();
+    previousLocalization++;
+
+    // Update manually the pointer of the parent. In DataChunk, gameObject is swap with last to optimize std::vector
+    // erase.
+    for (auto&& child : newPtr->getParent()->children)
+    {
+        if (child == previousLocalization)
+        {
+            child = newPtr; // Reminber that this will be swapping with back. First operation update and don't change
+                            // hierachy. Only the pointer (memory space) is importante to remain is this operation.
+            break;
+        }
+    }
+}
+
+inline std::list<GameObject*>::iterator GameObject::destroyChild(const std::list<GameObject*>::iterator& it) noexcept
+{
+    for (auto&& child : (*it)->children)
+    {
+        DataChunk<GameObject>::getInstance()->destroy(child);
+        updateGameObjectPtrAftereDelete(child);
+    }
+
+    DataChunk<GameObject>::getInstance()->destroy(*it);
+    updateGameObjectPtrAftereDelete(*it);
+
     return children.erase(it);
 }
 
 template <typename TUniqueComponentType>
-void GameObject::destroyUniqueComponentNow() noexcept
+inline void GameObject::destroyUniqueComponentNow() noexcept
 {
     for (auto&& it = m_pComponents.begin(); it != m_pComponents.end(); ++it)
     {
@@ -131,14 +166,14 @@ void GameObject::destroyUniqueComponentNow() noexcept
 
         if (unlikely(checkedCompPtr != nullptr))
         {
-            DataChunk<TUniqueComponentType>::getInstance()->destroyComponent(checkedCompPtr);
+            DataChunk<TUniqueComponentType>::getInstance()->destroy(checkedCompPtr);
             m_pComponents.erase(it);
             return;
         }
     };
 }
 
-void GameObject::setActive(bool newState)
+inline void GameObject::setActive(bool newState)
 {
     for (auto&& i : m_pComponents)
     {
@@ -146,29 +181,29 @@ void GameObject::setActive(bool newState)
     }
 }
 
-std::list<Component*>::iterator GameObject::destroyComponent(const std::list<Component*>::iterator& it) noexcept
+inline std::list<Component*>::iterator GameObject::destroyComponent(const std::list<Component*>::iterator& it) noexcept
 {
+    DataChunk<Component>::getInstance()->destroy(*it);
     return m_pComponents.erase(it);
 }
 
-void GameObject::destroy() noexcept
+inline void GameObject::destroy() noexcept
 {
     /*set flag to be delete by it parent*/
     m_isDead = true;
-    // m_isDirty = true;
 }
 
-void GameObject::destroyNow() noexcept
+inline void GameObject::destroyNow() noexcept
 {
-    parent->destroyChild(this);
+    m_parent->destroyChild(this);
 }
 
-constexpr bool GameObject::operator==(GameObject const& other) noexcept
+inline constexpr bool GameObject::operator==(GameObject const& other) noexcept
 {
     return (this == &other);
 }
 
-bool GameObject::compareTag(const std::string& toCompare) const noexcept
+inline bool GameObject::compareTag(const std::string& toCompare) const noexcept
 {
     return (!toCompare.compare(m_tag));
 }

@@ -10,7 +10,7 @@ using namespace std;
 
 Window::Window(const CreateArg& arg) noexcept
 {
-    Log::logInitializationStart("GLFW window");
+    Log::getInstance()->logInitializationStart("GLFW window");
 
     // Init glfw
     if (!glfwInit())
@@ -21,7 +21,7 @@ Window::Window(const CreateArg& arg) noexcept
 
 #ifdef _DEBUG
     glfwSetErrorCallback([](int errorCode, const char* description) {
-        Log::logError(stringFormat("GLFW error (%x) = %s\n", errorCode, description));
+        Log::getInstance()->logError(stringFormat("GLFW error (%x) = %s\n", errorCode, description));
     });
 #endif
 
@@ -41,14 +41,14 @@ Window::Window(const CreateArg& arg) noexcept
     glfwMakeContextCurrent(m_window);
     glfwSwapInterval(1); // enable v-sync
 
-    Log::logInitializationEnd("GLFW window");
+    Log::getInstance()->logInitializationEnd("GLFW window");
 }
 
 Window::~Window() noexcept
 {
     glfwDestroyWindow(m_window);
     glfwTerminate();
-    Log::log("GLFW window release");
+    Log::getInstance()->log("GLFW window release");
 }
 
 void Window::getSize(int& width, int& height) const noexcept

@@ -23,8 +23,8 @@ class ResourcesManager;
 
 /**
  * @brief Resources of one type. Will be created for each differente type.
- * @tparam LType 
-*/
+ * @tparam LType
+ */
 template <class LType>
 class ResourcesManager<LType>
 {
@@ -32,12 +32,12 @@ protected:
     std::unordered_map<std::string, LType> m_resources;
 
 public:
-    ResourcesManager() = default;
+    ResourcesManager()                                       = default;
     ResourcesManager(const ResourcesManager& other) noexcept = delete;
     ResourcesManager& operator=(const ResourcesManager& other) noexcept = delete;
-    ResourcesManager(ResourcesManager&& other) noexcept = default;
+    ResourcesManager(ResourcesManager&& other) noexcept                 = default;
     ResourcesManager& operator=(ResourcesManager&& other) noexcept = default;
-    ~ResourcesManager() noexcept = default;
+    ~ResourcesManager() noexcept                                   = default;
 
 public:
     /**
@@ -46,8 +46,11 @@ public:
      * @param key
      * @return LType&
      */
-    LType* get(const std::string& key) noexcept;
-    const LType* get(const std::string& key) const noexcept;
+    LType*                                  get(const std::string& key) noexcept;
+    const LType*                            get(const std::string& key) const noexcept;
+    std::unordered_map<std::string, LType>& getAll() noexcept;
+
+    const std::string* getKey(const LType* data) const noexcept;
 
     /**
      * @brief add element with argument of constructor in parameter and key. Resource canno't have the same key
@@ -61,15 +64,15 @@ public:
 
     /**
      * @brief Remove resource with the corresponding key if key is found
-     * @param key 
-     * @return 
-    */
+     * @param key
+     * @return
+     */
     inline void remove(const std::string& key) noexcept(std::is_nothrow_destructible_v<LType>);
 
     /**
      * @brief clear the container and all associate resources
-     * @return 
-    */
+     * @return
+     */
     inline void clear() noexcept(std::is_nothrow_destructible_v<LType>);
 };
 
@@ -79,19 +82,19 @@ public:
  * For example : resourceManager<int, float, std::string> wille create :
  * resourceManager<int>, resourceManager<float> and resourceManager<std::string>.
  * resourceManager<int, float, std::string> inherited about these 3 class and can access to each element
- * @tparam LType 
- * @tparam ...RType 
-*/
+ * @tparam LType
+ * @tparam ...RType
+ */
 template <class LType, class... RType>
 class ResourcesManager : public ResourcesManager<LType>, public ResourcesManager<RType...>
 {
 public:
-    ResourcesManager() = default;
+    ResourcesManager()                                       = default;
     ResourcesManager(const ResourcesManager& other) noexcept = delete;
     ResourcesManager& operator=(const ResourcesManager& other) noexcept = delete;
-    ResourcesManager(ResourcesManager&& other) noexcept = default;
+    ResourcesManager(ResourcesManager&& other) noexcept                 = default;
     ResourcesManager& operator=(ResourcesManager&& other) noexcept = default;
-    ~ResourcesManager() noexcept = default;
+    ~ResourcesManager() noexcept                                   = default;
 
     /**
      * @brief Return resource.
@@ -106,13 +109,19 @@ public:
     template <class T>
     inline const T* get(const std::string& key) const noexcept;
 
+    template <class T>
+    inline std::unordered_map<std::string, T>& getAll() noexcept;
+
+    template <class T>
+    inline const std::string* getKey(const T* data) const noexcept;
+
     /**
      * @brief Remove resource with the corresponding key if key is found
      * @example remove<Texture>("AwsomeTexture")
-     * @tparam T 
-     * @param key 
-     * @return 
-    */
+     * @tparam T
+     * @param key
+     * @return
+     */
     template <class T>
     inline void remove(const std::string& key) noexcept(std::is_nothrow_destructible_v<T>);
 
@@ -130,9 +139,9 @@ public:
     /**
      * @brief clear the container and all associate resources
      * @example clear<Texture>()
-     * @tparam T 
-     * @return 
-    */
+     * @tparam T
+     * @return
+     */
     template <class T>
     inline void clear() noexcept(std::is_nothrow_destructible_v<T>);
 };

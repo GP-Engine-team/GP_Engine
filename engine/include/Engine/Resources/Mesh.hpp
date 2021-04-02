@@ -10,14 +10,10 @@
 #include <string>
 #include <vector>
 
-#include <glad/glad.h>
-
+#include "Engine/Core/Tools/ClassUtility.hpp"
 #include "Engine/Resources/Type.hpp"
-
 #include "GPM/Shape3D/Volume.hpp"
 #include "GPM/Vector3.hpp"
-
-#include "Engine/Core/Tools/ClassUtility.hpp"
 
 namespace GPE
 {
@@ -32,14 +28,37 @@ public:
         AABB
     };
 
-    struct CreateArg
+    struct Vertex
+    {
+        GPM::Vec3 v;
+        GPM::Vec3 vn;
+        GPM::Vec2 vt;
+    };
+
+    struct Indice
+    {
+        unsigned int iv, ivt, ivn;
+    };
+
+    // Allow user to construct mesh thank's to EBO
+    struct CreateIndiceBufferArg
+    {
+        std::string                  objName;
+        std::vector<Vertex>          vertices;
+        std::vector<unsigned int>    indices;
+        EBoundingVolume              boundingVolumeType{EBoundingVolume::NONE};
+        std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
+    };
+
+    // Allow user to construct mesh thank's to multiple VBO
+    struct CreateContiguousVerticesArg
     {
         std::string                  objName;
         std::vector<GPM::Vec3>       vBuffer;
         std::vector<GPM::Vec2>       vtBuffer;
         std::vector<GPM::Vec3>       vnBuffer;
-        std::vector<Indice>          iBuffer;
-        EBoundingVolume              boundingVolumeType{EBoundingVolume::SPHERE};
+        std::vector<Indice>          iBuffer; // optional
+        EBoundingVolume              boundingVolumeType{EBoundingVolume::NONE};
         std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
     };
 
@@ -54,14 +73,26 @@ public:
     };
 
 protected:
-    unsigned int m_indexVAO      = 0;
+    unsigned int m_VAO           = 0;
     unsigned int m_verticesCount = 0;
+
+    // TODO: To remove for EBO only buffer
+    unsigned int m_vertexbuffer = 0;
+    unsigned int m_uvbuffer     = 0;
+    unsigned int m_normalbuffer = 0;
+
+    struct
+    {
+        unsigned int vbo = 0;
+        unsigned int ebo = 0;
+    } m_EBOBuffers;
 
     EBoundingVolume              m_boundingVolumeType = EBoundingVolume::NONE;
     std::unique_ptr<GPM::Volume> m_boundingVolume     = nullptr;
 
 public:
-    Mesh(CreateArg& arg) noexcept;
+    Mesh(CreateIndiceBufferArg& arg) noexcept;
+    Mesh(CreateContiguousVerticesArg& arg) noexcept;
 
     Mesh(const Mesh& other) = delete;
     Mesh(Mesh&& other)      = default;
@@ -75,7 +106,7 @@ public:
 
     inline const GPM::Volume* getBoundingVolume() const noexcept;
 
-    GETTER_BY_VALUE(ID, m_indexVAO);
+    GETTER_BY_VALUE(ID, m_VAO);
     GETTER_BY_VALUE(VerticesCount, m_verticesCount);
     DEFAULT_GETTER_SETTER_BY_REF(BoundingVolumeType, m_boundingVolumeType);
 
@@ -86,16 +117,17 @@ public:
      * @param indexTexture          : index of texture if split
      * @return MeshConstructorArg
      */
-    static Mesh::CreateArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f, float textureRepetition = 1.f,
-                                      unsigned int indexTextureX = 0, unsigned int indexTextureY = 0,
-                                      Axis towardAxis = Axis::Y, bool isRectoVerso = false) noexcept;
+    static CreateContiguousVerticesArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f,
+                                                  float textureRepetition = 1.f, unsigned int indexTextureX = 0,
+                                                  unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y,
+                                                  bool isRectoVerso = false) noexcept;
 
     /**
      * @brief Create a Cube object of radius 1 and return it mesh. Cube is centered on the origin
      *
      * @return MeshConstructorArg
      */
-    static CreateArg createCube(float textureRepetition = 1.f) noexcept;
+    static CreateContiguousVerticesArg createCube(float textureRepetition = 1.f) noexcept;
 
     /**
      * @brief Create a Sphere object of radius 1 and return it mesh. Sphere is centered on the origin
@@ -104,7 +136,7 @@ public:
      * @param longitudeCount    : number of vertex in longitude
      * @return MeshConstructorArg
      */
-    static CreateArg createSphere(int latitudeCount, int longitudeCount) noexcept;
+    static CreateContiguousVerticesArg createSphere(int latitudeCount, int longitudeCount) noexcept;
 
     /**
      * @brief Create a Cylindre object
@@ -112,8 +144,9 @@ public:
      * @param prescision
      * @return MeshConstructorArg
      */
-    static CreateArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace Culling (bad
-                                                                       // normal)
+    static CreateContiguousVerticesArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace
+                                                                                         // Culling (bad
+                                                                                         // normal)
 };
 
 #include "Mesh.inl"

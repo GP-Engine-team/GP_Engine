@@ -1,15 +1,18 @@
-#include "Engine/Resources/Light/DirectionalLight.hpp"
+﻿#include "Engine/ECS/Component/Light/DirectionalLight.hpp"
 
 using namespace GPE;
 
-DirectionalLight::DirectionalLight(GameObject& owner, const CreateArg& arg) noexcept
-    : Light{owner, arg.ambient, arg.diffuse, arg.specular}, m_direction{arg.direction.normalized()}
+DirectionalLight::~DirectionalLight()
+{
+    DataChunk<DirectionalLight>::getInstance()->destroy(this);
+}
+
+DirectionalLight::DirectionalLight(GameObject& owner) noexcept : DirectionalLight(owner, CreateArg{})
 {
 }
 
-DirectionalLight::DirectionalLight(GameObject& owner, const GPM::Vec3& direction, const AmbiantComponent& ambient,
-                                   const DiffuseComponent& diffuse, const SpecularComponent& specular) noexcept
-    : Light{owner, ambient, diffuse, specular}, m_direction{direction.normalized()}
+DirectionalLight::DirectionalLight(GameObject& owner, const CreateArg& arg) noexcept
+    : Light{owner, arg.ambient, arg.diffuse, arg.specular}, m_direction{arg.direction.normalized()}
 {
 }
 

@@ -44,7 +44,14 @@ Generated
 !third_party/lib/
 third_party/lib/*
 !third_party/lib/*.lib
-
+!third_party/libDebug/
+!third_party/libDebug/*.lib
+!third_party/libRelease/
+!third_party/libRelease/*.lib
+!third_party/libRelease/Refureku/
+!third_party/libRelease/Refureku/*.lib
+!third_party/libDebug/Refureku/
+!third_party/libDebug/Refureku/*.lib
 # Executables
 *.exe
 *.out

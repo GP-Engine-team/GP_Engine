@@ -9,11 +9,14 @@
 #include <map>
 #include <string>
 #include <vector>
-
-#include <Windows.h>
+#include <functional>
 
 #define ADD_PROCESS(rcpp, function) rcpp.addProcess(#function);
 #define GET_PROCESS(rcpp, function) rcpp.getProcess<decltype(function)>(#function);
+
+// Forward Declarations
+typedef struct HINSTANCE__* HINSTANCE;
+typedef HINSTANCE           HMODULE;
 
 namespace GPE
 {
@@ -29,9 +32,12 @@ private:
     size_t lastRefreshTime = 0;
     std::map<std::string, void*> processes; // current successfully loaded processes
 
-private:
+public:
+    std::function<void()> onUnload;
+
+public:
     // Only call this when reloadableCpp.path is pointing towards a valid file.
-    void load(const char *newFileSuffix = ".copy.dll");
+    bool load(const char *newFileSuffix = ".copy.dll");
 
     void unload();
 

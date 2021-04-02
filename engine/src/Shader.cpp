@@ -212,17 +212,23 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char f
 
     compile(vertexCode, fragmentCode);
 
-    Log::log((std::string("Load and compile shaders \"") + m_nameVertex.c_str() + "\" shader and \"" + m_nameFragment +
-              "\" shader done")
-                 .c_str());
+    Log::getInstance()->log((std::string("Load and compile shaders \"") + m_nameVertex.c_str() + "\" shader and \"" +
+                             m_nameFragment + "\" shader done")
+                                .c_str());
+}
+
+// TODO
+Shader::Shader(const char* shaderPath)
+{
 }
 
 Shader::~Shader() noexcept
 {
     glDeleteBuffers(1, &m_lightsUniformBuffer);
-    glDeleteShader(m_id);
+    glDeleteProgram(m_id);
 
-    Log::log((std::string("Release ") + m_nameVertex.c_str() + ".vs and " + m_nameFragment + ".fs").c_str());
+    Log::getInstance()->log(
+        (std::string("Release ") + m_nameVertex.c_str() + ".vs and " + m_nameFragment + ".fs").c_str());
 }
 
 void Shader::use()
@@ -265,7 +271,7 @@ void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3
     }
     else
     {
-        Log::logWarning("Shader cannot send light block because it is not a light shader");
+        Log::getInstance()->logWarning("Shader cannot send light block because it is not a light shader");
     }
 }
 
@@ -284,7 +290,7 @@ void Shader::setMaterialBlock(const MaterialComponent& material) const noexcept
     }
     else
     {
-        Log::logWarning("Shader cannot send Material block because it is not a light shader");
+        Log::getInstance()->logWarning("Shader cannot send Material block because it is not a light shader");
     }
 }
 
@@ -375,11 +381,13 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
 
             if (type == EType::VERTEX)
             {
-                Log::logError(std::string("Shader name's \"") + m_nameVertex + "\" compilation error\n" + infoLog);
+                Log::getInstance()->logError(std::string("Shader name's \"") + m_nameVertex + "\" compilation error\n" +
+                                             infoLog);
             }
             else if (type == EType::FRAGMENT)
             {
-                Log::logError(std::string("Shader name's \"") + m_nameFragment + "\" compilation error\n" + infoLog);
+                Log::getInstance()->logError(std::string("Shader name's \"") + m_nameFragment +
+                                             "\" compilation error\n" + infoLog);
             }
         }
     }
@@ -392,12 +400,12 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
 
             if (type == EType::VERTEX)
             {
-                Log::logError(
+                Log::getInstance()->logError(
                     (std::string("Shader name's \"") + m_nameVertex.c_str() + "\" linking error.\n" + infoLog).c_str());
             }
             else if (type == EType::FRAGMENT)
             {
-                Log::logError(
+                Log::getInstance()->logError(
                     (std::string("Shader name's \"") + m_nameFragment.c_str() + "\" linking error.\n" + infoLog)
                         .c_str());
             }

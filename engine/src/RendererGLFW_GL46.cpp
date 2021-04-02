@@ -1,12 +1,13 @@
-#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
+﻿#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <glad/glad.h> //In first
 
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include <GLFW/glfw3.h> //In second
+
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/Tools/Format.hpp"
-#include "Engine/Intermediate/RenderSystem.hpp"
+#include "Engine/Engine.hpp"
 
 using namespace GPE;
 using namespace std;
@@ -107,13 +108,13 @@ inline void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint i
         break;
     }
 
-    Log::logError(stringFormat("%d: %s of %s severity, raised from %s: %s\n", id, _type, _severity, _source, msg));
+    Log::getInstance()->logError(
+        stringFormat("%d: %s of %s severity, raised from %s: %s\n", id, _type, _severity, _source, msg));
 }
 
-Renderer::Renderer(Window& window) noexcept 
-    : m_pWindow {&window}
+Renderer::Renderer(Window& window) noexcept : m_pWindow{&window}
 {
-    Log::logInitializationStart("GLFW / OpenGL 4.6 Renderer");
+    Log::getInstance()->logInitializationStart("GLFW / OpenGL 4.6 Renderer");
 
     // Init glad
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
@@ -145,19 +146,17 @@ Renderer::Renderer(Window& window) noexcept
         glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_OTHER, GL_DONT_CARE, 0, nullptr, GL_FALSE);
     }
 
-    Log::logInitializationEnd("SDL/OpenGL 4.6 Renderer");
-    Log::log(stringFormat("GL_VENDOR = %s", glGetString(GL_VENDOR)));
-    Log::log(stringFormat("GL_RENDERER = %s", glGetString(GL_RENDERER)));
-    Log::log(stringFormat("GL_VERSION = %s", glGetString(GL_VERSION)));
-
-    RenderSystem::getInstance()->addRenderer(this);
+    Log::getInstance()->logInitializationEnd("SDL/OpenGL 4.6 Renderer");
+    Log::getInstance()->log(stringFormat("GL_VENDOR = %s", glGetString(GL_VENDOR)));
+    Log::getInstance()->log(stringFormat("GL_RENDERER = %s", glGetString(GL_RENDERER)));
+    Log::getInstance()->log(stringFormat("GL_VERSION = %s", glGetString(GL_VERSION)));
 }
 
 Renderer::~Renderer() noexcept
 {
-    RenderSystem::getInstance()->removeRenderer(this);
+    Engine::getInstance()->renderSystem.removeRenderer(this);
 
-    Log::log("GLFW / OpenGL 4.6 renderer release");
+    Log::getInstance()->log("GLFW / OpenGL 4.6 renderer release");
 }
 
 void Renderer::swapBuffer() noexcept

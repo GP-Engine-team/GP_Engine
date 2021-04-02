@@ -21,37 +21,85 @@ Texture::Texture(const LoadArg& arg) noexcept
 
     if (pixels == nullptr)
     {
-        FUNCT_ERROR((std::string("STBI canno't load image : ") + arg.path).c_str());
-        FUNCT_ERROR(std::string("Loading image failed: ") + stbi_failure_reason());
+        FUNCT_ERROR((std::string("STBI cannot load image: ") + arg.path).c_str());
+        FUNCT_ERROR(std::string("Reason: ") + stbi_failure_reason());
         return;
     }
 
-    Texture::loadInGPU(w, h, comp, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT,
-                       pixels);
+    setFormat(comp);
 
-    Log::log((std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path.c_str()) + "\" load in GPU").c_str());
+    loadInGPU(w, h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT,
+              pixels, arg.generateMipmaps);
+
+    Log::getInstance()->log(
+        (std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path.c_str()) + "\" loaded to VRAM").c_str());
     stbi_image_free(pixels);
 }
 
-Texture::Texture(const CreateArg& arg) noexcept
+Texture::Texture(const CreateArg& arg) noexcept : format{arg.format}
 {
-    Texture::loadInGPU(arg.width, arg.height, static_cast<unsigned char>(arg.format), arg.textureMinFilter,
-                       arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT, nullptr);
+    Texture::loadInGPU(arg.width, arg.height, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS,
+                       arg.textureWrapT, nullptr);
 
-    Log::log((std::string("Texture create of ") + std::to_string(arg.width) + '/' + std::to_string(arg.height) +
-              " load in GPU")
-                 .c_str());
+    Log::getInstance()->log(
+        (std::to_string(arg.width) + 'x' + std::to_string(arg.height) + " texture loaded in VRAM").c_str());
 }
 
 Texture::~Texture() noexcept
 {
     glDeleteTextures(1, &m_id);
-    Log::log("Texture release");
+    Log::getInstance()->log("Texture released");
 }
 
-void Texture::loadInGPU(int w, int h, int comp, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
-                        ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels) noexcept
+void Texture::setFormat(int channels)
 {
+    switch (channels)
+    {
+    case 1:
+        format = EFormat::R;
+        break;
+
+    case 2:
+        format = EFormat::RG;
+        break;
+
+    case 3:
+        format = EFormat::RGB;
+        break;
+
+    case 4:
+        format = EFormat::RGBA;
+        break;
+
+    default:
+        format = EFormat::NONE;
+        return;
+    }
+}
+
+bool Texture::checkFormatValidity() const
+{
+    switch (format)
+    {
+    case EFormat::R:
+    case EFormat::RG:
+    case EFormat::RGB:
+    case EFormat::RGBA:
+        return true;
+    }
+
+    FUNCT_WARNING((std::string("Unsupported texture format: ") + std::to_string((GLenum)format)).c_str());
+    return false;
+}
+
+bool Texture::loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
+                        ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels, bool generateMipmaps) noexcept
+{
+    if (!checkFormatValidity())
+    {
+        return false;
+    }
+
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);
 
@@ -60,29 +108,16 @@ void Texture::loadInGPU(int w, int h, int comp, ETextureMinFilter textureMinFilt
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(textureWrapS));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(textureWrapT));
 
-    switch (comp)
-    {
-    case 1:
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, w, h, 0, GL_RED, GL_UNSIGNED_BYTE, pixels);
-        break;
+    glTexImage2D(GL_TEXTURE_2D, 0, (GLenum)format, w, h, 0, (GLenum)format, GL_UNSIGNED_BYTE, pixels);
 
-    case 2:
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RG, w, h, 0, GL_RG, GL_UNSIGNED_BYTE, pixels);
-        break;
+    if (generateMipmaps)
+        glGenerateMipmap(GL_TEXTURE_2D);
 
-    case 3:
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-        break;
+    return true;
+}
 
-    case 4:
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-        break;
-
-    default:
-        FUNCT_WARNING((std::string("Texture component unsuppported with component : ") + std::to_string(comp)).c_str());
-        exit(1);
-    }
-
-    glGenerateMipmap(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0);
+void Texture::resize(int width, int height) noexcept
+{
+    glBindTexture(GL_TEXTURE_2D, m_id);
+    glTexImage2D(GL_TEXTURE_2D, 0, (GLenum)format, width, height, 0, (GLenum)format, GL_UNSIGNED_BYTE, nullptr);
 }
