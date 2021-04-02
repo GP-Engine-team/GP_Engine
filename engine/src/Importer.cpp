@@ -49,7 +49,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
     srcDirPath = srcDirPath.parent_path();
 
     std::filesystem::path dstDirPath(dstPath);
-    dstDirPath = dstDirPath.parent_path();
 
     for (size_t i = 1; i < scene->mNumMaterials; ++i)
     {

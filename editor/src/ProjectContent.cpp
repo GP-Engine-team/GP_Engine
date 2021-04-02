@@ -65,6 +65,7 @@ void ProjectContent::refreshResourcesList()
     std::filesystem::path path = std::filesystem::current_path() / RESOURCES_DIR;
 
     DirectoryInfo* pCurrentNode = &resourcesTree;
+    pCurrentDirectory           = pCurrentNode;
 
     for (std::filesystem::recursive_directory_iterator next(path), end; next != end; ++next)
     {
@@ -229,6 +230,7 @@ void ProjectContent::render()
     if (ImGui::Button("Reload"))
     {
         refreshResourcesList();
+        pSelectedDirectory = pCurrentDirectory;
     }
 
     ImGui::SameLine();
