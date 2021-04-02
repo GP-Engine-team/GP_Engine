@@ -119,6 +119,20 @@ void renderResourceExplorer(const char* name, T*& inRes)
 
         inRes = &it->second;
     }
+
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RESOURCE_GPASSET_PATH"))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            gameObject.pOwnerScene->addLoadedResourcePath(path.string().c_str());
+
+            std::cout << gameObject.getName() << "  " << path.string() << std::endl;
+        }
+    }
 }
 
 template <>
