@@ -7,7 +7,6 @@ setup_mirror.bat
 # Project
 Generated
 resources/*
-imgui.ini
 
 ### C++ ###
 # Prerequisites

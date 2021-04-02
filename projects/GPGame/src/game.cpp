@@ -2,6 +2,8 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 
+#include "Engine/Core/Debug/Assert.hpp"
+#include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ObjParser.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
@@ -22,8 +24,9 @@
 #include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Texture.hpp"
-#include "myScript.hpp"
-
+#include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
+#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
+#include <myFpsScript.hpp>
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 //#include "GPM/Random.hpp"
@@ -137,26 +140,63 @@ Game::Game()
     iManager.bindInput(GLFW_KEY_SPACE, "jump");
     iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
     iManager.bindInput(GLFW_KEY_ESCAPE, "exit");
-    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
+    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
+    iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
+    iManager.bindInput(GLFW_KEY_KP_ADD, "growUpCollider");
+    iManager.bindInput(GLFW_KEY_KP_SUBTRACT, "growDownCollider");
 
-    GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}}};
+    GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 50.f, 0.f}}};
+    GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 50.f}}};
+    GameObject::CreateArg groundArg{"GroundArg", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 0.f}}};
 
     Camera::PerspectiveCreateArg camCreateArg;
-    camCreateArg.aspect = Camera::computeAspect(900.f, 600.f);
+    camCreateArg.aspect = Camera::computeAspect(900, 600);
 
     camCreateArg.farVal  = 3000;
     camCreateArg.nearVal = 0.01f;
 
-    GameObject& player = sm.getCurrentScene()->getWorld().addChild(playerArg);
-
-    player.addComponent<Camera>(camCreateArg);
-    player.addComponent<GPG::MyScript>();
+    PointLight::CreateArg lightArg{
+        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};
 
     rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs",
                    AMBIANTE_COLOR_ONLY);
     rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
                    "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
 
+    GameObject& ground      = sm.getCurrentScene()->getWorld().addChild(groundArg);
+    GameObject& player      = sm.getCurrentScene()->getWorld().addChild(playerArg);
+    GameObject& testPhysX   = sm.getCurrentScene()->getWorld().addChild(testPhysXArg);
+
+    player.addComponent<Camera>(camCreateArg);
+    player.addComponent<GPG::MyFpsScript>();
+    PointLight& light = player.addComponent<PointLight>(lightArg);
+
+    testPhysX.addComponent<SphereCollider>();
+    testPhysX.getComponent<SphereCollider>()->isVisible = true;
+    testPhysX.getComponent<SphereCollider>()->setRadius(10.f);
+    testPhysX.addComponent<RigidbodyStatic>();
+    testPhysX.getComponent<RigidbodyStatic>()->collider = testPhysX.getComponent<SphereCollider>();
+
+    /*Model::CreateArg modelArg;
+    modelArg.subModels.emplace_back(SubModel{nullptr, Engine::getInstance()->resourceManager.get<Shader>("TextureOnly"),
+                                             Engine::getInstance()->resourceManager.get<Material>("SkyboxMaterial"),
+                                             Engine::getInstance()->resourceManager.get<Mesh>("Sphere")});
+
+    testPhysX.addComponent<Model>(modelArg);*/
+
+    ground.addComponent<BoxCollider>();
+    ground.getComponent<BoxCollider>()->isVisible = true;
+    ground.getComponent<BoxCollider>()->setDimensions(Vec3{1000.f, 10.f, 1000.f});
+    ground.addComponent<RigidbodyStatic>();
+    ground.getComponent<RigidbodyStatic>()->collider = ground.getComponent<BoxCollider>();
+
+    /*Model::CreateArg modelArg2;
+    modelArg2.subModels.emplace_back(SubModel{nullptr,
+                                              Engine::getInstance()->resourceManager.get<Shader>("TextureOnly"),
+                                              Engine::getInstance()->resourceManager.get<Material>("SkyboxMaterial"),
+                                              Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug")});
+
+    ground.addComponent<Model>(modelArg2);*/
     loadSkyboxResource(rm);
     loadTreeResource(rm);
 

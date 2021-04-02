@@ -39,6 +39,8 @@ private:
 
     virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final
     {
+        AbstractGame::fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+        // GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
         ++fixedUpdateFrameCount;
         bSys.fixedUpdate(fixedDeltaTime);
     }
