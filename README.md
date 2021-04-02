@@ -12,9 +12,9 @@
 ```batch
 git clone --recurse-submodules https://github.com/GP-Engine-team/GP_Engine.git
 ```
-2. From the Drive, download the assets [from the Drive]() and extract them from the root of your local copy of this repository
+2. Download the assets [from the Drive](https://drive.google.com/drive/folders/1ElLiWl6cP_Z3WOdevMU3CpLjCIND17XD) and extract them from the root of your local copy of this repository (individually, or 
 3. Open [projects/GPGame/GPGame.sln](projects/GPGame/GPGame.sln) in Visual Studio
-4. Either set the "GPLauncher" or "GPEditor" project as startup project to launch the game alone or in the editor, respectively
+4. **Either set the "GPLauncher" or "GPEditor" project as startup project** to launch the game alone, or with the editor, respectively
 5. Choose either Debug or Release mode, and hit F5 to compile
 
 
@@ -31,20 +31,26 @@ git clone --recurse-submodules https://github.com/GP-Engine-team/GP_Engine.git
 | Esc   | Exit the program |
 
 
+## Known bugs
+- Sounds are sometimes played with lags, in a fragmented way
+- Inputs declared in game-code collide with inputs declared in editor-code
+- When the editor's window is minimized, OpenGL errors are raised and visible in the console
+- The `ResourceManager` can't take a single template argument
+
 ## Repository folders architecture
 
 - `editor/`: code relative to the editor
 - `engine/`: the heart of the C++ API
 - `generator/`: reflexion with Refureku
 - `launcher/`: game-only launcher code
-- `projects/`: where the games made with the engine are developped
+- `projects/`: where the games made with the engine are edited
 
 ## Global architecture
 
 The following diagram, as well as other more specific UML diagrams, are [available on the project's Google Drive](https://drive.google.com/drive/folders/1BV3M4kYvesof0PHtpZnjXgYIOzirfpd5).
 
 Click the image to get a zoomable version of it.
-[![](https://i.postimg.cc/85ZGJpq6/Global-project-architecture.png)](https://postimg.cc/1V5Cs1sV)
+[![Global architecture diagram](https://i.postimg.cc/2ynPdCtG/Global-project-architecture.png)](https://postimg.cc/1V5Cs1sV)
 
 ## Dependencies
 
