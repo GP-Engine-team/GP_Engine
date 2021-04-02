@@ -10,7 +10,9 @@
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
 
-#define ENGINE_ASSET_EXTENSION ".GPAsset"
+#define ENGINE_MESH_EXTENSION ".GPMesh"
+#define ENGINE_MATERIAL_EXTENSION ".GPMaterial"
+#define ENGINE_TEXTURE_EXTENSION ".GPTexture"
 
 namespace GPE
 {
@@ -28,13 +30,13 @@ struct TextureImportDataConfig
 
 void importeModel(const char* srcPath, const char* dstPath) noexcept;
 
-void writeTextureFile(const char* dst, const TextureImportDataConfig& arg);
-void readTextureFile(const char* src, Texture::ImportArg& arg);
+void               writeTextureFile(const char* dst, const TextureImportDataConfig& arg);
+Texture::ImportArg readTextureFile(const char* src);
 
-void writeMaterialFile(const char* dst, const Material::ImporteArg& arg);
-void readMaterialFile(const char* src, Material::ImporteArg& arg);
+void                 writeMaterialFile(const char* dst, const Material::ImporteArg& arg);
+Material::ImporteArg readMaterialFile(const char* src);
 
-void writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
-void readMeshFile(const char* src, Mesh::CreateIndiceBufferArg& arg);
+void                        writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
+Mesh::CreateIndiceBufferArg readMeshFile(const char* src);
 
 } // namespace GPE

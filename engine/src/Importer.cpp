@@ -86,11 +86,11 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
         std::filesystem::path dstTexturePath = dstDirPath;
         dstTexturePath /= materialArg.diffuseTextureName;
-        dstTexturePath += ENGINE_ASSET_EXTENSION;
+        dstTexturePath += ENGINE_TEXTURE_EXTENSION;
 
         std::filesystem::path dstMaterialPath = dstDirPath;
         dstMaterialPath /= materialArg.name;
-        dstMaterialPath += ENGINE_ASSET_EXTENSION;
+        dstMaterialPath += ENGINE_MATERIAL_EXTENSION;
 
         writeTextureFile(dstTexturePath.string().c_str(), textureArg);
         writeMaterialFile(dstMaterialPath.string().c_str(), materialArg);
@@ -133,7 +133,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
         std::filesystem::path dstMeshPath = dstDirPath;
         dstMeshPath /= arg.objName;
-        dstMeshPath += ENGINE_ASSET_EXTENSION;
+        dstMeshPath += ENGINE_MESH_EXTENSION;
 
         writeMeshFile(dstMeshPath.string().c_str(), arg);
     }
@@ -186,7 +186,7 @@ void GPE::writeTextureFile(const char* dst, const TextureImportDataConfig& arg)
     STBIW_FREE(png);
 }
 
-void GPE::readTextureFile(const char* src, Texture::ImportArg& arg)
+Texture::ImportArg GPE::readTextureFile(const char* src)
 {
     FILE* pFile;
 
@@ -197,6 +197,7 @@ void GPE::readTextureFile(const char* src, Texture::ImportArg& arg)
     }
 
     TextureHeader header;
+
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
@@ -205,9 +206,9 @@ void GPE::readTextureFile(const char* src, Texture::ImportArg& arg)
 
     fread(&texBuffer[0], sizeof(stbi_uc), header.textureLenght, pFile); // Texture buffer
 
-    int w, h, comp;
-
-    unsigned char* pixels = stbi_load_from_memory(texBuffer.data(), header.textureLenght, &w, &h, &comp, 0);
+    Texture::ImportArg arg;
+    arg.pixels = stbi_load_from_memory(texBuffer.data(), header.textureLenght, &arg.w, &arg.h, &arg.comp, 0);
+    return arg;
 }
 
 struct MaterialHeader
@@ -235,7 +236,7 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
     fclose(pFile);
 }
 
-void GPE::readMaterialFile(const char* src, Material::ImporteArg& arg)
+Material::ImporteArg GPE::readMaterialFile(const char* src)
 {
     FILE* pFile;
 
@@ -249,6 +250,7 @@ void GPE::readMaterialFile(const char* src, Material::ImporteArg& arg)
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
+    Material::ImporteArg arg;
     arg.name.assign(header.nameLenght, '\0');
     arg.diffuseTextureName.assign(header.nameLenght, '\0');
 
@@ -282,7 +284,7 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
     fclose(pFile);
 }
 
-void GPE::readMeshFile(const char* src, Mesh::CreateIndiceBufferArg& arg)
+Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
 {
     FILE* pFile;
 
@@ -296,6 +298,7 @@ void GPE::readMeshFile(const char* src, Mesh::CreateIndiceBufferArg& arg)
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
+    Mesh::CreateIndiceBufferArg arg;
     arg.objName.assign(header.nameLenght, '\0');
     arg.vertices.assign(header.verticeLenght, Mesh::Vertex{});
     arg.indices.assign(header.indiceLenght, 0);

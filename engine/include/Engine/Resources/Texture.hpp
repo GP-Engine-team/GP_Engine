@@ -73,12 +73,8 @@ public:
 
     struct ImportArg
     {
-        std::string path = "";
-    };
-
-    struct LoadArg
-    {
-        std::string       path             = "";
+        int               w, h, comp;
+        unsigned char*    pixels; // This data must be free after usage
         ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
@@ -114,7 +110,7 @@ public:
     Texture(const Texture& other) = delete;
     Texture(Texture&& other)      = default;
 
-    Texture(const LoadArg& arg) noexcept;
+    Texture(const ImportArg& arg) noexcept;
     Texture(const CreateArg& arg) noexcept;
     ~Texture() noexcept;
 

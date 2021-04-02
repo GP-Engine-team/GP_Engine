@@ -6,6 +6,7 @@
 #include "Engine/ECS/System/SceneRenderSystem.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Resources/Importer/Importer.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
@@ -119,20 +120,6 @@ void renderResourceExplorer(const char* name, T*& inRes)
 
         inRes = &it->second;
     }
-
-    // Drop
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RESOURCE_GPASSET_PATH"))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-            gameObject.pOwnerScene->addLoadedResourcePath(path.string().c_str());
-
-            std::cout << gameObject.getName() << "  " << path.string() << std::endl;
-        }
-    }
 }
 
 template <>
@@ -142,8 +129,63 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
         !((size_t)inspected.pMesh & (size_t)inspected.pShader & (size_t)inspected.pMaterial);
 
     renderResourceExplorer<Mesh>("Mesh", inspected.pMesh);
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_MESH_EXTENSION))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            if (Mesh* pMesh = Engine::getInstance()->resourceManager.get<Mesh>(path.string().c_str()))
+            {
+                inspected.pMesh = pMesh;
+            }
+            else
+            {
+                Mesh::CreateIndiceBufferArg arg;
+                readMeshFile(path.string().c_str(), arg);
+                inspected.pMesh = &Engine::getInstance()->resourceManager.add<Mesh>(path.string().c_str(), arg);
+            }
+        }
+    }
+
     renderResourceExplorer<Shader>("Shader", inspected.pShader);
     renderResourceExplorer<Material>("Material", inspected.pMaterial);
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_MESH_EXTENSION))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(path.string().c_str()))
+            {
+                inspected.pMaterial = pMaterial;
+            }
+            else
+            {
+                Material::ImporteArg impArg;
+                readMaterialFile(path.string().c_str(), impArg);
+                Material::CreateArg arg;
+                arg.name = std::move(impArg.name);
+                arg.comp = std::move(impArg.comp);
+
+                arg.pTexture = Engine::getInstance()->resourceManager.get<Texture>(impArg.diffuseTextureName.c_str());
+                if (arg.pTexture == nullptr)
+                {
+                    Texture::LoadArg textureArg;
+                    textureArg.path = impArg.diffuseTextureName;
+
+                    arg.pTexture = &Engine::getInstance()->resourceManager.add<Texture>(
+                        impArg.diffuseTextureName.c_str(), textureArg);
+                }
+
+                inspected.pMaterial = &Engine::getInstance()->resourceManager.add<Material>(path.string().c_str(), arg);
+            }
+        }
+    }
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
 

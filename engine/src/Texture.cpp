@@ -12,28 +12,16 @@
 
 using namespace GPE;
 
-Texture::Texture(const LoadArg& arg) noexcept
-{ /*
-    stbi_set_flip_vertically_on_load(arg.flipTexture);
+Texture::Texture(const ImportArg& arg) noexcept
+{
+    setFormat(arg.comp);
 
-    int            w, h, comp;
-    unsigned char* pixels = stbi_load(arg.path.c_str(), &w, &h, &comp, 0);
+    loadInGPU(arg.w, arg.h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT, arg.pixels,
+              arg.generateMipmaps);
 
-    if (pixels == nullptr)
-    {
-        FUNCT_ERROR((std::string("STBI cannot load image: ") + arg.path).c_str());
-        FUNCT_ERROR(std::string("Reason: ") + stbi_failure_reason());
-        return;
-    }
+    free(arg.pixels);
 
-    setFormat(comp);
-
-    loadInGPU(w, h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT,
-              pixels, arg.generateMipmaps);
-
-    Log::getInstance()->log(
-        (std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path.c_str()) + "\" loaded to VRAM").c_str());
-    stbi_image_free(pixels);*/
+    Log::getInstance()->log("Texture loaded to VRAM");
 }
 
 Texture::Texture(const CreateArg& arg) noexcept : format{arg.format}

@@ -336,10 +336,10 @@ void ProjectContent::render()
             }
 
             // Drag
-            if (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str()) == GPE::hash(".GPAsset") &&
-                ImGui::BeginDragDropSource())
+            if (ImGui::BeginDragDropSource())
             {
-                ImGui::SetDragDropPayload("RESOURCE_GPASSET_PATH", (void*)&pCurrentDirectory->files[i].path,
+                ImGui::SetDragDropPayload(pCurrentDirectory->files[i].extention.string().c_str(),
+                                          (void*)&pCurrentDirectory->files[i].path,
                                           sizeof(pCurrentDirectory->files[i].path));
                 ImGui::TextUnformatted(pCurrentDirectory->files[i].filename.string().c_str());
                 ImGui::EndDragDropSource();
