@@ -143,7 +143,7 @@ void Editor::renderLevelEditor()
     m_sceneEditor.resize(static_cast<int>(size.x), static_cast<int>(size.y));
     m_sceneEditor.render();
 
-    ImGui::Image((void*)(intptr_t)m_sceneEditor.textureID, size, ImVec2{0.f, 1.f}, ImVec2{1.f, 0.f});
+    ImGui::Image((void*)(intptr_t)m_sceneEditor.textureID, size, {0.f, 1.f}, {1.f, 0.f});
     ImGui::End();
 
     ImGui::PopStyleVar(2);
