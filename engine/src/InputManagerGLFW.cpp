@@ -81,7 +81,7 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
     m_cursor.deltaPos =
-        Vec2{m_cursor.position.x - static_cast<GPM::f32>(xpos), m_cursor.position.y - static_cast<GPM::f32>(ypos)};
+        Vec2{static_cast<GPM::f32>(xpos) - m_cursor.position.x, static_cast<GPM::f32>(ypos) - m_cursor.position.y};
     m_cursor.position.x = static_cast<GPM::f32>(xpos);
     m_cursor.position.y = static_cast<GPM::f32>(ypos);
 }
