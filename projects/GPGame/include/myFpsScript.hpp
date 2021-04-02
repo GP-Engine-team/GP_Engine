@@ -145,7 +145,7 @@ public:
 
     void fixedUpdate(float deltaTime) final
     {
-        rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
+        rotate(-GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
         controller.update(deltaTime);
     }
 };
