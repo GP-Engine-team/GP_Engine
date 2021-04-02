@@ -262,7 +262,7 @@ void Editor::update()
 
 void Editor::render()
 {
-    ImGui::ShowDemoWindow(nullptr);
+    //ImGui::ShowDemoWindow(nullptr);
 
     ImGui::Render();
 

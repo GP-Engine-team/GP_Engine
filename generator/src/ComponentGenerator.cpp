@@ -22,8 +22,8 @@ std::string ComponentGenerator::generateClassFooterCode(kodgen::EntityInfo const
         std::string serializeInside = "DataChunk<" + var.name + ">::getInstance()->destroy(this);";
 
         std::string serializeFunction = "void destroy() override "
-                                        "{ std::cout << \" destroy comp : " +
-                                        var.name + "\" << std::endl;" + serializeInside + "}";
+                                        "{" +
+                                        serializeInside + "}";
 
         std::cout << serializeFunction << std::endl;
         return "public:" + serializeFunction;
