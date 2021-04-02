@@ -8,27 +8,33 @@
 #include <Engine/ECS/Component/Component.hpp>
 #include <PxShape.h>
 
-namespace GPE
+// Generated
+#include "Generated/Collider.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class Collider : public Component
-{
-public:
-    Collider(GameObject& owner) noexcept : Component(owner)
+    class RFKClass(ComponentGen(), Inspect()) Collider : public Component
     {
-    }
+    public:
+        Collider(GameObject & owner) noexcept : Component(owner)
+        {
+        }
 
-    Collider() noexcept                      = delete;
-    Collider(const Collider& other) noexcept = delete;
-    Collider(Collider&& other) noexcept      = default;
-    Collider& operator=(Collider const& other) noexcept = delete;
-    Collider& operator=(Collider&& other) noexcept = delete;
+        Collider() noexcept                      = delete;
+        Collider(const Collider& other) noexcept = delete;
+        Collider(Collider && other) noexcept     = default;
+        Collider& operator=(Collider const& other) noexcept = delete;
+        Collider& operator=(Collider&& other) noexcept = delete;
 
-    virtual ~Collider() noexcept = default;
+        virtual ~Collider() noexcept = default;
 
-public:
-    physx::PxShape*    shape     = nullptr;
-    physx::PxMaterial* material  = nullptr;
-    bool               isTrigger = false;
-    bool               isVisible = false;
-};
-} // namespace GPE
+    public:
+        RFKField(Inspect()) physx::PxShape*    shape     = nullptr;
+        RFKField(Inspect()) physx::PxMaterial* material  = nullptr;
+        RFKField(Inspect()) bool               isTrigger = false;
+        RFKField(Inspect()) bool               isVisible = false;
+
+        Collider_GENERATED
+    };
+} // namespace )
+File_GENERATED

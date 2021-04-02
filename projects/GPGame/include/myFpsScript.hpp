@@ -51,7 +51,8 @@ public:
         source.playSound("Western");
 
         controller.setHasGravity(true);
-        controller.setSpeed(0.3);
+        controller.setSpeed(5);
+        controller.setGravity(0.1);
     }
 
     MyFpsScript() noexcept                         = delete;
@@ -66,9 +67,12 @@ public:
     GPE::AudioComponent&      source;
     GPE::CharacterController& controller;
 
+    // bool
+
     void rotate(const GPM::Vec2& deltaDisplacement)
     {
-        if (deltaDisplacement.length() > 0.4)
+        if (deltaDisplacement.length() >
+            0.4 /*&& getOwner().getTransform().getSpacialAttribut().rotation.eulerAngles().x*/)
         {
             getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation *
                                                   GPM::Quaternion::angleAxis(deltaDisplacement.y * 0.001f, {1, 0, 0}));
@@ -79,10 +83,12 @@ public:
 
     inline void jump()
     {
-        /*getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(physx::PxVec3{0, 1, 0} * speed,
-                                                                              physx::PxForceMode::eFORCE);*/
-        GPM::Vec3 vec = getOwner().getTransform().getVectorUp();
-        controller.move(vec, 100);
+        // controller.controller->getActor()->/*addForce(physx::PxVec3{0, 1, 0} * 10000000000,
+        // physx::PxForceMode::eFORCE)*/;
+        GPM::Vec3 vec = {0, 1, 0};
+        controller.addForce(vec * 3);
+        controller.setJumping(true);
+        // controller.move(vec * 300);
         // controller.controller->getActor()->addForce(physx::PxVec3{ 0, 1, 0 } *10000,physx::PxForceMode::eFORCE);
     }
 

@@ -82,12 +82,12 @@ public:
 
     inline void sprint()
     {
-        m_speed = 2;
+        // m_speed = 2;
     }
 
     void update(float deltaTime) final
     {
-        m_speed = 1;
+        // m_speed = 1;
 
         if (Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.1)
         {

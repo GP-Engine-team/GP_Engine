@@ -84,8 +84,8 @@ PhysXSystem::~PhysXSystem()
     manager->release();
     scene->release();
     cooking->release();
-    pvd->release();
     physics->release();
+    pvd->release();
     foundation->release();
 }
 

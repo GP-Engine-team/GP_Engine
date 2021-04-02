@@ -1,5 +1,7 @@
+#include <Engine/Core/Debug/Log.hpp>
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/Engine.hpp>
+#include <string>
 
 using namespace GPE;
 using namespace physx;
@@ -20,19 +22,26 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
 void CharacterController::update(float deltaTime) noexcept
 {
     physx::PxControllerFilters filters;
-    if (m_hasGravity)
+    updateForce();
+
+    if (m_jumping == true)
     {
-        move({0, -1.f, 0}, m_gravity);
+        if (canJump() == true)
+        {
+            m_jumping = false;
+            m_force   = {0, 0, 0};
+        }
+
+        if (m_hasGravity)
+        {
+            addForce(GPM::Vec3{0, -1.f, 0} * m_gravity);
+        }
     }
+
     controller->move(GPE::PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, deltaTime, filters);
     m_displacement = {0, 0, 0};
     getOwner().getTransform().setTranslation(GPE::PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()));
 }
-
-/*void CharacterController::updateVelocity() noexcept
-{
-
-}*/
 
 void CharacterController::move(const GPM::Vec3& displacement) noexcept
 {
@@ -42,6 +51,24 @@ void CharacterController::move(const GPM::Vec3& displacement) noexcept
 void CharacterController::move(const GPM::Vec3& displacement, float customSpeed) noexcept
 {
     m_displacement += displacement * customSpeed;
+}
+
+void CharacterController::addForce(const GPM::Vec3& force) noexcept
+{
+    m_force += force;
+}
+
+void CharacterController::updateForce() noexcept
+{
+    m_displacement += m_force;
+    // m_force *= 0.9f;
+}
+
+bool CharacterController::canJump() noexcept
+{
+    PxControllerState cctState;
+    controller->getState(cctState);
+    return (cctState.collisionFlags & PxControllerCollisionFlag::eCOLLISION_DOWN) != 0;
 }
 
 CharacterController::~CharacterController() noexcept
