@@ -34,10 +34,10 @@ EditorStartup::EditorStartup()
           if (m_game != nullptr)
               m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
       }},
-      m_update{[&](double fixedUnscaledDeltaTime, double deltaTime) {
+      m_update{[&](double unscaledDeltaTime, double deltaTime) {
           GPE::Engine::getInstance()->inputManager.processInput();
           if (m_game != nullptr)
-              m_game->update(fixedUnscaledDeltaTime, deltaTime);
+              m_game->update(unscaledDeltaTime, deltaTime);
       }},
 
       m_render{[&]() {

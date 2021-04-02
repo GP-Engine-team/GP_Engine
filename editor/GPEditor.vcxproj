@@ -166,14 +166,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\imgui\backends;$(GPEngineDir)third_party\imgui;$(GPEngineDir)third_party;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir);$(GPEngineDir)third_party\include\Refureku;$(GPGameDir)include;$(GPGameDir);$(ProjectDir)include;$(GPEngineDir)include;$(GPEngineDir)src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\imgui\backends;$(GPEngineDir)third_party\imgui;$(GPEngineDir)third_party;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir);$(GPEngineDir)third_party\include\Refureku;$(GPGameDir)include;$(GPGameDir);$(ProjectDir)include;$(GPEngineDir)include;$(GPEngineDir)src;$(GPEngineDir)/third_party/include/PhysX/</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;GPGame.lib;glfw3.lib;RefurekuDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(GPEngineDir)third_party\lib\Refureku;$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GPEngine.lib;GPGame.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration);$(GPEngineDir)\third_party\libDebug\;$(GPEngineDir)\third_party\libDebug\Refureku;%(AdditionalLibraryDirectories);$(GPEngineDir)\third_party\lib\;$(GPEngineDir)\third_party\lib\Refureku</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference />
     <ProjectReference />
@@ -187,7 +187,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(GPEngineDir)third_party/include;$(GPEngineDir)third_party/gpm/include;$(GPEngineDir)third_party/imgui;$(GPEngineDir)third_party;$(GPEngineDir);$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include;$(GPGameDir);$(ProjectDir)/include;$(GPEngineDir)include;$(GPEngineDir)src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GPEngineDir)third_party/include;$(GPEngineDir)third_party/gpm/include;$(GPEngineDir)third_party/imgui;$(GPEngineDir)third_party;$(GPEngineDir);$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include;$(GPGameDir);$(ProjectDir)/include;$(GPEngineDir)include;$(GPEngineDir)src;$(GPEngineDir)/third_party/include/PhysX/</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -195,8 +195,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;GPGame.lib;RefurekuRelease.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib;$(GPEngineDir)\third_party\lib\Refureku;$(GPGameDir)bin\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GPEngine.lib;GPGame.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\;$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\libRelease\;$(GPEngineDir)\third_party\libRelease\Refureku;$(GPGameDir)bin\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

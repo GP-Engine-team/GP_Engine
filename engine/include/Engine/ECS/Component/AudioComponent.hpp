@@ -31,16 +31,19 @@ struct SourceSettings
 class AudioComponent : public Component
 {
 public:
-    AudioComponent(GameObject& owner) noexcept;
+    AudioComponent(GameObject& owner);
 
-    virtual ~AudioComponent() noexcept;
+    virtual ~AudioComponent();
 
-    AudioComponent() noexcept                            = delete;
-    AudioComponent(const AudioComponent& other) noexcept = delete;
-    AudioComponent& operator=(AudioComponent const& other) noexcept = delete;
+    AudioComponent()                            = delete;
+    AudioComponent(const AudioComponent& other) = delete;
+    AudioComponent& operator=(AudioComponent const& other) = delete;
 
-    AudioComponent(AudioComponent&& other) noexcept = default;
-    AudioComponent& operator                        =(AudioComponent&& other) noexcept;
+    // AudioComponent(AudioComponent&& other) noexcept = default;
+    AudioComponent& operator=(AudioComponent&& other);
+    AudioComponent(AudioComponent&& other) : Component(other.getOwner())
+    {
+    }
 
 private:
     ALboolean   m_enumeration;

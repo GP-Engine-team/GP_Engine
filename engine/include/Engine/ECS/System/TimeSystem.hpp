@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  *	found in the top-level directory of this distribution.
@@ -37,7 +37,7 @@ protected:
     double m_deltaTime              = 0.;
     double m_unscaledDeltaTime      = 0.;
     double m_timeScale              = 1.;
-    double m_fixedUnscaledDeltaTime = 1. / 60.;
+    double m_fixedUnscaledDeltaTime = 1. / 120.;
     double m_fixedDeltaTime         = m_fixedUnscaledDeltaTime * m_timeScale;
 
     double m_scaledTimeAcc   = 0.f;

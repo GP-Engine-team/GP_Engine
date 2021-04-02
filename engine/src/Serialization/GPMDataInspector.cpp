@@ -1,6 +1,6 @@
 #include "Engine/Serialization/GPMDataInspector.hpp"
-#include "GPM/Transform.hpp"
 #include "Engine/Serialization/Slider.hpp"
+#include "GPM/Transform.hpp"
 #include "imgui.h"
 
 #include <windows.h>
@@ -15,7 +15,7 @@ template <>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const char* name)
 {
     bool b = false;
-    b |= DataInspector::inspect(context, inspected.position,  "Position");
+    b |= DataInspector::inspect(context, inspected.position, "Position");
     b |= DataInspector::inspect(context, inspected.scale, "Scale");
     b |= DataInspector::inspect(context, inspected.rotation, "Rotation");
     return b;
@@ -51,13 +51,12 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& 
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
-
 template <>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const char* name)
 {
-    GPM::Vec3 asRotation = inspected.eulerAngles() * 180.f / PI;     // to degrees
-    bool hasChanged = GPE::DataInspector::inspect(context, asRotation, name); // display as euler angles
-    inspected = GPM::Quaternion::fromEuler(asRotation * PI / 180.f); // to radians
+    GPM::Vec3 asRotation = inspected.eulerAngles() * 180.f / PI;                   // to degrees
+    bool      hasChanged = GPE::DataInspector::inspect(context, asRotation, name); // display as euler angles
+    inspected            = GPM::Quaternion::fromEuler(asRotation * PI / 180.f);    // to radians
 
     return hasChanged;
 }
