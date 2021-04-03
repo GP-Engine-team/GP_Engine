@@ -293,13 +293,11 @@ void ProjectContent::render()
         {
             switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
             {
-            case GPE::hash(".obj"):  // compile time
-            case GPE::hash(".fbx"):  // compile time
-            case GPE::hash(".gltf"): // compile time
+            case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
                 renderModel(size);
                 break;
 
-            case GPE::hash(".mtl"): // compile time
+            case GPE::hash(ENGINE_MATERIAL_EXTENSION): // compile time
                 renderMaterial(size);
                 break;
 
@@ -313,10 +311,7 @@ void ProjectContent::render()
                 renderShader(size);
                 break;
 
-            case GPE::hash(".jpg"):  // compile time
-            case GPE::hash(".png"):  // compile time
-            case GPE::hash(".jpeg"): // compile time
-            case GPE::hash(".bmp"):  // compile time
+            case GPE::hash(ENGINE_TEXTURE_EXTENSION): // compile time
                 renderImage(size);
                 break;
 
