@@ -71,6 +71,17 @@ public:
         STENCIL_INDEX8     = 4
     };
 
+    struct LoadArg
+    {
+        std::string       path             = "";
+        ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
+        ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
+        ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
+        ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
+        bool              flipTexture      = true;
+        bool              generateMipmaps  = true;
+    };
+
     struct ImportArg
     {
         int               w, h, comp;
@@ -110,6 +121,7 @@ public:
     Texture(const Texture& other) = delete;
     Texture(Texture&& other)      = default;
 
+    Texture(const LoadArg& arg) noexcept;
     Texture(const ImportArg& arg) noexcept;
     Texture(const CreateArg& arg) noexcept;
     ~Texture() noexcept;

@@ -79,14 +79,17 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         materialArg.diffuseTextureName = diffuseTextureName.C_Str();
 
         TextureImportDataConfig textureArg;
-        std::filesystem::path   srcTexturePath = srcDirPath;
-        srcTexturePath /= diffuseTextureName.C_Str();
+
+        std::filesystem::path dstTexturePath = dstDirPath;
+        std::filesystem::path srcTexturePath = srcDirPath;
+        std::filesystem::path diffuseTextureFile(materialArg.diffuseTextureName);
+        dstTexturePath /= diffuseTextureFile.stem();
+        dstTexturePath += ENGINE_TEXTURE_EXTENSION;
+        srcTexturePath /= diffuseTextureFile;
 
         textureArg.srcPath = srcTexturePath.string();
 
-        std::filesystem::path dstTexturePath = dstDirPath;
-        dstTexturePath /= materialArg.diffuseTextureName;
-        dstTexturePath += ENGINE_TEXTURE_EXTENSION;
+        materialArg.diffuseTextureName = dstTexturePath.string().c_str();
 
         std::filesystem::path dstMaterialPath = dstDirPath;
         dstMaterialPath /= materialArg.name;
@@ -169,7 +172,7 @@ void GPE::writeTextureFile(const char* dst, const TextureImportDataConfig& arg)
         FUNCT_ERROR((std::string("STBI cannot write image with png format with this path : ") + arg.srcPath).c_str());
     }
 
-    FILE* pFile;
+    FILE* pFile = nullptr;
 
     if (fopen_s(&pFile, dst, "w+b"))
     {
@@ -188,27 +191,47 @@ void GPE::writeTextureFile(const char* dst, const TextureImportDataConfig& arg)
 
 Texture::ImportArg GPE::readTextureFile(const char* src)
 {
-    FILE* pFile;
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
+    Texture::ImportArg    arg;
 
     if (fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
-        return;
+        return arg;
     }
 
-    TextureHeader header;
+    if (srcPath.extension() == ENGINE_TEXTURE_EXTENSION)
+    {
+        TextureHeader header;
 
-    // copy the file into the buffer:
-    fread(&header, sizeof(header), 1, pFile);
+        // copy the file into the buffer:
+        fread(&header, sizeof(header), 1, pFile);
 
-    std::vector<stbi_uc> texBuffer;
-    texBuffer.assign(header.textureLenght, 0);
+        std::vector<stbi_uc> texBuffer;
+        texBuffer.assign(header.textureLenght, 0);
 
-    fread(&texBuffer[0], sizeof(stbi_uc), header.textureLenght, pFile); // Texture buffer
+        fread(&texBuffer[0], sizeof(stbi_uc), header.textureLenght, pFile); // Texture buffer
 
-    Texture::ImportArg arg;
-    arg.pixels = stbi_load_from_memory(texBuffer.data(), header.textureLenght, &arg.w, &arg.h, &arg.comp, 0);
+        arg.pixels = stbi_load_from_memory(texBuffer.data(), header.textureLenght, &arg.w, &arg.h, &arg.comp, 0);
+    }
+    else
+    {
+        arg.pixels = stbi_load_from_file(pFile, &arg.w, &arg.h, &arg.comp, 0);
+    }
+
+    if (!arg.pixels)
+    {
+        Log::getInstance()->logError(stringFormat("Fail to load file \"%s\"", src));
+    }
+
     return arg;
+}
+
+Texture* GPE::loadTextureFile(const char* src)
+{
+    std::filesystem::path srcPath(src);
+    return &Engine::getInstance()->resourceManager.add<Texture>(srcPath.filename().string(), readTextureFile(src));
 }
 
 struct MaterialHeader
@@ -221,7 +244,7 @@ struct MaterialHeader
 
 void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
 {
-    FILE* pFile;
+    FILE* pFile = nullptr;
     if (fopen_s(&pFile, dst, "w+b"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
@@ -236,26 +259,34 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
     fclose(pFile);
 }
 
-Material::ImporteArg GPE::readMaterialFile(const char* src)
+Material* GPE::loadMaterialFile(const char* src)
 {
-    FILE* pFile;
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
 
-    if (fopen_s(&pFile, src, "rb"))
+    if (srcPath.extension() != ENGINE_MATERIAL_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
-        return;
+        return nullptr;
     }
 
     MaterialHeader header;
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
-    Material::ImporteArg arg;
+    Material::CreateArg arg;
     arg.name.assign(header.nameLenght, '\0');
-    arg.diffuseTextureName.assign(header.nameLenght, '\0');
+    std::string diffusePath(header.nameDiffuseTextureLenght, '\0');
 
-    fread(&arg.name[0], sizeof(char), header.nameLenght, pFile);                             // string buffer
-    fread(&arg.diffuseTextureName[0], sizeof(char), header.nameDiffuseTextureLenght, pFile); // string buffer
+    fread(&arg.name[0], sizeof(char), header.nameLenght, pFile); // string buffer
+
+    if (header.nameDiffuseTextureLenght) // If diffuse texture existe
+    {
+        fread(diffusePath.data(), sizeof(char), header.nameDiffuseTextureLenght, pFile); // string buffer
+        arg.pTexture = loadTextureFile(diffusePath.c_str());
+    }
+
+    return &Engine::getInstance()->resourceManager.add<Material>(srcPath.filename().string(), arg);
 }
 
 struct MeshHeader
@@ -268,7 +299,8 @@ struct MeshHeader
 
 void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
 {
-    FILE* pFile;
+    FILE* pFile = nullptr;
+
     if (fopen_s(&pFile, dst, "w+b"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
@@ -284,14 +316,15 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
     fclose(pFile);
 }
 
-Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
+Mesh* GPE::loadMeshFile(const char* src)
 {
-    FILE* pFile;
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
 
-    if (fopen_s(&pFile, src, "rb"))
+    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
-        return;
+        return nullptr;
     }
 
     MeshHeader header;
@@ -306,4 +339,6 @@ Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
     fread(&arg.objName[0], sizeof(char), header.nameLenght, pFile);                // string buffer
     fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
     fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
+
+    return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), arg);
 }

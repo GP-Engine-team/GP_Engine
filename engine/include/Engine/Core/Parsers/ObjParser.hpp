@@ -10,8 +10,9 @@
 #include "Engine/Resources/Mesh.hpp"
 
 namespace GPE
-{
+{ /*
 Model::CreateArg importeSingleModel(const char*           assetPath,
-                                    Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE) noexcept;
+                                    Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE)
+noexcept;*/
 
 } // namespace GPE

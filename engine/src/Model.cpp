@@ -143,9 +143,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
             }
             else
             {
-                Mesh::CreateIndiceBufferArg arg;
-                readMeshFile(path.string().c_str(), arg);
-                inspected.pMesh = &Engine::getInstance()->resourceManager.add<Mesh>(path.string().c_str(), arg);
+                inspected.pMesh = loadMeshFile(path.string().c_str());
             }
         }
     }
@@ -166,23 +164,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
             }
             else
             {
-                Material::ImporteArg impArg;
-                readMaterialFile(path.string().c_str(), impArg);
-                Material::CreateArg arg;
-                arg.name = std::move(impArg.name);
-                arg.comp = std::move(impArg.comp);
-
-                arg.pTexture = Engine::getInstance()->resourceManager.get<Texture>(impArg.diffuseTextureName.c_str());
-                if (arg.pTexture == nullptr)
-                {
-                    Texture::LoadArg textureArg;
-                    textureArg.path = impArg.diffuseTextureName;
-
-                    arg.pTexture = &Engine::getInstance()->resourceManager.add<Texture>(
-                        impArg.diffuseTextureName.c_str(), textureArg);
-                }
-
-                inspected.pMaterial = &Engine::getInstance()->resourceManager.add<Material>(path.string().c_str(), arg);
+                inspected.pMaterial = loadMaterialFile(path.string().c_str());
             }
         }
     }

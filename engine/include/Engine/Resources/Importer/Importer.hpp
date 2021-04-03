@@ -32,11 +32,12 @@ void importeModel(const char* srcPath, const char* dstPath) noexcept;
 
 void               writeTextureFile(const char* dst, const TextureImportDataConfig& arg);
 Texture::ImportArg readTextureFile(const char* src);
+Texture*           loadTextureFile(const char* src);
 
-void                 writeMaterialFile(const char* dst, const Material::ImporteArg& arg);
-Material::ImporteArg readMaterialFile(const char* src);
+void      writeMaterialFile(const char* dst, const Material::ImporteArg& arg);
+Material* loadMaterialFile(const char* src);
 
-void                        writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
-Mesh::CreateIndiceBufferArg readMeshFile(const char* src);
+void  writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
+Mesh* loadMeshFile(const char* src);
 
 } // namespace GPE

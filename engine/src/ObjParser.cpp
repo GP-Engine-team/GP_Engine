@@ -15,9 +15,10 @@
 
 using namespace GPE;
 using namespace GPM;
-
+/*
 Model::CreateArg GPE::importeSingleModel(const char* assetPath, Mesh::EBoundingVolume boundingVolumeType) noexcept
 {
+
     GPE_ASSERT(assetPath != nullptr, "Void path");
 
     Log::getInstance()->logInitializationStart("Obj parsing");
@@ -151,4 +152,5 @@ Model::CreateArg GPE::importeSingleModel(const char* assetPath, Mesh::EBoundingV
     Log::getInstance()->logInitializationEnd("Obj parsing");
 
     return modelArg;
-}
+
+}*/

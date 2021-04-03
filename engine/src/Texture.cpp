@@ -1,16 +1,18 @@
 #include "Engine/Resources/Texture.hpp"
 
 #include <utility>
-/*
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
-*/
+
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ParserTool.hpp"
+#include "Engine/Resources/Importer/Importer.hpp"
 #include "glad/glad.h"
 
 using namespace GPE;
+
+Texture::Texture(const LoadArg& arg) noexcept : Texture(readTextureFile(arg.path.c_str()))
+{
+}
 
 Texture::Texture(const ImportArg& arg) noexcept
 {
