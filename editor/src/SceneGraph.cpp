@@ -16,6 +16,8 @@
 #include "Engine/ECS/Component/Light/PointLight.hpp"
 #include "Engine/ECS/Component/Light/SpotLight.hpp"
 
+#include "Engine/Serialization/IInspectable.hpp"
+
 #include "Engine/Resources/Scene.hpp"
 #include <imgui/imgui.h>
 
@@ -39,7 +41,7 @@ void DeferedSetParent::tryExecute()
     m_newParentGO = nullptr;
 }
 
-void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
+void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject, int idElem)
 {
     // Drag
     if (ImGui::BeginDragDropSource())
@@ -148,7 +150,8 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
     }
 }
 
-void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
+void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject,
+                                         int idElem)
 {
     ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_Selected * (selectedGameObject == &gameObject) |
                                   ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick |
@@ -178,7 +181,7 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GameObject
     }
 }
 
-void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GameObject*& selectedGameObject)
+void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject)
 {
     recursiveSceneGraphNode(gameObject, selectedGameObject);
     deferedSetParent.tryExecute();

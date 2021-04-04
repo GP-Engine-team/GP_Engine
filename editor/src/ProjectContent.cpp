@@ -1,7 +1,9 @@
 ﻿#include "Editor/ProjectContent.hpp"
 
-#include "Editor/FileExplorer.hpp"
+#include "Engine/Serialization/ShaderImporterSetting.hpp"
+
 #include "Engine/Resources/Importer/Importer.hpp"
+#include "Engine/Serialization/FileExplorer.hpp"
 
 #include <Imgui/imgui.h>
 #include <string>
@@ -214,14 +216,20 @@ static void renderfolder(ImVec2& size, DirectoryInfo** pSelectectDir, DirectoryI
     }
 }
 
-void ProjectContent::render()
+void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject)
 {
     float          window_visible_x2  = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
     DirectoryInfo* pSelectedDirectory = pCurrentDirectory;
 
+    // Try to reset SelectedGameObject
+    if (importationSetting.get() && selectedGameObject != importationSetting.get())
+    {
+        importationSetting.reset();
+    }
+
     if (ImGui::Button("Importe"))
     {
-        std::string srcPath = Editor::openFileExplorer().string();
+        std::string srcPath = GPE::openFileExplorer().string();
         importeModel(srcPath.c_str(), pCurrentDirectory->path.string().c_str());
     }
 
@@ -306,8 +314,7 @@ void ProjectContent::render()
                 renderSound(size);
                 break;
 
-            case GPE::hash(".fs"): // compile time
-            case GPE::hash(".vs"): // compile time
+            case GPE::hash(ENGINE_SHADER_EXTENSION): // compile time
                 renderShader(size);
                 break;
 
@@ -320,6 +327,7 @@ void ProjectContent::render()
                 break;
             }
 
+            // Display properties
             if (ImGui::IsItemHovered())
             {
                 ImGui::BeginTooltip();
@@ -328,6 +336,40 @@ void ProjectContent::render()
                 ImGui::Text("%lu bytes", pCurrentDirectory->files[i].size);
                 ImGui::PopTextWrapPos();
                 ImGui::EndTooltip();
+            }
+
+            // Try to inspect
+            if (ImGui::IsItemClicked())
+            {
+                switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
+                {
+                case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
+
+                    break;
+
+                case GPE::hash(ENGINE_MATERIAL_EXTENSION): // compile time
+
+                    break;
+
+                case GPE::hash(".wav"): // compile time
+                case GPE::hash(".mp3"): // compile time
+
+                    break;
+
+                case GPE::hash(ENGINE_SHADER_EXTENSION): // compile time
+                    importationSetting =
+                        std::make_unique<GPE::ShaderImporterModifier>(pCurrentDirectory->files[i].path.string());
+                    selectedGameObject = importationSetting.get();
+                    break;
+
+                case GPE::hash(ENGINE_TEXTURE_EXTENSION): // compile time
+
+                    break;
+
+                default:
+                    renderUnknowFormat(size);
+                    break;
+                }
             }
 
             // Drag
@@ -356,4 +398,35 @@ void ProjectContent::render()
     }
 
     pCurrentDirectory = pSelectedDirectory;
+
+    if (ImGui::IsWindowHovered() && ImGui::GetIO().MouseClicked[ImGuiMouseButton_Right])
+    {
+        ImGui::OpenPopup("ProjectContentPopup");
+    }
+
+    if (ImGui::BeginPopup("ProjectContentPopup"))
+    {
+        if (ImGui::BeginMenu("Create"))
+        {
+            if (ImGui::MenuItem("Shader"))
+            {
+                std::filesystem::path shaderDir  = pCurrentDirectory->path;
+                std::filesystem::path shaderName = "NewShader" ENGINE_SHADER_EXTENSION;
+
+                int id = 0;
+                while (pCurrentDirectory->containFile(shaderName))
+                {
+                    shaderName = stringFormat("NewShader(%i)" ENGINE_SHADER_EXTENSION, ++id);
+                }
+
+                shaderDir /= shaderName;
+
+                writeShaderFile(shaderDir.string().c_str());
+            }
+
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndPopup();
+    }
 }

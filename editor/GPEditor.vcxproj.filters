@@ -44,9 +44,6 @@
     <ClInclude Include="include\Editor\SceneEditor.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Editor\FileExplorer.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GPEditor.props" />

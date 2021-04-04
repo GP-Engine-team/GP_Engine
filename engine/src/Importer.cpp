@@ -342,3 +342,53 @@ Mesh* GPE::loadMeshFile(const char* src)
 
     return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), arg);
 }
+
+struct ShadeHeader
+{
+    char assetID            = (char)EFileType::SHADER;
+    int  vertexPathLenght   = 0;
+    int  fragmentPathLenght = 0;
+};
+
+void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
+{
+    FILE* pFile = nullptr;
+
+    if (fopen_s(&pFile, dst, "w+b"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
+        return;
+    }
+
+    ShadeHeader header{(char)EFileType::SHADER, arg.vertexShaderPath.size(), arg.fragmentShaderPath.size()};
+    fwrite(&header, sizeof(header), 1, pFile);                                                 // header
+    fwrite(arg.vertexShaderPath.data(), sizeof(char), arg.vertexShaderPath.size(), pFile);     // string buffer
+    fwrite(arg.fragmentShaderPath.data(), sizeof(char), arg.fragmentShaderPath.size(), pFile); // string buffer
+
+    fclose(pFile);
+}
+
+Shader* GPE::loadShaderFile(const char* src)
+{
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
+
+    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
+        return nullptr;
+    }
+
+    ShadeHeader header;
+    // copy the file into the buffer:
+    fread(&header, sizeof(header), 1, pFile);
+
+    std::string vertexShaderPath(header.vertexPathLenght, '\0');
+    fread(vertexShaderPath.data(), sizeof(char), header.vertexPathLenght, pFile); // string buffer
+
+    std::string fragmentShaderPath(header.fragmentPathLenght, '\0');
+    fread(fragmentShaderPath.data(), sizeof(char), header.fragmentPathLenght, pFile); // string buffer
+
+    return &Engine::getInstance()->resourceManager.add<Shader>(srcPath.filename().string(), vertexShaderPath.c_str(),
+                                                               fragmentShaderPath.c_str());
+}

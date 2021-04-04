@@ -13,6 +13,7 @@
 #define ENGINE_MESH_EXTENSION ".GPMesh"
 #define ENGINE_MATERIAL_EXTENSION ".GPMaterial"
 #define ENGINE_TEXTURE_EXTENSION ".GPTexture"
+#define ENGINE_SHADER_EXTENSION ".GPShader"
 
 namespace GPE
 {
@@ -20,12 +21,19 @@ enum class EFileType
 {
     MESH     = 0,
     MATERIAL = 1,
-    TEXTURE  = 2
+    TEXTURE  = 2,
+    SHADER   = 3
 };
 
 struct TextureImportDataConfig
 {
     std::string srcPath;
+};
+
+struct ShaderCreateonfig
+{
+    std::string vertexShaderPath;
+    std::string fragmentShaderPath;
 };
 
 void importeModel(const char* srcPath, const char* dstPath) noexcept;
@@ -39,5 +47,8 @@ Material* loadMaterialFile(const char* src);
 
 void  writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
 Mesh* loadMeshFile(const char* src);
+
+void    writeShaderFile(const char* dst, const ShaderCreateonfig& arg = ShaderCreateonfig{});
+Shader* loadShaderFile(const char* src);
 
 } // namespace GPE

@@ -564,6 +564,15 @@
     <ClInclude Include="third_party\include\stb\stb_perlin.h">
       <Filter>third_party\stb</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\IInspectable.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\include\Editor\FileExplorer.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\ShaderImporterSetting.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

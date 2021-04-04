@@ -7,6 +7,7 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Resources/SceneManager.hpp"
+#include "Engine/Serialization/IInspectable.hpp"
 
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
@@ -194,7 +195,7 @@ void Editor::renderExplorer()
     {
         if (ImGui::BeginTabItem("Project"))
         {
-            m_projectContent.render();
+            m_projectContent.renderAndGetSelected(m_inspectedObject);
             ImGui::EndTabItem();
         }
 
