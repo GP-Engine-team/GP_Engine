@@ -1,5 +1,6 @@
 ﻿#include "Editor/ProjectContent.hpp"
 
+#include "Engine/Serialization/MaterialImporterSetting.hpp"
 #include "Engine/Serialization/ShaderImporterSetting.hpp"
 
 #include "Engine/Resources/Importer/Importer.hpp"
@@ -330,7 +331,9 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             // Drag
             if (ImGui::BeginDragDropSource())
             {
-                ImGui::SetDragDropPayload(pCurrentDirectory->files[i].extention.string().c_str(), (void*)&pCurrentDirectory->files[i].path, sizeof(pCurrentDirectory->files[i].path));
+                ImGui::SetDragDropPayload(pCurrentDirectory->files[i].extention.string().c_str(),
+                                          (void*)&pCurrentDirectory->files[i].path,
+                                          sizeof(pCurrentDirectory->files[i].path));
                 ImGui::TextUnformatted(pCurrentDirectory->files[i].filename.string().c_str());
                 ImGui::EndDragDropSource();
             }
@@ -356,7 +359,9 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     break;
 
                 case GPE::hash(ENGINE_MATERIAL_EXTENSION): // compile time
-
+                    importationSetting =
+                        std::make_unique<GPE::MaterialImporterModifier>(pCurrentDirectory->files[i].path.string());
+                    selectedGameObject = importationSetting.get();
                     break;
 
                 case GPE::hash(".wav"): // compile time
@@ -420,6 +425,22 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 shaderDir /= shaderName;
 
                 writeShaderFile(shaderDir.string().c_str());
+            }
+
+            if (ImGui::MenuItem("Material"))
+            {
+                std::filesystem::path materialDir  = pCurrentDirectory->path;
+                std::filesystem::path materialName = "NewMaterial" ENGINE_MATERIAL_EXTENSION;
+
+                int id = 0;
+                while (pCurrentDirectory->containFile(materialName))
+                {
+                    materialName = stringFormat("NewMaterial(%i)" ENGINE_MATERIAL_EXTENSION, ++id);
+                }
+
+                materialDir /= materialName;
+
+                writeMaterialFile(materialDir.string().c_str());
             }
 
             ImGui::EndMenu();

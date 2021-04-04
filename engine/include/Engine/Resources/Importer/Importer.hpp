@@ -42,14 +42,15 @@ void               writeTextureFile(const char* dst, const TextureImportDataConf
 Texture::ImportArg readTextureFile(const char* src);
 Texture*           loadTextureFile(const char* src);
 
-void      writeMaterialFile(const char* dst, const Material::ImporteArg& arg);
-Material* loadMaterialFile(const char* src);
+void                 writeMaterialFile(const char* dst, const Material::ImporteArg& arg = Material::ImporteArg{});
+Material::ImporteArg readMaterialFile(const char* src);
+Material*            loadMaterialFile(const char* src);
 
 void  writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
 Mesh* loadMeshFile(const char* src);
 
-void    writeShaderFile(const char* dst, const ShaderCreateonfig& arg = ShaderCreateonfig{});
+void              writeShaderFile(const char* dst, const ShaderCreateonfig& arg = ShaderCreateonfig{});
 ShaderCreateonfig readShaderFile(const char* src);
-Shader* loadShaderFile(const char* src);
+Shader*           loadShaderFile(const char* src);
 
 } // namespace GPE

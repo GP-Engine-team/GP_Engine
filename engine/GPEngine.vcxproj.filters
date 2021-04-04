@@ -573,6 +573,12 @@
     <ClInclude Include="include\Engine\Serialization\ShaderImporterSetting.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\MaterialImporterSetting.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

@@ -59,8 +59,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
         Material::ImporteArg materialArg;
 
-        materialArg.name = scene->mMaterials[i]->GetName().C_Str();
-
         aiColor3D color;
         scene->mMaterials[i]->Get(AI_MATKEY_COLOR_AMBIENT, color);
         materialArg.comp.ambient.rgbi = GPM::Vec4{color.r, color.g, color.b, 1.f};
@@ -76,15 +74,15 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
         aiString diffuseTextureName;
         scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &diffuseTextureName);
-        materialArg.diffuseTextureName = diffuseTextureName.C_Str();
 
         TextureImportDataConfig textureArg;
 
         std::filesystem::path dstTexturePath = dstDirPath;
         std::filesystem::path srcTexturePath = srcDirPath;
-        std::filesystem::path diffuseTextureFile(materialArg.diffuseTextureName);
+        std::filesystem::path diffuseTextureFile(diffuseTextureName.C_Str());
         dstTexturePath /= diffuseTextureFile.stem();
         dstTexturePath += ENGINE_TEXTURE_EXTENSION;
+
         srcTexturePath /= diffuseTextureFile;
 
         textureArg.srcPath = srcTexturePath.string();
@@ -92,7 +90,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         materialArg.diffuseTextureName = dstTexturePath.string().c_str();
 
         std::filesystem::path dstMaterialPath = dstDirPath;
-        dstMaterialPath /= materialArg.name;
+        dstMaterialPath /= scene->mMaterials[i]->GetName().C_Str();
         dstMaterialPath += ENGINE_MATERIAL_EXTENSION;
 
         writeTextureFile(dstTexturePath.string().c_str(), textureArg);
@@ -243,7 +241,6 @@ struct MaterialHeader
 {
     char              assetID                  = (char)EFileType::MATERIAL;
     MaterialComponent component                = {};
-    int               nameLenght               = 0;
     int               nameDiffuseTextureLenght = 0;
 };
 
@@ -256,9 +253,8 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
         return;
     }
 
-    MaterialHeader header{(char)EFileType::MATERIAL, arg.comp, arg.name.size(), arg.diffuseTextureName.size()};
+    MaterialHeader header{(char)EFileType::MATERIAL, arg.comp, arg.diffuseTextureName.size()};
     fwrite(&header, sizeof(header), 1, pFile);                                                   // header
-    fwrite(arg.name.data(), sizeof(char), header.nameLenght, pFile);                             // string buffer
     fwrite(arg.diffuseTextureName.data(), sizeof(char), header.nameDiffuseTextureLenght, pFile); // string buffer
 
     fclose(pFile);
@@ -266,35 +262,42 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
     Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
 }
 
-Material* GPE::loadMaterialFile(const char* src)
+Material::ImporteArg GPE::readMaterialFile(const char* src)
 {
     FILE*                 pFile = nullptr;
     std::filesystem::path srcPath(src);
+    Material::ImporteArg  arg;
 
     if (srcPath.extension() != ENGINE_MATERIAL_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
-        return nullptr;
+        return arg;
     }
 
     MaterialHeader header;
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
-    Material::CreateArg arg;
-    arg.name.assign(header.nameLenght, '\0');
-    std::string diffusePath(header.nameDiffuseTextureLenght, '\0');
-
-    fread(&arg.name[0], sizeof(char), header.nameLenght, pFile); // string buffer
-
     if (header.nameDiffuseTextureLenght) // If diffuse texture existe
     {
-        fread(diffusePath.data(), sizeof(char), header.nameDiffuseTextureLenght, pFile); // string buffer
-        arg.pTexture = loadTextureFile(diffusePath.c_str());
+        arg.diffuseTextureName.assign(header.nameDiffuseTextureLenght, '\0');
+        fread(arg.diffuseTextureName.data(), sizeof(char), header.nameDiffuseTextureLenght, pFile); // string buffer
     }
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("Material read from \"%s\"", src));
+    return arg;
+}
+
+Material* GPE::loadMaterialFile(const char* src)
+{
+    std::filesystem::path srcPath(src);
+    Material::ImporteArg  importeArg = readMaterialFile(src);
+    Material::CreateArg   arg;
+    arg.comp     = importeArg.comp;
+
+    if (!importeArg.diffuseTextureName.empty())
+        arg.pTexture = loadTextureFile(importeArg.diffuseTextureName.c_str());
 
     return &Engine::getInstance()->resourceManager.add<Material>(srcPath.filename().string(), arg);
 }
@@ -388,7 +391,7 @@ ShaderCreateonfig GPE::readShaderFile(const char* src)
 {
     FILE*                 pFile = nullptr;
     std::filesystem::path srcPath(src);
-    ShaderCreateonfig arg;
+    ShaderCreateonfig     arg;
 
     if (srcPath.extension() != ENGINE_SHADER_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
@@ -415,6 +418,7 @@ ShaderCreateonfig GPE::readShaderFile(const char* src)
 Shader* GPE::loadShaderFile(const char* src)
 {
     std::filesystem::path srcPath(src);
-    ShaderCreateonfig arg = readShaderFile(src);
-    return &Engine::getInstance()->resourceManager.add<Shader>(srcPath.filename().string(), arg.vertexShaderPath.c_str(), arg.fragmentShaderPath.c_str());
+    ShaderCreateonfig     arg = readShaderFile(src);
+    return &Engine::getInstance()->resourceManager.add<Shader>(
+        srcPath.filename().string(), arg.vertexShaderPath.c_str(), arg.fragmentShaderPath.c_str());
 }
