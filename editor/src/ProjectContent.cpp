@@ -402,7 +402,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
     pCurrentDirectory = pSelectedDirectory;
 
-    if (ImGui::IsWindowHovered() && ImGui::GetIO().MouseClicked[ImGuiMouseButton_Right])
+    if (!ImGui::IsAnyItemHovered() && ImGui::IsWindowHovered() && ImGui::GetIO().MouseClicked[ImGuiMouseButton_Right])
     {
         ImGui::OpenPopup("ProjectContentPopup");
     }
