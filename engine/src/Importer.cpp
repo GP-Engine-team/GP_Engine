@@ -187,6 +187,8 @@ void GPE::writeTextureFile(const char* dst, const TextureImportDataConfig& arg)
     fclose(pFile);
     stbi_image_free(pixels);
     STBIW_FREE(png);
+
+    Log::getInstance()->log(stringFormat("Texture write to \"%s\"", dst));
 }
 
 Texture::ImportArg GPE::readTextureFile(const char* src)
@@ -226,6 +228,8 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
     }
 
     fclose(pFile);
+
+    Log::getInstance()->log(stringFormat("Texture read from \"%s\"", src));
     return arg;
 }
 
@@ -258,6 +262,8 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
     fwrite(arg.diffuseTextureName.data(), sizeof(char), header.nameDiffuseTextureLenght, pFile); // string buffer
 
     fclose(pFile);
+
+    Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
 }
 
 Material* GPE::loadMaterialFile(const char* src)
@@ -288,6 +294,8 @@ Material* GPE::loadMaterialFile(const char* src)
     }
 
     fclose(pFile);
+    Log::getInstance()->log(stringFormat("Material read from \"%s\"", src));
+
     return &Engine::getInstance()->resourceManager.add<Material>(srcPath.filename().string(), arg);
 }
 
@@ -316,6 +324,7 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
     fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
 
     fclose(pFile);
+    Log::getInstance()->log(stringFormat("Mesh write to \"%s\"", dst));
 }
 
 Mesh* GPE::loadMeshFile(const char* src)
@@ -343,6 +352,8 @@ Mesh* GPE::loadMeshFile(const char* src)
     fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
 
     fclose(pFile);
+    Log::getInstance()->log(stringFormat("Mesh read from \"%s\"", src));
+
     return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), arg);
 }
 
@@ -369,6 +380,8 @@ void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
     fwrite(arg.fragmentShaderPath.data(), sizeof(char), arg.fragmentShaderPath.size(), pFile); // string buffer
 
     fclose(pFile);
+
+    Log::getInstance()->log(stringFormat("Shader write to \"%s\"", dst));
 }
 
 ShaderCreateonfig GPE::readShaderFile(const char* src)
@@ -394,31 +407,14 @@ ShaderCreateonfig GPE::readShaderFile(const char* src)
     fread(arg.fragmentShaderPath.data(), sizeof(char), header.fragmentPathLenght, pFile); // string buffer
 
     fclose(pFile);
+
+    Log::getInstance()->log(stringFormat("Shader read from \"%s\"", src));
     return arg;
 }
 
 Shader* GPE::loadShaderFile(const char* src)
 {
-    FILE*                 pFile = nullptr;
     std::filesystem::path srcPath(src);
-
-    if (srcPath.extension() != ENGINE_SHADER_EXTENSION || fopen_s(&pFile, src, "rb"))
-    {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
-        return nullptr;
-    }
-
-    ShadeHeader header;
-    // copy the file into the buffer:
-    fread(&header, sizeof(header), 1, pFile);
-
-    std::string vertexShaderPath(header.vertexPathLenght, '\0');
-    fread(vertexShaderPath.data(), sizeof(char), header.vertexPathLenght, pFile); // string buffer
-
-    std::string fragmentShaderPath(header.fragmentPathLenght, '\0');
-    fread(fragmentShaderPath.data(), sizeof(char), header.fragmentPathLenght, pFile); // string buffer
-
-    fclose(pFile);
-    return &Engine::getInstance()->resourceManager.add<Shader>(srcPath.filename().string(), vertexShaderPath.c_str(),
-                                                               fragmentShaderPath.c_str());
+    ShaderCreateonfig arg = readShaderFile(src);
+    return &Engine::getInstance()->resourceManager.add<Shader>(srcPath.filename().string(), arg.vertexShaderPath.c_str(), arg.fragmentShaderPath.c_str());
 }
