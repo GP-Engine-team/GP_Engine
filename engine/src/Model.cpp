@@ -174,7 +174,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
     // Drop
     if (ImGui::BeginDragDropTarget())
     {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_MESH_EXTENSION))
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_MATERIAL_EXTENSION))
         {
             IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
             std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);

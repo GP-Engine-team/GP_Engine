@@ -35,41 +35,46 @@ inline void PopEnabled()
 namespace GPE RFKNamespace()
 {
 
-    struct RFKStruct() ShaderImporterModifier : public IInspectable // Allow user to modify shader importation setting
+    struct RFKClass() ShaderImporterModifier : public IInspectable // Allow user to modify shader importation setting
     {
-        std::string       path = nullptr;
-        ShaderCreateonfig config;
-        bool              isDirty = false;
+        protected:
+        std::string       m_path = nullptr;
+        ShaderCreateonfig m_config;
+        bool              m_isDirty = false;
 
-        ShaderImporterModifier(const std::string& inPath) : IInspectable(), path(inPath), config(readShaderFile(inPath.c_str()))
+        public:
+
+        ShaderImporterModifier() = delete;
+
+        ShaderImporterModifier(const std::string& inPath) : IInspectable(), m_path(inPath), m_config(readShaderFile(inPath.c_str()))
         {
         }
 
         void inspect(InspectContext & context) override
         {
-            ImGui::Text("Shader importer configuration");
-            if (ImGui::Button((config.vertexShaderPath.empty() ? "None##Vertex" : config.vertexShaderPath.c_str())))
+            ImGui::Text("Shader importer m_configuration");
+            if (ImGui::Button((m_config.vertexShaderPath.empty() ? "None##Vertex" : m_config.vertexShaderPath.c_str())))
             {
-                config.vertexShaderPath =
+                m_config.vertexShaderPath =
                     openFileExplorer(L"Select vertex shader", {{L"Vertex Shader", L"*.vs"}}).string().c_str();
 
-                isDirty = true;
+                m_isDirty = true;
             }
 
-            if (ImGui::Button(config.fragmentShaderPath.empty() ? "None##Fragment" : config.fragmentShaderPath.c_str()))
+            if (ImGui::Button(m_config.fragmentShaderPath.empty() ? "None##Fragment" : m_config.fragmentShaderPath.c_str()))
             {
-                config.fragmentShaderPath =
+                m_config.fragmentShaderPath =
                     openFileExplorer(L"Select fragment shader", {{L"Fragment Shader", L"*.fs"}}).string().c_str();
 
-                isDirty = true;
+                m_isDirty = true;
             }
 
-            ImGui::PushEnabled(isDirty);
+            ImGui::PushEnabled(m_isDirty);
 
             if (ImGui::Button("Apply"))
             {
-                writeShaderFile(path.c_str(), config);
-                isDirty = false;
+                writeShaderFile(m_path.c_str(), m_config);
+                m_isDirty = false;
             }
 
             ImGui::PopEnabled();
