@@ -161,7 +161,7 @@ namespace GPE RFKNamespace()
         void destroyUniqueComponentNow() noexcept;
 
         /**
-         * @brief destroy component of gameobject
+         * @brief onent of gameobject
          *
          * @param Component
          */

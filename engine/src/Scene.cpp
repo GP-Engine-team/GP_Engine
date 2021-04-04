@@ -19,7 +19,7 @@ Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*t
 
 Scene::~Scene() noexcept
 {
-    DataChunk<GameObject>::getInstance()->destroy(m_pWorld);
+    // DataChunk<GameObject>::getInstance()->destroy(m_pWorld);
 }
 
 GameObject* Scene::getGameObject(const std::string& path) noexcept

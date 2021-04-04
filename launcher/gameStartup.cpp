@@ -33,7 +33,7 @@ GameStartup::GameStartup()
 
 void GameStartup::update()
 {
-    GPE::Engine::getInstance()->timeSystem.update(gameFunctionsPtr.update, gameFunctionsPtr.fixedUpdate,
+    GPE::Engine::getInstance()->timeSystem.update(gameFunctionsPtr.fixedUpdate, gameFunctionsPtr.update,
                                                   gameFunctionsPtr.render);
 }
 

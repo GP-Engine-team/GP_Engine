@@ -7,8 +7,7 @@
 #pragma once
 
 #include "Engine/Core/Tools/ClassUtility.hpp"
-#include <array> //std::array
-#include <iostream>
+#include <array>  //std::array
 #include <vector> //std::vector
 
 // In inl

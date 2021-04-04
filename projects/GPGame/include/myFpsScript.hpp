@@ -72,7 +72,7 @@ public:
         {
             getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation *
                                                   GPM::Quaternion::angleAxis(deltaDisplacement.y * 0.001f, {1, 0, 0}));
-            getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(deltaDisplacement.x * 0.001f, {0, 1, 0}) *
+            getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(-deltaDisplacement.x * 0.001f, {0, 1, 0}) *
                                                   getOwner().getTransform().getSpacialAttribut().rotation);
         }
     }

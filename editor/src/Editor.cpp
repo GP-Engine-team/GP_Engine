@@ -144,7 +144,7 @@ void Editor::renderLevelEditor()
     m_sceneEditor.resize(static_cast<int>(size.x), static_cast<int>(size.y));
     m_sceneEditor.render();
 
-    ImGui::Image((void*)(intptr_t)m_sceneEditor.textureID, size, {.0f, 1.f}, {1.f, .0f});
+    ImGui::Image((void*)(intptr_t)m_sceneEditor.textureID, size, {0.f, 1.f}, {1.f, 0.f});
     ImGui::End();
 
     ImGui::PopStyleVar(2);
@@ -229,7 +229,8 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
         std::cout << msg;
 
         // Log in log inspector
-        m_logInspector.addLog(msg);
+        if (ImGui::GetCurrentContext() != nullptr)
+            m_logInspector.addLog(msg);
     };
 }
 
@@ -264,7 +265,7 @@ void Editor::update()
 
 void Editor::render()
 {
-    ImGui::ShowDemoWindow(nullptr);
+    // ImGui::ShowDemoWindow(nullptr);
 
     ImGui::Render();
 
