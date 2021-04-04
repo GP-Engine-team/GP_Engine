@@ -339,7 +339,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             }
 
             // Try to inspect
-            if (ImGui::IsItemClicked())
+            if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
             {
                 switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
                 {
