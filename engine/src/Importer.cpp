@@ -373,7 +373,7 @@ Shader* GPE::loadShaderFile(const char* src)
     FILE*                 pFile = nullptr;
     std::filesystem::path srcPath(src);
 
-    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
+    if (srcPath.extension() != ENGINE_SHADER_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
         return nullptr;

@@ -149,7 +149,28 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
     }
 
     renderResourceExplorer<Shader>("Shader", inspected.pShader);
+
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_SHADER_EXTENSION))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(path.string().c_str()))
+            {
+                inspected.pShader = pShader;
+            }
+            else
+            {
+                inspected.pShader = loadShaderFile(path.string().c_str());
+            }
+        }
+    }
+
     renderResourceExplorer<Material>("Material", inspected.pMaterial);
+
     // Drop
     if (ImGui::BeginDragDropTarget())
     {
