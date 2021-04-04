@@ -225,6 +225,7 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
         Log::getInstance()->logError(stringFormat("Fail to load file \"%s\"", src));
     }
 
+    fclose(pFile);
     return arg;
 }
 
@@ -286,6 +287,7 @@ Material* GPE::loadMaterialFile(const char* src)
         arg.pTexture = loadTextureFile(diffusePath.c_str());
     }
 
+    fclose(pFile);
     return &Engine::getInstance()->resourceManager.add<Material>(srcPath.filename().string(), arg);
 }
 
@@ -340,6 +342,7 @@ Mesh* GPE::loadMeshFile(const char* src)
     fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
     fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
 
+    fclose(pFile);
     return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), arg);
 }
 
@@ -368,6 +371,32 @@ void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
     fclose(pFile);
 }
 
+ShaderCreateonfig GPE::readShaderFile(const char* src)
+{
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
+    ShaderCreateonfig arg;
+
+    if (srcPath.extension() != ENGINE_SHADER_EXTENSION || fopen_s(&pFile, src, "rb"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
+        return arg;
+    }
+
+    ShadeHeader header;
+    // copy the file into the buffer:
+    fread(&header, sizeof(header), 1, pFile);
+
+    arg.vertexShaderPath.assign(header.vertexPathLenght, '\0');
+    fread(arg.vertexShaderPath.data(), sizeof(char), header.vertexPathLenght, pFile); // string buffer
+
+    arg.fragmentShaderPath.assign(header.fragmentPathLenght, '\0');
+    fread(arg.fragmentShaderPath.data(), sizeof(char), header.fragmentPathLenght, pFile); // string buffer
+
+    fclose(pFile);
+    return arg;
+}
+
 Shader* GPE::loadShaderFile(const char* src)
 {
     FILE*                 pFile = nullptr;
@@ -389,6 +418,7 @@ Shader* GPE::loadShaderFile(const char* src)
     std::string fragmentShaderPath(header.fragmentPathLenght, '\0');
     fread(fragmentShaderPath.data(), sizeof(char), header.fragmentPathLenght, pFile); // string buffer
 
+    fclose(pFile);
     return &Engine::getInstance()->resourceManager.add<Shader>(srcPath.filename().string(), vertexShaderPath.c_str(),
                                                                fragmentShaderPath.c_str());
 }

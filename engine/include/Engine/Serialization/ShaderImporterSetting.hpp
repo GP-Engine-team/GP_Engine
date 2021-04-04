@@ -41,7 +41,7 @@ namespace GPE RFKNamespace()
         ShaderCreateonfig config;
         bool              isDirty = false;
 
-        ShaderImporterModifier(const std::string& inPath) : IInspectable(), path(inPath)
+        ShaderImporterModifier(const std::string& inPath) : IInspectable(), path(inPath), config(readShaderFile(inPath.c_str()))
         {
         }
 

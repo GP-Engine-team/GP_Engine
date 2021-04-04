@@ -49,6 +49,7 @@ void  writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
 Mesh* loadMeshFile(const char* src);
 
 void    writeShaderFile(const char* dst, const ShaderCreateonfig& arg = ShaderCreateonfig{});
+ShaderCreateonfig readShaderFile(const char* src);
 Shader* loadShaderFile(const char* src);
 
 } // namespace GPE
