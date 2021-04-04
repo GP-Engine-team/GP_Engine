@@ -68,6 +68,7 @@ void Scene::addLoadedResourcePath(const char* path) noexcept
     if (itRst.second)
     {
         importeResource(path);
+        Log::getInstance()->log(stringFormat("Resource add to scene \"%s\" with path : %s", m_name.c_str(), path));
     }
     else
     {
@@ -80,5 +81,6 @@ void Scene::removeLoadedResourcePath(const char* path) noexcept
     if (--m_loadedResourcesPath[path] == 0)
     {
         m_loadedResourcesPath.erase(path);
+        Log::getInstance()->log(stringFormat("Resource remove from scene \"%s\" with path : %s", m_name.c_str(), path));
     }
 }
