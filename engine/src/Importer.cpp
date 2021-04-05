@@ -362,9 +362,10 @@ Mesh* GPE::loadMeshFile(const char* src)
 
 struct ShadeHeader
 {
-    char assetID            = (char)EFileType::SHADER;
-    int  vertexPathLenght   = 0;
-    int  fragmentPathLenght = 0;
+    char          assetID            = (char)EFileType::SHADER;
+    int           vertexPathLenght   = 0;
+    int           fragmentPathLenght = 0;
+    unsigned char featureMask        = 0;
 };
 
 void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
@@ -377,7 +378,8 @@ void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
         return;
     }
 
-    ShadeHeader header{(char)EFileType::SHADER, arg.vertexShaderPath.size(), arg.fragmentShaderPath.size()};
+    ShadeHeader header{(char)EFileType::SHADER, arg.vertexShaderPath.size(), arg.fragmentShaderPath.size(),
+                       arg.featureMask};
     fwrite(&header, sizeof(header), 1, pFile);                                                 // header
     fwrite(arg.vertexShaderPath.data(), sizeof(char), arg.vertexShaderPath.size(), pFile);     // string buffer
     fwrite(arg.fragmentShaderPath.data(), sizeof(char), arg.fragmentShaderPath.size(), pFile); // string buffer
@@ -402,6 +404,7 @@ ShaderCreateonfig GPE::readShaderFile(const char* src)
     ShadeHeader header;
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
+    arg.featureMask = header.featureMask;
 
     arg.vertexShaderPath.assign(header.vertexPathLenght, '\0');
     fread(arg.vertexShaderPath.data(), sizeof(char), header.vertexPathLenght, pFile); // string buffer
@@ -420,5 +423,5 @@ Shader* GPE::loadShaderFile(const char* src)
     std::filesystem::path srcPath(src);
     ShaderCreateonfig     arg = readShaderFile(src);
     return &Engine::getInstance()->resourceManager.add<Shader>(
-        srcPath.filename().string(), arg.vertexShaderPath.c_str(), arg.fragmentShaderPath.c_str());
+        srcPath.filename().string(), arg.vertexShaderPath.c_str(), arg.fragmentShaderPath.c_str(), arg.featureMask);
 }

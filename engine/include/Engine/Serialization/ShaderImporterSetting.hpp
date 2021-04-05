@@ -61,6 +61,47 @@ namespace GPE RFKNamespace()
                 m_isDirty = true;
             }
 
+            unsigned char featureMask        = m_config.featureMask;
+            bool          blinPhongFlag      = m_config.featureMask & LIGHT_BLIN_PHONG;
+            bool          skyboxFlag         = m_config.featureMask & SKYBOX;
+            bool          ambiantOnlyFlag    = m_config.featureMask & AMBIANTE_COLOR_ONLY;
+            bool          scaleTimeAccFlag   = m_config.featureMask & SCALE_TIME_ACC;
+            bool          UnscaleTimeAccFlag = m_config.featureMask & UNSCALED_TIME_ACC;
+
+            ImGui::PushEnabled(!ambiantOnlyFlag);
+            if (ImGui::Checkbox("LIGHT BLIN PHONG", &blinPhongFlag))
+            {
+                m_config.featureMask ^= LIGHT_BLIN_PHONG;
+                m_isDirty = true;
+            }
+            ImGui::PopEnabled();
+
+            if (ImGui::Checkbox("SKYBOX", &skyboxFlag))
+            {
+                m_config.featureMask ^= SKYBOX;
+                m_isDirty = true;
+            }
+
+            ImGui::PushEnabled(!blinPhongFlag);
+            if (ImGui::Checkbox("AMBIANTE COLOR ONLY", &ambiantOnlyFlag))
+            {
+                m_config.featureMask ^= AMBIANTE_COLOR_ONLY;
+                m_isDirty = true;
+            }
+            ImGui::PopEnabled();
+
+            if (ImGui::Checkbox("SCALE TIME ACC", &scaleTimeAccFlag))
+            {
+                m_config.featureMask ^= SCALE_TIME_ACC;
+                m_isDirty = true;
+            }
+
+            if (ImGui::Checkbox("UNSCALED TIME ACC", &UnscaleTimeAccFlag))
+            {
+                m_config.featureMask ^= UNSCALED_TIME_ACC;
+                m_isDirty = true;
+            }
+
             ImGui::PushEnabled(m_isDirty);
 
             if (ImGui::Button("Apply"))
@@ -70,7 +111,8 @@ namespace GPE RFKNamespace()
                 // Update loaded resource
                 if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(m_path.c_str()))
                 {
-                    pShader->reload(m_config.vertexShaderPath.c_str(), m_config.fragmentShaderPath.c_str());
+                    pShader->reload(m_config.vertexShaderPath.c_str(), m_config.fragmentShaderPath.c_str(),
+                                    m_config.featureMask);
                 }
 
                 m_isDirty = false;
