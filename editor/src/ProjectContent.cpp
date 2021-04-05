@@ -301,6 +301,11 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
         ImGui::BeginGroup();
         {
+            float posX = ImGui::GetCursorPosX() +
+                         ImGui::CalcTextSize(pCurrentDirectory->files[i].filename.string().c_str()).x / 2.f -
+                         2 * ImGui::GetStyle().ItemSpacing.x;
+            ImGui::SetCursorPosX(posX);
+
             switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
             {
             case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
