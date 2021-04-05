@@ -1,6 +1,7 @@
 ﻿#include "Editor/ProjectContent.hpp"
 
 #include "Engine/Serialization/MaterialImporterSetting.hpp"
+#include "Engine/Serialization/MeshImporterSetting.hpp"
 #include "Engine/Serialization/ShaderImporterSetting.hpp"
 
 #include "Engine/Resources/Importer/Importer.hpp"
@@ -219,7 +220,7 @@ static void renderfolder(ImVec2& size, DirectoryInfo** pSelectectDir, DirectoryI
 
 void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject)
 {
-    float          window_visible_x2  = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+    float          windowVisibleX2    = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
     DirectoryInfo* pSelectedDirectory = pCurrentDirectory;
 
     // Try to reset SelectedGameObject
@@ -286,7 +287,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
         float last_button_x2 = ImGui::GetItemRectMax().x;
         float next_button_x2 =
             last_button_x2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
-        if (i + 1 < pCurrentDirectory->directories.size() && next_button_x2 < window_visible_x2)
+        if (i + 1 < pCurrentDirectory->directories.size() && next_button_x2 < windowVisibleX2)
         {
             ImGui::SameLine();
         }
@@ -355,7 +356,9 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
                 {
                 case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
-
+                    importationSetting =
+                        std::make_unique<GPE::MeshImporterModifier>(pCurrentDirectory->files[i].path.string());
+                    selectedGameObject = importationSetting.get();
                     break;
 
                 case GPE::hash(ENGINE_MATERIAL_EXTENSION): // compile time
@@ -389,10 +392,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
         }
         ImGui::EndGroup();
 
-        float last_button_x2 = ImGui::GetItemRectMax().x;
-        float next_button_x2 =
-            last_button_x2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
-        if (i + 1 < pCurrentDirectory->files.size() && next_button_x2 < window_visible_x2)
+        float lastButtonX2 = ImGui::GetItemRectMax().x;
+        float nextButtonX2 =
+            lastButtonX2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
+        if (i + 1 < pCurrentDirectory->files.size() && nextButtonX2 < windowVisibleX2)
         {
             ImGui::SameLine();
         }

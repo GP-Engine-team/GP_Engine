@@ -35,7 +35,7 @@ bool inspect(GPE::InspectContext& context, T& inspected, const char* name)
 template <typename T>
 void inspect(GPE::InspectContext& context, T& inspected, const std::string& name)
 {
-    DataInspector::inspect(inspected, name.c_str());
+    DataInspector::inspect(context, inspected, name.c_str());
 }
 
 /**

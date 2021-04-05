@@ -106,8 +106,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         arg.vertices.reserve(pMesh->mNumVertices);
         arg.indices.reserve(pMesh->mNumFaces * 3u);
 
-        arg.objName = pMesh->mName.C_Str();
-
         // Vertices
         for (size_t verticeId = 0; verticeId < pMesh->mNumVertices; ++verticeId)
         {
@@ -133,7 +131,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         }
 
         std::filesystem::path dstMeshPath = dstDirPath;
-        dstMeshPath /= arg.objName;
+        dstMeshPath /= pMesh->mName.C_Str();
         dstMeshPath += ENGINE_MESH_EXTENSION;
 
         writeMeshFile(dstMeshPath.string().c_str(), arg);
@@ -294,7 +292,7 @@ Material* GPE::loadMaterialFile(const char* src)
     std::filesystem::path srcPath(src);
     Material::ImporteArg  importeArg = readMaterialFile(src);
     Material::CreateArg   arg;
-    arg.comp     = importeArg.comp;
+    arg.comp = importeArg.comp;
 
     if (!importeArg.diffuseTextureName.empty())
         arg.pTexture = loadTextureFile(importeArg.diffuseTextureName.c_str());
@@ -305,7 +303,6 @@ Material* GPE::loadMaterialFile(const char* src)
 struct MeshHeader
 {
     char assetID       = (char)EFileType::MESH;
-    int  nameLenght    = 0;
     int  verticeLenght = 0;
     int  indiceLenght  = 0;
 };
@@ -320,9 +317,8 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
         return;
     }
 
-    MeshHeader header{(char)EFileType::MESH, arg.objName.size(), arg.vertices.size(), arg.indices.size()};
+    MeshHeader header{(char)EFileType::MESH, arg.vertices.size(), arg.indices.size()};
     fwrite(&header, sizeof(header), 1, pFile);                                         // header
-    fwrite(arg.objName.data(), sizeof(char), header.nameLenght, pFile);                // string buffer
     fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
     fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
 
@@ -330,34 +326,38 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
     Log::getInstance()->log(stringFormat("Mesh write to \"%s\"", dst));
 }
 
-Mesh* GPE::loadMeshFile(const char* src)
+Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
 {
-    FILE*                 pFile = nullptr;
-    std::filesystem::path srcPath(src);
+    FILE*                       pFile = nullptr;
+    std::filesystem::path       srcPath(src);
+    Mesh::CreateIndiceBufferArg arg;
 
     if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
-        return nullptr;
+        return arg;
     }
 
     MeshHeader header;
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
-    Mesh::CreateIndiceBufferArg arg;
-    arg.objName.assign(header.nameLenght, '\0');
     arg.vertices.assign(header.verticeLenght, Mesh::Vertex{});
     arg.indices.assign(header.indiceLenght, 0);
 
-    fread(&arg.objName[0], sizeof(char), header.nameLenght, pFile);                // string buffer
     fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
     fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("Mesh read from \"%s\"", src));
 
-    return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), arg);
+    return arg;
+}
+
+Mesh* GPE::loadMeshFile(const char* src)
+{
+    std::filesystem::path srcPath(src);
+    return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), readMeshFile(src));
 }
 
 struct ShadeHeader

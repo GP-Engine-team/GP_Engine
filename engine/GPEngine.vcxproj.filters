@@ -579,6 +579,9 @@
     <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\MeshImporterSetting.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

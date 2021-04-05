@@ -277,6 +277,7 @@
     <ClInclude Include="include\Engine\Serialization\Inspect.hpp" />
     <ClInclude Include="include\Engine\Serialization\InspectContext.hpp" />
     <ClInclude Include="include\Engine\Serialization\MaterialImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\MeshImporterSetting.hpp" />
     <ClInclude Include="include\Engine\Serialization\Serialize.hpp" />
     <ClInclude Include="include\Engine\Serialization\ShaderImporterSetting.hpp" />
     <ClInclude Include="include\Engine\Serialization\Slider.hpp" />

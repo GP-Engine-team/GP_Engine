@@ -3,6 +3,21 @@
 #include "Engine/Serialization/Slider.hpp"
 
 template <>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, unsigned int& inspected, const rfk::Field& info)
+{
+    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, unsigned int& inspected, const char* name)
+{
+    startProperty(name);
+    bool hasChanged = ImGui::InputScalar("", ImGuiDataType_U32, &inspected);
+    endProperty();
+    return hasChanged;
+}
+
+template <>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, int& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());

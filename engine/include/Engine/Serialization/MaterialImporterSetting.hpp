@@ -37,7 +37,7 @@ namespace GPE RFKNamespace()
 
         void inspect(InspectContext & context) override
         {
-            ImGui::Text("Material importer");
+            ImGui::TextUnformatted("Material importer");
 
             m_isDirty = true;
             // TODO: dirty flag must change when inspect will returned bool

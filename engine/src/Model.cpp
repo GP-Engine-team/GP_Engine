@@ -310,6 +310,4 @@ void Model::inspect(InspectContext& context)
         }
         ImGui::TreePop();
     }
-
-    return;
 }

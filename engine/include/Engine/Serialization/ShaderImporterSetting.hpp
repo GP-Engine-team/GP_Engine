@@ -7,8 +7,10 @@
 #pragma once
 
 #include "Engine/Resources/Importer/Importer.hpp"
+#include "Engine/Resources/Shader.hpp"
 #include "Engine/Serialization/FileExplorer.hpp"
 #include "Engine/Serialization/IInspectable.hpp"
+#include "Engine/engine.hpp"
 
 #include "Engine/Core/Tools/ImGuiTools.hpp"
 #include <imgui/imgui.h>
@@ -36,7 +38,7 @@ namespace GPE RFKNamespace()
 
         void inspect(InspectContext & context) override
         {
-            ImGui::Text("Shader importer");
+            ImGui::TextUnformatted("Shader importer");
 
             ImGui::TextUnformatted("Vertex shader");
             ImGui::SameLine();
@@ -64,6 +66,13 @@ namespace GPE RFKNamespace()
             if (ImGui::Button("Apply"))
             {
                 writeShaderFile(m_path.c_str(), m_config);
+
+                // Update loaded resource
+                if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(m_path.c_str()))
+                {
+                    pShader->reload(m_config.vertexShaderPath.c_str(), m_config.fragmentShaderPath.c_str());
+                }
+
                 m_isDirty = false;
             }
 
