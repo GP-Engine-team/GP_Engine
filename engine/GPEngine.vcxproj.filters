@@ -549,9 +549,6 @@
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp">
       <Filter>third_party</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Resources\ResourceImporter.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -581,6 +578,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\MeshImporterSetting.hpp">
       <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

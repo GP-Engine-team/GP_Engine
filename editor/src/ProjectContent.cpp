@@ -4,7 +4,7 @@
 #include "Engine/Serialization/MeshImporterSetting.hpp"
 #include "Engine/Serialization/ShaderImporterSetting.hpp"
 
-#include "Engine/Resources/Importer/Importer.hpp"
+#include "Engine/Resources/Importer/ResourceImporter.hpp"
 #include "Engine/Serialization/FileExplorer.hpp"
 
 #include <Imgui/imgui.h>
@@ -231,8 +231,12 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
     if (ImGui::Button("Importe"))
     {
-        std::string srcPath = GPE::openFileExplorer().string();
-        importeModel(srcPath.c_str(), pCurrentDirectory->path.string().c_str());
+        const std::string srcPath =
+            GPE::openFileExplorer(L"Select asset to import", {{L"Asset", L"*.obj;*.jpg;*.jpeg;*.bmp;*.png;*.tga"},
+                                                              {L"Model", L"*.obj"},
+                                                              {L"Image", L"*.jpg;*.jpeg;*.bmp;*.png;*.tga"}})
+                .string();
+        importeResource(srcPath.c_str(), pCurrentDirectory->path.string().c_str());
     }
 
     ImGui::SameLine();

@@ -146,6 +146,18 @@ struct TextureHeader
     int  textureLenght = 0;
 };
 
+void GPE::importeTextureFile(const char* srcPath, const char* dstPath)
+{
+    TextureImportDataConfig textureArg;
+    textureArg.srcPath = srcPath;
+
+    std::filesystem::path srcTexturePath(srcPath);
+    std::filesystem::path dstTexturePath(dstPath);
+    dstTexturePath /= srcTexturePath.stem();
+
+    writeTextureFile((dstTexturePath.string() + ENGINE_TEXTURE_EXTENSION).c_str(), textureArg);
+}
+
 void GPE::writeTextureFile(const char* dst, const TextureImportDataConfig& arg)
 {
     stbi_set_flip_vertically_on_load(true);

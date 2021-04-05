@@ -2,7 +2,7 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Intermediate/DataChunk.hpp"
-#include "Engine/Resources/ResourceImporter.hpp"
+#include "Engine/Resources/Importer/ResourceImporter.hpp"
 
 #include <filesystem> //std::path
 #include <sstream>    //std::sstream, std::getline
@@ -13,7 +13,7 @@ Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*t
 {
     for (auto&& elem : m_loadedResourcesPath)
     {
-        importeResource(elem.first.c_str());
+        // importeResource(elem.first.c_str());
     }
 }
 
@@ -67,7 +67,7 @@ void Scene::addLoadedResourcePath(const char* path) noexcept
 
     if (itRst.second)
     {
-        importeResource(path);
+        // importeResource(path);
         Log::getInstance()->log(stringFormat("Resource add to scene \"%s\" with path : %s", m_name.c_str(), path));
     }
     else

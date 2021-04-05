@@ -1,27 +1,35 @@
-#include "Engine/Resources/ResourceImporter.hpp"
+#include "Engine/Resources/Importer/ResourceImporter.hpp"
 
 #include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Parsers/ObjParser.hpp"
 #include "Engine/Core/Tools/Hash.hpp"
 #include "Engine/Engine.hpp"
+#include "Engine/Resources/Importer/Importer.hpp"
 #include <filesystem>
 
 using namespace GPE;
 
-void GPE::importeResource(const char* path) noexcept
+void GPE::importeResource(const char* src, const char* dst) noexcept
 {
-    std::filesystem::path fsPath(path);
-    switch (hash(fsPath.extension().string().c_str()))
+    std::filesystem::path srcPath(src);
+    std::filesystem::path dstPath(src);
+    switch (hash(srcPath.extension().string().c_str()))
     {
-        /*
-        case hash(".obj"):
-            Engine::getInstance()->resourceManager.add<Model::CreateArg>(fsPath.filename().string(),
-                                                                         importeSingleModel(path));
-            break;*/
+
+    case hash(".obj"):
+        importeModel(src, dst);
+        break;
+
+    case hash(".jpg"):
+    case hash(".jpeg"):
+    case hash(".png"):
+    case hash(".bmp"):
+    case hash(".tga"):
+
+        importeTextureFile(src, dst);
+        break;
 
     default:
-        Log::getInstance()->logWarning(
-            stringFormat("Missing implementation for load extention &s", fsPath.extension().string().c_str()));
+        Log::getInstance()->logWarning(stringFormat("Missing implementation to importe file \"%s\"", src));
         break;
     }
 }

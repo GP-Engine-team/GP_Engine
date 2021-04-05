@@ -8,6 +8,6 @@
 
 namespace GPE
 {
-void importeResource(const char* path) noexcept;
+void importeResource(const char* src, const char* dst) noexcept;
 
 } /*namespace GPE*/

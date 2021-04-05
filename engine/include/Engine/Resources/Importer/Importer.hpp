@@ -39,6 +39,7 @@ struct ShaderCreateonfig
 
 void importeModel(const char* srcPath, const char* dstPath) noexcept;
 
+void               importeTextureFile(const char* srcPath, const char* dstPath);
 void               writeTextureFile(const char* dst, const TextureImportDataConfig& arg);
 Texture::ImportArg readTextureFile(const char* src);
 Texture*           loadTextureFile(const char* src);
