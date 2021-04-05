@@ -143,6 +143,9 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
             }
             else
             {
+                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pMesh))
+                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
+
                 inspected.pMesh = loadMeshFile(path.string().c_str());
                 inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
             }
@@ -165,6 +168,9 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
             }
             else
             {
+                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pShader))
+                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
+
                 inspected.pShader = loadShaderFile(path.string().c_str());
                 inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
             }
@@ -187,6 +193,9 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
             }
             else
             {
+                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pMaterial))
+                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
+
                 inspected.pMaterial = loadMaterialFile(path.string().c_str());
                 inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
             }
