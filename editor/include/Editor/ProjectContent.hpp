@@ -7,7 +7,6 @@
 #pragma once
 
 #include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Engine.hpp"
 #include <Imgui/imgui.h>
 #include <filesystem>
 #include <string>

@@ -1,7 +1,9 @@
-﻿#include "Engine/ECS/Component/Light/PointLight.hpp"
-
-#include "Engine/Intermediate/DataChunk.hpp"
+﻿#include "Engine/Intermediate/DataChunk.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+
+#include "Engine/ECS/Component/Light/PointLight.hpp"
+
+File_GENERATED
 
 using namespace GPE;
 

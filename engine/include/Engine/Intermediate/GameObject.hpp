@@ -29,8 +29,8 @@ namespace GPE RFKNamespace()
 template <>
 void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
 
-void save(XmlSaver& context, class GameObject*& inspected);
-void load(XmlLoader& context, class GameObject*& sinspected);
+void save(XmlSaver& context, class GameObject& inspected);
+void load(XmlLoader& context, class GameObject& sinspected);
 
 class Scene;
 
@@ -45,12 +45,14 @@ class RFKClass(Inspect()/*, Serialize(false)*/) GameObject
         };
 
     protected:
-        RFKField(Inspect()) std::string m_name;
-        TransformComponent*             m_pTransform;
+        RFKField(Inspect())             
+        std::string m_name;
+
+        RFKField(Serialize()) 
+        TransformComponent* m_pTransform;
 
         RFKField(Serialize())
         std::list<Component*> m_pComponents;
-        //List<Component*>      m_pComponents;
         std::string           m_tag{"GameObject"};
         GameObject*           m_parent = nullptr;
         bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
@@ -63,7 +65,7 @@ class RFKClass(Inspect()/*, Serialize(false)*/) GameObject
         inline GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
         ~GameObject() noexcept;
 
-        GameObject()                        = delete;
+        GameObject()                        = default;
         GameObject(const GameObject& other) = delete;            // TODO: when transform is available
         GameObject& operator=(GameObject const& other) = delete; // TODO
 
@@ -222,7 +224,7 @@ class RFKClass(Inspect()/*, Serialize(false)*/) GameObject
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 
-        virtual void save(XmlSaver&);
+        virtual void save(XmlSaver&) const;
         virtual void load(XmlLoader&);
 
         GameObject_GENERATED
@@ -232,4 +234,3 @@ class RFKClass(Inspect()/*, Serialize(false)*/) GameObject
 
 } // namespace )
 
-File_GENERATED

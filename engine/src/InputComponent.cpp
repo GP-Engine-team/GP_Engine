@@ -1,4 +1,7 @@
 ﻿#include "Engine/ECS/Component/InputComponent.hpp"
+
+File_GENERATED
+
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Engine.hpp"
 

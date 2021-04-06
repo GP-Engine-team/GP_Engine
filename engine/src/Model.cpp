@@ -1,5 +1,7 @@
 ﻿#include "Engine/ECS/Component/Model.hpp"
 
+File_GENERATED
+
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Hash.hpp"
@@ -21,6 +23,11 @@
 
 using namespace GPE;
 using namespace GPM;
+
+void foo()
+{
+    GPE::Model::staticGetArchetype();
+}
 
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
 {

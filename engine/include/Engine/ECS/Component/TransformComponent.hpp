@@ -23,8 +23,6 @@
 
 namespace GPE RFKNamespace()
 {
-    class GameObject;
-
     class RFKClass(ComponentGen) TransformComponent : public Component
     {
     public:
@@ -46,7 +44,7 @@ namespace GPE RFKNamespace()
     public:
         TransformComponent(GameObject & refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
 
-        TransformComponent() noexcept                                = delete;
+        TransformComponent() noexcept                                = default;
         TransformComponent(const TransformComponent& other) noexcept = delete;
         TransformComponent(TransformComponent && other) noexcept     = default;
         virtual ~TransformComponent() noexcept                       = default;
@@ -115,4 +113,3 @@ namespace GPE RFKNamespace()
 
 } // namespace )
 
-File_GENERATED

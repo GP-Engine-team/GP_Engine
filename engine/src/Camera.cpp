@@ -1,11 +1,13 @@
-﻿#include "Engine/ECS/Component/Camera.hpp"
-
-#include "Engine/Core/Debug/Assert.hpp"
+﻿#include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/ECS/System/SceneRenderSystem.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "GPM/Transform.hpp"
 #include "GPM/Vector3.hpp"
+
+#include "Engine/ECS/Component/Camera.hpp"
+
+File_GENERATED
 
 using namespace GPM;
 

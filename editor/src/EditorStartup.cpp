@@ -49,11 +49,15 @@ EditorStartup::EditorStartup()
                                              GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
       m_game{nullptr}
 {
+    m_editor.m_reloadableCpp = &m_reloadableCpp;
+
     ADD_PROCESS(m_reloadableCpp, createGameInstance);
     ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
     ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
     ADD_PROCESS(m_reloadableCpp, setLogInstance);
     ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+    ADD_PROCESS(m_reloadableCpp, saveScene);
+    ADD_PROCESS(m_reloadableCpp, loadScene);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 

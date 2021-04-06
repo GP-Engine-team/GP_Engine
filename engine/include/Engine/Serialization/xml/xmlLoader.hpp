@@ -5,6 +5,9 @@
 #include "RapidXML/rapidxml.hpp"
 #include <set>
 #include <stack>
+
+#include "Engine/Serialization/STDReflect.hpp"
+
 //#include <string>
 //
 // class XmlLoader
@@ -287,6 +290,12 @@ template <>
 void load(XmlLoader& context, char& data, const rfk::Field& info);
 
 /**
+ * @brief Specialization for std::string data. See the original function for more comments.
+ */
+template <>
+void load(XmlLoader& context, std::string& data, const rfk::Field& info);
+
+/**
  * @brief Specialization for float data. See the original function for more comments.
  */
 template <>
@@ -301,6 +310,7 @@ void load(XmlLoader& context, bool& data, const rfk::Field& info);
 } // namespace GPE
 
 #include <Refureku/Refureku.h>
+#include <type_traits>
 
 template <typename T>
 void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, std::size_t key)
@@ -308,12 +318,20 @@ void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, std::size_t key)
     auto pair = alreadyLoadedPtrs.insert({key, LoadedPtr{info}});
     if (pair.second) // Has been inserted ?
     {
-        std::string       idStr     = findAttribValue(top(), "typeID");
-        rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(std::stoull(idStr)));
-        data                        = archetype->makeInstance<T>(); // TODO : Call custom instantiator
+        if constexpr (std::is_base_of<rfk::Object, T>::value)
+        {
+            std::string       idStr     = findAttribValue(top(), "typeID");
+            rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(std::stoull(idStr)));
+            assert(archetype != 0);              // Type is not complete.
+            data = archetype->makeInstance<T>(); // TODO : Call custom instantiator
+        }
+        else 
+        {
+            data = new T();
+        }
+
         pair.first->second.data     = data;
 
-        assert(archetype != 0);  // Type is not complete.
         assert(data != nullptr); // Type is not default constructible.
 
         std::stack<Node*> otherContextHierarchy;

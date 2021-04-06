@@ -17,10 +17,10 @@ typename std::enable_if<std::is_base_of<rfk::Object, T>::value>::type save(class
                                                                            const std::list<T*>& inspected,
                                                                            const rfk::Field&    info);
 
-template <typename T>
-typename std::enable_if<std::is_base_of<rfk::Object, T>::value>::type save(class XmlSaver&      context,
-                                                                           const List<T*>& inspected,
-                                                                           const rfk::Field&    info);
+//template <typename T>
+//typename std::enable_if<std::is_base_of<rfk::Object, T>::value>::type save(class XmlSaver&      context,
+//                                                                           const List<T*>& inspected,
+//                                                                           const rfk::Field&    info);
 
 //template <>
 //void save(class XmlSaver& context, rfk::Object* const& inspected, const rfk::Field& info);
@@ -31,8 +31,8 @@ typename std::enable_if<std::is_base_of<rfk::Object, T>::value>::type save(class
 template <typename T>
 void load(class XmlLoader& context, std::list<T*>& inspected, const rfk::Field& info);
 
-template <typename T>
-void load(class XmlLoader& context, List<T*>& inspected, const rfk::Field& info);
+//template <typename T>
+//void load(class XmlLoader& context, List<T*>& inspected, const rfk::Field& info);
 
 
 template <typename T>
@@ -59,11 +59,11 @@ void load(XmlLoader& context, std::list<T*>& inspected, const XmlLoader::LoadInf
     {
         size_t size = std::stoll(findAttribValue(context.top(), "size"));
 
-        //for (T* elem : inspected)
-        //{
-        //    //delete elem;
-        //    elem->destroy();
-        //}
+        for (T* elem : inspected)
+        {
+            //delete elem;
+            elem->destroy();
+        }
 
         inspected.clear();
 
@@ -73,7 +73,7 @@ void load(XmlLoader& context, std::list<T*>& inspected, const XmlLoader::LoadInf
             //GPE::load(context, *elem, XmlSaver::SaveInfo{std::to_string(i), "T", 0});
 
             T* elem;
-            GPE::load(context, elem, XmlLoader::LoadInfo{std::to_string(i), info.typeName, info.typeId});
+            GPE::load(context, elem, XmlLoader::LoadInfo{std::to_string(i), "T", info.typeId});
             inspected.emplace_back(elem);
         }
 

@@ -1,12 +1,15 @@
-﻿#include "Engine/Intermediate/GameObject.hpp"
-
-#include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
+﻿#include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Intermediate/DataChunk.hpp" //DataChunk
 #include "imgui.h"
 #include <iostream>
 #include <istream>
 #include <sstream>
+
+#include "Engine/Intermediate/GameObject.hpp"
+#include "Generated/GameObject.rfk.h"
+
+File_GENERATED
 
 using namespace GPE;
 using namespace GPM;
@@ -270,25 +273,24 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject& inspe
     for (Component* comp : comps)
     {
         ImGui::PushID(comp);
-        // comp->inspect();
         GPE::DataInspector::inspect(context, *comp);
         ImGui::PopID();
     }
 }
 
-void GPE::save(XmlSaver& context, GameObject*& inspected)
+void GPE::save(XmlSaver& context, GameObject& inspected)
 {
     const rfk::Class& archetype = GameObject::staticGetArchetype();
 
     // TODO : Replace "gameObject" by unique name.
     context.push("gameObject", archetype.name, archetype.id);
 
-    inspected->save(context);
+    inspected.save(context);
 
     context.pop();
 }
 
-void GPE::load(XmlLoader& context, class GameObject*& inspected)
+void GPE::load(XmlLoader& context, class GameObject& inspected)
 {
     const rfk::Class& archetype = GameObject::staticGetArchetype();
 
@@ -296,24 +298,42 @@ void GPE::load(XmlLoader& context, class GameObject*& inspected)
     XmlLoader::LoadInfo info{"gameObject", archetype.name, archetype.id};
     if (context.goToSubChild(info))
     {
-        inspected->load(context);
+        inspected.load(context);
         context.pop();
     }
 }
 
 
 
-void GameObject::save(XmlSaver& context)
+void GameObject::save(XmlSaver& context) const
 {
     rfk::Class const& c = GameObject::staticGetArchetype();
 
-    // GPE::save(context, field.name, + c.getField("");
+    {
+        rfk::Field const* field = c.getField("m_name");
+        GPE::save(context, m_name, *field);
+    }
+
+    {
+        rfk::Field const* field = c.getField("m_pTransform");
+        GPE::save(context, m_pTransform, *field);
+    }
 
     GPE::save(context, m_pComponents, XmlSaver::SaveInfo{"m_pComponents", "std::list<Component*>", 0});
 }
 void GameObject::load(XmlLoader& context)
 {
     rfk::Class const& c = GameObject::staticGetArchetype();
+
+    {
+        rfk::Field const* field = c.getField("m_name");
+        GPE::load(context, m_name, *field);
+    }
+
+    {
+        rfk::Field const* field = c.getField("m_pTransform");
+        GPE::load(context, m_pTransform, *field);
+    }
 
     GPE::load(context, m_pComponents, XmlLoader::LoadInfo{"m_pComponents", "std::list<Component*>", 0});
 }

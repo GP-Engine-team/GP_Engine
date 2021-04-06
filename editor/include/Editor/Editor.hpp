@@ -18,6 +18,7 @@ namespace GPE
 {
 	class Scene;
 	class GameObject;
+    class ReloadableCpp;
 }
 
 namespace Editor
@@ -58,6 +59,8 @@ namespace Editor
 
 	public:
 		Editor(GLFWwindow* window, GPE::Scene& editedScene);
+
+		GPE::ReloadableCpp* m_reloadableCpp = nullptr;
 
 		void setSceneInEdition(GPE::Scene& scene);
 		void update();

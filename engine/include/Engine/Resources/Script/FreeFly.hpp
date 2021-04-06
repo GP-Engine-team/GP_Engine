@@ -9,7 +9,6 @@
 #include "Engine/ECS/Component/BehaviourComponent.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
 #include <iostream>
@@ -85,14 +84,6 @@ public:
         m_speed = 2;
     }
 
-    void update(float deltaTime) final
-    {
-        m_speed = 1;
-
-        if (Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.1)
-        {
-            rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
-        }
-    }
+    void update(float deltaTime) final;
 };
 } // namespace GPE

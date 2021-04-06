@@ -12,6 +12,7 @@
 #include "Engine/Serialization/ComponentGen.h"
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/Inspect.hpp"
+#include "Engine/Serialization/InspectContext.hpp"
 #include "GPM/Matrix4.hpp"
 #include "GPM/Shape3D/Plane.hpp"
 
@@ -196,4 +197,3 @@ namespace GPE RFKNamespace()
 
 } // namespace )
 
-File_GENERATED

@@ -2,6 +2,9 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Serialization/Inspect.hpp"
 
+#include "Generated/TransformComponent.rfk.h"
+File_GENERATED
+
 namespace GPE
 {
 

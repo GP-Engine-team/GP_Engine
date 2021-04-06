@@ -17,6 +17,8 @@
 
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
+#include "Editor/ExternalDeclarations.hpp"
+#include "Engine/Core/HotReload/ReloadableCpp.hpp"
 
 using namespace GPE;
 
@@ -161,14 +163,16 @@ void Editor::renderInspector()
 
         //s += 1.f/30.f;
 
-        //if (s > 2)
+        //if (s > 1)
         //{
         //    rapidxml::xml_document<> doc;
         //    XmlSaver saver(doc);
-        //    GPE::save(saver, m_inspectedObject);
+        //    auto a = GET_PROCESS((*m_reloadableCpp), saveScene);
+        //    a(saver, m_inspectedObject, XmlSaver::SaveInfo{"m_inspectedObject", "GameObject", 0});
         //    saver.print();
         //    XmlLoader loader(doc);
-        //    GPE::load(loader, m_inspectedObject);
+        //    auto b = GET_PROCESS((*m_reloadableCpp), loadScene);
+        //    b(loader, m_inspectedObject, XmlLoader::LoadInfo{"m_inspectedObject", "GameObject", 0});
         //    s = 0;
         //}
     }

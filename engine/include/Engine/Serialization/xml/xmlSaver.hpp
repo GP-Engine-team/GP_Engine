@@ -193,6 +193,17 @@ void save(XmlSaver& context, const T& inspected, const XmlSaver::SaveInfo& info)
 }
 
 template <typename T>
+void save(XmlSaver& context, T* const& inspected, const rfk::Field& info)
+{
+    context.push(info);
+
+    context.saveAsString(std::to_string(size_t(inspected)), info);
+    context.savePtrData(inspected, XmlSaver::SaveInfo{info.name, info.type.archetype->name, info.type.archetype->id});
+
+    context.pop();
+}
+
+template <typename T>
 void save(XmlSaver& context, T* const & inspected, const XmlSaver::SaveInfo& info)
 {
     context.push(info);

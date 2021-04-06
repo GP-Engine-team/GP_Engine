@@ -59,5 +59,10 @@ void load(XmlLoader& context, T*& inspected, const XmlLoader::LoadInfo& info)
     }
 }
 
+template <typename T>
+void load(XmlLoader& context, T*& inspected, const rfk::Field& info)
+{
+    load(context, inspected, XmlLoader::LoadInfo{info.name, info.type.archetype->name, info.type.archetype->id});
+}
 
 } // namespace GPE

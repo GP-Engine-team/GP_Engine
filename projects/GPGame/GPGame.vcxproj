@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\myScript.cpp" />
     <ClCompile Include="src\SingletonsSync.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -28,6 +28,7 @@ void generateEngineFiles(const std::string& engineDir)
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir);
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/imgui");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/Refureku");
@@ -92,7 +93,7 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
 
     // You will need to setup parsing settings and generation settings here.
     // Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, false);
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, true);
 }
 
 // First Arg : Engine  (default : "../engine/")
@@ -101,7 +102,7 @@ int main(int argc, char** argv)
 {
     std::cout << "=== Refureku Generator Running" << std::endl;
 
-    if (argc != 0)
+    if (argc > 1)
     {
 
         for (int i = 0; i < argc; i++)

@@ -41,13 +41,18 @@ namespace GPG RFKNamespace()
 			input->bindAction("sprint", EKeyMode::KEY_DOWN, this, &MyScript::sprint);
 		}
 
-		MyScript() noexcept = default;
+		MyScript() noexcept
+        {
+            enableUpdate(true);
+			// TODO : Bind inputs later
+		}
 		MyScript(const MyScript& other) noexcept = delete;
 		MyScript(MyScript&& other) noexcept = default;
 		virtual ~MyScript() noexcept = default;
 		MyScript& operator=(MyScript const& other) noexcept = delete;
 		MyScript& operator=(MyScript&& other) noexcept = delete;
 
+		RFKField(Serialize()) 
 		GPE::InputComponent* input = nullptr;
 
 		RFKField(Serialize(), Inspect(), Slider(0, 10)) 
@@ -119,4 +124,3 @@ namespace GPG RFKNamespace()
 	};
 } /*namespace GPG*/
 
-File_GENERATED

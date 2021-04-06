@@ -12,3 +12,13 @@ std::string generateSerializationFunction(const kodgen::StructClassInfo& entity,
                                           kodgen::ComplexProperty const& property, const std::string& functionName,
                                           const std::string& argClassName, const std::string& fieldCallingFunction,
                                           std::string extraQualifier = "");
+
+std::string generateSerializationFunctionDecl(const kodgen::StructClassInfo& entity,
+                                              kodgen::ComplexProperty const& property, const std::string& functionName,
+                                              const std::string& argClassName, const std::string& fieldCallingFunction,
+                                              std::string extraQualifier = "");
+
+std::string generateSerializationFunctionImpl(const kodgen::StructClassInfo& entity,
+                                              kodgen::ComplexProperty const& property, const std::string& functionName,
+                                              const std::string& argClassName, const std::string& fieldCallingFunction,
+                                              std::string extraQualifier = "");
