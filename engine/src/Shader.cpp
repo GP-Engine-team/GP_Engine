@@ -217,11 +217,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char f
                                 .c_str());
 }
 
-// TODO
-Shader::Shader(const char* shaderPath)
-{
-}
-
 Shader::~Shader() noexcept
 {
     glDeleteBuffers(1, &m_lightsUniformBuffer);

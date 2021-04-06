@@ -55,9 +55,6 @@ public:
      */
     Shader(const char* vertexPath, const char* fragmentPath, unsigned char featureMask = 0);
 
-    // TODO:
-    Shader(const char* shaderPath);
-
     Shader(const Shader& other) = delete;
     Shader(Shader&& other)      = default;
     ~Shader() noexcept;
