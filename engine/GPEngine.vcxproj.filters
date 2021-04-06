@@ -459,57 +459,6 @@
     <ClInclude Include="include\Engine\Serialization\xml\xmlUtilities.hpp">
       <Filter>include\Serialization\xml</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\AudioComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Camera.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Component.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\InputComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Model.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Light\DirectionalLight.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Light\Light.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Light\PointLight.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Light\SpotLight.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\BehaviourSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\RenderSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\SoundSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="third_party\imgui\backends\imgui_impl_glfw.h">
       <Filter>third_party\imgui</Filter>
     </ClInclude>
@@ -542,6 +491,57 @@
     </ClInclude>
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp">
       <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\AudioComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Component.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\BehaviourSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\InputComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\RenderSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\SoundSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Camera.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Model.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Light\DirectionalLight.hpp">
+      <Filter>include\ECS\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Light\Light.hpp">
+      <Filter>include\ECS\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Light\PointLight.hpp">
+      <Filter>include\ECS\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Light\SpotLight.hpp">
+      <Filter>include\ECS\Component\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -621,26 +621,26 @@
     <None Include="include\Engine\Serialization\xml\xmlSaver.inl">
       <Filter>include\Serialization\xml</Filter>
     </None>
-    <None Include="include\Engine\ECS\Component\Camera.inl">
-      <Filter>include</Filter>
-    </None>
     <None Include="include\Engine\ECS\Component\Component.inl">
-      <Filter>include</Filter>
+      <Filter>include\ECS\Component</Filter>
     </None>
     <None Include="include\Engine\ECS\Component\TransformComponent.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\ECS\Component\Light\Light.inl">
-      <Filter>include</Filter>
+      <Filter>include\ECS\Component</Filter>
     </None>
     <None Include="include\Engine\ECS\System\InputManagerGLFW.inl">
-      <Filter>include</Filter>
+      <Filter>include\ECS\System</Filter>
     </None>
     <None Include="include\Engine\ECS\System\SoundSystem.inl">
-      <Filter>include</Filter>
+      <Filter>include\ECS\System</Filter>
     </None>
     <None Include="include\Engine\ECS\System\TimeSystem.inl">
-      <Filter>include</Filter>
+      <Filter>include\ECS\System</Filter>
+    </None>
+    <None Include="include\Engine\ECS\Component\Camera.inl">
+      <Filter>include\ECS\Component</Filter>
+    </None>
+    <None Include="include\Engine\ECS\Component\Light\Light.inl">
+      <Filter>include\ECS\Component\Light</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -694,6 +694,18 @@
     </Filter>
     <Filter Include="third_party\imgui">
       <UniqueIdentifier>{6dfd1f98-6fbb-49fc-b799-938084eb316d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS">
+      <UniqueIdentifier>{0ed19c7b-b6a9-410a-b5ba-8456fffff64d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\Component">
+      <UniqueIdentifier>{47eb078b-417c-4922-b3aa-da6d242276bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\System">
+      <UniqueIdentifier>{7146170c-51c2-4301-beda-03964490aaf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\Component\Light">
+      <UniqueIdentifier>{fb30ed6a-04c4-43e4-b020-6ab7a2d442fb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
