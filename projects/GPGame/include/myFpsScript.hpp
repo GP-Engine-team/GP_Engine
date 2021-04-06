@@ -18,10 +18,13 @@
 
 #include <iostream>
 
-namespace GPG
+// Generated
+#include "Generated/myFpsScript.rfk.h"
+
+namespace GPG RFKNamespace()
 {
-class MyFpsScript : public GPE::BehaviourComponent
-{
+class RFKClass(Inspect(), Serialize()) MyFpsScript : public GPE::BehaviourComponent
+    {
 public:
     inline MyFpsScript(GPE::GameObject& owner) noexcept
         : GPE::BehaviourComponent(owner), input(owner.addComponent<GPE::InputComponent>()),
@@ -148,5 +151,7 @@ public:
         rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
         controller.update(deltaTime);
     }
+
+    MyFpsScript_GENERATED
 };
 } /*namespace GPG*/

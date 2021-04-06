@@ -1,6 +1,11 @@
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/Engine.hpp>
 
+// Generated
+#include "Generated/CharacterController.rfk.h"
+
+File_GENERATED
+
 using namespace GPE;
 using namespace physx;
 
