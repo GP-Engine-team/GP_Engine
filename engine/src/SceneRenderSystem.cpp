@@ -174,37 +174,34 @@ void SceneRenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentS
     }*/
 }
 
-void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
+void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, SubModel& subModel)
 {
-    Shader* pShader = subModel.pShader;
-
-    if ((pShader->getFeature() & SKYBOX) == SKYBOX)
+    if ((shader.getFeature() & SKYBOX) == SKYBOX)
     {
         Mat4 view = camToUse.getView();
 
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
 
-        pShader->setMat4(
+        shader.setMat4(
             "projectViewModelMatrix",
             (camToUse.getProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
-        pShader->setMat4("projection", camToUse.getProjection().e);
-        pShader->setMat4("view", view.e);
+        shader.setMat4("projection", camToUse.getProjection().e);
+        shader.setMat4("view", view.e);
     }
     else
     {
-        pShader->setMat4(
-            "projectViewModelMatrix",
-            (camToUse.getProjectionView() * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+        shader.setMat4("projectViewModelMatrix",
+                       (camToUse.getProjectionView() * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
     }
 
-    if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         Mat3 inverseModelMatrix3(
             toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()).transposed());
 
-        pShader->setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
-        pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
+        shader.setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
+        shader.setMat3("inverseModelMatrix", inverseModelMatrix3.e);
     }
 }
 
@@ -307,15 +304,15 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
     {
         glBindFramebuffer(GL_FRAMEBUFFER, renderTextureID);
 
-        Frustum camFrustum = pCameras[0]->getFrustum();
-
-        rs.resetCurrentRenderPassKey();
-
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        Frustum camFrustum = pCameras[0]->getFrustum();
+
+        rs.resetCurrentRenderPassKey();
 
         /*Display opaque element*/
         {
@@ -338,7 +335,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[0], *pSubModel);
+                rs.sendModelDataToShader(*pCameras[0], *pSubModel->pShader, *pSubModel);
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -372,7 +369,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[0], *it->second);
+                rs.sendModelDataToShader(*pCameras[0], *it->second->pShader, *it->second);
                 rs.drawModelPart(*it->second);
             };
         }
