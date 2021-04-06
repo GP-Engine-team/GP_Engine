@@ -225,7 +225,7 @@ Shader::Shader(const char* shaderPath)
 Shader::~Shader() noexcept
 {
     glDeleteBuffers(1, &m_lightsUniformBuffer);
-    glDeleteShader(m_id);
+    glDeleteProgram(m_id);
 
     Log::getInstance()->log(
         (std::string("Release ") + m_nameVertex.c_str() + ".vs and " + m_nameFragment + ".fs").c_str());

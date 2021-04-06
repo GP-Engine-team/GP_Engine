@@ -10,10 +10,12 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
+#include "Engine/ECS/System/PhysXSystem.hpp"
 #include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/SceneManager.hpp"
+#include <Engine/ECS/System/SoundSystem.hpp>
 
 namespace GPE
 {
@@ -37,11 +39,13 @@ public:
     ResourceManagerType resourceManager;
     RenderSystem        renderSystem;
     SceneManager        sceneManager;
+    PhysXSystem         physXSystem;
+    SoundSystem         soundSystem;
 
 protected:
     Engine()
         : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          behaviourSystem{}, resourceManager{}, renderSystem{}, sceneManager{}
+          behaviourSystem{}, resourceManager{}, renderSystem{}, sceneManager{}, physXSystem{}, soundSystem{}
     {
         renderSystem.addRenderer(&renderer);
     }
@@ -77,6 +81,11 @@ public:
     static void setInstance(Engine& engine)
     {
         m_instance = &engine;
+    }
+
+    void destroy()
+    {
+        delete (m_instance);
     }
 };
 

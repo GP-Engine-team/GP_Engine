@@ -34,10 +34,10 @@ EditorStartup::EditorStartup()
           if (m_game != nullptr)
               m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
       }},
-      m_update{[&](double fixedUnscaledDeltaTime, double deltaTime) {
+      m_update{[&](double unscaledDeltaTime, double deltaTime) {
           GPE::Engine::getInstance()->inputManager.processInput();
           if (m_game != nullptr)
-              m_game->update(fixedUnscaledDeltaTime, deltaTime);
+              m_game->update(unscaledDeltaTime, deltaTime);
       }},
 
       m_render{[&]() {
@@ -66,6 +66,9 @@ EditorStartup::EditorStartup()
 
 EditorStartup::~EditorStartup()
 {
+    GPE::Engine::getInstance()->timeSystem.clearScaledTimer();
+    GPE::Engine::getInstance()->timeSystem.clearUnscaledTimer();
+
     if (m_game != nullptr)
     {
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);

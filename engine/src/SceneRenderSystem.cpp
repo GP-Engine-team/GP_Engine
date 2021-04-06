@@ -439,6 +439,9 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 
                     glLineWidth(1.0f);
                     glDisable(GL_LINE_SMOOTH);
+
+                    glDeleteVertexArrays(1, &lineVAO);
+                    glDeleteBuffers(1, &lineVBO);
                 }
 
                 debugLine.clear();
