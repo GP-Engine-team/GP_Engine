@@ -111,10 +111,10 @@ void SceneViewer::bindScene(Scene& scene) noexcept
 
 void SceneViewer::render() const
 {
+    glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
-    pScene->sceneRenderer.draw(Engine::getInstance()->resourceManager, pScene->sceneRenderer.defaultRenderPipeline(),
-                               framebufferID);
+    pScene->sceneRenderer.draw(Engine::getInstance()->resourceManager, pScene->sceneRenderer.defaultRenderPipeline());
 }
 
 unsigned int SceneViewer::getIDOfSelectedGameObject() const
@@ -174,8 +174,8 @@ unsigned int SceneViewer::getIDOfSelectedGameObject() const
         [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
            std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
            std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
-           std::vector<SceneRenderSystem::DebugShape>& debugShape, std::vector<SceneRenderSystem::DebugLine>& debugLine,
-           unsigned int renderTextureID) {
+           std::vector<SceneRenderSystem::DebugShape>& debugShape,
+           std::vector<SceneRenderSystem::DebugLine>&  debugLine) {
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(GL_LEQUAL);
 
@@ -227,8 +227,7 @@ unsigned int SceneViewer::getIDOfSelectedGameObject() const
                 }
             }
             rs.resetCurrentRenderPassKey();
-        },
-        FBOIDframebufferID);
+        });
     glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
     unsigned int pixel = 0;
 

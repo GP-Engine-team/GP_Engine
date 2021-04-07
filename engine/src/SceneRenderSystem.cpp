@@ -299,11 +299,9 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
     return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape,
-              std::vector<DebugLine>& debugLine, unsigned int renderTextureID)
+              std::vector<DebugLine>& debugLines)
 
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, renderTextureID);
-
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -399,13 +397,13 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                 debugShape.clear();
             }
 
-            if (!debugLine.empty())
+            if (!debugLines.empty())
             {
                 const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
                 glUseProgram(shaderToUse->getID());
                 rs.tryToSetBackFaceCulling(false);
 
-                for (auto&& line : debugLine)
+                for (auto&& line : debugLines)
                 {
                     GLfloat lineSeg[] = {
                         line.pt1.x, line.pt1.y, line.pt1.z, // first vertex
@@ -441,21 +439,18 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                     glDeleteBuffers(1, &lineVBO);
                 }
 
-                debugLine.clear();
+                debugLines.clear();
             }
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0u);
     };
 }
 
-void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline,
-                             unsigned int renderTextureID) noexcept
+void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
 {
     renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_debugShape, m_debugLine, renderTextureID);
+                   m_debugShape, m_debugLine);
 }
 
 void SceneRenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,

@@ -282,6 +282,7 @@ void Editor::render()
 
     ImGui::Render();
 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, m_sceneEditor.width, m_sceneEditor.height);
     glClearColor(1.f, 1.f, 1.f, .0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
