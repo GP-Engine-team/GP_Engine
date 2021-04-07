@@ -269,6 +269,8 @@
     <ClInclude Include="include\Engine\Serialization\DataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPMDataInspector.hpp" />
+    <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp" />
+    <ClInclude Include="include\Engine\Serialization\GPMSave.hpp" />
     <ClInclude Include="include\Engine\Serialization\Inspect.hpp" />
     <ClInclude Include="include\Engine\Serialization\InspectContext.hpp" />
     <ClInclude Include="include\Engine\Serialization\STDReflect.hpp" />
@@ -362,6 +364,8 @@
     <ClCompile Include="src\Serialization\ComponentGen.cpp" />
     <ClCompile Include="src\Serialization\DataInspector.cpp" />
     <ClCompile Include="src\Serialization\GPMDataInspector.cpp" />
+    <ClCompile Include="src\Serialization\GPMLoad.cpp" />
+    <ClCompile Include="src\Serialization\GPMSave.cpp" />
     <ClCompile Include="src\Serialization\Inspect.cpp" />
     <ClCompile Include="src\Serialization\Serialize.cpp" />
     <ClCompile Include="src\Serialization\Slider.cpp" />

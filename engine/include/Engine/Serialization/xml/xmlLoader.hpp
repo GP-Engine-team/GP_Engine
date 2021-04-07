@@ -350,4 +350,5 @@ void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, std::size_t key)
 }
 
 #include "Engine/Serialization/STDSave.hpp"
+#include "Engine/Serialization/GPMLoad.hpp"
 #include "Engine/Serialization/xml/xmlLoader.inl"

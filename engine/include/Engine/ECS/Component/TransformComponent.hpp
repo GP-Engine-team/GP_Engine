@@ -23,7 +23,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(ComponentGen) TransformComponent : public Component
+    class RFKClass(ComponentGen, Serialize()) TransformComponent : public Component
     {
     public:
         struct CreateArg
@@ -34,9 +34,10 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect()) GPM::SplitTransform m_spaceAttribut;
-        GPM::Transform                          m_transform = GPM::toTransform(m_spaceAttribut);
-        bool                                    m_isDirty   = false;
+        RFKField(Inspect(), Serialize()) 
+        GPM::SplitTransform m_spaceAttribut;
+        GPM::Transform      m_transform = GPM::toTransform(m_spaceAttribut);
+        bool                m_isDirty   = false;
 
     public:
         Event OnUpdate;

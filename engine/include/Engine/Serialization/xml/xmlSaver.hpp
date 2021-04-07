@@ -272,3 +272,4 @@ bool XmlSaver::savePtrData(T* data, const SaveInfo& info)
 }
 
 #include "Engine/Serialization/STDSave.hpp"
+#include "Engine/Serialization/GPMSave.hpp"

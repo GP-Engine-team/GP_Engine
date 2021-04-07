@@ -214,6 +214,12 @@
     <ClCompile Include="src\Collider.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Serialization\GPMSave.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\GPMLoad.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp">
@@ -571,6 +577,12 @@
       <Filter>include\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\STDReflect.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\GPMSave.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
