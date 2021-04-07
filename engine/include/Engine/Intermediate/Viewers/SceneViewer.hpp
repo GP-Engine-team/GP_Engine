@@ -33,6 +33,15 @@ public:
     SceneViewer(GPE::Scene& viewed, int width = 1, int height = 1);
     ~SceneViewer();
 
+    /**
+     * @brief Generate texture to get the ID of selected element thank's to GPU ID buffer.
+     * This texture is down sampleted to increase performance.
+     * Use this function only if user need ID of selected object only.
+     * Don't use it in loop because it will created a texture each iteration
+     * @return
+     */
+    unsigned int getIDOfSelectedGameObject() const;
+
     void resize(int width, int height);
     void bindScene(Scene& scene) noexcept;
     void render() const;
