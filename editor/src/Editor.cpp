@@ -124,20 +124,35 @@ void Editor::renderLevelEditor()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
     ImGui::Begin(m_sceneEditor.pScene->getWorld().getName().c_str(), nullptr, ImGuiWindowFlags_NoBackground);
-    /*
+
     if (ImGui::IsMouseClicked(0))
     {
         if (ImGui::IsWindowHovered())
         {
-            m_sceneEditor.captureInputs();
+            if (unsigned int idSelectedGameObect = m_sceneEditor.getIDOfSelectedGameObject())
+            {
+                if (GameObject* const selectionGameObject = Engine::getInstance()
+                                                                ->sceneManager.getCurrentScene()
+                                                                ->getWorld()
+                                                                .getGameObjectCorrespondingToID(idSelectedGameObect))
+                {
+                    m_inspectedObject = selectionGameObject;
+                }
+                else
+                {
+                    GPE::Log::getInstance()->logError(
+                        stringFormat("No gameObject corresponding to the id %i", idSelectedGameObect));
+                }
+            }
+            // m_sceneEditor.captureInputs();
         }
 
-        else
-        {
-            m_sceneEditor.releaseInputs();
-        }
+        // else
+        //{
+        //    m_sceneEditor.releaseInputs();
+        //}
     }
-    */
+
     const ImVec2 size{ImGui::GetContentRegionAvail()};
 
     m_sceneEditor.resize(static_cast<int>(size.x), static_cast<int>(size.y));

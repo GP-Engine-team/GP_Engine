@@ -111,17 +111,17 @@ void SceneViewer::bindScene(Scene& scene) noexcept
 
 void SceneViewer::render() const
 {
+    glViewport(0, 0, width, height);
+
     pScene->sceneRenderer.draw(Engine::getInstance()->resourceManager, pScene->sceneRenderer.defaultRenderPipeline(),
                                framebufferID);
-
-    std::cout << getIDOfSelectedGameObject() << std::endl;
 }
 
 unsigned int SceneViewer::getIDOfSelectedGameObject() const
 {
-    GLuint FBOIDtextureID;
-    GLuint FBOIDdepthID;
-    GLuint FBOIDframebufferID;
+    GLuint FBOIDtextureID     = 0;
+    GLuint FBOIDdepthID       = 0;
+    GLuint FBOIDframebufferID = 0;
 
     // low sampling (we don't need 4K texture to select element)
     const int downScaleSampling = 4;
@@ -161,13 +161,10 @@ unsigned int SceneViewer::getIDOfSelectedGameObject() const
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, FBOIDdepthID);
         GPE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
                    "An error occured during this framebuffer's generation");
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0u);
     }
 
     Shader& shaderGameObjectIdentifier = *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
 
-    glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
     glUseProgram(shaderGameObjectIdentifier.getID());
     glViewport(0, 0, FBOIDwidth, FBOIDheight);
 
@@ -185,21 +182,21 @@ unsigned int SceneViewer::getIDOfSelectedGameObject() const
             glClearColor(0.f, 0.f, 0.f, 0.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            Frustum camFrustum = pCameras[0]->getFrustum();
+            const Frustum camFrustum = pCameras[0]->getFrustum();
 
             Shader& shaderGameObjectIdentifier =
                 *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
 
             /*Display opaque element*/
             {
-                unsigned int id = 0;
+                const GLint idLocation = glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id");
 
                 for (auto&& pSubModel : pOpaqueSubModels)
                 {
                     if (!rs.isOnFrustum(camFrustum, pSubModel))
                         continue;
 
-                    glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"), ++id);
+                    glUniform1ui(idLocation, pSubModel->pModel->getOwner().getID());
 
                     rs.tryToBindMesh(pSubModel->pMesh->getID());
                     rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
@@ -216,7 +213,8 @@ unsigned int SceneViewer::getIDOfSelectedGameObject() const
                     if (!rs.isOnFrustum(camFrustum, pSubModel))
                         continue;
 
-                    glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"), ++id);
+                    glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"),
+                                 pSubModel->pModel->getOwner().getID());
 
                     rs.tryToBindMesh(pSubModel->pMesh->getID());
                     rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
@@ -234,8 +232,8 @@ unsigned int SceneViewer::getIDOfSelectedGameObject() const
     glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
     unsigned int pixel = 0;
 
-    ImVec2 currentScreenStart = ImGui::GetCursorScreenPos();
-    ImVec2 cursPos            = ImGui::GetMousePos();
+    const ImVec2 currentScreenStart = ImGui::GetCursorScreenPos();
+    const ImVec2 cursPos            = ImGui::GetMousePos();
 
     glReadPixels((cursPos.x - currentScreenStart.x) / downScaleSampling,
                  (height - cursPos.y + currentScreenStart.y) / downScaleSampling, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT,
