@@ -54,5 +54,8 @@ public:
 
     void addLoadedResourcePath(const char* path) noexcept;
     void removeLoadedResourcePath(const char* path) noexcept;
+
+    void save(XmlSaver&) const;
+    void load(XmlLoader&);
 };
 } /*namespace GPE*/

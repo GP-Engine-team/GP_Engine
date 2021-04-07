@@ -167,12 +167,12 @@ void Editor::renderInspector()
         //{
         //    rapidxml::xml_document<> doc;
         //    XmlSaver saver(doc);
-        //    auto a = GET_PROCESS((*m_reloadableCpp), saveScene);
-        //    a(saver, m_inspectedObject, XmlSaver::SaveInfo{"m_inspectedObject", "GameObject", 0});
+        //    auto a = GET_PROCESS((*m_reloadableCpp), saveCurrentScene);
+        //    a(saver);
         //    saver.print();
         //    XmlLoader loader(doc);
-        //    auto b = GET_PROCESS((*m_reloadableCpp), loadScene);
-        //    b(loader, m_inspectedObject, XmlLoader::LoadInfo{"m_inspectedObject", "GameObject", 0});
+        //    auto b = GET_PROCESS((*m_reloadableCpp), loadCurrentScene);
+        //    b(loader);
         //    s = 0;
         //}
     }

@@ -17,5 +17,5 @@ inline void setImguiCurrentContext(struct ImGuiContext* ctx) {}
 
 inline void setLogInstance(GPE::Log& log) {}
 
-inline void saveScene(XmlSaver& context, GPE::GameObject* const& inspected, const XmlSaver::SaveInfo& info) {}
-inline void loadScene(XmlLoader& context, GPE::GameObject*& inspected, const XmlLoader::LoadInfo& info) {}
+inline void saveCurrentScene(XmlSaver& context) {}
+inline void loadCurrentScene(XmlLoader& context) {}
