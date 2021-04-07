@@ -38,7 +38,7 @@ public:
 
     virtual ~AudioComponent();
 
-    AudioComponent()                            = delete;
+    AudioComponent()                            = default;
     AudioComponent(const AudioComponent& other) = delete;
     AudioComponent& operator=(AudioComponent const& other) = delete;
 

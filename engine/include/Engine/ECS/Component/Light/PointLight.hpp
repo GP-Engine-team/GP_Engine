@@ -16,7 +16,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen) PointLight : public Light
+    class RFKClass(Serialize(), Inspect(), ComponentGen) PointLight : public Light
     {
     public:
         struct CreateArg
@@ -39,7 +39,7 @@ namespace GPE RFKNamespace()
         PointLight(PointLight && other)     = default;
         virtual ~PointLight();
 
-        PointLight()        = delete;
+        PointLight()        = default;
         PointLight& operator=(PointLight const& other) = delete;
         PointLight& operator=(PointLight&& other) = default;
 

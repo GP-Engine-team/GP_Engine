@@ -27,20 +27,20 @@ class RFKClass(Inspect(), Serialize()) MyFpsScript : public GPE::BehaviourCompon
     {
 public:
     inline MyFpsScript(GPE::GameObject& owner) noexcept
-        : GPE::BehaviourComponent(owner), input(owner.addComponent<GPE::InputComponent>()),
-          source(owner.addComponent<GPE::AudioComponent>()), controller(owner.addComponent<GPE::CharacterController>())
+        : GPE::BehaviourComponent(owner), input(&owner.addComponent<GPE::InputComponent>()),
+          source(&owner.addComponent<GPE::AudioComponent>()), controller(&owner.addComponent<GPE::CharacterController>())
     {
         enableFixedUpdate(true);
-        input.bindAction("jump", EKeyMode::KEY_PRESSED, this, &MyFpsScript::jump);
-        input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyFpsScript::right);
-        input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyFpsScript::left);
-        input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyFpsScript::forward);
-        input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyFpsScript::back);
-        input.bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyFpsScript::leave);
-        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyFpsScript::sprintStart);
-        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyFpsScript::sprintEnd);
-        input.bindAction("growUpCollider", EKeyMode::KEY_DOWN, this, &MyFpsScript::growUpSphereCollider);
-        input.bindAction("growDownCollider", EKeyMode::KEY_DOWN, this, &MyFpsScript::growDownSphereCollider);
+        input->bindAction("jump", EKeyMode::KEY_PRESSED, this, &MyFpsScript::jump);
+        input->bindAction("right", EKeyMode::KEY_DOWN, this, &MyFpsScript::right);
+        input->bindAction("left", EKeyMode::KEY_DOWN, this, &MyFpsScript::left);
+        input->bindAction("forward", EKeyMode::KEY_DOWN, this, &MyFpsScript::forward);
+        input->bindAction("back", EKeyMode::KEY_DOWN, this, &MyFpsScript::back);
+        input->bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyFpsScript::leave);
+        input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyFpsScript::sprintStart);
+        input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyFpsScript::sprintEnd);
+        input->bindAction("growUpCollider", EKeyMode::KEY_DOWN, this, &MyFpsScript::growUpSphereCollider);
+        input->bindAction("growDownCollider", EKeyMode::KEY_DOWN, this, &MyFpsScript::growDownSphereCollider);
 
         GPE::Wave testSound("./resources/sounds/RickRoll.wav", "RICKROLL");
         GPE::Wave testSound2("./resources/sounds/YMCA.wav", "YMCA");
@@ -50,14 +50,14 @@ public:
         sourceSettings.pitch = 1;
         sourceSettings.loop  = AL_TRUE;
 
-        source.setSound("Western", "Western", sourceSettings);
-        source.playSound("Western");
+        source->setSound("Western", "Western", sourceSettings);
+        source->playSound("Western");
 
-        controller.setHasGravity(true);
-        controller.setSpeed(0.3);
+        controller->setHasGravity(true);
+        controller->setSpeed(0.3);
     }
 
-    MyFpsScript() noexcept                         = delete;
+    MyFpsScript() noexcept                         = default;
     MyFpsScript(const MyFpsScript& other) noexcept = delete;
     MyFpsScript(MyFpsScript&& other) noexcept      = default;
     virtual ~MyFpsScript() noexcept                = default;
@@ -65,9 +65,9 @@ public:
     MyFpsScript& operator=(MyFpsScript const& other) noexcept = delete;
     MyFpsScript& operator=(MyFpsScript&& other) noexcept = delete;
 
-    GPE::InputComponent&      input;
-    GPE::AudioComponent&      source;
-    GPE::CharacterController& controller;
+    GPE::InputComponent*      input = nullptr;
+    GPE::AudioComponent*      source = nullptr;
+    GPE::CharacterController* controller = nullptr;
 
     void rotate(const GPM::Vec2& deltaDisplacement)
     {
@@ -85,7 +85,7 @@ public:
         /*getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(physx::PxVec3{0, 1, 0} * speed,
                                                                               physx::PxForceMode::eFORCE);*/
         GPM::Vec3 vec = getOwner().getTransform().getVectorUp();
-        controller.move(vec, 100);
+        controller->move(vec, 100);
         // controller.controller->getActor()->addForce(physx::PxVec3{ 0, 1, 0 } *10000,physx::PxForceMode::eFORCE);
     }
 
@@ -93,7 +93,7 @@ public:
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
         vec.y         = 0;
-        controller.move(-vec);
+        controller->move(-vec);
         // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
     }
 
@@ -101,7 +101,7 @@ public:
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
         vec.y         = 0;
-        controller.move(vec);
+        controller->move(vec);
         // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
 
@@ -109,7 +109,7 @@ public:
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorRight();
         vec.y         = 0;
-        controller.move(-vec);
+        controller->move(-vec);
         // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
     }
 
@@ -117,7 +117,7 @@ public:
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorRight();
         vec.y         = 0;
-        controller.move(vec);
+        controller->move(vec);
         // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
 
@@ -128,12 +128,12 @@ public:
 
     inline void sprintStart()
     {
-        controller.setSpeed(controller.getSpeed() * 2.f);
+        controller->setSpeed(controller->getSpeed() * 2.f);
     }
 
     inline void sprintEnd()
     {
-        controller.setSpeed(controller.getSpeed() / 2.f);
+        controller->setSpeed(controller->getSpeed() / 2.f);
     }
 
     inline void growUpSphereCollider()
@@ -149,7 +149,7 @@ public:
     void fixedUpdate(float deltaTime) final
     {
         rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
-        controller.update(deltaTime);
+        controller->update(deltaTime);
     }
 
     MyFpsScript_GENERATED

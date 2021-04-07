@@ -211,6 +211,9 @@
     <ClCompile Include="src\Serialization\Inspect.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Collider.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp">
@@ -665,7 +668,7 @@
     </None>
     <None Include="include\Engine\Serialization\STDDataInspector.inl">
       <Filter>include\Serialization</Filter>
-	</None>
+    </None>
     <None Include="include\Engine\ECS\System\InputManagerGLFW.inl">
       <Filter>include</Filter>
     </None>
