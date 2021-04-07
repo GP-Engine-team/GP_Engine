@@ -190,9 +190,6 @@
     <ClCompile Include="third_party\src\OpenAL_Soft_Debug.cpp">
       <Filter>third_party</Filter>
     </ClCompile>
-    <ClCompile Include="src\Serialization\STDReflect.cpp">
-      <Filter>src\Serialization</Filter>
-    </ClCompile>
     <ClCompile Include="src\Light.cpp">
       <Filter>src</Filter>
     </ClCompile>

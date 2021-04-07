@@ -195,6 +195,9 @@ void save(XmlSaver& context, const T& inspected, const XmlSaver::SaveInfo& info)
 template <typename T>
 void save(XmlSaver& context, T* const& inspected, const rfk::Field& info)
 {
+    if (inspected == nullptr)
+        return;
+
     context.push(info);
 
     context.saveAsString(std::to_string(size_t(inspected)), info);

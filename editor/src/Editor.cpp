@@ -163,7 +163,7 @@ void Editor::renderInspector()
 
         //s += 1.f/30.f;
 
-        //if (s > 1)
+        //if (s > 9)
         //{
         //    rapidxml::xml_document<> doc;
         //    XmlSaver saver(doc);
@@ -174,6 +174,7 @@ void Editor::renderInspector()
         //    auto b = GET_PROCESS((*m_reloadableCpp), loadCurrentScene);
         //    b(loader);
         //    s = 0;
+        //    m_inspectedObject = nullptr;
         //}
     }
     else

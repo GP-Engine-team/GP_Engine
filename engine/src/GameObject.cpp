@@ -302,38 +302,3 @@ void GPE::load(XmlLoader& context, class GameObject& inspected)
         context.pop();
     }
 }
-
-
-
-void GameObject::save(XmlSaver& context) const
-{
-    rfk::Class const& c = GameObject::staticGetArchetype();
-
-    {
-        rfk::Field const* field = c.getField("m_name");
-        GPE::save(context, m_name, *field);
-    }
-
-    {
-        rfk::Field const* field = c.getField("m_pTransform");
-        GPE::save(context, m_pTransform, *field);
-    }
-
-    GPE::save(context, m_pComponents, XmlSaver::SaveInfo{"m_pComponents", "std::list<Component*>", 0});
-}
-void GameObject::load(XmlLoader& context)
-{
-    rfk::Class const& c = GameObject::staticGetArchetype();
-
-    {
-        rfk::Field const* field = c.getField("m_name");
-        GPE::load(context, m_name, *field);
-    }
-
-    {
-        rfk::Field const* field = c.getField("m_pTransform");
-        GPE::load(context, m_pTransform, *field);
-    }
-
-    GPE::load(context, m_pComponents, XmlLoader::LoadInfo{"m_pComponents", "std::list<Component*>", 0});
-}

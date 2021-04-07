@@ -34,7 +34,7 @@ void load(XmlLoader& context, class GameObject& sinspected);
 
 class Scene;
 
-class RFKClass(Inspect()/*, Serialize(false)*/) GameObject
+class RFKClass(Inspect(), Serialize(false)) GameObject
 {
     public:
         struct CreateArg
@@ -45,7 +45,7 @@ class RFKClass(Inspect()/*, Serialize(false)*/) GameObject
         };
 
     protected:
-        RFKField(Inspect())             
+        RFKField(Inspect(), Serialize())             
         std::string m_name;
 
         RFKField(Serialize()) 
@@ -54,11 +54,13 @@ class RFKClass(Inspect()/*, Serialize(false)*/) GameObject
         RFKField(Serialize())
         std::list<Component*> m_pComponents;
         std::string           m_tag{"GameObject"};
+        RFKField(Serialize())
         GameObject*           m_parent = nullptr;
         bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
     public:
         Scene*                 pOwnerScene;
+        RFKField(Serialize())
         std::list<GameObject*> children = {};
 
     public:
@@ -223,9 +225,6 @@ class RFKClass(Inspect()/*, Serialize(false)*/) GameObject
         [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
-
-        virtual void save(XmlSaver&) const;
-        virtual void load(XmlLoader&);
 
         GameObject_GENERATED
     };

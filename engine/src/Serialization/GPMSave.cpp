@@ -4,22 +4,6 @@
 
 namespace GPE
 {
-//std::string transformToString(const GPM::Transform& data)
-//{
-//    data.model;
-//}
-//
-//template <>
-//void save(XmlSaver& context, const GPM::Transform& data, const rfk::Field& info)
-//{
-//    context.push(info);
-//
-//    context.saveAsString(transformToString(data), info);
-//    GPE::save(context, data.model, XmlSaver::SaveInfo{"model", "Mat4", 0});
-//
-//    context.pop();
-//}
-
 template <>
 void save(XmlSaver& context, const GPM::SplitTransform& data, const rfk::Field& info)
 {

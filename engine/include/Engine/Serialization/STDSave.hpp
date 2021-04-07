@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Engine/Serialization/STDReflect.hpp"
 #include "Engine/Serialization/xml/xmlLoader.hpp"
 #include "Engine/Serialization/xml/xmlSaver.hpp"
 #include <list>
-#include "Engine/Serialization/STDReflect.hpp"
 
 namespace rfk
 {
@@ -13,27 +13,11 @@ class Field;
 namespace GPE
 {
 template <typename T>
-typename std::enable_if<std::is_base_of<rfk::Object, T>::value>::type save(class XmlSaver&      context,
-                                                                           const std::list<T*>& inspected,
-                                                                           const rfk::Field&    info);
+void save(class XmlSaver& context, const std::list<T*>& inspected, const rfk::Field& info);
 
-//template <typename T>
-//typename std::enable_if<std::is_base_of<rfk::Object, T>::value>::type save(class XmlSaver&      context,
-//                                                                           const List<T*>& inspected,
-//                                                                           const rfk::Field&    info);
-
-//template <>
-//void save(class XmlSaver& context, rfk::Object* const& inspected, const rfk::Field& info);
-
-//template <>
-//void save(class XmlSaver& context, rfk::Object* const& inspected, const XmlSaver::SaveInfo& info);
 
 template <typename T>
 void load(class XmlLoader& context, std::list<T*>& inspected, const rfk::Field& info);
-
-//template <typename T>
-//void load(class XmlLoader& context, List<T*>& inspected, const rfk::Field& info);
-
 
 template <typename T>
 void save(XmlSaver& context, const std::list<T*>& inspected, const XmlSaver::SaveInfo& info)
@@ -45,7 +29,14 @@ void save(XmlSaver& context, const std::list<T*>& inspected, const XmlSaver::Sav
     size_t i = 0;
     for (T* elem : inspected)
     {
-        GPE::save(context, elem, XmlSaver::SaveInfo{std::to_string(i), "T", elem->getArchetype().id});
+        if constexpr (std::is_base_of_v<rfk::Object, T>)
+        {
+            GPE::save(context, elem, XmlSaver::SaveInfo{std::to_string(i), "T", elem->getArchetype().id});
+        }
+        else 
+        {
+            GPE::save(context, elem, XmlSaver::SaveInfo{std::to_string(i), "T", 0});
+        }
         i++;
     }
 
@@ -61,7 +52,7 @@ void load(XmlLoader& context, std::list<T*>& inspected, const XmlLoader::LoadInf
 
         for (T* elem : inspected)
         {
-            //delete elem;
+            // delete elem;
             elem->destroy();
         }
 
@@ -69,8 +60,8 @@ void load(XmlLoader& context, std::list<T*>& inspected, const XmlLoader::LoadInf
 
         for (size_t i = 0; i < size; i++)
         {
-            //T* elem = new T(); // TODO : Share with context
-            //GPE::load(context, *elem, XmlSaver::SaveInfo{std::to_string(i), "T", 0});
+            // T* elem = new T(); // TODO : Share with context
+            // GPE::load(context, *elem, XmlSaver::SaveInfo{std::to_string(i), "T", 0});
 
             T* elem;
             GPE::load(context, elem, XmlLoader::LoadInfo{std::to_string(i), "T", info.typeId});
@@ -80,7 +71,6 @@ void load(XmlLoader& context, std::list<T*>& inspected, const XmlLoader::LoadInf
         context.pop();
     }
 }
-
 
 } // namespace GPE
 
