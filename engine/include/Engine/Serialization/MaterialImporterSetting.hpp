@@ -50,9 +50,9 @@ namespace GPE RFKNamespace()
             ImGui::TextUnformatted("Diffuse texture");
             ImGui::SameLine();
             if (ImGui::Button(
-                    (m_config.diffuseTextureName.empty() ? "None##Vertex" : m_config.diffuseTextureName.c_str())))
+                    (m_config.diffuseTexturePath.empty() ? "None##Vertex" : m_config.diffuseTexturePath.c_str())))
             {
-                m_config.diffuseTextureName =
+                m_config.diffuseTexturePath =
                     openFileExplorer(L"Select vertex shader", {{L"Image", L"*.jpg;*.jpeg;*.bmp;*.png;*.tga"}})
                         .string()
                         .c_str();

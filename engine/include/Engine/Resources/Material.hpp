@@ -23,7 +23,7 @@ public:
     struct ImporteArg
     {
         MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
-        std::string       diffuseTextureName = "";
+        std::string       diffuseTexturePath = "";
     };
 
     struct CreateArg

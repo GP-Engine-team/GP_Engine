@@ -72,25 +72,21 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         scene->mMaterials[i]->Get(AI_MATKEY_SHININESS, materialArg.comp.shininess);
         scene->mMaterials[i]->Get(AI_MATKEY_OPACITY, materialArg.comp.opacity);
 
-        aiString diffuseTextureName;
-        scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &diffuseTextureName);
+        aiString diffuseTexturePath;
+        scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &diffuseTexturePath);
 
         TextureImportDataConfig textureArg;
 
-        std::filesystem::path dstTexturePath = dstDirPath;
-        std::filesystem::path srcTexturePath = srcDirPath;
-        std::filesystem::path diffuseTextureFile(diffuseTextureName.C_Str());
-        dstTexturePath /= diffuseTextureFile.stem();
+        std::filesystem::path diffuseTextureFile(diffuseTexturePath.C_Str());
+        std::filesystem::path dstTexturePath = dstDirPath / diffuseTextureFile.stem();
         dstTexturePath += ENGINE_TEXTURE_EXTENSION;
-
-        srcTexturePath /= diffuseTextureFile;
+        std::filesystem::path srcTexturePath = srcDirPath / diffuseTextureFile;
 
         textureArg.srcPath = srcTexturePath.string();
 
-        materialArg.diffuseTextureName = dstTexturePath.string().c_str();
+        materialArg.diffuseTexturePath = std::filesystem::relative(dstTexturePath).string().c_str();
 
-        std::filesystem::path dstMaterialPath = dstDirPath;
-        dstMaterialPath /= scene->mMaterials[i]->GetName().C_Str();
+        std::filesystem::path dstMaterialPath = dstDirPath / scene->mMaterials[i]->GetName().C_Str();
         dstMaterialPath += ENGINE_MATERIAL_EXTENSION;
 
         writeTextureFile(dstTexturePath.string().c_str(), textureArg);
@@ -130,8 +126,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
             arg.indices.emplace_back(pMesh->mFaces[i].mIndices[2]);
         }
 
-        std::filesystem::path dstMeshPath = dstDirPath;
-        dstMeshPath /= pMesh->mName.C_Str();
+        std::filesystem::path dstMeshPath = dstDirPath / pMesh->mName.C_Str();
         dstMeshPath += ENGINE_MESH_EXTENSION;
 
         writeMeshFile(dstMeshPath.string().c_str(), arg);
@@ -152,10 +147,10 @@ void GPE::importeTextureFile(const char* srcPath, const char* dstPath)
     textureArg.srcPath = srcPath;
 
     std::filesystem::path srcTexturePath(srcPath);
-    std::filesystem::path dstTexturePath(dstPath);
-    dstTexturePath /= srcTexturePath.stem();
+    std::filesystem::path dstTexturePath = dstPath / srcTexturePath.stem();
+    dstTexturePath += ENGINE_TEXTURE_EXTENSION;
 
-    writeTextureFile((dstTexturePath.string() + ENGINE_TEXTURE_EXTENSION).c_str(), textureArg);
+    writeTextureFile(dstTexturePath.string().c_str(), textureArg);
 }
 
 void GPE::writeTextureFile(const char* dst, const TextureImportDataConfig& arg)
@@ -251,7 +246,7 @@ struct MaterialHeader
 {
     char              assetID                  = (char)EFileType::MATERIAL;
     MaterialComponent component                = {};
-    int               nameDiffuseTextureLenght = 0;
+    int               pathDiffuseTextureLenght = 0;
 };
 
 void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
@@ -263,9 +258,9 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
         return;
     }
 
-    MaterialHeader header{(char)EFileType::MATERIAL, arg.comp, arg.diffuseTextureName.size()};
+    MaterialHeader header{(char)EFileType::MATERIAL, arg.comp, arg.diffuseTexturePath.size()};
     fwrite(&header, sizeof(header), 1, pFile);                                                   // header
-    fwrite(arg.diffuseTextureName.data(), sizeof(char), header.nameDiffuseTextureLenght, pFile); // string buffer
+    fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile); // string buffer
 
     fclose(pFile);
 
@@ -288,10 +283,10 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
-    if (header.nameDiffuseTextureLenght) // If diffuse texture existe
+    if (header.pathDiffuseTextureLenght) // If diffuse texture existe
     {
-        arg.diffuseTextureName.assign(header.nameDiffuseTextureLenght, '\0');
-        fread(arg.diffuseTextureName.data(), sizeof(char), header.nameDiffuseTextureLenght, pFile); // string buffer
+        arg.diffuseTexturePath.assign(header.pathDiffuseTextureLenght, '\0');
+        fread(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile); // string buffer
     }
 
     fclose(pFile);
@@ -306,8 +301,9 @@ Material* GPE::loadMaterialFile(const char* src)
     Material::CreateArg   arg;
     arg.comp = importeArg.comp;
 
-    if (!importeArg.diffuseTextureName.empty())
-        arg.pTexture = loadTextureFile(importeArg.diffuseTextureName.c_str());
+    if (!importeArg.diffuseTexturePath.empty())
+        arg.pTexture =
+            loadTextureFile((std::filesystem::current_path() / importeArg.diffuseTexturePath).string().c_str());
 
     return &Engine::getInstance()->resourceManager.add<Material>(srcPath.filename().string(), arg);
 }
