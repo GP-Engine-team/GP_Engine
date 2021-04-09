@@ -12,6 +12,7 @@
 
 #include "Engine/Core/Tools/ClassUtility.hpp"
 #include "Engine/Resources/Type.hpp"
+#include "Engine/Serialization/DataInspector.hpp"
 #include "GPM/Shape3D/Volume.hpp"
 #include "GPM/Vector3.hpp"
 
@@ -43,7 +44,6 @@ public:
     // Allow user to construct mesh thank's to EBO
     struct CreateIndiceBufferArg
     {
-        std::string                  objName;
         std::vector<Vertex>          vertices;
         std::vector<unsigned int>    indices;
         EBoundingVolume              boundingVolumeType{EBoundingVolume::NONE};
@@ -53,7 +53,6 @@ public:
     // Allow user to construct mesh thank's to multiple VBO
     struct CreateContiguousVerticesArg
     {
-        std::string                  objName;
         std::vector<GPM::Vec3>       vBuffer;
         std::vector<GPM::Vec2>       vtBuffer;
         std::vector<GPM::Vec3>       vnBuffer;
@@ -148,6 +147,12 @@ public:
                                                                                          // Culling (bad
                                                                                          // normal)
 };
+
+template <>
+void DataInspector::inspect(GPE::InspectContext& context, Mesh::Vertex& inspected);
+
+template <>
+void DataInspector::inspect(GPE::InspectContext& context, Mesh::Indice& inspected);
 
 #include "Mesh.inl"
 

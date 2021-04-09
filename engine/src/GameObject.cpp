@@ -260,14 +260,13 @@ std::string GameObject::getAbsolutePath() const noexcept
     return path;
 }
 
-template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject& inspected)
+void GameObject::inspect(GPE::InspectContext& context)
 {
-    inspected.inspect(context);
+    GPE::DataInspector::inspect(context, m_name, "name");
 
-    inspected.getTransform().inspect(context);
+    getTransform().inspect(context);
 
-    std::list<Component*>& comps = inspected.getComponents();
+    std::list<Component*>& comps = getComponents();
 
     for (Component* comp : comps)
     {

@@ -6,6 +6,7 @@
 #include "Engine/ECS/System/SceneRenderSystem.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
+#include "Engine/Resources/Importer/Importer.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
@@ -128,8 +129,78 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
         !((size_t)inspected.pMesh & (size_t)inspected.pShader & (size_t)inspected.pMaterial);
 
     renderResourceExplorer<Mesh>("Mesh", inspected.pMesh);
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_MESH_EXTENSION))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            if (Mesh* pMesh = Engine::getInstance()->resourceManager.get<Mesh>(path.string().c_str()))
+            {
+                inspected.pMesh = pMesh;
+            }
+            else
+            {
+                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pMesh))
+                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
+
+                inspected.pMesh = loadMeshFile(path.string().c_str());
+                inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
+            }
+        }
+    }
+
     renderResourceExplorer<Shader>("Shader", inspected.pShader);
+
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_SHADER_EXTENSION))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(path.string().c_str()))
+            {
+                inspected.pShader = pShader;
+            }
+            else
+            {
+                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pShader))
+                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
+
+                inspected.pShader = loadShaderFile(path.string().c_str());
+                inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
+            }
+        }
+    }
+
     renderResourceExplorer<Material>("Material", inspected.pMaterial);
+
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_MATERIAL_EXTENSION))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(path.string().c_str()))
+            {
+                inspected.pMaterial = pMaterial;
+            }
+            else
+            {
+                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pMaterial))
+                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
+
+                inspected.pMaterial = loadMaterialFile(path.string().c_str());
+                inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
+            }
+        }
+    }
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
 
@@ -248,6 +319,4 @@ void Model::inspect(InspectContext& context)
         }
         ImGui::TreePop();
     }
-
-    return;
 }

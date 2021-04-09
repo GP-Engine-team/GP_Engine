@@ -172,58 +172,18 @@ uniform float unscaledTimeAcc;
 Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char featureMask)
     : m_featureMask(featureMask), m_lightsUniformBuffer(0)
 {
-    std::string vertexCode;
-    std::string fragmentCode;
-
-    removeUntilFirstSpace(vertexPath, m_nameVertex);
-    removeUntilFirstSpace(fragmentPath, m_nameFragment);
-    if (loadFile(vertexPath, vertexCode, fragmentPath, fragmentCode))
-    {
-        return;
-    }
-
-    // parse shader : If #include "path" is found, replace by code
-    ShaderParser::parse(vertexCode);
-    ShaderParser::parse(fragmentCode);
-
-    if ((m_featureMask & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
-    {
-        vertexCode.insert(0, lightBlinPhongVertexShaderStr);
-        fragmentCode.insert(0, lightBlinPhongFragmentShaderStr);
-    }
-
-    if ((m_featureMask & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
-    {
-        fragmentCode.insert(0, colorFragmentShaderStr);
-    }
-
-    if ((m_featureMask & SCALE_TIME_ACC) == SCALE_TIME_ACC)
-    {
-        vertexCode.insert(0, timeScaledAccVertexShaderStr);
-    }
-
-    if ((m_featureMask & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
-    {
-        vertexCode.insert(0, timeUnscaledAccVertexShaderStr);
-    }
-
-    vertexCode.insert(0, versionHeaderStr);
-    fragmentCode.insert(0, versionHeaderStr);
-
-    compile(vertexCode, fragmentCode);
-
-    Log::getInstance()->log((std::string("Load and compile shaders \"") + m_nameVertex.c_str() + "\" shader and \"" +
-                             m_nameFragment + "\" shader done")
-                                .c_str());
+    loadAndCompile(vertexPath, fragmentPath, featureMask);
 }
 
 Shader::~Shader() noexcept
 {
-    glDeleteBuffers(1, &m_lightsUniformBuffer);
-    glDeleteProgram(m_id);
+    release();
+}
 
-    Log::getInstance()->log(
-        (std::string("Release ") + m_nameVertex.c_str() + ".vs and " + m_nameFragment + ".fs").c_str());
+void Shader::reload(const char* vertexPath, const char* fragmentPath, unsigned char featureMask)
+{
+    release();
+    loadAndCompile(vertexPath, fragmentPath, featureMask);
 }
 
 void Shader::use()
@@ -376,13 +336,11 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
 
             if (type == EType::VERTEX)
             {
-                Log::getInstance()->logError(std::string("Shader name's \"") + m_nameVertex + "\" compilation error\n" +
-                                             infoLog);
+                Log::getInstance()->logError(std::string("Vertex shader compilation error\n") + infoLog);
             }
             else if (type == EType::FRAGMENT)
             {
-                Log::getInstance()->logError(std::string("Shader name's \"") + m_nameFragment +
-                                             "\" compilation error\n" + infoLog);
+                Log::getInstance()->logError(std::string("Framgnet shader compilation error\n") + infoLog);
             }
         }
     }
@@ -395,28 +353,63 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
 
             if (type == EType::VERTEX)
             {
-                Log::getInstance()->logError(
-                    (std::string("Shader name's \"") + m_nameVertex.c_str() + "\" linking error.\n" + infoLog).c_str());
+                Log::getInstance()->logError((std::string("Vertex shader linking error\n") + infoLog).c_str());
             }
             else if (type == EType::FRAGMENT)
             {
-                Log::getInstance()->logError(
-                    (std::string("Shader name's \"") + m_nameFragment.c_str() + "\" linking error.\n" + infoLog)
-                        .c_str());
+                Log::getInstance()->logError((std::string("Fragmnet shader linking error\n") + infoLog).c_str());
             }
         }
     }
 }
 
-void Shader::removeUntilFirstSpace(const char* path, std::string& shaderName)
+void Shader::loadAndCompile(const char* vertexPath, const char* fragmentPath, unsigned char featureMask)
 {
-    std::string src(path);
+    std::string vertexCode;
+    std::string fragmentCode;
 
-    std::size_t cursStart = src.find_last_of('/');
-    if (cursStart == std::string::npos)
-        cursStart = 0;
-    cursStart += 1;
-    std::size_t cursEnd = src.find_last_of('.');
+    if (loadFile(vertexPath, vertexCode, fragmentPath, fragmentCode))
+    {
+        return;
+    }
 
-    shaderName = src.substr(cursStart, cursEnd - cursStart);
+    // parse shader : If #include "path" is found, replace by code
+    ShaderParser::parse(vertexCode);
+    ShaderParser::parse(fragmentCode);
+
+    if ((m_featureMask & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    {
+        vertexCode.insert(0, lightBlinPhongVertexShaderStr);
+        fragmentCode.insert(0, lightBlinPhongFragmentShaderStr);
+    }
+
+    if ((m_featureMask & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
+    {
+        fragmentCode.insert(0, colorFragmentShaderStr);
+    }
+
+    if ((m_featureMask & SCALE_TIME_ACC) == SCALE_TIME_ACC)
+    {
+        vertexCode.insert(0, timeScaledAccVertexShaderStr);
+    }
+
+    if ((m_featureMask & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
+    {
+        vertexCode.insert(0, timeUnscaledAccVertexShaderStr);
+    }
+
+    vertexCode.insert(0, versionHeaderStr);
+    fragmentCode.insert(0, versionHeaderStr);
+
+    compile(vertexCode, fragmentCode);
+
+    Log::getInstance()->log("Load and compile vertex and fragment shader done");
+}
+
+void Shader::release()
+{
+    glDeleteBuffers(1, &m_lightsUniformBuffer);
+    glDeleteProgram(m_id);
+
+    Log::getInstance()->log("Release vs and fs");
 }

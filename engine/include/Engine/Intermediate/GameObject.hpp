@@ -14,6 +14,7 @@
 #include "Engine/ECS/Component/TransformComponent.hpp" //TransformComponent
 
 #include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/IInspectable.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
 
 // in Inl
@@ -25,12 +26,9 @@
 
 namespace GPE RFKNamespace()
 {
-    template <>
-    void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
-
     class Scene;
 
-    class RFKClass(Inspect()) GameObject
+    class RFKClass() GameObject : public IInspectable
     {
     public:
         struct CreateArg
@@ -230,6 +228,8 @@ namespace GPE RFKNamespace()
         [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
+
+        void inspect(GPE::InspectContext & context) override;
 
         GameObject_GENERATED
     };
