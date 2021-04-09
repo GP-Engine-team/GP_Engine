@@ -214,7 +214,7 @@ Game::Game()
     // loadSkyboxResource(rm);
     loadTreeResource(rm);
 
-    // loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
+    //loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
     loadTree(sm.getCurrentScene()->getWorld(), rm, 10);
 
     ts.addScaledTimer(

@@ -44,8 +44,11 @@ namespace GPE RFKNamespace()
             ImGui::SameLine();
             if (ImGui::Button((m_config.vertexShaderPath.empty() ? "None##Vertex" : m_config.vertexShaderPath.c_str())))
             {
+
                 m_config.vertexShaderPath =
-                    openFileExplorer(L"Select vertex shader", {{L"Vertex Shader", L"*.vs"}}).string().c_str();
+                    openFileExplorerAndGetRelativePath(L"Select vertex shader", {{L"Vertex Shader", L"*.vs"}})
+                        .string()
+                        .c_str();
 
                 m_isDirty = true;
             }
@@ -56,7 +59,9 @@ namespace GPE RFKNamespace()
                                                                   : m_config.fragmentShaderPath.c_str()))
             {
                 m_config.fragmentShaderPath =
-                    openFileExplorer(L"Select fragment shader", {{L"Fragment Shader", L"*.fs"}}).string().c_str();
+                    openFileExplorerAndGetRelativePath(L"Select fragment shader", {{L"Fragment Shader", L"*.fs"}})
+                        .string()
+                        .c_str();
 
                 m_isDirty = true;
             }
@@ -111,7 +116,8 @@ namespace GPE RFKNamespace()
                 // Update loaded resource
                 if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(m_path.c_str()))
                 {
-                    pShader->reload(m_config.vertexShaderPath.c_str(), m_config.fragmentShaderPath.c_str(),
+                    pShader->reload((std::filesystem::current_path() / m_config.vertexShaderPath).string().c_str(),
+                                    (std::filesystem::current_path() / m_config.fragmentShaderPath).string().c_str(),
                                     m_config.featureMask);
                 }
 

@@ -53,7 +53,8 @@ namespace GPE RFKNamespace()
                     (m_config.diffuseTexturePath.empty() ? "None##Vertex" : m_config.diffuseTexturePath.c_str())))
             {
                 m_config.diffuseTexturePath =
-                    openFileExplorer(L"Select vertex shader", {{L"Image", L"*.jpg;*.jpeg;*.bmp;*.png;*.tga"}})
+                    openFileExplorerAndGetRelativePath(L"Select vertex shader",
+                                                       {{L"Image", L"*.jpg;*.jpeg;*.bmp;*.png;*.tga"}})
                         .string()
                         .c_str();
 

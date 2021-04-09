@@ -431,5 +431,6 @@ Shader* GPE::loadShaderFile(const char* src)
     std::filesystem::path srcPath(src);
     ShaderCreateonfig     arg = readShaderFile(src);
     return &Engine::getInstance()->resourceManager.add<Shader>(
-        srcPath.filename().string(), arg.vertexShaderPath.c_str(), arg.fragmentShaderPath.c_str(), arg.featureMask);
+        srcPath.filename().string(), (std::filesystem::current_path() / arg.vertexShaderPath).string().c_str(),
+        (std::filesystem::current_path() / arg.fragmentShaderPath).string().c_str(), arg.featureMask);
 }

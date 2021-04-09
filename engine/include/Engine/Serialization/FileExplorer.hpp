@@ -29,8 +29,8 @@ namespace GPE
  https://docs.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-ifiledialog-setfiletypes
  * @return
 */
-std::filesystem::path openFileExplorer(LPCWSTR                        title  = L"Open",
-                                       std::vector<COMDLG_FILTERSPEC> filter = {{L"All", L"*.*"}})
+std::filesystem::path openFileExplorerAndGetAbsoluePath(LPCWSTR                        title  = L"Open",
+                                                        std::vector<COMDLG_FILTERSPEC> filter = {{L"All", L"*.*"}})
 {
     std::filesystem::path src;
 
@@ -86,6 +86,13 @@ std::filesystem::path openFileExplorer(LPCWSTR                        title  = L
     }
     return src;
 }
+
+std::filesystem::path openFileExplorerAndGetRelativePath(LPCWSTR                        title  = L"Open",
+                                                         std::vector<COMDLG_FILTERSPEC> filter = {{L"All", L"*.*"}})
+{
+    return std::filesystem::relative(openFileExplorerAndGetAbsoluePath(title, filter));
+}
+
 #endif
 
 } // namespace GPE
