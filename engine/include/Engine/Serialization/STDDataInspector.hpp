@@ -12,8 +12,16 @@ namespace GPE::DataInspector
 template <typename T>
 bool inspect(GPE::InspectContext& context, std::vector<T>& inspected, const rfk::Field& info);
 
+template <typename T>
+bool inspect(GPE::InspectContext& context, std::vector<T>& inspected, const char* name);
+
 // template <typename T, typename SIZE>
 // void  inspect(std::array<T, SIZE>& inspected, const rfk::Field& info);
+
+template <>
+bool inspect(GPE::InspectContext& context, unsigned int& inspected, const rfk::Field& info);
+template <>
+bool inspect(GPE::InspectContext& context, unsigned int& inspected, const char* name);
 
 template <>
 bool inspect(GPE::InspectContext& context, int& inspected, const rfk::Field& info);

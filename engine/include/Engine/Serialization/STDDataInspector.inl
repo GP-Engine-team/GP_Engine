@@ -3,10 +3,16 @@
 template <typename T>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const rfk::Field& info)
 {
-    ImGuiTreeNodeFlags nodeFlag =
+    return inspect(context, inspected, info.name.c_str());
+}
+
+template <typename T>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const char* name)
+{
+    const ImGuiTreeNodeFlags nodeFlag =
         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-    const bool arrayIsOpen = ImGui::TreeNodeEx((void*)info.name.c_str(), nodeFlag, info.name.c_str());
+    const bool arrayIsOpen = ImGui::TreeNodeEx((void*)name, nodeFlag, name);
 
     if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
     {
@@ -62,7 +68,7 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
                 // Check if user inspect the current element
                 if (treeIsOpen)
                 {
-                    inspect(*it);
+                    inspect(context, *it);
                     ImGui::TreePop();
                 }
 
@@ -71,4 +77,6 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
         }
         ImGui::TreePop();
     }
+
+    return false;
 }

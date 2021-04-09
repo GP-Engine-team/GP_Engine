@@ -2,6 +2,11 @@
 
 #include "Engine/Intermediate/GameObject.hpp"
 
+namespace GPE
+{
+class IInspectable;
+} // namespace GPE
+
 namespace Editor
 {
 class DeferedSetParent
@@ -21,11 +26,11 @@ protected:
     DeferedSetParent deferedSetParent;
 
 protected:
-    void controlPreviousItem(GPE::GameObject& gameObject, GPE::GameObject*& selectedGameObject, int idElem);
+    void controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject, int idElem);
 
-    void recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::GameObject*& selectedGameObject, int idElem = 0);
+    void recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject, int idElem = 0);
 
 public:
-    void renderAndGetSelected(GPE::GameObject& gameObject, GPE::GameObject*& selectedGameObject);
+    void renderAndGetSelected(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject);
 };
 } // namespace Editor

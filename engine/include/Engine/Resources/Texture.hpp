@@ -82,6 +82,18 @@ public:
         bool              generateMipmaps  = true;
     };
 
+    struct ImportArg
+    {
+        int               w, h, comp;
+        unsigned char*    pixels; // This data must be free after usage
+        ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
+        ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
+        ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
+        ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
+        bool              flipTexture      = true;
+        bool              generateMipmaps  = true;
+    };
+
     struct CreateArg
     {
         int               width            = 0;
@@ -101,7 +113,8 @@ protected:
     bool checkFormatValidity() const;
 
     bool loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
-                   ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels, bool generateMipmaps = true) noexcept;
+                   ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels,
+                   bool generateMipmaps = true) noexcept;
 
 public:
     Texture()                     = default;
@@ -109,6 +122,7 @@ public:
     Texture(Texture&& other)      = default;
 
     Texture(const LoadArg& arg) noexcept;
+    Texture(const ImportArg& arg) noexcept;
     Texture(const CreateArg& arg) noexcept;
     ~Texture() noexcept;
 
