@@ -119,14 +119,18 @@ void SceneViewer::render() const
 
 unsigned int SceneViewer::getIDOfSelectedGameObject() const
 {
+    const int downScaleSamplingC = 4;
+    const int downScaleSampling =
+        (height >= downScaleSamplingC && width >= downScaleSamplingC) * (downScaleSamplingC - 1) +
+        1; // 1 or downScaleSamplingC
+
     GLuint FBOIDtextureID     = 0;
     GLuint FBOIDdepthID       = 0;
     GLuint FBOIDframebufferID = 0;
 
-    // low sampling (we don't need 4K texture to select element)
-    const int downScaleSampling = 4;
-    const int FBOIDwidth        = width / 4;
-    const int FBOIDheight       = height / 4;
+    // low sampling (we don't need 4K texture to select element)aa
+    const int FBOIDwidth  = width / downScaleSampling;
+    const int FBOIDheight = height / downScaleSampling;
 
     // Create FBO
     {
