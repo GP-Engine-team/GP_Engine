@@ -261,21 +261,21 @@ std::string GameObject::getAbsolutePath() const noexcept
     return path;
 }
 
-void GameObject::inspect(GPE::InspectContext& context)
-{
-    GPE::DataInspector::inspect(context, m_name, "name");
-
-    getTransform().inspect(context);
-
-    std::list<Component*>& comps = getComponents();
-
-    for (Component* comp : comps)
-    {
-        ImGui::PushID(comp);
-        GPE::DataInspector::inspect(context, *comp);
-        ImGui::PopID();
-    }
-}
+//void GameObject::inspect(GPE::InspectContext& context)
+//{
+//    GPE::DataInspector::inspect(context, m_name, "name");
+//
+//    getTransform().inspect(context);
+//
+//    std::list<Component*>& comps = getComponents();
+//
+//    for (Component* comp : comps)
+//    {
+//        ImGui::PushID(comp);
+//        GPE::DataInspector::inspect(context, *comp);
+//        ImGui::PopID();
+//    }
+//}
 
 void GPE::save(XmlSaver& context, GameObject& inspected)
 {

@@ -35,7 +35,7 @@ void load(XmlLoader& context, class GameObject& sinspected);
 
 class Scene;
 
-class RFKClass(Inspect(), Serialize(false)) GameObject
+class RFKClass(Inspect(false), Serialize(false)) GameObject : public IInspectable
 {
     public:
         struct CreateArg
@@ -227,7 +227,7 @@ class RFKClass(Inspect(), Serialize(false)) GameObject
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 
-        void inspect(GPE::InspectContext & context) override;
+        //void inspect(GPE::InspectContext & context) override;
 
         GameObject_GENERATED
     };
