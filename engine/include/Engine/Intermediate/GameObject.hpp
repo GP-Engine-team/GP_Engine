@@ -14,6 +14,7 @@
 #include "Engine/ECS/Component/TransformComponent.hpp" //TransformComponent
 
 #include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/IInspectable.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
 #include "Engine/Serialization/STDReflect.hpp"
 
@@ -225,6 +226,8 @@ class RFKClass(Inspect(), Serialize(false)) GameObject
         [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
+
+        void inspect(GPE::InspectContext & context) override;
 
         GameObject_GENERATED
     };

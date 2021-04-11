@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Refureku/TypeInfo/Variables/Field.h"
 #include "Engine/Serialization/InspectContext.hpp"
+#include "Refureku/TypeInfo/Variables/Field.h"
 
 namespace GPE
 {
@@ -15,7 +15,6 @@ namespace DataInspector
     {
         inspected.inspect(context);
     }
-
     /**
      * @brief Shows the content of the inspected object.
      * @tparam T The type of the inspected element.
@@ -40,7 +39,7 @@ namespace DataInspector
 
     /**
      * @brief Shows the content of the inspected object.
-     * @tparam T T The type of the inspected element.
+     * @tparam T The type of the inspected element.
      * @param inspected The inspected element.
      * @param info The information about the inspected element (its name, its properties, etc).
      * @return True if the inspected element has been modified, false otherwise.
@@ -55,5 +54,5 @@ namespace DataInspector
 
 } // namespace GPE
 
-#include "STDDataInspector.hpp"
 #include "GPMDataInspector.hpp"
+#include "STDDataInspector.hpp"

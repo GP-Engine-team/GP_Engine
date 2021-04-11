@@ -18,6 +18,7 @@ class Scene
     friend class SceneManager;
 
 protected:
+    std::string m_name   = "Scene";
     GameObject* m_pWorld = nullptr;
 
     std::unordered_map<std::string, unsigned int>

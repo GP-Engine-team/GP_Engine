@@ -7,12 +7,12 @@
 #pragma once
 
 #include "Engine/ECS/Component/Model.hpp"
-#include "Engine/Resources/ResourcesManagerType.hpp"
+#include "Engine/Resources/Mesh.hpp"
 
 namespace GPE
-{
-
-Model::CreateArg importeSingleModel(const char* assetPath, ResourceManagerType& resourceManager,
-                                    Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE) noexcept;
+{ /*
+Model::CreateArg importeSingleModel(const char*           assetPath,
+                                    Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE)
+noexcept;*/
 
 } // namespace GPE
