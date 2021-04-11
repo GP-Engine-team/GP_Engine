@@ -39,7 +39,7 @@ namespace GPE RFKNamespace()
         GPM::Plane nearFace;
     };
 
-    class RFKClass(Inspect(), ComponentGen) Camera : public Component
+    class RFKClass(Inspect(), ComponentGen, Serialize()) Camera : public Component
     {
     public:
         enum class EProjectionType
@@ -111,6 +111,7 @@ namespace GPE RFKNamespace()
         /**
          * @brief Update the view matrix in function of model matrix of it's parent
          */
+        RFKMethod()
         void updateView();
 
         /**

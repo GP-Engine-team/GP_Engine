@@ -45,7 +45,7 @@ void generateEngineFiles(const std::string& engineDir)
     settings.addToParseDirectory(engineDir + "/include/engine");
 
     settings.addIgnoredDirectory(engineDir + "/include/Generated");
-    settings.addIgnoredDirectory(engineDir + "/include/engine/Core");
+    //settings.addIgnoredDirectory(engineDir + "/include/engine/Core");
     // settings.addIgnoredDirectory(engineDir + "/include/engine/Serialization");
 
     // You will need to setup parsing settings and generation settings here.

@@ -31,14 +31,14 @@ namespace GPG RFKNamespace()
 		{
 
 			enableUpdate(true);
-			input->bindAction("jump", EKeyMode::KEY_DOWN, this, &MyScript::up);
-			input->bindAction("down", EKeyMode::KEY_DOWN, this, &MyScript::down);
-			input->bindAction("right", EKeyMode::KEY_DOWN, this, &MyScript::right);
-			input->bindAction("left", EKeyMode::KEY_DOWN, this, &MyScript::left);
-			input->bindAction("forward", EKeyMode::KEY_DOWN, this, &MyScript::forward);
-			input->bindAction("back", EKeyMode::KEY_DOWN, this, &MyScript::back);
-			input->bindAction("exit", EKeyMode::KEY_DOWN, this, &MyScript::leave);
-			input->bindAction("sprint", EKeyMode::KEY_DOWN, this, &MyScript::sprint);
+			input->bindAction("jump", EKeyMode::KEY_DOWN, this, "up");
+			input->bindAction("down", EKeyMode::KEY_DOWN, this, "down");
+			input->bindAction("right", EKeyMode::KEY_DOWN, this, "right");
+			input->bindAction("left", EKeyMode::KEY_DOWN, this, "left");
+			input->bindAction("forward", EKeyMode::KEY_DOWN, this, "forward");
+			input->bindAction("back", EKeyMode::KEY_DOWN, this, "back");
+			input->bindAction("exit", EKeyMode::KEY_DOWN, this, "leave");
+			input->bindAction("sprint", EKeyMode::KEY_DOWN, this, "sprint");
 		}
 
 		MyScript() noexcept

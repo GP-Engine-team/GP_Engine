@@ -6,13 +6,13 @@
 
 #pragma once
 
-#include <functional>
 #include <string>
 #include <unordered_map>
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
 #include "GPM/Vector3.hpp"
+#include "Engine/Core/Tools/FunctionPtr.hpp"
 
 // Generated
 #include "Generated/InputComponent.rfk.h"
@@ -40,7 +40,7 @@ namespace GPE RFKNamespace()
         InputComponent& operator=(InputComponent&& other);
 
     private:
-        std::unordered_map<std::string, std::function<void()>> m_functionMap;
+        std::unordered_map<std::string, GPE::Function> m_functionMap;
         int                                                    m_key = -1;
 
     public:
@@ -51,9 +51,9 @@ namespace GPE RFKNamespace()
          * @param function
          */
         template <typename T>
-        void bindAction(const std::string& action, const EKeyMode& keyMode, T* owner, void (T::*function)()) noexcept
+        void bindAction(const std::string& action, const EKeyMode& keyMode, T* owner, const std::string& methodName) noexcept
         {
-            m_functionMap.emplace(action, std::bind(function, owner));
+            m_functionMap.emplace(action, GPE::Function::make(owner, methodName));
             m_keyModeMap.emplace(action, keyMode);
         }
 

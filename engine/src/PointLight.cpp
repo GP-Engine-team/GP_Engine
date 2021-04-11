@@ -7,11 +7,6 @@ File_GENERATED
 
 using namespace GPE;
 
-PointLight::~PointLight()
-{
-    DataChunk<PointLight>::getInstance()->destroy(this);
-}
-
 PointLight::PointLight(GameObject& owner) noexcept : PointLight(owner, CreateArg{})
 {
 }

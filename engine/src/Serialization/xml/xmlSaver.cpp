@@ -92,6 +92,12 @@ void save(XmlSaver& context, const int& inspected, const rfk::Field& info)
 }
 
 template <>
+void save(XmlSaver& context, const size_t& inspected, const XmlSaver::SaveInfo& info)
+{
+    context.saveAsString(std::to_string(inspected), info);
+}
+
+template <>
 void save(XmlSaver& context, const char& inspected, const rfk::Field& info)
 {
     context.saveAsString(std::string(1, inspected), info);
@@ -121,6 +127,16 @@ void save(XmlSaver& context, rfk::Object* const& inspected, const XmlSaver::Save
 {
     auto i = reinterpret_cast<std::uintptr_t>(inspected);
     context.saveAsString(std::to_string(i), info);
+}
+
+template <>
+void save(XmlSaver& context, rfk::Method const* const& data, const XmlSaver::SaveInfo& info)
+{
+    context.push(info);
+
+    GPE::save(context, size_t(data->id), XmlSaver::SaveInfo{"id", "int", 0});
+
+    context.pop();
 }
 
 } // namespace GPE

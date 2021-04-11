@@ -37,7 +37,7 @@ namespace GPE RFKNamespace()
     public:
         PointLight(const PointLight& other) = delete;
         PointLight(PointLight && other)     = default;
-        virtual ~PointLight();
+        virtual ~PointLight() = default;
 
         PointLight()        = default;
         PointLight& operator=(PointLight const& other) = delete;

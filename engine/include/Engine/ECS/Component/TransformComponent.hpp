@@ -40,6 +40,7 @@ namespace GPE RFKNamespace()
         bool                m_isDirty   = false;
 
     public:
+        RFKField(Serialize()) 
         Event OnUpdate;
 
     public:

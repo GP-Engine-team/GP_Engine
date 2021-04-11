@@ -217,6 +217,9 @@
     <ClCompile Include="src\Serialization\GPMLoad.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\FunctionPtr.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp">
@@ -581,6 +584,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp">
       <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\FunctionPtr.hpp">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

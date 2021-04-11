@@ -14,11 +14,6 @@ Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*t
 {
 }
 
-Scene::~Scene() noexcept
-{
-    // DataChunk<GameObject>::getInstance()->destroy(m_pWorld);
-}
-
 GameObject* Scene::getGameObject(const std::string& path) noexcept
 {
     GPE_ASSERT(!path.empty(), "Empty path");
@@ -83,5 +78,7 @@ void Scene::save(XmlSaver& context) const
 
 void Scene::load(XmlLoader& context)
 {
+    DataChunk<GameObject>::getInstance()->destroy(m_pWorld);
+    m_pWorld = nullptr;
     GPE::load(context, m_pWorld, XmlLoader::LoadInfo{"m_pWorld", "GameObject", 0});
 }

@@ -1,74 +1,4 @@
 #include "Engine/Serialization/xml/xmlLoader.hpp"
-//#include "Engine/Serialization/xml/xmlUtilities.hpp"
-//#include <iostream>
-//
-// XmlLoader::Node* XmlLoader::findNodeWithMatchingAttribValue(Node* parentNode, const std::string& attribName, const
-// std::string& askedValue)
-//{
-//	for (Node* child = parentNode->first_node(); child; child = child->next_sibling())
-//	{
-//		std::string value = findAttribValue(child, attribName);
-//		if (value == askedValue)
-//		{
-//			return child;
-//		}
-//	}
-//	return nullptr;
-//}
-//
-// bool XmlLoader::checkType(Node* node, const std::string& loadedName, const std::string& typeName)
-//{
-//	return getType(node) == typeName;
-//}
-//
-// XmlLoader::Node* XmlLoader::findSubNodeWithName(XmlLoader::Node* parentNode, const std::string& name)
-//{
-//	return findNodeWithMatchingAttribValue(parentNode, "name", name);
-//}
-//
-// std::string XmlLoader::getValue(Node* node)
-//{
-//	return findAttribValue(node, "value");
-//}
-//
-// std::string XmlLoader::getType(Node* node)
-//{
-//	return findAttribValue(node, "type");
-//}
-//
-// bool XmlLoader::loadFromStr(Node* parentNode, std::string& str, const FieldInfo& fieldInfo)
-//{
-//	Node* child = findSubNodeWithName(parentNode, fieldInfo.name);
-//
-//	if (checkType(child, fieldInfo.name, fieldInfo.type))
-//	{
-//		str = getValue(child);
-//		return true;
-//	}
-//
-//	return false;
-//}
-//
-// template<>
-// void XmlLoader::load(Node* parentNode, int& data, const FieldInfo& fieldInfo)
-//{
-//	std::string value;
-//	data = loadFromStr(parentNode, value, fieldInfo) ? std::stoi(value) : 0;
-//}
-//
-// template<>
-// void XmlLoader::load(Node* parentNode, char& data, const FieldInfo& fieldInfo)
-//{
-//	std::string value;
-//	data = loadFromStr(parentNode, value, fieldInfo) ? value[0] : 0;
-//}
-//
-// template<>
-// void XmlLoader::load(Node* parentNode, float& data, const FieldInfo& fieldInfo)
-//{
-//	std::string value;
-//	data = loadFromStr(parentNode, value, fieldInfo) ? std::stof(value) : 0.f;
-//}
 
 bool XmlLoader::loadFromStr(std::string& str, const rfk::Field& info)
 {
@@ -92,6 +22,29 @@ bool XmlLoader::loadFromStr(std::string& str, const LoadInfo& info)
     return false;
 }
 
+void XmlLoader::addLazy(void*& data)
+{
+    lazyPtrs.push_back(&data);
+}
+
+// Pass a weak ptr pointing to an old value
+void XmlLoader::updateLazyPtr(void*& weak)
+{
+    auto it = alreadyLoadedPtrs.find({size_t(weak)});
+    assert(it != alreadyLoadedPtrs.end()); //  must be valid
+    weak = it->second.data;
+}
+
+void XmlLoader::updateLazyPtrs()
+{
+    for (void** weak : lazyPtrs)
+    {
+        updateLazyPtr(*weak);
+    }
+
+    lazyPtrs.clear();
+}
+
 namespace GPE
 {
 
@@ -100,6 +53,13 @@ void load(XmlLoader& context, int& data, const rfk::Field& info)
 {
     std::string value;
     data = context.loadFromStr(value, info) ? std::stoi(value) : 0;
+}
+
+template <>
+void load(XmlLoader& context, size_t& data, const XmlLoader::LoadInfo& info)
+{
+    std::string value;
+    data = context.loadFromStr(value, info) ? std::stoull(value) : 0;
 }
 
 template <>
@@ -127,6 +87,19 @@ void load(XmlLoader& context, bool& data, const rfk::Field& info)
 {
     std::string value;
     data = context.loadFromStr(value, info) ? (value == "true") : false;
+}
+
+template <>
+void load(XmlLoader& context, rfk::Method const*& data, const XmlLoader::LoadInfo& info)
+{
+    if (context.goToSubChild(info))
+    {
+        size_t methodId;
+        GPE::load(context, methodId, XmlLoader::LoadInfo{"id", "int", 0});
+        data = rfk::entityCast<rfk::Method>(rfk::Database::getEntity(methodId));
+
+        context.pop();
+    }
 }
 
 } // namespace GPE

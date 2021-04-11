@@ -49,4 +49,5 @@ extern "C" GAME_API void saveCurrentScene(XmlSaver& context)
 extern "C" GAME_API void loadCurrentScene(XmlLoader& context)
 {
     GPE::Engine::getInstance()->sceneManager.getCurrentScene()->load(context);
+    context.updateLazyPtrs();
 }

@@ -50,7 +50,7 @@ void InputComponent::fireAction(const std::string& action) noexcept
     auto it = m_functionMap.find(action);
     if (it != m_functionMap.end())
     {
-        std::function<void()> myfunc = it->second;
+        GPE::Function myfunc = it->second;
         myfunc();
     }
 }
