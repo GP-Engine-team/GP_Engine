@@ -30,12 +30,12 @@ namespace GPE RFKNamespace()
     template <>
     void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
 
-    void save(XmlSaver & context, class GameObject & inspected);
-    void load(XmlLoader & context, class GameObject & sinspected);
+    void save(XmlSaver& context, class GameObject& inspected);
+    void load(XmlLoader& context, class GameObject& sinspected);
 
     class Scene;
 
-    class RFKClass(Inspect(false), Serialize(false)) GameObject : public IInspectable
+    class RFKClass(Serialize(false)) GameObject : public IInspectable
     {
     public:
         struct CreateArg
@@ -238,7 +238,7 @@ namespace GPE RFKNamespace()
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 
-        // void inspect(GPE::InspectContext & context) override;
+         void inspect(GPE::InspectContext& context) override;
 
         GameObject_GENERATED
     };
