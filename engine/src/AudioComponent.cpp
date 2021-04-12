@@ -1,12 +1,11 @@
-﻿#include "Engine/ECS/Component/AudioComponent.hpp"
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/ECS/System/SoundSystem.hpp"
-#include "Engine/ECS/System/SystemsManager.hpp"
+﻿#include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Engine.hpp"
+#include <Engine/ECS/Component/AudioComponent.hpp>
 
 using namespace GPE;
 using namespace std;
 
-AudioComponent::AudioComponent(GameObject& owner) noexcept : Component(owner)
+AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
 {
     // Check if OpenAL Soft handle m_enumeration
     {
@@ -14,11 +13,6 @@ AudioComponent::AudioComponent(GameObject& owner) noexcept : Component(owner)
         if (m_enumeration == AL_FALSE)
         {
             FUNCT_ERROR("Enumeration not supported !");
-        }
-
-        else
-        {
-            Log::logAddMsg("Enumeration supported ...");
         }
     }
 
@@ -43,15 +37,23 @@ AudioComponent::AudioComponent(GameObject& owner) noexcept : Component(owner)
         FUNCT_ERROR("ERROR: Could not create audio context");
     }
 
-    m_key = SoundSystem::getInstance()->addComponent(this);
+    m_key = Engine::getInstance()->soundSystem.addComponent(this);
 }
 
-AudioComponent::AudioComponent(const AudioComponent& other) noexcept : Component(other.m_gameObject)
+AudioComponent& AudioComponent::operator=(AudioComponent&& other)
 {
-}
+    m_enumeration        = std::move(other.m_enumeration);
+    m_device             = std::move(other.m_device);
+    m_openALContext      = std::move(other.m_openALContext);
+    m_contextMadeCurrent = std::move(other.m_contextMadeCurrent);
+    m_closed             = std::move(other.m_closed);
+    m_key                = std::move(other.m_key);
+    sources              = std::move(other.sources);
 
-AudioComponent::AudioComponent(AudioComponent&& other) noexcept : Component(other.m_gameObject)
-{
+    Engine::getInstance()->soundSystem.updateComponent(this);
+
+    Component::operator=(std::move(other));
+    return *this;
 }
 
 void AudioComponent::setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept
@@ -66,7 +68,7 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity[0], settings.velocity[1], settings.velocity[2]);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
     AL_CALL(alSourcei, source->source, AL_BUFFER,
-            SystemsManager::getInstance()->resourceManager.get<Sound::Buffer>(soundName)->buffer);
+            Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName)->buffer);
 }
 
 AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept
@@ -89,7 +91,7 @@ void AudioComponent::playSound(const char* name) noexcept
     source->state = AL_PLAYING;
 }
 
-AudioComponent::~AudioComponent() noexcept
+AudioComponent::~AudioComponent()
 {
     // AL_CALL(alDeleteSources, 1, &sources[i].source);
     // AL_CALL(alDeleteBuffers, 1, &buffer);

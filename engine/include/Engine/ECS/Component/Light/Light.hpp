@@ -26,14 +26,14 @@
 namespace GPE RFKNamespace()
 {
     // TODO: Can be more optimize change information only when light is update
-    class RFKClass(Inspect(),ComponentGen) Light : public Component
+    class RFKClass(Inspect(), ComponentGen()) Light : public Component
     {
     public:
         struct CreateArg
         {
-            const AmbiantComponent&  ambient;
-            const DiffuseComponent&  diffuse;
-            const SpecularComponent& specular;
+            AmbiantComponent  ambient  = AmbiantComponent{0.f, 0.f, 0.f, 1.f};
+            DiffuseComponent  diffuse  = DiffuseComponent{0.5f, 0.5f, 0.5f, 1.f};
+            SpecularComponent specular = SpecularComponent{0.5f, 0.5f, 0.5f, 1.f};
         };
 
     protected:

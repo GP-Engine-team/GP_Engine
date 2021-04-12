@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "Engine/Core/Tools/ClassUtility.hpp"
 #include <array>  //std::array
 #include <vector> //std::vector
 
@@ -63,6 +64,8 @@ public:
     TStoredData& add(Args&&... args) noexcept;
 
     void destroy(TStoredData* const dataToDestroy) noexcept;
+
+    GETTER_BY_REF(Data, m_datas);
 
     /**
      * @brief This is the static method that controls the access to the singleton

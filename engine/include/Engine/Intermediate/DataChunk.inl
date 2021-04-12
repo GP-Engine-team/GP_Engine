@@ -21,10 +21,11 @@ void DataChunk<TStoredData, TSize>::destroy(TStoredData* const dataToDestroy) no
         if (unlikely(&m_datas[i] == dataToDestroy))
         {
             TStoredData tmp = std::move(m_datas[i]);
-            m_datas[i]     = std::move(m_datas.back());
-            m_datas.back() = std::move(tmp);
+            m_datas[i]      = std::move(m_datas.back());
+            m_datas.back()  = std::move(tmp);
 
             m_datas.pop_back();
+            return;
         }
     }
 

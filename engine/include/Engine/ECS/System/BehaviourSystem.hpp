@@ -7,7 +7,6 @@
 #pragma once
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
-#include <functional>
 #include <vector>
 
 namespace GPE

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Engine/ECS/System/TimeSystem.hpp"
+#include "Engine/Engine.hpp"
 
 class ContextStartup
 {
@@ -33,5 +34,6 @@ public:
     // Unload libraries
     ~ContextStartup()
     {
+        GPE::Engine::getInstance()->destroy();
     }
 };

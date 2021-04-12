@@ -11,12 +11,12 @@ namespace GPE
 {
 class SoundSystem
 {
-protected:
-    SoundSystem() = default;
-
-    static SoundSystem* m_soundSystem;
-
 public:
+    SoundSystem()  = default;
+    ~SoundSystem() = default;
+
+    std::unordered_map<int, AudioComponent*> m_audioComponents;
+
     /**
      * Singletons should not be cloneable.
      */
@@ -28,17 +28,13 @@ public:
     void operator=(const SoundSystem&) = delete;
 
     /**
-     * @brief get a pointeur to the InputManager singleton
-     * @return
-     */
-    static SoundSystem* getInstance();
-
-    /**
      * @brief add input component to the component list
      * @param input
      * @return
      */
     inline int addComponent(AudioComponent* input) noexcept;
+
+    inline void updateComponent(AudioComponent* newPointorBehaviour) noexcept;
 
     /**
      * @brief remove input component to the component list
@@ -46,9 +42,6 @@ public:
      * @return
      */
     inline void removeComponent(int key) noexcept;
-
-private:
-    std::unordered_map<int, AudioComponent*> m_audioComponent;
 };
 
 #include "Engine/ECS/System/SoundSystem.inl"

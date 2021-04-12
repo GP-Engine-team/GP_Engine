@@ -20,17 +20,25 @@ namespace GPE
 class Material
 {
 public:
+    struct ImporteArg
+    {
+        MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
+        std::string       diffuseTexturePath = "";
+    };
+
     struct CreateArg
     {
-        std::string       name{""};
         MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
         Texture*          pTexture{nullptr};
     };
 
 protected:
-    std::string       m_name{""};
+    static unsigned int materialCount;
+
+protected:
     MaterialComponent m_comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
     Texture*          m_pDiffuseTexture{nullptr};
+    unsigned int      m_ID = 0;
 
 public:
     inline Material(const CreateArg& arg);
@@ -42,11 +50,14 @@ public:
     Material& operator=(Material const& other) = default;
     Material& operator=(Material&& other) = default;
 
-    DEFAULT_GETTER_SETTER_BY_REF(Name, m_name);
     DEFAULT_GETTER_SETTER_BY_REF(Component, m_comp);
     DEFAULT_GETTER_SETTER_BY_REF(DiffuseTexture, m_pDiffuseTexture);
 
     inline bool isOpaque() const noexcept;
+
+    inline unsigned int getID() const;
+
+    inline void generateNewMaterial();
 };
 
 #include "Material.inl"

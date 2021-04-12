@@ -58,10 +58,9 @@ public:
         bool      smooth = true;
     };
 
-    using RenderPipeline =
-        std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
-                           std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
-                           std::vector<Light*>&, std::vector<DebugShape>&, std::vector<DebugLine>&, unsigned int)>;
+    using RenderPipeline = std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
+                                              std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
+                                              std::vector<Light*>&, std::vector<DebugShape>&, std::vector<DebugLine>&)>;
 
 protected:
     std::vector<Renderer*>  m_pRenderers;
@@ -74,15 +73,21 @@ protected:
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
+    unsigned int m_currentMaterialID                = 0;
     unsigned int m_currentMeshID                    = 0;
     Shader*      m_currentPShaderUse                = nullptr;
     bool         m_currentBackFaceCullingModeEnable = false;
+
+    Mesh* m_planeMesh  = nullptr;
+    Mesh* m_sphereMesh = nullptr;
+    Mesh* m_cubeMesh   = nullptr;
 
 public:
     SceneRenderSystem() noexcept;
     ~SceneRenderSystem() noexcept;
 
     void tryToBindShader(Shader& shader);
+    void tryToBindMaterial(Shader& shader, Material& material);
     void tryToBindTexture(unsigned int textureID);
     void tryToBindMesh(unsigned int meshID);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
@@ -91,11 +96,11 @@ public:
 
     bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept;
     void drawModelPart(const SubModel& subModel);
-    void sendModelDataToShader(Camera& camToUse, SubModel& subModel);
+    void sendModelDataToShader(Camera& camToUse, Shader& shader, SubModel& subModel);
     void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
-    void draw(const ResourceManagerType& res, RenderPipeline renderPipeline, unsigned int renderTextureID = 0) noexcept;
+    void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
                          const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},

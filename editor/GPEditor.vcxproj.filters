@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Fichiers de ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
@@ -27,9 +23,6 @@
     <ClInclude Include="include\Editor\Viewport.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Editor\SceneEditor.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="include\Editor\ExternalDeclarations.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -43,6 +36,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Editor\GameControlBar.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Editor\SceneEditor.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Editor\SceneEditor.hpp">
@@ -68,30 +64,6 @@
     <ClCompile Include="src\SceneEditor.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_glfw.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\backends\imgui_impl_opengl3.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\imgui.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\imgui_demo.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\imgui_draw.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\imgui_tables.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\imgui_widgets.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\third_party\imgui\misc\cpp\imgui_stdlib.cpp">
-      <Filter>third_party</Filter>
-    </ClCompile>
     <ClCompile Include="src\SceneGraph.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -99,6 +71,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\GameControlBar.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ProjectContent.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

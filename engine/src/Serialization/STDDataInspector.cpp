@@ -1,23 +1,30 @@
 #include "Engine/Serialization/STDDataInspector.hpp"
 
-#include "imgui.h"
 #include "Engine/Serialization/Slider.hpp"
 
-template <typename T>
-bool GPE::DataInspector::inspect(std::vector<T>& inspected, const rfk::Field& info)
+template <>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, unsigned int& inspected, const rfk::Field& info)
 {
-    
-    return false;
+    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(int& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, unsigned int& inspected, const char* name)
 {
-    return GPE::DataInspector::inspect(inspected, info.name.c_str());
+    startProperty(name);
+    bool hasChanged = ImGui::InputScalar("", ImGuiDataType_U32, &inspected);
+    endProperty();
+    return hasChanged;
 }
 
 template <>
-bool GPE::DataInspector::inspect(int& inspected, const char* name)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, int& inspected, const rfk::Field& info)
+{
+    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, int& inspected, const char* name)
 {
     startProperty(name);
     bool hasChanged = ImGui::InputInt("", &inspected);
@@ -26,7 +33,7 @@ bool GPE::DataInspector::inspect(int& inspected, const char* name)
 }
 
 template <>
-bool GPE::DataInspector::inspect(float& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, float& inspected, const rfk::Field& info)
 {
     Slider const* property = info.getProperty<Slider>();
     if (property)
@@ -38,12 +45,12 @@ bool GPE::DataInspector::inspect(float& inspected, const rfk::Field& info)
     }
     else
     {
-        return GPE::DataInspector::inspect(inspected, info.name.c_str());
+        return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
     }
 }
 
 template <>
-bool GPE::DataInspector::inspect(float& inspected, const char* name)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, float& inspected, const char* name)
 {
     startProperty(name);
     bool hasChanged = ImGui::InputFloat("", &inspected);
@@ -52,13 +59,13 @@ bool GPE::DataInspector::inspect(float& inspected, const char* name)
 }
 
 template <>
-bool GPE::DataInspector::inspect(std::string& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::string& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(inspected, info.name.c_str());
+    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(std::string& inspected, const char* name)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::string& inspected, const char* name)
 {
     startProperty(name);
 
@@ -67,20 +74,20 @@ bool GPE::DataInspector::inspect(std::string& inspected, const char* name)
     char             buffer[bufferSize];
     strcpy_s(buffer, inspected.c_str());
     bool hasChanged = ImGui::InputText("", buffer, bufferSize);
-    inspected = buffer;
+    inspected       = buffer;
 
     endProperty();
     return hasChanged;
 }
 
 template <>
-bool GPE::DataInspector::inspect(bool& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, bool& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(inspected, info.name.c_str());
+    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(bool& inspected, const char* name)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, bool& inspected, const char* name)
 {
     startProperty(name);
     bool hasChanged = ImGui::Checkbox("", &inspected);
@@ -89,7 +96,7 @@ bool GPE::DataInspector::inspect(bool& inspected, const char* name)
 }
 
 template <>
-void GPE::DataInspector::inspect(std::string& t)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::string& t)
 {
     return ImGui::Text(t.c_str());
 }

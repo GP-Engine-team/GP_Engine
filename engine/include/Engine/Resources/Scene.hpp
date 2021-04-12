@@ -9,8 +9,7 @@
 #include "Engine/ECS/System/SceneRenderSystem.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
-#include <sstream> //std::getLine
-#include <string>  // std::string
+#include <string> // std::string
 
 namespace GPE
 {
@@ -18,16 +17,19 @@ class Scene
 {
     friend class SceneManager;
 
+protected:
+    std::string m_name   = "Scene";
+    GameObject* m_pWorld = nullptr;
+
+    std::unordered_map<std::string, unsigned int>
+        m_loadedResourcesPath; // Indicate witch resource is loaded with counter
+
 public:
-    GameObject        world;
     SceneRenderSystem sceneRenderer;
 
 public:
-    inline Scene() noexcept : world(*this)
-    {
-    }
-
-    inline ~Scene() noexcept = default;
+    Scene() noexcept;
+    ~Scene() noexcept;
 
     // TODO: Can scene be copied ? How to manage resource
     constexpr inline Scene(const Scene& other) noexcept = delete;
@@ -48,5 +50,10 @@ public:
      * @return GraphEntity&
      */
     GameObject* getGameObject(const std::string& path) noexcept;
+
+    GameObject& getWorld() noexcept;
+
+    void addLoadedResourcePath(const char* path) noexcept;
+    void removeLoadedResourcePath(const char* path) noexcept;
 };
 } /*namespace GPE*/

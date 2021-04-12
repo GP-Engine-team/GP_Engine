@@ -36,10 +36,9 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect())
-        GPM::SplitTransform m_spaceAttribut;
-        GPM::Transform      m_transform = GPM::toTransform(m_spaceAttribut);
-        bool                m_isDirty   = false;
+        RFKField(Inspect()) GPM::SplitTransform m_spaceAttribut;
+        GPM::Transform                          m_transform = GPM::toTransform(m_spaceAttribut);
+        bool                                    m_isDirty   = false;
 
     public:
         Event OnUpdate;
@@ -107,7 +106,7 @@ namespace GPE RFKNamespace()
 
         constexpr const GPM::Vec3& getScale() const noexcept;
 
-        virtual bool inspect();
+        virtual void inspect(GPE::InspectContext & context);
 
         TransformComponent_GENERATED
     };

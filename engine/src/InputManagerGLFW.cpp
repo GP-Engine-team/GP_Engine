@@ -1,8 +1,9 @@
 ﻿#include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "GPM/DebugOutput.hpp"
 #include <GLFW/glfw3.h>
-#include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
+#include <imgui.h>
 
 using namespace std;
 using namespace GPE;
@@ -18,7 +19,7 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
     if (!action.empty())
     {
         auto stateMapIt     = m_stateMap.find(key);
-        auto lastStateMapIt = m_stateMap.find(key);
+        auto lastStateMapIt = m_lastStateMap.find(key);
         for (int i = 0; i < m_inputComponents.size(); i++)
         {
             auto keyModeMapIt = m_inputComponents[i]->m_keyModeMap.find(action);
@@ -63,7 +64,7 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
 
 void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
-    if (action != GLFW_REPEAT)
+    if (action >= 0 && action != GLFW_REPEAT)
     {
         if (m_stateMap.count(key))
         {
@@ -80,22 +81,32 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 
 void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
-    m_cursor.deltaPos =
-        Vec2{m_cursor.position.x - static_cast<GPM::f32>(xpos), m_cursor.position.y - static_cast<GPM::f32>(ypos)};
+    // GLFW cursor position is expressed relative to the top-left corner of the screen
+    // Internally, we represent deltaPos' y-axis going up, not down like GLFW
+    m_cursor.deltaPos.x = static_cast<GPM::f32>(xpos) - m_cursor.position.x;
+    m_cursor.deltaPos.y = m_cursor.position.y - static_cast<GPM::f32>(ypos);
     m_cursor.position.x = static_cast<GPM::f32>(xpos);
     m_cursor.position.y = static_cast<GPM::f32>(ypos);
 }
 
 void InputManager::cursorLockedPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
+    // GLFW cursor position is expressed relative to the top-left corner of the screen
+    // Internally, we represent deltaPos' y-axis going up, not down like GLFW
+
     int x, y;
     glfwGetWindowSize(window, &x, &y);
-    m_cursor.center.x   = x / 2.f;
-    m_cursor.center.y   = y / 2.f;
+
+    const float centerX = static_cast<GPM::f32>(x) * .5,
+                centerY = static_cast<GPM::f32>(y) * .5;
+
     m_cursor.position.x = static_cast<GPM::f32>(xpos);
     m_cursor.position.y = static_cast<GPM::f32>(ypos);
-    m_cursor.deltaPos   = m_cursor.position - m_cursor.center;
-    glfwSetCursorPos(window, m_cursor.center.x, m_cursor.center.y);
+
+    m_cursor.deltaPos.x = m_cursor.position.x - centerX;
+    m_cursor.deltaPos.y = centerY - m_cursor.position.y;
+
+    glfwSetCursorPos(window, static_cast<double>(centerX), static_cast<double>(centerY));
 }
 
 void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
@@ -110,7 +121,8 @@ void setLockedCursorCallback(GLFWwindow* window, double xpos, double ypos) noexc
 
 void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
-    ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+    if (ImGui::GetCurrentContext() != nullptr)
+        ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
     static_cast<InputManager*>(glfwGetWindowUserPointer(window))->keyCallback(window, key, scancode, action, mods);
 }
 

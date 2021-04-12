@@ -5,10 +5,12 @@
  */
 
 #pragma once
-#include <OpenAL_Soft_Debug.hpp>
+
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/Sound.hpp"
+
+#include <OpenAL_Soft_Debug.hpp>
 #include <unordered_map>
 
 namespace GPE
@@ -29,10 +31,19 @@ struct SourceSettings
 class AudioComponent : public Component
 {
 public:
-    AudioComponent(const AudioComponent& other) noexcept;
-    AudioComponent(AudioComponent&& other) noexcept;
-    virtual ~AudioComponent() noexcept;
-    AudioComponent(GameObject& owner) noexcept;
+    AudioComponent(GameObject& owner);
+
+    virtual ~AudioComponent();
+
+    AudioComponent()                            = delete;
+    AudioComponent(const AudioComponent& other) = delete;
+    AudioComponent& operator=(AudioComponent const& other) = delete;
+
+    // AudioComponent(AudioComponent&& other) noexcept = default;
+    AudioComponent& operator=(AudioComponent&& other);
+    AudioComponent(AudioComponent&& other) : Component(other.getOwner())
+    {
+    }
 
 private:
     ALboolean   m_enumeration;
@@ -72,6 +83,11 @@ public:
      * @brief Stop the current bound sound
      */
     void stopSound(const char* name) noexcept;
+
+    int getKey() const noexcept
+    {
+        return m_key;
+    }
 
 private:
     [[nodiscard]] SourceData* getSource(const char* name) noexcept;

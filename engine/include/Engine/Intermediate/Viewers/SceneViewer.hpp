@@ -25,11 +25,15 @@ public:
     int           height;
 
 private:
+    bool          m_captureInputs;
+    
     void initializeFramebuffer();
 
 public:
     SceneViewer(GPE::Scene& viewed, int width = 1, int height = 1);
     ~SceneViewer();
+
+    unsigned int getIDOfSelectedGameObject() const;
 
     void resize   (int width, int height);
     void bindScene(Scene& scene)          noexcept;
