@@ -1,7 +1,7 @@
 #include <Engine/Serialization/PhysXDataInspector.hpp>
 #include <characterkinematic/PxCapsuleController.h>
 
-template <>
+/*template <>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, physx::PxController*& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
@@ -42,4 +42,4 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, physx::PxShape*& 
     bool changed = false;
     // b |= DataInspector::inspect(context, inspected.
     return changed;
-}
+}*/

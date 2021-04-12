@@ -44,7 +44,7 @@ namespace GPE RFKNamespace()
         // GPM::Vec3				m_acceleration	= { 0,0,0 };
 
     public:
-        RFKField(Inspect()) physx::PxController* controller;
+        /*RFKField(Inspect()) */ physx::PxController* controller;
         DEFAULT_GETTER_SETTER_BY_VALUE(Speed, m_speed);
         DEFAULT_GETTER_SETTER_BY_VALUE(HasGravity, m_hasGravity);
         DEFAULT_GETTER_SETTER_BY_VALUE(Gravity, m_gravity);

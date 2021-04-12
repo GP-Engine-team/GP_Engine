@@ -29,10 +29,10 @@ namespace GPE RFKNamespace()
         virtual ~Collider() noexcept = default;
 
     public:
-        RFKField(Inspect()) physx::PxShape*    shape     = nullptr;
-        RFKField(Inspect()) physx::PxMaterial* material  = nullptr;
-        RFKField(Inspect()) bool               isTrigger = false;
-        RFKField(Inspect()) bool               isVisible = false;
+        /*RFKField(Inspect())*/ physx::PxShape*    shape     = nullptr;
+        /*RFKField(Inspect())*/ physx::PxMaterial* material  = nullptr;
+        RFKField(Inspect()) bool                   isTrigger = false;
+        RFKField(Inspect()) bool                   isVisible = false;
 
         Collider_GENERATED
     };

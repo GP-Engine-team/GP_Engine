@@ -25,6 +25,12 @@ enum class EKeyMode
     KEY_UP       = 4,
 };
 
+enum class EInputMode
+{
+    EDITOR = 0,
+    GAME   = 1,
+};
+
 namespace GPE RFKNamespace()
 {
     class RFKClass(ComponentGen()) InputComponent : public Component
@@ -44,17 +50,20 @@ namespace GPE RFKNamespace()
         int                                                    m_key = -1;
 
     public:
-        std::unordered_map<std::string, EKeyMode> m_keyModeMap;
+        std::unordered_map<std::string, EKeyMode>    keyModeMap;
+        std::unordered_map<std::string, std::string> inputModeMap;
         /**
          * @brief Bind a function to an action
          * @param action
          * @param function
          */
         template <typename T>
-        void bindAction(const std::string& action, const EKeyMode& keyMode, T* owner, void (T::*function)()) noexcept
+        void bindAction(const std::string& action, const EKeyMode& keyMode, const std::string& inputMode, T* owner,
+                        void (T::*function)()) noexcept
         {
             m_functionMap.emplace(action, std::bind(function, owner));
-            m_keyModeMap.emplace(action, keyMode);
+            keyModeMap.emplace(action, keyMode);
+            inputModeMap.emplace(action, inputMode);
         }
 
         /**

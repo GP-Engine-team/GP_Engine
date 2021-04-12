@@ -191,7 +191,7 @@
       <Filter>third_party</Filter>
     </ClCompile>
     <ClCompile Include="src\Serialization\PhysXDataInspector.cpp">
-      <Filter>src</Filter>
+      <Filter>src\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

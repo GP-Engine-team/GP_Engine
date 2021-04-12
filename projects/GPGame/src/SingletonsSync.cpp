@@ -1,38 +1,47 @@
 ﻿#include "SingletonsSync.hpp"
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_internal.h"
+#include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
-#include "GLFW/glfw3.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
+#include <Windows.h>
 
-extern "C" void setLogInstance(GPE::Log & log)
+extern "C" void setLogInstance(GPE::Log& log)
 {
-	GPE::Log::setInstance(log);
+    GPE::Log::setInstance(log);
 }
 
-extern "C" GPE::Log & getLogInstance()
+extern "C" GPE::Log& getLogInstance()
 {
-	return *GPE::Log::getInstance();
+    return *GPE::Log::getInstance();
 }
 
-extern "C" void setGameEngineInstance(GPE::Engine & engine)
+extern "C" void setGameEngineInstance(GPE::Engine& engine)
 {
-	GPE::Engine::setInstance(engine);
+    GPE::Engine::setInstance(engine);
 }
 
-extern "C" GPE::Engine & getGameEngineInstance()
+extern "C" GPE::Engine& getGameEngineInstance()
 {
-	return *GPE::Engine::getInstance();
+    return *GPE::Engine::getInstance();
 }
 
-extern "C" void setContextCurrent(GLFWwindow * window)
+extern "C" void setContextCurrent(GLFWwindow* window)
 {
-	glfwMakeContextCurrent(window);
+    glfwSetErrorCallback(
+        [](int errorCode, const char* description) { printf("GLFW error (%x) = %s\n", errorCode, description); });
+
+    //glfwInit();
+
+    int x, y;
+    glfwMakeContextCurrent(window);
+    glfwGetWindowSize(window, &x, &y);
+    DWORD errorNumber = GetLastError();
 }
 
 extern "C" void setImguiCurrentContext(ImGuiContext* ctx)
 {
-	ImGui::SetCurrentContext(ctx);
+    ImGui::SetCurrentContext(ctx);
 }

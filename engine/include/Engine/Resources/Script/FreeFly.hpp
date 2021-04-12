@@ -28,13 +28,13 @@ public:
         enableUpdate(true);
         InputComponent& input = owner.addComponent<InputComponent>();
 
-        input.bindAction("up", EKeyMode::KEY_DOWN, this, &FreeFly::up);
-        input.bindAction("down", EKeyMode::KEY_DOWN, this, &FreeFly::down);
-        input.bindAction("right", EKeyMode::KEY_DOWN, this, &FreeFly::right);
-        input.bindAction("left", EKeyMode::KEY_DOWN, this, &FreeFly::left);
-        input.bindAction("forward", EKeyMode::KEY_DOWN, this, &FreeFly::forward);
-        input.bindAction("back", EKeyMode::KEY_DOWN, this, &FreeFly::back);
-        input.bindAction("sprint", EKeyMode::KEY_DOWN, this, &FreeFly::sprint);
+        input.bindAction("up", EKeyMode::KEY_DOWN, "game01", this, &FreeFly::up);
+        input.bindAction("down", EKeyMode::KEY_DOWN, "game01", this, &FreeFly::down);
+        input.bindAction("right", EKeyMode::KEY_DOWN, "game01", this, &FreeFly::right);
+        input.bindAction("left", EKeyMode::KEY_DOWN, "game01", this, &FreeFly::left);
+        input.bindAction("forward", EKeyMode::KEY_DOWN, "game01", this, &FreeFly::forward);
+        input.bindAction("back", EKeyMode::KEY_DOWN, "game01", this, &FreeFly::back);
+        input.bindAction("sprint", EKeyMode::KEY_DOWN, "game01", this, &FreeFly::sprint);
     }
 
     void rotate(const GPM::Vec2& deltaDisplacement)

@@ -20,13 +20,13 @@ class PxShape;
 namespace GPE
 {
 
-template <>
+/*template <>
 bool DataInspector::inspect(GPE::InspectContext& context, physx::PxController*& inspected, const rfk::Field& info);
 
 template <>
-bool DataInspector::inspect(GPE::InspectContext& context, physx::PxController*& inspected, const char* name);
+bool DataInspector::inspect(GPE::InspectContext& context, physx::PxController*& inspected, const char* name);*/
 
-template <>
+/*template <>
 bool DataInspector::inspect(GPE::InspectContext& context, physx::PxMaterial*& inspected, const rfk::Field& info);
 
 template <>
@@ -36,6 +36,6 @@ template <>
 bool DataInspector::inspect(GPE::InspectContext& context, physx::PxShape*& inspected, const rfk::Field& info);
 
 template <>
-bool DataInspector::inspect(GPE::InspectContext& context, physx::PxShape*& inspected, const char* name);
+bool DataInspector::inspect(GPE::InspectContext& context, physx::PxShape*& inspected, const char* name);*/
 
 } // namespace GPE

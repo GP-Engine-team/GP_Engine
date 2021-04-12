@@ -26,15 +26,15 @@ public:
           source(owner.addComponent<GPE::AudioComponent>())
     {
         enableUpdate(true);
-        input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::up);
-        input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::down);
-        input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::right);
-        input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::left);
-        input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::forward);
-        input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::back);
-        input.bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyFreeFlyScript::leave);
-        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyFreeFlyScript::sprintStart);
-        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyFreeFlyScript::sprintEnd);
+        input.bindAction("jump", EKeyMode::KEY_DOWN, "game01", this, &MyFreeFlyScript::up);
+        input.bindAction("down", EKeyMode::KEY_DOWN, "game01", this, &MyFreeFlyScript::down);
+        input.bindAction("right", EKeyMode::KEY_DOWN, "game01", this, &MyFreeFlyScript::right);
+        input.bindAction("left", EKeyMode::KEY_DOWN, "game01", this, &MyFreeFlyScript::left);
+        input.bindAction("forward", EKeyMode::KEY_DOWN, "game01", this, &MyFreeFlyScript::forward);
+        input.bindAction("back", EKeyMode::KEY_DOWN, "game01", this, &MyFreeFlyScript::back);
+        input.bindAction("exit", EKeyMode::KEY_PRESSED, "game01", this, &MyFreeFlyScript::leave);
+        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, "game01", this, &MyFreeFlyScript::sprintStart);
+        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "game01", this, &MyFreeFlyScript::sprintEnd);
 
         GPE::Wave testSound("./resources/sounds/RickRoll.wav", "RICKROLL");
         GPE::Wave testSound2("./resources/sounds/YMCA.wav", "YMCA");

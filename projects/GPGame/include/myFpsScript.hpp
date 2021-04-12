@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "GLFW/glfw3.h"
 #include <Engine/ECS/Component/AudioComponent.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/ECS/Component/InputComponent.hpp>
@@ -15,6 +16,7 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
+#include <Windows.h>
 
 #include <iostream>
 
@@ -28,16 +30,20 @@ public:
           source(owner.addComponent<GPE::AudioComponent>()), controller(owner.addComponent<GPE::CharacterController>())
     {
         enableFixedUpdate(true);
-        input.bindAction("jump", EKeyMode::KEY_PRESSED, this, &MyFpsScript::jump);
-        input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyFpsScript::right);
-        input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyFpsScript::left);
-        input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyFpsScript::forward);
-        input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyFpsScript::back);
-        input.bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyFpsScript::leave);
-        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyFpsScript::sprintStart);
-        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyFpsScript::sprintEnd);
-        input.bindAction("growUpCollider", EKeyMode::KEY_DOWN, this, &MyFpsScript::growUpSphereCollider);
-        input.bindAction("growDownCollider", EKeyMode::KEY_DOWN, this, &MyFpsScript::growDownSphereCollider);
+        input.bindAction("jump", EKeyMode::KEY_PRESSED, "game01", this, &MyFpsScript::jump);
+        input.bindAction("right", EKeyMode::KEY_DOWN, "game01", this, &MyFpsScript::right);
+        input.bindAction("left", EKeyMode::KEY_DOWN, "game01", this, &MyFpsScript::left);
+        input.bindAction("forward", EKeyMode::KEY_DOWN, "game01", this, &MyFpsScript::forward);
+        input.bindAction("back", EKeyMode::KEY_DOWN, "game01", this, &MyFpsScript::back);
+        input.bindAction("exit", EKeyMode::KEY_PRESSED, "game01", this, &MyFpsScript::leave);
+        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, "game01", this, &MyFpsScript::sprintStart);
+        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "game01", this, &MyFpsScript::sprintEnd);
+        input.bindAction("growUpCollider", EKeyMode::KEY_DOWN, "game01", this, &MyFpsScript::growUpSphereCollider);
+        input.bindAction("growDownCollider", EKeyMode::KEY_DOWN, "game01", this, &MyFpsScript::growDownSphereCollider);
+        input.bindAction("swapInputModeToGame01", EKeyMode::KEY_PRESSED, "game02", this,
+                         &MyFpsScript::swapInputModeToGame01);
+        input.bindAction("swapInputModeToGame02", EKeyMode::KEY_PRESSED, "game01", this,
+                         &MyFpsScript::swapInputModeToGame02);
 
         GPE::Wave testSound("./resources/sounds/RickRoll.wav", "RICKROLL");
         GPE::Wave testSound2("./resources/sounds/YMCA.wav", "YMCA");
@@ -75,8 +81,8 @@ public:
             0.4 /*&& getOwner().getTransform().getSpacialAttribut().rotation.eulerAngles().x*/)
         {
             getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation *
-                                                  GPM::Quaternion::angleAxis(deltaDisplacement.y * 0.001f, {1, 0, 0}));
-            getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(deltaDisplacement.x * 0.001f, {0, 1, 0}) *
+                                                  GPM::Quaternion::angleAxis(-deltaDisplacement.y * 0.001f, {1, 0, 0}));
+            getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(-deltaDisplacement.x * 0.001f, {0, 1, 0}) *
                                                   getOwner().getTransform().getSpacialAttribut().rotation);
         }
     }
@@ -149,9 +155,38 @@ public:
         // collider.setRadius(collider.getRadius() - 1);
     }
 
+    void swapInputModeToGame01()
+    {
+        int                x        = -2;
+        int                y        = 5;
+        GPE::Window&       window   = GPE::Engine::getInstance()->window;
+        GPE::InputManager& iManager = GPE::Engine::getInstance()->inputManager;
+
+        // glfwGetWindowSize(window.getGLFWWindow(), &x, &y);
+        GPE::Engine::getInstance()->window.getSize(x, y);
+
+        // DWORD errorNumber = GetLastError();
+        iManager.setInputMode("game01");
+        iManager.setCursorTrackingState(true);
+        iManager.setCursorMode(window.getGLFWWindow(), GLFW_CURSOR_HIDDEN);
+
+        glfwSetCursorPos(window.getGLFWWindow(), x / 2, y / 2);
+    }
+
+    void swapInputModeToGame02()
+    {
+        GPE::InputManager& iManager = GPE::Engine::getInstance()->inputManager;
+        iManager.setInputMode("game02");
+        iManager.setCursorTrackingState(false);
+        iManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR_NORMAL);
+    }
+
     void fixedUpdate(float deltaTime) final
     {
-        rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
+        if (GPE::Engine::getInstance()->inputManager.getInputMode() == "game01")
+        {
+            rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
+        }
         controller.update(deltaTime);
     }
 };

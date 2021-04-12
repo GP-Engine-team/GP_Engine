@@ -54,10 +54,13 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
     ADD_PROCESS(m_reloadableCpp, setLogInstance);
     ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+    ADD_PROCESS(m_reloadableCpp, setContextCurrent);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
-    GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
+    GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow(), true);
+    GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
+                                                           GLFW_CURSOR_NORMAL);
 }
 
 EditorStartup::~EditorStartup()
@@ -114,6 +117,8 @@ void EditorStartup::update()
         auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
         (*syncImgui)(ImGui::GetCurrentContext());
 
+        auto syncGlfw = GET_PROCESS(m_reloadableCpp, setContextCurrent);
+        (*syncGlfw)(GPE::Engine::getInstance()->window.getGLFWWindow());
         startGame();
     }
 }
