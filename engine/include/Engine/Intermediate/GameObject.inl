@@ -1,6 +1,6 @@
 ﻿inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
     : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->add(*this, arg.transformArg)},
-      m_pComponents{}, pOwnerScene{&scene}, m_parent{arg.parent}
+      m_pComponents{}, pOwnerScene{&scene}, m_parent{arg.parent}, m_id{++m_currentID}
 {
 }
 
@@ -206,4 +206,9 @@ inline constexpr bool GameObject::operator==(GameObject const& other) noexcept
 inline bool GameObject::compareTag(const std::string& toCompare) const noexcept
 {
     return (!toCompare.compare(m_tag));
+}
+
+unsigned int GameObject::getID() const noexcept
+{
+    return m_id;
 }

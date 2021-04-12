@@ -39,12 +39,17 @@ namespace GPE RFKNamespace()
         };
 
     protected:
+        // TODO: remove this variable for dataChunk localtion when data chunk will be rework
+        static unsigned int m_currentID;
+
+    protected:
         RFKField(Inspect()) std::string m_name;
         TransformComponent*             m_pTransform;
 
         std::list<Component*> m_pComponents;
         std::string           m_tag{"GameObject"};
         GameObject*           m_parent = nullptr;
+        unsigned int          m_id;
         bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
     public:
@@ -197,6 +202,14 @@ namespace GPE RFKNamespace()
         template <typename... Args>
         GameObject& addChild(Args && ... args) noexcept;
 
+        // TODO: Remove this function when dataChunk will be rework
+        /**
+         * @brief Recursive function that allow user to find gameObject corresponding to Id
+         * @param ID
+         * @return
+         */
+        GameObject* getGameObjectCorrespondingToID(unsigned int ID) noexcept;
+
         [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;
 
         template <typename T>
@@ -207,6 +220,8 @@ namespace GPE RFKNamespace()
         [[nodiscard]] inline constexpr const std::list<Component*>& getComponents() const noexcept;
 
         [[nodiscard]] std::string getAbsolutePath() const noexcept;
+
+        [[nodiscard]] inline unsigned int getID() const noexcept;
 
         inline void setTag(const std::string& newTag) noexcept;
 
