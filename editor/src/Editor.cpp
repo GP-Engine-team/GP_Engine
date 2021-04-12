@@ -16,10 +16,10 @@
 #include "imgui/imgui_internal.h"
 #include <imgui/imgui.h>
 
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
 #include "Editor/ExternalDeclarations.hpp"
 #include "Engine/Core/HotReload/ReloadableCpp.hpp"
+#include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/InspectContext.hpp"
 
 using namespace GPE;
 
@@ -175,11 +175,11 @@ void Editor::renderInspector()
         GPE::InspectContext context;
         GPE::DataInspector::inspect(context, *m_inspectedObject);
 
-        //static float s = 0;
+        // static float s = 0;
 
-        //s += 1.f/30.f;
+        // s += 1.f/30.f;
 
-        //if (s > 9)
+        // if (s > 9)
         //{
         //    rapidxml::xml_document<> doc;
         //    XmlSaver saver(doc);
@@ -296,12 +296,12 @@ void Editor::update()
     renderSceneGraph();
     renderExplorer();
     renderInspector();
+
+    ImGui::ShowDemoWindow(nullptr);
 }
 
 void Editor::render()
 {
-    ImGui::ShowDemoWindow(nullptr);
-
     ImGui::Render();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

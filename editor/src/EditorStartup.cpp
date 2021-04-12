@@ -36,12 +36,14 @@ EditorStartup::EditorStartup()
       }},
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
           GPE::Engine::getInstance()->inputManager.processInput();
+
+          m_editor.update();
+
           if (m_game != nullptr)
               m_game->update(unscaledDeltaTime, deltaTime);
       }},
 
       m_render{[&]() {
-          m_editor.update();
           m_editor.render();
           GPE::Engine::getInstance()->renderer.swapBuffer();
       }},
