@@ -215,7 +215,7 @@ Game::Game()
     loadTreeResource(rm);
 
     //loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
-    loadTree(sm.getCurrentScene()->getWorld(), rm, 10);
+    loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
 
     ts.addScaledTimer(
         FPLogDelay,

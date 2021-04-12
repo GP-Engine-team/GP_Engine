@@ -16,8 +16,11 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         int h, w;
         pRenderers[0]->getWindow()->getSize(w, h);
 
+        glUseProgram(0);
+        glViewport(0, 0, w, h);
+
         pSceneRenderSystems[0]->draw(Engine::getInstance()->resourceManager,
-                                     pSceneRenderSystems[0]->defaultRenderPipeline(), 0);
+                                     pSceneRenderSystems[0]->defaultRenderPipeline());
     };
 }
 

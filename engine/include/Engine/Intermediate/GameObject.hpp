@@ -27,16 +27,16 @@
 
 namespace GPE RFKNamespace()
 {
-template <>
-void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
+    template <>
+    void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
 
-void save(XmlSaver& context, class GameObject& inspected);
-void load(XmlLoader& context, class GameObject& sinspected);
+    void save(XmlSaver & context, class GameObject & inspected);
+    void load(XmlLoader & context, class GameObject & sinspected);
 
-class Scene;
+    class Scene;
 
-class RFKClass(Inspect(false), Serialize(false)) GameObject : public IInspectable
-{
+    class RFKClass(Inspect(false), Serialize(false)) GameObject : public IInspectable
+    {
     public:
         struct CreateArg
         {
@@ -45,24 +45,25 @@ class RFKClass(Inspect(false), Serialize(false)) GameObject : public IInspectabl
             GameObject*                   parent = nullptr;
         };
 
+        // TODO: remove this variable for dataChunk localtion when data chunk will be rework
+        static unsigned int m_currentID;
+
     protected:
-        RFKField(Inspect(), Serialize())             
-        std::string m_name;
+        RFKField(Inspect(), Serialize()) std::string m_name;
 
-        RFKField(Serialize()) 
-        TransformComponent* m_pTransform;
+        RFKField(Serialize()) TransformComponent* m_pTransform;
 
-        RFKField(Serialize())
-        std::list<Component*> m_pComponents;
-        std::string           m_tag{"GameObject"};
-        RFKField(Serialize())
-        GameObject*           m_parent = nullptr;
+        RFKField(Serialize()) std::list<Component*> m_pComponents;
+
+        std::string m_tag{"GameObject"};
+
+        RFKField(Serialize()) GameObject* m_parent = nullptr;
+        unsigned int                      m_id;
         bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
     public:
-        Scene*                 pOwnerScene;
-        RFKField(Serialize())
-        std::list<GameObject*> children = {};
+        Scene*                                       pOwnerScene;
+        RFKField(Serialize()) std::list<GameObject*> children = {};
 
     public:
         inline GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
@@ -210,6 +211,14 @@ class RFKClass(Inspect(false), Serialize(false)) GameObject : public IInspectabl
         template <typename... Args>
         GameObject& addChild(Args && ... args) noexcept;
 
+        // TODO: Remove this function when dataChunk will be rework
+        /**
+         * @brief Recursive function that allow user to find gameObject corresponding to Id
+         * @param ID
+         * @return
+         */
+        GameObject* getGameObjectCorrespondingToID(unsigned int ID) noexcept;
+
         [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;
 
         template <typename T>
@@ -221,13 +230,15 @@ class RFKClass(Inspect(false), Serialize(false)) GameObject : public IInspectabl
 
         [[nodiscard]] std::string getAbsolutePath() const noexcept;
 
+        [[nodiscard]] inline unsigned int getID() const noexcept;
+
         inline void setTag(const std::string& newTag) noexcept;
 
         [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 
-        //void inspect(GPE::InspectContext & context) override;
+        // void inspect(GPE::InspectContext & context) override;
 
         GameObject_GENERATED
     };
@@ -235,4 +246,3 @@ class RFKClass(Inspect(false), Serialize(false)) GameObject : public IInspectabl
 #include "GameObject.inl"
 
 } // namespace )
-

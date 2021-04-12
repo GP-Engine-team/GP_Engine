@@ -14,6 +14,8 @@ File_GENERATED
 using namespace GPE;
 using namespace GPM;
 
+unsigned int GameObject::m_currentID = 0;
+
 GameObject::~GameObject() noexcept
 {
     m_pTransform->destroy();
@@ -300,4 +302,22 @@ void GPE::load(XmlLoader& context, class GameObject& inspected)
         inspected.load(context);
         context.pop();
     }
+}
+
+GameObject* GameObject::getGameObjectCorrespondingToID(unsigned int ID) noexcept
+{
+    if (m_id == ID)
+        return this;
+
+    GameObject* rst = nullptr;
+
+    for (auto&& child : children)
+    {
+        if (rst = child->getGameObjectCorrespondingToID(ID))
+        {
+            return rst;
+        }
+    }
+
+    return nullptr;
 }
