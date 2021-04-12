@@ -27,33 +27,42 @@ namespace GPG RFKNamespace()
 	public:
 		inline MyScript(GPE::GameObject& owner) noexcept
 			: GPE::BehaviourComponent(owner)
-			, input(owner.addComponent<GPE::InputComponent>())
+			, input(&owner.addComponent<GPE::InputComponent>())
 		{
 
 			enableUpdate(true);
-			input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyScript::up);
-			input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyScript::down);
-			input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyScript::right);
-			input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyScript::left);
-			input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyScript::forward);
-			input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyScript::back);
-			input.bindAction("exit", EKeyMode::KEY_DOWN, this, &MyScript::leave);
-			input.bindAction("sprint", EKeyMode::KEY_DOWN, this, &MyScript::sprint);
-
-			speed = 1;
+			input->bindAction("jump", EKeyMode::KEY_DOWN, this, "up");
+			input->bindAction("down", EKeyMode::KEY_DOWN, this, "down");
+			input->bindAction("right", EKeyMode::KEY_DOWN, this, "right");
+			input->bindAction("left", EKeyMode::KEY_DOWN, this, "left");
+			input->bindAction("forward", EKeyMode::KEY_DOWN, this, "forward");
+			input->bindAction("back", EKeyMode::KEY_DOWN, this, "back");
+			input->bindAction("exit", EKeyMode::KEY_DOWN, this, "leave");
+			input->bindAction("sprint", EKeyMode::KEY_DOWN, this, "sprint");
 		}
 
-		MyScript() noexcept = delete;
+		MyScript() noexcept
+        {
+            enableUpdate(true);
+			// TODO : Bind inputs later
+		}
 		MyScript(const MyScript& other) noexcept = delete;
 		MyScript(MyScript&& other) noexcept = default;
 		virtual ~MyScript() noexcept = default;
 		MyScript& operator=(MyScript const& other) noexcept = delete;
 		MyScript& operator=(MyScript&& other) noexcept = delete;
 
-		GPE::InputComponent& input;
+		RFKField(Serialize()) 
+		GPE::InputComponent* input = nullptr;
 
-		RFKField(Serialize(), Inspect(), Slider(0, 1))
-		float speed;
+		RFKField(Serialize(), Inspect(), Slider(0, 10)) 
+		float sprintSpeed = 2;
+
+		RFKField(Serialize(), Inspect(), Slider(0, 10)) 
+		float defaultSpeed = 1;
+
+		RFKField(Serialize())
+		float speed = defaultSpeed;
 
 		void rotate(const GPM::Vec2& deltaDisplacement)
 		{
@@ -100,12 +109,12 @@ namespace GPG RFKNamespace()
 
 		inline void sprint()
 		{
-			speed = 2;
+			speed = sprintSpeed;
 		}
 
 		void update(float deltaTime) final
 		{
-			speed = 1;
+			speed = defaultSpeed;
 
 			if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.00001)
 				rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
@@ -115,4 +124,3 @@ namespace GPG RFKNamespace()
 	};
 } /*namespace GPG*/
 
-File_GENERATED

@@ -2,6 +2,11 @@
 #include "Engine/Engine.hpp"
 #include <Engine/ECS/Component/AudioComponent.hpp>
 
+// Generated
+#include "Generated/AudioComponent.rfk.h"
+
+File_GENERATED
+
 using namespace GPE;
 using namespace std;
 

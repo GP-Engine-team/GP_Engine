@@ -1,12 +1,19 @@
-﻿#include "Engine/ECS/System/BehaviourSystem.hpp"
+﻿#include "Engine/ECS/Component/BehaviourComponent.hpp"
+
+File_GENERATED
+
+#include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "imgui.h"
 #include "Engine/Engine.hpp"
-
-#include "Engine/ECS/Component/BehaviourComponent.hpp"
 
 using namespace GPE;
 
 BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(owner)
+{
+    Engine::getInstance()->behaviourSystem.addBehaviour(this);
+}
+
+BehaviourComponent::BehaviourComponent() noexcept
 {
     Engine::getInstance()->behaviourSystem.addBehaviour(this);
 }

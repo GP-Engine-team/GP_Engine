@@ -13,7 +13,10 @@
 #include <OpenAL_Soft_Debug.hpp>
 #include <unordered_map>
 
-namespace GPE
+// Generated
+#include "Generated/AudioComponent.rfk.h"
+
+namespace GPE RFKNamespace()
 {
 
 struct SourceSettings
@@ -28,14 +31,14 @@ struct SourceSettings
     // SourceSettings(ALfloat pitch, ALfloat gain, ALfloat position[3], ALfloat velocity[3], ALboolean loop = AL_FALSE)
 };
 
-class AudioComponent : public Component
+class RFKClass(Inspect(), Serialize()) AudioComponent : public Component
 {
 public:
     AudioComponent(GameObject& owner);
 
     virtual ~AudioComponent();
 
-    AudioComponent()                            = delete;
+    AudioComponent()                            = default;
     AudioComponent(const AudioComponent& other) = delete;
     AudioComponent& operator=(AudioComponent const& other) = delete;
 
@@ -91,5 +94,7 @@ public:
 
 private:
     [[nodiscard]] SourceData* getSource(const char* name) noexcept;
+
+    AudioComponent_GENERATED
 };
 } // namespace GPE

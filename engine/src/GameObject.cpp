@@ -1,12 +1,15 @@
-﻿#include "Engine/Intermediate/GameObject.hpp"
-
-#include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
+﻿#include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Intermediate/DataChunk.hpp" //DataChunk
 #include "imgui.h"
 #include <iostream>
 #include <istream>
 #include <sstream>
+
+#include "Engine/Intermediate/GameObject.hpp"
+#include "Generated/GameObject.rfk.h"
+
+File_GENERATED
 
 using namespace GPE;
 using namespace GPM;
@@ -271,9 +274,33 @@ void GameObject::inspect(GPE::InspectContext& context)
     for (Component* comp : comps)
     {
         ImGui::PushID(comp);
-        // comp->inspect();
         GPE::DataInspector::inspect(context, *comp);
         ImGui::PopID();
+    }
+}
+
+void GPE::save(XmlSaver& context, GameObject& inspected)
+{
+    const rfk::Class& archetype = GameObject::staticGetArchetype();
+
+    // TODO : Replace "gameObject" by unique name.
+    context.push("gameObject", archetype.name, archetype.id);
+
+    inspected.save(context);
+
+    context.pop();
+}
+
+void GPE::load(XmlLoader& context, class GameObject& inspected)
+{
+    const rfk::Class& archetype = GameObject::staticGetArchetype();
+
+    // TODO : Replace "gameObject" by unique name.
+    XmlLoader::LoadInfo info{"gameObject", archetype.name, archetype.id};
+    if (context.goToSubChild(info))
+    {
+        inspected.load(context);
+        context.pop();
     }
 }
 

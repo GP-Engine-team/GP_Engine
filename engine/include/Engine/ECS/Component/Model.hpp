@@ -59,7 +59,7 @@ namespace GPE RFKNamespace()
         Model(Model && other) noexcept;
         virtual ~Model();
 
-        Model()        = delete;
+        Model()        = default;
         Model& operator=(Model const& other) = delete;
         Model& operator                      =(Model&& other);
 
@@ -71,4 +71,3 @@ namespace GPE RFKNamespace()
     };
 } // namespace )
 
-File_GENERATED

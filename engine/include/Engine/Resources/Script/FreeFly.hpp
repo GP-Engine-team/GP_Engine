@@ -9,7 +9,6 @@
 #include "Engine/ECS/Component/BehaviourComponent.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
 #include <iostream>
@@ -28,13 +27,13 @@ public:
         enableUpdate(true);
         InputComponent& input = owner.addComponent<InputComponent>();
 
-        input.bindAction("up", EKeyMode::KEY_DOWN, this, &FreeFly::up);
-        input.bindAction("down", EKeyMode::KEY_DOWN, this, &FreeFly::down);
-        input.bindAction("right", EKeyMode::KEY_DOWN, this, &FreeFly::right);
-        input.bindAction("left", EKeyMode::KEY_DOWN, this, &FreeFly::left);
-        input.bindAction("forward", EKeyMode::KEY_DOWN, this, &FreeFly::forward);
-        input.bindAction("back", EKeyMode::KEY_DOWN, this, &FreeFly::back);
-        input.bindAction("sprint", EKeyMode::KEY_DOWN, this, &FreeFly::sprint);
+        input.bindAction("up", EKeyMode::KEY_DOWN, this, "up");
+        input.bindAction("down", EKeyMode::KEY_DOWN, this, "down");
+        input.bindAction("right", EKeyMode::KEY_DOWN, this, "right");
+        input.bindAction("left", EKeyMode::KEY_DOWN, this, "left");
+        input.bindAction("forward", EKeyMode::KEY_DOWN, this, "forward");
+        input.bindAction("back", EKeyMode::KEY_DOWN, this, "back");
+        input.bindAction("sprint", EKeyMode::KEY_DOWN, this, "sprint");
     }
 
     void rotate(const GPM::Vec2& deltaDisplacement)
@@ -50,49 +49,48 @@ public:
         }
     }
 
+    RFKMethod()
     inline void up()
     {
         getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * m_speed);
     }
 
+    RFKMethod()
     inline void down()
     {
         getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -m_speed);
     }
 
+    RFKMethod()
     inline void forward()
     {
         getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -m_speed);
     }
 
+    RFKMethod()
     inline void back()
     {
         getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * m_speed);
     }
 
+    RFKMethod()
     inline void left()
     {
         getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -m_speed);
     }
 
+    RFKMethod()
     inline void right()
     {
         getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * m_speed);
     }
 
+    RFKMethod()
     inline void sprint()
     {
         m_speed = 2;
     }
 
-    void update(float deltaTime) final
-    {
-        m_speed = 1;
-
-        if (Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.1)
-        {
-            rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
-        }
-    }
+    void update(float deltaTime) final;
 };
 } // namespace GPE

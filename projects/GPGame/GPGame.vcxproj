@@ -24,10 +24,13 @@
     <ClInclude Include="include\myFpsScript.hpp" />
     <ClInclude Include="include\myFreeFlyScript.hpp" />
     <ClInclude Include="include\myFreeFlyWithCollisionScript.hpp" />
+    <ClInclude Include="include\myScript.hpp" />
     <ClInclude Include="include\SingletonsSync.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\myFpsScript.cpp" />
+    <ClCompile Include="src\myScript.cpp" />
     <ClCompile Include="src\SingletonsSync.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -174,7 +177,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;glfw3.lib;assimp-vc142-mt.lib;zlibstatic.lib;OpenAL32.lib;RefurekuDebug.lib;clang.lib;KodgenDebug.lib;RefurekuGeneratorLibDebug.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GPEngine.lib;glfw3.lib;assimp-vc142-mt.lib;zlibstatic.lib;OpenAL32.lib;RefurekuDebug.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration)\;$(GPGameDir)\x64\Debug;$(GPEngineDir)\third_party\libDebug\Refureku;$(GPEngineDir)\third_party\libDebug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
@@ -202,7 +205,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;glfw3.lib;assimp-vc142-mt.lib;zlibstatic.lib;OpenAL32.lib;RefurekuRelease.lib;clang.lib;KodgenRelease.lib;RefurekuGeneratorLibRelease.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GPEngine.lib;glfw3.lib;assimp-vc142-mt.lib;zlibstatic.lib;OpenAL32.lib;RefurekuRelease.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\lib;$(SolutionDir)bin\$(Configuration)\;$(GPGameDir)\x64\Debug;$(GPEngineDir)\third_party\libRelease\Refureku;$(GPEngineDir)\third_party\libRelease\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>

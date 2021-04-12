@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "Engine/Core/Debug/Log.hpp"
+#include <Imgui/imgui.h>
 #include <filesystem>
 #include <memory>
 #include <vector>

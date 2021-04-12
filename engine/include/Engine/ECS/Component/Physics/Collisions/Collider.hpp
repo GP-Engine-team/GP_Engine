@@ -8,16 +8,19 @@
 #include <Engine/ECS/Component/Component.hpp>
 #include <PxShape.h>
 
-namespace GPE
+// Generated
+#include "Generated/Collider.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class Collider : public Component
+class RFKClass(Inspect(), Serialize()) Collider : public Component
 {
 public:
     Collider(GameObject& owner) noexcept : Component(owner)
     {
     }
 
-    Collider() noexcept                      = delete;
+    Collider() noexcept                      = default;
     Collider(const Collider& other) noexcept = delete;
     Collider(Collider&& other) noexcept      = default;
     Collider& operator=(Collider const& other) noexcept = delete;
@@ -30,5 +33,7 @@ public:
     physx::PxMaterial* material  = nullptr;
     bool               isTrigger = false;
     bool               isVisible = false;
+
+    Collider_GENERATED
 };
 } // namespace GPE

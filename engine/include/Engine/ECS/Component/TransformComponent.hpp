@@ -23,9 +23,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class GameObject;
-
-    class RFKClass(ComponentGen) TransformComponent : public Component
+    class RFKClass(ComponentGen, Serialize()) TransformComponent : public Component
     {
     public:
         struct CreateArg
@@ -36,17 +34,19 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect()) GPM::SplitTransform m_spaceAttribut;
-        GPM::Transform                          m_transform = GPM::toTransform(m_spaceAttribut);
-        bool                                    m_isDirty   = false;
+        RFKField(Inspect(), Serialize()) 
+        GPM::SplitTransform m_spaceAttribut;
+        GPM::Transform      m_transform = GPM::toTransform(m_spaceAttribut);
+        bool                m_isDirty   = false;
 
     public:
+        RFKField(Serialize()) 
         Event OnUpdate;
 
     public:
         TransformComponent(GameObject & refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
 
-        TransformComponent() noexcept                                = delete;
+        TransformComponent() noexcept                                = default;
         TransformComponent(const TransformComponent& other) noexcept = delete;
         TransformComponent(TransformComponent && other) noexcept     = default;
         virtual ~TransformComponent() noexcept                       = default;
@@ -115,4 +115,3 @@ namespace GPE RFKNamespace()
 
 } // namespace )
 
-File_GENERATED

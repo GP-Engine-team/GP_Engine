@@ -12,3 +12,6 @@ extern "C" GAME_API GPE::Log & getLogInstance();
 
 extern "C" GAME_API void setContextCurrent(GLFWwindow* window);
 extern "C" GAME_API void setImguiCurrentContext(struct ImGuiContext* ctx);
+
+extern "C" GAME_API void saveCurrentScene(XmlSaver& context);
+extern "C" GAME_API void loadCurrentScene(XmlLoader& context);

@@ -7,6 +7,9 @@
 #include <filesystem> //std::path
 #include <sstream>    //std::sstream, std::getline
 
+#include "Engine/Serialization/xml/xmlLoader.hpp"
+#include "Engine/Serialization/xml/xmlSaver.hpp"
+
 using namespace GPE;
 
 Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*this))
@@ -15,11 +18,6 @@ Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*t
     {
         // importeResource(elem.first.c_str());
     }
-}
-
-Scene::~Scene() noexcept
-{
-    // DataChunk<GameObject>::getInstance()->destroy(m_pWorld);
 }
 
 GameObject* Scene::getGameObject(const std::string& path) noexcept
@@ -83,4 +81,16 @@ void Scene::removeLoadedResourcePath(const char* path) noexcept
         m_loadedResourcesPath.erase(path);
         Log::getInstance()->log(stringFormat("Resource remove from scene \"%s\" with path : %s", m_name.c_str(), path));
     }
+}
+
+void Scene::save(XmlSaver& context) const
+{
+    GPE::save(context, m_pWorld, XmlSaver::SaveInfo{"m_pWorld", "GameObject", 0});
+}
+
+void Scene::load(XmlLoader& context)
+{
+    DataChunk<GameObject>::getInstance()->destroy(m_pWorld);
+    m_pWorld = nullptr;
+    GPE::load(context, m_pWorld, XmlLoader::LoadInfo{"m_pWorld", "GameObject", 0});
 }

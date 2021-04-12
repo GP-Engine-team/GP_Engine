@@ -16,8 +16,10 @@ struct GLFWwindow;
 
 namespace GPE
 {
-class Scene;
-class IInspectable;
+	class Scene;
+    class IInspectable;
+	class GameObject;
+    class ReloadableCpp;
 } // namespace GPE
 
 namespace Editor
@@ -34,9 +36,12 @@ private:
     GPE::IInspectable* m_inspectedObject;
     bool               m_showAppStyleEditor;
 
-    GPE::Scene& loadDefaultScene() const;
+public:
+    GPE::ReloadableCpp* m_reloadableCpp = nullptr;
 
 private:
+    GPE::Scene& loadDefaultScene() const;
+
     void setupDearImGui();
 
     void renderLog();
