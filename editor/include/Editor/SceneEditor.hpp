@@ -2,17 +2,27 @@
 
 #include "Engine/Intermediate/Viewers/SceneViewer.hpp"
 
+namespace GPE
+{
+class IInspectable;
+}
+
 namespace Editor
 {
 
 class SceneEditor
 {
+
 public:
-	GPE::SceneViewer sceneViewer;
+	GPE::SceneViewer view;
 
-	SceneEditor(GPE::Scene& scene);
+private:
+	void checkCursor(GPE::IInspectable*& inspectedObject);
 
-	void render() const;
+public:
+	SceneEditor		(GPE::Scene& scene);
+
+	void render		(GPE::IInspectable*& inspectedObject);
 };
 
 }
