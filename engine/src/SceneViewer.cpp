@@ -6,10 +6,11 @@
 #include "Engine/Resources/Script/FreeFly.hpp"
 
 #include "glad/glad.h"
-#include <GLFW/glfw3.h>
 
 namespace GPE
 {
+
+#define INV_DOWN_SAMPLING_COEF .25f
 
 void SceneViewer::initializeFramebuffer()
 {
@@ -50,6 +51,48 @@ void SceneViewer::initializeFramebuffer()
     }
 }
 
+
+void SceneViewer::initializePickingFBO()
+{
+    // low sampling (we don't need 4K texture to select element)
+    FBOIDwidth  = static_cast<int>(ceilf(width  * INV_DOWN_SAMPLING_COEF));
+    FBOIDheight = static_cast<int>(ceilf(height * INV_DOWN_SAMPLING_COEF));
+
+    // Create FBO
+    { // Initialize screen texture
+        glGenTextures(1, &FBOIDtextureID);
+        glBindTexture(GL_TEXTURE_2D, FBOIDtextureID);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, FBOIDwidth, FBOIDheight, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    { // Initialize depth buffer
+        glGenRenderbuffers(1u, &FBOIDdepthID);
+        glBindRenderbuffer(GL_RENDERBUFFER, FBOIDdepthID);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, FBOIDwidth, FBOIDheight);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    }
+
+    { // Initialize the framebuffer itself
+        glGenFramebuffers(1, &FBOIDframebufferID);
+        glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, FBOIDtextureID, 0);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, FBOIDdepthID);
+        GPE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
+                   "An error occured during this framebuffer's generation");
+    }
+}
+
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     : cameraOwner    {viewed, {"Editor camera", {}, &viewed.getWorld()}},
       freeFly        {cameraOwner.addComponent<FreeFly>()},
@@ -59,6 +102,11 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
       textureID      {0u},
       depthStencilID {0u},
       framebufferID  {0u},
+      FBOIDtextureID {0u},
+      FBOIDdepthID   {0u},
+      FBOIDframebufferID{0u},
+      FBOIDwidth     {static_cast<int>(ceilf(1.f / INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight    {static_cast<int>(ceilf(1.f / INV_DOWN_SAMPLING_COEF))},
       width          {width_},
       height         {height_},
       m_captureInputs{false}
@@ -67,6 +115,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
                                                        "./resources/shaders/fGameObjectIdentifier.fs");
     initializeFramebuffer();
+    initializePickingFBO();
 
     freeFly.enableFixedUpdate(m_captureInputs);
     freeFly.setActive(m_captureInputs);
@@ -81,7 +130,45 @@ SceneViewer::~SceneViewer()
     glDeleteFramebuffers(1, &framebufferID);
     glDeleteTextures(1, &textureID);
     glDeleteRenderbuffers(1, &depthStencilID);
+
+    glDeleteFramebuffers(1, &FBOIDframebufferID);
+    glDeleteTextures(1, &FBOIDtextureID);
+    glDeleteRenderbuffers(1, &FBOIDdepthID);
 }
+
+
+unsigned int SceneViewer::getHoveredGameObjectID() const
+{
+    // Render the picking texture in the identifier FBO
+    Shader& shaderGameObjectIdentifier = *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
+
+    glUseProgram(shaderGameObjectIdentifier.getID());
+    glViewport(0, 0, FBOIDwidth, FBOIDheight);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
+
+    SceneRenderSystem renderSys{pScene->sceneRenderer};
+    renderSys.draw(Engine::getInstance()->resourceManager, renderSys.gameObjectIdentifierPipeline());
+
+    // Find the hovered game object, if any
+    unsigned int pixel = 0u;
+
+    const ImVec2 currentScreenStart = ImGui::GetCursorScreenPos();
+    const ImVec2 cursPos            = ImGui::GetMousePos();
+    const ImVec2 cursorRelativePos   {ceilf((cursPos.x - currentScreenStart.x) * INV_DOWN_SAMPLING_COEF),
+                                      ceilf((cursPos.y - currentScreenStart.y) * INV_DOWN_SAMPLING_COEF)};
+    
+    const int x = static_cast<GLint>(cursorRelativePos.x);
+    const int y = height - static_cast<GLint>(cursorRelativePos.y);
+    glReadPixels((cursPos.x - currentScreenStart.x) / 4,
+                 (height - cursPos.y + currentScreenStart.y) / 4,
+                 1u, 1u, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0u);
+
+    return pixel;
+}
+
 
 void SceneViewer::resize(int width_, int height_)
 {
@@ -90,6 +177,7 @@ void SceneViewer::resize(int width_, int height_)
         return;
     }
 
+    // ==== Update screen's texture framebuffer ====
     width  = width_;
     height = height_;
 
@@ -101,9 +189,22 @@ void SceneViewer::resize(int width_, int height_)
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, width, height);
 
     camera.setAspect(width / (float)height);
+
+
+    // ==== Update selection framebuffer ====
+    // Low sampling (we don't need 4K texture to select element)
+    FBOIDwidth  = static_cast<int>(ceilf(width_  * INV_DOWN_SAMPLING_COEF));
+    FBOIDheight = static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF));
+
+    // Resize texture and depth buffers
+    glBindTexture(GL_TEXTURE_2D, FBOIDtextureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, FBOIDwidth, FBOIDheight, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, FBOIDdepthID);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, FBOIDwidth, FBOIDheight);
 }
 
-void SceneViewer::bindScene(Scene& scene) noexcept
+void SceneViewer::bindScene(Scene& scene)
 {
     if (pScene == &scene)
     {
@@ -135,143 +236,6 @@ void SceneViewer::render() const
     glViewport(0, 0, width, height);
 
     pScene->sceneRenderer.draw(Engine::getInstance()->resourceManager, pScene->sceneRenderer.defaultRenderPipeline());
-}
-
-unsigned int SceneViewer::getIDOfSelectedGameObject() const
-{
-    const int downScaleSamplingC = 4;
-    const int downScaleSampling =
-        (height >= downScaleSamplingC && width >= downScaleSamplingC) * (downScaleSamplingC - 1) +
-        1; // 1 or downScaleSamplingC
-
-    GLuint FBOIDtextureID     = 0;
-    GLuint FBOIDdepthID       = 0;
-    GLuint FBOIDframebufferID = 0;
-
-    // low sampling (we don't need 4K texture to select element)aa
-    const int FBOIDwidth  = width / downScaleSampling;
-    const int FBOIDheight = height / downScaleSampling;
-
-    // Create FBO
-    {
-        // Initialize screen texture
-        glGenTextures(1, &FBOIDtextureID);
-        glBindTexture(GL_TEXTURE_2D, FBOIDtextureID);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, FBOIDwidth, FBOIDheight, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, nullptr);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    { // Initialize depth-stencil buffer
-        glGenRenderbuffers(1u, &FBOIDdepthID);
-        glBindRenderbuffer(GL_RENDERBUFFER, FBOIDdepthID);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, FBOIDwidth, FBOIDheight);
-
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    }
-
-    { // Initialize the framebuffer itself
-        glGenFramebuffers(1, &FBOIDframebufferID);
-        glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, FBOIDtextureID, 0);
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, FBOIDdepthID);
-        GPE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
-                   "An error occured during this framebuffer's generation");
-    }
-
-    Shader& shaderGameObjectIdentifier = *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
-
-    glUseProgram(shaderGameObjectIdentifier.getID());
-    glViewport(0, 0, FBOIDwidth, FBOIDheight);
-
-    // In capture input
-    pScene->sceneRenderer.draw(
-        Engine::getInstance()->resourceManager,
-        [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
-           std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
-           std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
-           std::vector<SceneRenderSystem::DebugShape>& debugShape,
-           std::vector<SceneRenderSystem::DebugLine>&  debugLine) {
-            glEnable(GL_DEPTH_TEST);
-            glDepthFunc(GL_LEQUAL);
-
-            glClearColor(0.f, 0.f, 0.f, 0.f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            const Frustum camFrustum = pCameras[0]->getFrustum();
-
-            Shader& shaderGameObjectIdentifier =
-                *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
-
-            /*Display opaque element*/
-            {
-                const GLint idLocation = glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id");
-
-                for (auto&& pSubModel : pOpaqueSubModels)
-                {
-                    if (!rs.isOnFrustum(camFrustum, pSubModel))
-                        continue;
-
-                    glUniform1ui(idLocation, pSubModel->pModel->getOwner().getID());
-
-                    rs.tryToBindMesh(pSubModel->pMesh->getID());
-                    rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
-
-                    shaderGameObjectIdentifier.setMat4("projectViewModelMatrix",
-                                                       (pCameras[0]->getProjectionView() *
-                                                        pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                                                           .e);
-                    rs.drawModelPart(*pSubModel);
-                }
-
-                for (auto&& pSubModel : pTransparenteSubModels)
-                {
-                    if (!rs.isOnFrustum(camFrustum, pSubModel))
-                        continue;
-
-                    glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"),
-                                 pSubModel->pModel->getOwner().getID());
-
-                    rs.tryToBindMesh(pSubModel->pMesh->getID());
-                    rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
-
-                    shaderGameObjectIdentifier.setMat4("projectViewModelMatrix",
-                                                       (pCameras[0]->getProjectionView() *
-                                                        pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                                                           .e);
-                    rs.drawModelPart(*pSubModel);
-                }
-            }
-            rs.resetCurrentRenderPassKey();
-        });
-    glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
-    unsigned int pixel = 0;
-
-    const ImVec2 currentScreenStart = ImGui::GetCursorScreenPos();
-    const ImVec2 cursPos            = ImGui::GetMousePos();
-
-    glReadPixels((cursPos.x - currentScreenStart.x) / downScaleSampling,
-                 (height - cursPos.y + currentScreenStart.y) / downScaleSampling, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT,
-                 &pixel);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0u);
-
-    // Delete FBO
-    {
-        glDeleteFramebuffers(1, &FBOIDframebufferID);
-        glDeleteTextures(1, &FBOIDtextureID);
-        glDeleteRenderbuffers(1, &FBOIDdepthID);
-    }
-
-    return pixel;
 }
 
 void SceneViewer::captureInputs(bool shouldCapture)
