@@ -1,7 +1,5 @@
 ﻿#include "Editor/Editor.hpp"
 
-#include <string>
-
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
@@ -13,13 +11,7 @@
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
-#include "imgui/imgui_internal.h"
 #include <imgui/imgui.h>
-
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
-
-using namespace GPE;
 
 // Hint to use GPU if available
 extern "C"
@@ -30,6 +22,8 @@ extern "C"
 
 namespace Editor
 {
+
+using namespace GPE;
 
 /* ========================== Private methods ========================== */
 GPE::Scene& Editor::loadDefaultScene() const
@@ -120,52 +114,7 @@ void Editor::renderGameControlBar()
 
 void Editor::renderLevelEditor()
 {
-    // Use the whole window content
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
-
-    ImGui::Begin(m_sceneEditor.pScene->getWorld().getName().c_str(), nullptr, ImGuiWindowFlags_NoBackground);
-
-    if (ImGui::IsMouseClicked(0))
-    {
-        bool hovered = ImGui::IsWindowHovered();
-        m_sceneEditor.captureInputs(hovered);
-
-        if (hovered)
-        {
-            if (unsigned int idSelectedGameObect = m_sceneEditor.getIDOfSelectedGameObject())
-            {
-                if (GameObject* const selectionGameObject = Engine::getInstance()
-                                                                ->sceneManager.getCurrentScene()
-                                                                ->getWorld()
-                                                                .getGameObjectCorrespondingToID(idSelectedGameObect))
-                {
-                    m_inspectedObject = selectionGameObject;
-                }
-                else
-                {
-                    GPE::Log::getInstance()->logError(
-                        stringFormat("No gameObject corresponding to the id %i", idSelectedGameObect));
-                }
-            }
-            // m_sceneEditor.captureInputs();
-        }
-
-        // else
-        //{
-        //    m_sceneEditor.releaseInputs();
-        //}
-    }
-
-    const ImVec2 size{ImGui::GetContentRegionAvail()};
-
-    m_sceneEditor.resize(static_cast<int>(size.x), static_cast<int>(size.y));
-    m_sceneEditor.render();
-
-    ImGui::Image((void*)(intptr_t)m_sceneEditor.textureID, size, {0.f, 1.f}, {1.f, 0.f});
-    ImGui::End();
-
-    ImGui::PopStyleVar(2);
+   m_sceneEditor.render(m_inspectedObject);
 }
 
 void Editor::renderInspector()
@@ -260,7 +209,7 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
 
 void Editor::setSceneInEdition(GPE::Scene& scene)
 {
-    m_sceneEditor.bindScene(scene);
+    m_sceneEditor.view.bindScene(scene);
 }
 
 void Editor::update()
@@ -294,7 +243,7 @@ void Editor::render()
     ImGui::Render();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, m_sceneEditor.width, m_sceneEditor.height);
+    glViewport(0, 0, m_sceneEditor.view.width, m_sceneEditor.view.height);
     glClearColor(1.f, 1.f, 1.f, .0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
