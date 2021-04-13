@@ -100,6 +100,7 @@ public:
     void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
+    RenderPipeline gameObjectIdentifierPipeline() const noexcept;
     void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,

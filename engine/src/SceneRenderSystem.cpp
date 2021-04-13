@@ -6,7 +6,6 @@
 #include <memory>
 
 #include "Engine/Intermediate/GameObject.hpp"
-//#include "Engine/Core/System/TimeSystem.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/Tools/BranchPrediction.hpp"
@@ -446,6 +445,71 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
         }
     };
 }
+
+
+SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipeline() const noexcept
+{
+    return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
+           std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
+           std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
+           std::vector<SceneRenderSystem::DebugShape>& debugShape,
+           std::vector<SceneRenderSystem::DebugLine>&  debugLine)
+    {
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+
+        glClearColor(0.f, 0.f, 0.f, 0.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        const Frustum camFrustum = pCameras[0]->getFrustum();
+
+        Shader& shaderGameObjectIdentifier =
+            *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
+
+        /*Display opaque element*/
+        {
+            const GLint idLocation = glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id");
+
+            for (auto&& pSubModel : pOpaqueSubModels)
+            {
+                if (!rs.isOnFrustum(camFrustum, pSubModel))
+                    continue;
+
+                glUniform1ui(idLocation, pSubModel->pModel->getOwner().getID());
+
+                rs.tryToBindMesh(pSubModel->pMesh->getID());
+                rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
+
+                shaderGameObjectIdentifier.setMat4("projectViewModelMatrix",
+                                                    (pCameras[0]->getProjectionView() *
+                                                    pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                                                        .e);
+                rs.drawModelPart(*pSubModel);
+            }
+
+            for (auto&& pSubModel : pTransparenteSubModels)
+            {
+                if (!rs.isOnFrustum(camFrustum, pSubModel))
+                    continue;
+
+                glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"),
+                                pSubModel->pModel->getOwner().getID());
+
+                rs.tryToBindMesh(pSubModel->pMesh->getID());
+                rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
+
+                shaderGameObjectIdentifier.setMat4("projectViewModelMatrix",
+                                                    (pCameras[0]->getProjectionView() *
+                                                    pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                                                        .e);
+                rs.drawModelPart(*pSubModel);
+            }
+        }
+
+        rs.resetCurrentRenderPassKey();
+    };
+}
+
 
 void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
 {
