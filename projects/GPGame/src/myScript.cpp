@@ -1,3 +1,3 @@
-#include "myFpsScript.hpp"
+#include "myScript.hpp"
 
 File_GENERATED
