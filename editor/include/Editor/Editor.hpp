@@ -16,9 +16,11 @@ struct GLFWwindow;
 
 namespace GPE
 {
+
 class Scene;
 class IInspectable;
-} // namespace GPE
+
+}
 
 namespace Editor
 {
