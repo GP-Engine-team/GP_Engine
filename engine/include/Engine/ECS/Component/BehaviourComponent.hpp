@@ -17,8 +17,9 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BehaviourComponent : public Component
     {
     protected:
-        RFKField(Inspect(), Serialize()) bool m_isUpdated      = false;
-        RFKField(Inspect(), Serialize()) bool m_isFixedUpdated = false;
+        RFKField(Inspect(), Serialize()) bool m_useUpdate      = false;
+        RFKField(Inspect(), Serialize()) bool m_useFixedUpdate = false;
+        RFKField(Inspect(), Serialize()) bool m_useOnGUI       = false;
 
     public:
         BehaviourComponent(GameObject & owner) noexcept;
@@ -42,12 +43,15 @@ namespace GPE RFKNamespace()
         {
         }
 
-        void enableUpdate(bool flag) noexcept;
+        virtual void onGUI()
+        {
+        }
 
+        void enableUpdate(bool flag) noexcept;
         void enableFixedUpdate(bool flag) noexcept;
+        void enableOnGUI(bool flag) noexcept;
 
         BehaviourComponent_GENERATED
     };
 
 } // namespace )
-

@@ -24,4 +24,31 @@ inline void PopEnabled()
     PopStyleVar();
 }
 
+enum class EHAlign
+{
+    Left   = 0,  // multiply by 0.01 = 0.f
+    Middle = 50, // multiply by 0.01 = 0.5
+    Right  = 100 // multiply by 0.01 = 1.f
+};
+
+enum class EVAlign
+{
+    Top    = 0,  // multiply by 0.01 = 0.f
+    Middle = 50, // multiply by 0.01 = 0.5
+    Bottom = 100 // multiply by 0.01 = 1.f
+};
+
+inline void SetNextElementLayout(float xWindowSizeRatio, float yWindowSizeRatio, const ImVec2& size,
+                                 EHAlign hItemAlign = EHAlign::Middle, EVAlign vItemAlign = EVAlign::Middle)
+{
+    ImGui::SetCursorPosX(ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+                         (ImGui::GetWindowSize().x - ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) *
+                             xWindowSizeRatio -
+                         size.x * (int)hItemAlign * 0.01f);
+    ImGui::SetCursorPosY(ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y +
+                         (ImGui::GetWindowSize().y - ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y) *
+                             yWindowSizeRatio -
+                         size.y * (int)vItemAlign * 0.01f);
+}
+
 } // namespace ImGui

@@ -44,7 +44,7 @@ public:
 
 protected:
     Engine()
-        : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
+        : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{window}, inputManager{window},
           behaviourSystem{}, resourceManager{}, renderSystem{}, sceneManager{}, physXSystem{}, soundSystem{}
     {
         renderSystem.addRenderer(&renderer);

@@ -1,19 +1,55 @@
 ﻿#include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 
+#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+
+#include <glad/glad.h>
+
+#include <GLFW/glfw3.h>
+
+#include <imgui.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/imgui_internal.h>
 #include <string>
 
 using namespace GPE;
+
+static void initDearImGui(GLFWwindow* window)
+{
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 460");
+}
+
+TimeSystem::TimeSystem(Window& window)
+{
+    initDearImGui(window.getGLFWWindow());
+}
 
 void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double fixedDeltaTime)> fixedUpdateFunction,
                         std::function<void(double unscaledDeltaTime, double deltaTime)>           updateFunction,
                         std::function<void()> renderFunction) noexcept
 {
+    /*Update imGui frames*/
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
     /*unfixed update*/
     updateFunction(m_unscaledDeltaTime, m_deltaTime);
 
     /*render the current frame*/
     renderFunction();
+
+    ImGui::Render();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     /*Prepar the next frame*/
     m_tempTime          = std::chrono::steady_clock::now();

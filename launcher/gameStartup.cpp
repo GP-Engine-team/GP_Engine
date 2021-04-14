@@ -12,10 +12,24 @@ using namespace GPE;
 GameStartup::GameStartup()
 {
     setGameEngineInstance(*GPE::Engine::getInstance());
+    setContextCurrent(GPE::Engine::getInstance()->window.getGLFWWindow());
+    setImguiCurrentContext(ImGui::GetCurrentContext());
+
     m_game = createGameInstance();
 
     GPE_ASSERT(m_game != nullptr, "m_game should be valid since we're running the game.");
     gameFunctionsPtr.update = [&](double a, double b) {
+        int h = 0, w = 0;
+        Engine::getInstance()->window.getSize(w, h);
+        ImGui::SetNextWindowSize(ImVec2{(float)w, (float)h});
+        ImGui::SetNextWindowPos({0.f, 0.f});
+        ImGui::Begin("UI", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration);
+
+        // Draw GUI
+        Engine::getInstance()->behaviourSystem.onGUI();
+
+        ImGui::End();
+
         GPE::Engine::getInstance()->inputManager.processInput();
         m_game->update(a, b);
     };

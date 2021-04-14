@@ -1,7 +1,7 @@
 ﻿
+#include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/ECS/Component/BehaviourComponent.hpp"
-#include "Engine/ECS/System/BehaviourSystem.hpp"
 
 using namespace GPE;
 
@@ -36,6 +36,24 @@ void BehaviourSystem::removeFixedUpdate(BehaviourComponent& fixedUpdateFunctionT
         {
             std::swap(function, m_fixedUpdateFunctions.back());
             m_fixedUpdateFunctions.pop_back();
+            return;
+        }
+    }
+}
+
+void BehaviourSystem::addOnGUI(BehaviourComponent& fixedUpdateFunction) noexcept
+{
+    m_onGUIFunctions.emplace_back(&fixedUpdateFunction);
+}
+
+void BehaviourSystem::removeOnGUI(BehaviourComponent& functionToRemove) noexcept
+{
+    for (auto&& function : m_onGUIFunctions)
+    {
+        if (unlikely(function == &functionToRemove))
+        {
+            std::swap(function, m_onGUIFunctions.back());
+            m_onGUIFunctions.pop_back();
             return;
         }
     }
@@ -79,6 +97,14 @@ void BehaviourSystem::start() const noexcept
     for (auto&& behaviour : m_pBehaviours)
     {
         behaviour->start();
+    }
+}
+
+void BehaviourSystem::onGUI() const noexcept
+{
+    for (auto&& behaviour : m_onGUIFunctions)
+    {
+        behaviour->onGUI();
     }
 }
 
