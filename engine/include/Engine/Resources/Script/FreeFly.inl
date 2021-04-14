@@ -16,7 +16,7 @@ inline void FreeFly::forward()
 }
 
 
-inline void FreeFly::backward()
+inline void FreeFly::back()
 {
     getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * m_speed);
 }
