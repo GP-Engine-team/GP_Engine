@@ -161,15 +161,15 @@ void Editor::renderLevelEditor()
     m_sceneEditor.resize(static_cast<int>(size.x), static_cast<int>(size.y));
     m_sceneEditor.render();
 
-    auto pos = ImGui::GetCursorPos();
+    // auto pos = ImGui::GetCursorPos();
     ImGui::Image((void*)(intptr_t)m_sceneEditor.textureID, size, {0.f, 1.f}, {1.f, 0.f});
-
+    /*
     auto win = ImGui::GetCurrentWindow();
     ImGui::SetCursorPos(pos);
 
     // Draw GUI
     Engine::getInstance()->behaviourSystem.onGUI();
-
+    */
     ImGui::End();
 
     ImGui::PopStyleVar(2);
@@ -284,6 +284,11 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
 
 void Editor::update()
 {
+    // Initialize a new frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
     // Start drawing
     if (m_showAppStyleEditor)
     {
@@ -305,6 +310,14 @@ void Editor::update()
 
 void Editor::render()
 {
+    ImGui::Render();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, m_sceneEditor.width, m_sceneEditor.height);
+    glClearColor(1.f, 1.f, 1.f, .0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 bool Editor::isRunning()

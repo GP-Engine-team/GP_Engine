@@ -45,8 +45,6 @@ protected:
     std::priority_queue<TimerTask, std::vector<TimerTask>, std::greater<TimerTask>> m_unscaledTimerQueue;
 
 public:
-    TimeSystem(class Window& window);
-
     /**
      * @brief Update the time, update system and renderSystem. The update function will call with accumulator to be call
      * a fixed time by second

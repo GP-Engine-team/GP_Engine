@@ -35,6 +35,9 @@ private:
     Editor             m_editor;
     AbstractGame*      m_game;
 
+protected:
+    GLFWwindow* initDearImGui(GLFWwindow* window);
+
 public:
     EditorStartup();
     virtual ~EditorStartup() final;

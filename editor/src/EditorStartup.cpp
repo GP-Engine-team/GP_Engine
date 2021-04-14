@@ -16,6 +16,21 @@
 namespace Editor
 {
 
+GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
+{
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 460");
+
+    auto c = ImGui::GetCurrentContext();
+
+    return window;
+}
+
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
           if (m_game != nullptr)
@@ -29,12 +44,12 @@ EditorStartup::EditorStartup()
           if (m_game != nullptr)
               m_game->update(unscaledDeltaTime, deltaTime);
       }},
-
       m_render{[&]() {
           m_editor.render();
+
           GPE::Engine::getInstance()->renderer.swapBuffer();
       }},
-      m_reloadableCpp{gameDllPath}, m_editor{GPE::Engine::getInstance()->window.getGLFWWindow(),
+      m_reloadableCpp{gameDllPath}, m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
                                              GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
       m_game{nullptr}
 {
@@ -44,7 +59,7 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
     ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
     ADD_PROCESS(m_reloadableCpp, setLogInstance);
-    ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+    // ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
     ADD_PROCESS(m_reloadableCpp, saveCurrentScene);
     ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
 
@@ -107,8 +122,8 @@ void EditorStartup::update()
         auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
         (*sync)(*GPE::Engine::getInstance());
 
-        auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
-        (*syncImgui)(ImGui::GetCurrentContext());
+        // auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+        // (*syncImgui)(ImGui::GetCurrentContext());
 
         startGame();
     }

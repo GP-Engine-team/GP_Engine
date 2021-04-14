@@ -24,7 +24,6 @@ protected:
     GPE::TimeSystem&          ts       = GPE::Engine::getInstance()->timeSystem;
     GPE::InputManager&        iManager = GPE::Engine::getInstance()->inputManager;
     GPE::BehaviourSystem&     bSys     = GPE::Engine::getInstance()->behaviourSystem;
-    GPE::RenderSystem&        rSys     = GPE::Engine::getInstance()->renderSystem;
     GPE::ResourceManagerType& rm       = GPE::Engine::getInstance()->resourceManager;
     GPE::SceneManager&        sm       = GPE::Engine::getInstance()->sceneManager;
 
@@ -35,6 +34,11 @@ protected:
 private:
     virtual void update(double unscaledDeltaTime, double deltaTime) override final
     {
+        // Initialize a new frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         ++unFixedUpdateFrameCount;
 
         bSys.update(deltaTime);
@@ -65,6 +69,21 @@ private:
     {
         GPE::SceneRenderSystem& sceneRS = GPE::Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
         sceneRS.draw(GPE::Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
+
+protected:
+    void initDearImGui(GLFWwindow* window)
+    {
+        // Setup Dear ImGui context
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+
+        // Setup Platform/Renderer backends
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init("#version 460");
     }
 
 public:
@@ -72,6 +91,9 @@ public:
 
     virtual ~Game() final
     {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
     }
 };
 
