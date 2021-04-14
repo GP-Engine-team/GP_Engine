@@ -13,7 +13,6 @@
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/ECS/Component/Light/Light.hpp"
 #include "Engine/ECS/Component/Model.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/RenderBuffer.hpp"
@@ -87,13 +86,10 @@ SceneRenderSystem::SceneRenderSystem() noexcept
     m_cubeMesh   = &Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
     m_planeMesh  = &Engine::getInstance()->resourceManager.add<Mesh>(
         "Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
-
-    Engine::getInstance()->renderSystem.addSceneRenderSystem(this);
 }
 
 SceneRenderSystem::~SceneRenderSystem() noexcept
 {
-    Engine::getInstance()->renderSystem.removeSceneRenderSystem(this);
 }
 
 bool SceneRenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept

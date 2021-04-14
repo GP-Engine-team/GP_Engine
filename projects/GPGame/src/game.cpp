@@ -15,7 +15,6 @@
 #include "Engine/ECS/Component/TransformComponent.hpp"
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"

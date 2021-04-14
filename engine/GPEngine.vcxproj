@@ -243,7 +243,6 @@
     <ClInclude Include="include\Engine\ECS\System\BehaviourSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp" />
     <ClInclude Include="include\Engine\ECS\System\PhysXSystem.hpp" />
-    <ClInclude Include="include\Engine\ECS\System\RenderSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\SoundSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp" />
@@ -369,7 +368,6 @@
     <ClCompile Include="src\ReloadableCpp.cpp" />
     <ClCompile Include="src\RenderBuffer.cpp" />
     <ClCompile Include="src\RendererGLFW_GL46.cpp" />
-    <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\RenderTexture.cpp" />
     <ClCompile Include="src\ResourceImporter.cpp" />
     <ClCompile Include="src\Scene.cpp" />

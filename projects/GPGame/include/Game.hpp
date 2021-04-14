@@ -5,12 +5,16 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "GameApiMacros.hpp"
 #include <iostream>
+
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+#include "imgui/imgui_internal.h"
+#include <imgui/imgui.h>
 
 class Game final : public AbstractGame
 {
@@ -35,6 +39,18 @@ private:
 
         bSys.update(deltaTime);
         sm.getCurrentScene()->getWorld().updateSelfAndChildren();
+
+        int h, w;
+        Engine::getInstance()->window.getSize(w, h); //TODO: Fixe it when glfw will be fixed
+        ImGui::SetNextWindowSize(ImVec2{(float)w, (float)h});
+        ImGui::SetNextWindowPos({0.f, 0.f});
+
+        ImGui::Begin("UI", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration);
+
+        // Draw GUI
+        GPE::Engine::getInstance()->behaviourSystem.onGUI();
+
+        ImGui::End();
     }
 
     virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final
@@ -47,7 +63,8 @@ private:
 
     virtual void render() override final
     {
-        rSys.draw(rSys.defaultRenderPipeline());
+        GPE::SceneRenderSystem& sceneRS = GPE::Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
+        sceneRS.draw(GPE::Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
     }
 
 public:
