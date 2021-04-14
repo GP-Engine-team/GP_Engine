@@ -26,12 +26,25 @@ public:
 
     void rotate(const GPM::Vector2& deltaDisplacement);
 
+    RFKMethod()
     inline void up();
+    
+    RFKMethod()
     inline void down();
+
+    RFKMethod()
     inline void forward();
+
+    RFKMethod()
     inline void backward();
+
+    RFKMethod()
     inline void left();
+
+    RFKMethod()
     inline void right();
+
+    RFKMethod()
     inline void sprint();
 
     void update(float deltaTime) final;

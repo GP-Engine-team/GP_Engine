@@ -29,7 +29,7 @@ public:
 
 public:
     Scene() noexcept;
-    ~Scene() noexcept;
+    ~Scene() noexcept = default;
 
     // TODO: Can scene be copied ? How to manage resource
     constexpr inline Scene(const Scene& other) noexcept = delete;
@@ -55,5 +55,8 @@ public:
 
     void addLoadedResourcePath(const char* path) noexcept;
     void removeLoadedResourcePath(const char* path) noexcept;
+
+    void save(XmlSaver&) const;
+    void load(XmlLoader&);
 };
 } /*namespace GPE*/

@@ -10,7 +10,10 @@
 #include <memory>
 #include <vector>
 
-#include "Engine/Serialization/IInspectable.hpp"
+namespace GPE
+{
+class IInspectable;
+}
 
 #define RESOURCES_DIR "resources"
 

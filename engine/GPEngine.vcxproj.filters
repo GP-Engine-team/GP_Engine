@@ -193,10 +193,34 @@
     <ClCompile Include="third_party\src\OpenAL_Soft_Debug.cpp">
       <Filter>third_party</Filter>
     </ClCompile>
-    <ClCompile Include="src\ResourceImporter.cpp">
+    <ClCompile Include="src\Light.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Importer.cpp">
+    <ClCompile Include="src\FreeFly.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\Serialize.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\Slider.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\ComponentGen.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\Inspect.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Collider.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\GPMSave.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\GPMLoad.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FunctionPtr.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -552,37 +576,19 @@
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp">
       <Filter>third_party</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\include\stb\stb_image.h">
-      <Filter>third_party\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\include\stb\stb_image_write.h">
-      <Filter>third_party\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\include\stb\stb_perlin.h">
-      <Filter>third_party\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\IInspectable.hpp">
+    <ClInclude Include="include\Engine\Serialization\STDSave.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="..\editor\include\Editor\FileExplorer.hpp">
+    <ClInclude Include="include\Engine\Serialization\STDReflect.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\ShaderImporterSetting.hpp">
+    <ClInclude Include="include\Engine\Serialization\GPMSave.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\MaterialImporterSetting.hpp">
+    <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\MeshImporterSetting.hpp">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp">
+    <ClInclude Include="include\Engine\Core\Tools\FunctionPtr.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -675,6 +681,12 @@
     <None Include="include\Engine\ECS\Component\Light\Light.inl">
       <Filter>include</Filter>
     </None>
+    <None Include="include\Engine\Serialization\STDSave.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\STDDataInspector.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
     <None Include="include\Engine\ECS\System\InputManagerGLFW.inl">
       <Filter>include</Filter>
     </None>
@@ -739,9 +751,6 @@
     </Filter>
     <Filter Include="third_party\imgui">
       <UniqueIdentifier>{6dfd1f98-6fbb-49fc-b799-938084eb316d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="third_party\stb">
-      <UniqueIdentifier>{537c2f3b-e0ca-4e7b-aa4c-1badd1d88423}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

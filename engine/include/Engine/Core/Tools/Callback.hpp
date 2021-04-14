@@ -8,40 +8,36 @@
 
 #include <functional>
 #include <string>
+#include "Engine/Core/Tools/FunctionPtr.hpp"
 
-template <typename T, typename... U>
-size_t getAddress(std::function<T(U...)> f)
-{
-    typedef T(fnType)(U...);
-    fnType** fnPointer = f.template target<fnType*>();
-    return (size_t)*fnPointer;
-}
+#include "Engine/Serialization/xml/xmlSaver.hpp"
+#include "Engine/Serialization/xml/xmlLoader.hpp"
 
 /**
  * @brief
- * @example :   cb += [](){ puts("test c2");};
- *              cb += std::bind(&test::te, t);
- *              cb -= std::bind(&test::te, t);
+ * @example :   cb += GPE::Function::make(t, "test")
+ *              cb -= GPE::Function::make(t, "test")
  *              cb();
  * @tparam T
  */
 template <typename T, typename... U>
 class Callback
 {
-    std::vector<std::function<T(U...)>> m_functions;
+private:
+    std::vector<GPE::Function> m_functions;
 
 public:
-    void operator+=(std::function<T(U...)> functToAdd)
+    void operator+=(GPE::Function functToAdd)
     {
         m_functions.emplace_back(functToAdd);
     }
 
     // Remove all
-    void operator-=(std::function<T(U...)> functToRemove)
+    void operator-=(const GPE::Function& functToRemove)
     {
-        for (std::function<T(U...)>& funct : m_functions)
+        for (GPE::Function& funct : m_functions)
         {
-            if (getAddress(funct) == getAddress(functToRemove))
+            if (funct == functToRemove)
             {
                 std::swap(m_functions.back(), funct);
                 m_functions.pop_back();
@@ -51,7 +47,7 @@ public:
 
     void operator()()
     {
-        for (std::function<T(U...)>& funct : m_functions)
+        for (GPE::Function& funct : m_functions)
             funct();
     }
 
@@ -60,10 +56,15 @@ public:
         m_functions.clear();
     }
 
-    template <typename TClass>
-    static std::function<T(U...)> make(T (TClass::*function)(U...), TClass* owner)
+    void load(XmlLoader& context)
     {
-        return std::bind(function, owner);
+        GPE::load(context, m_functions, XmlLoader::LoadInfo{"m_functions", "T", 0});
+    }
+
+    void save(XmlSaver& context) const
+    {
+        GPE::save(context, m_functions, XmlSaver::SaveInfo{"m_functions", "T", 0});
+
     }
 };
 

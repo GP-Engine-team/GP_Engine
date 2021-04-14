@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  * found in the top-level directory of this distribution.
@@ -20,15 +20,16 @@ namespace GPE
 FreeFly::FreeFly(GameObject& owner) noexcept
     : BehaviourComponent(owner)
 {
-    InputComponent& input = owner.addComponent<InputComponent>();
+        enableUpdate(true);
+        InputComponent& input = owner.addComponent<InputComponent>();
 
-    input.bindAction("forward",  EKeyMode::KEY_DOWN, this, &FreeFly::forward);
-    input.bindAction("backward", EKeyMode::KEY_DOWN, this, &FreeFly::backward);
-    input.bindAction("left",     EKeyMode::KEY_DOWN, this, &FreeFly::left);
-    input.bindAction("right",    EKeyMode::KEY_DOWN, this, &FreeFly::right);
-    input.bindAction("up",       EKeyMode::KEY_DOWN, this, &FreeFly::up);
-    input.bindAction("down",     EKeyMode::KEY_DOWN, this, &FreeFly::down);
-    input.bindAction("sprint",   EKeyMode::KEY_DOWN, this, &FreeFly::sprint);
+        input.bindAction("up", EKeyMode::KEY_DOWN, this, "up");
+        input.bindAction("down", EKeyMode::KEY_DOWN, this, "down");
+        input.bindAction("right", EKeyMode::KEY_DOWN, this, "right");
+        input.bindAction("left", EKeyMode::KEY_DOWN, this, "left");
+        input.bindAction("forward", EKeyMode::KEY_DOWN, this, "forward");
+        input.bindAction("back", EKeyMode::KEY_DOWN, this, "back");
+        input.bindAction("sprint", EKeyMode::KEY_DOWN, this, "sprint");
 }
 
 
@@ -67,7 +68,7 @@ void FreeFly::update(float deltaTime)
 {
     m_speed = 1.f;
 
-    if (Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > .0001f)
+    if (Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > .1f)
     {
         rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
     }

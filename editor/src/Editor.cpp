@@ -6,12 +6,19 @@
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Resources/SceneManager.hpp"
 #include "Engine/Serialization/IInspectable.hpp"
+#include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/InspectContext.hpp"
+#include "Editor/ExternalDeclarations.hpp"
+#include "Engine/Core/HotReload/ReloadableCpp.hpp"
 
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include <imgui/imgui.h>
+
+
+using namespace GPE;
 
 // Hint to use GPU if available
 extern "C"
@@ -124,6 +131,24 @@ void Editor::renderInspector()
     {
         GPE::InspectContext context;
         GPE::DataInspector::inspect(context, *m_inspectedObject);
+
+        //static float s = 0;
+
+        //s += 1.f/30.f;
+
+        //if (s > 9)
+        //{
+        //    rapidxml::xml_document<> doc;
+        //    XmlSaver saver(doc);
+        //    auto a = GET_PROCESS((*m_reloadableCpp), saveCurrentScene);
+        //    a(saver);
+        //    saver.print();
+        //    XmlLoader loader(doc);
+        //    auto b = GET_PROCESS((*m_reloadableCpp), loadCurrentScene);
+        //    b(loader);
+        //    s = 0;
+        //    m_inspectedObject = nullptr;
+        //}
     }
     else
     {

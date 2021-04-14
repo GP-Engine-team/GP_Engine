@@ -1,5 +1,7 @@
 ﻿#include "Engine/ECS/Component/Light/DirectionalLight.hpp"
 
+File_GENERATED
+
 using namespace GPE;
 
 DirectionalLight::~DirectionalLight()

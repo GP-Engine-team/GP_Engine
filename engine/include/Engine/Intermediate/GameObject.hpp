@@ -16,6 +16,7 @@
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/IInspectable.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
+#include "Engine/Serialization/STDReflect.hpp"
 
 // in Inl
 #include "Engine/Core/Debug/Log.hpp"
@@ -26,9 +27,15 @@
 
 namespace GPE RFKNamespace()
 {
+    template <>
+    void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
+
+    void save(XmlSaver& context, class GameObject& inspected);
+    void load(XmlLoader& context, class GameObject& sinspected);
+
     class Scene;
 
-    class RFKClass() GameObject : public IInspectable
+    class RFKClass(Serialize(false)) GameObject : public IInspectable
     {
     public:
         using Children = std::list<GameObject*>;
@@ -40,29 +47,31 @@ namespace GPE RFKNamespace()
             GameObject*                   parent = nullptr;
         };
 
-    protected:
         // TODO: remove this variable for dataChunk localtion when data chunk will be rework
         static unsigned int m_currentID;
 
     protected:
-        RFKField(Inspect()) std::string m_name;
-        TransformComponent*             m_pTransform;
+        RFKField(Inspect(), Serialize()) std::string m_name;
 
-        std::list<Component*> m_pComponents;
-        std::string           m_tag{"GameObject"};
-        GameObject*           m_parent = nullptr;
-        unsigned int          m_id;
+        RFKField(Serialize()) TransformComponent* m_pTransform;
+
+        RFKField(Serialize()) std::list<Component*> m_pComponents;
+
+        std::string m_tag{"GameObject"};
+
+        RFKField(Serialize()) GameObject* m_parent = nullptr;
+        unsigned int                      m_id;
         bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
     public:
-        Scene*                 pOwnerScene;
-        std::list<GameObject*> children = {};
+        Scene*                                       pOwnerScene;
+        RFKField(Serialize()) std::list<GameObject*> children = {};
 
     public:
         inline GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
         ~GameObject() noexcept;
 
-        GameObject()                        = delete;
+        GameObject()                        = default;
         GameObject(const GameObject& other) = delete;            // TODO: when transform is available
         GameObject& operator=(GameObject const& other) = delete; // TODO
 
@@ -231,7 +240,7 @@ namespace GPE RFKNamespace()
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 
-        void inspect(GPE::InspectContext & context) override;
+         void inspect(GPE::InspectContext& context) override;
 
         GameObject_GENERATED
     };
@@ -239,5 +248,3 @@ namespace GPE RFKNamespace()
 #include "GameObject.inl"
 
 } // namespace )
-
-File_GENERATED
