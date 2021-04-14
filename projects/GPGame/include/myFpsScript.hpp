@@ -143,7 +143,6 @@ namespace GPG RFKNamespace()
 
         RFKMethod() inline void sprintStart()
         {
-            ImGui::Button("Button");
             controller->setSpeed(controller->getSpeed() * 2.f);
         }
 
