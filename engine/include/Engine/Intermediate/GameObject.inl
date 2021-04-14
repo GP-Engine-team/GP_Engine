@@ -160,7 +160,9 @@ inline std::list<GameObject*>::iterator GameObject::destroyChild(const std::list
 template <typename TUniqueComponentType>
 inline void GameObject::destroyUniqueComponentNow() noexcept
 {
-    for (auto&& it = m_pComponents.begin(); it != m_pComponents.end(); ++it)
+    const std::list<Component*>::const_iterator end = m_pComponents.end();
+
+    for (std::list<Component*>::iterator it = m_pComponents.begin(); it != end; ++it)
     {
         TUniqueComponentType* checkedCompPtr = dynamic_cast<TUniqueComponentType*>(*it);
 

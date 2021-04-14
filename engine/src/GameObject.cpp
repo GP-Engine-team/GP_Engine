@@ -20,10 +20,12 @@ GameObject::~GameObject() noexcept
 {
     m_pTransform->destroy();
 
+    /*
     for (auto&& component : m_pComponents)
     {
         component->destroy();
     }
+    */
 }
 
 void GameObject::moveTowardScene(Scene& newOwner) noexcept
@@ -38,6 +40,8 @@ void GameObject::moveTowardScene(Scene& newOwner) noexcept
 
 void GameObject::updateSelfAndChildren() noexcept
 {
+    const Children::const_iterator end{children.end()};
+
     if (m_pTransform->isDirty())
     {
         // Update self
@@ -47,6 +51,7 @@ void GameObject::updateSelfAndChildren() noexcept
 
             if (m_isDead)
             {
+                // NOTE (Sami): what happens to the children?
                 m_parent->destroyChild(this);
                 return;
             }
@@ -57,7 +62,7 @@ void GameObject::updateSelfAndChildren() noexcept
         }
 
         // Update children
-        for (std::list<GameObject*>::iterator i = children.begin(); i != children.end();)
+        for (Children::iterator i = children.begin(); i != end; i++)
         {
             if ((*i)->m_isDead)
             {
@@ -72,7 +77,7 @@ void GameObject::updateSelfAndChildren() noexcept
     else
     {
         // Update children
-        for (std::list<GameObject*>::iterator i = children.begin(); i != children.end();)
+        for (Children::iterator i = children.begin(); i != end;)
         {
             if ((*i)->m_isDead)
             {
@@ -94,7 +99,8 @@ void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
         getTransform().update(m_parent->getTransform().getModelMatrix());
 
     // Update children
-    for (std::list<GameObject*>::iterator i = children.begin(); i != children.end();)
+    const Children::const_iterator end{children.end()};
+    for (Children::iterator i = children.begin(); i != end;)
     {
         if ((*i)->m_isDead)
         {
@@ -128,7 +134,8 @@ void GameObject::forceUpdate() noexcept
     }
 
     // Force update children
-    for (auto&& i = children.begin(); i != children.end();)
+    const Children::const_iterator end{children.end()};
+    for (auto&& i = children.begin(); i != end; i++)
     {
         if ((*i)->m_isDead)
         {
@@ -147,7 +154,8 @@ void GameObject::forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept
     getTransform().update(m_parent->getTransform().getModelMatrix());
 
     // Force update children
-    for (auto&& i = children.begin(); i != children.end(); i++)
+    const Children::const_iterator end{children.end()};
+    for (auto&& i = children.begin(); i != end; i++)
     {
         (*i)->forceUpdate(m_pTransform->getModelMatrix());
     }
@@ -155,7 +163,11 @@ void GameObject::forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept
 
 GameObject* GameObject::getChild(const std::string& path) noexcept
 {
-    GPE_ASSERT(!path.empty(), "Void path");
+    if (path.empty())
+    {
+        Log::getInstance()->logWarning("The passed string is empty");
+        return nullptr;
+    }
 
     std::stringstream sPath(path);
     std::string       word;
@@ -190,11 +202,11 @@ void GameObject::destroyChild(const std::string& path) noexcept
 {
     GPE_ASSERT(!path.empty(), "Void path");
 
-    std::stringstream                sPath(path);
-    std::string                      word;
-    GameObject*                      parentEntity  = this;
-    GameObject*                      currentEntity = this;
-    std::list<GameObject*>::iterator it;
+    std::stringstream  sPath(path);
+    std::string        word;
+    GameObject*        parentEntity  = this;
+    GameObject*        currentEntity = this;
+    Children::iterator it;
 
     while (std::getline(sPath, word, '/'))
     {
@@ -225,9 +237,10 @@ void GameObject::destroyChild(const std::string& path) noexcept
     parentEntity->children.erase(it);
 }
 
-std::list<GameObject*>::iterator GameObject::destroyChild(GameObject* pGameObject) noexcept
+GameObject::Children::iterator GameObject::destroyChild(GameObject* pGameObject) noexcept
 {
-    for (std::list<GameObject*>::iterator it = children.begin(); it != children.end(); it++)
+    const Children::const_iterator end{children.end()};
+    for (Children::iterator it = children.begin(); it != end; it++)
     {
         if (*it == pGameObject)
         {
@@ -239,13 +252,15 @@ std::list<GameObject*>::iterator GameObject::destroyChild(GameObject* pGameObjec
 
 std::list<Component*>::iterator GameObject::destroyComponent(Component* pComponent) noexcept
 {
-    for (std::list<Component*>::iterator it = m_pComponents.begin(); it != m_pComponents.end(); it++)
+    const std::list<Component*>::const_iterator end{m_pComponents.end()};
+    for (std::list<Component*>::iterator it = m_pComponents.begin(); it != end; it++)
     {
         if (*it == pComponent)
         {
             return m_pComponents.erase(it);
         }
     }
+    
     return m_pComponents.end();
 }
 

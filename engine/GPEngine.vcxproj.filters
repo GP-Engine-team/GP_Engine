@@ -151,6 +151,9 @@
     <ClCompile Include="src\Serialization\DataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\FreeFly.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Serialization\GPMDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
@@ -218,6 +221,17 @@
       <Filter>src\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="src\FunctionPtr.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Importer.cpp" />
+    <ClCompile Include="src\ResourceImporter.cpp" />
+    <ClCompile Include="src\MaterialImporterSetting.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshImporterSetting.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FileExplorer.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -588,6 +602,17 @@
     <ClInclude Include="include\Engine\Core\Tools\FunctionPtr.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\editor\include\Editor\FileExplorer.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp" />
+    <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp" />
+    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp" />
+    <ClInclude Include="include\Engine\Serialization\IInspectable.hpp" />
+    <ClInclude Include="include\Engine\Serialization\MaterialImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\MeshImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\ShaderImporterSetting.hpp" />
+    <ClInclude Include="third_party\include\stb\stb_image.h" />
+    <ClInclude Include="third_party\include\stb\stb_image_write.h" />
+    <ClInclude Include="third_party\include\stb\stb_perlin.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -691,6 +716,9 @@
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\ECS\System\TimeSystem.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Script\FreeFly.inl">
       <Filter>include</Filter>
     </None>
   </ItemGroup>

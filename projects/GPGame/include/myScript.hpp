@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -66,9 +66,9 @@ namespace GPG RFKNamespace()
 
 		void rotate(const GPM::Vec2& deltaDisplacement)
 		{
-			if (deltaDisplacement.length() > 0.4) {
-				getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation * GPM::Quaternion::angleAxis(-deltaDisplacement.y * 0.001f, { 1, 0, 0 }));
-				getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(-deltaDisplacement.x * 0.001f, { 0, 1, 0 }) * getOwner().getTransform().getSpacialAttribut().rotation);
+			if (deltaDisplacement.sqrLength() > .16f) {
+				getOwner().getTransform().setRotation(getOwner().getTransform().getSpacialAttribut().rotation * GPM::Quaternion::angleAxis(deltaDisplacement.y * .001f, {1.f, .0f, .0f}));
+				getOwner().getTransform().setRotation(GPM::Quaternion::angleAxis(deltaDisplacement.x * .001f, {.0f, 1.f, .0f}) * getOwner().getTransform().getSpacialAttribut().rotation);
 			}
 		}
 
@@ -79,12 +79,12 @@ namespace GPG RFKNamespace()
 
 		inline void down()
 		{
-			getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -1 * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -speed);
 		}
 
 		inline void forward()
 		{
-			getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -1 * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -speed);
 		}
 
 		inline void back()
@@ -94,7 +94,7 @@ namespace GPG RFKNamespace()
 
 		inline void left()
 		{
-			getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -1 * speed);
+			getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -speed);
 		}
 
 		inline void right()
@@ -116,7 +116,7 @@ namespace GPG RFKNamespace()
 		{
 			speed = defaultSpeed;
 
-			if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.00001)
+			if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > .00001f)
 				rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
 		}
 
