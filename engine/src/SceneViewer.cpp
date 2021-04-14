@@ -12,6 +12,7 @@ namespace GPE
 
 #define INV_DOWN_SAMPLING_COEF .25f
 
+// ========================== Private methods ==========================
 void SceneViewer::initializeFramebuffer()
 {
     { // Initialize screen texture
@@ -93,6 +94,10 @@ void SceneViewer::initializePickingFBO()
     }
 }
 
+
+
+
+// ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     : cameraOwner    {viewed, {"Editor camera", {}, &viewed.getWorld()}},
       freeFly        {cameraOwner.addComponent<FreeFly>()},
@@ -105,8 +110,8 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
       FBOIDtextureID {0u},
       FBOIDdepthID   {0u},
       FBOIDframebufferID{0u},
-      FBOIDwidth     {static_cast<int>(ceilf(1.f / INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight    {static_cast<int>(ceilf(1.f / INV_DOWN_SAMPLING_COEF))},
+      FBOIDwidth     {static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight    {static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
       width          {width_},
       height         {height_},
       m_captureInputs{false}
@@ -152,18 +157,19 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
 
     // Find the hovered game object, if any
     unsigned int pixel = 0u;
+    int x, y;
 
-    const ImVec2 currentScreenStart = ImGui::GetCursorScreenPos();
-    const ImVec2 cursPos            = ImGui::GetMousePos();
-    const ImVec2 cursorRelativePos   {ceilf((cursPos.x - currentScreenStart.x) * INV_DOWN_SAMPLING_COEF),
-                                      ceilf((cursPos.y - currentScreenStart.y) * INV_DOWN_SAMPLING_COEF)};
+    { // Find the coordinates of the pixel to read
+        const ImVec2 currentScreenStart = ImGui::GetCursorScreenPos();
+        const ImVec2 cursPos            = ImGui::GetMousePos();
+        const ImVec2 cursorRelativePos   {ceilf((cursPos.x - currentScreenStart.x)),
+                                          ceilf((cursPos.y - currentScreenStart.y))};
+
+        x = static_cast<GLint>(cursorRelativePos.x * INV_DOWN_SAMPLING_COEF);
+        y = static_cast<GLint>((static_cast<float>(height) - cursorRelativePos.y) * INV_DOWN_SAMPLING_COEF);
+    }
     
-    const int x = static_cast<GLint>(cursorRelativePos.x);
-    const int y = height - static_cast<GLint>(cursorRelativePos.y);
-    glReadPixels((cursPos.x - currentScreenStart.x) / 4,
-                 (height - cursPos.y + currentScreenStart.y) / 4,
-                 1u, 1u, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
-
+    glReadPixels(x, y, 1u, 1u, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
     glBindFramebuffer(GL_FRAMEBUFFER, 0u);
 
     return pixel;
