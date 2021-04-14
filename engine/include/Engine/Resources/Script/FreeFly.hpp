@@ -9,11 +9,12 @@
 #include "Engine/ECS/Component/BehaviourComponent.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "GPM/Vector3.hpp"
+#include "Generated/FreeFly.rfk.h"
 
-namespace GPE
+namespace GPE RFKNamespace()
 {
 
-class FreeFly final : public BehaviourComponent
+class RFKClass() FreeFly final : public BehaviourComponent
 {
 protected:
     float m_speed         = 1.f;
@@ -24,6 +25,7 @@ public:
     FreeFly(FreeFly&& other) noexcept = default;
     ~FreeFly() noexcept;
 
+    RFKMethod()
     void rotate(const GPM::Vector2& deltaDisplacement);
 
     RFKMethod()
@@ -36,7 +38,7 @@ public:
     inline void forward();
 
     RFKMethod()
-    inline void backward();
+    inline void back();
 
     RFKMethod()
     inline void left();
@@ -50,6 +52,8 @@ public:
     void update(float deltaTime) final;
 
     FreeFly& operator=(FreeFly&& other) noexcept;
+
+    FreeFly_GENERATED
 };
 
 #include "FreeFly.inl"

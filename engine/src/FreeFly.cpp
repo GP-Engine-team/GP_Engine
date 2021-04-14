@@ -6,13 +6,13 @@
 
 #pragma once
 
-#include "Engine/Resources/Script/FreeFly.hpp"
-
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Engine.hpp"
 
-#include <GLFW/glfw3.h>
+#include "Engine/Resources/Script/FreeFly.hpp"
+
+File_GENERATED
 
 namespace GPE
 {
