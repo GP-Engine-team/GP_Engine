@@ -14,6 +14,11 @@ private:
     {
         void* caller = nullptr;
         rfk::Method const* method = nullptr;
+
+        bool operator==(const MemberFunction& mf) const
+        {
+            return (caller == mf.caller) && (method == mf.method);
+        }
     };
 
     std::variant<MemberFunction> subFunctor;
@@ -65,6 +70,11 @@ public:
 
     void save(XmlSaver& context) const;
     void load(XmlLoader& context);
+
+    bool operator==(const Function& f) const
+    {
+        return subFunctor == f.subFunctor;
+    }
 };
 
 } // namespace GPE
