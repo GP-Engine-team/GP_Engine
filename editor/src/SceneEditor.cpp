@@ -1,6 +1,5 @@
 ﻿#include "Editor/SceneEditor.hpp"
 
-#include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "imgui/imgui.h"
@@ -22,10 +21,9 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
 
         if (idSelectedGameObject && hovered)
         {
-            if (GameObject* const selectionGameObject = Engine::getInstance()
-                                                            ->sceneManager.getCurrentScene()
-                                                            ->getWorld()
-                                                            .getGameObjectCorrespondingToID(idSelectedGameObject))
+            if (GameObject* const selectionGameObject = view.pScene->getWorld()
+                                                        .getGameObjectCorrespondingToID(idSelectedGameObject))
+
             {
                 inspectedObject = selectionGameObject;
             }
