@@ -346,6 +346,7 @@
     <ClCompile Include="src\Collider.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
+    <ClCompile Include="src\FileExplorer.cpp" />
     <ClCompile Include="src\FreeFly.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\FunctionPtr.cpp" />
@@ -356,7 +357,9 @@
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Material.cpp" />
+    <ClCompile Include="src\MaterialImporterSetting.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\MeshImporterSetting.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\ObjParser.cpp" />
     <ClCompile Include="src\Physics\CharacterController\CharacterController.cpp" />
