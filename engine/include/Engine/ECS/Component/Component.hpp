@@ -57,5 +57,5 @@ namespace GPE RFKNamespace()
 
 #include "Component.inl"
 
-} // namespace )
+} // namespace GPE
 
