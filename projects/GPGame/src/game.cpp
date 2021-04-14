@@ -114,25 +114,17 @@ void loadTree(GameObject& parent, ResourceManagerType& resourceManager, unsigned
 
 void loadSkyboxResource(ResourceManagerType& resourceManager)
 {
-    /*
-    Model::CreateArg& modelArg =
-        resourceManager.add<Model::CreateArg>("SkyboxModel", importeSingleModel("./resources/meshs/Skybox.obj"));
+    Model::CreateArg arg;
 
-    Texture::LoadArg textureArg;
-    textureArg.path             = "./resources/textures/Skybox/skb.bmp";
-    textureArg.flipTexture      = false;
-    textureArg.textureMinFilter = Texture::ETextureMinFilter::LINEAR;
-    textureArg.textureMagFilter = Texture::ETextureMagFilter::LINEAR;
+    SubModel subModel;
+    subModel.pShader               = loadShaderFile("./resources/Skybox.GPShader");
+    subModel.pMaterial             = loadMaterialFile("./resources/Skybox.GPMaterial");
+    subModel.pMesh                 = loadMeshFile("./resources/meshs/Cube.GPMesh");
+    subModel.enableBackFaceCulling = false;
 
-    Material::CreateArg matSkybox;
-    matSkybox.name     = "Skybox";
-    matSkybox.pTexture = &resourceManager.add<Texture>("SkyboxTexture", textureArg);
+    arg.subModels.push_back(subModel);
 
-    modelArg.subModels.front().pMaterial = &resourceManager.add<Material>("SkyboxMaterial", matSkybox);
-    modelArg.subModels.front().pShader = &resourceManager.add<Shader>("SkyboxShader", "./resources/shaders/vSkybox.vs",
-                                                                      "./resources/shaders/fSkybox.fs", SKYBOX);
-    modelArg.subModels.front().pMesh->setBoundingVolumeType(Mesh::EBoundingVolume::NONE);
-    modelArg.subModels.front().enableBackFaceCulling = false;*/
+    resourceManager.add<Model::CreateArg>("SkyboxModel", arg);
 }
 
 void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
@@ -144,6 +136,8 @@ void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
 
 Game::Game()
 {
+    initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
+
     sm.addEmpty("main");
     sm.loadScene("main");
 
@@ -211,11 +205,11 @@ Game::Game()
                                               Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug")});
 
     ground.addComponent<Model>(modelArg2);*/
-    // loadSkyboxResource(rm);
+    loadSkyboxResource(rm);
     loadTreeResource(rm);
 
-    //loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
-    loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
+    loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
+    loadTree(sm.getCurrentScene()->getWorld(), rm, 1000);
 
     ts.addScaledTimer(
         FPLogDelay,
