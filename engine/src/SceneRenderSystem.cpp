@@ -5,15 +5,14 @@
 #include <map> //std::map
 #include <memory>
 
-#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/ECS/Component/Light/Light.hpp"
 #include "Engine/ECS/Component/Model.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/Engine.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/RenderBuffer.hpp"
 #include "Engine/Resources/RenderTexture.hpp"
@@ -86,13 +85,10 @@ SceneRenderSystem::SceneRenderSystem() noexcept
     m_cubeMesh   = &Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
     m_planeMesh  = &Engine::getInstance()->resourceManager.add<Mesh>(
         "Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
-
-    Engine::getInstance()->renderSystem.addSceneRenderSystem(this);
 }
 
 SceneRenderSystem::~SceneRenderSystem() noexcept
 {
-    Engine::getInstance()->renderSystem.removeSceneRenderSystem(this);
 }
 
 bool SceneRenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
@@ -446,15 +442,13 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
     };
 }
 
-
 SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipeline() const noexcept
 {
     return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
-           std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
-           std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
-           std::vector<SceneRenderSystem::DebugShape>& debugShape,
-           std::vector<SceneRenderSystem::DebugLine>&  debugLine)
-    {
+              std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
+              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
+              std::vector<SceneRenderSystem::DebugShape>& debugShape,
+              std::vector<SceneRenderSystem::DebugLine>&  debugLine) {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -480,10 +474,10 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipelin
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
-                shaderGameObjectIdentifier.setMat4("projectViewModelMatrix",
-                                                    (pCameras[0]->getProjectionView() *
-                                                    pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                                                        .e);
+                shaderGameObjectIdentifier.setMat4(
+                    "projectViewModelMatrix",
+                    (pCameras[0]->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                        .e);
                 rs.drawModelPart(*pSubModel);
             }
 
@@ -493,15 +487,15 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipelin
                     continue;
 
                 glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"),
-                                pSubModel->pModel->getOwner().getID());
+                             pSubModel->pModel->getOwner().getID());
 
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
-                shaderGameObjectIdentifier.setMat4("projectViewModelMatrix",
-                                                    (pCameras[0]->getProjectionView() *
-                                                    pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                                                        .e);
+                shaderGameObjectIdentifier.setMat4(
+                    "projectViewModelMatrix",
+                    (pCameras[0]->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                        .e);
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -509,7 +503,6 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipelin
         rs.resetCurrentRenderPassKey();
     };
 }
-
 
 void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
 {
@@ -613,14 +606,10 @@ void SceneRenderSystem::addSubModel(SubModel* pSubModel) noexcept
 
 void SceneRenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept
 {
-    const std::vector<SubModel*>::const_iterator end
-    {
-        newPointerSubModel->pMaterial->isOpaque() ?
-        m_pOpaqueSubModels.end() : m_pTransparenteSubModels.end()
-    };
+    const std::vector<SubModel*>::const_iterator end{
+        newPointerSubModel->pMaterial->isOpaque() ? m_pOpaqueSubModels.end() : m_pTransparenteSubModels.end()};
 
-    for (std::vector<SubModel*>::iterator it = m_pTransparenteSubModels.begin();
-         it != end; ++it)
+    for (std::vector<SubModel*>::iterator it = m_pTransparenteSubModels.begin(); it != end; ++it)
     {
         if ((*it) == exPointerSubModel)
         {

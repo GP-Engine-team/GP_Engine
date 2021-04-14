@@ -15,7 +15,6 @@
 #include "Engine/ECS/Component/TransformComponent.hpp"
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
@@ -28,14 +27,41 @@
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <myFpsScript.hpp>
 
+#include <iostream>
+
 #include "Engine/Resources/Importer/Importer.hpp"
-//#include "GPM/Random.hpp"
 
 #include <glad/glad.h> //In first
 #include <glfw/glfw3.h>
 
 using namespace GPE;
 using namespace GPM;
+
+void Game::update(double unscaledDeltaTime, double deltaTime)
+{
+    ++unFixedUpdateFrameCount;
+
+    bSys.update(deltaTime);
+    sm.getCurrentScene()->getWorld().updateSelfAndChildren();
+}
+
+void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
+{
+    AbstractGame::fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+    // GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
+    ++fixedUpdateFrameCount;
+    bSys.fixedUpdate(fixedDeltaTime);
+}
+
+void Game::render()
+{
+    SceneRenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
+    sceneRS.draw(Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
+}
+
+Game::~Game()
+{
+}
 
 extern "C" AbstractGame* createGameInstance()
 {
@@ -214,7 +240,7 @@ Game::Game()
     // loadSkyboxResource(rm);
     loadTreeResource(rm);
 
-    //loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
+    // loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
     loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
 
     ts.addScaledTimer(
