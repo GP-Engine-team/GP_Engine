@@ -1,34 +1,46 @@
 template <typename T>
 UnrolledListAllocator<T>::UnrolledListAllocator(UnrolledListAllocator&& rhs)
-    : m_nodes(std::move(rhs.m_nodes)), m_size(rhs.m_size), nextToConstruct(rhs.nextToConstruct)
+    : firstNode(rhs.firstNode), lastNode(rhs.lastNode), m_size(rhs.m_size), nextToConstruct(rhs.nextToConstruct)
 {
     rhs.nextToConstruct = nullptr;
+    rhs.firstNode       = nullptr;
+    rhs.lastNode        = nullptr;
 }
 
 template <typename T>
 UnrolledListAllocator<T>::UnrolledListAllocator(size_t size) : m_size(size)
 {
-    addNode();
+    assert(size != 0);
+    addFirstNode();
+    firstNode = lastNode;
 }
 
 template <typename T>
 UnrolledListAllocator<T>& UnrolledListAllocator<T>::operator=(UnrolledListAllocator&& rhs)
 {
-    m_nodes = std::move(rhs.m_nodes);
-    m_size  = rhs.m_size;
+    nextToConstruct = rhs.nextToConstruct;
+    firstNode       = rhs.firstNode;
+    lastNode        = rhs.lastNode;
 
-    nextToConstruct     = rhs.nextToConstruct;
+    m_size = rhs.m_size;
+
     rhs.nextToConstruct = nullptr;
+    rhs.firstNode       = nullptr;
+    rhs.lastNode        = nullptr;
     return *this;
 }
 
 template <typename T>
 UnrolledListAllocator<T>::~UnrolledListAllocator()
 {
-    for (SubNode* node : m_nodes)
+    while (firstNode != lastNode)
     {
-        free(node);
+        Node* nextNode = firstNode->next;
+        free(firstNode);
+        firstNode = nextNode;
     }
+
+    free(lastNode);
 }
 
 template <typename T>
@@ -46,19 +58,63 @@ UnrolledListAllocator<T> UnrolledListAllocator<T>::fromNbBytes(size_t nbBytes)
 }
 
 template <typename T>
-void UnrolledListAllocator<T>::addNode()
+void UnrolledListAllocator<T>::allocateData(Node*& node, SubNode*& subNodes, size_t nbElements)
 {
-    SubNode* allocated = (SubNode*)malloc(m_size * sizeof(SubNode));
-    m_nodes.push_back(allocated);
+    struct Allocated
+    {
+        Node    node;
+        SubNode subNodes; // undefined amount, but a minimum of 1.
+    };
 
-    for (SubNode* s = allocated; s < allocated + m_size; s++)
+    Allocated* allocated = (Allocated*)malloc(sizeof(Node) + nbElements * sizeof(SubNode));
+    node                 = &allocated->node;
+    subNodes             = &allocated->subNodes;
+}
+
+template <typename T>
+void UnrolledListAllocator<T>::initSubNodes(SubNode* subNodes, size_t nbElements)
+{
+    // Init SubNodes / Free list
+    for (SubNode* s = subNodes; s < subNodes + nbElements; s++)
     {
         s->next = s + 1;
     }
 
-    allocated[m_size - 1].next = nullptr;
+    subNodes[nbElements - 1].next = nullptr;
+}
 
-    nextToConstruct = allocated;
+template <typename T>
+void UnrolledListAllocator<T>::addNode()
+{
+    Node*    newNode;
+    SubNode* newSubNodes;
+    allocateData(newNode, newSubNodes, m_size);
+
+    // Set Node
+    new (newNode) Node();
+    lastNode->next = newNode;
+    lastNode       = newNode;
+
+    initSubNodes(newSubNodes, m_size);
+
+    nextToConstruct = newSubNodes;
+}
+
+template <typename T>
+void UnrolledListAllocator<T>::addFirstNode()
+{
+    Node*    newNode;
+    SubNode* newSubNodes;
+    allocateData(newNode, newSubNodes, m_size);
+
+    // Set Node
+    new (newNode) Node();
+    firstNode = newNode;
+    lastNode  = newNode;
+
+    initSubNodes(newSubNodes, m_size);
+
+    nextToConstruct = newSubNodes;
 }
 
 template <typename T>
@@ -69,7 +125,7 @@ T* UnrolledListAllocator<T>::allocate(size_t nbElements)
     SubNode* constructedElem = nextToConstruct;
     nextToConstruct          = nextToConstruct->next;
 
-    // If not space left
+    // If no space left
     if (nextToConstruct == nullptr)
     {
         addNode();
@@ -85,4 +141,10 @@ void UnrolledListAllocator<T>::deallocate(T* ptr, std::size_t nbElements)
     SubNode* subNode = reinterpret_cast<SubNode*>(ptr);
     subNode->next    = nextToConstruct;
     nextToConstruct  = subNode;
+}
+
+template <typename T>
+typename UnrolledListAllocator<T>::SubNode* UnrolledListAllocator<T>::Node::getSubNodes()
+{
+    return reinterpret_cast<SubNode*>(this + 1);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include <memory>
 #include <cassert>
 #include <iosfwd>
@@ -15,17 +16,33 @@ private:
     {
         // Points to the next element that should be constructed.
         // Can be in a different chunk.
-        SubNode* next = nullptr;
+        SubNode* next;
         T elem;
     };
 
-    std::vector<SubNode*> m_nodes; // Pointers to all chunks to free them later.
-    size_t m_size; // nb Elements per node
+    // All allocated subNodes start with a Node, 
+    // so if Node is free, subNodes are also free.
+    struct Node
+    {
+        Node* next = nullptr;
+
+        SubNode* getSubNodes();
+    };
+
+    // std::vector<SubNode*> m_nodes; // Pointers to all chunks to free them later.
+
+    Node* firstNode; // Points to the first created node
+    Node* lastNode;  // Points to the last added node
+    size_t m_size;   // nb Elements per node
     SubNode* nextToConstruct = nullptr; // The location of the next node that will be constructed
+
+    static void allocateData(Node*& node, SubNode*& subNodes, size_t nbElements);
+    static void initSubNodes(SubNode* subNodes, size_t nbElements);
 
     // A node should only be added when there is no space left in existing nodes.
     // Adds a chunk.
     void addNode();
+    void addFirstNode();
 
 public:
     // The size must always be non null.
