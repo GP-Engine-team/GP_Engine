@@ -152,7 +152,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions);GLFW_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPEngineDir)third_party;$(GPEngineDir)third_party/imgui;$(GPEngineDir)/third_party/include/PhysX/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -179,7 +179,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions);GLFW_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPEngineDir)third_party;$(GPEngineDir)third_party/imgui;$(GPEngineDir)/third_party/include/PhysX/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -337,7 +337,6 @@
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AbstractGame.cpp" />
     <ClCompile Include="src\AudioComponent.cpp" />
     <ClCompile Include="src\BehaviourComponent.cpp" />
     <ClCompile Include="src\BehaviourSystem.cpp" />

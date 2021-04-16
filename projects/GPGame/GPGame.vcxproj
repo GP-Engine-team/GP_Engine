@@ -177,7 +177,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;glfw3.lib;assimp-vc142-mt.lib;zlibstatic.lib;OpenAL32.lib;RefurekuDebug.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GPEngine.lib;glfw3dll.lib;assimp-vc142-mt.lib;zlibstatic.lib;OpenAL32.lib;RefurekuDebug.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)third_party\lib;$(SolutionDir)bin\$(Configuration)\;$(GPGameDir)\x64\Debug;$(GPEngineDir)\third_party\libDebug\Refureku;$(GPEngineDir)\third_party\libDebug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>

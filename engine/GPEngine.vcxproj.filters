@@ -82,9 +82,6 @@
     <ClCompile Include="src\WindowGLFW.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\AbstractGame.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\AudioComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
