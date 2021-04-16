@@ -29,6 +29,25 @@ GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
     return window;
 }
 
+void EditorStartup::initializeDefaultInputs() const
+{
+    GPE::InputManager& inputs = GPE::Engine::getInstance()->inputManager;
+
+    // Default editor-specific inputs
+    inputs.bindInput(GLFW_KEY_W, "forward");
+    inputs.bindInput(GLFW_KEY_S, "backward");
+    inputs.bindInput(GLFW_KEY_A, "left");
+    inputs.bindInput(GLFW_KEY_D, "right");
+    inputs.bindInput(GLFW_KEY_SPACE, "up");
+    inputs.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
+    inputs.bindInput(GLFW_KEY_ESCAPE, "exit");
+    inputs.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
+
+    inputs.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
+    GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
+                                                           GLFW_CURSOR_NORMAL);
+}
+
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
           if (m_game != nullptr)
@@ -39,7 +58,6 @@ EditorStartup::EditorStartup()
           if (m_game != nullptr)
               m_game->update(unscaledDeltaTime, deltaTime);
       }},
-
       m_render{[&]() {
           m_editor.update();
           m_editor.render();
@@ -49,22 +67,26 @@ EditorStartup::EditorStartup()
                                              GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
       m_game{nullptr}
 {
+    m_editor.m_reloadableCpp = &m_reloadableCpp;
+
     ADD_PROCESS(m_reloadableCpp, createGameInstance);
     ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
     ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
     ADD_PROCESS(m_reloadableCpp, setLogInstance);
     ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
-    ADD_PROCESS(m_reloadableCpp, setContextCurrent);
+    ADD_PROCESS(m_reloadableCpp, saveCurrentScene);
+    ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
-    GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
-    GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
-                                                           GLFW_CURSOR_NORMAL);
+    initializeDefaultInputs();
 }
 
 EditorStartup::~EditorStartup()
 {
+    GPE::Engine::getInstance()->timeSystem.clearScaledTimer();
+    GPE::Engine::getInstance()->timeSystem.clearUnscaledTimer();
+
     if (m_game != nullptr)
     {
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
@@ -117,8 +139,8 @@ void EditorStartup::update()
         auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
         (*syncImgui)(ImGui::GetCurrentContext());
 
-        auto syncGlfw = GET_PROCESS(m_reloadableCpp, setContextCurrent);
-        (*syncGlfw)(GPE::Engine::getInstance()->window.getGLFWWindow());
+        /*auto syncGlfw = GET_PROCESS(m_reloadableCpp, setContextCurrent);
+        (*syncGlfw)(GPE::Engine::getInstance()->window.getGLFWWindow());*/
         startGame();
     }
 }

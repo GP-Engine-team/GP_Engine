@@ -8,6 +8,7 @@
 #pragma once
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/Component/Component.hpp>
+#include <Engine/Serialization/Slider.hpp>
 #include <GPM/Vector3.hpp>
 #include <characterkinematic/PxCapsuleController.h>
 
@@ -23,7 +24,7 @@ namespace GPE RFKNamespace()
     public:
         CharacterController(GameObject & owner) noexcept;
 
-        CharacterController() noexcept                                 = delete;
+        CharacterController() noexcept;
         CharacterController(const CharacterController& other) noexcept = delete;
         CharacterController(CharacterController && other) noexcept     = default;
         CharacterController& operator=(CharacterController const& other) noexcept = delete;
@@ -39,6 +40,7 @@ namespace GPE RFKNamespace()
         RFKField(Inspect()) float     m_gravity      = EARTH_GRAVITY;
         RFKField(Inspect()) bool      m_hasGravity   = false;
         RFKField(Inspect()) float     m_speed        = 1.f;
+        RFKField(Inspect()) float     m_mouseSpeed   = 1.f;
         RFKField(Inspect()) bool      m_jumping      = false;
         // GPM::Vec3				m_velocity		= { 0,0,0 };
         // GPM::Vec3				m_acceleration	= { 0,0,0 };
@@ -46,6 +48,7 @@ namespace GPE RFKNamespace()
     public:
         /*RFKField(Inspect()) */ physx::PxController* controller;
         DEFAULT_GETTER_SETTER_BY_VALUE(Speed, m_speed);
+        DEFAULT_GETTER_SETTER_BY_VALUE(MouseSpeed, m_mouseSpeed);
         DEFAULT_GETTER_SETTER_BY_VALUE(HasGravity, m_hasGravity);
         DEFAULT_GETTER_SETTER_BY_VALUE(Gravity, m_gravity);
         DEFAULT_GETTER_SETTER_BY_VALUE(Jumping, m_jumping);
@@ -59,4 +62,3 @@ namespace GPE RFKNamespace()
         CharacterController_GENERATED
     };
 } // namespace )
-File_GENERATED

@@ -1,7 +1,7 @@
-﻿#include "Engine/ECS/System/BehaviourSystem.hpp"
-
+﻿
 #include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/ECS/Component/BehaviourComponent.hpp"
+#include "Engine/ECS/System/BehaviourSystem.hpp"
 
 using namespace GPE;
 

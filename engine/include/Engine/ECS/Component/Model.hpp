@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -59,7 +59,7 @@ namespace GPE RFKNamespace()
         Model(Model && other) noexcept;
         virtual ~Model();
 
-        Model()        = delete;
+        Model()        = default;
         Model& operator=(Model const& other) = delete;
         Model& operator                      =(Model&& other);
 
@@ -71,4 +71,3 @@ namespace GPE RFKNamespace()
     };
 } // namespace )
 
-File_GENERATED

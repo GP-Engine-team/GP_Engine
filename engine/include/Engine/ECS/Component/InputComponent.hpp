@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -10,9 +10,9 @@
 #include <string>
 #include <unordered_map>
 
+#include "Engine/Core/Tools/FunctionPtr.hpp"
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
-#include "GPM/Vector3.hpp"
 
 // Generated
 #include "Generated/InputComponent.rfk.h"
@@ -38,7 +38,7 @@ namespace GPE RFKNamespace()
     public:
         InputComponent(GameObject & owner);
 
-        InputComponent()                            = delete;
+        InputComponent();
         InputComponent(const InputComponent& other) = delete;
         InputComponent& operator=(InputComponent const& other) = delete;
         virtual ~InputComponent();
@@ -46,8 +46,8 @@ namespace GPE RFKNamespace()
         InputComponent& operator=(InputComponent&& other);
 
     private:
-        std::unordered_map<std::string, std::function<void()>> m_functionMap;
-        int                                                    m_key = -1;
+        std::unordered_map<std::string, GPE::Function> m_functionMap;
+        int                                            m_key = -1;
 
     public:
         std::unordered_map<std::string, EKeyMode>    keyModeMap;
@@ -57,11 +57,12 @@ namespace GPE RFKNamespace()
          * @param action
          * @param function
          */
+
         template <typename T>
         void bindAction(const std::string& action, const EKeyMode& keyMode, const std::string& inputMode, T* owner,
-                        void (T::*function)()) noexcept
+                        const std::string& methodName) noexcept
         {
-            m_functionMap.emplace(action, std::bind(function, owner));
+            m_functionMap.emplace(action, GPE::Function::make(owner, methodName));
             keyModeMap.emplace(action, keyMode);
             inputModeMap.emplace(action, inputMode);
         }
@@ -75,5 +76,3 @@ namespace GPE RFKNamespace()
         InputComponent_GENERATED
     };
 } // namespace )
-
-File_GENERATED

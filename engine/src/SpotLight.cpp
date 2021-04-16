@@ -1,7 +1,11 @@
-﻿#include "Engine/ECS/Component/Light/SpotLight.hpp"
-#include "Engine/Intermediate/DataChunk.hpp"
+﻿#include "Engine/Intermediate/DataChunk.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "GPM/Constants.hpp"
+
+#include "Engine/ECS/Component/Light/SpotLight.hpp"
+
+File_GENERATED
+
 
 using namespace GPE;
 

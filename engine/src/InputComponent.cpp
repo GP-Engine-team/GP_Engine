@@ -1,4 +1,7 @@
 ﻿#include "Engine/ECS/Component/InputComponent.hpp"
+
+File_GENERATED
+
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Engine.hpp"
 
@@ -11,6 +14,12 @@ InputComponent::InputComponent(GameObject& owner) : Component(owner)
 {
     m_key = Engine::getInstance()->inputManager.addComponent(this);
 }
+
+InputComponent::InputComponent() 
+{
+    m_key = Engine::getInstance()->inputManager.addComponent(this);
+}
+
 
 InputComponent::InputComponent(InputComponent&& other) : Component(other.getOwner())
 {
@@ -41,7 +50,7 @@ void InputComponent::fireAction(const std::string& action) noexcept
     auto it = m_functionMap.find(action);
     if (it != m_functionMap.end())
     {
-        std::function<void()> myfunc = it->second;
+        GPE::Function myfunc = it->second;
         myfunc();
     }
 }

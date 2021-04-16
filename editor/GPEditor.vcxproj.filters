@@ -73,5 +73,8 @@
     <ClCompile Include="src\GameControlBar.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ProjectContent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

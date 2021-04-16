@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -14,7 +14,9 @@
 #include "Engine/ECS/Component/TransformComponent.hpp" //TransformComponent
 
 #include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/IInspectable.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
+#include "Engine/Serialization/STDReflect.hpp"
 
 // in Inl
 #include "Engine/Core/Debug/Log.hpp"
@@ -28,11 +30,16 @@ namespace GPE RFKNamespace()
     template <>
     void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
 
+    void save(XmlSaver& context, class GameObject& inspected);
+    void load(XmlLoader& context, class GameObject& sinspected);
+
     class Scene;
 
-    class RFKClass(Inspect()) GameObject
+    class RFKClass(Serialize(false)) GameObject : public IInspectable
     {
     public:
+        using Children = std::list<GameObject*>;
+
         struct CreateArg
         {
             std::string                   name = "World";
@@ -40,24 +47,31 @@ namespace GPE RFKNamespace()
             GameObject*                   parent = nullptr;
         };
 
-    protected:
-        RFKField(Inspect()) std::string m_name;
-        TransformComponent*             m_pTransform;
+        // TODO: remove this variable for dataChunk localtion when data chunk will be rework
+        static unsigned int m_currentID;
 
-        std::list<Component*> m_pComponents;
-        std::string           m_tag{"GameObject"};
-        GameObject*           m_parent = nullptr;
+    protected:
+        RFKField(Inspect(), Serialize()) std::string m_name;
+
+        RFKField(Serialize()) TransformComponent* m_pTransform;
+
+        RFKField(Serialize()) std::list<Component*> m_pComponents;
+
+        std::string m_tag{"GameObject"};
+
+        RFKField(Serialize()) GameObject* m_parent = nullptr;
+        unsigned int                      m_id;
         bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
     public:
-        Scene*                 pOwnerScene;
-        std::list<GameObject*> children = {};
+        Scene*                                       pOwnerScene;
+        RFKField(Serialize()) std::list<GameObject*> children = {};
 
     public:
         inline GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
         ~GameObject() noexcept;
 
-        GameObject()                        = delete;
+        GameObject()                        = default;
         GameObject(const GameObject& other) = delete;            // TODO: when transform is available
         GameObject& operator=(GameObject const& other) = delete; // TODO
 
@@ -163,7 +177,7 @@ namespace GPE RFKNamespace()
         void destroyUniqueComponentNow() noexcept;
 
         /**
-         * @brief destroy component of gameobject
+         * @brief onent of gameobject
          *
          * @param Component
          */
@@ -199,6 +213,14 @@ namespace GPE RFKNamespace()
         template <typename... Args>
         GameObject& addChild(Args && ... args) noexcept;
 
+        // TODO: Remove this function when dataChunk will be rework
+        /**
+         * @brief Recursive function that allow user to find gameObject corresponding to Id
+         * @param ID
+         * @return
+         */
+        GameObject* getGameObjectCorrespondingToID(unsigned int ID) noexcept;
+
         [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;
 
         template <typename T>
@@ -210,11 +232,15 @@ namespace GPE RFKNamespace()
 
         [[nodiscard]] std::string getAbsolutePath() const noexcept;
 
+        [[nodiscard]] inline unsigned int getID() const noexcept;
+
         inline void setTag(const std::string& newTag) noexcept;
 
         [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
+
+         void inspect(GPE::InspectContext& context) override;
 
         GameObject_GENERATED
     };
@@ -222,5 +248,3 @@ namespace GPE RFKNamespace()
 #include "GameObject.inl"
 
 } // namespace )
-
-File_GENERATED

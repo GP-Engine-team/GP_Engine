@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -13,8 +13,8 @@
 #include "Engine/Serialization/Serialize.hpp"
 #include "Engine/Serialization/xml/xmlLoader.hpp"
 #include "Engine/Serialization/xml/xmlSaver.hpp"
-#include "Generated/Component.rfk.h"
 #include "Refureku/Object.h"
+#include "Generated/Component.rfk.h"
 
 namespace GPE RFKNamespace()
 {
@@ -26,12 +26,14 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(false), Serialize(false)) Component : public rfk::Object
     {
     protected:
+        RFKField(Serialize()) 
         GameObject*              m_gameObject; // can not be ref for move
-        RFKField(Inspect()) bool m_isActivated{true};
+        RFKField(Inspect(), Serialize()) 
+        bool m_isActivated{true};
 
     public:
         inline Component(GameObject & owner) noexcept;
-        inline Component() noexcept                       = delete;
+        inline Component() noexcept                       = default;
         inline Component(const Component& other) noexcept = delete;
         inline Component(Component && other) noexcept     = default;
         inline virtual ~Component() noexcept              = default;
@@ -55,6 +57,5 @@ namespace GPE RFKNamespace()
 
 #include "Component.inl"
 
-} // namespace )
+} // namespace GPE
 
-File_GENERATED

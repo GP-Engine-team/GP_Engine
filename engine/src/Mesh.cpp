@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Serialization/GPMDataInspector.hpp"
 #include "GPM/Constants.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
 
@@ -15,10 +16,10 @@ using namespace GPM;
 
 Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
 {
-    m_boundingVolumeType = arg.boundingVolumeType;
+    // m_boundingVolumeType = arg.boundingVolumeType;
 
-    if (arg.boundingVolume != nullptr)
-        m_boundingVolume = std::move(arg.boundingVolume);
+    // if (arg.boundingVolume != nullptr)
+    //  m_boundingVolume = std::move(arg.boundingVolume);
 
     m_verticesCount = static_cast<unsigned int>(arg.indices.size());
 
@@ -49,7 +50,7 @@ Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
 
     glBindVertexArray(0);
 
-    Log::getInstance()->log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with EBO").c_str());
+    Log::getInstance()->log("Mesh load in GPU with EBO");
 }
 
 static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, const void* data, int size) noexcept
@@ -62,10 +63,10 @@ static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, 
 
 Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
 {
-    m_boundingVolumeType = arg.boundingVolumeType;
+    // m_boundingVolumeType = arg.boundingVolumeType;
 
-    if (arg.boundingVolume != nullptr)
-        m_boundingVolume = std::move(arg.boundingVolume);
+    //  if (arg.boundingVolume != nullptr)
+    //      m_boundingVolume = std::move(arg.boundingVolume);
 
     if (arg.iBuffer.empty())
     {
@@ -124,7 +125,7 @@ Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
     glBindBuffer(GL_ARRAY_BUFFER, m_uvbuffer);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    Log::getInstance()->log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with VBOs").c_str());
+    Log::getInstance()->log("Mesh load in GPU with VBOs");
 }
 
 Mesh::~Mesh() noexcept
@@ -156,7 +157,6 @@ Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHe
                                                    Axis towardAxis, bool isRectoVerso) noexcept
 {
     Mesh::CreateContiguousVerticesArg mesh;
-    mesh.objName = "Plane";
 
     // plane contain 4 triangle, 4 vertex 4 texture coordonate and 2 normal
     mesh.vBuffer.reserve(4);
@@ -254,7 +254,6 @@ Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHe
 Mesh::CreateContiguousVerticesArg Mesh::createCube(float textureRepetition) noexcept
 {
     Mesh::CreateContiguousVerticesArg mesh;
-    mesh.objName = "Cube";
 
     // cube contain 12 triangle, 8 vertex 4 texture coordonate and 6 normal
     mesh.vBuffer.reserve(8);
@@ -343,7 +342,6 @@ Mesh::CreateContiguousVerticesArg Mesh::createSphere(int latitudeCount, int long
     GPE_ASSERT(latitudeCount > 2 && longitudeCount > 2, "Latitude and Longitude must be greater than 2");
 
     Mesh::CreateContiguousVerticesArg mesh;
-    mesh.objName = "Sphere";
 
     latitudeCount *= 2;
 
@@ -430,7 +428,6 @@ Mesh::CreateContiguousVerticesArg Mesh::createCylindre(unsigned int prescision) 
     GPE_ASSERT(prescision > 2, "Prescision must be greater than 2");
 
     Mesh::CreateContiguousVerticesArg mesh;
-    mesh.objName = "Cylindre";
 
     // Cylindre contain prescision * 2 + 2
     mesh.vBuffer.reserve(static_cast<size_t>(prescision) * 2 + 2);
@@ -523,4 +520,20 @@ Mesh::CreateContiguousVerticesArg Mesh::createCylindre(unsigned int prescision) 
     mesh.iBuffer.push_back(Indice{prescision + 1, prescision + 1, prescision + 1});
 
     return mesh;
+}
+
+template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, Mesh::Vertex& inspected)
+{
+    inspect(context, inspected.v, "v");
+    inspect(context, inspected.vn, "vn");
+    inspect(context, inspected.vt, "uv");
+}
+
+template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, Mesh::Indice& inspected)
+{
+    inspect(context, inspected.iv, "iv");
+    inspect(context, inspected.ivn, "ivn");
+    inspect(context, inspected.ivt, "iuv");
 }

@@ -1,3 +1,5 @@
+#define GLFW_INCLUDE_NONE
+#define GLFW_DLL
 #include <Kodgen/Misc/DefaultLogger.h>
 #include <RefurekuGenerator/CodeGen/FileGenerationUnit.h>
 #include <RefurekuGenerator/CodeGen/FileGenerator.h>
@@ -28,6 +30,7 @@ void generateEngineFiles(const std::string& engineDir)
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir);
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/imgui");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/Refureku");
@@ -44,7 +47,7 @@ void generateEngineFiles(const std::string& engineDir)
     settings.addToParseDirectory(engineDir + "/include/engine");
 
     settings.addIgnoredDirectory(engineDir + "/include/Generated");
-    settings.addIgnoredDirectory(engineDir + "/include/engine/Core");
+    // settings.addIgnoredDirectory(engineDir + "/include/engine/Core");
     // settings.addIgnoredDirectory(engineDir + "/include/engine/Serialization");
 
     // You will need to setup parsing settings and generation settings here.
@@ -92,7 +95,7 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
 
     // You will need to setup parsing settings and generation settings here.
     // Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, false);
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, true);
 }
 
 // First Arg : Engine  (default : "../engine/")
@@ -100,29 +103,37 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
 int main(int argc, char** argv)
 {
     std::cout << "=== Refureku Generator Running" << std::endl;
-    for (int i = 0; i < argc; i++)
+
+    if (argc > 1)
     {
-        std::cout << "argv[" << i << "] = " << argv[i] << std::endl;
+
+        for (int i = 0; i < argc; i++)
+        {
+            std::cout << "argv[" << i << "] = " << argv[i] << std::endl;
+        }
+        switch (argc)
+        {
+        case 2:
+            generateEngineFiles(argv[1]);
+            break;
+
+        case 3:
+            generateGameFiles(argv[2], argv[1]);
+            break;
+
+        default:
+            std::cout << "invalid number of arguments" << std::endl;
+            break;
+        }
     }
-    switch (argc)
+    else
     {
-    case 2:
-        generateEngineFiles(argv[1]);
-        break;
+        const char* p2 =
+            "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/../../engine/";
+        const char* p1 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/";
 
-    case 3:
-        generateGameFiles(argv[2], argv[1]);
-        break;
-
-    default:
-        std::cout << "invalid number of arguments" << std::endl;
-        break;
+        generateGameFiles(p1, p2);
+        generateEngineFiles(p2);
     }
-
-    // const char* p2 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/../../engine/";
-    // const char* p1 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/";
-
-    // generateGameFiles(p1, p2);
-
     return 0;
 }

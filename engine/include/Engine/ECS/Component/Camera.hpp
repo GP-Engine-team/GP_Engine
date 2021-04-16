@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -12,6 +12,7 @@
 #include "Engine/Serialization/ComponentGen.h"
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/Inspect.hpp"
+#include "Engine/Serialization/InspectContext.hpp"
 #include "GPM/Matrix4.hpp"
 #include "GPM/Shape3D/Plane.hpp"
 
@@ -38,7 +39,7 @@ namespace GPE RFKNamespace()
         GPM::Plane nearFace;
     };
 
-    class RFKClass(Inspect(), ComponentGen) Camera : public Component
+    class RFKClass(Inspect(), ComponentGen, Serialize()) Camera : public Component
     {
     public:
         enum class EProjectionType
@@ -98,7 +99,7 @@ namespace GPE RFKNamespace()
     public:
         virtual ~Camera() noexcept;
 
-        Camera() noexcept                    = delete;
+        Camera() noexcept                    = default;
         Camera(const Camera& other) noexcept = delete;
         Camera& operator=(Camera const& other) noexcept = delete;
 
@@ -110,6 +111,7 @@ namespace GPE RFKNamespace()
         /**
          * @brief Update the view matrix in function of model matrix of it's parent
          */
+        RFKMethod()
         void updateView();
 
         /**
@@ -196,4 +198,3 @@ namespace GPE RFKNamespace()
 
 } // namespace )
 
-File_GENERATED

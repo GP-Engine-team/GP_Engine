@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -17,13 +17,13 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BehaviourComponent : public Component
     {
     protected:
-        RFKField(Inspect()) bool m_isUpdated      = false;
-        RFKField(Inspect()) bool m_isFixedUpdated = false;
+        RFKField(Inspect(), Serialize()) bool m_isUpdated      = false;
+        RFKField(Inspect(), Serialize()) bool m_isFixedUpdated = false;
 
     public:
         BehaviourComponent(GameObject & owner) noexcept;
 
-        BehaviourComponent() noexcept                                = delete;
+        BehaviourComponent() noexcept;
         BehaviourComponent(const BehaviourComponent& other) noexcept = delete;
         BehaviourComponent(BehaviourComponent && other) noexcept;
         virtual ~BehaviourComponent() noexcept;
@@ -51,4 +51,3 @@ namespace GPE RFKNamespace()
 
 } // namespace )
 
-File_GENERATED

@@ -85,7 +85,7 @@ PhysXSystem::~PhysXSystem()
     scene->release();
     cooking->release();
     physics->release();
-    pvd->release();
+    //pvd->release();
     foundation->release();
 }
 

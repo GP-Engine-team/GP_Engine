@@ -2,38 +2,28 @@
 
 #include <utility>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
-
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ParserTool.hpp"
+#include "Engine/Resources/Importer/Importer.hpp"
 #include "glad/glad.h"
 
 using namespace GPE;
 
-Texture::Texture(const LoadArg& arg) noexcept
+Texture::Texture(const LoadArg& arg) noexcept : Texture(readTextureFile(arg.path.c_str()))
 {
-    stbi_set_flip_vertically_on_load(arg.flipTexture);
+}
 
-    int            w, h, comp;
-    unsigned char* pixels = stbi_load(arg.path.c_str(), &w, &h, &comp, 0);
+Texture::Texture(const ImportArg& arg) noexcept
+{
+    setFormat(arg.comp);
 
-    if (pixels == nullptr)
-    {
-        FUNCT_ERROR((std::string("STBI cannot load image: ") + arg.path).c_str());
-        FUNCT_ERROR(std::string("Reason: ") + stbi_failure_reason());
-        return;
-    }
+    loadInGPU(arg.w, arg.h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT, arg.pixels,
+              arg.generateMipmaps);
 
-    setFormat(comp);
+    free(arg.pixels);
 
-    loadInGPU(w, h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT,
-              pixels, arg.generateMipmaps);
-
-    Log::getInstance()->log(
-        (std::string("Texture \"") + removeUntilFirstSpaceInPath(arg.path.c_str()) + "\" loaded to VRAM").c_str());
-    stbi_image_free(pixels);
+    Log::getInstance()->log("Texture loaded to VRAM");
 }
 
 Texture::Texture(const CreateArg& arg) noexcept : format{arg.format}
@@ -93,7 +83,8 @@ bool Texture::checkFormatValidity() const
 }
 
 bool Texture::loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
-                        ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels, bool generateMipmaps) noexcept
+                        ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels,
+                        bool generateMipmaps) noexcept
 {
     if (!checkFormatValidity())
     {
