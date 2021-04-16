@@ -57,7 +57,9 @@ public:
     Material& operator=(Material&& other) = default;
 
     DEFAULT_GETTER_SETTER_BY_REF(Component, m_comp);
+    DEFAULT_GETTER_SETTER_BY_REF(AmbianteTexture, m_pAmbianteTexture);
     DEFAULT_GETTER_SETTER_BY_REF(DiffuseTexture, m_pDiffuseTexture);
+    DEFAULT_GETTER_SETTER_BY_REF(BaseColorTexture, m_pBaseColorTexture);
 
     inline bool isOpaque() const noexcept;
 

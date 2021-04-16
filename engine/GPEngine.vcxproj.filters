@@ -241,7 +241,7 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Serialization\GPEDataInspector.cpp">
-      <Filter>src</Filter>
+      <Filter>src\Serialization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

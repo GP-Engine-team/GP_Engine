@@ -92,8 +92,10 @@ File_GENERATED
         {
             writeShaderFile(m_path.c_str(), m_config);
 
+            std::filesystem::path fsPath = m_path;
+
             // Update loaded resource
-            if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(m_path.c_str()))
+            if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(fsPath.filename().string()))
             {
                 pShader->reload((std::filesystem::current_path() / m_config.vertexShaderPath).string().c_str(),
                                 (std::filesystem::current_path() / m_config.fragmentShaderPath).string().c_str(),

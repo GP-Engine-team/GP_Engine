@@ -1,4 +1,5 @@
 #include "Engine/Core/Tools/ImGuiTools.hpp"
+#include "Engine/Engine.hpp"
 #include "Engine/Serialization/FileExplorer.hpp"
 #include "Engine/Serialization/GPMDataInspector.hpp"
 #include "Engine/Serialization/STDDataInspector.hpp"
@@ -66,6 +67,37 @@ File_GENERATED
         if (ImGui::Button("Apply"))
         {
             writeMaterialFile(m_path.c_str(), m_config);
+
+            std::filesystem::path fsPath = m_path;
+
+            // Update loaded resource
+            if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(fsPath.filename().string()))
+            {
+                pMaterial->setComponent(m_config.comp);
+
+                fsPath = m_config.ambianteTexturePath;
+
+                if (Texture* pTexture = Engine::getInstance()->resourceManager.get<Texture>(fsPath.filename().string()))
+                    pMaterial->setAmbianteTexture(pTexture);
+                else
+                    pMaterial->setAmbianteTexture(loadTextureFile(m_config.ambianteTexturePath.c_str()));
+
+                fsPath = m_config.diffuseTexturePath;
+
+                if (Texture* pTexture =
+                        Engine::getInstance()->resourceManager.get<Texture>(m_config.diffuseTexturePath.c_str()))
+                    pMaterial->setDiffuseTexture(pTexture);
+                else
+                    pMaterial->setDiffuseTexture(loadTextureFile(m_config.diffuseTexturePath.c_str()));
+
+                fsPath = m_config.baseColorTexturePath;
+
+                if (Texture* pTexture = Engine::getInstance()->resourceManager.get<Texture>(fsPath.filename().string()))
+                    pMaterial->setBaseColorTexture(pTexture);
+                else
+                    pMaterial->setBaseColorTexture(loadTextureFile(m_config.baseColorTexturePath.c_str()));
+            }
+
             m_isDirty = false;
         }
         ImGui::PopEnabled();
