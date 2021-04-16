@@ -1,5 +1,5 @@
 ﻿inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
-    : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->add(*this, arg.transformArg)},
+    : m_name{arg.name}, m_pTransform{DataChunk<TransformComponent>::getInstance()->add(*this, arg.transformArg)},
       m_pComponents{}, pOwnerScene{&scene}, m_parent{arg.parent}, m_id{++m_currentID}
 {
 }
@@ -7,9 +7,9 @@
 template <typename T, typename... Args>
 inline T& GameObject::addComponent(Args&&... args) noexcept
 {
-    T& newComponent = DataChunk<T>::getInstance()->add(*this, std::forward<Args>(args)...);
-    m_pComponents.emplace_back(&newComponent);
-    return newComponent;
+    T* newComponent = DataChunk<T>::getInstance()->add(*this, std::forward<Args>(args)...);
+    m_pComponents.emplace_back(newComponent);
+    return *newComponent;
 }
 
 template <typename T>
@@ -82,7 +82,7 @@ inline constexpr TransformComponent& GameObject::getTransform() noexcept
 template <typename... Args>
 inline GameObject& GameObject::addChild(Args&&... args) noexcept
 {
-    GameObject* pChild = children.emplace_back(&DataChunk<GameObject>::getInstance()->add(*pOwnerScene, args...));
+    GameObject* pChild = children.emplace_back(DataChunk<GameObject>::getInstance()->add(*pOwnerScene, args...));
 
     pChild->m_parent = this;
     pChild->getTransform().setDirty();
@@ -124,35 +124,35 @@ inline constexpr const std::string& GameObject::getTag() const noexcept
 {
     return m_tag;
 }
-
-static void updateGameObjectPtrAftereDelete(GameObject* newPtr)
-{
-    GameObject* previousLocalization = &DataChunk<GameObject>::getInstance()->getData().back();
-    previousLocalization++;
-
-    // Update manually the pointer of the parent. In DataChunk, gameObject is swap with last to optimize std::vector
-    // erase.
-    for (auto&& child : newPtr->getParent()->children)
-    {
-        if (child == previousLocalization)
-        {
-            child = newPtr; // Reminber that this will be swapping with back. First operation update and don't change
-                            // hierachy. Only the pointer (memory space) is importante to remain is this operation.
-            break;
-        }
-    }
-}
+//
+//static void updateGameObjectPtrAftereDelete(GameObject* newPtr)
+//{
+//    GameObject* previousLocalization = &DataChunk<GameObject>::getInstance()->getData().back();
+//    previousLocalization++;
+//
+//    // Update manually the pointer of the parent. In DataChunk, gameObject is swap with last to optimize std::vector
+//    // erase.
+//    for (auto&& child : newPtr->getParent()->children)
+//    {
+//        if (child == previousLocalization)
+//        {
+//            child = newPtr; // Reminber that this will be swapping with back. First operation update and don't change
+//                            // hierachy. Only the pointer (memory space) is importante to remain is this operation.
+//            break;
+//        }
+//    }
+//}
 
 inline std::list<GameObject*>::iterator GameObject::destroyChild(const std::list<GameObject*>::iterator& it) noexcept
 {
     for (auto&& child : (*it)->children)
     {
         DataChunk<GameObject>::getInstance()->destroy(child);
-        updateGameObjectPtrAftereDelete(child);
+        //updateGameObjectPtrAftereDelete(child);
     }
 
     DataChunk<GameObject>::getInstance()->destroy(*it);
-    updateGameObjectPtrAftereDelete(*it);
+    //updateGameObjectPtrAftereDelete(*it);
 
     return children.erase(it);
 }

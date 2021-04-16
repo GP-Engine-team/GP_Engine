@@ -16,6 +16,8 @@ private:
         // Can be in a different chunk.
         SubNode* next;
         T elem;
+
+        ~SubNode() = delete;
     };
 
     // All allocated subNodes start with a Node, 
@@ -61,8 +63,8 @@ public:
     static UnrolledListAllocator fromNbElements(size_t nbElementsPerNode);
     static UnrolledListAllocator fromNbBytes(size_t nbBytes);
 
-    T* allocate(size_t nbElements);
-    void deallocate(T* ptr, std::size_t nbElements);
+    T* allocate(size_t nbElements = 1);
+    void deallocate(T* ptr, std::size_t nbElements = 1);
 
     //  Define it if you want to debug or see what's inside UnrolledListAllocator
     template<typename U>

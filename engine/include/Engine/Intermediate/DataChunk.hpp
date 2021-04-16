@@ -9,6 +9,7 @@
 #include "Engine/Core/Tools/ClassUtility.hpp"
 #include <array>  //std::array
 #include <vector> //std::vector
+#include "Engine/Core/Tools/UnrolledListAllocator.hpp"
 
 // In inl
 #include "Engine/Core/Debug/Assert.hpp"
@@ -24,8 +25,7 @@ namespace GPE
  * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
  * @tparam T : Component stored type
  */
-// TODO: Remove multiplicator
-template <typename TStoredData, int TSize = 65536 * 1000> // 64KiB = 65,536Ko
+template <typename TStoredData, size_t TSize = 65536> // 64KiB = 65,536Ko
 class DataChunk
 {
     /**
@@ -35,9 +35,7 @@ class DataChunk
      */
 private:
     static DataChunk* m_pInstance;
-
-protected:
-    std::vector<TStoredData> m_datas;
+    UnrolledListAllocator<TStoredData> allocator = UnrolledListAllocator<TStoredData>::fromNbBytes(TSize);
 
 protected:
     constexpr DataChunk() noexcept;
@@ -61,11 +59,11 @@ public:
      * @return T&
      */
     template <typename... Args>
-    TStoredData& add(Args&&... args) noexcept;
+    TStoredData* add(Args&&... args) noexcept;
 
     void destroy(TStoredData* const dataToDestroy) noexcept;
 
-    GETTER_BY_REF(Data, m_datas);
+    //GETTER_BY_REF(Data, m_datas);
 
     /**
      * @brief This is the static method that controls the access to the singleton
@@ -80,7 +78,7 @@ public:
     static void       setInstance(DataChunk& ptr) noexcept;
 };
 
-template <typename TStoredData, int TSize>
+template <typename TStoredData, size_t TSize>
 DataChunk<TStoredData, TSize>* DataChunk<TStoredData, TSize>::m_pInstance{nullptr};
 
 #include "DataChunk.inl"

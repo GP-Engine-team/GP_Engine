@@ -12,7 +12,7 @@
 
 using namespace GPE;
 
-Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*this))
+Scene::Scene() noexcept : m_pWorld(DataChunk<GameObject>::getInstance()->add(*this))
 {
     for (auto&& elem : m_loadedResourcesPath)
     {

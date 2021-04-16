@@ -1,6 +1,6 @@
 template <typename T>
 UnrolledListAllocator<T>::UnrolledListAllocator(UnrolledListAllocator&& rhs)
-    : firstNode(rhs.firstNode), m_lastNode(rhs.m_lastNode), m_size(rhs.m_size), m_nextToConstruct(rhs.m_nextToConstruct)
+    : m_firstNode(rhs.m_firstNode), m_lastNode(rhs.m_lastNode), m_size(rhs.m_size), m_nextToConstruct(rhs.m_nextToConstruct)
 {
     rhs.m_nextToConstruct = nullptr;
     rhs.m_firstNode       = nullptr;
@@ -64,9 +64,14 @@ void UnrolledListAllocator<T>::allocateData(Node*& node, SubNode*& subNodes, siz
     {
         Node    node;
         SubNode subNodes; // undefined amount, but a minimum of 1.
+
+        ~Allocated() = delete;
     };
 
     Allocated* allocated = (Allocated*)malloc(sizeof(Node) + nbElements * sizeof(SubNode));
+    if (allocated == 0)
+        throw std::bad_alloc();
+
     node                 = &allocated->node;
     subNodes             = &allocated->subNodes;
 }
