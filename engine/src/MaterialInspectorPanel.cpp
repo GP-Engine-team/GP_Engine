@@ -3,18 +3,18 @@
 #include "Engine/Serialization/GPMDataInspector.hpp"
 #include "Engine/Serialization/STDDataInspector.hpp"
 
-#include "Engine/Serialization/MaterialImporterSetting.hpp"
+#include "Engine/Serialization/MaterialInspectorPanel.hpp"
 File_GENERATED
 
     namespace GPE
 {
 
-    MaterialImporterModifier::MaterialImporterModifier(const std::string& inPath)
+    MaterialInspectorPanel::MaterialInspectorPanel(const std::string& inPath)
         : IInspectable(), m_config(readMaterialFile(inPath.c_str())), m_path(inPath), m_isDirty(false)
     {
     }
 
-    void MaterialImporterModifier::inspect(InspectContext & context)
+    void MaterialInspectorPanel::inspect(InspectContext & context)
     {
         ImGui::TextUnformatted("Material importer");
 
@@ -68,7 +68,6 @@ File_GENERATED
             writeMaterialFile(m_path.c_str(), m_config);
             m_isDirty = false;
         }
-
         ImGui::PopEnabled();
     }
 

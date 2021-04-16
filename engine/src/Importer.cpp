@@ -64,54 +64,55 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         scene->mMaterials[i]->Get(AI_MATKEY_SHININESS, materialArg.comp.shininess);
         scene->mMaterials[i]->Get(AI_MATKEY_OPACITY, materialArg.comp.opacity);
 
-        TextureImportDataConfig textureArg;
-        aiString                path;
-        std::filesystem::path   fsPath;
-        std::filesystem::path   fsDstPath;
+        TextureImportConfig   textureArg;
+        aiString              path;
+        std::filesystem::path fsPath;
+        std::filesystem::path fsDstPath;
+        std::filesystem::path fsSrcPath;
 
         if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_AMBIENT))
         {
             scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_AMBIENT, 0, &path);
 
-            fsPath             = path.C_Str();
-            textureArg.srcPath = (srcDirPath / fsPath).string();
+            fsPath    = path.C_Str();
+            fsSrcPath = srcDirPath / fsPath;
 
             fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
             fsDstPath = dstDirPath / fsPath;
 
             materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-            writeTextureFile(fsDstPath.string().c_str(), textureArg);
+            importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
         }
 
         if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE))
         {
             scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
 
-            fsPath             = path.C_Str();
-            textureArg.srcPath = (srcDirPath / fsPath).string();
+            fsPath    = path.C_Str();
+            fsSrcPath = srcDirPath / fsPath;
 
             fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
             fsDstPath = dstDirPath / fsPath;
 
             materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-            writeTextureFile(fsDstPath.string().c_str(), textureArg);
+            importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
         }
 
         if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_BASE_COLOR))
         {
             scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_BASE_COLOR, 0, &path);
 
-            fsPath             = path.C_Str();
-            textureArg.srcPath = (srcDirPath / fsPath).string();
+            fsPath    = path.C_Str();
+            fsSrcPath = srcDirPath / fsPath;
 
             fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
             fsDstPath = dstDirPath / fsPath;
 
             materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-            writeTextureFile(fsDstPath.string().c_str(), textureArg);
+            importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
         }
 
         std::filesystem::path dstMaterialPath = dstDirPath / scene->mMaterials[i]->GetName().C_Str();
@@ -187,40 +188,45 @@ struct TextureHeader
     int  textureLenght = 0;
 };
 
-void GPE::importeTextureFile(const char* srcPath, const char* dstPath)
+void GPE::importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config)
 {
-    TextureImportDataConfig textureArg;
-    textureArg.srcPath = srcPath;
+    stbi_set_flip_vertically_on_load(config.verticalFlip);
+
+    Texture::ImportArg arg;
+    arg.pixels.reset(stbi_load(srcPath, &arg.w, &arg.h, &arg.comp, 0));
+
+    if (arg.pixels == nullptr)
+    {
+        FUNCT_ERROR((std::string("STBI cannot load image: ") + srcPath).c_str());
+        FUNCT_ERROR(std::string("Reason: ") + stbi_failure_reason());
+        return;
+    }
+
+    switch (config.format)
+    {
+    case TextureImportConfig::EFormatType::PNG:
+    default: {
+        arg.pixels.reset(stbi_write_png_to_mem((const unsigned char*)arg.pixels.get(), arg.w * arg.comp, arg.w, arg.h,
+                                               arg.comp, &arg.len));
+
+        if (arg.pixels == NULL)
+        {
+            FUNCT_ERROR((std::string("STBI cannot write image with png format with this path : ") + srcPath).c_str());
+        }
+
+        break;
+    }
+    }
 
     std::filesystem::path srcTexturePath(srcPath);
     std::filesystem::path dstTexturePath = dstPath / srcTexturePath.stem();
     dstTexturePath += ENGINE_TEXTURE_EXTENSION;
 
-    writeTextureFile(dstTexturePath.string().c_str(), textureArg);
+    writeTextureFile(dstTexturePath.string().c_str(), arg);
 }
 
-void GPE::writeTextureFile(const char* dst, const TextureImportDataConfig& arg)
+void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data)
 {
-    stbi_set_flip_vertically_on_load(true);
-
-    int            w, h, comp;
-    unsigned char* pixels = stbi_load(arg.srcPath.c_str(), &w, &h, &comp, 0);
-
-    if (pixels == nullptr)
-    {
-        FUNCT_ERROR((std::string("STBI cannot load image: ") + arg.srcPath).c_str());
-        FUNCT_ERROR(std::string("Reason: ") + stbi_failure_reason());
-        return;
-    }
-
-    int            len;
-    unsigned char* png = stbi_write_png_to_mem((const unsigned char*)pixels, w * comp, w, h, comp, &len);
-
-    if (png == NULL)
-    {
-        FUNCT_ERROR((std::string("STBI cannot write image with png format with this path : ") + arg.srcPath).c_str());
-    }
-
     FILE* pFile = nullptr;
 
     if (fopen_s(&pFile, dst, "w+b"))
@@ -229,13 +235,11 @@ void GPE::writeTextureFile(const char* dst, const TextureImportDataConfig& arg)
         return;
     }
 
-    TextureHeader header{(char)EFileType::TEXTURE, len};
+    TextureHeader header{(char)EFileType::TEXTURE, data.len};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
-    fwrite(png, len, 1, pFile);
+    fwrite(data.pixels.get(), data.len, 1, pFile);
     fclose(pFile);
-    stbi_image_free(pixels);
-    STBIW_FREE(png);
 
     Log::getInstance()->log(stringFormat("Texture write to \"%s\"", dst));
 }
@@ -264,11 +268,11 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
 
         fread(&texBuffer[0], sizeof(stbi_uc), header.textureLenght, pFile); // Texture buffer
 
-        arg.pixels = stbi_load_from_memory(texBuffer.data(), header.textureLenght, &arg.w, &arg.h, &arg.comp, 0);
+        arg.pixels.reset(stbi_load_from_memory(texBuffer.data(), header.textureLenght, &arg.w, &arg.h, &arg.comp, 0));
     }
     else
     {
-        arg.pixels = stbi_load_from_file(pFile, &arg.w, &arg.h, &arg.comp, 0);
+        arg.pixels.reset(stbi_load_from_file(pFile, &arg.w, &arg.h, &arg.comp, 0));
     }
 
     if (!arg.pixels)
