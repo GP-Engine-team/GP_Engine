@@ -154,8 +154,6 @@ Renderer::Renderer(Window& window) noexcept : m_pWindow{&window}
 
 Renderer::~Renderer() noexcept
 {
-    Engine::getInstance()->renderSystem.removeRenderer(this);
-
     Log::getInstance()->log("GLFW / OpenGL 4.6 renderer release");
 }
 

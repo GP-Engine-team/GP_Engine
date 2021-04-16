@@ -40,9 +40,6 @@
     <ClCompile Include="src\RendererGLFW_GL46.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\RenderSystem.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\RenderTexture.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -540,9 +537,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\RenderSystem.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp">
