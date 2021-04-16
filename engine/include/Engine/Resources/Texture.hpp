@@ -84,8 +84,8 @@ public:
 
     struct ImportArg
     {
-        int               w, h, comp;
-        unsigned char*    pixels; // This data must be free after usage
+        int               w = 0, h = 0, comp = 0;
+        unsigned char*    pixels = nullptr; // This data must be free after usage
         ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
