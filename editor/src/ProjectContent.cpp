@@ -232,12 +232,18 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
     if (ImGui::Button("Importe"))
     {
-        const std::string srcPath = GPE::openFileExplorerAndGetAbsoluePath(
-                                        L"Select asset to import", {{L"Asset", L"*.obj;*.jpg;*.jpeg;*.bmp;*.png;*.tga"},
-                                                                    {L"Model", L"*.obj"},
-                                                                    {L"Image", L"*.jpg;*.jpeg;*.bmp;*.png;*.tga"}})
-                                        .string();
-        importeResource(srcPath.c_str(), pCurrentDirectory->path.string().c_str());
+        const std::string srcPath =
+            GPE::openFileExplorerAndGetAbsoluePath(L"Select asset to import",
+                                                   {{L"Asset", L"*.obj;*.fbx;*.jpg;*.jpeg;*.bmp;*.png;*.tga"},
+                                                    {L"Model", L"*.obj;*.fbx"},
+                                                    {L"Image", L"*.jpg;*.jpeg;*.bmp;*.png;*.tga"}})
+                .string();
+
+        if (!srcPath.empty())
+        {
+            importeResource(srcPath.c_str(), pCurrentDirectory->path.string().c_str());
+            refreshResourcesList();
+        }
     }
 
     ImGui::SameLine();

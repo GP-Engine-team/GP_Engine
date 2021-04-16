@@ -37,13 +37,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
     Assimp::Importer importer;
     const aiScene*   scene = importer.ReadFile(srcPath, postProcessflags);
     if (!scene)
+    {
         FUNCT_ERROR(importer.GetErrorString());
-
-    // SubModule initialization
-    GPE_ASSERT(scene->HasMeshes(), "File without mesh");
-
-    // Material and texture
-    GPE_ASSERT(scene->HasMaterials(), "Mesh without material not supported");
+        return;
+    }
 
     std::filesystem::path srcDirPath(srcPath);
     srcDirPath = srcDirPath.parent_path();
@@ -52,10 +49,19 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
     for (size_t i = 1; i < scene->mNumMaterials; ++i)
     {
-        GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) != 0,
-                   "No diffuse texture not supported");
-        GPE_ASSERT(scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) < 2,
-                   "Multiple diffuse trexture not supported");
+        if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) == 0)
+        {
+            Log::getInstance()->logError(
+                stringFormat("Material \"%s\" : No diffuse texture not supported", scene->mMaterials[i]->GetName()));
+            continue;
+        }
+
+        if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE) > 1)
+        {
+            Log::getInstance()->logError(stringFormat("Material \"%s\" : Multiple diffuse texture not supported",
+                                                      scene->mMaterials[i]->GetName()));
+            continue;
+        }
 
         Material::ImporteArg materialArg;
 
@@ -78,11 +84,11 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         TextureImportDataConfig textureArg;
 
         std::filesystem::path diffuseTextureFile(diffuseTexturePath.C_Str());
-        std::filesystem::path dstTexturePath = dstDirPath / diffuseTextureFile.stem();
-        dstTexturePath += ENGINE_TEXTURE_EXTENSION;
         std::filesystem::path srcTexturePath = srcDirPath / diffuseTextureFile;
+        textureArg.srcPath                   = srcTexturePath.string();
 
-        textureArg.srcPath = srcTexturePath.string();
+        diffuseTextureFile.replace_extension(ENGINE_TEXTURE_EXTENSION);
+        std::filesystem::path dstTexturePath = dstDirPath / diffuseTextureFile;
 
         materialArg.diffuseTexturePath = std::filesystem::relative(dstTexturePath).string().c_str();
 
@@ -105,10 +111,29 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         // Vertices
         for (size_t verticeId = 0; verticeId < pMesh->mNumVertices; ++verticeId)
         {
-            GPE_ASSERT(pMesh->mVertices != nullptr, "Mesh without vertices");
-            GPE_ASSERT(pMesh->HasNormals(), "Mesh without Normal");
-            GPE_ASSERT(pMesh->mTextureCoords != nullptr, "Mesh without UV");
-            GPE_ASSERT(pMesh->mTextureCoords[0] != nullptr, "Invalid UV");
+            if (pMesh->mVertices == nullptr)
+            {
+                Log::getInstance()->logError(stringFormat("Mesh \"%s\" without vertices", pMesh->mName));
+                continue;
+            }
+
+            if (!pMesh->HasNormals())
+            {
+                Log::getInstance()->logError(stringFormat("Mesh \"%s\" without Normal", pMesh->mName));
+                continue;
+            }
+
+            if (pMesh->mTextureCoords == nullptr)
+            {
+                Log::getInstance()->logError(stringFormat("Mesh \"%s\" without UV", pMesh->mName));
+                continue;
+            }
+
+            if (pMesh->mTextureCoords[0] == nullptr)
+            {
+                Log::getInstance()->logError(stringFormat("Mesh \"%s\" with invalid UV", pMesh->mName));
+                continue;
+            }
 
             const aiVector3D& vertice   = pMesh->mVertices[verticeId];
             const aiVector3D& textCoord = pMesh->mTextureCoords[0][verticeId];
@@ -350,11 +375,17 @@ Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
-    arg.vertices.assign(header.verticeLenght, Mesh::Vertex{});
-    arg.indices.assign(header.indiceLenght, 0);
+    if (header.verticeLenght)
+    {
+        arg.vertices.assign(header.verticeLenght, Mesh::Vertex{});
+        fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
+    }
 
-    fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
-    fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
+    if (header.indiceLenght)
+    {
+        arg.indices.assign(header.indiceLenght, 0);
+        fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile); // indice buffer
+    }
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("Mesh read from \"%s\"", src));
@@ -388,7 +419,8 @@ void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
 
     ShadeHeader header{(char)EFileType::SHADER, arg.vertexShaderPath.size(), arg.fragmentShaderPath.size(),
                        arg.featureMask};
-    fwrite(&header, sizeof(header), 1, pFile);                                                 // header
+    fwrite(&header, sizeof(header), 1, pFile); // header
+
     fwrite(arg.vertexShaderPath.data(), sizeof(char), arg.vertexShaderPath.size(), pFile);     // string buffer
     fwrite(arg.fragmentShaderPath.data(), sizeof(char), arg.fragmentShaderPath.size(), pFile); // string buffer
 
@@ -414,11 +446,17 @@ ShaderCreateonfig GPE::readShaderFile(const char* src)
     fread(&header, sizeof(header), 1, pFile);
     arg.featureMask = header.featureMask;
 
-    arg.vertexShaderPath.assign(header.vertexPathLenght, '\0');
-    fread(arg.vertexShaderPath.data(), sizeof(char), header.vertexPathLenght, pFile); // string buffer
+    if (header.vertexPathLenght)
+    {
+        arg.vertexShaderPath.assign(header.vertexPathLenght, '\0');
+        fread(arg.vertexShaderPath.data(), sizeof(char), header.vertexPathLenght, pFile); // string buffer
+    }
 
-    arg.fragmentShaderPath.assign(header.fragmentPathLenght, '\0');
-    fread(arg.fragmentShaderPath.data(), sizeof(char), header.fragmentPathLenght, pFile); // string buffer
+    if (header.fragmentPathLenght)
+    {
+        arg.fragmentShaderPath.assign(header.fragmentPathLenght, '\0');
+        fread(arg.fragmentShaderPath.data(), sizeof(char), header.fragmentPathLenght, pFile); // string buffer
+    }
 
     fclose(pFile);
 
