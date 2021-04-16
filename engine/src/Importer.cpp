@@ -108,33 +108,33 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         arg.vertices.reserve(pMesh->mNumVertices);
         arg.indices.reserve(pMesh->mNumFaces * 3u);
 
+        if (pMesh->mVertices == nullptr)
+        {
+            Log::getInstance()->logError(stringFormat("Mesh \"%s\" without vertices", pMesh->mName));
+            continue;
+        }
+
+        if (!pMesh->HasNormals())
+        {
+            Log::getInstance()->logError(stringFormat("Mesh \"%s\" without Normal", pMesh->mName));
+            continue;
+        }
+
+        if (pMesh->mTextureCoords == nullptr)
+        {
+            Log::getInstance()->logError(stringFormat("Mesh \"%s\" without UV", pMesh->mName));
+            continue;
+        }
+
+        if (pMesh->mTextureCoords[0] == nullptr)
+        {
+            Log::getInstance()->logError(stringFormat("Mesh \"%s\" with invalid UV", pMesh->mName));
+            continue;
+        }
+
         // Vertices
         for (size_t verticeId = 0; verticeId < pMesh->mNumVertices; ++verticeId)
         {
-            if (pMesh->mVertices == nullptr)
-            {
-                Log::getInstance()->logError(stringFormat("Mesh \"%s\" without vertices", pMesh->mName));
-                continue;
-            }
-
-            if (!pMesh->HasNormals())
-            {
-                Log::getInstance()->logError(stringFormat("Mesh \"%s\" without Normal", pMesh->mName));
-                continue;
-            }
-
-            if (pMesh->mTextureCoords == nullptr)
-            {
-                Log::getInstance()->logError(stringFormat("Mesh \"%s\" without UV", pMesh->mName));
-                continue;
-            }
-
-            if (pMesh->mTextureCoords[0] == nullptr)
-            {
-                Log::getInstance()->logError(stringFormat("Mesh \"%s\" with invalid UV", pMesh->mName));
-                continue;
-            }
-
             const aiVector3D& vertice   = pMesh->mVertices[verticeId];
             const aiVector3D& textCoord = pMesh->mTextureCoords[0][verticeId];
             const aiVector3D& normal    = pMesh->mNormals[verticeId];
