@@ -7,6 +7,7 @@
 #pragma once
 
 #include "SceneEditor.hpp"
+#include "GameViewer.hpp"
 #include "GameControlBar.hpp"
 #include "LogInspector.hpp"
 #include "ProjectContent.hpp"
@@ -29,6 +30,7 @@ class Editor
 {
 private:
     SceneEditor        m_sceneEditor;
+    GameViewer         m_gameViewer;
     LogInspector       m_logInspector;
     ProjectContent     m_projectContent;
     SceneGraph         m_sceneGraph;
@@ -50,6 +52,7 @@ private:
     void renderMenuBar();
     void renderGameControlBar();
     void renderLevelEditor();
+    void renderGameView(GPE::AbstractGame* game);
     void renderInspector();
     void renderSceneGraph();
     void renderExplorer();
@@ -66,8 +69,8 @@ public:
     Editor(GLFWwindow* window, GPE::Scene& editedScene);
 
     void setSceneInEdition(GPE::Scene& scene);
-    void update();
-    void render();
+    void update(GPE::AbstractGame* game);
+    void render(GPE::AbstractGame* game);
     bool isRunning();
 };
 
