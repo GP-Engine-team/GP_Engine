@@ -23,13 +23,17 @@ public:
     struct ImporteArg
     {
         MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
-        std::string       diffuseTexturePath = "";
+        std::string       ambianteTexturePath  = "";
+        std::string       diffuseTexturePath   = "";
+        std::string       baseColorTexturePath = "";
     };
 
     struct CreateArg
     {
         MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
-        Texture*          pTexture{nullptr};
+        Texture*          pAmbianteTexture{nullptr};
+        Texture*          pDiffuseTexture{nullptr};
+        Texture*          pBaseColorTexture{nullptr};
     };
 
 protected:
@@ -37,7 +41,9 @@ protected:
 
 protected:
     MaterialComponent m_comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
+    Texture*          m_pAmbianteTexture{nullptr};
     Texture*          m_pDiffuseTexture{nullptr};
+    Texture*          m_pBaseColorTexture{nullptr};
     unsigned int      m_ID = 0;
 
 public:

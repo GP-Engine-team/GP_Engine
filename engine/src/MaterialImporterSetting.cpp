@@ -26,12 +26,35 @@ File_GENERATED
         GPE::DataInspector::inspect(context, m_config.comp.shininess, "shininess");
         GPE::DataInspector::inspect(context, m_config.comp.opacity, "opacity");
 
+        ImGui::TextUnformatted("Ambiante texture");
+        ImGui::SameLine();
+        if (ImGui::Button(
+                (m_config.ambianteTexturePath.empty() ? "None##Ambiante" : m_config.ambianteTexturePath.c_str())))
+        {
+            m_config.ambianteTexturePath =
+                openFileExplorerAndGetRelativePath(L"Ambiante texture", {{L"Image", L"*.GPTexture"}}).string().c_str();
+
+            m_isDirty = true;
+        }
+
         ImGui::TextUnformatted("Diffuse texture");
         ImGui::SameLine();
-        if (ImGui::Button((m_config.diffuseTexturePath.empty() ? "None##Vertex" : m_config.diffuseTexturePath.c_str())))
+        if (ImGui::Button(
+                (m_config.diffuseTexturePath.empty() ? "None##Diffuse" : m_config.diffuseTexturePath.c_str())))
         {
             m_config.diffuseTexturePath =
-                openFileExplorerAndGetRelativePath(L"Select vertex shader", {{L"Image", L"*.GPTexture"}})
+                openFileExplorerAndGetRelativePath(L"Diffuse texture", {{L"Image", L"*.GPTexture"}}).string().c_str();
+
+            m_isDirty = true;
+        }
+
+        ImGui::TextUnformatted("Base color texture");
+        ImGui::SameLine();
+        if (ImGui::Button(
+                (m_config.baseColorTexturePath.empty() ? "None##BaseColor" : m_config.baseColorTexturePath.c_str())))
+        {
+            m_config.baseColorTexturePath =
+                openFileExplorerAndGetRelativePath(L"Base color texture", {{L"Image", L"*.GPTexture"}})
                     .string()
                     .c_str();
 
