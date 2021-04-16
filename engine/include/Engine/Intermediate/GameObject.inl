@@ -1,6 +1,6 @@
 ﻿inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
     : m_name{arg.name}, m_pTransform{&DataChunk<TransformComponent>::getInstance()->add(*this, arg.transformArg)},
-      m_pComponents{}, pOwnerScene{&scene}, m_parent{arg.parent}
+      m_pComponents{}, pOwnerScene{&scene}, m_parent{arg.parent}, m_id{++m_currentID}
 {
 }
 
@@ -160,7 +160,9 @@ inline std::list<GameObject*>::iterator GameObject::destroyChild(const std::list
 template <typename TUniqueComponentType>
 inline void GameObject::destroyUniqueComponentNow() noexcept
 {
-    for (auto&& it = m_pComponents.begin(); it != m_pComponents.end(); ++it)
+    const std::list<Component*>::const_iterator end = m_pComponents.end();
+
+    for (std::list<Component*>::iterator it = m_pComponents.begin(); it != end; ++it)
     {
         TUniqueComponentType* checkedCompPtr = dynamic_cast<TUniqueComponentType*>(*it);
 
@@ -206,4 +208,9 @@ inline constexpr bool GameObject::operator==(GameObject const& other) noexcept
 inline bool GameObject::compareTag(const std::string& toCompare) const noexcept
 {
     return (!toCompare.compare(m_tag));
+}
+
+unsigned int GameObject::getID() const noexcept
+{
+    return m_id;
 }

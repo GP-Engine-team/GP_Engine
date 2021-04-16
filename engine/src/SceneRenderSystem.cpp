@@ -5,16 +5,14 @@
 #include <map> //std::map
 #include <memory>
 
-#include "Engine/Intermediate/GameObject.hpp"
-//#include "Engine/Core/System/TimeSystem.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/Core/Tools/BranchPrediction.hpp"
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/ECS/Component/Light/Light.hpp"
 #include "Engine/ECS/Component/Model.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/Engine.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/RenderBuffer.hpp"
 #include "Engine/Resources/RenderTexture.hpp"
@@ -87,13 +85,10 @@ SceneRenderSystem::SceneRenderSystem() noexcept
     m_cubeMesh   = &Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
     m_planeMesh  = &Engine::getInstance()->resourceManager.add<Mesh>(
         "Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
-
-    Engine::getInstance()->renderSystem.addSceneRenderSystem(this);
 }
 
 SceneRenderSystem::~SceneRenderSystem() noexcept
 {
-    Engine::getInstance()->renderSystem.removeSceneRenderSystem(this);
 }
 
 bool SceneRenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
@@ -174,37 +169,34 @@ void SceneRenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentS
     }*/
 }
 
-void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, SubModel& subModel)
+void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, SubModel& subModel)
 {
-    Shader* pShader = subModel.pShader;
-
-    if ((pShader->getFeature() & SKYBOX) == SKYBOX)
+    if ((shader.getFeature() & SKYBOX) == SKYBOX)
     {
         Mat4 view = camToUse.getView();
 
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
 
-        pShader->setMat4(
+        shader.setMat4(
             "projectViewModelMatrix",
             (camToUse.getProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
-        pShader->setMat4("projection", camToUse.getProjection().e);
-        pShader->setMat4("view", view.e);
+        shader.setMat4("projection", camToUse.getProjection().e);
+        shader.setMat4("view", view.e);
     }
     else
     {
-        pShader->setMat4(
-            "projectViewModelMatrix",
-            (camToUse.getProjectionView() * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+        shader.setMat4("projectViewModelMatrix",
+                       (camToUse.getProjectionView() * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
     }
 
-    if ((pShader->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         Mat3 inverseModelMatrix3(
             toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()).transposed());
 
-        pShader->setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
-        pShader->setMat3("inverseModelMatrix", inverseModelMatrix3.e);
+        shader.setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
+        shader.setMat3("inverseModelMatrix", inverseModelMatrix3.e);
     }
 }
 
@@ -302,20 +294,18 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
     return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape,
-              std::vector<DebugLine>& debugLine, unsigned int renderTextureID)
+              std::vector<DebugLine>& debugLines)
 
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, renderTextureID);
-
-        Frustum camFrustum = pCameras[0]->getFrustum();
-
-        rs.resetCurrentRenderPassKey();
-
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        Frustum camFrustum = pCameras[0]->getFrustum();
+
+        rs.resetCurrentRenderPassKey();
 
         /*Display opaque element*/
         {
@@ -338,7 +328,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[0], *pSubModel);
+                rs.sendModelDataToShader(*pCameras[0], *pSubModel->pShader, *pSubModel);
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -372,7 +362,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[0], *it->second);
+                rs.sendModelDataToShader(*pCameras[0], *it->second->pShader, *it->second);
                 rs.drawModelPart(*it->second);
             };
         }
@@ -402,13 +392,13 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                 debugShape.clear();
             }
 
-            if (!debugLine.empty())
+            if (!debugLines.empty())
             {
                 const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
                 glUseProgram(shaderToUse->getID());
                 rs.tryToSetBackFaceCulling(false);
 
-                for (auto&& line : debugLine)
+                for (auto&& line : debugLines)
                 {
                     GLfloat lineSeg[] = {
                         line.pt1.x, line.pt1.y, line.pt1.z, // first vertex
@@ -444,21 +434,80 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                     glDeleteBuffers(1, &lineVBO);
                 }
 
-                debugLine.clear();
+                debugLines.clear();
             }
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0u);
     };
 }
 
-void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline,
-                             unsigned int renderTextureID) noexcept
+SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipeline() const noexcept
+{
+    return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
+              std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
+              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
+              std::vector<SceneRenderSystem::DebugShape>& debugShape,
+              std::vector<SceneRenderSystem::DebugLine>&  debugLine) {
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+
+        glClearColor(0.f, 0.f, 0.f, 0.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        const Frustum camFrustum = pCameras[0]->getFrustum();
+
+        Shader& shaderGameObjectIdentifier =
+            *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
+
+        /*Display opaque element*/
+        {
+            const GLint idLocation = glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id");
+
+            for (auto&& pSubModel : pOpaqueSubModels)
+            {
+                if (!rs.isOnFrustum(camFrustum, pSubModel))
+                    continue;
+
+                glUniform1ui(idLocation, pSubModel->pModel->getOwner().getID());
+
+                rs.tryToBindMesh(pSubModel->pMesh->getID());
+                rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
+
+                shaderGameObjectIdentifier.setMat4(
+                    "projectViewModelMatrix",
+                    (pCameras[0]->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                        .e);
+                rs.drawModelPart(*pSubModel);
+            }
+
+            for (auto&& pSubModel : pTransparenteSubModels)
+            {
+                if (!rs.isOnFrustum(camFrustum, pSubModel))
+                    continue;
+
+                glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"),
+                             pSubModel->pModel->getOwner().getID());
+
+                rs.tryToBindMesh(pSubModel->pMesh->getID());
+                rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
+
+                shaderGameObjectIdentifier.setMat4(
+                    "projectViewModelMatrix",
+                    (pCameras[0]->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                        .e);
+                rs.drawModelPart(*pSubModel);
+            }
+        }
+
+        rs.resetCurrentRenderPassKey();
+    };
+}
+
+void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
 {
     renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_debugShape, m_debugLine, renderTextureID);
+                   m_debugShape, m_debugLine);
 }
 
 void SceneRenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,
@@ -516,7 +565,8 @@ void SceneRenderSystem::addRenderer(Renderer* pRenderer) noexcept
 
 void SceneRenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept
 {
-    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != m_pRenderers.end(); it++)
+    const std::vector<Renderer*>::const_iterator end{m_pRenderers.end()};
+    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != end; it++)
     {
         if ((*it) == exPointerRenderer)
         {
@@ -528,7 +578,8 @@ void SceneRenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Rend
 
 void SceneRenderSystem::removeRenderer(Renderer* pRenderer) noexcept
 {
-    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != m_pRenderers.end(); it++)
+    const std::vector<Renderer*>::const_iterator end{m_pRenderers.end()};
+    for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != end; it++)
     {
         if ((*it) == pRenderer)
         {
@@ -555,27 +606,15 @@ void SceneRenderSystem::addSubModel(SubModel* pSubModel) noexcept
 
 void SceneRenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept
 {
-    if (newPointerSubModel->pMaterial->isOpaque())
+    const std::vector<SubModel*>::const_iterator end{
+        newPointerSubModel->pMaterial->isOpaque() ? m_pOpaqueSubModels.end() : m_pTransparenteSubModels.end()};
+
+    for (std::vector<SubModel*>::iterator it = m_pTransparenteSubModels.begin(); it != end; ++it)
     {
-        for (std::vector<SubModel*>::iterator it = m_pOpaqueSubModels.begin(); it != m_pOpaqueSubModels.end(); ++it)
+        if ((*it) == exPointerSubModel)
         {
-            if ((*it) == exPointerSubModel)
-            {
-                *it = newPointerSubModel;
-                return;
-            }
-        }
-    }
-    else
-    {
-        for (std::vector<SubModel*>::iterator it = m_pTransparenteSubModels.begin();
-             it != m_pTransparenteSubModels.end(); ++it)
-        {
-            if ((*it) == exPointerSubModel)
-            {
-                *it = newPointerSubModel;
-                return;
-            }
+            *it = newPointerSubModel;
+            return;
         }
     }
 }
@@ -584,12 +623,15 @@ void SceneRenderSystem::removeSubModel(SubModel* pSubModel) noexcept
 {
     if (pSubModel->pMaterial->isOpaque())
     {
-        m_pOpaqueSubModels.erase(std::find(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel));
+        auto it = std::find(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel);
+        if (it != m_pOpaqueSubModels.end())
+            m_pOpaqueSubModels.erase(it);
     }
     else
     {
-        m_pTransparenteSubModels.erase(
-            std::find(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), pSubModel));
+        auto it = std::find(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), pSubModel);
+        if (it != m_pOpaqueSubModels.end())
+            m_pTransparenteSubModels.erase(it);
     }
 }
 void SceneRenderSystem::addCamera(Camera* pCamera) noexcept
@@ -599,7 +641,8 @@ void SceneRenderSystem::addCamera(Camera* pCamera) noexcept
 
 void SceneRenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept
 {
-    for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != m_pCameras.end(); it++)
+    const std::vector<Camera*>::const_iterator end{m_pCameras.end()};
+    for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != end; it++)
     {
         if ((*it) == exPointerCamera)
         {
@@ -611,7 +654,8 @@ void SceneRenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* ex
 
 void SceneRenderSystem::removeCamera(Camera* pCamera) noexcept
 {
-    for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != m_pCameras.end(); it++)
+    const std::vector<Camera*>::const_iterator end{m_pCameras.end()};
+    for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != end; it++)
     {
         if ((*it) == pCamera)
         {
@@ -629,7 +673,8 @@ void SceneRenderSystem::addLight(Light* pLight) noexcept
 
 void SceneRenderSystem::updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept
 {
-    for (std::vector<Light*>::iterator it = m_pLights.begin(); it != m_pLights.end(); it++)
+    const std::vector<Light*>::const_iterator end{m_pLights.end()};
+    for (std::vector<Light*>::iterator it = m_pLights.begin(); it != end; it++)
     {
         if ((*it) == exPointerLight)
         {
@@ -641,7 +686,8 @@ void SceneRenderSystem::updateLightPointer(Light* newPointerLight, Light* exPoin
 
 void SceneRenderSystem::removeLight(Light* pLight) noexcept
 {
-    for (std::vector<Light*>::iterator it = m_pLights.begin(); it != m_pLights.end(); it++)
+    std::vector<Light*>::const_iterator end{m_pLights.end()};
+    for (std::vector<Light*>::iterator it = m_pLights.begin(); it != end; it++)
     {
         if ((*it) == pLight)
         {

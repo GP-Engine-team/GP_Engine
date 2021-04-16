@@ -1,14 +1,13 @@
 /*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
 
 #include "Engine/Core/Tools/ClassUtility.hpp"
-#include <array> //std::array
-#include <iostream>
+#include <array>  //std::array
 #include <vector> //std::vector
 
 // In inl
@@ -64,7 +63,7 @@ public:
     template <typename... Args>
     TStoredData& add(Args&&... args) noexcept;
 
-    void destroy(const TStoredData* dataToDestroy) noexcept;
+    void destroy(TStoredData* const dataToDestroy) noexcept;
 
     GETTER_BY_REF(Data, m_datas);
 

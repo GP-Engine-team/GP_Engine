@@ -33,12 +33,21 @@
     <ClInclude Include="include\SingletonsSync.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\myScript.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SingletonsSync.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\myScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\myFpsScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

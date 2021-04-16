@@ -1,44 +1,57 @@
 ﻿#pragma once
 
-
 #include "Engine/Intermediate/GameObject.hpp"
-#include "glad/glad.h"
-
-#include <iostream>
-#include <stdlib.h>
 
 namespace GPE
 {
 
+class FreeFly;
 class Scene;
+class Camera;
 
 class SceneViewer
 {
+// ==== Data members ====
 public:
     GameObject    cameraOwner;
+    FreeFly&      freeFly;
+    Camera&       camera;
     Scene*        pScene;
-    class Camera* pCamera;
+    GameObject::Children::iterator it;
 
-    GLuint        textureID;
-    GLuint        depthStencilID;
-    GLuint        framebufferID;
+    unsigned int  textureID;
+
+private:
+    unsigned int  depthStencilID;
+    unsigned int  framebufferID;
+	unsigned int  FBOIDtextureID;
+    unsigned int  FBOIDdepthID;
+    unsigned int  FBOIDframebufferID;
+	int		      FBOIDwidth;
+	int		      FBOIDheight;
+
+public:
     int           width;
     int           height;
 
 private:
     bool          m_captureInputs;
-
+    
+// ==== Methods ====
+private:
     void initializeFramebuffer();
+    void initializePickingFBO ();
 
 public:
     SceneViewer(GPE::Scene& viewed, int width = 1, int height = 1);
     ~SceneViewer();
 
-    void resize   (int width, int height);
-    void bindScene(Scene& scene)          noexcept;
-    void render   ()                      const;
-    void captureInputs();
-    void releaseInputs();
+    unsigned int getHoveredGameObjectID()                       const;
+
+    void         resize                (int width, int height);
+    void         bindScene             (Scene& scene);
+    void         render                ()                       const;
+    void         captureInputs         (bool shouldCapture);
 };
 
 } // namespace GPE

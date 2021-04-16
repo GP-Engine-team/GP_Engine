@@ -1,11 +1,13 @@
-﻿#include "Engine/ECS/Component/Camera.hpp"
-
-#include "Engine/Core/Debug/Assert.hpp"
+﻿#include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/ECS/System/SceneRenderSystem.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "GPM/Transform.hpp"
 #include "GPM/Vector3.hpp"
+
+#include "Engine/ECS/Component/Camera.hpp"
+
+File_GENERATED
 
 using namespace GPM;
 
@@ -64,7 +66,7 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.znear, m_projInfo.zfar);
 
     getOwner().pOwnerScene->sceneRenderer.addCamera(this);
-    getOwner().getTransform().OnUpdate += std::bind(&Camera::updateView, this);
+    getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     updateView();
 
     Log::getInstance()->log((std::string("Perspective projection added with name \"") + arg.name + "\"").c_str());
@@ -88,7 +90,7 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
         Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
 
     getOwner().pOwnerScene->sceneRenderer.addCamera(this);
-    getOwner().getTransform().OnUpdate += std::bind(&Camera::updateView, this);
+    getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     updateView();
 
     Log::getInstance()->log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
@@ -96,6 +98,7 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
 
 Camera::~Camera() noexcept
 {
+    getOwner().getTransform().OnUpdate -= GPE::Function::make(this, "updateView");
     getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
 }
 

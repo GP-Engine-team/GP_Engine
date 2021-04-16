@@ -14,4 +14,3 @@ struct RFKStruct(PropertySettings(rfk::EEntityKind::Struct | rfk::EEntityKind::C
     ComponentGen_GENERATED
 };
 
-File_GENERATED

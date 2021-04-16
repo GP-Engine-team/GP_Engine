@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -18,6 +18,7 @@ class Scene
     friend class SceneManager;
 
 protected:
+    std::string m_name   = "Scene";
     GameObject* m_pWorld = nullptr;
 
     std::unordered_map<std::string, unsigned int>
@@ -28,7 +29,7 @@ public:
 
 public:
     Scene() noexcept;
-    ~Scene() noexcept;
+    ~Scene() noexcept = default;
 
     // TODO: Can scene be copied ? How to manage resource
     constexpr inline Scene(const Scene& other) noexcept = delete;
@@ -54,5 +55,8 @@ public:
 
     void addLoadedResourcePath(const char* path) noexcept;
     void removeLoadedResourcePath(const char* path) noexcept;
+
+    void save(XmlSaver&) const;
+    void load(XmlLoader&);
 };
 } /*namespace GPE*/

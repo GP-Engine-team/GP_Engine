@@ -14,4 +14,3 @@ struct RFKStruct(PropertySettings(rfk::EEntityKind::Struct | rfk::EEntityKind::C
     Serialize_GENERATED
 };
 
-File_GENERATED

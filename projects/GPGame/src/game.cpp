@@ -15,7 +15,6 @@
 #include "Engine/ECS/Component/TransformComponent.hpp"
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
@@ -27,13 +26,42 @@
 #include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <myFpsScript.hpp>
-//#include "GPM/Random.hpp"
+
+#include <iostream>
+
+#include "Engine/Resources/Importer/Importer.hpp"
 
 #include <glad/glad.h> //In first
 #include <glfw/glfw3.h>
 
 using namespace GPE;
 using namespace GPM;
+
+void Game::update(double unscaledDeltaTime, double deltaTime)
+{
+    ++unFixedUpdateFrameCount;
+
+    bSys.update(deltaTime);
+    sm.getCurrentScene()->getWorld().updateSelfAndChildren();
+}
+
+void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
+{
+    AbstractGame::fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+    // GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
+    ++fixedUpdateFrameCount;
+    bSys.fixedUpdate(fixedDeltaTime);
+}
+
+void Game::render()
+{
+    SceneRenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
+    sceneRS.draw(Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
+}
+
+Game::~Game()
+{
+}
 
 extern "C" AbstractGame* createGameInstance()
 {
@@ -55,8 +83,21 @@ extern "C" void destroyGameInstance(AbstractGame* game)
 
 void loadTreeResource(ResourceManagerType& resourceManager)
 {
-    resourceManager.add<Model::CreateArg>(
-        "TreeModel", importeSingleModel("./resources/meshs/Tree.obj", resourceManager, Mesh::EBoundingVolume::AABB));
+    Model::CreateArg arg;
+
+    SubModel subModel;
+    subModel.pShader   = resourceManager.get<Shader>("TextureWithLihghts");
+    subModel.pMaterial = loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial");
+    subModel.pMesh     = loadMeshFile("./resources/meshs/g1.GPMesh");
+
+    arg.subModels.push_back(subModel);
+
+    subModel.pMaterial = loadMaterialFile("./resources/meshs/DB2X2_L01.GPMaterial");
+    subModel.pMesh     = loadMeshFile("./resources/meshs/g2.GPMesh");
+
+    arg.subModels.push_back(subModel);
+
+    resourceManager.add<Model::CreateArg>("TreeModel", arg);
 }
 
 template <typename T = float>
@@ -99,8 +140,9 @@ void loadTree(GameObject& parent, ResourceManagerType& resourceManager, unsigned
 
 void loadSkyboxResource(ResourceManagerType& resourceManager)
 {
-    Model::CreateArg& modelArg = resourceManager.add<Model::CreateArg>(
-        "SkyboxModel", importeSingleModel("./resources/meshs/Skybox.obj", resourceManager));
+    /*
+    Model::CreateArg& modelArg =
+        resourceManager.add<Model::CreateArg>("SkyboxModel", importeSingleModel("./resources/meshs/Skybox.obj"));
 
     Texture::LoadArg textureArg;
     textureArg.path             = "./resources/textures/Skybox/skb.bmp";
@@ -116,7 +158,7 @@ void loadSkyboxResource(ResourceManagerType& resourceManager)
     modelArg.subModels.front().pShader = &resourceManager.add<Shader>("SkyboxShader", "./resources/shaders/vSkybox.vs",
                                                                       "./resources/shaders/fSkybox.fs", SKYBOX);
     modelArg.subModels.front().pMesh->setBoundingVolumeType(Mesh::EBoundingVolume::NONE);
-    modelArg.subModels.front().enableBackFaceCulling = false;
+    modelArg.subModels.front().enableBackFaceCulling = false;*/
 }
 
 void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
@@ -137,20 +179,11 @@ Game::Game()
     iManager.bindInput(GLFW_KEY_D, "right");
     iManager.bindInput(GLFW_KEY_SPACE, "jump");
     iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-    iManager.bindInput(GLFW_KEY_ESCAPE, "exitGame01");
-    iManager.bindInput(GLFW_KEY_ESCAPE, "exitGame02");
+    iManager.bindInput(GLFW_KEY_ESCAPE, "exit");
     iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
     iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
     iManager.bindInput(GLFW_KEY_KP_ADD, "growUpCollider");
     iManager.bindInput(GLFW_KEY_KP_SUBTRACT, "growDownCollider");
-    iManager.bindInput(GLFW_KEY_X, "swapInputModeToGame01");
-    iManager.bindInput(GLFW_KEY_X, "swapInputModeToGame02");
-
-    iManager.setInputMode("game02");
-    iManager.setCursorTrackingState(false);
-
-    int x, y;
-    GPE::Engine::getInstance()->window.getSize(x, y);
 
     GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 50.f, 0.f}}};
     GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 50.f}}};
@@ -204,11 +237,11 @@ Game::Game()
                                               Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug")});
 
     ground.addComponent<Model>(modelArg2);*/
-    loadSkyboxResource(rm);
+    // loadSkyboxResource(rm);
     loadTreeResource(rm);
 
-    loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
-    loadTree(sm.getCurrentScene()->getWorld(), rm, 10);
+    // loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
+    loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
 
     ts.addScaledTimer(
         FPLogDelay,

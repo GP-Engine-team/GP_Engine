@@ -3,6 +3,11 @@
 #include <Engine/Engine.hpp>
 #include <string>
 
+// Generated
+#include "Generated/CharacterController.rfk.h"
+
+File_GENERATED
+
 using namespace GPE;
 using namespace physx;
 
@@ -13,6 +18,19 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
     desc.height   = 1;
     desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
     desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition());
+    desc.radius   = 1;
+
+    controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
+    GPE::Engine::getInstance()->physXSystem.addComponent(this);
+}
+
+CharacterController::CharacterController() noexcept
+{
+    physx::PxCapsuleControllerDesc desc;
+
+    desc.height   = 1;
+    desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
+    desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
     desc.radius   = 1;
 
     controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);

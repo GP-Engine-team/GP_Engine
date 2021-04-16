@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -26,7 +26,7 @@
 namespace GPE RFKNamespace()
 {
     // TODO: Can be more optimize change information only when light is update
-    class RFKClass(Inspect(), ComponentGen()) Light : public Component
+    class RFKClass(Serialize(), Inspect(), ComponentGen()) Light : public Component
     {
     public:
         struct CreateArg
@@ -51,7 +51,7 @@ namespace GPE RFKNamespace()
         Light(Light && other)     = default;
         inline virtual ~Light();
 
-        Light()        = delete;
+        Light()        = default;
         Light& operator=(const Light& other) = delete;
 
         inline Light& operator=(Light&& other);
@@ -99,4 +99,3 @@ namespace GPE RFKNamespace()
 
 } // namespace )
 
-File_GENERATED

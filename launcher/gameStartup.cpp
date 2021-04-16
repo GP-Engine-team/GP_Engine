@@ -22,8 +22,14 @@ GameStartup::GameStartup()
     gameFunctionsPtr.fixedUpdate =
         std::bind(&AbstractGame::fixedUpdate, m_game, std::placeholders::_1, std::placeholders::_2);
     gameFunctionsPtr.render = [&]() {
-        GPE::Engine::getInstance()->renderer.swapBuffer();
+        int h, w;
+        Engine::getInstance()->window.getSize(w, h);
+
+        glUseProgram(0);
+        glViewport(0, 0, w, h);
+
         m_game->render();
+        GPE::Engine::getInstance()->renderer.swapBuffer();
     };
 
     GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow(), true);
@@ -35,7 +41,7 @@ GameStartup::GameStartup()
 
 void GameStartup::update()
 {
-    GPE::Engine::getInstance()->timeSystem.update(gameFunctionsPtr.update, gameFunctionsPtr.fixedUpdate,
+    GPE::Engine::getInstance()->timeSystem.update(gameFunctionsPtr.fixedUpdate, gameFunctionsPtr.update,
                                                   gameFunctionsPtr.render);
 }
 

@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -58,10 +58,9 @@ public:
         bool      smooth = true;
     };
 
-    using RenderPipeline =
-        std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
-                           std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
-                           std::vector<Light*>&, std::vector<DebugShape>&, std::vector<DebugLine>&, unsigned int)>;
+    using RenderPipeline = std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
+                                              std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
+                                              std::vector<Light*>&, std::vector<DebugShape>&, std::vector<DebugLine>&)>;
 
 protected:
     std::vector<Renderer*>  m_pRenderers;
@@ -97,11 +96,12 @@ public:
 
     bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept;
     void drawModelPart(const SubModel& subModel);
-    void sendModelDataToShader(Camera& camToUse, SubModel& subModel);
+    void sendModelDataToShader(Camera& camToUse, Shader& shader, SubModel& subModel);
     void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
-    void draw(const ResourceManagerType& res, RenderPipeline renderPipeline, unsigned int renderTextureID = 0) noexcept;
+    RenderPipeline gameObjectIdentifierPipeline() const noexcept;
+    void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
                          const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
