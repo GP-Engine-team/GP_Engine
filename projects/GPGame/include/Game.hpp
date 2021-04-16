@@ -5,12 +5,10 @@
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "GameApiMacros.hpp"
-#include <iostream>
 
 class Game final : public AbstractGame
 {
@@ -20,7 +18,6 @@ protected:
     GPE::TimeSystem&          ts       = GPE::Engine::getInstance()->timeSystem;
     GPE::InputManager&        iManager = GPE::Engine::getInstance()->inputManager;
     GPE::BehaviourSystem&     bSys     = GPE::Engine::getInstance()->behaviourSystem;
-    GPE::RenderSystem&        rSys     = GPE::Engine::getInstance()->renderSystem;
     GPE::ResourceManagerType& rm       = GPE::Engine::getInstance()->resourceManager;
     GPE::SceneManager&        sm       = GPE::Engine::getInstance()->sceneManager;
 
@@ -29,33 +26,16 @@ protected:
     double FPLogDelay              = 1.;
 
 private:
-    virtual void update(double unscaledDeltaTime, double deltaTime) override final
-    {
-        ++unFixedUpdateFrameCount;
+    virtual void update(double unscaledDeltaTime, double deltaTime) override final;
 
-        bSys.update(deltaTime);
-        sm.getCurrentScene()->getWorld().updateSelfAndChildren();
-    }
+    virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final;
 
-    virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final
-    {
-        AbstractGame::fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
-        // GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
-        ++fixedUpdateFrameCount;
-        bSys.fixedUpdate(fixedDeltaTime);
-    }
-
-    virtual void render() override final
-    {
-        rSys.draw(rSys.defaultRenderPipeline());
-    }
+    virtual void render() override final;
 
 public:
     Game();
 
-    virtual ~Game() final
-    {
-    }
+    virtual ~Game() final;
 };
 
 /**

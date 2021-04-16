@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -11,7 +11,6 @@
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/ECS/System/PhysXSystem.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
 #include "Engine/Resources/SceneManager.hpp"
@@ -37,7 +36,6 @@ public:
     InputManager        inputManager;
     BehaviourSystem     behaviourSystem;
     ResourceManagerType resourceManager;
-    RenderSystem        renderSystem;
     SceneManager        sceneManager;
     PhysXSystem         physXSystem;
     SoundSystem         soundSystem;
@@ -45,9 +43,8 @@ public:
 protected:
     Engine()
         : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          behaviourSystem{}, resourceManager{}, renderSystem{}, sceneManager{}, physXSystem{}, soundSystem{}
+          behaviourSystem{}, resourceManager{}, sceneManager{}, physXSystem{}, soundSystem{}
     {
-        renderSystem.addRenderer(&renderer);
     }
 
 public:

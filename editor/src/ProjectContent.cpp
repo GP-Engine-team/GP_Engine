@@ -1,5 +1,6 @@
 ﻿#include "Editor/ProjectContent.hpp"
 
+#include "Engine/Serialization/IInspectable.hpp"
 #include "Engine/Serialization/MaterialImporterSetting.hpp"
 #include "Engine/Serialization/MeshImporterSetting.hpp"
 #include "Engine/Serialization/ShaderImporterSetting.hpp"
@@ -7,7 +8,7 @@
 #include "Engine/Resources/Importer/ResourceImporter.hpp"
 #include "Engine/Serialization/FileExplorer.hpp"
 
-#include <Imgui/imgui.h>
+#include <imgui/imgui.h>
 #include <string>
 
 #include "Engine/Core/Debug/Log.hpp"

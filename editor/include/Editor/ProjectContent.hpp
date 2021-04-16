@@ -6,13 +6,14 @@
 
 #pragma once
 
-#include "Engine/Core/Debug/Log.hpp"
-#include <Imgui/imgui.h>
 #include <filesystem>
 #include <memory>
 #include <vector>
 
-#include "Engine/Serialization/IInspectable.hpp"
+namespace GPE
+{
+class IInspectable;
+}
 
 #define RESOURCES_DIR "resources"
 

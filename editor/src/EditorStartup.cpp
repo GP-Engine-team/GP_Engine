@@ -29,24 +29,46 @@ GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
     return window;
 }
 
+
+void EditorStartup::initializeDefaultInputs() const
+{
+    GPE::InputManager& inputs = GPE::Engine::getInstance()->inputManager;
+
+    // Default editor-specific inputs
+    inputs.bindInput(GLFW_KEY_W,            "forward");
+	inputs.bindInput(GLFW_KEY_S,            "backward");
+	inputs.bindInput(GLFW_KEY_A,            "left");
+	inputs.bindInput(GLFW_KEY_D,            "right");
+	inputs.bindInput(GLFW_KEY_SPACE,        "up");
+	inputs.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
+	inputs.bindInput(GLFW_KEY_ESCAPE,       "exit");
+	inputs.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprint");
+
+    inputs.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
+}
+
+
 EditorStartup::EditorStartup()
-    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
+    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+      {
           if (m_game != nullptr)
               m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
       }},
-      m_update{[&](double unscaledDeltaTime, double deltaTime) {
+      m_update{[&](double unscaledDeltaTime, double deltaTime)
+      {
           GPE::Engine::getInstance()->inputManager.processInput();
           if (m_game != nullptr)
               m_game->update(unscaledDeltaTime, deltaTime);
       }},
-
-      m_render{[&]() {
+      m_render{[&]()
+      {
           m_editor.update();
           m_editor.render();
           GPE::Engine::getInstance()->renderer.swapBuffer();
       }},
-      m_reloadableCpp{gameDllPath}, m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
-                                             GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
+      m_reloadableCpp{gameDllPath},
+      m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
+               GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
       m_game{nullptr}
 {
     m_editor.m_reloadableCpp = &m_reloadableCpp;
@@ -59,10 +81,11 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, saveCurrentScene);
     ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
 
-    m_reloadableCpp.onUnload = [&]() { closeGame(); };
+    m_reloadableCpp.onUnload = [&](){ closeGame(); };
 
-    GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
+    initializeDefaultInputs();
 }
+
 
 EditorStartup::~EditorStartup()
 {

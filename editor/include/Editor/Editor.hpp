@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/Intermediate/Viewers/SceneViewer.hpp"
+#include "SceneEditor.hpp"
 #include "GameControlBar.hpp"
 #include "LogInspector.hpp"
 #include "ProjectContent.hpp"
@@ -16,18 +16,19 @@ struct GLFWwindow;
 
 namespace GPE
 {
-	class Scene;
-    class IInspectable;
-	class GameObject;
-    class ReloadableCpp;
-} // namespace GPE
+class Scene;
+class IInspectable;
+class GameObject;
+class ReloadableCpp;
+}
 
 namespace Editor
 {
+
 class Editor
 {
 private:
-    GPE::SceneViewer   m_sceneEditor;
+    SceneEditor        m_sceneEditor;
     LogInspector       m_logInspector;
     ProjectContent     m_projectContent;
     SceneGraph         m_sceneGraph;

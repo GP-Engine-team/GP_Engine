@@ -40,9 +40,6 @@
     <ClCompile Include="src\RendererGLFW_GL46.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\RenderSystem.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\RenderTexture.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -151,6 +148,9 @@
     <ClCompile Include="src\Serialization\DataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\FreeFly.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Serialization\GPMDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
@@ -222,6 +222,15 @@
     </ClCompile>
     <ClCompile Include="src\Importer.cpp" />
     <ClCompile Include="src\ResourceImporter.cpp" />
+    <ClCompile Include="src\MaterialImporterSetting.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshImporterSetting.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FileExplorer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp">
@@ -530,9 +539,6 @@
     <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\RenderSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -711,6 +717,9 @@
     </None>
     <None Include="include\Engine\Core\Tools\UnrolledListAllocator.inl">
       <Filter>include\Core\Tools</Filter>
+	</None>
+    <None Include="include\Engine\Resources\Script\FreeFly.inl">
+      <Filter>include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
