@@ -29,10 +29,10 @@ private:
 
     // std::vector<SubNode*> m_nodes; // Pointers to all chunks to free them later.
 
-    Node* firstNode; // Points to the first created node
-    Node* lastNode;  // Points to the last added node
+    Node* m_firstNode; // Points to the first created node
+    Node* m_lastNode;  // Points to the last added node
     size_t m_size;   // nb Elements per node
-    SubNode* nextToConstruct = nullptr; // The location of the next node that will be constructed
+    SubNode* m_nextToConstruct = nullptr; // The location of the next node that will be constructed
 
     static void allocateData(Node*& node, SubNode*& subNodes, size_t nbElements);
     static void initSubNodes(SubNode* subNodes, size_t nbElements);
