@@ -5,9 +5,9 @@
  */
 
 #pragma once
-#include "Engine/ECS/Component/InputComponent.hpp"
-#include "Engine/Resources/Cursor.hpp"
 #include <Engine/Core/Tools/ClassUtility.hpp>
+#include <Engine/ECS/Component/InputComponent.hpp>
+#include <Engine/Resources/Cursor.hpp>
 #include <string>
 #include <unordered_map>
 
@@ -48,7 +48,6 @@ public:
      * @return
      */
     void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
-    void cursorLockedPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
 
     /**
      * @brief Throw events to input components
@@ -62,7 +61,7 @@ public:
      * @param window
      * @return
      */
-    void setupCallbacks(GLFWwindow* window, bool lockMousInCenter = false) noexcept;
+    void setupCallbacks(GLFWwindow* window) noexcept;
 
     /**
      * @brief Set cursor mode using GLFW Enum
@@ -89,6 +88,13 @@ public:
      * @return
      */
     inline void setCursorTrackingState(bool trackState) noexcept;
+
+    /**
+     * @brief Set the cursor lock state
+     * @param lockState
+     * @return
+     */
+    void setCursorLockState(bool lockState) noexcept;
 
     /**
      * @brief bind a key to an action

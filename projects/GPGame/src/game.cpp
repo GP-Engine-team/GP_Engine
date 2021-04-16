@@ -137,7 +137,8 @@ Game::Game()
     iManager.bindInput(GLFW_KEY_D, "right");
     iManager.bindInput(GLFW_KEY_SPACE, "jump");
     iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-    iManager.bindInput(GLFW_KEY_ESCAPE, "exit");
+    iManager.bindInput(GLFW_KEY_ESCAPE, "exitGame01");
+    iManager.bindInput(GLFW_KEY_ESCAPE, "exitGame02");
     iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
     iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
     iManager.bindInput(GLFW_KEY_KP_ADD, "growUpCollider");

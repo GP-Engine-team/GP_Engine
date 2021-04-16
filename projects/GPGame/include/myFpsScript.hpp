@@ -35,7 +35,8 @@ public:
         input.bindAction("left", EKeyMode::KEY_DOWN, "game01", this, &MyFpsScript::left);
         input.bindAction("forward", EKeyMode::KEY_DOWN, "game01", this, &MyFpsScript::forward);
         input.bindAction("back", EKeyMode::KEY_DOWN, "game01", this, &MyFpsScript::back);
-        input.bindAction("exit", EKeyMode::KEY_PRESSED, "game01", this, &MyFpsScript::leave);
+        input.bindAction("exitGame01", EKeyMode::KEY_PRESSED, "game01", this, &MyFpsScript::leave);
+        input.bindAction("exitGame02", EKeyMode::KEY_PRESSED, "game02", this, &MyFpsScript::leave);
         input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, "game01", this, &MyFpsScript::sprintStart);
         input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "game01", this, &MyFpsScript::sprintEnd);
         input.bindAction("growUpCollider", EKeyMode::KEY_DOWN, "game01", this, &MyFpsScript::growUpSphereCollider);
@@ -157,28 +158,20 @@ public:
 
     void swapInputModeToGame01()
     {
-        int                x        = -2;
-        int                y        = 5;
-        GPE::Window&       window   = GPE::Engine::getInstance()->window;
         GPE::InputManager& iManager = GPE::Engine::getInstance()->inputManager;
 
-        // glfwGetWindowSize(window.getGLFWWindow(), &x, &y);
-        GPE::Engine::getInstance()->window.getSize(x, y);
-
-        // DWORD errorNumber = GetLastError();
         iManager.setInputMode("game01");
         iManager.setCursorTrackingState(true);
-        iManager.setCursorMode(window.getGLFWWindow(), GLFW_CURSOR_HIDDEN);
-
-        glfwSetCursorPos(window.getGLFWWindow(), x / 2, y / 2);
+        iManager.setCursorLockState(true);
     }
 
     void swapInputModeToGame02()
     {
         GPE::InputManager& iManager = GPE::Engine::getInstance()->inputManager;
+
         iManager.setInputMode("game02");
         iManager.setCursorTrackingState(false);
-        iManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR_NORMAL);
+        iManager.setCursorLockState(false);
     }
 
     void fixedUpdate(float deltaTime) final

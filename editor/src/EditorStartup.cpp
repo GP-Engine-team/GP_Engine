@@ -58,7 +58,7 @@ EditorStartup::EditorStartup()
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
-    GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow(), true);
+    GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
     GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
                                                            GLFW_CURSOR_NORMAL);
 }

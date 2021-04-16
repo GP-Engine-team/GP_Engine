@@ -1,5 +1,6 @@
 ﻿#include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include <Engine/Engine.hpp>
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <imgui.h>
@@ -89,30 +90,9 @@ void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, doubl
     {
         m_cursor.deltaPos =
             Vec2{static_cast<GPM::f32>(xpos) - m_cursor.position.x, static_cast<GPM::f32>(ypos) - m_cursor.position.y};
-    }
-    m_cursor.position.x = static_cast<GPM::f32>(xpos);
-    m_cursor.position.y = static_cast<GPM::f32>(ypos);
-}
 
-void InputManager::cursorLockedPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
-{
-    int x, y;
-    glfwGetWindowSize(window, &x, &y);
-    m_cursor.center.x = x / 2.f;
-    m_cursor.center.y = y / 2.f;
-
-    if (m_cursor.tracked)
-    {
-        glfwSetCursorPos(window, m_cursor.center.x, m_cursor.center.y);
-        m_cursor.deltaPos   = m_cursor.position - m_cursor.center;
         m_cursor.position.x = static_cast<GPM::f32>(xpos);
         m_cursor.position.y = static_cast<GPM::f32>(ypos);
-    }
-
-    else
-    {
-        m_cursor.position.x = m_cursor.center.x;
-        m_cursor.position.y = m_cursor.center.y;
     }
 }
 
@@ -121,21 +101,16 @@ void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
     static_cast<InputManager*>(glfwGetWindowUserPointer(window))->cursorPositionCallback(window, xpos, ypos);
 }
 
-void setLockedCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
-{
-    static_cast<InputManager*>(glfwGetWindowUserPointer(window))->cursorLockedPositionCallback(window, xpos, ypos);
-}
-
 void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
     ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
     static_cast<InputManager*>(glfwGetWindowUserPointer(window))->keyCallback(window, key, scancode, action, mods);
 }
 
-void InputManager::setupCallbacks(GLFWwindow* window, bool lockMousInCenter) noexcept
+void InputManager::setupCallbacks(GLFWwindow* window) noexcept
 {
     glfwSetKeyCallback(window, setKeycallback);
-    glfwSetCursorPosCallback(window, lockMousInCenter ? setLockedCursorCallback : setCursorCallback);
+    glfwSetCursorPosCallback(window, setCursorCallback);
 }
 
 void InputManager::setCursorMode(GLFWwindow* window, int mode) noexcept
@@ -155,5 +130,19 @@ void InputManager::processInput() noexcept
         {
             fireInputComponents(i2->second, keyState.first);
         }
+    }
+}
+
+void InputManager::setCursorLockState(bool lockState) noexcept
+{
+    m_cursor.locked = lockState;
+    if (lockState)
+    {
+        setCursorMode(Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR_DISABLED);
+    }
+
+    else
+    {
+        setCursorMode(Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR_NORMAL);
     }
 }

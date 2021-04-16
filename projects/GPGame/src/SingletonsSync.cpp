@@ -30,15 +30,7 @@ extern "C" GPE::Engine& getGameEngineInstance()
 
 extern "C" void setContextCurrent(GLFWwindow* window)
 {
-    glfwSetErrorCallback(
-        [](int errorCode, const char* description) { printf("GLFW error (%x) = %s\n", errorCode, description); });
-
-    //glfwInit();
-
-    int x, y;
     glfwMakeContextCurrent(window);
-    glfwGetWindowSize(window, &x, &y);
-    DWORD errorNumber = GetLastError();
 }
 
 extern "C" void setImguiCurrentContext(ImGuiContext* ctx)
