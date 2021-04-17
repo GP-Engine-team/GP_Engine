@@ -21,9 +21,9 @@ File_GENERATED
 
         m_isDirty = true;
         // TODO: dirty flag must change when inspect will returned bool
-        GPE::DataInspector::inspect(context, m_config.comp.ambient.rgbi, "ambient");
-        GPE::DataInspector::inspect(context, m_config.comp.diffuse.rgbi, "diffuse");
-        GPE::DataInspector::inspect(context, m_config.comp.specular.rgbi, "specular");
+        GPE::DataInspector::inspect(context, m_config.comp.ambient, "ambient");
+        GPE::DataInspector::inspect(context, m_config.comp.diffuse, "diffuse");
+        GPE::DataInspector::inspect(context, m_config.comp.specular, "specular");
         GPE::DataInspector::inspect(context, m_config.comp.shininess, "shininess");
         GPE::DataInspector::inspect(context, m_config.comp.opacity, "opacity");
 
