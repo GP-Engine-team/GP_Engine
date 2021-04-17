@@ -66,8 +66,8 @@ void WindowFramebuffer::resize(int width, int height)
     }
 
     // Resize texture and depth-stencil buffers
-    width  = m_width;
-    height = m_height;
+    m_width = width;
+    m_height = height;
 
     glBindTexture(GL_TEXTURE_2D, m_textureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
