@@ -237,10 +237,6 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
       m_inspectedObject   {nullptr},
       m_showAppStyleEditor{false}
 {
-    int w, h;
-    glfwGetWindowSize(window, &w, &h);
-    m_gameViewer.framebuffer.resize(w, h);
-
     glfwMaximizeWindow(window);
     setupDearImGui();
 
