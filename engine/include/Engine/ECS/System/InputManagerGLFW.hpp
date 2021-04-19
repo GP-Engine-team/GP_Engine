@@ -5,8 +5,9 @@
  */
 
 #pragma once
-#include "Engine/ECS/Component/InputComponent.hpp"
-#include "Engine/Resources/Cursor.hpp"
+#include <Engine/Core/Tools/ClassUtility.hpp>
+#include <Engine/ECS/Component/InputComponent.hpp>
+#include <Engine/Resources/Cursor.hpp>
 #include <string>
 #include <unordered_map>
 
@@ -22,6 +23,7 @@ private:
     std::unordered_map<int, bool>             m_stateMap;
     std::unordered_map<int, bool>             m_lastStateMap;
     std::unordered_map<int, InputComponent*>  m_inputComponents;
+    std::string                               m_currentInputMode = "none";
     Cursor                                    m_cursor;
 
 public:
@@ -46,7 +48,6 @@ public:
      * @return
      */
     void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
-    void cursorLockedPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
 
     /**
      * @brief Throw events to input components
@@ -60,12 +61,40 @@ public:
      * @param window
      * @return
      */
-    void setupCallbacks(GLFWwindow* window, bool lockMousInCenter = false) noexcept;
+    void setupCallbacks(GLFWwindow* window) noexcept;
 
     /**
      * @brief Set cursor mode using GLFW Enum
      */
     void setCursorMode(GLFWwindow* window, int mode) noexcept;
+
+    /**
+     * @brief Set the current input mode
+     * @param inputMode
+     * @return
+     */
+    inline void setInputMode(const std::string& inputMode) noexcept;
+
+    /**
+     * @brief Set the current input mode
+     * @param
+     * @return const std::string& inputMode
+     */
+    [[nodiscard]] inline const std::string& getInputMode() noexcept;
+
+    /**
+     * @brief Set the cursor tracking state
+     * @param trackState
+     * @return
+     */
+    inline void setCursorTrackingState(bool trackState) noexcept;
+
+    /**
+     * @brief Set the cursor lock state
+     * @param lockState
+     * @return
+     */
+    void setCursorLockState(bool lockState) noexcept;
 
     /**
      * @brief bind a key to an action

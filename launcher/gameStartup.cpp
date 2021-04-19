@@ -51,8 +51,10 @@ GameStartup::GameStartup()
     };
 
     GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow(), true);
-    GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
-                                                           GLFW_CURSOR_DISABLED);
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_NoMouseCursorChange;
+    /*GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
+                                                           GLFW_CURSOR_DISABLED);*/
 }
 
 void GameStartup::update()

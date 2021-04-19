@@ -1,4 +1,4 @@
-﻿#include "Editor/EditorStartup.hpp"
+#include "Editor/EditorStartup.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
@@ -47,6 +47,8 @@ void EditorStartup::initializeDefaultInputs() const
     inputs.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
 
     inputs.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
+    GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
+                                                           GLFW_CURSOR_NORMAL);
 }
 
 EditorStartup::EditorStartup()

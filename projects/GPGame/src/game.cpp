@@ -1,4 +1,7 @@
-﻿#define IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_DEFINE_MATH_OPERATORS
+#define GLFW_INCLUDE_NONE
+#define GLFW_DLL
+
 #include "Game.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
@@ -223,11 +226,20 @@ Game::Game()
     iManager.bindInput(GLFW_KEY_D, "right");
     iManager.bindInput(GLFW_KEY_SPACE, "jump");
     iManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-    iManager.bindInput(GLFW_KEY_ESCAPE, "exit");
+    iManager.bindInput(GLFW_KEY_ESCAPE, "exitGame01");
+    iManager.bindInput(GLFW_KEY_ESCAPE, "exitGame02");
     iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
     iManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
     iManager.bindInput(GLFW_KEY_KP_ADD, "growUpCollider");
     iManager.bindInput(GLFW_KEY_KP_SUBTRACT, "growDownCollider");
+    iManager.bindInput(GLFW_KEY_X, "swapInputModeToGame01");
+    iManager.bindInput(GLFW_KEY_X, "swapInputModeToGame02");
+
+    iManager.setInputMode("game02");
+    iManager.setCursorTrackingState(false);
+
+    int x, y;
+    GPE::Engine::getInstance()->window.getSize(x, y);
 
     GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{GPM::Vec3{0.f, 50.f, 0.f}}};
     GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{GPM::Vec3{0.f, 0.f, 50.f}}};

@@ -1,6 +1,8 @@
 ﻿#include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
 #include "GPM/DebugOutput.hpp"
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Engine.hpp>
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <imgui.h>
@@ -22,39 +24,44 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
         auto lastStateMapIt = m_lastStateMap.find(key);
         for (int i = 0; i < m_inputComponents.size(); i++)
         {
-            auto keyModeMapIt = m_inputComponents[i]->m_keyModeMap.find(action);
-            if (keyModeMapIt != m_inputComponents[i]->m_keyModeMap.end())
+            auto inputModeMapIp = m_inputComponents[i]->inputModeMap.find(action);
+            if (inputModeMapIp != m_inputComponents[i]->inputModeMap.end() &&
+                inputModeMapIp->second == m_currentInputMode)
             {
-                if (stateMapIt->second == true)
+                auto keyModeMapIt = m_inputComponents[i]->keyModeMap.find(action);
+                if (keyModeMapIt != m_inputComponents[i]->keyModeMap.end())
                 {
-                    switch (keyModeMapIt->second)
+                    if (stateMapIt->second == true)
                     {
-                    case EKeyMode::KEY_PRESSED:
-                        if (lastStateMapIt->second == false)
+                        switch (keyModeMapIt->second)
                         {
-                            lastStateMapIt->second = true;
+                        case EKeyMode::KEY_PRESSED:
+                            if (lastStateMapIt->second == false)
+                            {
+                                lastStateMapIt->second = true;
+                                m_inputComponents[i]->fireAction(action);
+                            }
+                            break;
+                        case EKeyMode::KEY_DOWN:
                             m_inputComponents[i]->fireAction(action);
+                            break;
                         }
-                        break;
-                    case EKeyMode::KEY_DOWN:
-                        m_inputComponents[i]->fireAction(action);
-                        break;
                     }
-                }
-                else
-                {
-                    switch (keyModeMapIt->second)
+                    else
                     {
-                    case EKeyMode::KEY_RELEASED:
-                        if (lastStateMapIt->second == true)
+                        switch (keyModeMapIt->second)
                         {
-                            lastStateMapIt->second = false;
+                        case EKeyMode::KEY_RELEASED:
+                            if (lastStateMapIt->second == true)
+                            {
+                                lastStateMapIt->second = false;
+                                m_inputComponents[i]->fireAction(action);
+                            }
+                            break;
+                        case EKeyMode::KEY_UP:
                             m_inputComponents[i]->fireAction(action);
+                            break;
                         }
-                        break;
-                    case EKeyMode::KEY_UP:
-                        m_inputComponents[i]->fireAction(action);
-                        break;
                     }
                 }
             }
@@ -81,42 +88,19 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
 
 void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
-    // GLFW cursor position is expressed relative to the top-left corner of the screen
-    // Internally, we represent deltaPos' y-axis going up, not down like GLFW
-    m_cursor.deltaPos.x = static_cast<GPM::f32>(xpos) - m_cursor.position.x;
-    m_cursor.deltaPos.y = m_cursor.position.y - static_cast<GPM::f32>(ypos);
-    m_cursor.position.x = static_cast<GPM::f32>(xpos);
-    m_cursor.position.y = static_cast<GPM::f32>(ypos);
-}
-
-void InputManager::cursorLockedPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
-{
-    // GLFW cursor position is expressed relative to the top-left corner of the screen
-    // Internally, we represent deltaPos' y-axis going up, not down like GLFW
-
-    int x, y;
-    glfwGetWindowSize(window, &x, &y);
-
-    const float centerX = static_cast<GPM::f32>(x) * .5,
-                centerY = static_cast<GPM::f32>(y) * .5;
+    if (m_cursor.tracked)
+    {
+        m_cursor.deltaPos =
+            Vec2{static_cast<GPM::f32>(xpos) - m_cursor.position.x, static_cast<GPM::f32>(ypos) - m_cursor.position.y};
+    }
 
     m_cursor.position.x = static_cast<GPM::f32>(xpos);
     m_cursor.position.y = static_cast<GPM::f32>(ypos);
-
-    m_cursor.deltaPos.x = m_cursor.position.x - centerX;
-    m_cursor.deltaPos.y = centerY - m_cursor.position.y;
-
-    glfwSetCursorPos(window, static_cast<double>(centerX), static_cast<double>(centerY));
 }
 
 void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
     static_cast<InputManager*>(glfwGetWindowUserPointer(window))->cursorPositionCallback(window, xpos, ypos);
-}
-
-void setLockedCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
-{
-    static_cast<InputManager*>(glfwGetWindowUserPointer(window))->cursorLockedPositionCallback(window, xpos, ypos);
 }
 
 void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
@@ -126,10 +110,10 @@ void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int m
     static_cast<InputManager*>(glfwGetWindowUserPointer(window))->keyCallback(window, key, scancode, action, mods);
 }
 
-void InputManager::setupCallbacks(GLFWwindow* window, bool lockMousInCenter) noexcept
+void InputManager::setupCallbacks(GLFWwindow* window) noexcept
 {
     glfwSetKeyCallback(window, setKeycallback);
-    glfwSetCursorPosCallback(window, lockMousInCenter ? setLockedCursorCallback : setCursorCallback);
+    glfwSetCursorPosCallback(window, setCursorCallback);
 }
 
 void InputManager::setCursorMode(GLFWwindow* window, int mode) noexcept
@@ -149,5 +133,19 @@ void InputManager::processInput() noexcept
         {
             fireInputComponents(i2->second, keyState.first);
         }
+    }
+}
+
+void InputManager::setCursorLockState(bool lockState) noexcept
+{
+    m_cursor.locked = lockState;
+    if (lockState)
+    {
+        setCursorMode(Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR_DISABLED);
+    }
+
+    else
+    {
+        setCursorMode(Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR_NORMAL);
     }
 }

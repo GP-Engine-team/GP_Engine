@@ -29,14 +29,14 @@ namespace GPG RFKNamespace()
         {
 
             enableUpdate(true);
-            input->bindAction("jump", EKeyMode::KEY_DOWN, this, "up");
-            input->bindAction("down", EKeyMode::KEY_DOWN, this, "down");
-            input->bindAction("right", EKeyMode::KEY_DOWN, this, "right");
-            input->bindAction("left", EKeyMode::KEY_DOWN, this, "left");
-            input->bindAction("forward", EKeyMode::KEY_DOWN, this, "forward");
-            input->bindAction("back", EKeyMode::KEY_DOWN, this, "back");
-            input->bindAction("exit", EKeyMode::KEY_DOWN, this, "leave");
-            input->bindAction("sprint", EKeyMode::KEY_DOWN, this, "sprint");
+            input->bindAction("jump", EKeyMode::KEY_DOWN, "game01", this, "up");
+            input->bindAction("down", EKeyMode::KEY_DOWN, "game01", this, "down");
+            input->bindAction("right", EKeyMode::KEY_DOWN, "game01", this, "right");
+            input->bindAction("left", EKeyMode::KEY_DOWN, "game01", this, "left");
+            input->bindAction("forward", EKeyMode::KEY_DOWN, "game01", this, "forward");
+            input->bindAction("back", EKeyMode::KEY_DOWN, "game01", this, "back");
+            input->bindAction("exit", EKeyMode::KEY_DOWN, "game01", this, "leave");
+            input->bindAction("sprint", EKeyMode::KEY_DOWN, "game01", this, "sprint");
         }
 
         MyScript() noexcept
@@ -50,61 +50,63 @@ namespace GPG RFKNamespace()
         MyScript& operator=(MyScript const& other) noexcept = delete;
         MyScript& operator=(MyScript&& other) noexcept = delete;
 
-        RFKField(Serialize()) GPE::InputComponent*            input        = nullptr;
-        RFKField(Serialize(), Inspect(), Slider(0, 10)) float sprintSpeed  = 2;
+        RFKField(Serialize()) GPE::InputComponent* input = nullptr;
+
+        RFKField(Serialize(), Inspect(), Slider(0, 10)) float sprintSpeed = 2;
+
         RFKField(Serialize(), Inspect(), Slider(0, 10)) float defaultSpeed = 1;
 
         RFKField(Serialize()) float speed = defaultSpeed;
 
         void rotate(const GPM::Vec2& deltaDisplacement)
         {
-            if (deltaDisplacement.length() > 0.4)
+            if (deltaDisplacement.sqrLength() > .16f)
             {
                 getOwner().getTransform().setRotation(
                     getOwner().getTransform().getSpacialAttribut().rotation *
-                    GPM::Quaternion::angleAxis(-deltaDisplacement.y * 0.001f, {1, 0, 0}));
+                    GPM::Quaternion::angleAxis(deltaDisplacement.y * .001f, {1.f, .0f, .0f}));
                 getOwner().getTransform().setRotation(
-                    GPM::Quaternion::angleAxis(-deltaDisplacement.x * 0.001f, {0, 1, 0}) *
+                    GPM::Quaternion::angleAxis(deltaDisplacement.x * .001f, {.0f, 1.f, .0f}) *
                     getOwner().getTransform().getSpacialAttribut().rotation);
             }
         }
 
-        inline void up()
+        RFKMethod() inline void up()
         {
             getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * speed);
         }
 
-        inline void down()
+        RFKMethod() inline void down()
         {
-            getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -1 * speed);
+            getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -speed);
         }
 
-        inline void forward()
+        RFKMethod() inline void forward()
         {
-            getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -1 * speed);
+            getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -speed);
         }
 
-        inline void back()
+        RFKMethod() inline void back()
         {
             getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * speed);
         }
 
-        inline void left()
+        RFKMethod() inline void left()
         {
-            getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -1 * speed);
+            getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -speed);
         }
 
-        inline void right()
+        RFKMethod() inline void right()
         {
             getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * speed);
         }
 
-        inline void leave()
+        RFKMethod() inline void leave()
         {
             exit(666);
         }
 
-        inline void sprint()
+        RFKMethod() inline void sprint()
         {
             speed = sprintSpeed;
         }
@@ -113,7 +115,7 @@ namespace GPG RFKNamespace()
         {
             speed = defaultSpeed;
 
-            if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > 0.00001)
+            if (GPE::Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > .00001f)
                 rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
         }
 

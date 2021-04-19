@@ -6,12 +6,13 @@
 
 #pragma once
 
+#include <functional>
 #include <string>
 #include <unordered_map>
 
+#include "Engine/Core/Tools/FunctionPtr.hpp"
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
-#include "Engine/Core/Tools/FunctionPtr.hpp"
 
 // Generated
 #include "Generated/InputComponent.rfk.h"
@@ -22,6 +23,12 @@ enum class EKeyMode
     KEY_RELEASED = 2,
     KEY_DOWN     = 3,
     KEY_UP       = 4,
+};
+
+enum class EInputMode
+{
+    EDITOR = 0,
+    GAME   = 1,
 };
 
 namespace GPE RFKNamespace()
@@ -40,20 +47,24 @@ namespace GPE RFKNamespace()
 
     private:
         std::unordered_map<std::string, GPE::Function> m_functionMap;
-        int                                                    m_key = -1;
+        int                                            m_key = -1;
 
     public:
-        std::unordered_map<std::string, EKeyMode> m_keyModeMap;
+        std::unordered_map<std::string, EKeyMode>    keyModeMap;
+        std::unordered_map<std::string, std::string> inputModeMap;
         /**
          * @brief Bind a function to an action
          * @param action
          * @param function
          */
+
         template <typename T>
-        void bindAction(const std::string& action, const EKeyMode& keyMode, T* owner, const std::string& methodName) noexcept
+        void bindAction(const std::string& action, const EKeyMode& keyMode, const std::string& inputMode, T* owner,
+                        const std::string& methodName) noexcept
         {
             m_functionMap.emplace(action, GPE::Function::make(owner, methodName));
-            m_keyModeMap.emplace(action, keyMode);
+            keyModeMap.emplace(action, keyMode);
+            inputModeMap.emplace(action, inputMode);
         }
 
         /**
@@ -65,4 +76,3 @@ namespace GPE RFKNamespace()
         InputComponent_GENERATED
     };
 } // namespace )
-

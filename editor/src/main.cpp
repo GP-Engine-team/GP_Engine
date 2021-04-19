@@ -1,4 +1,6 @@
-﻿#include "Editor/EditorStartup.hpp"
+﻿#define GLFW_INCLUDE_NONE
+#define GLFW_DLL
+#include "Editor/EditorStartup.hpp"
 
 //#include "imgui/imgui.h"
 /*#include "imgui/backends/imgui_impl_glfw.h"
