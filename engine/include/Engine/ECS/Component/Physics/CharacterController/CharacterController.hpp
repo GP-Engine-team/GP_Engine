@@ -6,6 +6,9 @@
  */
 
 #pragma once
+#include <characterkinematic/PxCapsuleController.h>
+#include <GPM/Vector3.hpp>
+#include <Engine/ECS/Component/Component.hpp>
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/Component/Component.hpp>
 #include <Engine/Serialization/Slider.hpp>
@@ -15,7 +18,7 @@
 // Generated
 #include "Generated/CharacterController.rfk.h"
 
-#define EARTH_GRAVITY 0.980665f
+#define EARTH_GRAVITY 0.980665f 
 
 namespace GPE RFKNamespace()
 {

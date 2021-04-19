@@ -191,6 +191,7 @@
       <Filter>src\Physics\Collisions</Filter>
     </ClCompile>
     <ClCompile Include="src\Serialization\ComponentGen.cpp">
+    <ClCompile Include="src\Light.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\FileExplorer.cpp">
@@ -224,6 +225,7 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\FreeFly.cpp">
+    <ClCompile Include="src\MaterialImporterSetting.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Serialization\GPMLoad.cpp">
@@ -231,6 +233,12 @@
     </ClCompile>
     <ClCompile Include="src\Serialization\GPMSave.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Importer.cpp">
+      <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceImporter.cpp">
+      <Filter>third_party</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -593,6 +601,8 @@
     </ClInclude>
     <ClInclude Include="third_party\include\stb\stb_perlin.h">
       <Filter>third_party</Filter>
+    <ClInclude Include="include\Engine\Serialization\STDSave.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\STDReflect.hpp">
       <Filter>include</Filter>
@@ -629,6 +639,38 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp">
       <Filter>include</Filter>
+    <ClInclude Include="..\editor\include\Editor\FileExplorer.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\IInspectable.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\MaterialImporterSetting.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\MeshImporterSetting.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\ShaderImporterSetting.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_image.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_image_write.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_perlin.h">
+      <Filter>third_party</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

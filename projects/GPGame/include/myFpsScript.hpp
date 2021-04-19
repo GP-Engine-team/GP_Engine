@@ -21,10 +21,9 @@
 
 #include <iostream>
 
-// Generated
-#include "Generated/myFpsScript.rfk.h"
-
-namespace GPG RFKNamespace()
+namespace GPG
+{
+class MyFpsScript : public GPE::BehaviourComponent
 {
     class RFKClass(Inspect(), Serialize()) MyFpsScript : public GPE::BehaviourComponent
     {

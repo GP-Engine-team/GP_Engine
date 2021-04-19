@@ -105,8 +105,7 @@ void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 
 void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 {
-    if (ImGui::GetCurrentContext() != nullptr)
-        ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+    ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
     static_cast<InputManager*>(glfwGetWindowUserPointer(window))->keyCallback(window, key, scancode, action, mods);
 }
 

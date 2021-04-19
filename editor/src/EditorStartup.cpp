@@ -139,8 +139,6 @@ void EditorStartup::update()
         auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
         (*syncImgui)(ImGui::GetCurrentContext());
 
-        /*auto syncGlfw = GET_PROCESS(m_reloadableCpp, setContextCurrent);
-        (*syncGlfw)(GPE::Engine::getInstance()->window.getGLFWWindow());*/
         startGame();
     }
 }
