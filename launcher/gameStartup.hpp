@@ -5,10 +5,15 @@
 
 struct GLFWwindow;
 
+namespace GPE
+{
+class AbstractGame;
+}
+
 class GameStartup final : public ContextStartup
 {
 private:
-    class AbstractGame* m_game = nullptr;
+    GPE::AbstractGame* m_game = nullptr;
 
     struct
     {

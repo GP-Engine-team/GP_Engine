@@ -18,8 +18,6 @@
 #include <Engine/Resources/Wave.hpp>
 #include <PxForceMode.h>
 
-#include <iostream>
-
 namespace GPG
 {
 class MyFreeFlyWithCollisionScript : public GPE::BehaviourComponent

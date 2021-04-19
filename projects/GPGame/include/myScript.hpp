@@ -16,8 +16,6 @@
 #include "Engine/Serialization/Serialize.hpp"
 #include "Engine/Serialization/Slider.hpp"
 
-#include <iostream>
-
 #include "Generated/myScript.rfk.h"
 
 namespace GPG RFKNamespace()
@@ -52,8 +50,8 @@ namespace GPG RFKNamespace()
         MyScript& operator=(MyScript const& other) noexcept = delete;
         MyScript& operator=(MyScript&& other) noexcept = delete;
 
-        RFKField(Serialize()) GPE::InputComponent* input = nullptr;
-        RFKField(Serialize(), Inspect(), Slider(0, 10)) float sprintSpeed = 2;
+        RFKField(Serialize()) GPE::InputComponent*            input        = nullptr;
+        RFKField(Serialize(), Inspect(), Slider(0, 10)) float sprintSpeed  = 2;
         RFKField(Serialize(), Inspect(), Slider(0, 10)) float defaultSpeed = 1;
 
         RFKField(Serialize()) float speed = defaultSpeed;

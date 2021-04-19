@@ -12,7 +12,6 @@
 #include <extensions/PxDefaultErrorCallback.h>
 #include <extensions/PxDefaultSimulationFilterShader.h>
 #include <extensions/PxExtensionsAPI.h>
-#include <iostream>
 #include <pvd/PxPvdTransport.h>
 
 using namespace GPE;
@@ -85,7 +84,7 @@ PhysXSystem::~PhysXSystem()
     scene->release();
     cooking->release();
     physics->release();
-    //pvd->release();
+    // pvd->release();
     foundation->release();
 }
 

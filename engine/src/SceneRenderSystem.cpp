@@ -370,10 +370,6 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
             };
         }
 
-        // draw UI
-        //ImGui::Render();
-        //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
         // Draw debug shape
         {
             if (!debugShape.empty())

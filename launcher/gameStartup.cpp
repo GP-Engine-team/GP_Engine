@@ -5,17 +5,15 @@
 #include "Game.hpp"
 #include "SingletonsSync.hpp"
 
-#include "GLFW/glfw3.h"
-
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
+#include <GLFW/glfw3.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
 
 using namespace GPE;
 
 GameStartup::GameStartup()
 {
     setGameEngineInstance(*GPE::Engine::getInstance());
-    setContextCurrent(GPE::Engine::getInstance()->window.getGLFWWindow());
     setLogInstance(*GPE::Log::getInstance());
 
     // setImguiCurrentContext(ImGui::GetCurrentContext());
@@ -43,6 +41,7 @@ GameStartup::GameStartup()
     gameFunctionsPtr.render = [&]() {
         int h, w;
         GPE::Engine::getInstance()->window.getSize(w, h);
+        m_game->setViewport(0, 0, w, h);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, w, h);

@@ -14,8 +14,6 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
 
-#include <iostream>
-
 namespace GPG
 {
 class MyFreeFlyScript : public GPE::BehaviourComponent

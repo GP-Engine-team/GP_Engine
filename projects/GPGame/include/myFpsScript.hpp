@@ -20,8 +20,6 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-#include <iostream>
-
 // Generated
 #include "Generated/myFpsScript.rfk.h"
 

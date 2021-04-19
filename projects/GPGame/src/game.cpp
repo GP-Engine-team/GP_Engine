@@ -1,4 +1,5 @@
-﻿#include "Game.hpp"
+﻿#define IMGUI_DEFINE_MATH_OPERATORS
+#include "Game.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
 
@@ -27,14 +28,13 @@
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <myFpsScript.hpp>
 
-#include <iostream>
-
 #include "Engine/Resources/Importer/Importer.hpp"
 
 // Third_party
 #include <glad/glad.h> //In first
 #include <glfw/glfw3.h>
 
+#include "imgui/imgui_internal.h"
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
@@ -59,8 +59,32 @@ void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
 
 void Game::render()
 {
+    // UI code can be easly move in update because it's not real render function. It however her for simplicity
+    // Initialize a new frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+
+    ImGui::GetIO().DisplaySize = ImVec2((float)m_w, (float)m_h);
+    ImGui::GetIO().MousePos -= ImVec2((float)m_x, (float)m_y);
+
+    ImGui::NewFrame();
+
+    ImGui::SetNextWindowSize(ImVec2{(float)m_w, (float)m_h});
+    ImGui::SetNextWindowPos({0, 0});
+
+    ImGui::Begin("UI", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration);
+
+    // Draw GUI
+    GPE::Engine::getInstance()->behaviourSystem.onGUI();
+    ImGui::End();
+    ImGui::Render();
+
     SceneRenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
     sceneRS.draw(Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
+
+    // draw UI
+    // ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 extern "C" GPE::AbstractGame* createGameInstance()
@@ -169,6 +193,14 @@ void Game::initDearImGui(GLFWwindow* window)
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 460");
+}
+
+void Game::setViewport(float x, float y, float w, float h)
+{
+    m_x = x;
+    m_y = y;
+    m_w = w;
+    m_h = h;
 }
 
 Game::~Game()

@@ -25,6 +25,8 @@ protected:
     int    unFixedUpdateFrameCount = 0;
     double FPLogDelay              = 1.;
 
+    float m_x = 0, m_y = 0, m_w = 0, m_h = 0;
+
 private:
     virtual void update(double unscaledDeltaTime, double deltaTime) override final;
 
@@ -36,6 +38,7 @@ public:
     Game();
 
     void initDearImGui(GLFWwindow* window);
+    void setViewport(float x, float y, float w, float h);
 
     virtual ~Game() final;
 };

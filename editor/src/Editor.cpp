@@ -283,12 +283,12 @@ void Editor::update(GPE::AbstractGame* game)
 
     if (m_showImGuiDemoWindows)
         ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
-
-    ImGui::Render();
 }
 
 void Editor::render()
 {
+    ImGui::Render();
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0u);
     glViewport(0, 0, m_sceneEditor.view.width, m_sceneEditor.view.height);
     glClearColor(1.f, 1.f, 1.f, .0f);
