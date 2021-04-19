@@ -335,3 +335,13 @@ GameObject* GameObject::getGameObjectCorrespondingToID(unsigned int ID) noexcept
 
     return nullptr;
 }
+
+void* GameObject::operator new (std::size_t size)
+{
+    return GPE::DataChunk<GameObject>::getInstance()->add();
+}
+
+void GameObject::operator delete (void* ptr)
+{
+    GPE::DataChunk<GameObject>::getInstance()->destroy(static_cast<GameObject*>(ptr));
+}

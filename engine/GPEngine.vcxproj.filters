@@ -82,9 +82,6 @@
     <ClCompile Include="src\WindowGLFW.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\AbstractGame.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\AudioComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -205,12 +202,6 @@
     <ClCompile Include="src\ResourceImporter.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\MeshImporterSetting.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MaterialImporterSetting.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\Light.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -232,6 +223,12 @@
     <ClCompile Include="src\Serialization\GPMSave.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\MaterialInspectorPanel.cpp" />
+    <ClCompile Include="src\MeshInspectorPanel.cpp" />
+    <ClCompile Include="src\ModelImporterSetting.cpp" />
+    <ClCompile Include="src\Serialization\GPEDataInspector.cpp" />
+    <ClCompile Include="src\ShaderInspectorPanel.cpp" />
+    <ClCompile Include="src\TextureImporterSetting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp">
@@ -585,15 +582,6 @@
     <ClInclude Include="..\editor\include\Editor\FileExplorer.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="third_party\include\stb\stb_image.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\include\stb\stb_image_write.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
-    <ClInclude Include="third_party\include\stb\stb_perlin.h">
-      <Filter>third_party</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Serialization\STDReflect.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -612,16 +600,7 @@
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\MaterialImporterSetting.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\MeshImporterSetting.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\ShaderImporterSetting.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Tools\FunctionPtr.hpp">
@@ -648,6 +627,15 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_perlin.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_image.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_image_write.h">
+      <Filter>third_party</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -750,7 +738,7 @@
     </None>
     <None Include="include\Engine\Core\Tools\UnrolledListAllocator.inl">
       <Filter>include\Core\Tools</Filter>
-	</None>
+    </None>
     <None Include="include\Engine\Serialization\STDSave.inl">
       <Filter>include</Filter>
     </None>

@@ -19,15 +19,21 @@ std::string ComponentGenerator::generateClassFooterCode(kodgen::EntityInfo const
         // Get Struct / Class info to access its fields
         kodgen::StructClassInfo const& var = static_cast<kodgen::StructClassInfo const&>(entity);
 
-        //std::string serializeInside = "DataChunk<" + var.name + ">::getInstance()->destroy(this);";
-        std::string serializeInside = "delete this;";
+        std::string newInside = "return GPE::DataChunk<" + var.name + ">::getInstance()->add();";
 
-        std::string serializeFunction = "void destroy() override "
+        std::string newFunction = "static void* operator new(std::size_t size)"
                                         "{" +
-                                        serializeInside + "}";
+                                  newInside + "}";
 
-        std::cout << serializeFunction << std::endl;
-        return "public:" + serializeFunction;
+        std::string deleteInside = "GPE::DataChunk<" + var.name + ">::getInstance()->destroy(static_cast<" + var.name + "*>(ptr));";
+
+        std::string deleteFunction = "static void operator delete(void* ptr)"
+                                  "{" +
+                                  deleteInside + "}";
+
+
+        std::cout << newFunction << deleteFunction << std::endl;
+        return "public:" + newFunction + deleteFunction;
     }
     return "";
 }

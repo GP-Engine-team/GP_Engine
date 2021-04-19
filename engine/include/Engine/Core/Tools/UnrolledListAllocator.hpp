@@ -9,6 +9,8 @@ template<typename T>
 class UnrolledListAllocator
 {
 private:
+    int count = 0;
+
     // What's inside the Node elements.
     union SubNode
     {
