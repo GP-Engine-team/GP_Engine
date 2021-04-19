@@ -11,10 +11,13 @@
 #include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <PxRigidDynamic.h>
 
-namespace GPE
+// Generated
+#include "Generated/RigidbodyDynamic.rfk.h"
+
+namespace GPE RFKNamespace()
 {
 
-class RigidbodyDynamic : public Component
+class RFKClass(Serialize(), ComponentGen) RigidbodyDynamic : public Component
 {
 public:
     RigidbodyDynamic(GameObject& owner) noexcept;
@@ -39,5 +42,7 @@ private:
 public:
     void setKinematic(bool state) noexcept;
     GETTER_BY_VALUE(KinematicState, m_isKinematic);
+
+    RigidbodyDynamic_GENERATED
 };
 } // namespace GPE

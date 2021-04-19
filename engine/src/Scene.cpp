@@ -85,12 +85,12 @@ void Scene::removeLoadedResourcePath(const char* path) noexcept
 
 void Scene::save(XmlSaver& context) const
 {
-    GPE::save(context, m_pWorld, XmlSaver::SaveInfo{"m_pWorld", "GameObject", 0});
+    GPE::save(context, m_pWorld, XmlSaver::SaveInfo{"m_pWorld", "GameObject", GameObject::staticGetArchetype().id});
 }
 
 void Scene::load(XmlLoader& context)
 {
     delete m_pWorld;
     m_pWorld = nullptr;
-    GPE::load(context, m_pWorld, XmlLoader::LoadInfo{"m_pWorld", "GameObject", 0});
+    GPE::load(context, m_pWorld, XmlLoader::LoadInfo{"m_pWorld", "GameObject", GameObject::staticGetArchetype().id});
 }
