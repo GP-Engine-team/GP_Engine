@@ -10,12 +10,6 @@
 #include "Engine/Resources/Scene.hpp"
 #include "GameApiMacros.hpp"
 
-#include <iostream>
-
-#include <imgui/backends/imgui_impl_glfw.h>
-#include <imgui/backends/imgui_impl_opengl3.h>
-#include <imgui/imgui.h>
-
 class Game final : public AbstractGame
 {
 protected:
@@ -32,56 +26,11 @@ protected:
     double FPLogDelay              = 1.;
 
 private:
-    virtual void update(double unscaledDeltaTime, double deltaTime) override final
-    {
-        // Initialize a new frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+    virtual void update(double unscaledDeltaTime, double deltaTime) override final;
 
-        ++unFixedUpdateFrameCount;
+    virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final;
 
-        bSys.update(deltaTime);
-        sm.getCurrentScene()->getWorld().updateSelfAndChildren();
-        /*
-        int h, w;
-        GPE::Engine::getInstance()->window.getSize(w, h); // TODO: Fixe it when glfw will be fixed
-        ImGui::SetNextWindowSize(ImVec2{(float)w, (float)h});
-        ImGui::SetNextWindowPos({0.f, 0.f});
-
-        ImGui::Begin("UI", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration);
-
-        // Draw GUI
-        GPE::Engine::getInstance()->behaviourSystem.onGUI();
-
-        ImGui::End();*/
-    }
-
-    virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final
-    {
-        AbstractGame::fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
-        // GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
-        ++fixedUpdateFrameCount;
-        bSys.fixedUpdate(fixedDeltaTime);
-    }
-
-    virtual void render() override final
-    {
-        GPE::SceneRenderSystem& sceneRS = GPE::Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
-        sceneRS.draw(GPE::Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
-    }
-
-protected:
-    void initDearImGui(GLFWwindow* window)
-    {
-        // Setup Dear ImGui context
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-
-        // Setup Platform/Renderer backends
-        ImGui_ImplGlfw_InitForOpenGL(window, true);
-        ImGui_ImplOpenGL3_Init("#version 460");
-    }
+    virtual void render() override final;
 
 public:
     Game();
@@ -97,9 +46,9 @@ public:
 /**
  * @brief Called by the exe, by retriewing the dll functions. Can't be inlined.
  */
-extern "C" GAME_API class AbstractGame* createGameInstance();
+extern "C" GAME_API class GPE::AbstractGame* createGameInstance();
 /**
  * @brief Called by the exe, by retriewing the dll functions. Can't be inlined.
  * The class is created in the dll, so it must be deleted in the dll.
  */
-extern "C" GAME_API void destroyGameInstance(class AbstractGame* game);
+extern "C" GAME_API void destroyGameInstance(class GPE::AbstractGame* game);

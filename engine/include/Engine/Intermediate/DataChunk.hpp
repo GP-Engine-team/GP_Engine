@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -24,8 +24,7 @@ namespace GPE
  * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
  * @tparam T : Component stored type
  */
-// TODO: Remove multiplicator
-template <typename TStoredData, int TSize = 65536 * 1000> // 64KiB = 65,536Ko
+template <typename TStoredData, int TSize = 65536> // 64KiB = 65,536Ko
 class DataChunk
 {
     /**
@@ -63,7 +62,7 @@ public:
     template <typename... Args>
     TStoredData& add(Args&&... args) noexcept;
 
-    void destroy(const TStoredData* dataToDestroy) noexcept;
+    void destroy(TStoredData* const dataToDestroy) noexcept;
 
     GETTER_BY_REF(Data, m_datas);
 

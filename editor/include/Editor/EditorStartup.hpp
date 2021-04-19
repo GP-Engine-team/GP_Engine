@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -13,7 +13,6 @@
 
 #include <functional>
 
-class AbstractGame;
 struct GLFWwindow;
 
 namespace Editor
@@ -31,12 +30,14 @@ private:
     const char* gameDllPath = "./bin/Debug/GPGame.dll";
 #endif
 
-    GPE::ReloadableCpp m_reloadableCpp;
-    Editor             m_editor;
-    AbstractGame*      m_game;
+	Editor			   m_editor;
+	GPE::ReloadableCpp m_reloadableCpp;
+	GPE::AbstractGame* m_game;
 
 protected:
     GLFWwindow* initDearImGui(GLFWwindow* window);
+
+	void initializeDefaultInputs() const;
 
 public:
     EditorStartup();

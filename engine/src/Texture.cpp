@@ -18,10 +18,8 @@ Texture::Texture(const ImportArg& arg) noexcept
 {
     setFormat(arg.comp);
 
-    loadInGPU(arg.w, arg.h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT, arg.pixels,
-              arg.generateMipmaps);
-
-    free(arg.pixels);
+    loadInGPU(arg.w, arg.h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT,
+              arg.pixels.get(), arg.generateMipmaps);
 
     Log::getInstance()->log("Texture loaded to VRAM");
 }

@@ -1,13 +1,15 @@
 ﻿#include "Editor/ProjectContent.hpp"
 
-#include "Engine/Serialization/MaterialImporterSetting.hpp"
-#include "Engine/Serialization/MeshImporterSetting.hpp"
-#include "Engine/Serialization/ShaderImporterSetting.hpp"
+#include "Engine/Serialization/IInspectable.hpp"
+#include "Engine/Serialization/MaterialInspectorPanel.hpp"
+#include "Engine/Serialization/MeshInspectorPanel.hpp"
+#include "Engine/Serialization/ShaderInspectorPanel.hpp"
 
 #include "Engine/Resources/Importer/ResourceImporter.hpp"
 #include "Engine/Serialization/FileExplorer.hpp"
+#include "Engine/Serialization/TextureImporterSetting.hpp"
 
-#include <Imgui/imgui.h>
+#include <imgui/imgui.h>
 #include <string>
 
 #include "Engine/Core/Debug/Log.hpp"
@@ -231,12 +233,40 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
     if (ImGui::Button("Importe"))
     {
-        const std::string srcPath = GPE::openFileExplorerAndGetAbsoluePath(
-                                        L"Select asset to import", {{L"Asset", L"*.obj;*.jpg;*.jpeg;*.bmp;*.png;*.tga"},
-                                                                    {L"Model", L"*.obj"},
-                                                                    {L"Image", L"*.jpg;*.jpeg;*.bmp;*.png;*.tga"}})
-                                        .string();
-        importeResource(srcPath.c_str(), pCurrentDirectory->path.string().c_str());
+        const std::filesystem::path srcPath =
+            GPE::openFileExplorerAndGetAbsoluePath(L"Select asset to import",
+                                                   {{L"Asset", L"*.obj;*.fbx;*.jpg;*.jpeg;*.bmp;*.png;*.tga"},
+                                                    {L"Model", L"*.obj;*.fbx"},
+                                                    {L"Image", L"*.jpg;*.jpeg;*.bmp;*.png;*.tga"}})
+                .string();
+
+        if (!srcPath.empty())
+        {
+            switch (hash(srcPath.extension().string().c_str()))
+            {
+
+            case hash(".obj"):
+            case hash(".fbx"):
+                importeModel(srcPath.string().c_str(), pCurrentDirectory->path.string().c_str());
+                break;
+
+            case hash(".jpg"):
+            case hash(".jpeg"):
+            case hash(".png"):
+            case hash(".bmp"):
+            case hash(".tga"): {
+                importationSetting = std::make_unique<GPE::TextureImporterSetting>(
+                    srcPath.string().c_str(), pCurrentDirectory->path.string().c_str());
+                selectedGameObject = importationSetting.get();
+                break;
+            }
+
+            default:
+                Log::getInstance()->logWarning(
+                    stringFormat("Missing implementation to importe file \"%s\"", srcPath.string()));
+                break;
+            }
+        }
     }
 
     ImGui::SameLine();
@@ -371,13 +401,13 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 {
                 case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
                     importationSetting =
-                        std::make_unique<GPE::MeshImporterModifier>(pCurrentDirectory->files[i].path.string());
+                        std::make_unique<GPE::MeshInspectorPanel>(pCurrentDirectory->files[i].path.string());
                     selectedGameObject = importationSetting.get();
                     break;
 
                 case GPE::hash(ENGINE_MATERIAL_EXTENSION): // compile time
                     importationSetting =
-                        std::make_unique<GPE::MaterialImporterModifier>(pCurrentDirectory->files[i].path.string());
+                        std::make_unique<GPE::MaterialInspectorPanel>(pCurrentDirectory->files[i].path.string());
                     selectedGameObject = importationSetting.get();
                     break;
 
@@ -388,7 +418,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
                 case GPE::hash(ENGINE_SHADER_EXTENSION): // compile time
                     importationSetting =
-                        std::make_unique<GPE::ShaderImporterModifier>(pCurrentDirectory->files[i].path.string());
+                        std::make_unique<GPE::ShaderInspectorPanel>(pCurrentDirectory->files[i].path.string());
                     selectedGameObject = importationSetting.get();
                     break;
 

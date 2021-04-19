@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -34,8 +34,8 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        float m_cutOff; // specifies the spotlight's radius.
-        float m_cutOffExponent;
+        RFKField(Inspect()) float m_cutOff; // specifies the spotlight's radius.
+        RFKField(Inspect()) float m_cutOffExponent;
 
     public:
         SpotLight(const SpotLight& other) = delete;
@@ -78,4 +78,3 @@ namespace GPE RFKNamespace()
     };
 
 } // namespace )
-

@@ -3,11 +3,11 @@
 /**
  * @brief Signature of createGameInstance, whose definition should be inside a dll.
 */
-inline class AbstractGame* createGameInstance() { return nullptr; }
+inline class GPE::AbstractGame* createGameInstance() { return nullptr; }
 /**
  * @brief Signature of destroyGameInstance, whose definition should be inside a dll.
 */
-inline void destroyGameInstance(class AbstractGame* game) {}
+inline void destroyGameInstance(class GPE::AbstractGame* game) {}
 /**
  * @brief Signature of setGameEngineInstance, whose definition should be inside a dll.
 */

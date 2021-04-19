@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -53,9 +53,7 @@ namespace GPG RFKNamespace()
         MyScript& operator=(MyScript&& other) noexcept = delete;
 
         RFKField(Serialize()) GPE::InputComponent* input = nullptr;
-
         RFKField(Serialize(), Inspect(), Slider(0, 10)) float sprintSpeed = 2;
-
         RFKField(Serialize(), Inspect(), Slider(0, 10)) float defaultSpeed = 1;
 
         RFKField(Serialize()) float speed = defaultSpeed;

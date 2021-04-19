@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -25,9 +25,36 @@ enum class EFileType
     SHADER   = 3
 };
 
-struct TextureImportDataConfig
+struct TextureImportConfig
 {
-    std::string srcPath;
+    enum class EFormatType
+    {
+        PNG,
+        COUNT
+    } format = EFormatType::PNG;
+
+    bool verticalFlip = true;
+
+    std::string formatToString()
+    {
+        switch (format)
+        {
+        case GPE::TextureImportConfig::EFormatType::PNG:
+            return "png";
+            break;
+        default:
+            break;
+        }
+
+        return "unknow";
+    }
+
+    std::vector<const char*> allFormatToString()
+    {
+        std::vector<const char*> rst;
+        rst.emplace_back("png");
+        return rst;
+    }
 };
 
 struct ShaderCreateonfig
@@ -39,8 +66,8 @@ struct ShaderCreateonfig
 
 void importeModel(const char* srcPath, const char* dstPath) noexcept;
 
-void               importeTextureFile(const char* srcPath, const char* dstPath);
-void               writeTextureFile(const char* dst, const TextureImportDataConfig& arg);
+void               importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config = {});
+void               writeTextureFile(const char* dst, const Texture::ImportArg& arg);
 Texture::ImportArg readTextureFile(const char* src);
 Texture*           loadTextureFile(const char* src);
 

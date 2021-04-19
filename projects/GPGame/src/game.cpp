@@ -27,8 +27,9 @@
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <myFpsScript.hpp>
 
+#include <iostream>
+
 #include "Engine/Resources/Importer/Importer.hpp"
-//#include "GPM/Random.hpp"
 
 #include <glad/glad.h> //In first
 #include <glfw/glfw3.h>
@@ -36,7 +37,32 @@
 using namespace GPE;
 using namespace GPM;
 
-extern "C" AbstractGame* createGameInstance()
+void Game::update(double unscaledDeltaTime, double deltaTime)
+{
+    ++unFixedUpdateFrameCount;
+
+    bSys.update(deltaTime);
+    sm.getCurrentScene()->getWorld().updateSelfAndChildren();
+}
+
+void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
+{
+    GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
+    ++fixedUpdateFrameCount;
+    bSys.fixedUpdate(fixedDeltaTime);
+}
+
+void Game::render()
+{
+    SceneRenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
+    sceneRS.draw(Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
+}
+
+Game::~Game()
+{
+}
+
+extern "C" GPE::AbstractGame* createGameInstance()
 {
     // Init glad
     if (!gladLoadGL())
@@ -48,7 +74,7 @@ extern "C" AbstractGame* createGameInstance()
     return new Game();
 }
 
-extern "C" void destroyGameInstance(AbstractGame* game)
+extern "C" void destroyGameInstance(GPE::AbstractGame* game)
 {
     GPE_ASSERT(game != nullptr, "m_editor should be valid since we've just ran the editor.");
     delete game;
@@ -163,7 +189,7 @@ Game::Game()
     camCreateArg.nearVal = 0.01f;
 
     PointLight::CreateArg lightArg{
-        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};
+        {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};
 
     rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs",
                    AMBIANTE_COLOR_ONLY);
@@ -204,11 +230,11 @@ Game::Game()
                                               Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug")});
 
     ground.addComponent<Model>(modelArg2);*/
-    loadSkyboxResource(rm);
-    loadTreeResource(rm);
+    // loadSkyboxResource(rm);
+    // loadTreeResource(rm);
 
-    loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
-    loadTree(sm.getCurrentScene()->getWorld(), rm, 1000);
+    // loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
+    // loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
 
     ts.addScaledTimer(
         FPLogDelay,

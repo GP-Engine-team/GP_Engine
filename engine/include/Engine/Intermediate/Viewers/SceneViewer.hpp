@@ -1,52 +1,67 @@
-﻿#pragma once
+﻿/*
+ * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
+ * This file is subject to the LGNU license terms in the LICENSE file
+ * found in the top-level directory of this distribution.
+ */
+
+#pragma once
 
 #include "Engine/Intermediate/GameObject.hpp"
-#include "glad/glad.h"
-
-#include <iostream>
-#include <stdlib.h>
 
 namespace GPE
 {
 
+class FreeFly;
 class Scene;
+class Camera;
 
 class SceneViewer
 {
+// ==== Data members ====
 public:
     GameObject    cameraOwner;
+    FreeFly&      freeFly;
+    Camera&       camera;
     Scene*        pScene;
-    class Camera* pCamera;
 
-    GLuint textureID;
-    GLuint depthStencilID;
-    GLuint framebufferID;
-    int    width;
-    int    height;
+    // Keep track of cameraOwner, from the perspective of
+    // its parent's list of child
+    GameObject::Children::iterator it;
+
+    unsigned int  textureID;
 
 private:
-    bool m_captureInputs;
+    // TODO: factorize framebuffer and renderbuffer in classes
+    unsigned int  depthStencilID;
+    unsigned int  framebufferID;
+	unsigned int  FBOIDtextureID;
+    unsigned int  FBOIDdepthID;
+    unsigned int  FBOIDframebufferID;
+	int		      FBOIDwidth;
+	int		      FBOIDheight;
 
+public:
+    int           width;
+    int           height;
+
+private:
+    bool          m_captureInputs;
+    
+// ==== Methods ====
+private:
     void initializeFramebuffer();
+    void initializePickingFBO ();
 
 public:
     SceneViewer(GPE::Scene& viewed, int width = 1, int height = 1);
     ~SceneViewer();
 
-    /**
-     * @brief Generate texture to get the ID of selected element thank's to GPU ID buffer.
-     * This texture is down sampleted to increase performance.
-     * Use this function only if user need ID of selected object only.
-     * Don't use it in loop because it will created a texture each iteration
-     * @return
-     */
-    unsigned int getIDOfSelectedGameObject() const;
+    unsigned int getHoveredGameObjectID()                       const;
 
-    void resize(int width, int height);
-    void bindScene(Scene& scene) noexcept;
-    void render() const;
-    void captureInputs();
-    void releaseInputs();
+    void         resize                (int width, int height);
+    void         bindScene             (Scene& scene);
+    void         render                ()                       const;
+    void         captureInputs         (bool shouldCapture);
 };
 
 } // namespace GPE
