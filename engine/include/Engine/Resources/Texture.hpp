@@ -84,14 +84,14 @@ public:
 
     struct ImportArg
     {
-        int               w, h, comp;
-        unsigned char*    pixels; // This data must be free after usage
-        ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
-        ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
-        ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
-        ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
-        bool              flipTexture      = true;
-        bool              generateMipmaps  = true;
+        int                            w = 0, h = 0, comp = 0, len = 0;
+        std::unique_ptr<unsigned char> pixels           = nullptr;
+        ETextureMinFilter              textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
+        ETextureMagFilter              textureMagFilter = ETextureMagFilter::LINEAR;
+        ETextureWrapS                  textureWrapS     = ETextureWrapS::REPEAT;
+        ETextureWrapT                  textureWrapT     = ETextureWrapT::REPEAT;
+        bool                           flipTexture      = true;
+        bool                           generateMipmaps  = true;
     };
 
     struct CreateArg

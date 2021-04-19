@@ -10,11 +10,12 @@
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include "imgui/imgui.h"
 
-//#include "Game/Game.hpp"
 #include "Editor/ExternalDeclarations.hpp"
 
 namespace Editor
 {
+
+using namespace GPE;
 
 GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
 {
@@ -62,13 +63,12 @@ EditorStartup::EditorStartup()
       }},
       m_render{[&]()
       {
-          m_editor.update();
-          m_editor.render();
+          m_editor.render(m_game);
           GPE::Engine::getInstance()->renderer.swapBuffer();
       }},
-      m_reloadableCpp{gameDllPath},
       m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
                GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
+      m_reloadableCpp{gameDllPath},
       m_game{nullptr}
 {
     m_editor.m_reloadableCpp = &m_reloadableCpp;
@@ -130,9 +130,6 @@ void EditorStartup::closeGame()
 
 void EditorStartup::update()
 {
-    GPE::Engine::getInstance()->timeSystem.update(m_fixedUpdate, m_update, m_render);
-    isRunning = m_editor.isRunning();
-
     if (m_reloadableCpp.refresh())
     {
         auto syncLog = GET_PROCESS(m_reloadableCpp, setLogInstance);
@@ -146,6 +143,9 @@ void EditorStartup::update()
 
         startGame();
     }
+
+    GPE::Engine::getInstance()->timeSystem.update(m_fixedUpdate, m_update, m_render);
+    isRunning = m_editor.isRunning();
 }
 
 } // End of namespace Editor

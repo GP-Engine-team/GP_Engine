@@ -31,11 +31,6 @@ extern "C" GPE::Engine& getGameEngineInstance()
     return *GPE::Engine::getInstance();
 }
 
-extern "C" void setContextCurrent(GLFWwindow* window)
-{
-    glfwMakeContextCurrent(window);
-}
-
 extern "C" void setImguiCurrentContext(ImGuiContext* ctx)
 {
     ImGui::SetCurrentContext(ctx);

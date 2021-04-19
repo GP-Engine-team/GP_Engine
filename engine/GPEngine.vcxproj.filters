@@ -82,9 +82,6 @@
     <ClCompile Include="src\WindowGLFW.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\AbstractGame.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\AudioComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -222,14 +219,26 @@
     </ClCompile>
     <ClCompile Include="src\Importer.cpp" />
     <ClCompile Include="src\ResourceImporter.cpp" />
-    <ClCompile Include="src\MaterialImporterSetting.cpp">
+    <ClCompile Include="src\MaterialInspectorPanel.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\MeshImporterSetting.cpp">
+    <ClCompile Include="src\MeshInspectorPanel.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\FileExplorer.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelImporterSetting.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderInspectorPanel.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextureImporterSetting.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\GPEDataInspector.cpp">
+      <Filter>src\Serialization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -601,14 +610,19 @@
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp" />
     <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp" />
     <ClInclude Include="include\Engine\Serialization\IInspectable.hpp" />
-    <ClInclude Include="include\Engine\Serialization\MaterialImporterSetting.hpp" />
-    <ClInclude Include="include\Engine\Serialization\MeshImporterSetting.hpp" />
-    <ClInclude Include="include\Engine\Serialization\ShaderImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\MaterialInspectorPanel.hpp" />
+    <ClInclude Include="include\Engine\Serialization\MeshInspectorPanel.hpp" />
+    <ClInclude Include="include\Engine\Serialization\ShaderInspectorPanel.hpp" />
     <ClInclude Include="third_party\include\stb\stb_image.h" />
     <ClInclude Include="third_party\include\stb\stb_image_write.h" />
     <ClInclude Include="third_party\include\stb\stb_perlin.h" />
     <ClInclude Include="include\Engine\Core\Tools\UnrolledListAllocator.hpp">
       <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\ModelImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\TextureImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\GPEDataInspector.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

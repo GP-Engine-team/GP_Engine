@@ -52,7 +52,7 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
-    ImGui::Begin(view.pScene->getWorld().getName().c_str(), nullptr, ImGuiWindowFlags_NoBackground);
+    if (ImGui::Begin(view.pScene->getWorld().getName().c_str(), nullptr, ImGuiWindowFlags_NoBackground))
     {
         checkCursor(inspectedObject);
 
@@ -63,8 +63,8 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
 
         ImGui::Image((void*)(intptr_t)view.textureID, size, {0.f, 1.f}, {1.f, 0.f});
     }
-    ImGui::End();
 
+    ImGui::End();
     ImGui::PopStyleVar(2);
 }
 

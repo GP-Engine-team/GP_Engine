@@ -13,7 +13,6 @@
 
 #include <functional>
 
-class AbstractGame;
 struct GLFWwindow;
 
 namespace Editor
@@ -31,9 +30,9 @@ private:
 	const char* gameDllPath = "./bin/Debug/GPGame.dll";
 #endif
 
+	Editor			   m_editor;
 	GPE::ReloadableCpp m_reloadableCpp;
-	Editor             m_editor;
-	AbstractGame*	   m_game;
+	GPE::AbstractGame* m_game;
 
 	GLFWwindow* initDearImGui(GLFWwindow* window);
 

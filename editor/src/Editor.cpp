@@ -1,24 +1,26 @@
 ﻿#include "Editor/Editor.hpp"
 
+// Engine
+#include "Engine/Core/Game/AbstractGame.hpp"
+#include "Engine/Core/HotReload/ReloadableCpp.hpp"
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Resources/SceneManager.hpp"
-#include "Engine/Serialization/IInspectable.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/IInspectable.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
-#include "Editor/ExternalDeclarations.hpp"
-#include "Engine/Core/HotReload/ReloadableCpp.hpp"
 
+// Editor
+#include "Editor/ExternalDeclarations.hpp"
+
+// Third-party
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include <imgui/imgui.h>
-
-
-using namespace GPE;
 
 // Hint to use GPU if available
 extern "C"
@@ -43,7 +45,7 @@ void Editor::setupDearImGui()
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
-    // io.ConfigViewportsNoAutoMerge = true;
+    // io.ConfigViewportsNoAutoMerge   = true;
     // io.ConfigViewportsNoTaskBarIcon = true;
 
     // Setup Dear ImGui style
@@ -52,9 +54,12 @@ void Editor::setupDearImGui()
 
 void Editor::renderStyleEditor()
 {
-    ImGui::Begin("Style Editor", &m_showAppStyleEditor);
-    ImGui::ShowStyleEditor();
-    ImGui::End();
+    if (m_showAppStyleEditor)
+    {
+        ImGui::Begin("Style Editor", &m_showAppStyleEditor);
+        ImGui::ShowStyleEditor();
+        ImGui::End();
+    }
 }
 
 void Editor::renderMenuBar()
@@ -105,6 +110,8 @@ void Editor::renderMenuBar()
         // Help
         if (ImGui::BeginMenu("Help"))
         {
+            ImGui::MenuItem("Demo ImGui", NULL, &m_showImGuiDemoWindows);
+
             // Menu content
             ImGui::MenuItem("Useful links");
             ImGui::EndMenu();
@@ -121,89 +128,100 @@ void Editor::renderGameControlBar()
 
 void Editor::renderLevelEditor()
 {
-   m_sceneEditor.render(m_inspectedObject);
+    m_sceneEditor.render(m_inspectedObject);
+}
+
+
+void Editor::renderGameView(GPE::AbstractGame* game)
+{
+    m_gameViewer.render(game);
 }
 
 void Editor::renderInspector()
 {
-    ImGui::Begin("Inspector");
-    if (m_inspectedObject != nullptr)
+    if (ImGui::Begin("Inspector"))
     {
-        GPE::InspectContext context;
-        GPE::DataInspector::inspect(context, *m_inspectedObject);
+        if (m_inspectedObject != nullptr)
+        {
+            GPE::InspectContext context;
+            GPE::DataInspector::inspect(context, *m_inspectedObject);
 
-        //static float s = 0;
+            // static float s = 0;
 
-        //s += 1.f/30.f;
+            // s += 1.f/30.f;
 
-        //if (s > 9)
-        //{
-        //    rapidxml::xml_document<> doc;
-        //    XmlSaver saver(doc);
-        //    auto a = GET_PROCESS((*m_reloadableCpp), saveCurrentScene);
-        //    a(saver);
-        //    saver.print();
-        //    XmlLoader loader(doc);
-        //    auto b = GET_PROCESS((*m_reloadableCpp), loadCurrentScene);
-        //    b(loader);
-        //    s = 0;
-        //    m_inspectedObject = nullptr;
-        //}
-    }
-    else
-    {
-        ImGui::Text("Select an object to edit its attributes");
+            // if (s > 9)
+            //{
+            //    rapidxml::xml_document<> doc;
+            //    XmlSaver saver(doc);
+            //    auto a = GET_PROCESS((*m_reloadableCpp), saveCurrentScene);
+            //    a(saver);
+            //    saver.print();
+            //    XmlLoader loader(doc);
+            //    auto b = GET_PROCESS((*m_reloadableCpp), loadCurrentScene);
+            //    b(loader);
+            //    s = 0;
+            //    m_inspectedObject = nullptr;
+            //}
+        }
+        else
+        {
+            ImGui::Text("Select an object to edit its attributes");
+        }
     }
     ImGui::End();
 }
 
 void Editor::renderSceneGraph()
 {
-    ImGui::Begin("Scene Graph");
-
-    m_sceneGraph.renderAndGetSelected(Engine::getInstance()->sceneManager.getCurrentScene()->getWorld(),
-                                      m_inspectedObject);
+    if (ImGui::Begin("Scene Graph"))
+    {
+        GPE::GameObject& root{Engine::getInstance()->sceneManager.getCurrentScene()->getWorld()};
+        m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
+    }
 
     ImGui::End();
 }
 
 void Editor::renderLog()
 {
-    ImGui::BeginChild("Scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+    if (ImGui::BeginChild("Scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar))
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+        m_logInspector.draw("Example: Log");
 
-    m_logInspector.draw("Example: Log");
-
-    ImGui::PopStyleVar();
+        ImGui::PopStyleVar();
+    }
     ImGui::EndChild();
 }
 
 void Editor::renderExplorer()
 {
-    ImGui::Begin("Explorer");
-
-    if (ImGui::BeginTabBar("Explorer"))
+    if (ImGui::Begin("Explorer"))
     {
-        if (ImGui::BeginTabItem("Project"))
+        if (ImGui::BeginTabBar("Explorer"))
         {
-            m_projectContent.renderAndGetSelected(m_inspectedObject);
-            ImGui::EndTabItem();
-        }
+            if (ImGui::BeginTabItem("Project"))
+            {
+                m_projectContent.renderAndGetSelected(m_inspectedObject);
+                ImGui::EndTabItem();
+            }
 
-        if (ImGui::BeginTabItem("Logs"))
-        {
-            renderLog();
-            ImGui::EndTabItem();
-        }
+            if (ImGui::BeginTabItem("Logs"))
+            {
+                renderLog();
+                ImGui::EndTabItem();
+            }
 
-        if (ImGui::BeginTabItem("Profiler"))
-        {
-            ImGui::Text("Plots, and graphs, and numbers...");
-            ImGui::EndTabItem();
-        }
+            if (ImGui::BeginTabItem("Profiler"))
+            {
+                ImGui::Text("Plots, and graphs, and numbers...");
+                ImGui::EndTabItem();
+            }
 
-        ImGui::EndTabBar();
+            ImGui::EndTabBar();
+        }
     }
     ImGui::End();
 }
@@ -211,6 +229,7 @@ void Editor::renderExplorer()
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
     : m_sceneEditor       {editedScene},
+      m_gameViewer        {},
       m_logInspector      {},
       m_projectContent    {},
       m_sceneGraph        {},
@@ -237,7 +256,7 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
     m_sceneEditor.view.bindScene(scene);
 }
 
-void Editor::update()
+void Editor::update(GPE::AbstractGame* game)
 {
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -256,18 +275,22 @@ void Editor::update()
 
     renderGameControlBar();
     renderLevelEditor();
+    renderGameView(game);
     renderSceneGraph();
     renderExplorer();
     renderInspector();
+
+    if (m_showImGuiDemoWindows)
+        ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
 }
 
-void Editor::render()
+void Editor::render(GPE::AbstractGame* game)
 {
-    ImGui::ShowDemoWindow(nullptr);
+    update(game);
 
     ImGui::Render();
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0u);
     glViewport(0, 0, m_sceneEditor.view.width, m_sceneEditor.view.height);
     glClearColor(1.f, 1.f, 1.f, .0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

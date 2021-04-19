@@ -6,12 +6,17 @@
 
 #pragma once
 
+namespace GPE
+{
+
 class AbstractGame
 {
 public:
-    AbstractGame();
-    virtual void update(double unscaledDeltaTime, double deltaTime) = 0;
-    virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime);
-    virtual void render()   = 0;
     virtual ~AbstractGame() = default;
+    
+    virtual void update     (double unscaledDeltaTime, double deltaTime)           = 0;
+    virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) = 0;
+    virtual void render     ()                                                     = 0;
 };
+
+}
