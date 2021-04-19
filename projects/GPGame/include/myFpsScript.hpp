@@ -37,6 +37,7 @@ namespace GPG RFKNamespace()
               controller(&owner.addComponent<GPE::CharacterController>())
         {
             enableFixedUpdate(true);
+            enableOnGUI(true);
             input->bindAction("jump", EKeyMode::KEY_DOWN, "game01", this, "jump");
             input->bindAction("right", EKeyMode::KEY_DOWN, "game01", this, "right");
             input->bindAction("left", EKeyMode::KEY_DOWN, "game01", this, "left");
@@ -170,15 +171,6 @@ namespace GPG RFKNamespace()
             ImGui::DragFloat("Ratio", &ratio, 0.01, 0.f, 1.f);
 
             ImVec2 size = {ImGui::GetWindowSize().x * ratio, ImGui::GetWindowSize().y * ratio};
-
-            ImGui::SetNextElementLayout(0.5f, 0.25f, size);
-            ImGui::Button("Menu", size);
-
-            ImGui::SetNextElementLayout(0.5f, 0.5f, size);
-            ImGui::Button("Play", size);
-
-            ImGui::SetNextElementLayout(0.5f, 0.75f, size);
-            ImGui::Button("Option", size);
 
             ImGui::SetNextElementLayout(0.f, 0.f, size, ImGui::EHAlign::Left, ImGui::EVAlign::Top);
             ImGui::Button("Top/Left", size);

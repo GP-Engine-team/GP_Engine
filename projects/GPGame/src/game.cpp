@@ -86,7 +86,6 @@ void Game::render()
     sceneRS.draw(Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
 
     // draw UI
-    // ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
