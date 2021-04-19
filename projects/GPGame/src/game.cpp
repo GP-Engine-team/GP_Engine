@@ -292,11 +292,11 @@ Game::Game()
                                               Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug")});
 
     ground.addComponent<Model>(modelArg2);*/
-    // loadSkyboxResource(rm);
-    // loadTreeResource(rm);
+    loadSkyboxResource(rm);
+    loadTreeResource(rm);
 
-    // loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
-    // loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
+    loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
+    loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
 
     ts.addScaledTimer(
         FPLogDelay,
