@@ -10,7 +10,7 @@
 #include "Engine/Resources/Scene.hpp"
 #include "GameApiMacros.hpp"
 
-class Game final : public AbstractGame
+class Game final : public GPE::AbstractGame
 {
 protected:
     GPE::Window&              win      = GPE::Engine::getInstance()->window;
@@ -35,12 +35,9 @@ private:
 public:
     Game();
 
-    virtual ~Game() final
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
-    }
+    void initDearImGui(GLFWwindow* window);
+
+    virtual ~Game() final;
 };
 
 /**

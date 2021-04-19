@@ -31,8 +31,13 @@
 
 #include "Engine/Resources/Importer/Importer.hpp"
 
+// Third_party
 #include <glad/glad.h> //In first
 #include <glfw/glfw3.h>
+
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/imgui.h>
 
 using namespace GPE;
 using namespace GPM;
@@ -56,10 +61,6 @@ void Game::render()
 {
     SceneRenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
     sceneRS.draw(Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
-}
-
-Game::~Game()
-{
 }
 
 extern "C" GPE::AbstractGame* createGameInstance()
@@ -157,6 +158,24 @@ void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
     GameObject::CreateArg skyboxArgGameObject{"Skybox", {{0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {10.f, 10.f, 10.f}}};
 
     parent.addChild(skyboxArgGameObject).addComponent<Model>(*resourceManager.get<Model::CreateArg>("SkyboxModel"));
+}
+
+void Game::initDearImGui(GLFWwindow* window)
+{
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 460");
+}
+
+Game::~Game()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 Game::Game()
