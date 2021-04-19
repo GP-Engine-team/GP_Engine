@@ -198,7 +198,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
-      <AdditionalDependencies>GPEngine.lib;GPGame.lib;assimp-vc142-mt.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;RefurekuRelease.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GPEngine.lib;GPGame.lib;assimp-vc142-mt.lib;PhysX.lib;PhysXCharacterKinematic_static.lib;PhysXCommon.lib;PhysXCooking.lib;PhysXExtensions_static.lib;PhysXFoundation.lib;PhysXPvdSDK_static.lib;PhysXTask_static.lib;PhysXVehicle_static.lib;RefurekuRelease.lib;glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(GPEngineDir)\third_party\lib\;$(GPEngineDir)\third_party\lib\Refureku;$(GPEngineDir)\third_party\libRelease\;$(GPEngineDir)\third_party\libRelease\Refureku;$(GPGameDir)bin\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

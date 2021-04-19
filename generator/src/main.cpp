@@ -1,3 +1,5 @@
+#define GLFW_INCLUDE_NONE
+#define GLFW_DLL
 #include <Kodgen/Misc/DefaultLogger.h>
 #include <RefurekuGenerator/CodeGen/FileGenerationUnit.h>
 #include <RefurekuGenerator/CodeGen/FileGenerator.h>
@@ -45,7 +47,7 @@ void generateEngineFiles(const std::string& engineDir)
     settings.addToParseDirectory(engineDir + "/include/engine");
 
     settings.addIgnoredDirectory(engineDir + "/include/Generated");
-    //settings.addIgnoredDirectory(engineDir + "/include/engine/Core");
+    // settings.addIgnoredDirectory(engineDir + "/include/engine/Core");
     // settings.addIgnoredDirectory(engineDir + "/include/engine/Serialization");
 
     // You will need to setup parsing settings and generation settings here.

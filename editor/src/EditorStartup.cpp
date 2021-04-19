@@ -1,4 +1,4 @@
-﻿#include "Editor/EditorStartup.hpp"
+#include "Editor/EditorStartup.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
@@ -30,33 +30,31 @@ GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
     return window;
 }
 
-
 void EditorStartup::initializeDefaultInputs() const
 {
     GPE::InputManager& inputs = GPE::Engine::getInstance()->inputManager;
 
     // Default editor-specific inputs
-    inputs.bindInput(GLFW_KEY_W,            "forward");
-	inputs.bindInput(GLFW_KEY_S,            "backward");
-	inputs.bindInput(GLFW_KEY_A,            "left");
-	inputs.bindInput(GLFW_KEY_D,            "right");
-	inputs.bindInput(GLFW_KEY_SPACE,        "up");
-	inputs.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-	inputs.bindInput(GLFW_KEY_ESCAPE,       "exit");
-	inputs.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprint");
+    inputs.bindInput(GLFW_KEY_W, "forward");
+    inputs.bindInput(GLFW_KEY_S, "backward");
+    inputs.bindInput(GLFW_KEY_A, "left");
+    inputs.bindInput(GLFW_KEY_D, "right");
+    inputs.bindInput(GLFW_KEY_SPACE, "up");
+    inputs.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
+    inputs.bindInput(GLFW_KEY_ESCAPE, "exit");
+    inputs.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
 
     inputs.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
+    GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
+                                                           GLFW_CURSOR_NORMAL);
 }
 
-
 EditorStartup::EditorStartup()
-    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
-      {
+    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
           if (m_game != nullptr)
               m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
       }},
-      m_update{[&](double unscaledDeltaTime, double deltaTime)
-      {
+      m_update{[&](double unscaledDeltaTime, double deltaTime) {
           GPE::Engine::getInstance()->inputManager.processInput();
           if (m_game != nullptr)
               m_game->update(unscaledDeltaTime, deltaTime);
@@ -81,11 +79,10 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, saveCurrentScene);
     ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
 
-    m_reloadableCpp.onUnload = [&](){ closeGame(); };
+    m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
     initializeDefaultInputs();
 }
-
 
 EditorStartup::~EditorStartup()
 {

@@ -26,15 +26,15 @@ public:
           source(owner.addComponent<GPE::AudioComponent>())
     {
         enableUpdate(true);
-        input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::up);
-        input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::down);
-        input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::right);
-        input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::left);
-        input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::forward);
-        input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyFreeFlyScript::back);
-        input.bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyFreeFlyScript::leave);
-        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyFreeFlyScript::sprintStart);
-        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyFreeFlyScript::sprintEnd);
+        input.bindAction("jump", EKeyMode::KEY_DOWN, "game01", this, "up");
+        input.bindAction("down", EKeyMode::KEY_DOWN, "game01", this, "down");
+        input.bindAction("right", EKeyMode::KEY_DOWN, "game01", this, "right");
+        input.bindAction("left", EKeyMode::KEY_DOWN, "game01", this, "left");
+        input.bindAction("forward", EKeyMode::KEY_DOWN, "game01", this, "forward");
+        input.bindAction("back", EKeyMode::KEY_DOWN, "game01", this, "back");
+        input.bindAction("exit", EKeyMode::KEY_PRESSED, "game01", this, "leave");
+        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, "game01", this, "sprintStart");
+        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "game01", this, "sprintEnd");
 
         GPE::Wave testSound("./resources/sounds/RickRoll.wav", "RICKROLL");
         GPE::Wave testSound2("./resources/sounds/YMCA.wav", "YMCA");
@@ -70,53 +70,53 @@ public:
         }
     }
 
-    inline void up()
+    RFKMethod() inline void up()
     {
         GPE::TransformComponent& transform = getOwner().getTransform();
         transform.translate(transform.getVectorUp() * speed);
     }
 
-    inline void down()
+    RFKMethod() inline void down()
     {
         GPE::TransformComponent& transform = getOwner().getTransform();
         transform.translate(transform.getVectorUp() * -speed);
     }
 
-    inline void forward()
+    RFKMethod() inline void forward()
     {
         GPE::TransformComponent& transform = getOwner().getTransform();
         transform.translate(transform.getVectorForward() * -speed);
     }
 
-    inline void back()
+    RFKMethod() inline void back()
     {
         GPE::TransformComponent& transform = getOwner().getTransform();
         transform.translate(transform.getVectorForward() * speed);
     }
 
-    inline void left()
+    RFKMethod() inline void left()
     {
         GPE::TransformComponent& transform = getOwner().getTransform();
         transform.translate(transform.getVectorRight() * -speed);
     }
 
-    inline void right()
+    RFKMethod() inline void right()
     {
         GPE::TransformComponent& transform = getOwner().getTransform();
         transform.translate(transform.getVectorRight() * speed);
     }
 
-    inline void leave()
+    RFKMethod() inline void leave()
     {
         exit(666);
     }
 
-    inline void sprintStart()
+    RFKMethod() inline void sprintStart()
     {
         speed *= 2.f;
     }
 
-    inline void sprintEnd()
+    RFKMethod() inline void sprintEnd()
     {
         speed /= 2.f;
     }

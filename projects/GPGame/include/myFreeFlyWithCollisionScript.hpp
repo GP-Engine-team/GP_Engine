@@ -30,19 +30,17 @@ public:
           source(owner.addComponent<GPE::AudioComponent>())
     {
         enableUpdate(true);
-        input.bindAction("jump", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::up);
-        input.bindAction("down", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::down);
-        input.bindAction("right", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::right);
-        input.bindAction("left", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::left);
-        input.bindAction("forward", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::forward);
-        input.bindAction("back", EKeyMode::KEY_DOWN, this, &MyFreeFlyWithCollisionScript::back);
-        input.bindAction("exit", EKeyMode::KEY_PRESSED, this, &MyFreeFlyWithCollisionScript::leave);
-        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, this, &MyFreeFlyWithCollisionScript::sprintStart);
-        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, this, &MyFreeFlyWithCollisionScript::sprintEnd);
-        input.bindAction("growUpCollider", EKeyMode::KEY_DOWN, this,
-                         &MyFreeFlyWithCollisionScript::growUpSphereCollider);
-        input.bindAction("growDownCollider", EKeyMode::KEY_DOWN, this,
-                         &MyFreeFlyWithCollisionScript::growDownSphereCollider);
+        input.bindAction("jump", EKeyMode::KEY_DOWN, "game01", this, "up");
+        input.bindAction("down", EKeyMode::KEY_DOWN, "game01", this, "down");
+        input.bindAction("right", EKeyMode::KEY_DOWN, "game01", this, "right");
+        input.bindAction("left", EKeyMode::KEY_DOWN, "game01", this, "left");
+        input.bindAction("forward", EKeyMode::KEY_DOWN, "game01", this, "forward");
+        input.bindAction("back", EKeyMode::KEY_DOWN, "game01", this, "back");
+        input.bindAction("exit", EKeyMode::KEY_PRESSED, "game01", this, "leave");
+        input.bindAction("sprintStart", EKeyMode::KEY_PRESSED, "game01", this, "sprintStart");
+        input.bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "game01", this, "sprintEnd");
+        input.bindAction("growUpCollider", EKeyMode::KEY_DOWN, "game01", this, "growUpSphereCollider");
+        input.bindAction("growDownCollider", EKeyMode::KEY_DOWN, "game01", this, "growDownSphereCollider");
 
         GPE::Wave testSound("./resources/sounds/RickRoll.wav", "RICKROLL");
         GPE::Wave testSound2("./resources/sounds/YMCA.wav", "YMCA");
@@ -78,64 +76,64 @@ public:
         }
     }
 
-    inline void up()
+    RFKMethod() inline void up()
     {
         getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(
             GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorUp()) * speed,
             physx::PxForceMode::eFORCE);
     }
 
-    inline void down()
+    RFKMethod() inline void down()
     {
         getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(
             GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorUp()) * -speed,
             physx::PxForceMode::eFORCE);
     }
 
-    inline void forward()
+    RFKMethod() inline void forward()
     {
         getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(
             GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorForward()) * -speed,
             physx::PxForceMode::eFORCE);
     }
 
-    inline void back()
+    RFKMethod() inline void back()
     {
         getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(
             GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorForward()) * speed,
             physx::PxForceMode::eFORCE);
     }
 
-    inline void left()
+    RFKMethod() inline void left()
     {
         getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(
             GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorRight()) * -speed,
             physx::PxForceMode::eFORCE);
     }
 
-    inline void right()
+    RFKMethod() inline void right()
     {
         getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(
             GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorRight()) * speed,
             physx::PxForceMode::eFORCE);
     }
 
-    inline void leave()
+    RFKMethod() inline void leave()
     {
         exit(666);
     }
 
-    inline void sprintStart()
+    RFKMethod() inline void sprintStart()
     {
         speed *= 2.f;
     }
 
-    inline void sprintEnd()
+    RFKMethod() inline void sprintEnd()
     {
         speed /= 2.f;
     }
 
-    inline void growUpSphereCollider()
+    RFKMethod() inline void growUpSphereCollider()
     {
         GPE::SphereCollider* collider = getOwner().getComponent<GPE::SphereCollider>();
         if (collider)
@@ -144,7 +142,7 @@ public:
         }
     }
 
-    inline void growDownSphereCollider()
+    RFKMethod() inline void growDownSphereCollider()
     {
         GPE::SphereCollider* collider = getOwner().getComponent<GPE::SphereCollider>();
         if (collider)

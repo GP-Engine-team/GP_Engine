@@ -82,6 +82,9 @@
     <ClCompile Include="src\WindowGLFW.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\AbstractGame.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\AudioComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -145,9 +148,6 @@
     <ClCompile Include="src\Serialization\DataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\FreeFly.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\Serialization\GPMDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
@@ -187,58 +187,50 @@
     <ClCompile Include="third_party\src\OpenAL_Soft_Debug.cpp">
       <Filter>third_party</Filter>
     </ClCompile>
-    <ClCompile Include="src\Light.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\FreeFly.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\Serialize.cpp">
-      <Filter>src\Serialization</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\Slider.cpp">
-      <Filter>src\Serialization</Filter>
+    <ClCompile Include="src\Collider.cpp">
+      <Filter>src\Physics\Collisions</Filter>
     </ClCompile>
     <ClCompile Include="src\Serialization\ComponentGen.cpp">
-      <Filter>src\Serialization</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\Inspect.cpp">
-      <Filter>src\Serialization</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Collider.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\GPMSave.cpp">
-      <Filter>src\Serialization</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\GPMLoad.cpp">
-      <Filter>src\Serialization</Filter>
-    </ClCompile>
-    <ClCompile Include="src\FunctionPtr.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Importer.cpp" />
-    <ClCompile Include="src\ResourceImporter.cpp" />
-    <ClCompile Include="src\MaterialInspectorPanel.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MeshInspectorPanel.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\FileExplorer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ModelImporterSetting.cpp">
+    <ClCompile Include="src\Serialization\Slider.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ShaderInspectorPanel.cpp">
+    <ClCompile Include="src\Serialization\Serialize.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\TextureImporterSetting.cpp">
+    <ClCompile Include="src\ResourceImporter.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Serialization\GPEDataInspector.cpp">
-      <Filter>src\Serialization</Filter>
+    <ClCompile Include="src\MeshImporterSetting.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialImporterSetting.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Light.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\Inspect.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Importer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FunctionPtr.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FreeFly.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\GPMLoad.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\GPMSave.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -590,36 +582,53 @@
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp">
       <Filter>third_party</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\STDSave.hpp">
-      <Filter>include\Serialization</Filter>
+    <ClInclude Include="..\editor\include\Editor\FileExplorer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_image.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_image_write.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\stb\stb_perlin.h">
+      <Filter>third_party</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\STDReflect.hpp">
-      <Filter>include\Serialization</Filter>
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\STDSave.hpp">
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\GPMSave.hpp">
-      <Filter>include\Serialization</Filter>
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp">
-      <Filter>include\Serialization</Filter>
+    <ClInclude Include="include\Engine\Serialization\IInspectable.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\MaterialImporterSetting.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\MeshImporterSetting.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\ShaderImporterSetting.hpp">
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Tools\FunctionPtr.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\editor\include\Editor\FileExplorer.hpp" />
-    <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp" />
-    <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp" />
-    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp" />
-    <ClInclude Include="include\Engine\Serialization\IInspectable.hpp" />
-    <ClInclude Include="include\Engine\Serialization\MaterialInspectorPanel.hpp" />
-    <ClInclude Include="include\Engine\Serialization\MeshInspectorPanel.hpp" />
-    <ClInclude Include="include\Engine\Serialization\ShaderInspectorPanel.hpp" />
-    <ClInclude Include="third_party\include\stb\stb_image.h" />
-    <ClInclude Include="third_party\include\stb\stb_image_write.h" />
-    <ClInclude Include="third_party\include\stb\stb_perlin.h" />
-    <ClInclude Include="include\Engine\Serialization\ModelImporterSetting.hpp" />
-    <ClInclude Include="include\Engine\Serialization\TextureImporterSetting.hpp" />
-    <ClInclude Include="include\Engine\Serialization\GPEDataInspector.hpp">
-      <Filter>include\Serialization</Filter>
+    <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -711,12 +720,6 @@
     <None Include="include\Engine\ECS\Component\Light\Light.inl">
       <Filter>include</Filter>
     </None>
-    <None Include="include\Engine\Serialization\STDSave.inl">
-      <Filter>include\Serialization</Filter>
-    </None>
-    <None Include="include\Engine\Serialization\STDDataInspector.inl">
-      <Filter>include\Serialization</Filter>
-    </None>
     <None Include="include\Engine\ECS\System\InputManagerGLFW.inl">
       <Filter>include</Filter>
     </None>
@@ -724,6 +727,9 @@
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\ECS\System\TimeSystem.inl">
+      <Filter>include</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\STDSave.inl">
       <Filter>include</Filter>
     </None>
     <None Include="include\Engine\Resources\Script\FreeFly.inl">

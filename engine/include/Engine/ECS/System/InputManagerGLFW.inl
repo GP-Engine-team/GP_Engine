@@ -27,3 +27,18 @@ void InputManager::removeComponent(int key) noexcept
 {
     return m_cursor;
 }
+
+void InputManager::setInputMode(const std::string& inputMode) noexcept
+{
+    m_currentInputMode = inputMode;
+}
+
+void InputManager::setCursorTrackingState(bool trackState) noexcept
+{
+    m_cursor.tracked = trackState;
+}
+
+[[nodiscard]] inline const std::string& InputManager::getInputMode() noexcept
+{
+    return m_currentInputMode;
+}
