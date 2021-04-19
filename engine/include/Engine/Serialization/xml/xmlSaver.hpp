@@ -207,6 +207,11 @@ bool XmlSaver::savePtrData(T* data, const SaveInfo& info)
         otherContextHierarchy.push(&doc);
         std::swap(otherContextHierarchy, hierarchy);
 
+        if constexpr (std::is_base_of<rfk::Object, T>::value)
+        {
+            assert(info.typeId != 0);
+        }
+
         SaveInfo newInfo{std::to_string(std::size_t(data)), info.typeName, info.typeId};
         GPE::save(*this, *data, newInfo);
 

@@ -10,10 +10,13 @@
 #include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <PxRigidStatic.h>
 
-namespace GPE
+// Generated
+#include "Generated/RigidbodyStatic.rfk.h"
+
+namespace GPE RFKNamespace()
 {
 
-class RigidbodyStatic : public Component
+class RFKClass(Serialize(), ComponentGen) RigidbodyStatic : public Component
 {
 public:
     RigidbodyStatic(GameObject& owner) noexcept;
@@ -29,5 +32,7 @@ public:
 public:
     physx::PxRigidStatic* rigidbody;
     Collider*             collider;
+
+    RigidbodyStatic_GENERATED
 };
 } // namespace GPE

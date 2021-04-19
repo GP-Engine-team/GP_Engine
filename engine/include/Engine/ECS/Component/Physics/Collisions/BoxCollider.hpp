@@ -6,12 +6,15 @@
 
 #pragma once
 #include <Engine/Core/Tools/ClassUtility.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/collider.hpp>
+#include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <GPM/Vector3.hpp>
 
-namespace GPE
+// Generated
+#include "Generated/BoxCollider.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class BoxCollider : public Collider
+class RFKClass(Serialize(), ComponentGen) BoxCollider : public Collider
 {
 public:
     BoxCollider(GameObject& owner) noexcept;
@@ -32,5 +35,7 @@ public:
     DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);
     GETTER_BY_VALUE(Dimensions, m_dimensions);
     void setDimensions(GPM::Vec3 newDimensions) noexcept;
+
+    BoxCollider_GENERATED
 };
 } // namespace GPE

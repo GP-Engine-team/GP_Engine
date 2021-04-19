@@ -7,13 +7,17 @@
 
 #pragma once
 #include <Engine/Core/Tools/ClassUtility.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/collider.hpp>
+#include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <GPM/Vector3.hpp>
+#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 
-namespace GPE
+// Generated
+#include "Generated/SphereCollider.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class SphereCollider : public Collider
-{
+    class RFKClass(Serialize(), ComponentGen) SphereCollider : public Collider
+    {
 public:
     SphereCollider(GameObject& owner) noexcept;
 
@@ -33,5 +37,7 @@ public:
     DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);
     GETTER_BY_VALUE(Radius, m_radius);
     void setRadius(float newRadius) noexcept;
+
+    SphereCollider_GENERATED
 };
 } // namespace GPE

@@ -12,7 +12,7 @@
 
 using namespace GPE;
 
-Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*this))
+Scene::Scene() noexcept : m_pWorld(new GameObject(*this))
 {
     for (auto&& elem : m_loadedResourcesPath)
     {
@@ -85,12 +85,12 @@ void Scene::removeLoadedResourcePath(const char* path) noexcept
 
 void Scene::save(XmlSaver& context) const
 {
-    GPE::save(context, m_pWorld, XmlSaver::SaveInfo{"m_pWorld", "GameObject", 0});
+    GPE::save(context, m_pWorld, XmlSaver::SaveInfo{"m_pWorld", "GameObject", GameObject::staticGetArchetype().id});
 }
 
 void Scene::load(XmlLoader& context)
 {
-    DataChunk<GameObject>::getInstance()->destroy(m_pWorld);
+    delete m_pWorld;
     m_pWorld = nullptr;
-    GPE::load(context, m_pWorld, XmlLoader::LoadInfo{"m_pWorld", "GameObject", 0});
+    GPE::load(context, m_pWorld, XmlLoader::LoadInfo{"m_pWorld", "GameObject", GameObject::staticGetArchetype().id});
 }

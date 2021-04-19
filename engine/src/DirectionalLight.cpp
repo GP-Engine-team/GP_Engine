@@ -6,7 +6,7 @@ using namespace GPE;
 
 DirectionalLight::~DirectionalLight()
 {
-    DataChunk<DirectionalLight>::getInstance()->destroy(this);
+    
 }
 
 DirectionalLight::DirectionalLight(GameObject& owner) noexcept : DirectionalLight(owner, CreateArg{})
