@@ -1,4 +1,10 @@
-﻿#pragma once
+﻿/*
+ * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
+ * This file is subject to the LGNU license terms in the LICENSE file
+ * found in the top-level directory of this distribution.
+ */
+
+#pragma once
 
 #include "Engine/Intermediate/GameObject.hpp"
 
@@ -17,11 +23,15 @@ public:
     FreeFly&      freeFly;
     Camera&       camera;
     Scene*        pScene;
+
+    // Keep track of cameraOwner, from the perspective of
+    // its parent's list of child
     GameObject::Children::iterator it;
 
     unsigned int  textureID;
 
 private:
+    // TODO: factorize framebuffer and renderbuffer in classes
     unsigned int  depthStencilID;
     unsigned int  framebufferID;
 	unsigned int  FBOIDtextureID;

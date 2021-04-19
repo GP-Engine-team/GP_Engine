@@ -15,6 +15,7 @@ namespace GPE
 // ========================== Private methods ==========================
 void SceneViewer::initializeFramebuffer()
 {
+    // TODO: factorize framebuffer and renderbuffer in classes
     { // Initialize screen texture
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
@@ -28,7 +29,7 @@ void SceneViewer::initializeFramebuffer()
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    { // Initialize depth-stencil buffer
+    { // Initialize depth-stencil renderbuffer
         glGenRenderbuffers(1u, &depthStencilID);
         glBindRenderbuffer(GL_RENDERBUFFER, depthStencilID);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
