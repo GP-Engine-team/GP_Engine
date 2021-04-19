@@ -41,6 +41,11 @@ UnrolledListAllocator<T>::~UnrolledListAllocator()
     }
 
     free(m_lastNode);
+
+#ifndef NDEBUG
+    GPE::Log::getInstance()->log("Allocations : " + std::to_string(nbAllocations));
+    GPE::Log::getInstance()->log("Deallocations : " + std::to_string(nbDeallocations));
+#endif
 }
 
 template <typename T>
@@ -126,7 +131,9 @@ template <typename T>
 T* UnrolledListAllocator<T>::allocate(size_t nbElements)
 {
     assert(nbElements == 1);
-
+#ifndef NDEBUG
+    nbAllocations += nbElements;
+#endif
     SubNode* constructedElem = m_nextToConstruct;
     m_nextToConstruct        = m_nextToConstruct->next;
 
@@ -143,6 +150,9 @@ template <typename T>
 void UnrolledListAllocator<T>::deallocate(T* ptr, std::size_t nbElements)
 {
     assert(nbElements == 1);
+#ifndef NDEBUG
+    nbDeallocations += nbElements;
+#endif
     SubNode* subNode  = reinterpret_cast<SubNode*>(ptr);
     subNode->next     = m_nextToConstruct;
     m_nextToConstruct = subNode;

@@ -4,12 +4,18 @@
 #include <cassert>
 #include <iosfwd>
 
+// .inl
+#include "Engine/Core/Debug/Log.hpp"
+
 // Global Allocator
 template<typename T>
 class UnrolledListAllocator
 {
 private:
-    int count = 0;
+#ifndef NDEBUG
+    size_t nbAllocations = 0;
+    size_t nbDeallocations = 0;
+#endif
 
     // What's inside the Node elements.
     union SubNode
