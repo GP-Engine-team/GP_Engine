@@ -24,8 +24,7 @@ namespace GPE
  * @see https://refactoring.guru/fr/design-patterns/singleton/cpp/example
  * @tparam T : Component stored type
  */
-// TODO: Remove multiplicator
-template <typename TStoredData, int TSize = 65536 * 1000> // 64KiB = 65,536Ko
+template <typename TStoredData, int TSize = 65536> // 64KiB = 65,536Ko
 class DataChunk
 {
     /**

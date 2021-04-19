@@ -195,7 +195,7 @@ Game::Game()
     camCreateArg.nearVal = 0.01f;
 
     PointLight::CreateArg lightArg{
-        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};
+        {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};
 
     rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs",
                    AMBIANTE_COLOR_ONLY);
@@ -237,10 +237,10 @@ Game::Game()
 
     ground.addComponent<Model>(modelArg2);*/
     // loadSkyboxResource(rm);
-    loadTreeResource(rm);
+    // loadTreeResource(rm);
 
     // loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
-    loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
+    // loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
 
     ts.addScaledTimer(
         FPLogDelay,

@@ -8,8 +8,8 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Resources/SceneManager.hpp"
-#include "Engine/Serialization/IInspectable.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/IInspectable.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
 
 // Editor
@@ -21,7 +21,6 @@
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include <imgui/imgui.h>
-
 
 // Hint to use GPU if available
 extern "C"
@@ -111,6 +110,8 @@ void Editor::renderMenuBar()
         // Help
         if (ImGui::BeginMenu("Help"))
         {
+            ImGui::MenuItem("Demo ImGui", NULL, &m_showImGuiDemoWindows);
+
             // Menu content
             ImGui::MenuItem("Useful links");
             ImGui::EndMenu();
@@ -127,7 +128,7 @@ void Editor::renderGameControlBar()
 
 void Editor::renderLevelEditor()
 {
-   m_sceneEditor.render(m_inspectedObject);
+    m_sceneEditor.render(m_inspectedObject);
 }
 
 
@@ -145,11 +146,11 @@ void Editor::renderInspector()
             GPE::InspectContext context;
             GPE::DataInspector::inspect(context, *m_inspectedObject);
 
-            //static float s = 0;
+            // static float s = 0;
 
-            //s += 1.f/30.f;
+            // s += 1.f/30.f;
 
-            //if (s > 9)
+            // if (s > 9)
             //{
             //    rapidxml::xml_document<> doc;
             //    XmlSaver saver(doc);
@@ -278,6 +279,9 @@ void Editor::update(GPE::AbstractGame* game)
     renderSceneGraph();
     renderExplorer();
     renderInspector();
+
+    if (m_showImGuiDemoWindows)
+        ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
 }
 
 void Editor::render(GPE::AbstractGame* game)
@@ -286,7 +290,7 @@ void Editor::render(GPE::AbstractGame* game)
 
     ImGui::Render();
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0u);
     glViewport(0, 0, m_sceneEditor.view.width, m_sceneEditor.view.height);
     glClearColor(1.f, 1.f, 1.f, .0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
