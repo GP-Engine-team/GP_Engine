@@ -32,6 +32,20 @@ void save(XmlSaver& context, const std::vector<T>& inspected, const XmlSaver::Sa
 template <typename T>
 void load(XmlLoader& context, std::vector<T>& inspected, const XmlLoader::LoadInfo& info);
 
+
+template <typename T>
+void save(XmlSaver& context, const std::unique_ptr<T>& saved, const XmlSaver::SaveInfo& info)
+{
+    GPE::save(context, saved.get(), info);
+}
+
+template <typename T>
+void load(XmlLoader& context, std::unique_ptr<T>& loaded, const XmlLoader::LoadInfo& info)
+{
+
+    GPE::load(context, loaded.get(), info);
+}
+
 } // namespace GPE
 
 #include "STDSave.inl"

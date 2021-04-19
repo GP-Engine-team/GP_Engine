@@ -1,9 +1,14 @@
-﻿#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
-#include <Engine/ECS/System/PhysXSystem.hpp>
+﻿#include <Engine/ECS/System/PhysXSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <GPM/Vector3.hpp>
 #include <PxPhysics.h>
+
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
+
+// Generated
+#include "Generated/RigidbodyStatic.rfk.h"
+File_GENERATED
 
 using namespace GPE;
 using namespace physx;

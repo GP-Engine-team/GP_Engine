@@ -11,7 +11,6 @@ using namespace GPE;
 
 SpotLight::~SpotLight()
 {
-    DataChunk<SpotLight>::getInstance()->destroy(this);
 }
 
 SpotLight::SpotLight(GameObject& owner) noexcept : SpotLight(owner, CreateArg{})

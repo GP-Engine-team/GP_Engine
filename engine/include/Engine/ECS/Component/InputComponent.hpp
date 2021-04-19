@@ -33,7 +33,7 @@ enum class EInputMode
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(ComponentGen()) InputComponent : public Component
+    class RFKClass(ComponentGen(), Serialize()) InputComponent : public Component
     {
     public:
         InputComponent(GameObject & owner);

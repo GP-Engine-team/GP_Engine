@@ -42,7 +42,6 @@ InputComponent& InputComponent::operator=(InputComponent&& other)
 InputComponent::~InputComponent()
 {
     Engine::getInstance()->inputManager.removeComponent(m_key);
-    DataChunk<InputComponent>::getInstance()->destroy(this);
 }
 
 void InputComponent::fireAction(const std::string& action) noexcept
