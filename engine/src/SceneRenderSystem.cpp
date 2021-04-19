@@ -25,6 +25,9 @@
 #include "GPM/ShapeRelation/AABBPlane.hpp"
 #include "GPM/ShapeRelation/SpherePlane.hpp"
 
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/imgui.h>
+
 using namespace GPE;
 using namespace GPM;
 
@@ -367,6 +370,10 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                 rs.drawModelPart(*it->second);
             };
         }
+
+        // draw UI
+        //ImGui::Render();
+        //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // Draw debug shape
         {
