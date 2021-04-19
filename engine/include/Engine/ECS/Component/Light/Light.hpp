@@ -26,7 +26,7 @@
 namespace GPE RFKNamespace()
 {
     // TODO: Can be more optimize change information only when light is update
-    class RFKClass(Serialize(), Inspect(), ComponentGen()) Light : public Component
+    class RFKClass(Serialize(), Inspect(), ComponentGen) Light : public Component
     {
     public:
         struct CreateArg
@@ -37,9 +37,9 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        AmbiantComponent  m_ambientComp;
-        DiffuseComponent  m_diffuseComp;
-        SpecularComponent m_specularComp;
+        RFKField(Inspect()) AmbiantComponent  m_ambientComp;
+        RFKField(Inspect()) DiffuseComponent  m_diffuseComp;
+        RFKField(Inspect()) SpecularComponent m_specularComp;
 
     public:
         inline Light(GameObject & owner, const CreateArg& arg);
@@ -98,4 +98,3 @@ namespace GPE RFKNamespace()
 #include "Light.inl"
 
 } // namespace )
-

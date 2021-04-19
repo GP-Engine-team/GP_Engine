@@ -9,12 +9,12 @@
 #include "Engine/Resources/Importer/Importer.hpp"
 #include "Engine/Serialization/IInspectable.hpp"
 
-#include "Generated/MeshImporterSetting.rfk.h"
+#include "Generated/MeshInspectorPanel.rfk.h"
 
 namespace GPE RFKNamespace()
 {
     // Allow user to modify shader importation setting
-    class RFKClass() MeshImporterModifier : public IInspectable
+    class RFKClass() MeshInspectorPanel : public IInspectable
     {
     protected:
         Mesh::CreateIndiceBufferArg m_config;
@@ -22,11 +22,11 @@ namespace GPE RFKNamespace()
         bool                        m_isDirty;
 
     public:
-        MeshImporterModifier() = delete;
+        MeshInspectorPanel() = delete;
 
-        MeshImporterModifier(const std::string& inPath);
+        MeshInspectorPanel(const std::string& inPath);
 
         void inspect(InspectContext & context) override;
-        MeshImporterModifier_GENERATED
+        MeshInspectorPanel_GENERATED
     };
-} // namespace GPE
+} // namespace )
