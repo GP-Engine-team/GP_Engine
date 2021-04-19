@@ -152,7 +152,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions);GLFW_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPEngineDir)third_party;$(GPEngineDir)third_party/imgui;$(GPEngineDir)/third_party/include/PhysX/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -179,7 +179,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions);GLFW_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPEngineDir)third_party;$(GPEngineDir)third_party/imgui;$(GPEngineDir)/third_party/include/PhysX/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -272,20 +272,23 @@
     <ClInclude Include="include\Engine\Serialization\ComponentGen.h" />
     <ClInclude Include="include\Engine\Serialization\DataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp" />
+    <ClInclude Include="include\Engine\Serialization\GPEDataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPMDataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPMSave.hpp" />
     <ClInclude Include="include\Engine\Serialization\InspectContext.hpp" />
+    <ClInclude Include="include\Engine\Serialization\ModelImporterSetting.hpp" />
     <ClInclude Include="include\Engine\Serialization\STDReflect.hpp" />
     <ClInclude Include="include\Engine\Serialization\IInspectable.hpp" />
     <ClInclude Include="include\Engine\Serialization\Inspect.hpp" />
-    <ClInclude Include="include\Engine\Serialization\MaterialImporterSetting.hpp" />
-    <ClInclude Include="include\Engine\Serialization\MeshImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\MaterialInspectorPanel.hpp" />
+    <ClInclude Include="include\Engine\Serialization\MeshInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\Serialize.hpp" />
-    <ClInclude Include="include\Engine\Serialization\ShaderImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\ShaderInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\Slider.hpp" />
     <ClInclude Include="include\Engine\Serialization\STDDataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\STDSave.hpp" />
+    <ClInclude Include="include\Engine\Serialization\TextureImporterSetting.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlLoader.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlManager.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlSaver.hpp" />
@@ -337,7 +340,6 @@
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AbstractGame.cpp" />
     <ClCompile Include="src\AudioComponent.cpp" />
     <ClCompile Include="src\BehaviourComponent.cpp" />
     <ClCompile Include="src\BehaviourSystem.cpp" />
@@ -356,10 +358,11 @@
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Material.cpp" />
-    <ClCompile Include="src\MaterialImporterSetting.cpp" />
+    <ClCompile Include="src\MaterialInspectorPanel.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
-    <ClCompile Include="src\MeshImporterSetting.cpp" />
+    <ClCompile Include="src\MeshInspectorPanel.cpp" />
     <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\ModelImporterSetting.cpp" />
     <ClCompile Include="src\ObjParser.cpp" />
     <ClCompile Include="src\Physics\CharacterController\CharacterController.cpp" />
     <ClCompile Include="src\Physics\Collisions\BoxCollider.cpp" />
@@ -379,6 +382,7 @@
     <ClCompile Include="src\SceneViewer.cpp" />
     <ClCompile Include="src\Serialization\ComponentGen.cpp" />
     <ClCompile Include="src\Serialization\DataInspector.cpp" />
+    <ClCompile Include="src\Serialization\GPEDataInspector.cpp" />
     <ClCompile Include="src\Serialization\GPMDataInspector.cpp" />
     <ClCompile Include="src\Serialization\GPMLoad.cpp" />
     <ClCompile Include="src\Serialization\GPMSave.cpp" />
@@ -391,10 +395,12 @@
     <ClCompile Include="src\Serialization\xml\xmlSaver.cpp" />
     <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\ShaderInspectorPanel.cpp" />
     <ClCompile Include="src\ShaderParser.cpp" />
     <ClCompile Include="src\SoundSystem.cpp" />
     <ClCompile Include="src\SpotLight.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\TextureImporterSetting.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\TransformComponent.cpp" />
     <ClCompile Include="src\Wave.cpp" />

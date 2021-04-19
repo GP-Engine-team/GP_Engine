@@ -32,12 +32,14 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        float m_constant, m_linear, m_quadratic;
+        RFKField(Inspect()) float m_constant;
+        RFKField(Inspect()) float m_linear;
+        RFKField(Inspect()) float m_quadratic;
 
     public:
         PointLight(const PointLight& other) = delete;
         PointLight(PointLight && other)     = default;
-        virtual ~PointLight() = default;
+        virtual ~PointLight()               = default;
 
         PointLight()        = default;
         PointLight& operator=(PointLight const& other) = delete;
@@ -60,5 +62,3 @@ namespace GPE RFKNamespace()
     };
 
 } // namespace )
-
-

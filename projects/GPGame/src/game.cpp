@@ -49,8 +49,7 @@ void Game::update(double unscaledDeltaTime, double deltaTime)
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
 {
-    AbstractGame::fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
-    // GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
+    GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
     ++fixedUpdateFrameCount;
     bSys.fixedUpdate(fixedDeltaTime);
 }
@@ -65,7 +64,7 @@ Game::~Game()
 {
 }
 
-extern "C" AbstractGame* createGameInstance()
+extern "C" GPE::AbstractGame* createGameInstance()
 {
     // Init glad
     if (!gladLoadGL())
@@ -77,7 +76,7 @@ extern "C" AbstractGame* createGameInstance()
     return new Game();
 }
 
-extern "C" void destroyGameInstance(AbstractGame* game)
+extern "C" void destroyGameInstance(GPE::AbstractGame* game)
 {
     GPE_ASSERT(game != nullptr, "m_editor should be valid since we've just ran the editor.");
     delete game;
@@ -207,7 +206,7 @@ Game::Game()
     camCreateArg.nearVal = 0.01f;
 
     PointLight::CreateArg lightArg{
-        {1.f, 1.f, 1.f, 0.1f}, {1.f, 0.f, 0.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};
+        {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, 0.0014f, 0.000007f};
 
     rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs", "./resources/shaders/fTextureOnly.fs",
                    AMBIANTE_COLOR_ONLY);
@@ -249,10 +248,10 @@ Game::Game()
 
     ground.addComponent<Model>(modelArg2);*/
     // loadSkyboxResource(rm);
-    loadTreeResource(rm);
+    // loadTreeResource(rm);
 
     // loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
-    loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
+    // loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
 
     ts.addScaledTimer(
         FPLogDelay,

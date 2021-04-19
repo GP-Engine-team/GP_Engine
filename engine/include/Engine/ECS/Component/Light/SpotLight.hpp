@@ -34,8 +34,8 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        float m_cutOff; // specifies the spotlight's radius.
-        float m_cutOffExponent;
+        RFKField(Inspect()) float m_cutOff; // specifies the spotlight's radius.
+        RFKField(Inspect()) float m_cutOffExponent;
 
     public:
         SpotLight(const SpotLight& other) = delete;
@@ -78,4 +78,3 @@ namespace GPE RFKNamespace()
     };
 
 } // namespace )
-

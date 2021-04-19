@@ -16,6 +16,7 @@ void GPE::importeResource(const char* src, const char* dst) noexcept
     {
 
     case hash(".obj"):
+    case hash(".fbx"):
         importeModel(src, dst);
         break;
 

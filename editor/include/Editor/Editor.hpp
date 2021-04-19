@@ -7,9 +7,11 @@
 #pragma once
 
 #include "SceneEditor.hpp"
+#include "GameViewer.hpp"
 #include "GameControlBar.hpp"
 #include "LogInspector.hpp"
 #include "ProjectContent.hpp"
+#include "SceneEditor.hpp"
 #include "SceneGraph.hpp"
 
 struct GLFWwindow;
@@ -20,7 +22,7 @@ class Scene;
 class IInspectable;
 class GameObject;
 class ReloadableCpp;
-}
+} // namespace GPE
 
 namespace Editor
 {
@@ -29,13 +31,15 @@ class Editor
 {
 private:
     SceneEditor        m_sceneEditor;
+    GameViewer         m_gameViewer;
     LogInspector       m_logInspector;
     ProjectContent     m_projectContent;
     SceneGraph         m_sceneGraph;
     GameControlBar     m_gameControlBar;
-    GLFWwindow*        m_window;
-    GPE::IInspectable* m_inspectedObject;
-    bool               m_showAppStyleEditor;
+    GLFWwindow*        m_window               = nullptr;
+    GPE::IInspectable* m_inspectedObject      = nullptr;
+    bool               m_showAppStyleEditor   = false;
+    bool               m_showImGuiDemoWindows = false;
 
 public:
     GPE::ReloadableCpp* m_reloadableCpp = nullptr;
@@ -50,6 +54,7 @@ private:
     void renderMenuBar();
     void renderGameControlBar();
     void renderLevelEditor();
+    void renderGameView(GPE::AbstractGame* game);
     void renderInspector();
     void renderSceneGraph();
     void renderExplorer();
@@ -66,8 +71,8 @@ public:
     Editor(GLFWwindow* window, GPE::Scene& editedScene);
 
     void setSceneInEdition(GPE::Scene& scene);
-    void update();
-    void render();
+    void update(GPE::AbstractGame* game);
+    void render(GPE::AbstractGame* game);
     bool isRunning();
 };
 

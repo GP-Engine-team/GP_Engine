@@ -22,7 +22,7 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 void foo()

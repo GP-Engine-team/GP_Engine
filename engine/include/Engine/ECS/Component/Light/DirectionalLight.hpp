@@ -34,7 +34,7 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        GPM::Vec3 m_direction;
+        RFKField(Inspect()) GPM::Vec3 m_direction;
 
     public:
         DirectionalLight(const DirectionalLight& other) = delete;
@@ -57,4 +57,3 @@ namespace GPE RFKNamespace()
     };
 
 } // namespace )
-

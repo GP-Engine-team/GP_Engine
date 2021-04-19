@@ -10,7 +10,7 @@
 #include "Engine/Resources/Scene.hpp"
 #include "GameApiMacros.hpp"
 
-class Game final : public AbstractGame
+class Game final : public GPE::AbstractGame
 {
 protected:
     GPE::Window&              win      = GPE::Engine::getInstance()->window;
@@ -41,9 +41,9 @@ public:
 /**
  * @brief Called by the exe, by retriewing the dll functions. Can't be inlined.
  */
-extern "C" GAME_API class AbstractGame* createGameInstance();
+extern "C" GAME_API class GPE::AbstractGame* createGameInstance();
 /**
  * @brief Called by the exe, by retriewing the dll functions. Can't be inlined.
  * The class is created in the dll, so it must be deleted in the dll.
  */
-extern "C" GAME_API void destroyGameInstance(class AbstractGame* game);
+extern "C" GAME_API void destroyGameInstance(class GPE::AbstractGame* game);
