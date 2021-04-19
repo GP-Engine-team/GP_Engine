@@ -22,13 +22,13 @@ File_GENERATED
         enableUpdate(true);
         InputComponent& input = owner.addComponent<InputComponent>();
 
-        /*input.bindAction("up", EKeyMode::KEY_DOWN, "game01", this, "up");
-        input.bindAction("down", EKeyMode::KEY_DOWN, this, "down");
-        input.bindAction("right", EKeyMode::KEY_DOWN, this, "right");
-        input.bindAction("left", EKeyMode::KEY_DOWN, this, "left");
-        input.bindAction("forward", EKeyMode::KEY_DOWN, this, "forward");
-        input.bindAction("back", EKeyMode::KEY_DOWN, this, "back");
-        input.bindAction("sprint", EKeyMode::KEY_DOWN, this, "sprint");*/
+        input.bindAction("up", EKeyMode::KEY_DOWN, "game01", this, "up");
+        input.bindAction("down", EKeyMode::KEY_DOWN, "game01", this, "down");
+        input.bindAction("right", EKeyMode::KEY_DOWN, "game01", this, "right");
+        input.bindAction("left", EKeyMode::KEY_DOWN, "game01", this, "left");
+        input.bindAction("forward", EKeyMode::KEY_DOWN, "game01", this, "forward");
+        input.bindAction("back", EKeyMode::KEY_DOWN, "game01", this, "back");
+        input.bindAction("sprint", EKeyMode::KEY_DOWN, "game01", this, "sprint");
     }
 
     FreeFly::~FreeFly() noexcept

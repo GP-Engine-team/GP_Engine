@@ -165,6 +165,8 @@ namespace GPG RFKNamespace()
             iManager.setInputMode("game01");
             iManager.setCursorTrackingState(true);
             iManager.setCursorLockState(true);
+
+            
         }
 
         RFKMethod() void swapInputModeToGame02()

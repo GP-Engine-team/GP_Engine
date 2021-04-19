@@ -31,14 +31,14 @@ namespace GPG RFKNamespace()
         {
 
             enableUpdate(true);
-            /*input->bindAction("jump", EKeyMode::KEY_DOWN, this, "up");
-            input->bindAction("down", EKeyMode::KEY_DOWN, this, "down");
-            input->bindAction("right", EKeyMode::KEY_DOWN, this, "right");
-            input->bindAction("left", EKeyMode::KEY_DOWN, this, "left");
-            input->bindAction("forward", EKeyMode::KEY_DOWN, this, "forward");
-            input->bindAction("back", EKeyMode::KEY_DOWN, this, "back");
-            input->bindAction("exit", EKeyMode::KEY_DOWN, this, "leave");
-            input->bindAction("sprint", EKeyMode::KEY_DOWN, this, "sprint");*/
+            input->bindAction("jump", EKeyMode::KEY_DOWN, "game01", this, "up");
+            input->bindAction("down", EKeyMode::KEY_DOWN, "game01", this, "down");
+            input->bindAction("right", EKeyMode::KEY_DOWN, "game01", this, "right");
+            input->bindAction("left", EKeyMode::KEY_DOWN, "game01", this, "left");
+            input->bindAction("forward", EKeyMode::KEY_DOWN, "game01", this, "forward");
+            input->bindAction("back", EKeyMode::KEY_DOWN, "game01", this, "back");
+            input->bindAction("exit", EKeyMode::KEY_DOWN, "game01", this, "leave");
+            input->bindAction("sprint", EKeyMode::KEY_DOWN, "game01", this, "sprint");
         }
 
         MyScript() noexcept
@@ -73,42 +73,42 @@ namespace GPG RFKNamespace()
             }
         }
 
-        inline void up()
+        RFKMethod() inline void up()
         {
             getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * speed);
         }
 
-        inline void down()
+        RFKMethod() inline void down()
         {
             getOwner().getTransform().translate(getOwner().getTransform().getVectorUp() * -speed);
         }
 
-        inline void forward()
+        RFKMethod() inline void forward()
         {
             getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -speed);
         }
 
-        inline void back()
+        RFKMethod() inline void back()
         {
             getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * speed);
         }
 
-        inline void left()
+        RFKMethod() inline void left()
         {
             getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * -speed);
         }
 
-        inline void right()
+        RFKMethod() inline void right()
         {
             getOwner().getTransform().translate(getOwner().getTransform().getVectorRight() * speed);
         }
 
-        inline void leave()
+        RFKMethod() inline void leave()
         {
             exit(666);
         }
 
-        inline void sprint()
+        RFKMethod() inline void sprint()
         {
             speed = sprintSpeed;
         }

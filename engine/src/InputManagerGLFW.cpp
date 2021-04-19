@@ -1,7 +1,8 @@
 ﻿#include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include <Engine/Engine.hpp>
 #include "GPM/DebugOutput.hpp"
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Engine.hpp>
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <imgui.h>
@@ -91,10 +92,10 @@ void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, doubl
     {
         m_cursor.deltaPos =
             Vec2{static_cast<GPM::f32>(xpos) - m_cursor.position.x, static_cast<GPM::f32>(ypos) - m_cursor.position.y};
-
-        m_cursor.position.x = static_cast<GPM::f32>(xpos);
-        m_cursor.position.y = static_cast<GPM::f32>(ypos);
     }
+
+    m_cursor.position.x = static_cast<GPM::f32>(xpos);
+    m_cursor.position.y = static_cast<GPM::f32>(ypos);
 }
 
 void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
