@@ -20,12 +20,11 @@ GameObject::~GameObject() noexcept
 {
     m_pTransform->destroy();
 
-    /*
+    
     for (auto&& component : m_pComponents)
     {
-        component->destroy();
+        delete component;
     }
-    */
 }
 
 void GameObject::moveTowardScene(Scene& newOwner) noexcept

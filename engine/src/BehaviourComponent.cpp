@@ -27,8 +27,6 @@ BehaviourComponent::~BehaviourComponent() noexcept
 
     if (m_isUpdated)
         Engine::getInstance()->behaviourSystem.removeUpdate(*this);
-
-    DataChunk<BehaviourComponent>::getInstance()->destroy(this);
 }
 
 BehaviourComponent::BehaviourComponent(BehaviourComponent&& other) noexcept

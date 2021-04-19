@@ -11,13 +11,14 @@ template <typename... Args>
 TStoredData* DataChunk<TStoredData, TSize>::add(Args&&... args) noexcept
 {
     TStoredData* instance = allocator.allocate(1); // not constructed yet
-    return new (instance) TStoredData(std::forward<Args>(args)...);
+    //return new (instance) TStoredData(std::forward<Args>(args)...);
+    return instance;
 }
 
 template <typename TStoredData, size_t TSize>
 void DataChunk<TStoredData, TSize>::destroy(TStoredData* const dataToDestroy) noexcept
 {
-    dataToDestroy->~TStoredData();
+    //dataToDestroy->~TStoredData();
     allocator.deallocate(dataToDestroy);
     //delete dataToDestroy;
 }

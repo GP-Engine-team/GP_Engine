@@ -45,7 +45,6 @@ FreeFly::~FreeFly() noexcept
     // input.unbindAction("backward");
     // input.unbindAction("sprint");
 
-    DataChunk<FreeFly>::getInstance()->destroy(this);
 }
 
 

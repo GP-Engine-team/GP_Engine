@@ -19,7 +19,8 @@ std::string ComponentGenerator::generateClassFooterCode(kodgen::EntityInfo const
         // Get Struct / Class info to access its fields
         kodgen::StructClassInfo const& var = static_cast<kodgen::StructClassInfo const&>(entity);
 
-        std::string serializeInside = "DataChunk<" + var.name + ">::getInstance()->destroy(this);";
+        //std::string serializeInside = "DataChunk<" + var.name + ">::getInstance()->destroy(this);";
+        std::string serializeInside = "delete this;";
 
         std::string serializeFunction = "void destroy() override "
                                         "{" +
