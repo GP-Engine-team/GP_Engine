@@ -6,9 +6,6 @@
  */
 
 #pragma once
-#include <characterkinematic/PxCapsuleController.h>
-#include <GPM/Vector3.hpp>
-#include <Engine/ECS/Component/Component.hpp>
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/Component/Component.hpp>
 #include <Engine/Serialization/Slider.hpp>
@@ -18,7 +15,7 @@
 // Generated
 #include "Generated/CharacterController.rfk.h"
 
-#define EARTH_GRAVITY 0.980665f 
+#define EARTH_GRAVITY 0.980665f
 
 namespace GPE RFKNamespace()
 {
@@ -38,13 +35,15 @@ namespace GPE RFKNamespace()
         virtual ~CharacterController() noexcept;
 
     private:
-        RFKField(Inspect()) GPM::Vec3 m_displacement = {0, 0, 0};
-        RFKField(Inspect()) GPM::Vec3 m_force        = {0, 0, 0};
-        RFKField(Inspect()) float     m_gravity      = EARTH_GRAVITY;
-        RFKField(Inspect()) bool      m_hasGravity   = false;
-        RFKField(Inspect()) float     m_speed        = 1.f;
-        RFKField(Inspect()) float     m_mouseSpeed   = 1.f;
-        RFKField(Inspect()) bool      m_jumping      = false;
+        RFKField(Inspect()) GPM::Vec3 m_displacement  = {0, 0, 0};
+        RFKField(Inspect()) GPM::Vec3 m_force         = {0, 0, 0};
+        RFKField(Inspect()) float     m_gravity       = EARTH_GRAVITY;
+        RFKField(Inspect()) bool      m_hasGravity    = false;
+        RFKField(Inspect()) float     m_speed         = 1.f;
+        RFKField(Inspect()) float     m_mouseSpeed    = 1.f;
+        RFKField(Inspect()) bool      m_jumping       = false;
+        RFKField(Inspect()) float     m_startJumpTime = 0.f;
+        RFKField(Inspect()) float     m_jumpTimeDelay = 1.f;
         // GPM::Vec3				m_velocity		= { 0,0,0 };
         // GPM::Vec3				m_acceleration	= { 0,0,0 };
 
@@ -54,7 +53,9 @@ namespace GPE RFKNamespace()
         DEFAULT_GETTER_SETTER_BY_VALUE(MouseSpeed, m_mouseSpeed);
         DEFAULT_GETTER_SETTER_BY_VALUE(HasGravity, m_hasGravity);
         DEFAULT_GETTER_SETTER_BY_VALUE(Gravity, m_gravity);
-        DEFAULT_GETTER_SETTER_BY_VALUE(Jumping, m_jumping);
+        GETTER_BY_VALUE(Jumping, m_jumping);
+
+        void setJumping(float jumping) noexcept;
         void move(const GPM::Vec3& displacement) noexcept;
         void move(const GPM::Vec3& displacement, float customSpeed) noexcept;
         void addForce(const GPM::Vec3& displacement) noexcept;

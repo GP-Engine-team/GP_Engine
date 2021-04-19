@@ -21,9 +21,10 @@
 
 #include <iostream>
 
-namespace GPG
-{
-class MyFpsScript : public GPE::BehaviourComponent
+// Generated
+#include "Generated/myFpsScript.rfk.h"
+
+namespace GPG RFKNamespace()
 {
     class RFKClass(Inspect(), Serialize()) MyFpsScript : public GPE::BehaviourComponent
     {
@@ -34,7 +35,7 @@ class MyFpsScript : public GPE::BehaviourComponent
               controller(&owner.addComponent<GPE::CharacterController>())
         {
             enableFixedUpdate(true);
-            input->bindAction("jump", EKeyMode::KEY_PRESSED, "game01", this, "jump");
+            input->bindAction("jump", EKeyMode::KEY_DOWN, "game01", this, "jump");
             input->bindAction("right", EKeyMode::KEY_DOWN, "game01", this, "right");
             input->bindAction("left", EKeyMode::KEY_DOWN, "game01", this, "left");
             input->bindAction("forward", EKeyMode::KEY_DOWN, "game01", this, "forward");
@@ -61,7 +62,7 @@ class MyFpsScript : public GPE::BehaviourComponent
 
             controller->setHasGravity(true);
             controller->setSpeed(1);
-            controller->setMouseSpeed(0.005);
+            controller->setMouseSpeed(0.0025);
             controller->setGravity(0.1);
         }
 
@@ -95,9 +96,12 @@ class MyFpsScript : public GPE::BehaviourComponent
 
         RFKMethod() inline void jump()
         {
-            GPM::Vec3 vec = {0, 1, 0};
-            controller->addForce(vec * 3);
-            controller->setJumping(true);
+            if (controller->getJumping() == false)
+            {
+                GPM::Vec3 vec = {0, 1, 0};
+                controller->addForce(vec * 3);
+                controller->setJumping(true);
+            }
         }
 
         RFKMethod() inline void forward()
@@ -164,8 +168,6 @@ class MyFpsScript : public GPE::BehaviourComponent
             iManager.setInputMode("game01");
             iManager.setCursorTrackingState(true);
             iManager.setCursorLockState(true);
-
-            
         }
 
         RFKMethod() void swapInputModeToGame02()

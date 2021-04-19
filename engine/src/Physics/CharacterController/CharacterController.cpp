@@ -1,5 +1,6 @@
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
+#include <Engine/ECS/System/TimeSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <string>
 
@@ -8,7 +9,7 @@
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace physx;
 
 CharacterController::CharacterController(GameObject& owner) noexcept : Component(owner)
@@ -44,10 +45,12 @@ void CharacterController::update(float deltaTime) noexcept
 
     if (m_jumping == true)
     {
-        if (canJump() == true)
+        if (Engine::getInstance()->timeSystem.getAccumulatedTime() >= m_startJumpTime + m_jumpTimeDelay &&
+            canJump() == true)
         {
-            m_jumping = false;
-            m_force   = {0, 0, 0};
+            m_jumping       = false;
+            m_force         = {0, 0, 0};
+            m_startJumpTime = 0.f;
         }
 
         if (m_hasGravity)
@@ -87,6 +90,12 @@ bool CharacterController::canJump() noexcept
     PxControllerState cctState;
     controller->getState(cctState);
     return (cctState.collisionFlags & PxControllerCollisionFlag::eCOLLISION_DOWN) != 0;
+}
+
+void CharacterController::setJumping(float jumping) noexcept
+{
+    m_jumping       = jumping;
+    m_startJumpTime = Engine::getInstance()->timeSystem.getAccumulatedTime();
 }
 
 CharacterController::~CharacterController() noexcept
