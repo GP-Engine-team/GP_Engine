@@ -6,8 +6,6 @@
 
 #pragma once
 
-#include "Engine/ECS/Component/InputComponent.hpp"
-#include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Engine.hpp"
 
 #include "Engine/Resources/Script/FreeFly.hpp"
@@ -20,31 +18,12 @@ namespace GPE
 FreeFly::FreeFly(GameObject& owner) noexcept
     : BehaviourComponent(owner)
 {
-        enableUpdate(true);
-        InputComponent& input = owner.addComponent<InputComponent>();
-
-        input.bindAction("up", EKeyMode::KEY_DOWN, this, "up");
-        input.bindAction("down", EKeyMode::KEY_DOWN, this, "down");
-        input.bindAction("right", EKeyMode::KEY_DOWN, this, "right");
-        input.bindAction("left", EKeyMode::KEY_DOWN, this, "left");
-        input.bindAction("forward", EKeyMode::KEY_DOWN, this, "forward");
-        input.bindAction("back", EKeyMode::KEY_DOWN, this, "back");
-        input.bindAction("sprint", EKeyMode::KEY_DOWN, this, "sprint");
+    enableUpdate(true);
 }
 
 
 FreeFly::~FreeFly() noexcept
 {
-    // TODO: unbind actions
-    // InputComponent& input = owner.addComponent<InputComponent>();
-    // input.unbindAction("up");
-    // input.unbindAction("down");
-    // input.unbindAction("right");
-    // input.unbindAction("left");
-    // input.unbindAction("forward");
-    // input.unbindAction("backward");
-    // input.unbindAction("sprint");
-
     DataChunk<FreeFly>::getInstance()->destroy(this);
 }
 
@@ -66,12 +45,7 @@ void FreeFly::rotate(const GPM::Vector2& deltaDisplacement)
 
 void FreeFly::update(float deltaTime)
 {
-    m_speed = 1.f;
-
-    if (Engine::getInstance()->inputManager.getCursor().deltaPos.sqrLength() > .1f)
-    {
-        rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
-    }
+    rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
 }
 
 
