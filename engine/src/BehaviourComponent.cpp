@@ -10,17 +10,17 @@ File_GENERATED
 
 BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(owner)
 {
-    Engine::getInstance()->behaviourSystem.addBehaviour(this);
+    Engine::getInstance()->behaviourSystem.addBehaviour(*this);
 }
 
 BehaviourComponent::BehaviourComponent() noexcept
 {
-    Engine::getInstance()->behaviourSystem.addBehaviour(this);
+    Engine::getInstance()->behaviourSystem.addBehaviour(*this);
 }
 
 BehaviourComponent::~BehaviourComponent() noexcept
 {
-    Engine::getInstance()->behaviourSystem.removeBehaviour(this);
+    Engine::getInstance()->behaviourSystem.removeBehaviour(*this);
 
     if (m_useFixedUpdate)
         Engine::getInstance()->behaviourSystem.removeFixedUpdate(*this);
