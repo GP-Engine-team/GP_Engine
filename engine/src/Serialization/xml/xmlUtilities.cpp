@@ -2,7 +2,6 @@
 
 #include "RapidXML/rapidxml.hpp"
 #include "RapidXML/rapidxml_print.hpp"
-#include <iostream>
 
 using namespace rapidxml;
 

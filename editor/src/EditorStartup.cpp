@@ -27,6 +27,8 @@ GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 460");
 
+    auto c = ImGui::GetCurrentContext();
+
     return window;
 }
 
@@ -56,18 +58,23 @@ EditorStartup::EditorStartup()
       }},
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
           GPE::Engine::getInstance()->inputManager.processInput();
+
+          // First
           if (m_game != nullptr)
+          {
               m_game->update(unscaledDeltaTime, deltaTime);
+          }
+
+          // Second
+          m_editor.update(m_game);
       }},
-      m_render{[&]()
-      {
-          m_editor.render(m_game);
+      m_render{[&]() {
+          m_editor.render();
           GPE::Engine::getInstance()->renderer.swapBuffer();
       }},
       m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
                GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
-      m_reloadableCpp{gameDllPath},
-      m_game{nullptr}
+      m_reloadableCpp{gameDllPath}, m_game{nullptr}
 {
     m_editor.m_reloadableCpp = &m_reloadableCpp;
 
@@ -76,8 +83,12 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
     ADD_PROCESS(m_reloadableCpp, setLogInstance);
     ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+    ADD_PROCESS(m_reloadableCpp, getGameUIContext);
     ADD_PROCESS(m_reloadableCpp, saveScene);
     ADD_PROCESS(m_reloadableCpp, loadScene);
+    ADD_PROCESS(m_reloadableCpp, getGameUIContext);
+    ADD_PROCESS(m_reloadableCpp, saveCurrentScene);
+    ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
@@ -135,14 +146,10 @@ void EditorStartup::update()
         auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
         (*sync)(*GPE::Engine::getInstance());
 
-        auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
-        (*syncImgui)(ImGui::GetCurrentContext());
-
         startGame();
     }
 
     GPE::Engine::getInstance()->timeSystem.update(m_fixedUpdate, m_update, m_render);
     isRunning = m_editor.isRunning();
 }
-
 } // End of namespace Editor

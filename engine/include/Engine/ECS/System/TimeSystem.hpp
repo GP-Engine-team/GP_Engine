@@ -10,8 +10,6 @@
 #include <functional> //std::function
 #include <queue>
 
-#include <iostream>
-
 namespace GPE
 {
 struct TimerTask
