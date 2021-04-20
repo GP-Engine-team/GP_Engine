@@ -36,8 +36,15 @@ void BasicColorGen::generate(double dt, ParticleData* p, size_t startId, size_t 
 {
     for (size_t i = startId; i < endId; ++i)
     {
-        p->m_startCol[i] = Random::ranged(m_minStartCol, m_maxStartCol);
-        p->m_endCol[i]   = Random::ranged(m_minEndCol, m_maxEndCol);
+        p->m_startCol[i].x = Random::ranged(m_minStartCol.x, m_maxStartCol.x);
+        p->m_startCol[i].y = Random::ranged(m_minStartCol.y, m_maxStartCol.y);
+        p->m_startCol[i].z = Random::ranged(m_minStartCol.z, m_maxStartCol.z);
+        p->m_startCol[i].w = Random::ranged(m_minStartCol.w, m_maxStartCol.w);
+
+        p->m_endCol[i].x = Random::ranged(m_minEndCol.x, m_maxEndCol.x);
+        p->m_endCol[i].y = Random::ranged(m_minEndCol.y, m_maxEndCol.y);
+        p->m_endCol[i].z = Random::ranged(m_minEndCol.z, m_maxEndCol.z);
+        p->m_endCol[i].w = Random::ranged(m_minEndCol.w, m_maxEndCol.w);
     }
 }
 
@@ -45,12 +52,10 @@ void BasicVelGen::generate(double dt, ParticleData* p, size_t startId, size_t en
 {
     for (size_t i = startId; i < endId; ++i)
     {
-        p->m_vel[i].x = Random::ranged(posMin.x, posMax.x);
-        p->m_vel[i].y = Random::ranged(posMin.y, posMax.y);
-        p->m_vel[i].z = Random::ranged(posMin.z, posMax.z);
-        p->m_vel[i].w = Random::ranged(posMin.w, posMax.w);
-
-        p->m_vel[i] = Random::ranged(m_minStartVel, m_maxStartVel);
+        p->m_vel[i].x = Random::ranged(m_minStartVel.x, m_maxStartVel.x);
+        p->m_vel[i].y = Random::ranged(m_minStartVel.y, m_maxStartVel.y);
+        p->m_vel[i].z = Random::ranged(m_minStartVel.z, m_maxStartVel.z);
+        p->m_vel[i].w = Random::ranged(m_minStartVel.w, m_maxStartVel.w);
     }
 }
 

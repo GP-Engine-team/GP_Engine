@@ -107,6 +107,25 @@ public:
     virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
 };
 
+class VelFromPosGen : public ParticleGenerator
+{
+public:
+    Vec4  m_offset;
+    float m_minScale;
+    float m_maxScale;
+
+public:
+    VelFromPosGen() : m_offset(0.0), m_minScale(0.0), m_maxScale(0.0)
+    {
+    }
+    VelFromPosGen(const Vec4& off, double minS, double maxS)
+        : m_offset(off), m_minScale((float)minS), m_maxScale((float)maxS)
+    {
+    }
+
+    virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
+};
+
 class BasicTimeGen : public ParticleGenerator
 {
 public:
