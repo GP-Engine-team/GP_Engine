@@ -19,82 +19,90 @@
 namespace GPE RFKNamespace()
 {
 
-struct SourceSettings
-{
-    ALfloat   pitch       = 1.f;
-    ALfloat   gain        = 1.f;
-    ALfloat   position[3] = {0, 0, 0};
-    ALfloat   velocity[3] = {0, 0, 0};
-    ALboolean loop        = AL_FALSE;
-
-    // SourceSettings() = default;
-    // SourceSettings(ALfloat pitch, ALfloat gain, ALfloat position[3], ALfloat velocity[3], ALboolean loop = AL_FALSE)
-};
-
-class RFKClass(Inspect(), Serialize()) AudioComponent : public Component
-{
-public:
-    AudioComponent(GameObject& owner);
-
-    virtual ~AudioComponent();
-
-    AudioComponent()                            = default;
-    AudioComponent(const AudioComponent& other) = delete;
-    AudioComponent& operator=(AudioComponent const& other) = delete;
-
-    // AudioComponent(AudioComponent&& other) noexcept = default;
-    AudioComponent& operator=(AudioComponent&& other);
-    AudioComponent(AudioComponent&& other) : Component(other.getOwner())
+    struct SourceSettings
     {
-    }
+        ALfloat   pitch       = 1.f;
+        ALfloat   gain        = 1.f;
+        ALfloat   position[3] = {0, 0, 0};
+        ALfloat   velocity[3] = {0, 0, 0};
+        ALboolean loop        = AL_FALSE;
 
-private:
-    ALboolean   m_enumeration;
-    ALCdevice*  m_device;
-    ALCcontext* m_openALContext;
-    ALCboolean  m_contextMadeCurrent = false;
-    ALCboolean  m_closed;
-    int         m_key = -1;
-
-public:
-    struct SourceData
-    {
-        ALuint source;
-        ALint  state = AL_INITIAL;
+        // SourceSettings() = default;
+        // SourceSettings(ALfloat pitch, ALfloat gain, ALfloat position[3], ALfloat velocity[3], ALboolean loop =
+        // AL_FALSE)
     };
-    std::unordered_map<std::string, SourceData> sources;
 
-    /**
-     * @brief Find and return the corresponding source in the source list
-     * @param name of the source
-     * @return the source
-     */
-    [[nodiscard]] SourceData* findSource(const char* name) noexcept;
-
-    /**
-     * @brief Bind a sound on the current source
-     * @param sound
-     */
-    void setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept;
-
-    /**
-     * @brief Play the current bound sound
-     */
-    void playSound(const char* name) noexcept;
-
-    /**
-     * @brief Stop the current bound sound
-     */
-    void stopSound(const char* name) noexcept;
-
-    int getKey() const noexcept
+    class RFKClass(Inspect(), Serialize()) AudioComponent : public Component
     {
-        return m_key;
-    }
+    public:
+        AudioComponent(GameObject & owner);
 
-private:
-    [[nodiscard]] SourceData* getSource(const char* name) noexcept;
+        virtual ~AudioComponent();
 
-    AudioComponent_GENERATED
-};
-} // namespace GPE
+        AudioComponent()                            = default;
+        AudioComponent(const AudioComponent& other) = delete;
+        AudioComponent& operator=(AudioComponent const& other) = delete;
+
+        // AudioComponent(AudioComponent&& other) noexcept = default;
+        AudioComponent& operator=(AudioComponent&& other);
+        AudioComponent(AudioComponent && other) : Component(other.getOwner())
+        {
+        }
+
+    private:
+        ALboolean   m_enumeration;
+        ALCdevice*  m_device;
+        ALCcontext* m_openALContext;
+        ALCboolean  m_contextMadeCurrent = false;
+        ALCboolean  m_closed;
+        int         m_key = -1;
+
+    public:
+        struct SourceData
+        {
+            ALuint source;
+            ALint  state = AL_INITIAL;
+        };
+        std::unordered_map<std::string, SourceData> sources;
+
+        /**
+         * @brief Find and return the corresponding source in the source list
+         * @param name of the source
+         * @return the source
+         */
+        [[nodiscard]] SourceData* findSource(const char* name) noexcept;
+
+        /**
+         * @brief Bind a sound on the current source
+         * @param sound
+         */
+        void setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept;
+
+        /**
+         * @brief Play the current bound sound
+         */
+        void playSound(const char* name) noexcept;
+
+        /**
+         * @brief Stop the current bound sound
+         */
+        void stopSound(const char* name) noexcept;
+
+        int getKey() const noexcept
+        {
+            return m_key;
+        }
+
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
+
+    private:
+        [[nodiscard]] SourceData* getSource(const char* name) noexcept;
+
+        AudioComponent_GENERATED
+    };
+} // namespace )
