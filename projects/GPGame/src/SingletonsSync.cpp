@@ -37,6 +37,11 @@ extern "C" void setImguiCurrentContext(ImGuiContext* ctx)
     ImGui::SetCurrentContext(ctx);
 }
 
+extern "C" GAME_API ImGuiContext* getGameUIContext()
+{
+    return ImGui::GetCurrentContext();
+}
+
 extern "C" GAME_API void saveCurrentScene(XmlSaver& context)
 {
     GPE::Engine::getInstance()->sceneManager.getCurrentScene()->save(context);
