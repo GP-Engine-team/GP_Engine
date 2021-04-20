@@ -10,28 +10,33 @@
 #include <Engine/ECS/Component/Physics/Collisions/collider.hpp>
 #include <GPM/Vector3.hpp>
 
-namespace GPE
+// Generated
+#include "Generated/SphereCollider.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class SphereCollider : public Collider
-{
-public:
-    SphereCollider(GameObject& owner) noexcept;
+    class RFKClass(ComponentGen(), Inspect()) SphereCollider : public Collider
+    {
+    public:
+        SphereCollider(GameObject & owner) noexcept;
 
-    virtual ~SphereCollider() noexcept = default;
+        virtual ~SphereCollider() noexcept = default;
 
-    SphereCollider() noexcept                            = delete;
-    SphereCollider(const SphereCollider& other) noexcept = delete;
-    SphereCollider(SphereCollider&& other) noexcept      = default;
-    SphereCollider& operator=(SphereCollider const& other) noexcept = delete;
-    SphereCollider& operator=(SphereCollider&& other) noexcept = delete;
+        SphereCollider() noexcept                            = delete;
+        SphereCollider(const SphereCollider& other) noexcept = delete;
+        SphereCollider(SphereCollider && other) noexcept     = default;
+        SphereCollider& operator=(SphereCollider const& other) noexcept = delete;
+        SphereCollider& operator=(SphereCollider&& other) noexcept = delete;
 
-private:
-    GPM::Vector3 m_center;
-    float        m_radius;
+    private:
+        RFKField(Inspect(Setter("setRadius"))) GPM::Vector3 m_center;
+        RFKField(Inspect()) float                           m_radius;
 
-public:
-    DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);
-    GETTER_BY_VALUE(Radius, m_radius);
-    void setRadius(float newRadius) noexcept;
-};
-} // namespace GPE
+    public:
+        DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);
+        GETTER_BY_VALUE(Radius, m_radius);
+        void setRadius(float newRadius) noexcept;
+
+        SphereCollider_GENERATED
+    };
+} // namespace )

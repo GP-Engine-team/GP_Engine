@@ -10,24 +10,29 @@
 #include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <PxRigidStatic.h>
 
-namespace GPE
+// Generated
+#include "Generated/RigidbodyStatic.rfk.h"
+
+namespace GPE RFKNamespace()
 {
 
-class RigidbodyStatic : public Component
-{
-public:
-    RigidbodyStatic(GameObject& owner) noexcept;
+    class RFKClass(ComponentGen(), Inspect()) RigidbodyStatic : public Component
+    {
+    public:
+        RigidbodyStatic(GameObject & owner) noexcept;
 
-    RigidbodyStatic() noexcept                             = delete;
-    RigidbodyStatic(const RigidbodyStatic& other) noexcept = delete;
-    RigidbodyStatic(RigidbodyStatic&& other) noexcept      = default;
-    RigidbodyStatic& operator=(RigidbodyStatic const& other) noexcept = delete;
-    RigidbodyStatic& operator=(RigidbodyStatic&& other) noexcept = delete;
+        RigidbodyStatic() noexcept                             = delete;
+        RigidbodyStatic(const RigidbodyStatic& other) noexcept = delete;
+        RigidbodyStatic(RigidbodyStatic && other) noexcept     = default;
+        RigidbodyStatic& operator=(RigidbodyStatic const& other) noexcept = delete;
+        RigidbodyStatic& operator=(RigidbodyStatic&& other) noexcept = delete;
 
-    virtual ~RigidbodyStatic() noexcept = default;
+        virtual ~RigidbodyStatic() noexcept = default;
 
-public:
-    physx::PxRigidStatic* rigidbody;
-    Collider*             collider;
-};
-} // namespace GPE
+    public:
+        physx::PxRigidStatic* rigidbody;
+        Collider*             collider;
+
+        RigidbodyStatic_GENERATED
+    };
+} // namespace )

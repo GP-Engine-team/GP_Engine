@@ -5,7 +5,12 @@
 #include <GPM/Vector3.hpp>
 #include <PxPhysics.h>
 
-using namespace GPE;
+// Generated
+#include "Generated/RigidbodyDynamic.rfk.h"
+
+File_GENERATED
+
+    using namespace GPE;
 using namespace physx;
 
 RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner)

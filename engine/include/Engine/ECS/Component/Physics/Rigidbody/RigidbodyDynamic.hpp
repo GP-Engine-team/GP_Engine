@@ -11,33 +11,38 @@
 #include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <PxRigidDynamic.h>
 
-namespace GPE
+// Generated
+#include "Generated/RigidbodyDynamic.rfk.h"
+
+namespace GPE RFKNamespace()
 {
 
-class RigidbodyDynamic : public Component
-{
-public:
-    RigidbodyDynamic(GameObject& owner) noexcept;
+    class RFKClass(ComponentGen(), Inspect()) RigidbodyDynamic : public Component
+    {
+    public:
+        RigidbodyDynamic(GameObject & owner) noexcept;
 
-    RigidbodyDynamic() noexcept                              = delete;
-    RigidbodyDynamic(const RigidbodyDynamic& other) noexcept = delete;
-    RigidbodyDynamic(RigidbodyDynamic&& other) noexcept      = default;
-    RigidbodyDynamic& operator=(RigidbodyDynamic const& other) noexcept = delete;
-    RigidbodyDynamic& operator=(RigidbodyDynamic&& other) noexcept = delete;
+        RigidbodyDynamic() noexcept                              = delete;
+        RigidbodyDynamic(const RigidbodyDynamic& other) noexcept = delete;
+        RigidbodyDynamic(RigidbodyDynamic && other) noexcept     = default;
+        RigidbodyDynamic& operator=(RigidbodyDynamic const& other) noexcept = delete;
+        RigidbodyDynamic& operator=(RigidbodyDynamic&& other) noexcept = delete;
 
-    void update() noexcept;
+        void update() noexcept;
 
-    virtual ~RigidbodyDynamic() noexcept = default;
+        virtual ~RigidbodyDynamic() noexcept = default;
 
-public:
-    physx::PxRigidDynamic* rigidbody;
-    Collider*              collider;
+    public:
+        physx::PxRigidDynamic* rigidbody;
+        Collider*              collider;
 
-private:
-    bool m_isKinematic = false;
+    private:
+        RFKField(Inspect()) bool m_isKinematic = false;
 
-public:
-    void setKinematic(bool state) noexcept;
-    GETTER_BY_VALUE(KinematicState, m_isKinematic);
-};
-} // namespace GPE
+    public:
+        void setKinematic(bool state) noexcept;
+        GETTER_BY_VALUE(KinematicState, m_isKinematic);
+
+        RigidbodyDynamic_GENERATED
+    };
+} // namespace )

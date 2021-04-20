@@ -1,7 +1,12 @@
 ﻿#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <Engine/Engine.hpp>
 
-using namespace GPE;
+// Generated
+#include "Generated/SphereCollider.rfk.h"
+
+File_GENERATED
+
+    using namespace GPE;
 using namespace physx;
 using namespace std;
 

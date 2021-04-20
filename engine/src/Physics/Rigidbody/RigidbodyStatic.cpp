@@ -5,7 +5,12 @@
 #include <GPM/Vector3.hpp>
 #include <PxPhysics.h>
 
-using namespace GPE;
+// Generated
+#include "Generated/RigidbodyStatic.rfk.h"
+
+File_GENERATED
+
+    using namespace GPE;
 using namespace physx;
 
 RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner)
