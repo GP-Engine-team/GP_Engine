@@ -120,7 +120,14 @@ public:
 
     bool goToSubChild(const rfk::Field& info)
     {
-        return goToSubChild(LoadInfo{info.name, info.type.archetype->name, info.type.archetype->id});
+        if (info.type.archetype == nullptr)
+        {
+            return goToSubChild(LoadInfo{info.name, "empty", 0});
+        }
+        else
+        {
+            return goToSubChild(LoadInfo{info.name, info.type.archetype->name, info.type.archetype->id});
+        }
     }
 
     void pop()
@@ -213,7 +220,8 @@ void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, std::size_t key)
         if constexpr (std::is_base_of<rfk::Object, T>::value)
         {
             std::string       idStr     = findAttribValue(top(), "typeID");
-            rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(std::stoull(idStr)));
+            size_t            s         = (std::stoull(idStr));
+            rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(s));
             assert(archetype != 0);              // Type is not complete.
             data = archetype->makeInstance<T>(); // TODO : Call custom instantiator
         }

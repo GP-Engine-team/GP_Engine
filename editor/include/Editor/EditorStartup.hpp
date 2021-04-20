@@ -6,8 +6,9 @@
 
 #pragma once
 
-#include "Engine/Core/Game/ContextStartup.hpp"
-#include "Engine/Core/HotReload/ReloadableCpp.hpp"
+#include <Engine/Core/Game/ContextStartup.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+
 #include "Editor.hpp"
 
 #include <functional>
@@ -24,22 +25,23 @@ private:
 	const std::function<void()>			m_render;
 
 #ifdef NDEBUG
-	const char* gameDllPath = "./bin/Release/GPGame.dll";
+    const char* gameDllPath = "./bin/Release/GPGame.dll";
 #else
-	const char* gameDllPath = "./bin/Debug/GPGame.dll";
+    const char* gameDllPath = "./bin/Debug/GPGame.dll";
 #endif
 
 	Editor			   m_editor;
 	GPE::ReloadableCpp m_reloadableCpp;
 	GPE::AbstractGame* m_game;
 
-	GLFWwindow* initDearImGui(GLFWwindow* window);
+protected:
+    GLFWwindow* initDearImGui(GLFWwindow* window);
 
 	void initializeDefaultInputs() const;
 
 public:
-	EditorStartup();
-	virtual ~EditorStartup() final;
+    EditorStartup();
+    virtual ~EditorStartup() final;
 
 	void openGame ();
 	void closeGame();
@@ -48,7 +50,7 @@ public:
 	void pauseGame();
 	void stopGame ();
 
-	void renderGame();
+	GPE::AbstractGame& game() const;
 
 	virtual void update() override final;
 };

@@ -9,6 +9,7 @@
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
+#include <Windows.h>
 #include <memory>
 
 extern "C" void setLogInstance(GPE::Log& log)
@@ -34,6 +35,11 @@ extern "C" GPE::Engine& getGameEngineInstance()
 extern "C" void setImguiCurrentContext(ImGuiContext* ctx)
 {
     ImGui::SetCurrentContext(ctx);
+}
+
+extern "C" GAME_API ImGuiContext* getGameUIContext()
+{
+    return ImGui::GetCurrentContext();
 }
 
 extern "C" GAME_API void saveCurrentScene(XmlSaver& context)

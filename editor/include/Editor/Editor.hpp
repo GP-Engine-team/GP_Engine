@@ -6,9 +6,8 @@
 
 #pragma once
 
-#include "SceneEditor.hpp"
-#include "GameViewer.hpp"
 #include "GameControlBar.hpp"
+#include "GameViewer.hpp"
 #include "LogInspector.hpp"
 #include "ProjectContent.hpp"
 #include "SceneEditor.hpp"
@@ -40,10 +39,10 @@ private:
     ProjectContent     m_projectContent;
     SceneGraph         m_sceneGraph;
     GameControlBar     m_gameControlBar;
-    GLFWwindow*        m_window               = nullptr;
-    GPE::IInspectable* m_inspectedObject      = nullptr;
-    bool               m_showAppStyleEditor   = false;
-    bool               m_showImGuiDemoWindows = false;
+    GLFWwindow*        m_window;
+    GPE::IInspectable* m_inspectedObject;
+    bool               m_showAppStyleEditor;
+    bool               m_showImGuiDemoWindows;
 
 public:
     GPE::ReloadableCpp* m_reloadableCpp = nullptr;
@@ -74,7 +73,7 @@ public:
 
     void setSceneInEdition(GPE::Scene& scene);
     void update(EditorStartup& startup);
-    void render(EditorStartup& startup);
+    void render();
     bool isRunning();
 };
 

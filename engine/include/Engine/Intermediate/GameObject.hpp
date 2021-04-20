@@ -242,6 +242,11 @@ namespace GPE RFKNamespace()
 
          void inspect(GPE::InspectContext& context) override;
 
+         static void* operator new(std::size_t size);
+
+         static void operator delete(void* ptr);
+
+
         GameObject_GENERATED
     };
 

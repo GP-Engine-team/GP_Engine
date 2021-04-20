@@ -28,24 +28,20 @@ FreeFly::~FreeFly() noexcept
 }
 
 
-void FreeFly::rotate(const GPM::Vector2& deltaDisplacement)
-{
-    if (deltaDisplacement.sqrLength() > .16f)
-    {
-        const GPM::Quaternion newRot =
-            getOwner().getTransform().getSpacialAttribut().rotation *
-            GPM::Quaternion::angleAxis(deltaDisplacement.y * m_rotationSpeed, {1.f, .0f, .0f});
-        
-        getOwner().getTransform().setRotation(
-            GPM::Quaternion::angleAxis(deltaDisplacement.x * m_rotationSpeed, {.0f, 1.f, .0f}) *
-                                       newRot);
-    }
-}
-
-
 void FreeFly::update(float deltaTime)
 {
     rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
+}
+
+
+void FreeFly::rotate(const GPM::Vector2& deltaDisplacement)
+{
+    const GPM::Quaternion newRot =
+        getOwner().getTransform().getSpacialAttribut().rotation *
+        GPM::Quaternion::angleAxis(deltaDisplacement.y * m_rotationSpeed, {1.f, .0f, .0f});
+
+    getOwner().getTransform().setRotation(
+        GPM::Quaternion::angleAxis(deltaDisplacement.x * m_rotationSpeed, {.0f, 1.f, .0f}) * newRot);
 }
 
 

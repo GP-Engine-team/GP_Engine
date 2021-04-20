@@ -1,10 +1,12 @@
-#include "Editor/GameViewer.hpp"
+#include <Editor/GameViewer.hpp>
 
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Editor/EditorStartup.hpp"
+#include <Editor/EditorStartup.hpp>
 
-#include "glad/glad.h"
-#include "imgui/imgui.h"
+#include <Engine/Core/Game/AbstractGame.hpp>
+
+#include <glad/glad.h>
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
 namespace Editor
 {
@@ -12,6 +14,7 @@ namespace Editor
 GameViewer::GameViewer(int width, int height)
     : framebuffer{width, height}, m_captureInputs{false}
 {}
+
 
 void GameViewer::render(EditorStartup& startup)
 {
@@ -22,10 +25,13 @@ void GameViewer::render(EditorStartup& startup)
     if (ImGui::Begin("Game view"))
     {
         const ImVec2 size{ImGui::GetContentRegionAvail()};
+        startup.game().setViewport(ImGui::GetWindowPos().x + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x,
+                                   ImGui::GetWindowPos().y + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y,
+                                   size.x, size.y);
 
         framebuffer.resize(static_cast<int>(size.x), static_cast<int>(size.y));
         framebuffer.bind();
-        startup.renderGame();
+        startup.game().render();
 
         ImGui::Image((void*)(intptr_t)framebuffer.textureID(), size, {.0f, 1.f}, {1.f, .0f});
     }
@@ -34,4 +40,4 @@ void GameViewer::render(EditorStartup& startup)
     ImGui::PopStyleVar(2);
 }
 
-}
+} // namespace Editor

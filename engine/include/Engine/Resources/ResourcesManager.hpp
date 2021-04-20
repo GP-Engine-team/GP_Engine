@@ -8,9 +8,7 @@
 
 #include "Engine/Core/Debug/Log.hpp"
 #include <string>
-#include <typeinfo>
 #include <unordered_map>
-#include <utility>
 
 namespace GPE
 {

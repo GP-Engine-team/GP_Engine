@@ -13,10 +13,12 @@ class AbstractGame
 {
 public:
     virtual ~AbstractGame() = default;
-    
-    virtual void update     (double unscaledDeltaTime, double deltaTime)           = 0;
+
+    virtual void update(double unscaledDeltaTime, double deltaTime)                = 0;
     virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) = 0;
-    virtual void render     ()                                                     = 0;
+    virtual void render()                                                          = 0;
+
+    virtual void setViewport(float x, float y, float w, float h) = 0;
 };
 
-}
+} // namespace GPE

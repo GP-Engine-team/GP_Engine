@@ -24,6 +24,9 @@
 #include "GPM/ShapeRelation/AABBPlane.hpp"
 #include "GPM/ShapeRelation/SpherePlane.hpp"
 
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/imgui.h>
+
 using namespace GPE;
 using namespace GPM;
 
@@ -392,6 +395,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                 debugShape.clear();
             }
 
+            // Draw debug line
             if (!debugLines.empty())
             {
                 const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");

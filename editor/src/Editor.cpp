@@ -22,6 +22,8 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
 
+using namespace GPE;
+
 // Hint to use GPU if available
 extern "C"
 {
@@ -252,10 +254,16 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
 
 void Editor::update(EditorStartup& startup)
 {
+    auto syncImGui  = GET_PROCESS((*m_reloadableCpp), setImguiCurrentContext);
+    auto syncGameUI = GET_PROCESS((*m_reloadableCpp), getGameUIContext);
+
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
+    ImGuiContext* gameContext = syncGameUI();
+    syncImGui(ImGui::GetCurrentContext());
 
     // Start drawing
     if (m_showAppStyleEditor)
@@ -263,25 +271,27 @@ void Editor::update(EditorStartup& startup)
         renderStyleEditor();
     }
 
+    // Editor
     renderMenuBar();
 
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
     renderGameControlBar(startup);
     renderLevelEditor();
-    renderGameView(startup);
     renderSceneGraph();
     renderExplorer();
     renderInspector();
 
     if (m_showImGuiDemoWindows)
         ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
+
+    // Game
+    syncImGui(gameContext);
+    renderGameView(startup);
 }
 
-void Editor::render(EditorStartup& startup)
+void Editor::render()
 {
-    update(startup);
-
     ImGui::Render();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0u);

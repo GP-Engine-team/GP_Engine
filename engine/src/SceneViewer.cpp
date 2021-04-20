@@ -104,14 +104,14 @@ void SceneViewer::initializeInputs()
 {
     GPE::InputComponent& input = cameraOwner.addComponent<GPE::InputComponent>();
 
-    input.bindAction("up",      EKeyMode::KEY_DOWN, &freeFly, "up");
-    input.bindAction("down",    EKeyMode::KEY_DOWN, &freeFly, "down");
-    input.bindAction("right",   EKeyMode::KEY_DOWN, &freeFly, "right");
-    input.bindAction("left",    EKeyMode::KEY_DOWN, &freeFly, "left");
-    input.bindAction("forward", EKeyMode::KEY_DOWN, &freeFly, "forward");
-    input.bindAction("back",    EKeyMode::KEY_DOWN, &freeFly, "backward");
-    input.bindAction("sprint",  EKeyMode::KEY_PRESSED, &freeFly, "sprint");
-    input.bindAction("sprint",  EKeyMode::KEY_RELEASED, &freeFly, "walk");
+    input.bindAction("up",       EKeyMode::KEY_DOWN,     "Editor", &freeFly, "up");
+    input.bindAction("down",     EKeyMode::KEY_DOWN,     "Editor", &freeFly, "down");
+    input.bindAction("right",    EKeyMode::KEY_DOWN,     "Editor", &freeFly, "right");
+    input.bindAction("left",     EKeyMode::KEY_DOWN,     "Editor", &freeFly, "left");
+    input.bindAction("forward",  EKeyMode::KEY_DOWN,     "Editor", &freeFly, "forward");
+    input.bindAction("backward", EKeyMode::KEY_DOWN,     "Editor", &freeFly, "backward");
+    input.bindAction("sprint",   EKeyMode::KEY_PRESSED,  "Editor", &freeFly, "sprint");
+    input.bindAction("sprint",   EKeyMode::KEY_RELEASED, "Editor", &freeFly, "walk");
 }
 
 
