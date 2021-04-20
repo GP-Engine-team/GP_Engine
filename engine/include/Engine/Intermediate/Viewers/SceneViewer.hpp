@@ -51,6 +51,7 @@ private:
 private:
     void initializeFramebuffer();
     void initializePickingFBO ();
+    void initializeInputs();
 
 public:
     SceneViewer(GPE::Scene& viewed, int width = 1, int height = 1);
