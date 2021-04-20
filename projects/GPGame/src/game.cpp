@@ -125,11 +125,12 @@ void loadTree(GameObject& parent, ResourceManagerType& resourceManager, unsigned
     for (size_t i = 0; i < number; ++i)
     {
         treeGameObject.name                         = "Tree" + std::to_string(i);
-        treeGameObject.transformArg.position.x      = randRanged<float>(-1000.f, 1000.f);
-        treeGameObject.transformArg.position.z      = randRanged<float>(-1000.f, 1000.f);
+        treeGameObject.transformArg.position.x      = randRanged<float>(-100.f, 100.f);
+        treeGameObject.transformArg.position.z      = randRanged<float>(-100.f, 100.f);
         treeGameObject.transformArg.eulerRotation.y = randRanged<float>(360.f * 3.14f / 180.f);
 
-        treeGameObject.transformArg.scale = {randRanged<float>(4.f, 8.f), randRanged<float>(4.f, 8.f),
+        treeGameObject.transformArg.scale = {randRanged<float>(4.f, 8.f),
+                                             randRanged<float>(4.f, 8.f),
                                              randRanged<float>(4.f, 8.f)};
 
         GameObject& treeGO = treeContener.addChild(treeGameObject);
@@ -237,10 +238,10 @@ Game::Game()
 
     ground.addComponent<Model>(modelArg2);*/
     // loadSkyboxResource(rm);
-    // loadTreeResource(rm);
+    loadTreeResource(rm);
 
     // loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
-    // loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
+    loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
 
     ts.addScaledTimer(
         FPLogDelay,
