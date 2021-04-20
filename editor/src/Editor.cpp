@@ -1,25 +1,25 @@
-﻿#include "Editor/Editor.hpp"
+﻿#include <Editor/EditorStartup.hpp>
 
 // Engine
-#include "Engine/Core/Game/AbstractGame.hpp"
-#include "Engine/Core/HotReload/ReloadableCpp.hpp"
-#include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/Engine.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Scene.hpp"
-#include "Engine/Resources/SceneManager.hpp"
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/IInspectable.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
+#include <Engine/Core/Game/AbstractGame.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+#include <Engine/ECS/Component/Camera.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Scene.hpp>
+#include <Engine/Resources/SceneManager.hpp>
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/IInspectable.hpp>
+#include <Engine/Serialization/InspectContext.hpp>
 
 // Editor
-#include "Editor/ExternalDeclarations.hpp"
+#include <Editor/ExternalDeclarations.hpp>
 
 // Third-party
-#include "GLFW/glfw3.h"
-#include "glad/glad.h"
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
 
 // Hint to use GPU if available
@@ -35,11 +35,6 @@ namespace Editor
 using namespace GPE;
 
 /* ========================== Private methods ========================== */
-GPE::Scene& Editor::loadDefaultScene() const
-{
-    return GPE::Engine::getInstance()->sceneManager.loadScene("Empty scene");
-}
-
 void Editor::setupDearImGui()
 {
     ImGuiIO& io = ImGui::GetIO();
@@ -121,9 +116,9 @@ void Editor::renderMenuBar()
     }
 }
 
-void Editor::renderGameControlBar()
+void Editor::renderGameControlBar(EditorStartup& startup)
 {
-    m_gameControlBar.render(*this);
+    m_gameControlBar.render(startup);
 }
 
 void Editor::renderLevelEditor()
@@ -131,10 +126,9 @@ void Editor::renderLevelEditor()
     m_sceneEditor.render(m_inspectedObject);
 }
 
-
-void Editor::renderGameView(GPE::AbstractGame* game)
+void Editor::renderGameView(EditorStartup& startup)
 {
-    m_gameViewer.render(game);
+    m_gameViewer.render(startup);
 }
 
 void Editor::renderInspector()
@@ -256,7 +250,7 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
     m_sceneEditor.view.bindScene(scene);
 }
 
-void Editor::update(GPE::AbstractGame* game)
+void Editor::update(EditorStartup& startup)
 {
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -273,9 +267,9 @@ void Editor::update(GPE::AbstractGame* game)
 
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
-    renderGameControlBar();
+    renderGameControlBar(startup);
     renderLevelEditor();
-    renderGameView(game);
+    renderGameView(startup);
     renderSceneGraph();
     renderExplorer();
     renderInspector();
@@ -284,9 +278,9 @@ void Editor::update(GPE::AbstractGame* game)
         ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
 }
 
-void Editor::render(GPE::AbstractGame* game)
+void Editor::render(EditorStartup& startup)
 {
-    update(game);
+    update(startup);
 
     ImGui::Render();
 
@@ -297,6 +291,7 @@ void Editor::render(GPE::AbstractGame* game)
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
+
 
 bool Editor::isRunning()
 {
