@@ -181,7 +181,7 @@ void SceneViewer::resize(int width_, int height_)
     glBindRenderbuffer(GL_RENDERBUFFER, depthStencilID);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, width, height);
 
-    camera.setAspect(width / (float)height);
+    camera.setAspect(Camera::computeAspect(width, height));
 
     // ==== Update selection framebuffer ====
     // Low sampling (we don't need 4K texture to select element)

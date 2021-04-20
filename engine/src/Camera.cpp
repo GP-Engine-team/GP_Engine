@@ -122,6 +122,7 @@ void Camera::setFovY(const float fovY) noexcept
     m_projInfo.vSide = m_projInfo.zfar * tanf(m_projInfo.fovY * .5f) * 2.f;
 
     updateProjection();
+    updateView();
 }
 
 void Camera::setAspect(const float newAspect) noexcept
@@ -131,6 +132,7 @@ void Camera::setAspect(const float newAspect) noexcept
     m_projInfo.hSide  = m_projInfo.zfar * tanf(m_projInfo.fovX * .5f) * 2.f;
 
     updateProjection();
+    updateView();
 }
 
 Frustum Camera::getFrustum() const noexcept

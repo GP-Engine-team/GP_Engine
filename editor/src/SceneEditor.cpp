@@ -21,8 +21,8 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
 
         if (idSelectedGameObject && hovered)
         {
-            if (GameObject* const selectionGameObject = view.pScene->getWorld()
-                                                        .getGameObjectCorrespondingToID(idSelectedGameObject))
+            if (GameObject* const selectionGameObject =
+                    view.pScene->getWorld().getGameObjectCorrespondingToID(idSelectedGameObject))
 
             {
                 inspectedObject = selectionGameObject;
@@ -37,18 +37,14 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
     }
 }
 
-
-
-
 // ========================== Public methods ==========================
-SceneEditor::SceneEditor(GPE::Scene& scene)
-	: view{scene}
-{}
-
+SceneEditor::SceneEditor(GPE::Scene& scene) : view{scene}
+{
+}
 
 void SceneEditor::render(GPE::IInspectable*& inspectedObject)
 {
-	// Use the whole window content
+    // Use the whole window content
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
