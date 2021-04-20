@@ -8,13 +8,10 @@
 
 #include "WindowFramebuffer.hpp"
 
-namespace GPE
-{
-class AbstractGame;
-}
-
 namespace Editor
 {
+
+class EditorStartup;
 
 class GameViewer
 {
@@ -27,7 +24,7 @@ private:
 public:
     GameViewer(int width = 1, int height = 1);
 
-    void render(GPE::AbstractGame* game);
+    void render(EditorStartup& startup);
 };
 
 }
