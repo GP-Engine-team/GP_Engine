@@ -44,10 +44,8 @@ namespace GPE RFKNamespace()
         AudioComponent& operator=(AudioComponent const& other) = delete;
 
         // AudioComponent(AudioComponent&& other) noexcept = default;
-        AudioComponent& operator=(AudioComponent&& other);
-        AudioComponent(AudioComponent && other) noexcept : Component(other.getOwner())
-        {
-        }
+        AudioComponent& operator                         =(AudioComponent&& other);
+        AudioComponent(AudioComponent && other) noexcept = default;
 
     private:
         ALboolean   m_enumeration;

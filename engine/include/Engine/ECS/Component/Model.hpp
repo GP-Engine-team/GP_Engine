@@ -61,7 +61,7 @@ namespace GPE RFKNamespace()
 
         Model()        = default;
         Model& operator=(Model const& other) = delete;
-        Model& operator                      =(Model&& other);
+        Model& operator                      =(Model&& other) noexcept;
 
         void moveTowardScene(class Scene & newOwner) override;
 

@@ -48,15 +48,15 @@ void Game::update(double unscaledDeltaTime, double deltaTime)
 {
     ++unFixedUpdateFrameCount;
 
-    bSys.update(deltaTime);
+    bSys.update(static_cast<float>(deltaTime));
     sm.getCurrentScene()->getWorld().updateSelfAndChildren();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
 {
-    GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
+    GPE::Engine::getInstance()->physXSystem.advance(static_cast<float>(fixedDeltaTime));
     ++fixedUpdateFrameCount;
-    bSys.fixedUpdate(fixedDeltaTime);
+    bSys.fixedUpdate(static_cast<float>(fixedDeltaTime));
 }
 
 void Game::render()

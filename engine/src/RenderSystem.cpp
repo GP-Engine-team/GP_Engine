@@ -46,9 +46,8 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
 
         drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color,
                         RenderSystem::EDebugShapeMode::FILL);
-
-        break;
     }
+    break;
 
     case Mesh::EBoundingVolume::AABB: {
 
@@ -63,6 +62,7 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
 
         drawDebugCube(pos, Quat::identity(), scale, color, RenderSystem::EDebugShapeMode::FILL);
     }
+    break;
     default:
         break;
     }

@@ -41,9 +41,9 @@ private:
 
     // std::vector<SubNode*> m_nodes; // Pointers to all chunks to free them later.
 
-    Node*    m_firstNode;                 // Points to the first created node
-    Node*    m_lastNode;                  // Points to the last added node
-    size_t   m_size;                      // nb Elements per node
+    Node*    m_firstNode       = nullptr; // Points to the first created node
+    Node*    m_lastNode        = nullptr; // Points to the last added node
+    size_t   m_size            = 0;       // nb Elements per node
     SubNode* m_nextToConstruct = nullptr; // The location of the next node that will be constructed
 
     static void allocateData(Node*& node, SubNode*& subNodes, size_t nbElements);
@@ -60,7 +60,7 @@ public:
 
     // Without a big performance issue, we don't know elemenets that have been constructed, so we can't copy them.
     UnrolledListAllocator(const UnrolledListAllocator&) = delete;
-    UnrolledListAllocator(UnrolledListAllocator&&);
+    UnrolledListAllocator(UnrolledListAllocator&&) noexcept;
 
     UnrolledListAllocator(size_t nbElements);
 

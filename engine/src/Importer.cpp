@@ -310,8 +310,9 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
         return;
     }
 
-    MaterialHeader header{(char)EFileType::MATERIAL, arg.comp, arg.ambianteTexturePath.size(),
-                          arg.diffuseTexturePath.size(), arg.baseColorTexturePath.size()};
+    MaterialHeader header{(char)EFileType::MATERIAL, arg.comp, static_cast<int>(arg.ambianteTexturePath.size()),
+                          static_cast<int>(arg.diffuseTexturePath.size()),
+                          static_cast<int>(arg.baseColorTexturePath.size())};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
     fwrite(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght, pFile);   // string buffer
@@ -402,7 +403,8 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
         return;
     }
 
-    MeshHeader header{(char)EFileType::MESH, arg.vertices.size(), arg.indices.size()};
+    MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
+                      static_cast<int>(arg.indices.size())};
     fwrite(&header, sizeof(header), 1, pFile);                                         // header
     fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
     fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
@@ -469,8 +471,8 @@ void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
         return;
     }
 
-    ShadeHeader header{(char)EFileType::SHADER, arg.vertexShaderPath.size(), arg.fragmentShaderPath.size(),
-                       arg.featureMask};
+    ShadeHeader header{(char)EFileType::SHADER, static_cast<int>(arg.vertexShaderPath.size()),
+                       static_cast<int>(arg.fragmentShaderPath.size()), arg.featureMask};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
     fwrite(arg.vertexShaderPath.data(), sizeof(char), arg.vertexShaderPath.size(), pFile);     // string buffer

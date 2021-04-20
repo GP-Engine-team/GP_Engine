@@ -25,11 +25,6 @@ File_GENERATED
     using namespace GPE;
 using namespace GPM;
 
-void foo()
-{
-    GPE::Model::staticGetArchetype();
-}
-
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
 {
     return lhs->pShader->getID() < rhs->pShader->getID() || lhs->pMesh->getID() < rhs->pMesh->getID() ||
@@ -67,7 +62,7 @@ Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subM
     }
 }
 
-Model& Model::operator=(Model&& other)
+Model& Model::operator=(Model&& other) noexcept
 {
     m_subModels = other.m_subModels;
 
@@ -119,7 +114,7 @@ void renderResourceExplorer(const char* name, T*& inRes)
             ;
     }
 
-    if (ImGui::Combo(name, &itemCurrent, items.data(), items.size()))
+    if (ImGui::Combo(name, &itemCurrent, items.data(), static_cast<int>(items.size())))
     {
         auto&& it = resourceContainer.begin();
         for (int i = 0; i < itemCurrent; ++i, ++it)

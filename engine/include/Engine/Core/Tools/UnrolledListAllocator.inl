@@ -1,7 +1,7 @@
 namespace GPE
 {
 template <typename T>
-UnrolledListAllocator<T>::UnrolledListAllocator(UnrolledListAllocator&& rhs)
+UnrolledListAllocator<T>::UnrolledListAllocator(UnrolledListAllocator&& rhs) noexcept
     : m_firstNode(rhs.m_firstNode), m_lastNode(rhs.m_lastNode), m_size(rhs.m_size),
       m_nextToConstruct(rhs.m_nextToConstruct)
 {

@@ -26,7 +26,7 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(false), Serialize(false)) Component : public rfk::Object
     {
     protected:
-        RFKField(Serialize()) GameObject*     m_gameObject; // can not be ref for move
+        RFKField(Serialize()) GameObject*     m_gameObject{nullptr}; // can not be ref for move
         RFKField(Inspect(), Serialize()) bool m_isActivated{true};
 
     public:
