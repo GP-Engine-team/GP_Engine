@@ -45,7 +45,7 @@ namespace GPE RFKNamespace()
 
         // AudioComponent(AudioComponent&& other) noexcept = default;
         AudioComponent& operator=(AudioComponent&& other);
-        AudioComponent(AudioComponent && other) : Component(other.getOwner())
+        AudioComponent(AudioComponent && other) noexcept : Component(other.getOwner())
         {
         }
 

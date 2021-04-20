@@ -18,7 +18,7 @@ Light::~Light()
     getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
 }
 
-Light& Light::operator=(Light&& other)
+Light& Light::operator=(Light&& other) noexcept
 {
     m_ambientComp  = std::move(other.m_ambientComp);
     m_diffuseComp  = std::move(other.m_diffuseComp);

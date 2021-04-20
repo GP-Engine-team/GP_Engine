@@ -1,6 +1,6 @@
 ﻿#include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
-#include "Engine/ECS/System/SceneRenderSystem.hpp"
+#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "GPM/Transform.hpp"
 #include "GPM/Vector3.hpp"

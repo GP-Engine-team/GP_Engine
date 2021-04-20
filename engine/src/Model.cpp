@@ -5,7 +5,7 @@ File_GENERATED
 #include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/Tools/Hash.hpp>
-#include <Engine/ECS/System/SceneRenderSystem.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>

@@ -22,7 +22,7 @@ struct Frustum;
 class Model;
 class Shader;
 
-class SceneRenderSystem
+class RenderSystem
 {
 public:
     enum class EDebugShapeMode
@@ -58,7 +58,7 @@ public:
         bool      smooth = true;
     };
 
-    using RenderPipeline = std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
+    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>&,
                                               std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
                                               std::vector<Light*>&, std::vector<DebugShape>&, std::vector<DebugLine>&)>;
 
@@ -83,8 +83,8 @@ protected:
     Mesh* m_cubeMesh   = nullptr;
 
 public:
-    SceneRenderSystem() noexcept;
-    ~SceneRenderSystem() noexcept;
+    RenderSystem() noexcept;
+    ~RenderSystem() noexcept;
 
     void tryToBindShader(Shader& shader);
     void tryToBindMaterial(Shader& shader, Material& material);

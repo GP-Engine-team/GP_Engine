@@ -54,7 +54,7 @@ namespace GPE RFKNamespace()
         Light()        = default;
         Light& operator=(const Light& other) = delete;
 
-        inline Light& operator=(Light&& other);
+        inline Light& operator=(Light&& other) noexcept;
 
         void moveTowardScene(Scene & newOwner) final
         {
