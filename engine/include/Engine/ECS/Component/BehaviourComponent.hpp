@@ -51,9 +51,9 @@ namespace GPE RFKNamespace()
         void enableFixedUpdate(bool flag) noexcept;
         void enableOnGUI(bool flag) noexcept;
 
-        bool isUpdateEnable() const noexcept;
-        bool isFixedUpdateEnable() const noexcept;
-        bool isOnGUIEnable() const noexcept;
+        [[nodiscard]] bool isUpdateEnable() const noexcept;
+        [[nodiscard]] bool isFixedUpdateEnable() const noexcept;
+        [[nodiscard]] bool isOnGUIEnable() const noexcept;
 
         /**
          * @brief Add or remove current component from it's system which have for effect to enable or disable it
