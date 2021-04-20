@@ -23,7 +23,6 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
         {
             if (GameObject* const selectionGameObject = view.pScene->getWorld()
                                                         .getGameObjectCorrespondingToID(idSelectedGameObject))
-
             {
                 inspectedObject = selectionGameObject;
             }
@@ -61,7 +60,7 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
         view.resize(static_cast<int>(size.x), static_cast<int>(size.y));
         view.render();
 
-        ImGui::Image((void*)(intptr_t)view.textureID, size, {0.f, 1.f}, {1.f, 0.f});
+        ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
     }
 
     ImGui::End();
