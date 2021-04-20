@@ -259,10 +259,16 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
 
 void Editor::update(GPE::AbstractGame* game)
 {
+    auto syncImGui  = GET_PROCESS((*m_reloadableCpp), setImguiCurrentContext);
+    auto syncGameUI = GET_PROCESS((*m_reloadableCpp), getGameUIContext);
+
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
+    ImGuiContext* gameContext = syncGameUI();
+    syncImGui(ImGui::GetCurrentContext());
 
     // Start drawing
     if (m_showAppStyleEditor)
@@ -270,19 +276,23 @@ void Editor::update(GPE::AbstractGame* game)
         renderStyleEditor();
     }
 
+    // Editor
     renderMenuBar();
 
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
     renderGameControlBar();
     renderLevelEditor();
-    renderGameView(game);
     renderSceneGraph();
     renderExplorer();
     renderInspector();
 
     if (m_showImGuiDemoWindows)
         ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
+
+    // Game
+    syncImGui(gameContext);
+    renderGameView(game);
 }
 
 void Editor::render()
