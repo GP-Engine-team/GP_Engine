@@ -99,7 +99,7 @@ void BehaviourComponent::setActive(bool newState) noexcept
 {
     m_isActivated = newState;
     if (m_isActivated)
-        Engine::getInstance()->behaviourSystem.addBehaviour(this);
+        Engine::getInstance()->behaviourSystem.addBehaviour(*this);
     else
-        Engine::getInstance()->behaviourSystem.removeBehaviour(this);
+        Engine::getInstance()->behaviourSystem.removeBehaviour(*this);
 }
