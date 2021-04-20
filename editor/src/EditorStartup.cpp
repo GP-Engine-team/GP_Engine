@@ -50,20 +50,14 @@ void EditorStartup::initializeDefaultInputs() const
 
 
 EditorStartup::EditorStartup()
-    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
-      {
-          if (m_game != nullptr)
-              m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
-      }},
+    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {}},
       m_update{[&](double unscaledDeltaTime, double deltaTime)
       {
           GPE::Engine::getInstance()->inputManager.processInput();
-          if (m_game != nullptr)
-              m_game->update(unscaledDeltaTime, deltaTime);
       }},
       m_render{[&]()
       {
-          m_editor.render(m_game);
+          m_editor.render(*this);
           GPE::Engine::getInstance()->renderer.swapBuffer();
       }},
       m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
@@ -103,10 +97,13 @@ EditorStartup::~EditorStartup()
     ImGui::DestroyContext();
 }
 
-void EditorStartup::startGame()
+
+void EditorStartup::openGame()
 {
-    if (m_game != nullptr)
+    const bool gameWasInstanciated = m_game != nullptr;
+    if (gameWasInstanciated)
     {
+        pauseGame();
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
         destroyer(m_game);
     }
@@ -115,18 +112,68 @@ void EditorStartup::startGame()
     m_game = a();
 
     m_editor.setSceneInEdition(*GPE::Engine::getInstance()->sceneManager.getCurrentScene());
-    GPE::Engine::getInstance()->sceneManager.removeScene("Default scene");
+
+    if (gameWasInstanciated)
+    {
+        GPE::Engine::getInstance()->sceneManager.removeScene("Default scene");
+    }
 }
+
 
 void EditorStartup::closeGame()
 {
+    stopGame();
+
     if (m_game != nullptr)
     {
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
         destroyer(m_game);
         m_game = nullptr;
     }
+    
+    // TODO: are the scene previously loaded removed by m_game's destructor?
+    m_editor.setSceneInEdition(GPE::Engine::getInstance()->sceneManager.loadScene("Default scene"));
 }
+
+
+void EditorStartup::playGame()
+{
+    // TODO: update the way editor captures inputs?
+    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+    {
+        m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+    };
+    m_update = [&](double unscaledDeltaTime, double deltaTime)
+    {
+        GPE::Engine::getInstance()->inputManager.processInput();
+        m_game->update(unscaledDeltaTime, deltaTime);
+    };
+}
+
+
+void EditorStartup::pauseGame()
+{
+    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
+    m_update = [&](double unscaledDeltaTime, double deltaTime)
+    {
+        GPE::Engine::getInstance()->inputManager.processInput();
+        //m_editor.m_sceneEditor.view.pScene->getWorld().updateSelfAndChildren();
+        Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+    };
+}
+
+
+void EditorStartup::stopGame()
+{
+    pauseGame();
+}
+
+
+void EditorStartup::renderGame()
+{
+    m_game->render();
+}
+
 
 void EditorStartup::update()
 {
@@ -141,7 +188,7 @@ void EditorStartup::update()
         auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
         (*syncImgui)(ImGui::GetCurrentContext());
 
-        startGame();
+        openGame();
     }
 
     GPE::Engine::getInstance()->timeSystem.update(m_fixedUpdate, m_update, m_render);
