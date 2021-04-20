@@ -82,7 +82,8 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
     ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
     ADD_PROCESS(m_reloadableCpp, setLogInstance);
-    // ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+    ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+    ADD_PROCESS(m_reloadableCpp, getGameUIContext);
     ADD_PROCESS(m_reloadableCpp, saveCurrentScene);
     ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
 
@@ -141,9 +142,6 @@ void EditorStartup::update()
 
         auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
         (*sync)(*GPE::Engine::getInstance());
-
-        // auto syncImgui = GET_PROCESS(m_reloadableCpp, setImguiCurrentContext);
-        // (*syncImgui)(ImGui::GetCurrentContext());
 
         startGame();
     }
