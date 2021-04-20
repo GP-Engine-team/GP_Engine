@@ -1,6 +1,5 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #define GLFW_INCLUDE_NONE
-#define GLFW_DLL
 
 #include "Game.hpp"
 
