@@ -79,3 +79,27 @@ void BehaviourComponent::enableOnGUI(bool flag) noexcept
     else
         Engine::getInstance()->behaviourSystem.removeOnGUI(*this);
 }
+
+bool BehaviourComponent::isUpdateEnable() const noexcept
+{
+    return m_useUpdate;
+}
+
+bool BehaviourComponent::isFixedUpdateEnable() const noexcept
+{
+    return m_useFixedUpdate;
+}
+
+bool BehaviourComponent::isOnGUIEnable() const noexcept
+{
+    return m_useOnGUI;
+}
+
+void BehaviourComponent::setActive(bool newState) noexcept
+{
+    m_isActivated = newState;
+    if (m_isActivated)
+        Engine::getInstance()->behaviourSystem.addBehaviour(this);
+    else
+        Engine::getInstance()->behaviourSystem.removeBehaviour(this);
+}
