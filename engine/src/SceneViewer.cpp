@@ -1,11 +1,15 @@
 ﻿#include "Engine/Intermediate/Viewers/SceneViewer.hpp"
 
-#include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/Engine.hpp"
-#include "Engine/Resources/Scene.hpp"
-#include "Engine/Resources/Script/FreeFly.hpp"
+// Engine
+#include <Engine/ECS/Component/Camera.hpp>
+#include <Engine/ECS/Component/InputComponent.hpp>
+#include <Engine/ECS/System/InputManagerGLFW.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Resources/Scene.hpp>
+#include <Engine/Resources/Script/FreeFly.hpp>
 
-#include "glad/glad.h"
+// Third-party
+#include <glad/glad.h>
 
 namespace GPE
 {
@@ -96,6 +100,19 @@ void SceneViewer::initializePickingFBO()
 }
 
 
+void SceneViewer::initializeInputs()
+{
+    GPE::InputComponent& input = cameraOwner.addComponent<GPE::InputComponent>();
+
+    input.bindAction("up",      EKeyMode::KEY_DOWN, &freeFly, "up");
+    input.bindAction("down",    EKeyMode::KEY_DOWN, &freeFly, "down");
+    input.bindAction("right",   EKeyMode::KEY_DOWN, &freeFly, "right");
+    input.bindAction("left",    EKeyMode::KEY_DOWN, &freeFly, "left");
+    input.bindAction("forward", EKeyMode::KEY_DOWN, &freeFly, "forward");
+    input.bindAction("back",    EKeyMode::KEY_DOWN, &freeFly, "backward");
+    input.bindAction("sprint",  EKeyMode::KEY_PRESSED, &freeFly, "sprint");
+    input.bindAction("sprint",  EKeyMode::KEY_RELEASED, &freeFly, "walk");
+}
 
 
 // ========================== Public methods ==========================
@@ -129,6 +146,16 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
 
 SceneViewer::~SceneViewer()
 {
+    // TODO: unbind actions
+    // InputComponent& input = owner.addComponent<InputComponent>();
+    // input.unbindAction("up");
+    // input.unbindAction("down");
+    // input.unbindAction("right");
+    // input.unbindAction("left");
+    // input.unbindAction("forward");
+    // input.unbindAction("backward");
+    // input.unbindAction("sprint");
+
     //cameraOwner.destroyUniqueComponentNow<Camera>();
     //cameraOwner.destroyUniqueComponentNow<FreeFly>();
     pScene->getWorld().children.erase(it);
