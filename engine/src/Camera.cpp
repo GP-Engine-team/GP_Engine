@@ -9,7 +9,7 @@
 
 File_GENERATED
 
-using namespace GPM;
+    using namespace GPM;
 
 namespace GPE
 {
@@ -41,8 +41,8 @@ void Camera::updateProjection()
 
 void Camera::moveTowardScene(class Scene& newOwner)
 {
-    getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
-    newOwner.sceneRenderer.addCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
+    newOwner.sceneRenderer.addCamera(*this);
 }
 
 Camera::Camera(GameObject& owner) noexcept : Camera(owner, PerspectiveCreateArg{})
@@ -65,7 +65,7 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
 
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.znear, m_projInfo.zfar);
 
-    getOwner().pOwnerScene->sceneRenderer.addCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
     getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     updateView();
 
@@ -89,7 +89,7 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
     m_projection =
         Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
 
-    getOwner().pOwnerScene->sceneRenderer.addCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
     getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     updateView();
 
@@ -99,7 +99,7 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
 Camera::~Camera() noexcept
 {
     getOwner().getTransform().OnUpdate -= GPE::Function::make(this, "updateView");
-    getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
 }
 
 Camera& Camera::operator=(Camera&& other) noexcept
@@ -158,9 +158,9 @@ void Camera::setActive(bool newState) noexcept
 {
     m_isActivated = newState;
     if (m_isActivated)
-        getOwner().pOwnerScene->sceneRenderer.addCamera(this);
+        getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
     else
-        getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
+        getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
 }
 
 /*

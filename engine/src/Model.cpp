@@ -1,23 +1,23 @@
-﻿#include "Engine/ECS/Component/Model.hpp"
+﻿#include <Engine/ECS/Component/Model.hpp>
 
 File_GENERATED
 
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Tools/Hash.hpp"
-#include "Engine/ECS/System/SceneRenderSystem.hpp"
-#include "Engine/Engine.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Importer/Importer.hpp"
-#include "Engine/Resources/Material.hpp"
-#include "Engine/Resources/Mesh.hpp"
-#include "Engine/Resources/ResourcesManagerType.hpp"
-#include "Engine/Resources/Scene.hpp"
-#include "Engine/Resources/Shader.hpp"
-#include "Engine/Resources/Texture.hpp"
-#include "GPM/Matrix3.hpp"
-#include "GPM/Matrix4.hpp"
-#include "GPM/Shape3D/Sphere.hpp"
+#include <Engine/Core/Debug/Assert.hpp>
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/Hash.hpp>
+#include <Engine/ECS/System/SceneRenderSystem.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Importer/Importer.hpp>
+#include <Engine/Resources/Material.hpp>
+#include <Engine/Resources/Mesh.hpp>
+#include <Engine/Resources/ResourcesManagerType.hpp>
+#include <Engine/Resources/Scene.hpp>
+#include <Engine/Resources/Shader.hpp>
+#include <Engine/Resources/Texture.hpp>
+#include <GPM/Matrix3.hpp>
+#include <GPM/Matrix4.hpp>
+#include <GPM/Shape3D/Sphere.hpp>
 
 #include <filesystem>
 #include <imgui.h>
@@ -50,8 +50,8 @@ Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{
 
 Model::~Model()
 {
-    for (SubModel& pSubMesh : m_subModels)
-        getOwner().pOwnerScene->sceneRenderer.removeSubModel(&pSubMesh);
+    for (SubModel& subMesh : m_subModels)
+        getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
 }
 
 Model::Model(GameObject& owner) : Model(owner, CreateArg{})
@@ -60,10 +60,10 @@ Model::Model(GameObject& owner) : Model(owner, CreateArg{})
 
 Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subModels{arg.subModels}
 {
-    for (SubModel& pSubMesh : m_subModels)
+    for (SubModel& subMesh : m_subModels)
     {
-        pSubMesh.pModel = this;
-        getOwner().pOwnerScene->sceneRenderer.addSubModel(&pSubMesh);
+        subMesh.pModel = this;
+        getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
     }
 }
 
@@ -83,13 +83,13 @@ Model& Model::operator=(Model&& other)
 
 void Model::moveTowardScene(class Scene& newOwner)
 {
-    for (SubModel& pSubMesh : m_subModels)
-        getOwner().pOwnerScene->sceneRenderer.removeSubModel(&pSubMesh);
+    for (SubModel& subMesh : m_subModels)
+        getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
 
-    for (SubModel& pSubMesh : m_subModels)
+    for (SubModel& subMesh : m_subModels)
     {
-        pSubMesh.pModel = this;
-        newOwner.sceneRenderer.addSubModel(&pSubMesh);
+        subMesh.pModel = this;
+        newOwner.sceneRenderer.addSubModel(subMesh);
     }
 }
 
@@ -219,11 +219,11 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
     {
         if (isPreviousElementVoid)
         {
-            inspected.pModel->getOwner().pOwnerScene->sceneRenderer.addSubModel(&inspected);
+            inspected.pModel->getOwner().pOwnerScene->sceneRenderer.addSubModel(inspected);
         }
         else
         {
-            inspected.pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(&inspected);
+            inspected.pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(inspected);
         }
     }
 
@@ -302,7 +302,7 @@ void Model::inspect(InspectContext& context)
                 if (ImGui::MenuItem("Remove"))
                 {
                     if ((size_t)it->pMesh & (size_t)it->pShader & (size_t)it->pMaterial) // If not nullptr detectedhh
-                        it->pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(&(*it));
+                        it->pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(*it);
 
                     it        = m_subModels.erase(it);
                     isDestroy = true;
@@ -325,5 +325,24 @@ void Model::inspect(InspectContext& context)
             }
         }
         ImGui::TreePop();
+    }
+}
+
+void Model::setActive(bool newState) noexcept
+{
+    m_isActivated = newState;
+    if (m_isActivated)
+    {
+        for (SubModel& subMesh : m_subModels)
+        {
+            getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
+        }
+    }
+    else
+    {
+        for (SubModel& subMesh : m_subModels)
+        {
+            getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+        }
     }
 }

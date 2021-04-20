@@ -580,12 +580,12 @@ void SceneRenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Rend
     }
 }
 
-void SceneRenderSystem::removeRenderer(Renderer* pRenderer) noexcept
+void SceneRenderSystem::removeRenderer(Renderer& renderer) noexcept
 {
     const std::vector<Renderer*>::const_iterator end{m_pRenderers.end()};
     for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != end; it++)
     {
-        if ((*it) == pRenderer)
+        if ((*it) == &renderer)
         {
             std::swap<Renderer*>(m_pRenderers.back(), (*it));
             m_pRenderers.pop_back();
@@ -594,17 +594,17 @@ void SceneRenderSystem::removeRenderer(Renderer* pRenderer) noexcept
     }
 }
 
-void SceneRenderSystem::addSubModel(SubModel* pSubModel) noexcept
+void SceneRenderSystem::addSubModel(SubModel& subModel) noexcept
 {
-    if (pSubModel->pMaterial->isOpaque())
+    if (subModel.pMaterial->isOpaque())
     {
-        m_pOpaqueSubModels.insert(std::upper_bound(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel,
+        m_pOpaqueSubModels.insert(std::upper_bound(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), &subModel,
                                                    isSubModelHasPriorityOverAnother),
-                                  pSubModel);
+                                  &subModel);
     }
     else
     {
-        m_pTransparenteSubModels.emplace_back(pSubModel);
+        m_pTransparenteSubModels.emplace_back(&subModel);
     }
 }
 
@@ -623,24 +623,24 @@ void SceneRenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubM
     }
 }
 
-void SceneRenderSystem::removeSubModel(SubModel* pSubModel) noexcept
+void SceneRenderSystem::removeSubModel(SubModel& subModel) noexcept
 {
-    if (pSubModel->pMaterial->isOpaque())
+    if (subModel.pMaterial->isOpaque())
     {
-        auto it = std::find(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel);
+        auto it = std::find(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), &subModel);
         if (it != m_pOpaqueSubModels.end())
             m_pOpaqueSubModels.erase(it);
     }
     else
     {
-        auto it = std::find(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), pSubModel);
+        auto it = std::find(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), &subModel);
         if (it != m_pOpaqueSubModels.end())
             m_pTransparenteSubModels.erase(it);
     }
 }
-void SceneRenderSystem::addCamera(Camera* pCamera) noexcept
+void SceneRenderSystem::addCamera(Camera& camera) noexcept
 {
-    m_pCameras.push_back(pCamera);
+    m_pCameras.push_back(&camera);
 }
 
 void SceneRenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept
@@ -656,12 +656,12 @@ void SceneRenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* ex
     }
 }
 
-void SceneRenderSystem::removeCamera(Camera* pCamera) noexcept
+void SceneRenderSystem::removeCamera(Camera& camera) noexcept
 {
     const std::vector<Camera*>::const_iterator end{m_pCameras.end()};
     for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != end; it++)
     {
-        if ((*it) == pCamera)
+        if ((*it) == &camera)
         {
             std::swap<Camera*>(m_pCameras.back(), (*it));
             m_pCameras.pop_back();
@@ -670,9 +670,9 @@ void SceneRenderSystem::removeCamera(Camera* pCamera) noexcept
     }
 }
 
-void SceneRenderSystem::addLight(Light* pLight) noexcept
+void SceneRenderSystem::addLight(Light& light) noexcept
 {
-    m_pLights.push_back(pLight);
+    m_pLights.push_back(&light);
 }
 
 void SceneRenderSystem::updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept
@@ -688,12 +688,12 @@ void SceneRenderSystem::updateLightPointer(Light* newPointerLight, Light* exPoin
     }
 }
 
-void SceneRenderSystem::removeLight(Light* pLight) noexcept
+void SceneRenderSystem::removeLight(Light& light) noexcept
 {
     std::vector<Light*>::const_iterator end{m_pLights.end()};
     for (std::vector<Light*>::iterator it = m_pLights.begin(); it != end; it++)
     {
-        if ((*it) == pLight)
+        if ((*it) == &light)
         {
             std::swap<Light*>(m_pLights.back(), (*it));
             m_pLights.pop_back();
