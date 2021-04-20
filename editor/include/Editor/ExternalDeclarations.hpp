@@ -15,6 +15,8 @@ inline void setGameEngineInstance(GPE::Engine& engine) {}
 
 inline void setImguiCurrentContext(struct ImGuiContext* ctx) {}
 
+inline struct ImGuiContext* getGameUIContext() {}
+
 inline void setLogInstance(GPE::Log& log) {}
 
 inline void saveCurrentScene(XmlSaver& context) {}

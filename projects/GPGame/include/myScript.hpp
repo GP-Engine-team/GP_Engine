@@ -16,8 +16,6 @@
 #include "Engine/Serialization/Serialize.hpp"
 #include "Engine/Serialization/Slider.hpp"
 
-#include <iostream>
-
 #include "Generated/myScript.rfk.h"
 
 namespace GPG RFKNamespace()

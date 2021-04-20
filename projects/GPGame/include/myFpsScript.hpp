@@ -19,7 +19,9 @@
 #include <Engine/Resources/Wave.hpp>
 #include <Windows.h>
 
-#include <iostream>
+#include "Engine/Core/Tools/ImGuiTools.hpp"
+#include <imgui.h>
+#include <imgui_internal.h>
 
 // Generated
 #include "Generated/myFpsScript.rfk.h"
@@ -35,6 +37,7 @@ namespace GPG RFKNamespace()
               controller(&owner.addComponent<GPE::CharacterController>())
         {
             enableFixedUpdate(true);
+            enableOnGUI(true);
             input->bindAction("jump", EKeyMode::KEY_DOWN, "game01", this, "jump");
             input->bindAction("right", EKeyMode::KEY_DOWN, "game01", this, "right");
             input->bindAction("left", EKeyMode::KEY_DOWN, "game01", this, "left");
@@ -159,6 +162,42 @@ namespace GPG RFKNamespace()
         RFKMethod() inline void growDownSphereCollider()
         {
             // collider.setRadius(collider.getRadius() - 1);
+        }
+
+        void onGUI() final
+        {
+            static float ratio = 0.08;
+
+            ImGui::DragFloat("Ratio", &ratio, 0.01, 0.f, 1.f);
+
+            ImVec2 size = {ImGui::GetWindowSize().x * ratio, ImGui::GetWindowSize().y * ratio};
+
+            ImGui::SetNextElementLayout(0.f, 0.f, size, ImGui::EHAlign::Left, ImGui::EVAlign::Top);
+            ImGui::Button("Top/Left", size);
+
+            ImGui::SetNextElementLayout(0.5, 0.f, size, ImGui::EHAlign::Middle, ImGui::EVAlign::Top);
+            ImGui::Button("Top", size);
+
+            ImGui::SetNextElementLayout(1.f, 0.f, size, ImGui::EHAlign::Right, ImGui::EVAlign::Top);
+            ImGui::Button("Top/Right", size);
+
+            ImGui::SetNextElementLayout(0.f, 0.5f, size, ImGui::EHAlign::Left);
+            ImGui::Button("Mid/Left", size);
+
+            ImGui::SetNextElementLayout(0.5f, 0.5f, size);
+            ImGui::Button("Mid", size);
+
+            ImGui::SetNextElementLayout(1.f, 0.5f, size, ImGui::EHAlign::Right);
+            ImGui::Button("Mid/Right", size);
+
+            ImGui::SetNextElementLayout(0.f, 1.f, size, ImGui::EHAlign::Left, ImGui::EVAlign::Bottom);
+            ImGui::Button("Bot/Left", size);
+
+            ImGui::SetNextElementLayout(0.5f, 1.f, size, ImGui::EHAlign::Middle, ImGui::EVAlign::Bottom);
+            ImGui::Button("Bot", size);
+
+            ImGui::SetNextElementLayout(1.f, 1.f, size, ImGui::EHAlign::Right, ImGui::EVAlign::Bottom);
+            ImGui::Button("Bot/Right", size);
         }
 
         RFKMethod() void swapInputModeToGame01()

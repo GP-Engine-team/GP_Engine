@@ -2,7 +2,6 @@
 #include "Engine/Core/Debug/log.hpp"
 
 #include <fstream>
-#include <iostream>
 #include <sstream>
 
 using namespace GPE;
