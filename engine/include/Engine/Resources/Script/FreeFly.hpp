@@ -38,13 +38,16 @@ public:
     inline void forward();
 
     RFKMethod()
-    inline void back();
+    inline void backward();
 
     RFKMethod()
     inline void left();
 
     RFKMethod()
     inline void right();
+
+    RFKMethod()
+    inline void walk();
 
     RFKMethod()
     inline void sprint();
