@@ -146,22 +146,35 @@ void Editor::renderInspector()
             GPE::InspectContext context;
             GPE::DataInspector::inspect(context, *m_inspectedObject);
 
-            // static float s = 0;
+            //static float s = 0;
 
-            // s += 1.f/30.f;
+            //s += 1.f/30.f;
 
-            // if (s > 9)
+            //if (s > 3)
             //{
+            //    GPE::Scene* scene = m_sceneEditor.view.pScene;
+
+            //    m_sceneEditor.view.unbindScene();
+
             //    rapidxml::xml_document<> doc;
             //    XmlSaver saver(doc);
-            //    auto a = GET_PROCESS((*m_reloadableCpp), saveCurrentScene);
-            //    a(saver);
+            //    auto a = GET_PROCESS((*m_reloadableCpp), saveScene);
+            //    a(saver, scene);
             //    saver.print();
+
+            //    //GPE::SceneManager& sm      = GPE::Engine::getInstance()->sceneManager;
+            //    //std::string        newName = sm.getCurrentScene()->getName() + "_copy";
+            //    //sm.addEmpty(newName);
+            //    //sm.loadScene(newName);
+            //    setSceneInEdition(*scene);
+
             //    XmlLoader loader(doc);
-            //    auto b = GET_PROCESS((*m_reloadableCpp), loadCurrentScene);
-            //    b(loader);
+            //    auto      b = GET_PROCESS((*m_reloadableCpp), loadScene);
+            //    b(loader, scene);
             //    s = 0;
             //    m_inspectedObject = nullptr;
+
+            //    m_sceneEditor.view.bindScene(*scene);
             //}
         }
         else

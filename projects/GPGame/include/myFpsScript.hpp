@@ -26,14 +26,17 @@
 
 namespace GPG RFKNamespace()
 {
-    class RFKClass(Inspect(), Serialize()) MyFpsScript : public GPE::BehaviourComponent
+    class RFKClass(Inspect(), ComponentGen, Serialize()) MyFpsScript : public GPE::BehaviourComponent
     {
     public:
         inline MyFpsScript(GPE::GameObject & owner) noexcept
-            : GPE::BehaviourComponent(owner), input(&owner.addComponent<GPE::InputComponent>()),
-              source(&owner.addComponent<GPE::AudioComponent>()),
-              controller(&owner.addComponent<GPE::CharacterController>())
+            : GPE::BehaviourComponent(owner)
         {
+
+            input = &owner.addComponent<GPE::InputComponent>();
+            source = &owner.addComponent<GPE::AudioComponent>();
+            controller = &owner.addComponent<GPE::CharacterController>();
+
             enableFixedUpdate(true);
             input->bindAction("jump", EKeyMode::KEY_DOWN, "game01", this, "jump");
             input->bindAction("right", EKeyMode::KEY_DOWN, "game01", this, "right");
@@ -66,20 +69,27 @@ namespace GPG RFKNamespace()
             controller->setGravity(0.1);
         }
 
-        MyFpsScript() noexcept
-        {
-            enableFixedUpdate(true);
-        }
+        //MyFpsScript() noexcept : GPE::BehaviourComponent()
+        //{
+        //    //enableFixedUpdate(true);
+        //}
+        MyFpsScript() noexcept                         = default;
         MyFpsScript(const MyFpsScript& other) noexcept = delete;
-        MyFpsScript(MyFpsScript && other) noexcept     = default;
-        virtual ~MyFpsScript() noexcept                = default;
+        MyFpsScript(MyFpsScript && other) noexcept     = delete;
+        virtual ~MyFpsScript() noexcept                
+        {
+            enableFixedUpdate(false);
+        }
 
         MyFpsScript& operator=(MyFpsScript const& other) noexcept = delete;
         MyFpsScript& operator=(MyFpsScript&& other) noexcept = delete;
 
+    private:
         RFKField(Serialize()) GPE::InputComponent*      input      = nullptr;
         RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
         RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
+
+    public:
 
         void rotate(const GPM::Vec2& deltaDisplacement)
         {

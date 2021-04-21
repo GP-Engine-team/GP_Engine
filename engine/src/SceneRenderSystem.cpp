@@ -297,6 +297,9 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
               std::vector<DebugLine>& debugLines)
 
     {
+        if (pCameras.empty())
+            return;
+
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -449,6 +452,10 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipelin
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
               std::vector<SceneRenderSystem::DebugShape>& debugShape,
               std::vector<SceneRenderSystem::DebugLine>&  debugLine) {
+
+        if (pCameras.empty())
+            return;
+
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 

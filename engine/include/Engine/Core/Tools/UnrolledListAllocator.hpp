@@ -11,12 +11,12 @@
 template<typename T>
 class UnrolledListAllocator
 {
-private:
 #ifndef NDEBUG
+public:
     size_t nbAllocations = 0;
     size_t nbDeallocations = 0;
 #endif
-
+private:
     // What's inside the Node elements.
     union SubNode
     {

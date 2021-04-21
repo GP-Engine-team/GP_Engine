@@ -12,9 +12,10 @@
 
 #include "Engine/Resources/Script/FreeFly.hpp"
 
+#include "Generated/FreeFly.rfk.h"
 File_GENERATED
 
-    namespace GPE
+namespace GPE
 {
 
     FreeFly::FreeFly(GameObject & owner) noexcept : BehaviourComponent(owner)

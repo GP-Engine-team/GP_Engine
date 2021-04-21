@@ -2,8 +2,12 @@
 #define GLFW_DLL
 #include "Game.hpp"
 
-#include "Engine/Core/Debug/Assert.hpp"
-
+#include "Engine/Resources/Script/FreeFly.hpp"
+#include "Engine/ECS/Component/AudioComponent.hpp"
+#include "Engine/ECS/Component/InputComponent.hpp"
+#include "Engine/Resources/Scene.hpp"
+#include "Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp"
+#include "myFpsScript.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ObjParser.hpp"
@@ -226,6 +230,11 @@ Game::Game()
     testPhysX.getComponent<SphereCollider>()->setRadius(10.f);
     testPhysX.addComponent<RigidbodyStatic>();
     testPhysX.getComponent<RigidbodyStatic>()->collider = testPhysX.getComponent<SphereCollider>();
+
+    // FreeFly must be used to compile properly with GPGame.dll, to not be optimized out, for serialization.
+    {
+        rfk::Entity const* a = rfk::Database::getEntity(GPE::FreeFly::staticGetArchetype().id);
+    }
 
     /*Model::CreateArg modelArg;
     modelArg.subModels.emplace_back(SubModel{nullptr, Engine::getInstance()->resourceManager.get<Shader>("TextureOnly"),

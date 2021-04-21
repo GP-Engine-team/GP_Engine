@@ -33,7 +33,7 @@ protected:
         void*    data = nullptr;
     };
     // key is the saved ptr
-    std::map<size_t, LoadedPtr> alreadyLoadedPtrs;
+    std::map<void*, LoadedPtr> alreadyLoadedPtrs;
 
 protected:
     /**
@@ -141,13 +141,18 @@ public:
     }
 
     template <typename T>
-    void loadPtrData(T*& data, const LoadInfo& info, std::size_t key);
+    void loadPtrData(T*& data, const LoadInfo& info, void* key);
 
 private:
     std::vector<void**> lazyPtrs;
 
 public:
     void addLazy(void*& data);
+
+    void addPersistentPtr(void* ptr)
+    {
+        alreadyLoadedPtrs.insert({ptr, LoadedPtr{LoadInfo{"persistentPtr", "void*", 0}, ptr}});
+    }
 
     // Pass a weak ptr pointing to an old value
     void updateLazyPtr(void*& weak);
@@ -211,8 +216,16 @@ void load(XmlLoader& context, rfk::Method const*& data, const XmlLoader::LoadInf
 #include <Refureku/Refureku.h>
 #include <type_traits>
 
+inline XmlLoader::LoadInfo fieldToLoadInfo(rfk::Field const& field)
+{
+    if (field.type.archetype == nullptr)
+        return XmlLoader::LoadInfo{field.name, "unknown", 0};
+    else
+        return XmlLoader::LoadInfo{field.name, field.type.archetype->name, field.type.archetype->id};
+}
+
 template <typename T>
-void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, std::size_t key)
+void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, void* key)
 {
     auto pair = alreadyLoadedPtrs.insert({key, LoadedPtr{info}});
     if (pair.second) // Has been inserted ?
@@ -222,7 +235,7 @@ void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, std::size_t key)
             std::string       idStr     = findAttribValue(top(), "typeID");
             size_t            s         = (std::stoull(idStr));
             rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(s));
-            assert(archetype != 0);              // Type is not complete.
+            assert(archetype != 0);              // Type is not complete. Try adding corresponding include in game.cpp
             data = archetype->makeInstance<T>(); // TODO : Call custom instantiator
         }
         else 
@@ -238,7 +251,7 @@ void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, std::size_t key)
         otherContextHierarchy.push(&doc);
         std::swap(otherContextHierarchy, hierarchy);
 
-        LoadInfo newInfo{std::to_string(key), info.typeName, info.typeId};
+        LoadInfo newInfo{std::to_string(size_t(key)), info.typeName, info.typeId};
         GPE::load(*this, *data, newInfo);
 
         hierarchy = std::move(otherContextHierarchy);
