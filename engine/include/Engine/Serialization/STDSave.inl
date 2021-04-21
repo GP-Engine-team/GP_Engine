@@ -6,13 +6,13 @@ namespace GPE
 template <typename T>
 void save(class XmlSaver& context, const std::list<T*>& saved, const rfk::Field& info)
 {
-    GPE::save(context, saved, XmlSaver::SaveInfo{info.name, "std::list<T*>", 0});
+    GPE::save(context, saved, fieldToSaveInfo(info));
 }
 
 template <typename T>
 void load(XmlLoader& context, std::list<T*>& loaded, const rfk::Field& info)
 {
-    GPE::load(context, loaded, XmlLoader::LoadInfo{info.name, "std::list<T*>", 0});
+    GPE::load(context, loaded, fieldToLoadInfo(info));
 }
 
 template <typename T>

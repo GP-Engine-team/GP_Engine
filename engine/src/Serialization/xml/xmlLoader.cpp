@@ -76,6 +76,12 @@ void load(XmlLoader& context, std::string& data, const rfk::Field& info)
 }
 
 template <>
+void load(XmlLoader& context, std::string& data, const XmlLoader::LoadInfo& info)
+{
+    context.loadFromStr(data, info);
+}
+
+template <>
 void load(XmlLoader& context, float& data, const rfk::Field& info)
 {
     std::string value;

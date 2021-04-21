@@ -169,6 +169,8 @@ void save(XmlSaver& context, T* const & inspected, const XmlSaver::SaveInfo& inf
  */
 template <>
 void save(XmlSaver& context, const std::string& inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, const std::string& inspected, const XmlSaver::SaveInfo& info);
 
 /**
  * @brief Specialization for int data. See the original function for more comments.

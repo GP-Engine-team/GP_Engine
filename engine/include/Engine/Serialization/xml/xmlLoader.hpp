@@ -196,6 +196,9 @@ void load(XmlLoader& context, char& data, const rfk::Field& info);
 template <>
 void load(XmlLoader& context, std::string& data, const rfk::Field& info);
 
+template <>
+void load(XmlLoader& context, std::string& data, const XmlLoader::LoadInfo& info);
+
 /**
  * @brief Specialization for float data. See the original function for more comments.
  */
