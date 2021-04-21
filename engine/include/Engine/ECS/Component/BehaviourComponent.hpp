@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "Engine/ECS/Component/Component.hpp"
-#include "Engine/Serialization/ComponentGen.h"
+#include <Engine/ECS/Component/Component.hpp>
+#include <Engine/Serialization/ComponentGen.h>
 
 // Generated
-#include "Generated/BehaviourComponent.rfk.h"
+#include <Generated/BehaviourComponent.rfk.h>
 
 namespace GPE RFKNamespace()
 {
@@ -50,6 +50,17 @@ namespace GPE RFKNamespace()
         void enableUpdate(bool flag) noexcept;
         void enableFixedUpdate(bool flag) noexcept;
         void enableOnGUI(bool flag) noexcept;
+
+        [[nodiscard]] bool isUpdateEnable() const noexcept;
+        [[nodiscard]] bool isFixedUpdateEnable() const noexcept;
+        [[nodiscard]] bool isOnGUIEnable() const noexcept;
+
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
 
         BehaviourComponent_GENERATED
     };

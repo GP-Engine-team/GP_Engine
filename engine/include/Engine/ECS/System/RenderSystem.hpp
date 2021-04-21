@@ -22,7 +22,7 @@ struct Frustum;
 class Model;
 class Shader;
 
-class SceneRenderSystem
+class RenderSystem
 {
 public:
     enum class EDebugShapeMode
@@ -58,7 +58,7 @@ public:
         bool      smooth = true;
     };
 
-    using RenderPipeline = std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
+    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>&,
                                               std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
                                               std::vector<Light*>&, std::vector<DebugShape>&, std::vector<DebugLine>&)>;
 
@@ -83,8 +83,8 @@ protected:
     Mesh* m_cubeMesh   = nullptr;
 
 public:
-    SceneRenderSystem() noexcept;
-    ~SceneRenderSystem() noexcept;
+    RenderSystem() noexcept;
+    ~RenderSystem() noexcept;
 
     void tryToBindShader(Shader& shader);
     void tryToBindMaterial(Shader& shader, Material& material);
@@ -122,32 +122,32 @@ public:
 
 public:
     // TODO: Remove this shit and create variadic templated system
-    void addRenderer(Renderer* pRenderer) noexcept;
+    void addRenderer(Renderer* renderer) noexcept;
 
     void updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept;
 
-    void removeRenderer(Renderer* pRenderer) noexcept;
+    void removeRenderer(Renderer& renderer) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
-    void addSubModel(SubModel* pSubModel) noexcept;
+    void addSubModel(SubModel& subModel) noexcept;
 
     void updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept;
 
-    void removeSubModel(SubModel* pSubModel) noexcept;
+    void removeSubModel(SubModel& subModel) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
-    void addCamera(Camera* pCamera) noexcept;
+    void addCamera(Camera& camera) noexcept;
 
     void updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept;
 
-    void removeCamera(Camera* pCamera) noexcept;
+    void removeCamera(Camera& camera) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
-    void addLight(Light* pLight) noexcept;
+    void addLight(Light& light) noexcept;
 
     void updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept;
 
-    void removeLight(Light* pLight) noexcept;
+    void removeLight(Light& light) noexcept;
 };
 
 } /*namespace GPE*/

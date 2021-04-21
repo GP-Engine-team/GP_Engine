@@ -111,8 +111,7 @@ namespace GPE RFKNamespace()
         /**
          * @brief Update the view matrix in function of model matrix of it's parent
          */
-        RFKMethod()
-        void updateView();
+        RFKMethod() void updateView();
 
         /**
          * @brief Default constructor. Call perspective constructor by default
@@ -191,10 +190,15 @@ namespace GPE RFKNamespace()
          */
         Frustum getFrustum() const noexcept;
 
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
+
         Camera_GENERATED
     };
-
-#include "Camera.inl"
-
 } // namespace )
 
+#include "Camera.inl"

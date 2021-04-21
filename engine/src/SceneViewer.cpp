@@ -53,11 +53,10 @@ void SceneViewer::initializeFramebuffer()
     }
 }
 
-
 void SceneViewer::initializePickingFBO()
 {
     // low sampling (we don't need 4K texture to select element)
-    FBOIDwidth  = static_cast<int>(ceilf(width  * INV_DOWN_SAMPLING_COEF));
+    FBOIDwidth  = static_cast<int>(ceilf(width * INV_DOWN_SAMPLING_COEF));
     FBOIDheight = static_cast<int>(ceilf(height * INV_DOWN_SAMPLING_COEF));
 
     // Create FBO
@@ -95,26 +94,15 @@ void SceneViewer::initializePickingFBO()
     }
 }
 
-
-
-
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : cameraOwner    {viewed, {"Editor camera", {}, &viewed.getWorld()}},
-      freeFly        {cameraOwner.addComponent<FreeFly>()},
-      camera         {cameraOwner.addComponent<Camera>(Camera::PerspectiveCreateArg{width_ / (float)height_, .001f, 1000.f, 90.f})},
-      pScene         {&viewed},
-      it             {viewed.getWorld().children.emplace(viewed.getWorld().children.end(), &cameraOwner)},
-      textureID      {0u},
-      depthStencilID {0u},
-      framebufferID  {0u},
-      FBOIDtextureID {0u},
-      FBOIDdepthID   {0u},
-      FBOIDframebufferID{0u},
-      FBOIDwidth     {static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight    {static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
-      width          {width_},
-      height         {height_},
+    : cameraOwner{viewed, {"Editor camera", {}, &viewed.getWorld()}}, freeFly{cameraOwner.addComponent<FreeFly>()},
+      camera{
+          cameraOwner.addComponent<Camera>(Camera::PerspectiveCreateArg{width_ / (float)height_, .001f, 1000.f, 90.f})},
+      pScene{&viewed}, it{viewed.getWorld().children.emplace(viewed.getWorld().children.end(), &cameraOwner)},
+      textureID{0u}, depthStencilID{0u}, framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u},
+      FBOIDframebufferID{0u}, FBOIDwidth{static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight{static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_},
       m_captureInputs{false}
 {
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
@@ -129,8 +117,8 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
 
 SceneViewer::~SceneViewer()
 {
-    //cameraOwner.destroyUniqueComponentNow<Camera>();
-    //cameraOwner.destroyUniqueComponentNow<FreeFly>();
+    // cameraOwner.destroyUniqueComponentNow<Camera>();
+    // cameraOwner.destroyUniqueComponentNow<FreeFly>();
     pScene->getWorld().children.erase(it);
 
     glDeleteFramebuffers(1, &framebufferID);
@@ -142,7 +130,6 @@ SceneViewer::~SceneViewer()
     glDeleteRenderbuffers(1, &FBOIDdepthID);
 }
 
-
 unsigned int SceneViewer::getHoveredGameObjectID() const
 {
     // Render the picking texture in the identifier FBO
@@ -153,29 +140,28 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
 
     glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
 
-    SceneRenderSystem renderSys{pScene->sceneRenderer};
+    RenderSystem renderSys{pScene->sceneRenderer};
     renderSys.draw(Engine::getInstance()->resourceManager, renderSys.gameObjectIdentifierPipeline());
 
     // Find the hovered game object, if any
     unsigned int pixel = 0u;
-    int x, y;
+    int          x, y;
 
     { // Find the coordinates of the pixel to read
         const ImVec2 currentScreenStart = ImGui::GetCursorScreenPos();
         const ImVec2 cursPos            = ImGui::GetMousePos();
-        const ImVec2 cursorRelativePos   {ceilf((cursPos.x - currentScreenStart.x)),
-                                          ceilf((cursPos.y - currentScreenStart.y))};
+        const ImVec2 cursorRelativePos{ceilf((cursPos.x - currentScreenStart.x)),
+                                       ceilf((cursPos.y - currentScreenStart.y))};
 
         x = static_cast<GLint>(cursorRelativePos.x * INV_DOWN_SAMPLING_COEF);
         y = static_cast<GLint>((static_cast<float>(height) - cursorRelativePos.y) * INV_DOWN_SAMPLING_COEF);
     }
-    
+
     glReadPixels(x, y, 1u, 1u, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
     glBindFramebuffer(GL_FRAMEBUFFER, 0u);
 
     return pixel;
 }
-
 
 void SceneViewer::resize(int width_, int height_)
 {
@@ -195,12 +181,11 @@ void SceneViewer::resize(int width_, int height_)
     glBindRenderbuffer(GL_RENDERBUFFER, depthStencilID);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, width, height);
 
-    camera.setAspect(width / (float)height);
-
+    camera.setAspect(Camera::computeAspect(width, height));
 
     // ==== Update selection framebuffer ====
     // Low sampling (we don't need 4K texture to select element)
-    FBOIDwidth  = static_cast<int>(ceilf(width_  * INV_DOWN_SAMPLING_COEF));
+    FBOIDwidth  = static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF));
     FBOIDheight = static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF));
 
     // Resize texture and depth buffers
@@ -220,7 +205,7 @@ void SceneViewer::bindScene(Scene& scene)
 
     { // Move cameraOwner to the other scene
         // Transfer ownership of &cameraOwner to the new scene
-        using iterator = GameObject::Children::iterator;
+        using iterator       = GameObject::Children::iterator;
         const iterator newIt = scene.getWorld().children.emplace(scene.getWorld().children.end(), *it);
 
         // Update the previous scene and the iterator to cameraOwner's parent's children list
@@ -232,13 +217,13 @@ void SceneViewer::bindScene(Scene& scene)
     camera.moveTowardScene(scene);
     cameraOwner.setParent(scene.getWorld());
     cameraOwner.pOwnerScene = &scene;
-    pScene = &scene;
+    pScene                  = &scene;
 }
 
 void SceneViewer::render() const
 {
     camera.updateView();
-    
+
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
@@ -251,7 +236,7 @@ void SceneViewer::captureInputs(bool shouldCapture)
         return;
 
     m_captureInputs = shouldCapture;
-    
+
     freeFly.enableUpdate(shouldCapture);
     freeFly.setActive(shouldCapture);
 }
