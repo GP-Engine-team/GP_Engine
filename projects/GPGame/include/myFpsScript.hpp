@@ -92,6 +92,27 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
         RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
 
+        // Test to use a setter
+        RFKField(Inspect("setPrintHello")) 
+        bool printHello = false;
+
+        void setPrintHello(bool p)
+        {
+            if (printHello != p) // Called everytime if no if 
+            {
+                printHello = p;
+
+                if (printHello)
+                {
+                    GPE::Log::getInstance()->log("Hello world!");
+                }
+                else
+                {
+                    GPE::Log::getInstance()->log("Set me to true!");
+                }
+            }
+        }
+
     public:
 
         void rotate(const GPM::Vec2& deltaDisplacement)
