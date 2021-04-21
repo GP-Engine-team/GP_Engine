@@ -17,7 +17,7 @@ namespace Editor
 
 using namespace GPE;
 
-GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
+GLFWwindow* EditorStartup::initDearImGuiProxy(GLFWwindow* window)
 {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -27,8 +27,6 @@ GLFWwindow* EditorStartup::initDearImGui(GLFWwindow* window)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 460");
 
-    auto c = ImGui::GetCurrentContext();
-
     return window;
 }
 
@@ -37,14 +35,14 @@ void EditorStartup::initializeDefaultInputs() const
     GPE::InputManager& inputs = GPE::Engine::getInstance()->inputManager;
 
     // Default editor-specific inputs
-    inputs.bindInput(GLFW_KEY_W, "forward");
-    inputs.bindInput(GLFW_KEY_S, "backward");
-    inputs.bindInput(GLFW_KEY_A, "left");
-    inputs.bindInput(GLFW_KEY_D, "right");
-    inputs.bindInput(GLFW_KEY_SPACE, "up");
+    inputs.bindInput(GLFW_KEY_SPACE,        "up");
     inputs.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-    inputs.bindInput(GLFW_KEY_ESCAPE, "exit");
-    inputs.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
+    inputs.bindInput(GLFW_KEY_D,            "right");
+    inputs.bindInput(GLFW_KEY_A,            "left");
+    inputs.bindInput(GLFW_KEY_W,            "forward");
+    inputs.bindInput(GLFW_KEY_S,            "backward");
+    inputs.bindInput(GLFW_KEY_ESCAPE,       "exit");
+    inputs.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprint");
 
     inputs.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
     GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
@@ -63,7 +61,7 @@ EditorStartup::EditorStartup()
           m_editor.render();
           GPE::Engine::getInstance()->renderer.swapBuffer();
       }},
-      m_editor{initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow()),
+      m_editor{initDearImGuiProxy(GPE::Engine::getInstance()->window.getGLFWWindow()),
                GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
       m_reloadableCpp{gameDllPath}, m_game{nullptr}
 {

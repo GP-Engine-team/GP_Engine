@@ -35,7 +35,7 @@ private:
 	GPE::AbstractGame* m_game;
 
 protected:
-    GLFWwindow* initDearImGui(GLFWwindow* window);
+    GLFWwindow* initDearImGuiProxy(GLFWwindow* window);
 
 	void initializeDefaultInputs() const;
 

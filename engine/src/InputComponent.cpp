@@ -7,19 +7,18 @@ File_GENERATED
 
 #include <functional>
 
-using namespace std;
+    using namespace std;
 using namespace GPE;
 
 InputComponent::InputComponent(GameObject& owner) : Component(owner)
 {
-    m_key = Engine::getInstance()->inputManager.addComponent(this);
+    m_key = Engine::getInstance()->inputManager.addComponent(*this);
 }
 
-InputComponent::InputComponent() 
+InputComponent::InputComponent()
 {
-    m_key = Engine::getInstance()->inputManager.addComponent(this);
+    m_key = Engine::getInstance()->inputManager.addComponent(*this);
 }
-
 
 InputComponent::InputComponent(InputComponent&& other) : Component(other.getOwner())
 {
@@ -52,4 +51,13 @@ void InputComponent::fireAction(const std::string& action) noexcept
         GPE::Function myfunc = it->second;
         myfunc();
     }
+}
+
+void InputComponent::setActive(bool newState) noexcept
+{
+    m_isActivated = newState;
+    if (m_isActivated)
+        Engine::getInstance()->inputManager.addComponent(*this);
+    else
+        Engine::getInstance()->inputManager.removeComponent(m_key);
 }

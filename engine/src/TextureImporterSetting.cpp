@@ -41,7 +41,7 @@ File_GENERATED
 
         int                            currentItem  = (int)m_config.format;
         const std::vector<const char*> combotChoise = m_config.allFormatToString();
-        if (ImGui::Combo("Internal format :", &currentItem, combotChoise.data(), combotChoise.size()))
+        if (ImGui::Combo("Internal format :", &currentItem, combotChoise.data(), static_cast<int>(combotChoise.size())))
         {
             m_config.format = (TextureImportConfig::EFormatType)currentItem;
         }

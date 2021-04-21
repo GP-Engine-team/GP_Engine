@@ -1,3 +1,6 @@
+namespace GPE
+{
+
 inline constexpr bool TransformComponent::isDirty() const
 {
     return m_isDirty;
@@ -120,3 +123,5 @@ inline constexpr const GPM::Vec3& TransformComponent::getScale() const noexcept
 {
     return m_spaceAttribut.scale;
 }
+
+} // namespace GPE

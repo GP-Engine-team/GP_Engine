@@ -30,7 +30,7 @@
     }
 
 #define SETTER_BY_VALUE(variableName, variable)                                                                        \
-    inline void set##variableName(const decltype(variable)& in_##variableName) noexcept                                \
+    inline void set##variableName(const decltype(variable) in_##variableName) noexcept                                 \
     {                                                                                                                  \
         variable = in_##variableName;                                                                                  \
     }

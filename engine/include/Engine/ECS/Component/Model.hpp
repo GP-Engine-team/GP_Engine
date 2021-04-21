@@ -61,13 +61,19 @@ namespace GPE RFKNamespace()
 
         Model()        = default;
         Model& operator=(Model const& other) = delete;
-        Model& operator                      =(Model&& other);
+        Model& operator                      =(Model&& other) noexcept;
 
         void moveTowardScene(class Scene & newOwner) override;
 
         virtual void inspect(InspectContext & context);
 
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
+
         Model_GENERATED
     };
 } // namespace )
-

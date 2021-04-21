@@ -1,5 +1,5 @@
-#include "Engine/ECS/Component/Camera.hpp"
-
+namespace GPE
+{
 inline const Camera::ProjectionInfo& Camera::getProjectionInfo() const noexcept
 {
     return m_projInfo;
@@ -19,3 +19,4 @@ inline const GPM::Mat4& Camera::getProjection() const noexcept
 {
     return m_projection;
 }
+} // namespace GPE
