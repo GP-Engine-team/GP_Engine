@@ -2,7 +2,6 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Intermediate/DataChunk.hpp" //DataChunk
 #include "imgui.h"
-#include <iostream>
 #include <istream>
 #include <sstream>
 
@@ -13,7 +12,7 @@
 #include "Generated/GameObject.rfk.h"
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 unsigned int GameObject::m_currentID = 0;
@@ -265,7 +264,7 @@ std::list<Component*>::iterator GameObject::destroyComponent(Component* pCompone
             return m_pComponents.erase(it);
         }
     }
-    
+
     return m_pComponents.end();
 }
 

@@ -1,5 +1,6 @@
-﻿#define GLFW_INCLUDE_NONE
-#define GLFW_DLL
+#define IMGUI_DEFINE_MATH_OPERATORS
+#define GLFW_INCLUDE_NONE
+
 #include "Game.hpp"
 
 #include "Engine/Resources/Script/FreeFly.hpp"
@@ -33,12 +34,16 @@
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <myFpsScript.hpp>
 
-#include <iostream>
-
 #include "Engine/Resources/Importer/Importer.hpp"
 
+// Third_party
 #include <glad/glad.h> //In first
 #include <glfw/glfw3.h>
+
+#include "imgui/imgui_internal.h"
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/imgui.h>
 
 using namespace GPE;
 using namespace GPM;
@@ -60,12 +65,31 @@ void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
 
 void Game::render()
 {
+    // UI code can be easly move in update because it's not real render function. It however her for simplicity
+    // Initialize a new frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+
+    ImGui::GetIO().DisplaySize = ImVec2((float)m_w, (float)m_h);
+    ImGui::GetIO().MousePos -= ImVec2((float)m_x, (float)m_y);
+
+    ImGui::NewFrame();
+
+    ImGui::SetNextWindowSize(ImVec2{(float)m_w, (float)m_h});
+    ImGui::SetNextWindowPos({0, 0});
+
+    ImGui::Begin("UI", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration);
+
+    // Draw GUI
+    GPE::Engine::getInstance()->behaviourSystem.onGUI();
+    ImGui::End();
+    ImGui::Render();
+
     SceneRenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
     sceneRS.draw(Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
-}
 
-Game::~Game()
-{
+    // draw UI
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 extern "C" GPE::AbstractGame* createGameInstance()
@@ -145,25 +169,17 @@ void loadTree(GameObject& parent, ResourceManagerType& resourceManager, unsigned
 
 void loadSkyboxResource(ResourceManagerType& resourceManager)
 {
-    /*
-    Model::CreateArg& modelArg =
-        resourceManager.add<Model::CreateArg>("SkyboxModel", importeSingleModel("./resources/meshs/Skybox.obj"));
+    Model::CreateArg arg;
 
-    Texture::LoadArg textureArg;
-    textureArg.path             = "./resources/textures/Skybox/skb.bmp";
-    textureArg.flipTexture      = false;
-    textureArg.textureMinFilter = Texture::ETextureMinFilter::LINEAR;
-    textureArg.textureMagFilter = Texture::ETextureMagFilter::LINEAR;
+    SubModel subModel;
+    subModel.pShader               = loadShaderFile("./resources/Skybox.GPShader");
+    subModel.pMaterial             = loadMaterialFile("./resources/Skybox.GPMaterial");
+    subModel.pMesh                 = loadMeshFile("./resources/meshs/Cube.GPMesh");
+    subModel.enableBackFaceCulling = false;
 
-    Material::CreateArg matSkybox;
-    matSkybox.name     = "Skybox";
-    matSkybox.pTexture = &resourceManager.add<Texture>("SkyboxTexture", textureArg);
+    arg.subModels.push_back(subModel);
 
-    modelArg.subModels.front().pMaterial = &resourceManager.add<Material>("SkyboxMaterial", matSkybox);
-    modelArg.subModels.front().pShader = &resourceManager.add<Shader>("SkyboxShader", "./resources/shaders/vSkybox.vs",
-                                                                      "./resources/shaders/fSkybox.fs", SKYBOX);
-    modelArg.subModels.front().pMesh->setBoundingVolumeType(Mesh::EBoundingVolume::NONE);
-    modelArg.subModels.front().enableBackFaceCulling = false;*/
+    resourceManager.add<Model::CreateArg>("SkyboxModel", arg);
 }
 
 void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
@@ -173,8 +189,36 @@ void loadSkyBox(GameObject& parent, ResourceManagerType& resourceManager)
     parent.addChild(skyboxArgGameObject).addComponent<Model>(*resourceManager.get<Model::CreateArg>("SkyboxModel"));
 }
 
+void Game::initDearImGui(GLFWwindow* window)
+{
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 460");
+}
+
+void Game::setViewport(float x, float y, float w, float h)
+{
+    m_x = x;
+    m_y = y;
+    m_w = w;
+    m_h = h;
+}
+
+Game::~Game()
+{
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
+
 Game::Game()
 {
+    initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
+
     sm.addEmpty("main");
     sm.loadScene("main");
 
@@ -256,11 +300,11 @@ Game::Game()
                                               Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug")});
 
     ground.addComponent<Model>(modelArg2);*/
-    // loadSkyboxResource(rm);
-    // loadTreeResource(rm);
+    loadSkyboxResource(rm);
+    loadTreeResource(rm);
 
-    // loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
-    // loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
+    loadSkyBox(sm.getCurrentScene()->getWorld(), rm);
+    loadTree(sm.getCurrentScene()->getWorld(), rm, 100);
 
     ts.addScaledTimer(
         FPLogDelay,

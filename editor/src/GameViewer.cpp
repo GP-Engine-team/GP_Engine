@@ -5,13 +5,14 @@
 #include "glad/glad.h"
 
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 
 namespace Editor
 {
 
-GameViewer::GameViewer(int width, int height)
-    : framebuffer{width, height}, m_captureInputs{false}
-{}
+GameViewer::GameViewer(int width, int height) : framebuffer{width, height}, m_captureInputs{false}
+{
+}
 
 void GameViewer::render(GPE::AbstractGame* game)
 {
@@ -22,6 +23,9 @@ void GameViewer::render(GPE::AbstractGame* game)
     ImGui::Begin("Game view");
     {
         const ImVec2 size{ImGui::GetContentRegionAvail()};
+        game->setViewport(ImGui::GetWindowPos().x + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x,
+                          ImGui::GetWindowPos().y + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y, size.x,
+                          size.y);
 
         framebuffer.resize(static_cast<int>(size.x), static_cast<int>(size.y));
         framebuffer.bind();
@@ -34,4 +38,4 @@ void GameViewer::render(GPE::AbstractGame* game)
     ImGui::PopStyleVar(2);
 }
 
-}
+} // namespace Editor

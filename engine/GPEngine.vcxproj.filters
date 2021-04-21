@@ -31,105 +31,6 @@
     <ClCompile Include="src\Physics\CharacterController\CharacterController.cpp">
       <Filter>src\Physics\CharacterController</Filter>
     </ClCompile>
-    <ClCompile Include="src\ReloadableCpp.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RenderBuffer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RendererGLFW_GL46.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RenderTexture.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Scene.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SceneManager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SceneRenderSystem.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SceneViewer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Shader.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ShaderParser.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SoundSystem.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SpotLight.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TimeSystem.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TransformComponent.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Wave.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\WindowGLFW.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AudioComponent.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BehaviourComponent.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BehaviourSystem.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Camera.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Component.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DirectionalLight.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Engine.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\GameObject.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\InputComponent.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\InputManagerGLFW.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Log.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Material.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Mesh.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Model.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ObjParser.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PointLight.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp">
       <Filter>src\Serialization\xml</Filter>
     </ClCompile>
@@ -141,15 +42,6 @@
     </ClCompile>
     <ClCompile Include="src\Serialization\xml\xmlSaver.cpp">
       <Filter>src\Serialization\xml</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\DataInspector.cpp">
-      <Filter>src\Serialization</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\GPMDataInspector.cpp">
-      <Filter>src\Serialization</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\STDDataInspector.cpp">
-      <Filter>src\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="src\Physics\PhysXSystem.cpp">
       <Filter>src\Physics</Filter>
@@ -184,77 +76,176 @@
     <ClCompile Include="third_party\src\OpenAL_Soft_Debug.cpp">
       <Filter>third_party</Filter>
     </ClCompile>
-    <ClCompile Include="src\Collider.cpp">
-      <Filter>src\Physics\Collisions</Filter>
+    <ClCompile Include="src\FreeFly.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Serialization\ComponentGen.cpp">
+    <ClCompile Include="src\AudioComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BehaviourComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BehaviourSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Collider.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DirectionalLight.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\FileExplorer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Serialization\Slider.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\Serialize.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ResourceImporter.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Light.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Serialization\Inspect.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Importer.cpp">
+    <ClCompile Include="src\FreeFly.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\FunctionPtr.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\FreeFly.cpp">
+    <ClCompile Include="src\GameObject.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Importer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InputComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InputManagerGLFW.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Light.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Log.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Material.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialInspectorPanel.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshInspectorPanel.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelImporterSetting.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ObjParser.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PointLight.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ReloadableCpp.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderBuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RendererGLFW_GL46.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderTexture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceImporter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneRenderSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneViewer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderInspectorPanel.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderParser.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SoundSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpotLight.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextureImporterSetting.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TimeSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TransformComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Wave.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WindowGLFW.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\ComponentGen.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\DataInspector.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\GPEDataInspector.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\GPMDataInspector.cpp">
+      <Filter>src\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="src\Serialization\GPMLoad.cpp">
-      <Filter>src</Filter>
+      <Filter>src\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="src\Serialization\GPMSave.cpp">
-      <Filter>src</Filter>
+      <Filter>src\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\MaterialInspectorPanel.cpp" />
-    <ClCompile Include="src\MeshInspectorPanel.cpp" />
-    <ClCompile Include="src\ModelImporterSetting.cpp" />
-    <ClCompile Include="src\Serialization\GPEDataInspector.cpp" />
-    <ClCompile Include="src\ShaderInspectorPanel.cpp" />
-    <ClCompile Include="src\TextureImporterSetting.cpp" />
+    <ClCompile Include="src\Serialization\Inspect.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\Serialize.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\Slider.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\STDDataInspector.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp">
-      <Filter>include\Physics\Collisions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\CapsuleCollider.hpp">
-      <Filter>include\Physics\Collisions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\Collider.hpp">
-      <Filter>include\Physics\Collisions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\MeshCollider.hpp">
-      <Filter>include\Physics\Collisions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\SphereCollider.hpp">
-      <Filter>include\Physics\Collisions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyDynamic.hpp">
-      <Filter>include\Physics\Rigidbody</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyStatic.hpp">
-      <Filter>include\Physics\Rigidbody</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\PhysXSystem.hpp">
-      <Filter>include\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
       <Filter>third_party\gpm</Filter>
     </ClInclude>
@@ -348,204 +339,6 @@
     <ClInclude Include="third_party\include\KHR\khrplatform.h">
       <Filter>third_party</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\CharacterController\CharacterController.hpp">
-      <Filter>include\Physics\CharacterController</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Debug\Log.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\Callback.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\Hash.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Game\ContextStartup.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Game\AbstractGame.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Color.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Cursor.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\RenderTexture.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\ResourcesManagerType.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\ShaderType.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Type.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Wave.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Sound.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\RenderBuffer.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Script\FreeFly.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\SceneManager.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Material.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Mesh.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Scene.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Shader.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Texture.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Engine.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\GPMDataInspector.hpp">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\Inspect.hpp">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\InspectContext.hpp">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\Serialize.hpp">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\Slider.hpp">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\STDDataInspector.hpp">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\ComponentGen.h">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\DataInspector.hpp">
-      <Filter>include\Serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\xml\xmlLoader.hpp">
-      <Filter>include\Serialization\xml</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\xml\xmlManager.hpp">
-      <Filter>include\Serialization\xml</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\xml\xmlSaver.hpp">
-      <Filter>include\Serialization\xml</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\xml\xmlUtilities.hpp">
-      <Filter>include\Serialization\xml</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\AudioComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Camera.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Component.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\InputComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Model.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Light\DirectionalLight.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Light\Light.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Light\PointLight.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Light\SpotLight.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\BehaviourSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\SoundSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="third_party\imgui\backends\imgui_impl_glfw.h">
       <Filter>third_party\imgui</Filter>
     </ClInclude>
@@ -579,70 +372,279 @@
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp">
       <Filter>third_party</Filter>
     </ClInclude>
-    <ClInclude Include="..\editor\include\Editor\FileExplorer.hpp">
+    <ClInclude Include="include\Engine\Engine.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\STDReflect.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Serialization\xml\xmlLoader.hpp">
+      <Filter>include\Serialization\xml</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\STDSave.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Serialization\xml\xmlManager.hpp">
+      <Filter>include\Serialization\xml</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\GPMSave.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Serialization\xml\xmlSaver.hpp">
+      <Filter>include\Serialization\xml</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\IInspectable.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Serialization\xml\xmlUtilities.hpp">
+      <Filter>include\Serialization\xml</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Serialization\ComponentGen.h">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Serialization\DataInspector.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Tools\FunctionPtr.hpp">
-      <Filter>include</Filter>
+    <ClInclude Include="include\Engine\Serialization\FileExplorer.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="..\editor\include\Editor\FileExplorer.hpp" />
-    <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp" />
-    <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp" />
-    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp" />
-    <ClInclude Include="include\Engine\Serialization\IInspectable.hpp" />
-    <ClInclude Include="include\Engine\Serialization\MaterialInspectorPanel.hpp" />
-    <ClInclude Include="include\Engine\Serialization\MeshInspectorPanel.hpp" />
-    <ClInclude Include="include\Engine\Serialization\ShaderInspectorPanel.hpp" />
-    <ClInclude Include="third_party\include\stb\stb_image.h" />
-    <ClInclude Include="third_party\include\stb\stb_image_write.h" />
-    <ClInclude Include="third_party\include\stb\stb_perlin.h" />
-    <ClInclude Include="include\Engine\Core\Tools\UnrolledListAllocator.hpp">
-      <Filter>include\Core\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\ModelImporterSetting.hpp" />
-    <ClInclude Include="include\Engine\Serialization\TextureImporterSetting.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPEDataInspector.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\GPMDataInspector.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
     <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp">
-      <Filter>include</Filter>
+      <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="third_party\include\stb\stb_perlin.h">
-      <Filter>third_party</Filter>
+    <ClInclude Include="include\Engine\Serialization\GPMSave.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="third_party\include\stb\stb_image.h">
-      <Filter>third_party</Filter>
+    <ClInclude Include="include\Engine\Serialization\IInspectable.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="third_party\include\stb\stb_image_write.h">
-      <Filter>third_party</Filter>
+    <ClInclude Include="include\Engine\Serialization\Inspect.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\InspectContext.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\MaterialInspectorPanel.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\MeshInspectorPanel.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\ModelImporterSetting.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\Serialize.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\ShaderInspectorPanel.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\Slider.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\STDDataInspector.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\STDReflect.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\STDSave.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\TextureImporterSetting.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Color.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Cursor.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Material.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Mesh.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\RenderBuffer.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\RenderTexture.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ResourcesManager.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ResourcesManagerType.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Scene.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\SceneManager.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Shader.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ShaderType.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Sound.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Texture.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Type.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Wave.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
+      <Filter>include\Resources\Importer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp">
+      <Filter>include\Resources\Importer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Script\FreeFly.hpp">
+      <Filter>include\Resources\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp">
+      <Filter>include\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\GameObject.hpp">
+      <Filter>include\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp">
+      <Filter>include\Intermediate\SceneViewer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\BehaviourSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\PhysXSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\SceneRenderSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\SoundSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\TimeSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\AudioComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Camera.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Component.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\InputComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Model.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Light\DirectionalLight.hpp">
+      <Filter>include\ECS\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Light\Light.hpp">
+      <Filter>include\ECS\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Light\PointLight.hpp">
+      <Filter>include\ECS\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Light\SpotLight.hpp">
+      <Filter>include\ECS\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\CharacterController\CharacterController.hpp">
+      <Filter>include\ECS\Component\Physics\CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyDynamic.hpp">
+      <Filter>include\ECS\Component\Physics\Rigidbody</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyStatic.hpp">
+      <Filter>include\ECS\Component\Physics\Rigidbody</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp">
+      <Filter>include\ECS\Component\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\CapsuleCollider.hpp">
+      <Filter>include\ECS\Component\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\Collider.hpp">
+      <Filter>include\ECS\Component\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\MeshCollider.hpp">
+      <Filter>include\ECS\Component\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\SphereCollider.hpp">
+      <Filter>include\ECS\Component\Physics\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
+      <Filter>include\Core\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Debug\Log.hpp">
+      <Filter>include\Core\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Game\AbstractGame.hpp">
+      <Filter>include\Core\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Game\ContextStartup.hpp">
+      <Filter>include\Core\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
+      <Filter>include\Core\HotReload</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
+      <Filter>include\Core\Parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
+      <Filter>include\Core\Parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp">
+      <Filter>include\Core\Parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp">
+      <Filter>include\Core\Rendering\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp">
+      <Filter>include\Core\Rendering\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Callback.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Format.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\FunctionPtr.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Hash.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp">
+      <Filter>include\Core\Tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
-    <None Include="include\Engine\ECS\System\PhysXSystem.inl">
-      <Filter>include\Physics</Filter>
-    </None>
     <None Include="third_party\gpm\include\GPM\conversion.inl">
       <Filter>third_party\gpm</Filter>
     </None>
@@ -670,39 +672,6 @@
     <None Include="third_party\gpm\include\GPM\Vector4.inl">
       <Filter>third_party\gpm</Filter>
     </None>
-    <None Include="include\Engine\Core\Debug\Log.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Core\Tools\Format.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Core\Parsers\ParserTool.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Intermediate\DataChunk.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Intermediate\GameObject.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Resources\Shader.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Resources\Mesh.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Resources\Texture.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Resources\Material.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Resources\ResourcesManager.inl">
-      <Filter>include</Filter>
-    </None>
     <None Include="include\Engine\Serialization\STDDataInspector.inl">
       <Filter>include\Serialization</Filter>
     </None>
@@ -715,55 +684,76 @@
     <None Include="include\Engine\Serialization\xml\xmlSaver.inl">
       <Filter>include\Serialization\xml</Filter>
     </None>
-    <None Include="include\Engine\ECS\Component\Camera.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\ECS\Component\Component.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\ECS\Component\TransformComponent.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\ECS\Component\Light\Light.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\ECS\System\InputManagerGLFW.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\ECS\System\SoundSystem.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\ECS\System\TimeSystem.inl">
-      <Filter>include</Filter>
-    </None>
-    <None Include="include\Engine\Core\Tools\UnrolledListAllocator.inl">
-      <Filter>include\Core\Tools</Filter>
+    <None Include="include\Engine\Serialization\STDDataInspector.inl">
+      <Filter>include\Serialization</Filter>
     </None>
     <None Include="include\Engine\Serialization\STDSave.inl">
-      <Filter>include</Filter>
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Material.inl">
+      <Filter>include\Resources</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Mesh.inl">
+      <Filter>include\Resources</Filter>
+    </None>
+    <None Include="include\Engine\Resources\ResourcesManager.inl">
+      <Filter>include\Resources</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Shader.inl">
+      <Filter>include\Resources</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Texture.inl">
+      <Filter>include\Resources</Filter>
     </None>
     <None Include="include\Engine\Resources\Script\FreeFly.inl">
-      <Filter>include</Filter>
+      <Filter>include\Resources\Script</Filter>
+    </None>
+    <None Include="include\Engine\Intermediate\DataChunk.inl">
+      <Filter>include\Intermediate</Filter>
+    </None>
+    <None Include="include\Engine\Intermediate\GameObject.inl">
+      <Filter>include\Intermediate</Filter>
+    </None>
+    <None Include="include\Engine\ECS\System\InputManagerGLFW.inl">
+      <Filter>include\ECS\System</Filter>
+    </None>
+    <None Include="include\Engine\ECS\System\PhysXSystem.inl">
+      <Filter>include\ECS\System</Filter>
+    </None>
+    <None Include="include\Engine\ECS\System\SoundSystem.inl">
+      <Filter>include\ECS\System</Filter>
+    </None>
+    <None Include="include\Engine\ECS\System\TimeSystem.inl">
+      <Filter>include\ECS\System</Filter>
+    </None>
+    <None Include="include\Engine\ECS\Component\Camera.inl">
+      <Filter>include\ECS\Component</Filter>
+    </None>
+    <None Include="include\Engine\ECS\Component\Component.inl">
+      <Filter>include\ECS\Component</Filter>
+    </None>
+    <None Include="include\Engine\ECS\Component\TransformComponent.inl">
+      <Filter>include\ECS\Component</Filter>
+    </None>
+    <None Include="include\Engine\ECS\Component\Light\Light.inl">
+      <Filter>include\ECS\Component\Light</Filter>
+    </None>
+    <None Include="include\Engine\Core\Debug\Log.inl">
+      <Filter>include\Core\Debug</Filter>
+    </None>
+    <None Include="include\Engine\Core\Parsers\ParserTool.inl">
+      <Filter>include\Core\Parsers</Filter>
+    </None>
+    <None Include="include\Engine\Core\Rendering\Window\WindowGLFW.inl">
+      <Filter>include\Core\Rendering\Window</Filter>
+    </None>
+    <None Include="include\Engine\Core\Tools\Format.inl">
+      <Filter>include\Core\Tools</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
       <UniqueIdentifier>{5e2530e7-0724-4e95-a72d-388f56ce908f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\Physics">
-      <UniqueIdentifier>{a8f874fe-9a93-4b9f-9199-77958d8ab04f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\Physics\Collisions">
-      <UniqueIdentifier>{01bcb32d-31db-4b48-86aa-05478c16711f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\Physics\Rigidbody">
-      <UniqueIdentifier>{79f363b4-5a2a-4bd2-88c5-c87472cf2546}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\Serialization">
-      <UniqueIdentifier>{ff3b6198-07e8-4978-bce3-299123c781a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\Serialization\xml">
-      <UniqueIdentifier>{d0d6e35c-32d3-4970-be29-c8b4af574980}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{000e1053-6ae7-4555-88fa-1680885403d6}</UniqueIdentifier>
@@ -789,9 +779,6 @@
     <Filter Include="third_party\gpm">
       <UniqueIdentifier>{a2407ea9-052e-4dda-94fb-8a6a09d22eba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\Physics\CharacterController">
-      <UniqueIdentifier>{316718b7-fbdb-47d7-9c33-5efe87ec9f4e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Physics\CharacterController">
       <UniqueIdentifier>{67371112-0edc-4f27-b001-58415d8398de}</UniqueIdentifier>
     </Filter>
@@ -799,10 +786,76 @@
       <UniqueIdentifier>{6dfd1f98-6fbb-49fc-b799-938084eb316d}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\Core">
-      <UniqueIdentifier>{fd36de29-0290-4a8e-80b8-7dcc9217d2a4}</UniqueIdentifier>
+      <UniqueIdentifier>{8dd125de-6389-4ccb-8a73-fe1bdb8e17d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS">
+      <UniqueIdentifier>{789f34aa-fb56-4554-ae83-4beb283ca67f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Intermediate">
+      <UniqueIdentifier>{14ec765b-4a34-4022-893c-c004decafc21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Resources">
+      <UniqueIdentifier>{3bb607de-8e4f-4aa5-a5f7-7cc826dc4bbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Serialization">
+      <UniqueIdentifier>{d8be271a-bd21-44c9-842d-dd75b06b98d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Serialization\xml">
+      <UniqueIdentifier>{3fe42e6f-e2eb-4a89-8af7-2ba1b2f2a922}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Resources\Importer">
+      <UniqueIdentifier>{fb37b171-a2c3-48c9-a606-9fc2b48247ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Resources\Script">
+      <UniqueIdentifier>{3668d6c9-fe4c-40ff-8410-fb439f80802d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Intermediate\SceneViewer">
+      <UniqueIdentifier>{0efba322-abf5-4a6f-aa49-7de1f24b74ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\Component">
+      <UniqueIdentifier>{e7fe6379-f948-4b65-9dad-21cd46be25ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\System">
+      <UniqueIdentifier>{cee9e4b6-7fce-4fc2-8c78-d5a418b14641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\Component\Light">
+      <UniqueIdentifier>{2e7f539f-b6e9-487e-8851-0220defda875}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\Component\Physics">
+      <UniqueIdentifier>{758b5af2-de9e-435d-9fe5-d8a0bd381828}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\Component\Physics\CharacterController">
+      <UniqueIdentifier>{858fd582-7868-4b02-8a0a-a81b09087f38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\Component\Physics\Collisions">
+      <UniqueIdentifier>{c9757943-57ff-42de-8a53-3b01c0312aaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\Component\Physics\Rigidbody">
+      <UniqueIdentifier>{c944e1a1-4a35-4615-8465-f56569a8c40e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Core\Debug">
+      <UniqueIdentifier>{5e50119f-b46d-4abd-b3bf-f2003f18bec0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Core\Game">
+      <UniqueIdentifier>{b3c79f53-d4fb-4078-86f7-b3994b849c95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Core\HotReload">
+      <UniqueIdentifier>{96c32d83-24ac-4a82-a3bd-94c7f8619eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Core\Parsers">
+      <UniqueIdentifier>{e028e6cc-ce9d-4aea-b0c0-b0861b0d33f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Core\Rendering">
+      <UniqueIdentifier>{276d9617-8663-4173-9f8d-67cb222b99cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Core\Rendering\Renderer">
+      <UniqueIdentifier>{dc424aa2-76fc-4f31-b40f-962ea791f99e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Core\Rendering\Window">
+      <UniqueIdentifier>{a75dc348-3fb0-4a21-b54d-35a9243079b7}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\Core\Tools">
-      <UniqueIdentifier>{b4725415-cc95-4202-82c3-4d47db08ccf7}</UniqueIdentifier>
+      <UniqueIdentifier>{76d92f2b-f611-41b7-aa82-035d95a366d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

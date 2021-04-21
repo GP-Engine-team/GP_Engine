@@ -9,10 +9,13 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
                         std::function<void(double unscaledDeltaTime, double deltaTime)>           updateFunction,
                         std::function<void()> renderFunction) noexcept
 {
-    /*First render the current frame*/
+    /*unfixed update*/
+    updateFunction(m_unscaledDeltaTime, m_deltaTime);
+
+    /*render the current frame*/
     renderFunction();
 
-    /*Second, prepar the next frame*/
+    /*Prepar the next frame*/
     m_tempTime          = std::chrono::steady_clock::now();
     m_unscaledDeltaTime = std::chrono::duration<double>(m_tempTime - m_time).count();
     m_time              = m_tempTime;
@@ -67,7 +70,4 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
         }
         m_scaledTimerQueue.pop();
     }
-
-    /*unfixed update*/
-    updateFunction(m_unscaledDeltaTime, m_deltaTime);
 }

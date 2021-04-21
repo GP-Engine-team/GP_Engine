@@ -37,14 +37,19 @@ extern "C" void setImguiCurrentContext(ImGuiContext* ctx)
     ImGui::SetCurrentContext(ctx);
 }
 
-extern "C" GAME_API void saveScene(XmlSaver& context, GPE::Scene* scene)
+extern "C" ImGuiContext* getGameUIContext()
+{
+    return ImGui::GetCurrentContext();
+}
+
+extern "C" void saveScene(XmlSaver& context, GPE::Scene* scene)
 {
     //GPE::Engine::getInstance()->sceneManager.getCurrentScene()->save(context);
     context.addWeakPtr(scene);
     scene->save(context);
 }
 
-extern "C" GAME_API void loadScene(XmlLoader& context, GPE::Scene* scene)
+extern "C" void loadScene(XmlLoader& context, GPE::Scene* scene)
 {
     context.addPersistentPtr(scene);
 

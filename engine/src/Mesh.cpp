@@ -8,7 +8,6 @@
 
 #include <glad/glad.h>
 
-#include <iostream>
 #include <limits>
 
 using namespace GPE;

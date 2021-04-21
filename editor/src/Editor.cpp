@@ -2,18 +2,18 @@
 
 // Engine
 #include "Engine/Core/Game/AbstractGame.hpp"
-#include "Engine/Core/HotReload/ReloadableCpp.hpp"
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "Engine/Resources/SceneManager.hpp"
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/IInspectable.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
 
 // Editor
 #include "Editor/ExternalDeclarations.hpp"
+#include "Engine/Core/HotReload/ReloadableCpp.hpp"
+#include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/InspectContext.hpp"
+#include "Engine/Serialization/IInspectable.hpp"
 
 // Third-party
 #include "GLFW/glfw3.h"
@@ -21,6 +21,8 @@
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include <imgui/imgui.h>
+
+using namespace GPE;
 
 // Hint to use GPU if available
 extern "C"
@@ -130,7 +132,6 @@ void Editor::renderLevelEditor()
 {
     m_sceneEditor.render(m_inspectedObject);
 }
-
 
 void Editor::renderGameView(GPE::AbstractGame* game)
 {
@@ -271,10 +272,16 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
 
 void Editor::update(GPE::AbstractGame* game)
 {
+    auto syncImGui  = GET_PROCESS((*m_reloadableCpp), setImguiCurrentContext);
+    auto syncGameUI = GET_PROCESS((*m_reloadableCpp), getGameUIContext);
+
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
+    ImGuiContext* gameContext = syncGameUI();
+    syncImGui(ImGui::GetCurrentContext());
 
     // Start drawing
     if (m_showAppStyleEditor)
@@ -282,25 +289,27 @@ void Editor::update(GPE::AbstractGame* game)
         renderStyleEditor();
     }
 
+    // Editor
     renderMenuBar();
 
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
     renderGameControlBar();
     renderLevelEditor();
-    renderGameView(game);
     renderSceneGraph();
     renderExplorer();
     renderInspector();
 
     if (m_showImGuiDemoWindows)
         ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
+
+    // Game
+    syncImGui(gameContext);
+    renderGameView(game);
 }
 
-void Editor::render(GPE::AbstractGame* game)
+void Editor::render()
 {
-    update(game);
-
     ImGui::Render();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0u);
