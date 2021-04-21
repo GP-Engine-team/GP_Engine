@@ -8,7 +8,7 @@
 
 #include "CustomFileParserFactory.hpp"
 
-void generateEngineFiles(const std::string& engineDir)
+void generateEngineFiles(const std::string& engineDir, bool forceRegenerateAll = false)
 {
     std::cout << "GENERATE ENGINE" << std::endl;
 
@@ -52,10 +52,10 @@ void generateEngineFiles(const std::string& engineDir)
 
     // You will need to setup parsing settings and generation settings here.
     // Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, false);
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, forceRegenerateAll);
 }
 
-void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
+void generateGameFiles(const std::string& gameDir, const std::string& engineDir, bool forceRegenerateAll = false)
 {
     std::cout << "GENERATE GAME" << std::endl;
 
@@ -95,7 +95,7 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir)
 
     // You will need to setup parsing settings and generation settings here.
     // Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, true);
+    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, forceRegenerateAll);
 }
 
 // First Arg : Engine  (default : "../engine/")
@@ -114,11 +114,11 @@ int main(int argc, char** argv)
         switch (argc)
         {
         case 2:
-            generateEngineFiles(argv[1]);
+            generateEngineFiles(argv[1], false);
             break;
 
         case 3:
-            generateGameFiles(argv[2], argv[1]);
+            generateGameFiles(argv[2], argv[1], false);
             break;
 
         default:
@@ -132,8 +132,8 @@ int main(int argc, char** argv)
             "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/../../engine/";
         const char* p1 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/";
 
-        generateGameFiles(p1, p2);
-        generateEngineFiles(p2);
+        generateEngineFiles(p2, true);
+        generateGameFiles(p1, p2, true);
     }
     return 0;
 }

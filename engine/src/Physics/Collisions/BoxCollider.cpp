@@ -1,6 +1,9 @@
 ﻿#include <Engine/Engine.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
 
+// Generated
+#include "Generated/BoxCollider.rfk.h"
+
 File_GENERATED
 
 using namespace GPE;

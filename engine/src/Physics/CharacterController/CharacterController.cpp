@@ -27,15 +27,15 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
 
 CharacterController::CharacterController() noexcept
 {
-    physx::PxCapsuleControllerDesc desc;
+    //physx::PxCapsuleControllerDesc desc;
 
-    desc.height   = 1;
-    desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
-    desc.radius   = 1;
+    //desc.height   = 1;
+    //desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
+    //desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
+    //desc.radius   = 1;
 
-    controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
-    GPE::Engine::getInstance()->physXSystem.addComponent(this);
+    //controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
+    //GPE::Engine::getInstance()->physXSystem.addComponent(this);
 }
 
 void CharacterController::update(float deltaTime) noexcept
@@ -100,5 +100,5 @@ void CharacterController::setJumping(float jumping) noexcept
 
 CharacterController::~CharacterController() noexcept
 {
-    controller->release();
+    //controller->release();
 }

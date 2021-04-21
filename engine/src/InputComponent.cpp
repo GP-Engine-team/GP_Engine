@@ -1,13 +1,14 @@
 ﻿#include "Engine/ECS/Component/InputComponent.hpp"
-
-File_GENERATED
-
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Engine.hpp"
 
 #include <functional>
 
-    using namespace std;
+// Generated
+#include "Generated/InputComponent.rfk.h"
+File_GENERATED
+
+using namespace std;
 using namespace GPE;
 
 InputComponent::InputComponent(GameObject& owner) : Component(owner)

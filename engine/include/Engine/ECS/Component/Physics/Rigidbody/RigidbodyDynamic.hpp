@@ -22,7 +22,7 @@ class RFKClass(Serialize(), ComponentGen) RigidbodyDynamic : public Component
 public:
     RigidbodyDynamic(GameObject& owner) noexcept;
 
-    RigidbodyDynamic() noexcept                              = delete;
+    RigidbodyDynamic() noexcept                              = default;
     RigidbodyDynamic(const RigidbodyDynamic& other) noexcept = delete;
     RigidbodyDynamic(RigidbodyDynamic&& other) noexcept      = default;
     RigidbodyDynamic& operator=(RigidbodyDynamic const& other) noexcept = delete;

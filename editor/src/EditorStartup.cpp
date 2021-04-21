@@ -84,6 +84,9 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, setLogInstance);
     ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
     ADD_PROCESS(m_reloadableCpp, getGameUIContext);
+    ADD_PROCESS(m_reloadableCpp, saveScene);
+    ADD_PROCESS(m_reloadableCpp, loadScene);
+    ADD_PROCESS(m_reloadableCpp, getGameUIContext);
     ADD_PROCESS(m_reloadableCpp, saveCurrentScene);
     ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
 

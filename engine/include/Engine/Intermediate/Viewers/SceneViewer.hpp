@@ -19,7 +19,7 @@ class SceneViewer
 {
 // ==== Data members ====
 public:
-    GameObject    cameraOwner;
+    GameObject*    cameraOwner = nullptr;
     FreeFly&      freeFly;
     Camera&       camera;
     Scene*        pScene;
@@ -60,6 +60,7 @@ public:
 
     void         resize                (int width, int height);
     void         bindScene             (Scene& scene);
+    void         unbindScene           ();
     void         render                ()                       const;
     void         captureInputs         (bool shouldCapture);
 };

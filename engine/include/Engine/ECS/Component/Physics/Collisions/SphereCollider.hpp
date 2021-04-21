@@ -23,7 +23,7 @@ public:
 
     virtual ~SphereCollider() noexcept = default;
 
-    SphereCollider() noexcept                            = delete;
+    SphereCollider() noexcept                            = default;
     SphereCollider(const SphereCollider& other) noexcept = delete;
     SphereCollider(SphereCollider&& other) noexcept      = default;
     SphereCollider& operator=(SphereCollider const& other) noexcept = delete;
