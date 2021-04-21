@@ -54,12 +54,12 @@ namespace GPE RFKNamespace()
         Light()        = default;
         Light& operator=(const Light& other) = delete;
 
-        inline Light& operator=(Light&& other);
+        inline Light& operator=(Light&& other) noexcept;
 
         void moveTowardScene(Scene & newOwner) final
         {
-            getOwner().pOwnerScene->sceneRenderer.removeLight(this);
-            newOwner.sceneRenderer.addLight(this);
+            getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
+            newOwner.sceneRenderer.addLight(*this);
         }
 
         virtual void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept
@@ -92,9 +92,15 @@ namespace GPE RFKNamespace()
         inline void setDiffuse(const GPM::Vec4& newDiffuse) noexcept;
         inline void setSpecular(const GPM::Vec4& newSpecular) noexcept;
 
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
+
         Light_GENERATED
     };
+} // namespace )
 
 #include "Light.inl"
-
-} // namespace )

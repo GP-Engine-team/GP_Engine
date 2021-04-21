@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/ECS/System/SceneRenderSystem.hpp"
+#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
 #include <string> // std::string
@@ -25,7 +25,7 @@ protected:
         m_loadedResourcesPath; // Indicate witch resource is loaded with counter
 
 public:
-    SceneRenderSystem sceneRenderer;
+    RenderSystem sceneRenderer;
 
 public:
     Scene() noexcept;

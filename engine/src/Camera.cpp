@@ -1,6 +1,6 @@
 ﻿#include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
-#include "Engine/ECS/System/SceneRenderSystem.hpp"
+#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/Resources/Scene.hpp"
 #include "GPM/Transform.hpp"
 #include "GPM/Vector3.hpp"
@@ -9,7 +9,7 @@
 
 File_GENERATED
 
-using namespace GPM;
+    using namespace GPM;
 
 namespace GPE
 {
@@ -41,8 +41,8 @@ void Camera::updateProjection()
 
 void Camera::moveTowardScene(class Scene& newOwner)
 {
-    getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
-    newOwner.sceneRenderer.addCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
+    newOwner.sceneRenderer.addCamera(*this);
 }
 
 Camera::Camera(GameObject& owner) noexcept : Camera(owner, PerspectiveCreateArg{})
@@ -65,7 +65,7 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
 
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.znear, m_projInfo.zfar);
 
-    getOwner().pOwnerScene->sceneRenderer.addCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
     getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     updateView();
 
@@ -89,7 +89,7 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
     m_projection =
         Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
 
-    getOwner().pOwnerScene->sceneRenderer.addCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
     getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     updateView();
 
@@ -99,7 +99,7 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
 Camera::~Camera() noexcept
 {
     getOwner().getTransform().OnUpdate -= GPE::Function::make(this, "updateView");
-    getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
+    getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
 }
 
 Camera& Camera::operator=(Camera&& other) noexcept
@@ -122,6 +122,7 @@ void Camera::setFovY(const float fovY) noexcept
     m_projInfo.vSide = m_projInfo.zfar * tanf(m_projInfo.fovY * .5f) * 2.f;
 
     updateProjection();
+    updateView();
 }
 
 void Camera::setAspect(const float newAspect) noexcept
@@ -131,6 +132,7 @@ void Camera::setAspect(const float newAspect) noexcept
     m_projInfo.hSide  = m_projInfo.zfar * tanf(m_projInfo.fovX * .5f) * 2.f;
 
     updateProjection();
+    updateView();
 }
 
 Frustum Camera::getFrustum() const noexcept
@@ -153,6 +155,16 @@ Frustum Camera::getFrustum() const noexcept
 
     return frustum;
 }
+
+void Camera::setActive(bool newState) noexcept
+{
+    m_isActivated = newState;
+    if (m_isActivated)
+        getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
+    else
+        getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
+}
+
 /*
 Frustum Camera::getFrustum() const noexcept
 {

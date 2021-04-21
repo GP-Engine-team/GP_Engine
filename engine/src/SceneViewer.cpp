@@ -53,11 +53,10 @@ void SceneViewer::initializeFramebuffer()
     }
 }
 
-
 void SceneViewer::initializePickingFBO()
 {
     // low sampling (we don't need 4K texture to select element)
-    FBOIDwidth  = static_cast<int>(ceilf(width  * INV_DOWN_SAMPLING_COEF));
+    FBOIDwidth  = static_cast<int>(ceilf(width * INV_DOWN_SAMPLING_COEF));
     FBOIDheight = static_cast<int>(ceilf(height * INV_DOWN_SAMPLING_COEF));
 
     // Create FBO
@@ -95,9 +94,6 @@ void SceneViewer::initializePickingFBO()
     }
 }
 
-
-
-
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     : cameraOwner    {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
@@ -129,8 +125,8 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
 
 SceneViewer::~SceneViewer()
 {
-    //cameraOwner.destroyUniqueComponentNow<Camera>();
-    //cameraOwner.destroyUniqueComponentNow<FreeFly>();
+    // cameraOwner.destroyUniqueComponentNow<Camera>();
+    // cameraOwner.destroyUniqueComponentNow<FreeFly>();
     pScene->getWorld().children.erase(it);
 
     glDeleteFramebuffers(1, &framebufferID);
@@ -142,7 +138,6 @@ SceneViewer::~SceneViewer()
     glDeleteRenderbuffers(1, &FBOIDdepthID);
 }
 
-
 unsigned int SceneViewer::getHoveredGameObjectID() const
 {
     // Render the picking texture in the identifier FBO
@@ -153,29 +148,28 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
 
     glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
 
-    SceneRenderSystem renderSys{pScene->sceneRenderer};
+    RenderSystem renderSys{pScene->sceneRenderer};
     renderSys.draw(Engine::getInstance()->resourceManager, renderSys.gameObjectIdentifierPipeline());
 
     // Find the hovered game object, if any
     unsigned int pixel = 0u;
-    int x, y;
+    int          x, y;
 
     { // Find the coordinates of the pixel to read
         const ImVec2 currentScreenStart = ImGui::GetCursorScreenPos();
         const ImVec2 cursPos            = ImGui::GetMousePos();
-        const ImVec2 cursorRelativePos   {ceilf((cursPos.x - currentScreenStart.x)),
-                                          ceilf((cursPos.y - currentScreenStart.y))};
+        const ImVec2 cursorRelativePos{ceilf((cursPos.x - currentScreenStart.x)),
+                                       ceilf((cursPos.y - currentScreenStart.y))};
 
         x = static_cast<GLint>(cursorRelativePos.x * INV_DOWN_SAMPLING_COEF);
         y = static_cast<GLint>((static_cast<float>(height) - cursorRelativePos.y) * INV_DOWN_SAMPLING_COEF);
     }
-    
+
     glReadPixels(x, y, 1u, 1u, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
     glBindFramebuffer(GL_FRAMEBUFFER, 0u);
 
     return pixel;
 }
-
 
 void SceneViewer::resize(int width_, int height_)
 {
@@ -195,12 +189,11 @@ void SceneViewer::resize(int width_, int height_)
     glBindRenderbuffer(GL_RENDERBUFFER, depthStencilID);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, width, height);
 
-    camera.setAspect(width / (float)height);
-
+    camera.setAspect(Camera::computeAspect(width, height));
 
     // ==== Update selection framebuffer ====
     // Low sampling (we don't need 4K texture to select element)
-    FBOIDwidth  = static_cast<int>(ceilf(width_  * INV_DOWN_SAMPLING_COEF));
+    FBOIDwidth  = static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF));
     FBOIDheight = static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF));
 
     // Resize texture and depth buffers
@@ -231,6 +224,7 @@ void SceneViewer::bindScene(Scene& scene)
     }
 
     // Update the Camera component and cameraOwner scene and parent
+
     // 
     // SERIALIZATION CRASH : TODO : use setActive(false) when done, 
     //to remove camera from the old scene without adding it to a new scene
@@ -249,7 +243,7 @@ void SceneViewer::unbindScene()
 void SceneViewer::render() const
 {
     camera.updateView();
-    
+
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
@@ -262,7 +256,7 @@ void SceneViewer::captureInputs(bool shouldCapture)
         return;
 
     m_captureInputs = shouldCapture;
-    
+
     freeFly.enableUpdate(shouldCapture);
     freeFly.setActive(shouldCapture);
 }

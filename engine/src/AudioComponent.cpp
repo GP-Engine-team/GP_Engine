@@ -7,7 +7,7 @@
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace std;
 
 AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
@@ -125,4 +125,13 @@ void AudioComponent::stopSound(const char* name) noexcept
     SourceData* source = findSource(name);
     AL_CALL(alSourceStop, source->source);
     source->state = AL_STOPPED;
+}
+
+void AudioComponent::setActive(bool newState) noexcept
+{
+    m_isActivated = newState;
+    if (m_isActivated)
+        Engine::getInstance()->soundSystem.addComponent(this);
+    else
+        Engine::getInstance()->soundSystem.removeComponent(m_key);
 }

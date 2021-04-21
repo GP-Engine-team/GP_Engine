@@ -34,14 +34,12 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect(), Serialize()) 
-        GPM::SplitTransform m_spaceAttribut;
-        GPM::Transform      m_transform = GPM::toTransform(m_spaceAttribut);
-        bool                m_isDirty   = false;
+        RFKField(Inspect(), Serialize()) GPM::SplitTransform m_spaceAttribut;
+        GPM::Transform                                       m_transform = GPM::toTransform(m_spaceAttribut);
+        bool                                                 m_isDirty   = false;
 
     public:
-        RFKField(Serialize()) 
-        Event OnUpdate;
+        RFKField(Serialize()) Event OnUpdate;
 
     public:
         TransformComponent(GameObject & refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
@@ -110,8 +108,6 @@ namespace GPE RFKNamespace()
 
         TransformComponent_GENERATED
     };
-
-#include "TransformComponent.inl"
-
 } // namespace )
 
+#include "TransformComponent.inl"

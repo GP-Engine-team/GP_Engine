@@ -95,7 +95,7 @@ bool CharacterController::canJump() noexcept
 void CharacterController::setJumping(float jumping) noexcept
 {
     m_jumping       = jumping;
-    m_startJumpTime = Engine::getInstance()->timeSystem.getAccumulatedTime();
+    m_startJumpTime = static_cast<float>(Engine::getInstance()->timeSystem.getAccumulatedTime());
 }
 
 CharacterController::~CharacterController() noexcept
