@@ -22,7 +22,7 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
@@ -249,6 +249,8 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
 
 void Model::inspect(InspectContext& context)
 {
+    Component::inspect(context);
+
     ImGuiTreeNodeFlags nodeFlag =
         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 

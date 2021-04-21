@@ -13,8 +13,10 @@
 #include "Engine/Serialization/Serialize.hpp"
 #include "Engine/Serialization/xml/xmlLoader.hpp"
 #include "Engine/Serialization/xml/xmlSaver.hpp"
-#include "Generated/Component.rfk.h"
 #include "Refureku/Object.h"
+
+// Generated
+#include "Generated/Component.rfk.h"
 
 namespace GPE RFKNamespace()
 {
@@ -27,7 +29,7 @@ namespace GPE RFKNamespace()
     {
     protected:
         RFKField(Serialize()) GameObject*     m_gameObject{nullptr}; // can not be ref for move
-        RFKField(Inspect(), Serialize()) bool m_isActivated{true};
+        RFKField(Inspect("setActive"), Serialize()) bool m_isActivated{true};
 
     public:
         inline Component(GameObject & owner) noexcept;
