@@ -1,11 +1,9 @@
-﻿#include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "GPM/DebugOutput.hpp"
-#include <Engine/Core/Debug/Log.hpp>
+﻿#include <Engine/ECS/System/InputManagerGLFW.hpp>
+
 #include <Engine/Engine.hpp>
 #include <GLFW/glfw3.h>
-#include <backends/imgui_impl_glfw.h>
-#include <imgui.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/imgui.h>
 
 using namespace std;
 using namespace GPE;
@@ -90,12 +88,14 @@ void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, doubl
 {
     if (m_cursor.tracked)
     {
-        m_cursor.deltaPos =
-            Vec2{static_cast<GPM::f32>(xpos) - m_cursor.position.x, static_cast<GPM::f32>(ypos) - m_cursor.position.y};
+        // GLFW cursor position is expressed relative to the top-left corner of the screen
+        // Internally, we represent deltaPos' y-axis going up, not down like GLFW
+        m_cursor.deltaPos.x = f32(xpos) - m_cursor.position.x;
+        m_cursor.deltaPos.y = m_cursor.position.y - f32(ypos);
     }
 
-    m_cursor.position.x = static_cast<GPM::f32>(xpos);
-    m_cursor.position.y = static_cast<GPM::f32>(ypos);
+    m_cursor.position.x = f32(xpos);
+    m_cursor.position.y = f32(ypos);
 }
 
 void setCursorCallback(GLFWwindow* window, double xpos, double ypos) noexcept
