@@ -51,12 +51,12 @@ namespace GPE
     {
         if (deltaDisplacement.sqrLength() > .16f)
         {
-            const GPM::Quaternion newRot =
-                getOwner().getTransform().getSpacialAttribut().rotation *
-                GPM::Quaternion::angleAxis(deltaDisplacement.y * m_rotationSpeed, {1.f, .0f, .0f});
-
             getOwner().getTransform().setRotation(
-                GPM::Quaternion::angleAxis(deltaDisplacement.x * m_rotationSpeed, {.0f, 1.f, .0f}) * newRot);
+                getOwner().getTransform().getSpacialAttribut().rotation *
+                GPM::Quaternion::angleAxis(-deltaDisplacement.y * m_rotationSpeed, {1, 0, 0}));
+            getOwner().getTransform().setRotation(
+                GPM::Quaternion::angleAxis(-deltaDisplacement.x * m_rotationSpeed, {0, 1, 0}) *
+                getOwner().getTransform().getSpacialAttribut().rotation);
         }
     }
 

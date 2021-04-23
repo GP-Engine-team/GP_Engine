@@ -277,6 +277,11 @@ void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
     m_currentBackFaceCullingModeEnable = useBackFaceCulling;
 }
 
+void RenderSystem::setMainCamera(Camera& newMainCamera) noexcept
+{
+    m_mainCamera = &newMainCamera;
+}
+
 void RenderSystem::resetCurrentRenderPassKey()
 {
     m_currentShaderID                  = 0;
@@ -297,7 +302,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
     return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*>& pRenderers,
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape,
-              std::vector<DebugLine>& debugLines)
+              std::vector<DebugLine>& debugLines, Camera& mainCamera)
 
     {
         if (pCameras.empty())
@@ -309,7 +314,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Frustum camFrustum = pCameras[0]->getFrustum();
+        Frustum camFrustum = mainCamera.getFrustum();
 
         rs.resetCurrentRenderPassKey();
 
@@ -334,7 +339,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[0], *pSubModel->pShader, *pSubModel);
+                rs.sendModelDataToShader(mainCamera, *pSubModel->pShader, *pSubModel);
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -350,7 +355,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 if (rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    float distance = (pCameras[0]->getOwner().getTransform().getGlobalPosition() -
+                    float distance = (mainCamera.getOwner().getTransform().getGlobalPosition() -
                                       (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
                                          .sqrLength();
                     mapElemSortedByDistance[distance] = pSubModel;
@@ -368,7 +373,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[0], *it->second->pShader, *it->second);
+                rs.sendModelDataToShader(mainCamera, *it->second->pShader, *it->second);
                 rs.drawModelPart(*it->second);
             };
         }
@@ -386,7 +391,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
 
                     shaderToUse->setMat4("projectViewModelMatrix",
-                                         (pCameras[0]->getProjectionView() * shape.transform.model).e);
+                                         (mainCamera.getProjectionView() * shape.transform.model).e);
 
                     shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
 
@@ -421,7 +426,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     glEnableVertexAttribArray(0);
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 
-                    shaderToUse->setMat4("projectViewModelMatrix", pCameras[0]->getProjectionView().e);
+                    shaderToUse->setMat4("projectViewModelMatrix", mainCamera.getProjectionView().e);
 
                     shaderToUse->setVec4("Color", line.color.r, line.color.g, line.color.b, line.color.a);
 
@@ -454,8 +459,8 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
     return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*>& pRenderers,
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
-              std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine) {
-
+              std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
+              Camera& mainCamera) {
         if (pCameras.empty())
             return;
 
@@ -465,7 +470,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
         glClearColor(0.f, 0.f, 0.f, 0.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        const Frustum camFrustum = pCameras[0]->getFrustum();
+        const Frustum camFrustum = mainCamera.getFrustum();
 
         Shader& shaderGameObjectIdentifier =
             *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
@@ -486,8 +491,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
 
                 shaderGameObjectIdentifier.setMat4(
                     "projectViewModelMatrix",
-                    (pCameras[0]->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                        .e);
+                    (mainCamera.getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix()).e);
                 rs.drawModelPart(*pSubModel);
             }
 
@@ -504,8 +508,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
 
                 shaderGameObjectIdentifier.setMat4(
                     "projectViewModelMatrix",
-                    (pCameras[0]->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                        .e);
+                    (mainCamera.getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix()).e);
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -516,8 +519,14 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
 
 void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
 {
+    if (m_mainCamera == nullptr)
+    {
+        GPE_ASSERT(!m_pCameras.empty(), "Empty main camera");
+        m_mainCamera = m_pCameras[0];
+    }
+
     renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_debugShape, m_debugLine);
+                   m_debugShape, m_debugLine, *m_mainCamera);
 }
 
 void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, EDebugShapeMode mode,

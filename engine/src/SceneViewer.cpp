@@ -96,23 +96,18 @@ void SceneViewer::initializePickingFBO()
 
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : cameraOwner    {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
-      freeFly        {cameraOwner->addComponent<FreeFly>()},
-      camera         {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{width_ / (float)height_, .001f, 1000.f, 90.f})},
-      pScene         {&viewed},
-      it             {viewed.getWorld().children.emplace(viewed.getWorld().children.end(), cameraOwner)},
-      textureID      {0u},
-      depthStencilID {0u},
-      framebufferID  {0u},
-      FBOIDtextureID {0u},
-      FBOIDdepthID   {0u},
-      FBOIDframebufferID{0u},
-      FBOIDwidth     {static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight    {static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
-      width          {width_},
-      height         {height_},
+    : cameraOwner{new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
+      freeFly{cameraOwner->addComponent<FreeFly>()}, camera{cameraOwner->addComponent<Camera>(
+                                                         Camera::PerspectiveCreateArg{width_ / (float)height_, .001f,
+                                                                                      1000.f, 90.f})},
+      pScene{&viewed}, it{viewed.getWorld().children.emplace(viewed.getWorld().children.end(), cameraOwner)},
+      textureID{0u}, depthStencilID{0u}, framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u},
+      FBOIDframebufferID{0u}, FBOIDwidth{static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight{static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_},
       m_captureInputs{false}
 {
+    viewed.sceneRenderer.setMainCamera(camera);
+
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
                                                        "./resources/shaders/fGameObjectIdentifier.fs");
@@ -213,7 +208,7 @@ void SceneViewer::bindScene(Scene& scene)
 
     { // Move cameraOwner to the other scene
         // Transfer ownership of &cameraOwner to the new scene
-        using iterator = GameObject::Children::iterator;
+        using iterator       = GameObject::Children::iterator;
         const iterator newIt = scene.getWorld().children.emplace(scene.getWorld().children.end(), cameraOwner);
 
         // Update the previous scene and the iterator to cameraOwner's parent's children list
@@ -227,6 +222,8 @@ void SceneViewer::bindScene(Scene& scene)
     cameraOwner->setParent(scene.getWorld());
     cameraOwner->pOwnerScene = &scene;
     camera.setActive(true);
+
+    scene.sceneRenderer.setMainCamera(camera);
 
     pScene = &scene;
 }
