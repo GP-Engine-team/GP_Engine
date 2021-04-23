@@ -28,11 +28,12 @@ private:
     RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
     RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
 
-    // Test to use a setter
+    /* Variable setter serialization example
     RFKField(Inspect("setPrintHello"))
     bool printHello = false;
 
     void setPrintHello(bool p);
+    */
 
 public:
     MyFpsScript           (GPE::GameObject& owner)   noexcept;
