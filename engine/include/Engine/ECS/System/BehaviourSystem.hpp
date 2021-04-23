@@ -38,8 +38,8 @@ public:
 
     void removeBehaviour(BehaviourComponent& behaviour) noexcept;
 
+    void awake() const noexcept;
     void start() const noexcept;
-
     void onGUI() const noexcept;
 
     void fixedUpdate(float deltaTime) noexcept;
