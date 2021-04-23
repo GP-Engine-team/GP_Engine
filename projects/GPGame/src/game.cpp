@@ -3,22 +3,18 @@
 
 #include "Game.hpp"
 
-#include "Engine/Resources/Script/FreeFly.hpp"
-#include "Engine/ECS/Component/AudioComponent.hpp"
-#include "Engine/ECS/Component/InputComponent.hpp"
-#include "Engine/Resources/Scene.hpp"
-#include "Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp"
-#include "myFpsScript.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ObjParser.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/ECS/Component/AudioComponent.hpp"
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/Component/Light/DirectionalLight.hpp"
 #include "Engine/ECS/Component/Light/PointLight.hpp"
 #include "Engine/ECS/Component/Model.hpp"
+#include "Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp"
 #include "Engine/ECS/Component/TransformComponent.hpp"
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
@@ -28,8 +24,11 @@
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
+#include "Engine/Resources/Scene.hpp"
+#include "Engine/Resources/Script/FreeFly.hpp"
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Texture.hpp"
+#include "myFpsScript.hpp"
 #include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <myFpsScript.hpp>
@@ -100,8 +99,9 @@ extern "C" GPE::AbstractGame* createGameInstance()
         FUNCT_ERROR("gladLoadGLLoader failed");
         exit(EXIT_FAILURE);
     }
-
-    return new Game();
+    GPE::AbstractGame* const pGame = new Game();
+    GPE::Engine::getInstance()->behaviourSystem.awake();
+    return pGame;
 }
 
 extern "C" void destroyGameInstance(GPE::AbstractGame* game)
@@ -220,7 +220,7 @@ Game::Game()
     initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
 
     sm.addEmpty("main");
-    sm.loadScene("main");
+    Scene& currentScene = sm.loadScene("main");
 
     iManager.bindInput(GLFW_KEY_W, "forward");
     iManager.bindInput(GLFW_KEY_S, "back");
