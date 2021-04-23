@@ -4,7 +4,6 @@
 
 #include <functional>
 
-// Generated
 #include "Generated/InputComponent.rfk.h"
 File_GENERATED
 
