@@ -37,9 +37,10 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
 }
 
 // ========================== Public methods ==========================
-SceneEditor::SceneEditor(GPE::Scene& scene) : view{scene}
-{
-}
+SceneEditor::SceneEditor(GPE::Scene& scene)
+    : view{scene}
+{}
+
 
 void SceneEditor::render(GPE::IInspectable*& inspectedObject)
 {
