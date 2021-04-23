@@ -1,46 +1,50 @@
 ﻿#pragma once
 
-#include "Engine/Core/Game/AbstractGame.hpp"
-#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/ECS/System/BehaviourSystem.hpp"
-#include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/TimeSystem.hpp"
-#include "Engine/Engine.hpp"
-#include "Engine/Resources/Scene.hpp"
+#include <Engine/Core/Game/AbstractGame.hpp>
+#include <Engine/Resources/ResourcesManagerType.hpp>
 #include "GameApiMacros.hpp"
+
+struct GLFWwindow;
+
+namespace GPE
+{
+
+class Window;
+class Renderer;
+class TimeSystem;
+class InputManager;
+class BehaviourSystem;
+class SceneManager;
+}
 
 class Game final : public GPE::AbstractGame
 {
 protected:
-    GPE::Window&              win      = GPE::Engine::getInstance()->window;
-    GPE::Renderer&            ren      = GPE::Engine::getInstance()->renderer;
-    GPE::TimeSystem&          ts       = GPE::Engine::getInstance()->timeSystem;
-    GPE::InputManager&        iManager = GPE::Engine::getInstance()->inputManager;
-    GPE::BehaviourSystem&     bSys     = GPE::Engine::getInstance()->behaviourSystem;
-    GPE::ResourceManagerType& rm       = GPE::Engine::getInstance()->resourceManager;
-    GPE::SceneManager&        sm       = GPE::Engine::getInstance()->sceneManager;
+    GPE::Window&              win;
+    GPE::Renderer&            ren;
+    GPE::TimeSystem&          ts;
+    GPE::InputManager&        iManager;
+    GPE::BehaviourSystem&     bSys;
+    GPE::ResourceManagerType& rm;
+    GPE::SceneManager&        sm;
 
+    double FPLogDelay              = 1.;
+    float  m_x = .0f, m_y = .0f, m_w = .0f, m_h = .0f;
     int    fixedUpdateFrameCount   = 0;
     int    unFixedUpdateFrameCount = 0;
-    double FPLogDelay              = 1.;
-
-    float m_x = 0, m_y = 0, m_w = 0, m_h = 0;
 
 private:
-    virtual void update(double unscaledDeltaTime, double deltaTime) override final;
-
+    virtual void update     (double unscaledDeltaTime, double deltaTime)           override final;
     virtual void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) override final;
-
-    virtual void render() override final;
+    virtual void render     ()                                                     override final;
 
 public:
     Game();
+    virtual ~Game() final;
 
     void initDearImGui(GLFWwindow* window);
-    void setViewport(float x, float y, float w, float h);
+    void setViewport  (float x, float y, float w, float h);
 
-    virtual ~Game() final;
 };
 
 /**
