@@ -31,6 +31,10 @@ namespace GPE RFKNamespace()
         BehaviourComponent& operator=(BehaviourComponent const& other) noexcept = delete;
         BehaviourComponent& operator                                            =(BehaviourComponent&& other) noexcept;
 
+        virtual void awake()
+        {
+        }
+
         virtual void start()
         {
         }

@@ -58,9 +58,10 @@ public:
         bool      smooth = true;
     };
 
-    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>&,
-                                              std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
-                                              std::vector<Light*>&, std::vector<DebugShape>&, std::vector<DebugLine>&)>;
+    using RenderPipeline =
+        std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>&, std::vector<SubModel*>&,
+                           std::vector<SubModel*>&, std::vector<Camera*>&, std::vector<Light*>&,
+                           std::vector<DebugShape>&, std::vector<DebugLine>&, Camera&)>;
 
 protected:
     std::vector<Renderer*>  m_pRenderers;
@@ -70,6 +71,7 @@ protected:
     std::vector<Light*>     m_pLights;
     std::vector<DebugShape> m_debugShape;
     std::vector<DebugLine>  m_debugLine;
+    Camera*                 m_mainCamera = nullptr;
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
@@ -91,6 +93,8 @@ public:
     void tryToBindTexture(unsigned int textureID);
     void tryToBindMesh(unsigned int meshID);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
+
+    void setMainCamera(Camera& newMainCamera) noexcept;
 
     void resetCurrentRenderPassKey();
 
