@@ -31,18 +31,26 @@ FreeFly::~FreeFly() noexcept
 
 void FreeFly::update(float deltaTime)
 {
-    rotate(Engine::getInstance()->inputManager.getCursor().deltaPos);
+    const GPM::Vec2 deltaPos = Engine::getInstance()->inputManager.getCursor().deltaPos;
+
+    if (deltaPos.x || deltaPos.y)
+    {
+        rotate(deltaPos);
+    }
 }
 
 
 void FreeFly::rotate(const GPM::Vector2& deltaDisplacement)
 {
-    const GPM::Quaternion newRot =
-        getOwner().getTransform().getSpacialAttribut().rotation *
-        GPM::Quaternion::angleAxis(deltaDisplacement.y * m_rotationSpeed, {1.f, .0f, .0f});
+    using namespace GPM;
 
-    getOwner().getTransform().setRotation(
-        GPM::Quaternion::angleAxis(deltaDisplacement.x * m_rotationSpeed, {.0f, 1.f, .0f}) * newRot);
+    const Quat& orientation{getOwner().getTransform().getSpacialAttribut().rotation};
+    const Vec2  axis       {deltaDisplacement.rotated90()};
+    const Quat  rotX       {Quat::angleAxis(axis.x * m_rotationSpeed, Vec3::right())};
+    const Quat  rotY       {Quat::angleAxis(axis.y * m_rotationSpeed, Vec3::up())};
+    const Quat  newRot     {rotY * orientation * rotX};
+
+    getOwner().getTransform().setRotation(newRot);
 }
 
 
