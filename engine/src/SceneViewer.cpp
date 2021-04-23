@@ -101,7 +101,7 @@ void SceneViewer::initializePickingFBO()
 
 void SceneViewer::initializeInputs()
 {
-    GPE::InputComponent& input = cameraOwner.addComponent<GPE::InputComponent>();
+    GPE::InputComponent& input = cameraOwner->addComponent<GPE::InputComponent>();
 
     input.bindAction("up",       EKeyMode::KEY_DOWN,     "Editor", &freeFly, "up");
     input.bindAction("down",     EKeyMode::KEY_DOWN,     "Editor", &freeFly, "down");
@@ -147,9 +147,9 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
 SceneViewer::~SceneViewer()
 {
     pScene->getWorld().children.erase(it);
-    cameraOwner.destroyUniqueComponentNow<Camera>();
-    cameraOwner.destroyUniqueComponentNow<FreeFly>();
-    cameraOwner.destroyUniqueComponentNow<InputComponent>();
+    cameraOwner->destroyUniqueComponentNow<Camera>();
+    cameraOwner->destroyUniqueComponentNow<FreeFly>();
+    cameraOwner->destroyUniqueComponentNow<InputComponent>();
 
     glDeleteFramebuffers(1, &framebufferID);
     glDeleteTextures(1, &textureID);
@@ -211,7 +211,6 @@ void SceneViewer::resize(int width_, int height_)
     glBindRenderbuffer(GL_RENDERBUFFER, depthStencilID);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, width, height);
 
-    camera.setAspect(Camera::computeAspect(width, height));
 
     // ==== Update selection framebuffer ====
     // Low sampling (we don't need 4K texture to select element)
@@ -224,6 +223,9 @@ void SceneViewer::resize(int width_, int height_)
 
     glBindRenderbuffer(GL_RENDERBUFFER, FBOIDdepthID);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, FBOIDwidth, FBOIDheight);
+
+    // ==== Update the camera ==== // TODO: does not work
+    camera.setAspect(Camera::computeAspect(width, height));
 }
 
 void SceneViewer::bindScene(Scene& scene)
