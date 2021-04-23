@@ -158,6 +158,9 @@ Frustum Camera::getFrustum() const noexcept
 
 void Camera::setActive(bool newState) noexcept
 {
+    if (m_isActivated == newState)
+        return;
+
     m_isActivated = newState;
     if (m_isActivated)
         getOwner().pOwnerScene->sceneRenderer.addCamera(*this);

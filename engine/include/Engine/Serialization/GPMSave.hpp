@@ -30,4 +30,10 @@ void save(XmlSaver& context, const GPM::Vector3& data, const XmlSaver::SaveInfo&
 template <>
 void save(XmlSaver& context, const GPM::Quaternion& data, const XmlSaver::SaveInfo& info);
 
+/**
+ * @brief Specialization for Matrix4 data. See the original function for more comments.
+ */
+template <>
+void save(XmlSaver& context, const GPM::Matrix4& data, const XmlSaver::SaveInfo& info);
+
 } // namespace GPE

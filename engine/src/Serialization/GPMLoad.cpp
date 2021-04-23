@@ -44,4 +44,10 @@ void load(XmlLoader& context, GPM::Quaternion& data, const XmlLoader::LoadInfo& 
     loadFloatArray(context, data.e, 4, info);
 }
 
+template <>
+void load(XmlLoader& context, GPM::Matrix4& data, const XmlLoader::LoadInfo& info)
+{
+    loadFloatArray(context, data.e, 16, info);
+}
+
 } // namespace GPE

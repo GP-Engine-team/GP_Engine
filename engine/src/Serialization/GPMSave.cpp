@@ -41,4 +41,12 @@ void save(XmlSaver& context, const GPM::Quaternion& data, const XmlSaver::SaveIn
     saveFloatArray(context, data.e, 4, info);
 }
 
+
+template <>
+void save(XmlSaver& context, const GPM::Matrix4& data, const XmlSaver::SaveInfo& info)
+{
+    saveFloatArray(context, data.e, 16, info);
+}
+
+
 }

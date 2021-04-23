@@ -6,7 +6,7 @@
 
 File_GENERATED
 
-    namespace GPE
+namespace GPE
 {
 
     TransformComponent::TransformComponent(GameObject & refGameObject,

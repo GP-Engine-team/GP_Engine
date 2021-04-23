@@ -30,4 +30,10 @@ void load(XmlLoader& context, GPM::Vector3& data, const XmlLoader::LoadInfo& inf
 template <>
 void load(XmlLoader& context, GPM::Quaternion& data, const XmlLoader::LoadInfo& info);
 
+/**
+ * @brief Specialization for Matrix data. See the original function for more comments.
+ */
+template <>
+void load(XmlLoader& context, GPM::Matrix4& data, const XmlLoader::LoadInfo& info);
+
 } // namespace GPE
