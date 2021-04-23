@@ -19,10 +19,10 @@ class SceneViewer
 {
 // ==== Data members ====
 public:
-    GameObject*    cameraOwner = nullptr;
-    FreeFly&      freeFly;
-    Camera&       camera;
-    Scene*        pScene;
+    GameObject* cameraOwner = nullptr;
+    FreeFly&    freeFly;
+    Camera&     camera;
+    Scene*      pScene;
 
     // Keep track of cameraOwner, from the perspective of
     // its parent's list of child
