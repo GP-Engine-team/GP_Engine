@@ -6,8 +6,10 @@
 #include <sstream>
 
 #include "Engine/Intermediate/GameObject.hpp"
-#include "Generated/GameObject.rfk.h"
+#include "Engine/Resources/Scene.hpp"
 
+// Generated
+#include "Generated/GameObject.rfk.h"
 File_GENERATED
 
     using namespace GPE;
@@ -19,6 +21,10 @@ GameObject::~GameObject() noexcept
 {
     m_pTransform->destroy();
 
+    for (GameObject* child : children)
+    {
+        delete child;
+    }
     
     for (auto&& component : m_pComponents)
     {
@@ -274,6 +280,13 @@ std::string GameObject::getAbsolutePath() const noexcept
     }
 
     return path;
+}
+
+void GameObject::detach(const GameObject::Children::iterator& itToParentPtr) noexcept
+{
+    m_parent->children.erase(itToParentPtr);
+    m_parent = nullptr;
+    pOwnerScene = nullptr;
 }
 
 void GameObject::inspect(GPE::InspectContext& context)

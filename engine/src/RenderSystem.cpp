@@ -300,6 +300,9 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
               std::vector<DebugLine>& debugLines)
 
     {
+        if (pCameras.empty())
+            return;
+
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -452,6 +455,10 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
               std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine) {
+
+        if (pCameras.empty())
+            return;
+
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 

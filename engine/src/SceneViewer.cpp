@@ -116,10 +116,11 @@ void SceneViewer::initializeInputs()
 
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : cameraOwner       {viewed, {"Editor camera", {}, &viewed.getWorld()}}, freeFly{cameraOwner.addComponent<FreeFly>()},
-      camera            {cameraOwner.addComponent<Camera>(Camera::PerspectiveCreateArg{width_ / (float)height_, .001f, 1000.f, 90.f})},
+    : cameraOwner       {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
+      freeFly           {cameraOwner->addComponent<FreeFly>()},
+      camera            {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{width_ / (float)height_, .001f, 1000.f, 90.f})},
       pScene            {&viewed},
-      it                {viewed.getWorld().children.emplace(viewed.getWorld().children.end(), &cameraOwner)},
+      it                {viewed.getWorld().children.emplace(viewed.getWorld().children.end(), cameraOwner)},
       textureID         {0u},
       depthStencilID    {0u},
       framebufferID     {0u},
@@ -234,19 +235,31 @@ void SceneViewer::bindScene(Scene& scene)
 
     { // Move cameraOwner to the other scene
         // Transfer ownership of &cameraOwner to the new scene
-        using iterator       = GameObject::Children::iterator;
-        const iterator newIt = scene.getWorld().children.emplace(scene.getWorld().children.end(), *it);
+        using iterator = GameObject::Children::iterator;
+        const iterator newIt = scene.getWorld().children.emplace(scene.getWorld().children.end(), cameraOwner);
 
         // Update the previous scene and the iterator to cameraOwner's parent's children list
-        pScene->getWorld().children.erase(it);
+        if (pScene != nullptr)
+            pScene->getWorld().children.erase(it);
+
         it = newIt;
     }
 
     // Update the Camera component and cameraOwner scene and parent
-    camera.moveTowardScene(scene);
-    cameraOwner.setParent(scene.getWorld());
-    cameraOwner.pOwnerScene = &scene;
-    pScene                  = &scene;
+
+    // 
+    // SERIALIZATION CRASH : TODO : use setActive(false) when done, 
+    //to remove camera from the old scene without adding it to a new scene
+    camera.moveTowardScene(scene); 
+    cameraOwner->setParent(scene.getWorld());
+    cameraOwner->pOwnerScene = &scene;
+    pScene = &scene;
+}
+
+void SceneViewer::unbindScene()
+{
+    cameraOwner->detach(it);
+    pScene = nullptr;
 }
 
 void SceneViewer::render() const

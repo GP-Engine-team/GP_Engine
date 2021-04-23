@@ -10,6 +10,7 @@
 
 #include "Engine/Resources/Script/FreeFly.hpp"
 
+#include "Generated/FreeFly.rfk.h"
 File_GENERATED
 
 namespace GPE

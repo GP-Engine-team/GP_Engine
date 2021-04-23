@@ -21,7 +21,7 @@ class RFKClass(Serialize(), ComponentGen) RigidbodyStatic : public Component
 public:
     RigidbodyStatic(GameObject& owner) noexcept;
 
-    RigidbodyStatic() noexcept                             = delete;
+    RigidbodyStatic() noexcept                             = default;
     RigidbodyStatic(const RigidbodyStatic& other) noexcept = delete;
     RigidbodyStatic(RigidbodyStatic&& other) noexcept      = default;
     RigidbodyStatic& operator=(RigidbodyStatic const& other) noexcept = delete;

@@ -1,16 +1,16 @@
-#include "Editor/EditorStartup.hpp"
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Core/Game/AbstractGame.hpp"
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/Engine.hpp"
+#include <Editor/EditorStartup.hpp>
+#include <Engine/Core/Debug/Assert.hpp>
+#include <Engine/Core/Game/AbstractGame.hpp>
+#include <Engine/Core/Rendering/Window/WindowGLFW.hpp>
+#include <Engine/Engine.hpp>
 
-#include "GLFW/glfw3.h"
-#include "glad/glad.h"
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
-#include "imgui/imgui.h"
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/imgui.h>
 
-#include "Editor/ExternalDeclarations.hpp"
+#include <Editor/ExternalDeclarations.hpp>
 
 namespace Editor
 {
@@ -45,8 +45,8 @@ void EditorStartup::initializeDefaultInputs() const
     inputs.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprint");
 
     inputs.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
-    GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
-                                                           GLFW_CURSOR_NORMAL);
+    // GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
+    //                                                        GLFW_CURSOR_NORMAL);
 }
 
 EditorStartup::EditorStartup()
@@ -54,6 +54,7 @@ EditorStartup::EditorStartup()
       m_update{[&](double unscaledDeltaTime, double deltaTime)
       {
           GPE::Engine::getInstance()->inputManager.processInput();
+          Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
           m_editor.update(*this);
       }},
       m_render{[&]()
@@ -72,6 +73,9 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, setGameEngineInstance);
     ADD_PROCESS(m_reloadableCpp, setLogInstance);
     ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
+    ADD_PROCESS(m_reloadableCpp, getGameUIContext);
+    ADD_PROCESS(m_reloadableCpp, saveScene);
+    ADD_PROCESS(m_reloadableCpp, loadScene);
     ADD_PROCESS(m_reloadableCpp, getGameUIContext);
     ADD_PROCESS(m_reloadableCpp, saveCurrentScene);
     ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
@@ -158,8 +162,8 @@ void EditorStartup::pauseGame()
     m_update = [&](double unscaledDeltaTime, double deltaTime)
     {
         GPE::Engine::getInstance()->inputManager.processInput();
-        m_editor.update(*this);
         Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+        m_editor.update(*this);
     };
 }
 

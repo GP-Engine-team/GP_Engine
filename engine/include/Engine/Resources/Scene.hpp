@@ -58,5 +58,7 @@ public:
 
     void save(XmlSaver&) const;
     void load(XmlLoader&);
+
+    GETTER_BY_CONST_REF(Name, m_name);
 };
 } /*namespace GPE*/
