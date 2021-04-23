@@ -99,6 +99,15 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
     Log::getInstance()->log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
 }
 
+void Camera::awake()
+{
+    m_projection =
+        Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
+    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
+    updateView();
+
+}
+
 Camera::~Camera() noexcept
 {
     getOwner().getTransform().OnUpdate -= GPE::Function::make(this, "updateView");

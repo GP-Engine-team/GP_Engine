@@ -76,6 +76,12 @@ Model& Model::operator=(Model&& other) noexcept
     return static_cast<Model&>(Component::operator=(std::move(other)));
 }
 
+void Model::awake()
+{
+    setActive(false);
+    setActive(true);
+}
+
 void Model::moveTowardScene(class Scene& newOwner)
 {
     for (SubModel& subMesh : m_subModels)

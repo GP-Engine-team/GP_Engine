@@ -49,25 +49,25 @@ namespace GPE RFKNamespace()
             NONE
         };
 
-        struct RFKStruct(Serialize()) ProjectionInfo
+        struct RFKStruct(Inspect(), Serialize()) ProjectionInfo
         {
-            RFKField(Serialize())
+            RFKField(Inspect(), Serialize())
             std::string     name = "";
             EProjectionType type = EProjectionType::NONE;
 
-            RFKField(Serialize())
+            RFKField(Inspect(), Serialize())
             float aspect = 16.f / 9.f;
-            RFKField(Serialize())
+            RFKField(Inspect(), Serialize())
             float znear  = 0.001f;
-            RFKField(Serialize())
+            RFKField(Inspect(), Serialize())
             float zfar   = 10.f;
-            RFKField(Serialize())
+            RFKField(Inspect(), Serialize())
             float hSide  = 1.f;
-            RFKField(Serialize())
+            RFKField(Inspect(), Serialize())
             float vSide  = 1.f;
-            RFKField(Serialize())
+            RFKField(Inspect(), Serialize())
             float fovY   = 70.f;
-            RFKField(Serialize())
+            RFKField(Inspect(), Serialize())
             float fovX   = 70.f;
 
             ProjectionInfo_GENERATED
@@ -92,8 +92,9 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Serialize())
+        RFKField(Inspect(), Serialize())
         ProjectionInfo m_projInfo;
+        RFKField(Serialize())
         GPM::Mat4      m_projection;
 
         RFKField(Serialize())
@@ -209,6 +210,8 @@ namespace GPE RFKNamespace()
          * @return
          */
         void setActive(bool newState) noexcept override;
+
+        virtual void awake() override;
 
         Camera_GENERATED
     };

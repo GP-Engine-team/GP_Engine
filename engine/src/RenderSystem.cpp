@@ -189,6 +189,9 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, SubMo
     }
     else
     {
+        auto a = camToUse.getProjectionView();
+        auto i = subModel.pModel->getOwner().getTransform().getModelMatrix().e;
+        auto p = (camToUse.getProjectionView() * subModel.pModel->getOwner().getTransform().getModelMatrix()).e;
         shader.setMat4("projectViewModelMatrix",
                        (camToUse.getProjectionView() * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
     }

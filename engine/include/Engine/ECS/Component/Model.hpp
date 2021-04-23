@@ -73,6 +73,7 @@ namespace GPE RFKNamespace()
 
         void moveTowardScene(class Scene & newOwner) override;
 
+        virtual void awake();
         virtual void inspect(InspectContext & context);
 
         /**

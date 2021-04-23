@@ -59,6 +59,9 @@ void CharacterController::update(float deltaTime) noexcept
         }
     }
 
+    if (controller == nullptr)
+        return;
+
     controller->move(GPE::PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, deltaTime, filters);
     m_displacement = {0, 0, 0};
     getOwner().getTransform().setTranslation(GPE::PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()));

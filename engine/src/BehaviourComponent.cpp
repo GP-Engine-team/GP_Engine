@@ -18,6 +18,11 @@ BehaviourComponent::BehaviourComponent() noexcept
     Engine::getInstance()->behaviourSystem.addBehaviour(*this);
 }
 
+void BehaviourComponent::awake()
+{
+
+}
+
 BehaviourComponent::~BehaviourComponent() noexcept
 {
     Engine::getInstance()->behaviourSystem.removeBehaviour(*this);

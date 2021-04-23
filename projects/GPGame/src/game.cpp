@@ -100,7 +100,6 @@ extern "C" GPE::AbstractGame* createGameInstance()
         exit(EXIT_FAILURE);
     }
     GPE::AbstractGame* const pGame = new Game();
-    GPE::Engine::getInstance()->behaviourSystem.awake();
     return pGame;
 }
 

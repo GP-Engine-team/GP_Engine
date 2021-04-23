@@ -93,4 +93,23 @@ void Scene::load(XmlLoader& context)
     delete m_pWorld;
     m_pWorld = nullptr;
     GPE::load(context, m_pWorld, XmlLoader::LoadInfo{"m_pWorld", "GameObject", GameObject::staticGetArchetype().id});
+
+    struct Rec
+    {
+        static void rec(GameObject* g)
+        {
+            for (Component* comp : g->getComponents())
+            {
+                comp->awake();
+            }
+
+            g->getTransform().awake();
+
+            for (GameObject* g2 : g->children)
+            {
+                rec(g2);
+            }
+        };
+    };
+    Rec::rec(m_pWorld); // can't do recursives with lambdas, and std::function would be overkill
 }
