@@ -6,6 +6,7 @@ namespace GPM
 {
 struct Transform;
 struct SplitTransform;
+union alignas(16) Matrix4;
 union Vector3;
 union Quaternion;
 }
@@ -35,5 +36,7 @@ void save(XmlSaver& context, const GPM::Quaternion& data, const XmlSaver::SaveIn
  */
 template <>
 void save(XmlSaver& context, const GPM::Matrix4& data, const XmlSaver::SaveInfo& info);
+template <>
+void save(XmlSaver& context, const GPM::Matrix4& data, const rfk::Field& info);
 
 } // namespace GPE

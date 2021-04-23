@@ -4,12 +4,15 @@
 #include "Engine/Resources/Scene.hpp"
 #include "GPM/Transform.hpp"
 #include "GPM/Vector3.hpp"
+#include "engine/serialization/xml/xmlsaver.hpp"
+#include "engine/serialization/xml/xmlloader.hpp"
 
 #include "Engine/ECS/Component/Camera.hpp"
+#include "Generated/Camera.rfk.h"
 
 File_GENERATED
 
-    using namespace GPM;
+using namespace GPM;
 
 namespace GPE
 {

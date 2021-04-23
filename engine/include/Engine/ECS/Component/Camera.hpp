@@ -49,18 +49,28 @@ namespace GPE RFKNamespace()
             NONE
         };
 
-        struct ProjectionInfo
+        struct RFKStruct(Serialize()) ProjectionInfo
         {
+            RFKField(Serialize())
             std::string     name = "";
             EProjectionType type = EProjectionType::NONE;
 
+            RFKField(Serialize())
             float aspect = 16.f / 9.f;
+            RFKField(Serialize())
             float znear  = 0.001f;
+            RFKField(Serialize())
             float zfar   = 10.f;
+            RFKField(Serialize())
             float hSide  = 1.f;
+            RFKField(Serialize())
             float vSide  = 1.f;
+            RFKField(Serialize())
             float fovY   = 70.f;
+            RFKField(Serialize())
             float fovX   = 70.f;
+
+            ProjectionInfo_GENERATED
         };
 
         struct PerspectiveCreateArg
@@ -82,10 +92,13 @@ namespace GPE RFKNamespace()
         };
 
     protected:
+        RFKField(Serialize())
         ProjectionInfo m_projInfo;
         GPM::Mat4      m_projection;
 
+        RFKField(Serialize())
         GPM::Mat4 m_viewMatrix;
+        RFKField(Serialize())
         GPM::Mat4 m_projectionViewMatrix;
 
         void updateProjection();

@@ -6,6 +6,7 @@ namespace GPM
 {
 struct Transform;
 struct SplitTransform;
+union alignas(16) Matrix4;
 union Vector3;
 union Quaternion;
 } // namespace GPM
@@ -35,5 +36,6 @@ void load(XmlLoader& context, GPM::Quaternion& data, const XmlLoader::LoadInfo& 
  */
 template <>
 void load(XmlLoader& context, GPM::Matrix4& data, const XmlLoader::LoadInfo& info);
-
+template <>
+void load(XmlLoader& context, GPM::Matrix4& data, const rfk::Field& info);
 } // namespace GPE

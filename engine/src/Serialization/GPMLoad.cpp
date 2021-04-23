@@ -50,4 +50,11 @@ void load(XmlLoader& context, GPM::Matrix4& data, const XmlLoader::LoadInfo& inf
     loadFloatArray(context, data.e, 16, info);
 }
 
+template <>
+void load(XmlLoader& context, GPM::Matrix4& data, const rfk::Field& info)
+{
+    GPE::load(context, data, fieldToLoadInfo(info));
+}
+
+
 } // namespace GPE
