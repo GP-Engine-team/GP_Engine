@@ -31,8 +31,16 @@ void XmlLoader::addLazy(void*& data)
 void XmlLoader::updateLazyPtr(void*& weak)
 {
     auto it = alreadyLoadedPtrs.find({weak});
-    assert(it != alreadyLoadedPtrs.end()); //  must be valid
-    weak = it->second.data;
+    if (it != alreadyLoadedPtrs.end())
+    {
+
+        //assert(it != alreadyLoadedPtrs.end()); //  must be valid, instance must be here
+        weak = it->second.data;
+    }
+    else 
+    {
+        weak = nullptr;
+    }
 }
 
 void XmlLoader::updateLazyPtrs()
@@ -50,6 +58,13 @@ namespace GPE
 
 template <>
 void load(XmlLoader& context, int& data, const rfk::Field& info)
+{
+    std::string value;
+    data = context.loadFromStr(value, info) ? std::stoi(value) : 0;
+}
+
+template <>
+void load(XmlLoader& context, int& data, const XmlLoader::LoadInfo& info)
 {
     std::string value;
     data = context.loadFromStr(value, info) ? std::stoi(value) : 0;

@@ -105,5 +105,77 @@ void load(XmlLoader& context, std::vector<T>& inspected, const XmlLoader::LoadIn
     }
 }
 
+template <typename T, typename U>
+void save(XmlSaver& context, const std::pair<T, U>& inspected, const XmlSaver::SaveInfo& info)
+{
+    context.push(info);
+
+    GPE::save(context, inspected.first, XmlSaver::SaveInfo{"key", "unknown", 0});
+    GPE::save(context, inspected.second, XmlSaver::SaveInfo{"value", "unknown", 0});
+
+    context.pop();
+}
+template <typename T, typename U>
+void load(XmlLoader& context, std::pair<T, U>& inspected, const XmlLoader::LoadInfo& info)
+{
+    if (context.goToSubChild(info))
+    {
+        GPE::load(context, inspected.first, XmlLoader::LoadInfo{"key", "unknown", 0});
+        GPE::load(context, inspected.second, XmlLoader::LoadInfo{"value", "unknown", 0});
+
+        context.pop();
+    }
+}
+
+
+template <typename KEY, typename VALUE>
+void save(XmlSaver& context, const std::unordered_map<KEY, VALUE>& inspected, const XmlSaver::SaveInfo& info)
+{
+    context.push(info);
+
+    context.appendAttribute(context.top(), "size", std::to_string(inspected.size()));
+
+    size_t i = 0;
+    for (const std::pair<const KEY, VALUE>& pair : inspected)
+    {
+        GPE::save(context, pair, XmlSaver::SaveInfo{std::to_string(i), "std::pair", 0});
+        
+        i++;
+    }
+
+    context.pop();
+}
+template <typename KEY, typename VALUE>
+void save(XmlSaver& context, const std::unordered_map<KEY, VALUE>& inspected, const rfk::Field& info)
+{
+    GPE::save(context, inspected, XmlSaver::SaveInfo{info.name, "unknown", 0});
+}
+
+template <typename KEY, typename VALUE>
+void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const XmlLoader::LoadInfo& info)
+{
+    if (context.goToSubChild(info))
+    {
+        size_t size = std::stoll(findAttribValue(context.top(), "size"));
+
+        inspected.clear();
+        inspected.reserve(size);
+
+        for (size_t i = 0; i < size; i++)
+        {
+            std::pair<KEY, VALUE> pair;
+            GPE::load(context, pair, XmlLoader::LoadInfo{std::to_string(i), "std::pair", info.typeId});
+            inspected.insert(pair);
+        }
+
+        context.pop();
+    }
+}
+template <typename KEY, typename VALUE>
+void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const rfk::Field& info)
+{
+    GPE::load(context, inspected, XmlLoader::LoadInfo{info.name, "unknown", 0});
+}
+
 
 } // namespace GPE

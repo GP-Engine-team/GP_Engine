@@ -49,6 +49,12 @@ void save(XmlSaver& context, const int& inspected, const rfk::Field& info)
 }
 
 template <>
+void save(XmlSaver& context, const int& inspected, const XmlSaver::SaveInfo& info)
+{
+    context.saveAsString(std::to_string(inspected), info);
+}
+
+template <>
 void save(XmlSaver& context, const size_t& inspected, const XmlSaver::SaveInfo& info)
 {
     context.saveAsString(std::to_string(inspected), info);

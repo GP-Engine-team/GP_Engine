@@ -5,6 +5,7 @@
 #include "Engine/Serialization/xml/xmlSaver.hpp"
 #include <list>
 #include <vector>
+#include <unordered_map>
 
 namespace rfk
 {
@@ -79,6 +80,21 @@ void save(XmlSaver& context, const std::vector<T>& inspected, const XmlSaver::Sa
 
 template <typename T>
 void load(XmlLoader& context, std::vector<T>& inspected, const XmlLoader::LoadInfo& info);
+
+template <typename T, typename U>
+void save(XmlSaver& context, const std::pair<T, U>& inspected, const XmlSaver::SaveInfo& info);
+template <typename T, typename U>
+void load(XmlLoader& context, std::pair<T, U>& inspected, const XmlLoader::LoadInfo& info);
+
+template <typename KEY,  typename VALUE>
+void save(XmlSaver& context, const std::unordered_map<KEY, VALUE>& inspected, const XmlSaver::SaveInfo& info);
+template <typename KEY, typename VALUE>
+void save(XmlSaver& context, const std::unordered_map<KEY, VALUE>& inspected, const rfk::Field& info);
+
+template <typename KEY, typename VALUE>
+void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const XmlLoader::LoadInfo& info);
+template <typename KEY, typename VALUE>
+void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const rfk::Field& info);
 
 
 template <typename T>
