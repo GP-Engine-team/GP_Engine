@@ -1,32 +1,21 @@
 ﻿#pragma once
 
 #include <Engine/Core/Game/AbstractGame.hpp>
-#include <Engine/Resources/ResourcesManagerType.hpp>
 #include "GameApiMacros.hpp"
 
 struct GLFWwindow;
 
 namespace GPE
 {
-
-class Window;
-class Renderer;
-class TimeSystem;
-class InputManager;
 class BehaviourSystem;
-class SceneManager;
+class GameObject;
 }
 
 class Game final : public GPE::AbstractGame
 {
 protected:
-    GPE::Window&              win;
-    GPE::Renderer&            ren;
-    GPE::TimeSystem&          ts;
-    GPE::InputManager&        iManager;
     GPE::BehaviourSystem&     bSys;
-    GPE::ResourceManagerType& rm;
-    GPE::SceneManager&        sm;
+    GPE::GameObject*          world;
 
     double FPLogDelay              = 1.;
     float  m_x = .0f, m_y = .0f, m_w = .0f, m_h = .0f;
