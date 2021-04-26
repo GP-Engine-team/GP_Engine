@@ -118,7 +118,7 @@ void SceneViewer::initializeInputs()
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     : cameraOwner       {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
       freeFly           {cameraOwner->addComponent<FreeFly>()},
-      camera            {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{width_ / (float)height_, .001f, 1000.f, 90.f})},
+      camera            {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{"Editor camera", width_ / (float)height_, .001f, 1000.f, 90.f})},
       pScene            {&viewed},
       it                {viewed.getWorld().children.emplace(viewed.getWorld().children.end(), cameraOwner)},
       textureID         {0u},
