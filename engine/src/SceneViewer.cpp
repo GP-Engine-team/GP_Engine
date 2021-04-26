@@ -133,6 +133,8 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
       height            {height_},
       m_captureInputs   {false}
 {
+    viewed.sceneRenderer.setMainCamera(camera);
+
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
                                                        "./resources/shaders/fGameObjectIdentifier.fs");
@@ -237,7 +239,7 @@ void SceneViewer::bindScene(Scene& scene)
 
     { // Move cameraOwner to the other scene
         // Transfer ownership of &cameraOwner to the new scene
-        using iterator = GameObject::Children::iterator;
+        using iterator       = GameObject::Children::iterator;
         const iterator newIt = scene.getWorld().children.emplace(scene.getWorld().children.end(), cameraOwner);
 
         // Update the previous scene and the iterator to cameraOwner's parent's children list
@@ -249,13 +251,14 @@ void SceneViewer::bindScene(Scene& scene)
 
     // Update the Camera component and cameraOwner scene and parent
 
-    // 
-    // SERIALIZATION CRASH : TODO : use setActive(false) when done, 
-    //to remove camera from the old scene without adding it to a new scene
-    camera.moveTowardScene(scene); 
+    //
+    // SERIALIZATION CRASH : TODO : use setActive(false) when done,
+    // to remove camera from the old scene without adding it to a new scene
+    camera.moveTowardScene(scene);
     cameraOwner->setParent(scene.getWorld());
     cameraOwner->pOwnerScene = &scene;
-    pScene = &scene;
+    pScene                   = &scene;
+    scene.sceneRenderer.setMainCamera(camera);
 }
 
 void SceneViewer::unbindScene()

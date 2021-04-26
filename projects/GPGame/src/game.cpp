@@ -81,8 +81,9 @@ extern "C" GPE::AbstractGame* createGameInstance()
         FUNCT_ERROR("gladLoadGLLoader failed");
         exit(EXIT_FAILURE);
     }
-
-    return new Game();
+    GPE::AbstractGame* const pGame = new Game();
+    GPE::Engine::getInstance()->behaviourSystem.awake();
+    return pGame;
 }
 
 extern "C" void destroyGameInstance(GPE::AbstractGame* game)
