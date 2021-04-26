@@ -128,9 +128,8 @@ int main(int argc, char** argv)
     }
     else
     {
-        const char* p2 =
-            "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/../../engine/";
-        const char* p1 = "C:\\Users\\Utilisateur\\Downloads\\GP_EngineLAST\\GP_Engine\\projects\\GPGame\\/";
+        const char* p2 = "..\\engine";
+        const char* p1 = "..\\projects\\GPGame\\";
 
         generateEngineFiles(p2, true);
         generateGameFiles(p1, p2, true);
