@@ -244,6 +244,9 @@
     <ClCompile Include="src\Serialization\STDDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Serialization\SaveFile.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -644,6 +647,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Tools\UnrolledListAllocator.hpp">
       <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\SaveFile.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

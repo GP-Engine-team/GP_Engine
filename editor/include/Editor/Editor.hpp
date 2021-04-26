@@ -60,6 +60,9 @@ private:
     void renderSceneGraph();
     void renderExplorer();
 
+    void save();
+    void load();
+
     /**
      * @brief Function that crate scene graph recursively for each node in imGui window.
      * @param gameObject

@@ -283,6 +283,7 @@
     <ClInclude Include="include\Engine\Serialization\MaterialInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\MeshInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\ModelImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\SaveFile.hpp" />
     <ClInclude Include="include\Engine\Serialization\Serialize.hpp" />
     <ClInclude Include="include\Engine\Serialization\ShaderInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\Slider.hpp" />
@@ -385,6 +386,7 @@
     <ClCompile Include="src\Serialization\GPMLoad.cpp" />
     <ClCompile Include="src\Serialization\GPMSave.cpp" />
     <ClCompile Include="src\Serialization\Inspect.cpp" />
+    <ClCompile Include="src\Serialization\SaveFile.cpp" />
     <ClCompile Include="src\Serialization\Serialize.cpp" />
     <ClCompile Include="src\Serialization\Slider.cpp" />
     <ClCompile Include="src\Serialization\STDDataInspector.cpp" />
