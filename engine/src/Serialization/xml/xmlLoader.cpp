@@ -71,6 +71,13 @@ void load(XmlLoader& context, int& data, const XmlLoader::LoadInfo& info)
 }
 
 template <>
+void load(XmlLoader& context, unsigned int& data, const rfk::Field& info)
+{
+    std::string value;
+    data = context.loadFromStr(value, info) ? std::stoi(value) : 0;
+}
+
+template <>
 void load(XmlLoader& context, size_t& data, const XmlLoader::LoadInfo& info)
 {
     std::string value;

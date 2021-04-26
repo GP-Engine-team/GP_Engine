@@ -156,7 +156,7 @@ void Editor::renderInspector()
                 XmlSaver saver(doc);
                 auto     a = GET_PROCESS((*m_reloadableCpp), saveScene);
                 a(saver, scene);
-                 saver.print();
+                 //saver.print();
                 m_sceneEditor.view.bindScene(*scene);
             }
             else if (glfwGetKey(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_KEY_T) == GLFW_PRESS)

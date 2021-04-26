@@ -180,6 +180,9 @@ void load(XmlLoader& context, int& data, const rfk::Field& info);
 template <>
 void load(XmlLoader& context, int& data, const XmlLoader::LoadInfo& info);
 
+template <>
+void load(XmlLoader& context, unsigned int& data, const rfk::Field& info);
+
 /**
  * @brief Specialization for size_t data. See the original function for more comments.
  */

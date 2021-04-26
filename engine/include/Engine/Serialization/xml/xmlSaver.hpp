@@ -180,6 +180,9 @@ void save(XmlSaver& context, const int& inspected, const rfk::Field& info);
 template <>
 void save(XmlSaver& context, const int& inspected, const XmlSaver::SaveInfo& info);
 
+template <>
+void save(XmlSaver& context, const unsigned int& inspected, const rfk::Field& info);
+
 /**
  * @brief Specialization for size_t data. See the original function for more comments.
  */
