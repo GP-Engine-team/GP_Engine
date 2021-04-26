@@ -153,12 +153,16 @@ void Editor::renderInspector()
 
                 m_sceneEditor.view.unbindScene();
 
-                rapidxml::xml_document<> doc;
                 XmlSaver saver(doc);
-                auto a = GET_PROCESS((*m_reloadableCpp), saveScene);
+                auto     a = GET_PROCESS((*m_reloadableCpp), saveScene);
                 a(saver, scene);
-                //saver.print();
-
+                 saver.print();
+                m_sceneEditor.view.bindScene(*scene);
+            }
+            else if (glfwGetKey(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_KEY_T) == GLFW_PRESS)
+            {
+                GPE::Scene* scene = m_sceneEditor.view.pScene;
+                m_sceneEditor.view.unbindScene();
                 XmlLoader loader(doc);
                 auto      b = GET_PROCESS((*m_reloadableCpp), loadScene);
                 b(loader, scene);

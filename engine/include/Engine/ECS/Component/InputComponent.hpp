@@ -25,6 +25,14 @@ enum class EKeyMode
     KEY_UP       = 4,
 };
 
+namespace GPE
+{
+template <>
+void save(XmlSaver& context, const EKeyMode& inspected, const XmlSaver::SaveInfo& info);
+template <>
+void load(XmlLoader& context, EKeyMode& inspected, const XmlLoader::LoadInfo& info);
+} // namespace GPE
+
 enum class EInputMode
 {
     EDITOR = 0,
@@ -46,11 +54,14 @@ namespace GPE RFKNamespace()
         InputComponent& operator=(InputComponent&& other);
 
     private:
+        RFKField(Serialize())
         std::unordered_map<std::string, GPE::Function> m_functionMap;
         int                                            m_key = -1;
 
     public:
+        RFKField(Serialize())
         std::unordered_map<std::string, EKeyMode>    keyModeMap;
+        RFKField(Serialize())
         std::unordered_map<std::string, std::string> inputModeMap;
         /**
          * @brief Bind a function to an action
@@ -79,6 +90,8 @@ namespace GPE RFKNamespace()
          * @return
          */
         void setActive(bool newState) noexcept override;
+
+        virtual void awake() override;
 
         InputComponent_GENERATED
     };
