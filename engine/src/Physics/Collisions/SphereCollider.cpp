@@ -1,6 +1,9 @@
 ﻿#include <Engine/Engine.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 
+// Generated
+#include "Generated/SphereCollider.rfk.h"
+
 File_GENERATED
 
 using namespace GPE;

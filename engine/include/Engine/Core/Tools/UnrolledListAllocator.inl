@@ -1,6 +1,9 @@
+namespace GPE
+{
 template <typename T>
-UnrolledListAllocator<T>::UnrolledListAllocator(UnrolledListAllocator&& rhs)
-    : m_firstNode(rhs.m_firstNode), m_lastNode(rhs.m_lastNode), m_size(rhs.m_size), m_nextToConstruct(rhs.m_nextToConstruct)
+UnrolledListAllocator<T>::UnrolledListAllocator(UnrolledListAllocator&& rhs) noexcept
+    : m_firstNode(rhs.m_firstNode), m_lastNode(rhs.m_lastNode), m_size(rhs.m_size),
+      m_nextToConstruct(rhs.m_nextToConstruct)
 {
     rhs.m_nextToConstruct = nullptr;
     rhs.m_firstNode       = nullptr;
@@ -16,7 +19,7 @@ UnrolledListAllocator<T>::UnrolledListAllocator(size_t size) : m_size(size)
 }
 
 template <typename T>
-UnrolledListAllocator<T>& UnrolledListAllocator<T>::operator=(UnrolledListAllocator&& rhs)
+UnrolledListAllocator<T>& UnrolledListAllocator<T>::operator=(UnrolledListAllocator&& rhs) noexcept
 {
     m_nextToConstruct = rhs.m_nextToConstruct;
     m_firstNode       = rhs.m_firstNode;
@@ -77,8 +80,8 @@ void UnrolledListAllocator<T>::allocateData(Node*& node, SubNode*& subNodes, siz
     if (allocated == 0)
         throw std::bad_alloc();
 
-    node                 = &allocated->node;
-    subNodes             = &allocated->subNodes;
+    node     = &allocated->node;
+    subNodes = &allocated->subNodes;
 }
 
 template <typename T>
@@ -163,3 +166,4 @@ typename UnrolledListAllocator<T>::SubNode* UnrolledListAllocator<T>::Node::getS
 {
     return reinterpret_cast<SubNode*>(this + 1);
 }
+} // namespace GPE

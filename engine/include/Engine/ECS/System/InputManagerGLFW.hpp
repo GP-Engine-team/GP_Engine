@@ -109,7 +109,7 @@ public:
      * @param input
      * @return
      */
-    inline int addComponent(InputComponent* input) noexcept;
+    inline int addComponent(InputComponent& input) noexcept;
 
     inline void updateComponent(InputComponent* newPointerInputComponent, int key) noexcept;
 
@@ -132,6 +132,6 @@ public:
      */
     [[nodiscard]] inline const Cursor& getCursor() const noexcept;
 };
+} // namespace GPE
 
 #include "Engine/ECS/System/InputManagerGLFW.inl"
-} // namespace GPE

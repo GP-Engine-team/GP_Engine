@@ -31,15 +31,15 @@ public:
     void removeOnGUI(BehaviourComponent& updateFunctionToRemove) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
-    void addBehaviour(BehaviourComponent* pBehaviour) noexcept;
+    void addBehaviour(BehaviourComponent& behaviour) noexcept;
 
     void updateBehaviourPointer(BehaviourComponent*       newPointerBehaviour,
                                 const BehaviourComponent* exPointerBehaviour) noexcept;
 
-    void removeBehaviour(BehaviourComponent* pBehaviour) noexcept;
+    void removeBehaviour(BehaviourComponent& behaviour) noexcept;
 
+    void awake() const noexcept;
     void start() const noexcept;
-
     void onGUI() const noexcept;
 
     void fixedUpdate(float deltaTime) noexcept;

@@ -23,7 +23,7 @@ class Model;
 class Shader;
 class ParticleComponent;
 
-class SceneRenderSystem
+class RenderSystem
 {
 public:
     enum class EDebugShapeMode
@@ -62,7 +62,7 @@ public:
     using RenderPipeline = std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
                                               std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
                                               std::vector<Light*>&, std::vector<ParticleComponent*>&,
-                                              std::vector<DebugShape>&, std::vector<DebugLine>&)>;
+                                              std::vector<DebugShape>&, std::vector<DebugLine>&, Camera&)>;
 
 protected:
     std::vector<Renderer*>          m_pRenderers;
@@ -73,6 +73,7 @@ protected:
     std::vector<ParticleComponent*> m_pParticleComponents;
     std::vector<DebugShape>         m_debugShape;
     std::vector<DebugLine>          m_debugLine;
+    Camera*                         m_mainCamera = nullptr;
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
@@ -86,14 +87,16 @@ protected:
     Mesh* m_cubeMesh   = nullptr;
 
 public:
-    SceneRenderSystem() noexcept;
-    ~SceneRenderSystem() noexcept;
+    RenderSystem() noexcept;
+    ~RenderSystem() noexcept;
 
     void tryToBindShader(Shader& shader);
     void tryToBindMaterial(Shader& shader, Material& material);
     void tryToBindTexture(unsigned int textureID);
     void tryToBindMesh(unsigned int meshID);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
+
+    void setMainCamera(Camera& newMainCamera) noexcept;
 
     void resetCurrentRenderPassKey();
 
@@ -125,40 +128,40 @@ public:
 
 public:
     // TODO: Remove this shit and create variadic templated system
-    void addParticleComponent(ParticleComponent* pParticleComponent) noexcept;
+    void addParticleComponent(ParticleComponent& particleComponent) noexcept;
 
     void updateParticleComponentPointer(ParticleComponent* newPointerParticleComponent,
                                         ParticleComponent* exPointerParticleComponent) noexcept;
 
-    void removeParticleComponent(ParticleComponent* pParticleComponent) noexcept;
+    void removeParticleComponent(ParticleComponent& particleComponent) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
-    void addRenderer(Renderer* pRenderer) noexcept;
+    void addRenderer(Renderer& renderer) noexcept;
 
     void updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept;
 
-    void removeRenderer(Renderer* pRenderer) noexcept;
+    void removeRenderer(Renderer& renderer) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
-    void addSubModel(SubModel* pSubModel) noexcept;
+    void addSubModel(SubModel& subModel) noexcept;
 
     void updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept;
 
-    void removeSubModel(SubModel* pSubModel) noexcept;
+    void removeSubModel(SubModel& subModel) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
-    void addCamera(Camera* pCamera) noexcept;
+    void addCamera(Camera& camera) noexcept;
 
     void updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept;
 
-    void removeCamera(Camera* pCamera) noexcept;
+    void removeCamera(Camera& camera) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
-    void addLight(Light* pLight) noexcept;
+    void addLight(Light& light) noexcept;
 
     void updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept;
 
-    void removeLight(Light* pLight) noexcept;
+    void removeLight(Light& light) noexcept;
 };
 
 } /*namespace GPE*/

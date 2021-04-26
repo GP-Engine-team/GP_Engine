@@ -29,10 +29,10 @@ void load(XmlLoader& context, T*& inspected, const XmlLoader::LoadInfo& info)
         std::string str;
         if (context.loadFromStr(str, info))
         {
-            std::size_t p = std::stoll(str);
+            std::size_t p = std::stoull(str);
             
 
-            context.loadPtrData(inspected, info, p);
+            context.loadPtrData(inspected, info, (void*)p);
         }
 
         context.pop();
@@ -42,7 +42,7 @@ void load(XmlLoader& context, T*& inspected, const XmlLoader::LoadInfo& info)
 template <typename T>
 void load(XmlLoader& context, T*& inspected, const rfk::Field& info)
 {
-    load(context, inspected, XmlLoader::LoadInfo{info.name, info.type.archetype->name, info.type.archetype->id});
+    load(context, inspected, fieldToLoadInfo(info));
 }
 
 } // namespace GPE

@@ -30,7 +30,7 @@ void XmlLoader::addLazy(void*& data)
 // Pass a weak ptr pointing to an old value
 void XmlLoader::updateLazyPtr(void*& weak)
 {
-    auto it = alreadyLoadedPtrs.find({size_t(weak)});
+    auto it = alreadyLoadedPtrs.find({weak});
     assert(it != alreadyLoadedPtrs.end()); //  must be valid
     weak = it->second.data;
 }

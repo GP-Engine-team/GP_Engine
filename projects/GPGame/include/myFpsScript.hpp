@@ -28,14 +28,17 @@
 
 namespace GPG RFKNamespace()
 {
-    class RFKClass(Inspect(), Serialize()) MyFpsScript : public GPE::BehaviourComponent
+    class RFKClass(Inspect(), ComponentGen, Serialize()) MyFpsScript : public GPE::BehaviourComponent
     {
     public:
         inline MyFpsScript(GPE::GameObject & owner) noexcept
-            : GPE::BehaviourComponent(owner), input(&owner.addComponent<GPE::InputComponent>()),
-              source(&owner.addComponent<GPE::AudioComponent>()),
-              controller(&owner.addComponent<GPE::CharacterController>())
+            : GPE::BehaviourComponent(owner)
         {
+
+            input = &owner.addComponent<GPE::InputComponent>();
+            source = &owner.addComponent<GPE::AudioComponent>();
+            controller = &owner.addComponent<GPE::CharacterController>();
+
             enableFixedUpdate(true);
             enableOnGUI(true);
             input->bindAction("jump", EKeyMode::KEY_DOWN, "game01", this, "jump");
@@ -57,42 +60,70 @@ namespace GPG RFKNamespace()
             GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
             GPE::SourceSettings sourceSettings;
-            sourceSettings.pitch = 1;
+            sourceSettings.pitch = 1.f;
             sourceSettings.loop  = AL_TRUE;
 
             source->setSound("Western", "Western", sourceSettings);
             source->playSound("Western");
 
             controller->setHasGravity(true);
-            controller->setSpeed(1);
-            controller->setMouseSpeed(0.0025);
-            controller->setGravity(0.1);
+            controller->setSpeed(1.f);
+            controller->setMouseSpeed(0.0025f);
+            controller->setGravity(0.1f);
         }
 
-        MyFpsScript() noexcept
-        {
-            enableFixedUpdate(true);
-        }
+        //MyFpsScript() noexcept : GPE::BehaviourComponent()
+        //{
+        //    //enableFixedUpdate(true);
+        //}
+        MyFpsScript() noexcept                         = default;
         MyFpsScript(const MyFpsScript& other) noexcept = delete;
-        MyFpsScript(MyFpsScript && other) noexcept     = default;
-        virtual ~MyFpsScript() noexcept                = default;
+        MyFpsScript(MyFpsScript && other) noexcept     = delete;
+        virtual ~MyFpsScript() noexcept                
+        {
+            enableFixedUpdate(false);
+        }
 
         MyFpsScript& operator=(MyFpsScript const& other) noexcept = delete;
         MyFpsScript& operator=(MyFpsScript&& other) noexcept = delete;
 
+    private:
         RFKField(Serialize()) GPE::InputComponent*      input      = nullptr;
         RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
         RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
 
+        // Test to use a setter
+        RFKField(Inspect("setPrintHello")) 
+        bool printHello = false;
+
+        void setPrintHello(bool p)
+        {
+            if (printHello != p) // Called everytime if no if 
+            {
+                printHello = p;
+
+                if (printHello)
+                {
+                    GPE::Log::getInstance()->log("Hello world!");
+                }
+                else
+                {
+                    GPE::Log::getInstance()->log("Set me to true!");
+                }
+            }
+        }
+
+    public:
+
         void rotate(const GPM::Vec2& deltaDisplacement)
         {
-            if (deltaDisplacement.length() > 0.4)
+            if (deltaDisplacement.length() > 0.4f)
             {
                 getOwner().getTransform().setRotation(
                     getOwner().getTransform().getSpacialAttribut().rotation *
-                    GPM::Quaternion::angleAxis(-deltaDisplacement.y * controller->getMouseSpeed(), {1, 0, 0}));
+                    GPM::Quaternion::angleAxis(-deltaDisplacement.y * controller->getMouseSpeed(), GPM::Vec3::right()));
                 getOwner().getTransform().setRotation(
-                    GPM::Quaternion::angleAxis(-deltaDisplacement.x * controller->getMouseSpeed(), {0, 1, 0}) *
+                    GPM::Quaternion::angleAxis(-deltaDisplacement.x * controller->getMouseSpeed(), GPM::Vec3::up()) *
                     getOwner().getTransform().getSpacialAttribut().rotation);
             }
         }
@@ -101,8 +132,7 @@ namespace GPG RFKNamespace()
         {
             if (controller->getJumping() == false)
             {
-                GPM::Vec3 vec = {0, 1, 0};
-                controller->addForce(vec * 3);
+                controller->addForce(GPM::Vec3::up() * 3.f);
                 controller->setJumping(true);
             }
         }
@@ -166,9 +196,9 @@ namespace GPG RFKNamespace()
 
         void onGUI() final
         {
-            static float ratio = 0.08;
+            static float ratio = 0.08f;
 
-            ImGui::DragFloat("Ratio", &ratio, 0.01, 0.f, 1.f);
+            ImGui::DragFloat("Ratio", &ratio, 0.01f, 0.f, 1.f);
 
             ImVec2 size = {ImGui::GetWindowSize().x * ratio, ImGui::GetWindowSize().y * ratio};
 

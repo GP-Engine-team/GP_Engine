@@ -59,9 +59,18 @@ void BehaviourSystem::removeOnGUI(BehaviourComponent& functionToRemove) noexcept
     }
 }
 
-void BehaviourSystem::addBehaviour(BehaviourComponent* pBehaviour) noexcept
+void BehaviourSystem::addBehaviour(BehaviourComponent& behaviour) noexcept
 {
-    m_pBehaviours.push_back(pBehaviour);
+    if (behaviour.isFixedUpdateEnable())
+        addFixedUpdate(behaviour);
+
+    if (behaviour.isUpdateEnable())
+        addUpdate(behaviour);
+
+    if (behaviour.isOnGUIEnable())
+        addOnGUI(behaviour);
+
+    m_pBehaviours.push_back(&behaviour);
 }
 
 void BehaviourSystem::updateBehaviourPointer(BehaviourComponent*       newPointorBehaviour,
@@ -78,17 +87,35 @@ void BehaviourSystem::updateBehaviourPointer(BehaviourComponent*       newPointo
     }
 }
 
-void BehaviourSystem::removeBehaviour(BehaviourComponent* pBehaviour) noexcept
+void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
 {
     const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();
+
+    if (behaviour.isFixedUpdateEnable())
+        removeFixedUpdate(behaviour);
+
+    if (behaviour.isUpdateEnable())
+        removeUpdate(behaviour);
+
+    if (behaviour.isOnGUIEnable())
+        removeOnGUI(behaviour);
+
     for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != end; ++it)
     {
-        if ((*it) == pBehaviour)
+        if ((*it) == &behaviour)
         {
             std::swap<BehaviourComponent*>(m_pBehaviours.back(), (*it));
             m_pBehaviours.pop_back();
             return;
         }
+    }
+}
+
+void BehaviourSystem::awake() const noexcept
+{
+    for (auto&& behaviour : m_pBehaviours)
+    {
+        behaviour->awake();
     }
 }
 

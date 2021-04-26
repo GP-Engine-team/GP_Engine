@@ -4,17 +4,17 @@
 #include "Game.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
-
-#include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ObjParser.hpp"
 #include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
+#include "Engine/ECS/Component/AudioComponent.hpp"
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
 #include "Engine/ECS/Component/Light/DirectionalLight.hpp"
 #include "Engine/ECS/Component/Light/PointLight.hpp"
 #include "Engine/ECS/Component/Model.hpp"
+#include "Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp"
 #include "Engine/ECS/Component/TransformComponent.hpp"
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
@@ -24,8 +24,11 @@
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Resources/ResourcesManagerType.hpp"
+#include "Engine/Resources/Scene.hpp"
+#include "Engine/Resources/Script/FreeFly.hpp"
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Texture.hpp"
+#include "myFpsScript.hpp"
 #include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <myFpsScript.hpp>
@@ -48,15 +51,15 @@ void Game::update(double unscaledDeltaTime, double deltaTime)
 {
     ++unFixedUpdateFrameCount;
 
-    bSys.update(deltaTime);
+    bSys.update(static_cast<float>(deltaTime));
     sm.getCurrentScene()->getWorld().updateSelfAndChildren();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
 {
-    GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
+    GPE::Engine::getInstance()->physXSystem.advance(static_cast<float>(fixedDeltaTime));
     ++fixedUpdateFrameCount;
-    bSys.fixedUpdate(fixedDeltaTime);
+    bSys.fixedUpdate(static_cast<float>(fixedDeltaTime));
 }
 
 void Game::render()
@@ -81,7 +84,7 @@ void Game::render()
     ImGui::End();
     ImGui::Render();
 
-    SceneRenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
+    RenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
     sceneRS.draw(Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
 
     // draw UI
@@ -96,8 +99,9 @@ extern "C" GPE::AbstractGame* createGameInstance()
         FUNCT_ERROR("gladLoadGLLoader failed");
         exit(EXIT_FAILURE);
     }
-
-    return new Game();
+    GPE::AbstractGame* const pGame = new Game();
+    GPE::Engine::getInstance()->behaviourSystem.awake();
+    return pGame;
 }
 
 extern "C" void destroyGameInstance(GPE::AbstractGame* game)
@@ -216,7 +220,7 @@ Game::Game()
     initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
 
     sm.addEmpty("main");
-    sm.loadScene("main");
+    Scene& currentScene = sm.loadScene("main");
 
     iManager.bindInput(GLFW_KEY_W, "forward");
     iManager.bindInput(GLFW_KEY_S, "back");
@@ -270,6 +274,11 @@ Game::Game()
     testPhysX.getComponent<SphereCollider>()->setRadius(10.f);
     testPhysX.addComponent<RigidbodyStatic>();
     testPhysX.getComponent<RigidbodyStatic>()->collider = testPhysX.getComponent<SphereCollider>();
+
+    // FreeFly must be used to compile properly with GPGame.dll, to not be optimized out, for serialization.
+    {
+        rfk::Entity const* a = rfk::Database::getEntity(GPE::FreeFly::staticGetArchetype().id);
+    }
 
     /*Model::CreateArg modelArg;
     modelArg.subModels.emplace_back(SubModel{nullptr, Engine::getInstance()->resourceManager.get<Shader>("TextureOnly"),

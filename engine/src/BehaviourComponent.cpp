@@ -10,17 +10,17 @@ File_GENERATED
 
 BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(owner)
 {
-    Engine::getInstance()->behaviourSystem.addBehaviour(this);
+    Engine::getInstance()->behaviourSystem.addBehaviour(*this);
 }
 
 BehaviourComponent::BehaviourComponent() noexcept
 {
-    Engine::getInstance()->behaviourSystem.addBehaviour(this);
+    Engine::getInstance()->behaviourSystem.addBehaviour(*this);
 }
 
 BehaviourComponent::~BehaviourComponent() noexcept
 {
-    Engine::getInstance()->behaviourSystem.removeBehaviour(this);
+    Engine::getInstance()->behaviourSystem.removeBehaviour(*this);
 
     if (m_useFixedUpdate)
         Engine::getInstance()->behaviourSystem.removeFixedUpdate(*this);
@@ -78,4 +78,28 @@ void BehaviourComponent::enableOnGUI(bool flag) noexcept
         Engine::getInstance()->behaviourSystem.addOnGUI(*this);
     else
         Engine::getInstance()->behaviourSystem.removeOnGUI(*this);
+}
+
+bool BehaviourComponent::isUpdateEnable() const noexcept
+{
+    return m_useUpdate;
+}
+
+bool BehaviourComponent::isFixedUpdateEnable() const noexcept
+{
+    return m_useFixedUpdate;
+}
+
+bool BehaviourComponent::isOnGUIEnable() const noexcept
+{
+    return m_useOnGUI;
+}
+
+void BehaviourComponent::setActive(bool newState) noexcept
+{
+    m_isActivated = newState;
+    if (m_isActivated)
+        Engine::getInstance()->behaviourSystem.addBehaviour(*this);
+    else
+        Engine::getInstance()->behaviourSystem.removeBehaviour(*this);
 }
