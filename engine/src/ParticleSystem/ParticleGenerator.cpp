@@ -81,7 +81,7 @@ void VelFromPosGen::generate(double dt, ParticleData* p, size_t startId, size_t 
     {
         float scale = Random::ranged(m_minScale, m_maxScale);
         Vec4  vel   = (p->m_pos[i] - m_offset);
-        p->m_vel[i] = scale * vel;
+        p->m_vel[i] = vel * scale;
     }
 }
 

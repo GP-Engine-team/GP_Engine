@@ -50,7 +50,9 @@ File_GENERATED
         bool          skyboxFlag         = m_config.featureMask & SKYBOX;
         bool          ambiantOnlyFlag    = m_config.featureMask & AMBIANTE_COLOR_ONLY;
         bool          scaleTimeAccFlag   = m_config.featureMask & SCALE_TIME_ACC;
-        bool          UnscaleTimeAccFlag = m_config.featureMask & UNSCALED_TIME_ACC;
+        bool          unscaleTimeAccFlag = m_config.featureMask & UNSCALED_TIME_ACC;
+        bool          projectionMatrix   = m_config.featureMask & PROJECTION_MATRIX;
+        bool          viewMatrix         = m_config.featureMask & VIEW_MATRIX;
 
         ImGui::PushEnabled(!ambiantOnlyFlag);
         if (ImGui::Checkbox("LIGHT BLIN PHONG", &blinPhongFlag))
@@ -80,9 +82,21 @@ File_GENERATED
             m_isDirty = true;
         }
 
-        if (ImGui::Checkbox("UNSCALED TIME ACC", &UnscaleTimeAccFlag))
+        if (ImGui::Checkbox("UNSCALED TIME ACC", &unscaleTimeAccFlag))
         {
             m_config.featureMask ^= UNSCALED_TIME_ACC;
+            m_isDirty = true;
+        }
+
+        if (ImGui::Checkbox("PROJECTION MATRIX", &projectionMatrix))
+        {
+            m_config.featureMask ^= PROJECTION_MATRIX;
+            m_isDirty = true;
+        }
+
+        if (ImGui::Checkbox("VIEW MATRIX", &viewMatrix))
+        {
+            m_config.featureMask ^= VIEW_MATRIX;
             m_isDirty = true;
         }
 

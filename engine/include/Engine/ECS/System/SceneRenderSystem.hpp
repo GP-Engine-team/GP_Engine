@@ -21,6 +21,7 @@ class Camera;
 struct Frustum;
 class Model;
 class Shader;
+class ParticleComponent;
 
 class SceneRenderSystem
 {
@@ -60,16 +61,18 @@ public:
 
     using RenderPipeline = std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
                                               std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
-                                              std::vector<Light*>&, std::vector<DebugShape>&, std::vector<DebugLine>&)>;
+                                              std::vector<Light*>&, std::vector<ParticleComponent*>&,
+                                              std::vector<DebugShape>&, std::vector<DebugLine>&)>;
 
 protected:
-    std::vector<Renderer*>  m_pRenderers;
-    std::vector<SubModel*>  m_pOpaqueSubModels;
-    std::vector<SubModel*>  m_pTransparenteSubModels;
-    std::vector<Camera*>    m_pCameras;
-    std::vector<Light*>     m_pLights;
-    std::vector<DebugShape> m_debugShape;
-    std::vector<DebugLine>  m_debugLine;
+    std::vector<Renderer*>          m_pRenderers;
+    std::vector<SubModel*>          m_pOpaqueSubModels;
+    std::vector<SubModel*>          m_pTransparenteSubModels;
+    std::vector<Camera*>            m_pCameras;
+    std::vector<Light*>             m_pLights;
+    std::vector<ParticleComponent*> m_pParticleComponents;
+    std::vector<DebugShape>         m_debugShape;
+    std::vector<DebugLine>          m_debugLine;
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
@@ -121,6 +124,14 @@ public:
     void displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) noexcept;
 
 public:
+    // TODO: Remove this shit and create variadic templated system
+    void addParticleComponent(ParticleComponent* pParticleComponent) noexcept;
+
+    void updateParticleComponentPointer(ParticleComponent* newPointerParticleComponent,
+                                        ParticleComponent* exPointerParticleComponent) noexcept;
+
+    void removeParticleComponent(ParticleComponent* pParticleComponent) noexcept;
+
     // TODO: Remove this shit and create variadic templated system
     void addRenderer(Renderer* pRenderer) noexcept;
 

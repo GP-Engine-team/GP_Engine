@@ -11,6 +11,7 @@
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Engine/ECS/Component/Light/Light.hpp"
 #include "Engine/ECS/Component/Model.hpp"
+#include "Engine/ECS/Component/ParticleComponent.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Mesh.hpp"
@@ -160,6 +161,16 @@ void SceneRenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentS
         pCurrentShaderUse->setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
     }
 
+    if ((pCurrentShaderUse->getFeature() & PROJECTION_MATRIX) == PROJECTION_MATRIX)
+    {
+        pCurrentShaderUse->setMat4("projectMatrix", camToUse.getProjection().e);
+    }
+
+    if ((pCurrentShaderUse->getFeature() & VIEW_MATRIX) == VIEW_MATRIX)
+    {
+        pCurrentShaderUse->setMat4("viewMatrix", camToUse.getView().e);
+    }
+
     /*
     if ((pCurrentShaderUse->getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
     {
@@ -296,10 +307,15 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 {
     return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
-              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape,
-              std::vector<DebugLine>& debugLines)
+              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
+              std::vector<ParticleComponent*>& pParticleComponents, std::vector<DebugShape>& debugShape,
+              std::vector<DebugLine>& debugLines) {
+        // TODO : remove it
+        for (auto&& particle : pParticleComponents)
+        {
+            particle->update(1 / 60.0);
+        }
 
-    {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -368,6 +384,24 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                 rs.sendModelDataToShader(*pCameras[0], *it->second->pShader, *it->second);
                 rs.drawModelPart(*it->second);
             };
+        }
+
+        // Draw particles
+        {
+            for (auto&& particle : pParticleComponents)
+            {
+                glEnable(GL_PROGRAM_POINT_SIZE);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                if (particle->getShader())
+                    rs.tryToBindShader(*particle->getShader());
+                rs.tryToBindMesh(particle->getMeshID());
+
+                const size_t count = particle->numAliveParticles();
+                if (count > 0)
+                    glDrawArrays(GL_POINTS, 0, count);
+            }
         }
 
         // Draw debug shape
@@ -451,6 +485,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipelin
     return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
+              std::vector<ParticleComponent*>&            pParticleComponents,
               std::vector<SceneRenderSystem::DebugShape>& debugShape,
               std::vector<SceneRenderSystem::DebugLine>&  debugLine) {
         glEnable(GL_DEPTH_TEST);
@@ -511,7 +546,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipelin
 void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
 {
     renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_debugShape, m_debugLine);
+                   m_pParticleComponents, m_debugShape, m_debugLine);
 }
 
 void SceneRenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,
@@ -542,6 +577,39 @@ void SceneRenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2
                                       bool smooth) noexcept
 {
     m_debugLine.emplace_back(DebugLine{pt1, pt2, width, color, smooth});
+}
+
+void SceneRenderSystem::addParticleComponent(ParticleComponent* pParticleComponent) noexcept
+{
+    m_pParticleComponents.push_back(pParticleComponent);
+}
+
+void SceneRenderSystem::updateParticleComponentPointer(ParticleComponent* newPointerParticleComponent,
+                                                       ParticleComponent* exPointerParticleComponent) noexcept
+{
+    const std::vector<ParticleComponent*>::const_iterator end{m_pParticleComponents.end()};
+    for (std::vector<ParticleComponent*>::iterator it = m_pParticleComponents.begin(); it != end; it++)
+    {
+        if ((*it) == exPointerParticleComponent)
+        {
+            *it = newPointerParticleComponent;
+            return;
+        }
+    }
+}
+
+void SceneRenderSystem::removeParticleComponent(ParticleComponent* pParticleComponent) noexcept
+{
+    const std::vector<ParticleComponent*>::const_iterator end{m_pParticleComponents.end()};
+    for (std::vector<ParticleComponent*>::iterator it = m_pParticleComponents.begin(); it != end; it++)
+    {
+        if ((*it) == pParticleComponent)
+        {
+            std::swap<ParticleComponent*>(m_pParticleComponents.back(), (*it));
+            m_pParticleComponents.pop_back();
+            return;
+        }
+    }
 }
 
 void SceneRenderSystem::addRenderer(Renderer* pRenderer) noexcept

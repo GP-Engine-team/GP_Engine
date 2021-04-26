@@ -19,38 +19,56 @@ namespace GPE
 class ParticleData
 {
 public:
-    // Buffers (SoA)
-    std::unique_ptr<GPM::Vec4[]> m_pos{nullptr};
-    std::unique_ptr<GPM::Vec4[]> m_col{nullptr};
-    std::unique_ptr<GPM::Vec4[]> m_startCol{nullptr};
-    std::unique_ptr<GPM::Vec4[]> m_endCol{nullptr};
-    std::unique_ptr<GPM::Vec4[]> m_vel{nullptr};
-    std::unique_ptr<GPM::Vec4[]> m_acc{nullptr};
-    std::unique_ptr<GPM::Vec4[]> m_time{nullptr};
-    std::unique_ptr<bool[]>      m_alive{nullptr};
+    enum EParam : uint8_t
+    {
+        POSITION            = (1u << 1),
+        COLOR_INTERPOLATION = (1u << 2),
+        VELOCITY            = (1u << 3),
+        TIME                = (1u << 4)
+    };
+
+public:
+    uint8_t m_maskType = 0;
+
+    std::unique_ptr<GPM::Vec4[]> m_pos;
+    std::unique_ptr<GPM::Vec4[]> m_col;
+    std::unique_ptr<GPM::Vec4[]> m_startCol;
+    std::unique_ptr<GPM::Vec4[]> m_endCol;
+    std::unique_ptr<GPM::Vec4[]> m_vel;
+    std::unique_ptr<GPM::Vec4[]> m_acc;
+    std::unique_ptr<GPM::Vec4[]> m_time;
+    std::unique_ptr<bool[]>      m_alive;
 
     size_t m_count{0};
     size_t m_countAlive{0};
 
 public:
-    ParticleData()                          = delete;
-    ParticleData(const ParticleData& other) = delete;
-    ParticleData& operator=(ParticleData const& other) = delete;
-    ParticleData(ParticleData&& other)                 = delete;
-    ParticleData& operator=(ParticleData&& other) = delete;
-    ~ParticleData()                               = default;
-
-    explicit ParticleData(size_t maxCount)
+    ParticleData()
     {
-        generate(maxCount);
+    }
+
+    explicit ParticleData(size_t maxCount, uint8_t maskType)
+    {
+        generate(maxCount, maskType);
+    }
+
+    ~ParticleData()
+    {
     }
 
     ParticleData(const ParticleData&) = delete;
     ParticleData& operator=(const ParticleData&) = delete;
 
-    void generate(size_t maxSize);
+    void generate(size_t maxSize, uint8_t maskType);
     void kill(size_t id);
     void wake(size_t id);
     void swapData(size_t a, size_t b);
+
+    bool isParamEnable(EParam param) const;
+    void addParam(EParam param);
+    void removeParam(EParam param);
+    void invertParamState(EParam param);
+
+    static void copyOnlyAlive(const ParticleData* source, ParticleData* destination);
 };
 } // namespace GPE

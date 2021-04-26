@@ -22,6 +22,9 @@ namespace GPE
 #define SCALE_TIME_ACC (1 << 3)
 #define UNSCALED_TIME_ACC (1 << 4)
 
+#define PROJECTION_MATRIX (1 << 5)
+#define VIEW_MATRIX (1 << 6)
+
 // Inspiread about code exemple on learn openGl : https://learnopengl.com/Getting-started/Shaders
 class Shader
 {
