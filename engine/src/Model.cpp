@@ -161,7 +161,7 @@ void GPE::save(XmlSaver & context, const SubModel& inspected, const XmlSaver::Sa
         }
     }
 
-    //GPE::save(context, inspected.enableBackFaceCulling, XmlSaver::SaveInfo{"enableBackFaceCulling", "bool", 0});
+    GPE::save(context, inspected.enableBackFaceCulling, XmlSaver::SaveInfo{"enableBackFaceCulling", "bool", 0});
 
     context.pop();
 }
@@ -191,7 +191,7 @@ void GPE::load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadI
             inspected.pMesh = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName);
         }
 
-        //GPE::load(context, inspected.enableBackFaceCulling, XmlLoader::LoadInfo{"enableBackFaceCulling", "bool", 0});
+        GPE::load(context, inspected.enableBackFaceCulling, XmlLoader::LoadInfo{"enableBackFaceCulling", "bool", 0});
 
         context.pop();
     }

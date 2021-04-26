@@ -201,6 +201,8 @@ void save(XmlSaver& context, const float& inspected, const rfk::Field& info);
  */
 template <>
 void save(XmlSaver& context, const bool& inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, const bool& inspected, const XmlSaver::SaveInfo& info);
 
 template <>
 void save(XmlSaver& context, rfk::Object* const & inspected, const rfk::Field& info);

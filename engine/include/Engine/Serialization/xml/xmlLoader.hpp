@@ -210,6 +210,8 @@ void load(XmlLoader& context, float& data, const rfk::Field& info);
  */
 template <>
 void load(XmlLoader& context, bool& data, const rfk::Field& info);
+template <>
+void load(XmlLoader& context, bool& data, const XmlLoader::LoadInfo& info);
 
 template <>
 void load(XmlLoader& context, rfk::Method const*& data, const XmlLoader::LoadInfo& info);

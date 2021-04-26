@@ -96,6 +96,13 @@ void load(XmlLoader& context, bool& data, const rfk::Field& info)
 }
 
 template <>
+void load(XmlLoader& context, bool& data, const XmlLoader::LoadInfo& info)
+{
+    std::string value;
+    data = context.loadFromStr(value, info) ? (value == "true") : false;
+}
+
+template <>
 void load(XmlLoader& context, rfk::Method const*& data, const XmlLoader::LoadInfo& info)
 {
     if (context.goToSubChild(info))
