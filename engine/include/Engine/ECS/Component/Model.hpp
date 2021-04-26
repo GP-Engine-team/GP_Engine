@@ -34,7 +34,7 @@ namespace GPE RFKNamespace()
         bool enableBackFaceCulling = true;
     };
 
-    template <>
+    template<>
     void DataInspector::inspect(GPE::InspectContext & context, SubModel & inspected);
 
     bool isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept;
@@ -51,9 +51,9 @@ namespace GPE RFKNamespace()
         RFKField(Inspect()) std::list<SubModel> m_subModels;
 
     public:
-        Model(GameObject & owner);
+        Model(GameObject& owner);
 
-        Model(GameObject & owner, const CreateArg& arg);
+        Model(GameObject& owner, const CreateArg& arg);
 
         Model(const Model& other) noexcept = delete;
         Model(Model && other) noexcept;
