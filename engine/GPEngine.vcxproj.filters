@@ -651,6 +651,9 @@
     <ClInclude Include="include\Engine\Serialization\SavedScene.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\STDLoad.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -763,6 +766,9 @@
       <Filter>include\Core\Tools</Filter>
     </None>
     <None Include="include\Engine\Serialization\DataInspector.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\STDLoad.inl">
       <Filter>include\Serialization</Filter>
     </None>
   </ItemGroup>
