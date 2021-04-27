@@ -314,8 +314,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
               std::vector<ParticleComponent*>& pParticleComponents, std::vector<DebugShape>& debugShape,
-              std::vector<DebugLine>& debugLines, Camera& mainCamera)
-    {
+              std::vector<DebugLine>& debugLines, Camera& mainCamera) {
         if (pCameras.empty())
             return;
 
@@ -494,9 +493,8 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
     return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*>& pRenderers,
               std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
               std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
-              std::vector<ParticleComponent*>&            pParticleComponents,
-              std::vector<SceneRenderSystem::DebugShape>& debugShape,
-              std::vector<SceneRenderSystem::DebugLine>&  debugLine, Camera& mainCamera) {
+              std::vector<ParticleComponent*>& pParticleComponents, std::vector<RenderSystem::DebugShape>& debugShape,
+              std::vector<RenderSystem::DebugLine>& debugLine, Camera& mainCamera) {
         if (pCameras.empty())
             return;
 
@@ -594,13 +592,13 @@ void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, flo
     m_debugLine.emplace_back(DebugLine{pt1, pt2, width, color, smooth});
 }
 
-void SceneRenderSystem::addParticleComponent(ParticleComponent particleComponent) noexcept
+void RenderSystem::addParticleComponent(ParticleComponent& particleComponent) noexcept
 {
     m_pParticleComponents.push_back(&particleComponent);
 }
 
-void SceneRenderSystem::updateParticleComponentPointer(ParticleComponent* newPointerParticleComponent,
-                                                       ParticleComponent* exPointerParticleComponent) noexcept
+void RenderSystem::updateParticleComponentPointer(ParticleComponent* newPointerParticleComponent,
+                                                  ParticleComponent* exPointerParticleComponent) noexcept
 {
     const std::vector<ParticleComponent*>::const_iterator end{m_pParticleComponents.end()};
     for (std::vector<ParticleComponent*>::iterator it = m_pParticleComponents.begin(); it != end; it++)
@@ -613,7 +611,7 @@ void SceneRenderSystem::updateParticleComponentPointer(ParticleComponent* newPoi
     }
 }
 
-void SceneRenderSystem::removeParticleComponent(ParticleComponent& particleComponent) noexcept
+void RenderSystem::removeParticleComponent(ParticleComponent& particleComponent) noexcept
 {
     const std::vector<ParticleComponent*>::const_iterator end{m_pParticleComponents.end()};
     for (std::vector<ParticleComponent*>::iterator it = m_pParticleComponents.begin(); it != end; it++)

@@ -21,7 +21,8 @@ public:
     {
     }
 
-    virtual void update(double dt, ParticleData* p) = 0;
+    virtual void    update(double dt, ParticleData* p) = 0;
+    virtual uint8_t getRequiereConfig() const          = 0;
 };
 
 class EulerUpdater : public ParticleUpdater
@@ -35,6 +36,8 @@ public:
     }
 
     virtual void update(double dt, ParticleData* p) override;
+
+    uint8_t getRequiereConfig() const override;
 };
 
 // collision with the floor :) todo: implement a collision model
@@ -50,6 +53,8 @@ public:
     }
 
     virtual void update(double dt, ParticleData* p) override;
+
+    uint8_t getRequiereConfig() const override;
 };
 
 class AttractorUpdater : public ParticleUpdater
@@ -58,6 +63,8 @@ protected:
     std::vector<GPM::Vec4> m_attractors; // .w is force
 public:
     virtual void update(double dt, ParticleData* p) override;
+
+    uint8_t getRequiereConfig() const override;
 
     size_t collectionSize() const
     {
@@ -77,6 +84,8 @@ class BasicColorUpdater : public ParticleUpdater
 {
 public:
     virtual void update(double dt, ParticleData* p) override;
+
+    uint8_t getRequiereConfig() const override;
 };
 
 class PosColorUpdater : public ParticleUpdater
@@ -91,6 +100,8 @@ public:
     }
 
     virtual void update(double dt, ParticleData* p) override;
+
+    uint8_t getRequiereConfig() const override;
 };
 
 class VelColorUpdater : public ParticleUpdater
@@ -105,12 +116,16 @@ public:
     }
 
     virtual void update(double dt, ParticleData* p) override;
+
+    uint8_t getRequiereConfig() const override;
 };
 
 class BasicTimeUpdater : public ParticleUpdater
 {
 public:
     virtual void update(double dt, ParticleData* p) override;
+
+    uint8_t getRequiereConfig() const override;
 };
 
 } // namespace GPE

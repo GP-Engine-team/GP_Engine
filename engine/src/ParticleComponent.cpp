@@ -15,19 +15,19 @@ using namespace GPM;
 
 ParticleComponent::ParticleComponent(GameObject& owner) : Component(owner)
 {
-    owner.pOwnerScene->sceneRenderer.addParticleComponent(this);
-    initialize(1000000);
+    owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    initialize(10000);
 }
 
 ParticleComponent::ParticleComponent(GameObject& owner, const CreateArg& arg) : Component(owner)
 {
-    owner.pOwnerScene->sceneRenderer.addParticleComponent(this);
-    initialize(1000000);
+    owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    initialize(10000);
 }
 
 ParticleComponent::~ParticleComponent()
 {
-    getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(this);
+    getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
 }
 
 void ParticleComponent::moveTowardScene(Scene& newOwner)
@@ -72,47 +72,84 @@ void renderResourceExplorer(const char* name, T*& inRes)
 
 void ParticleComponent::inspect(InspectContext& context)
 {
+    DataInspector::inspect(context, m_emitters);
+
     bool flag = m_particles.isParamEnable(ParticleData::EParam::POSITION);
     if (ImGui::Checkbox("##POSITION", &flag))
     {
         m_particles.invertParamState(ParticleData::EParam::POSITION);
+
+        if (m_particles.isParamEnable(ParticleData::EParam::POSITION))
+        {
+        }
+        else
+        {
+        }
     }
     ImGui::SameLine();
     ImGui::PushEnabled(flag);
-    ImGui::CollapsingHeader("Position");
+    if (ImGui::CollapsingHeader("Position"))
+    {
+        /* auto m_posGenerator = m_posGenerator->m_pos = Vec4{0.0, 0.0, 0.0, 0.0};
+         m_posGenerator->m_maxStartPosOffset         = Vec4{0.0, 0.0, 0.0, 0.0};
+         (m_posGenerator);*/
+    }
     ImGui::PopEnabled();
 
     flag = m_particles.isParamEnable(ParticleData::EParam::COLOR_INTERPOLATION);
     if (ImGui::Checkbox("##COLOR_INTERPOLATION", &flag))
     {
         m_particles.invertParamState(ParticleData::EParam::COLOR_INTERPOLATION);
+
+        if (m_particles.isParamEnable(ParticleData::EParam::COLOR_INTERPOLATION))
+        {
+            BasicColorGen::CreateArg arg;
+            m_emitters->addGenerator<BasicColorGen>(arg);
+        }
+        else
+        {
+            m_emitters->removeGenerator<BasicColorGen>();
+        }
     }
     ImGui::SameLine();
     ImGui::PushEnabled(flag);
-    ImGui::CollapsingHeader("Color interpolation");
+    if (ImGui::CollapsingHeader("Color interpolation"))
+    {
+        BasicColorGen::CreateArg arg;
+
+        m_colGenerator->m_minStartCol = Vec4{0.7, 0.7, 0.7, 1.0};
+        m_colGenerator->m_maxStartCol = Vec4{1.0, 1.0, 1.0, 1.0};
+        m_colGenerator->m_minEndCol   = Vec4{0.5, 0.0, 0.6, 0.0};
+        m_colGenerator->m_maxEndCol   = Vec4{0.7, 0.5, 1.0, 0.0};
+
+        m_emitters->addGenerator<BasicColorGen>(arg);
+    }
     ImGui::PopEnabled();
 
-    renderResourceExplorer<Shader>("Shader", m_shader);
-
-    // Drop
-    if (ImGui::BeginDragDropTarget())
+    // Shader
     {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_SHADER_EXTENSION))
+        renderResourceExplorer<Shader>("Shader", m_shader);
+
+        // Drop
+        if (ImGui::BeginDragDropTarget())
         {
-            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-            if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(path.string().c_str()))
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_SHADER_EXTENSION))
             {
-                m_shader = pShader;
-            }
-            else
-            {
-                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(m_shader))
-                    getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
+                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+                std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
-                m_shader = loadShaderFile(path.string().c_str());
-                getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
+                if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(path.string().c_str()))
+                {
+                    m_shader = pShader;
+                }
+                else
+                {
+                    if (const std::string* str = Engine::getInstance()->resourceManager.getKey(m_shader))
+                        getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
+
+                    m_shader = loadShaderFile(path.string().c_str());
+                    getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
+                }
             }
         }
     }
@@ -135,34 +172,33 @@ bool ParticleComponent::initialize(size_t numParticles)
     //
     // emitter:
     //
-    auto particleEmitter = std::make_shared<ParticleEmitter>();
+    m_emitters = std::make_shared<ParticleEmitter>();
     {
-        particleEmitter->m_emitRate = (float)numParticles * 0.25f;
+        m_emitters->m_emitRate = (float)numParticles * 0.25f;
 
         // pos:
         auto m_posGenerator                 = std::make_shared<BoxPosGen>();
         m_posGenerator->m_pos               = Vec4{0.0, 0.0, 0.0, 0.0};
         m_posGenerator->m_maxStartPosOffset = Vec4{0.0, 0.0, 0.0, 0.0};
-        particleEmitter->addGenerator(m_posGenerator);
+        m_emitters->addGenerator(m_posGenerator);
 
         auto m_colGenerator           = std::make_shared<BasicColorGen>();
         m_colGenerator->m_minStartCol = Vec4{0.7, 0.7, 0.7, 1.0};
         m_colGenerator->m_maxStartCol = Vec4{1.0, 1.0, 1.0, 1.0};
         m_colGenerator->m_minEndCol   = Vec4{0.5, 0.0, 0.6, 0.0};
         m_colGenerator->m_maxEndCol   = Vec4{0.7, 0.5, 1.0, 0.0};
-        particleEmitter->addGenerator(m_colGenerator);
+        m_emitters->addGenerator(m_colGenerator);
 
         auto velGenerator           = std::make_shared<BasicVelGen>();
         velGenerator->m_minStartVel = Vec4{-5.f, 2.2f, -5.f, 0.0f};
         velGenerator->m_maxStartVel = Vec4{50.f, 25.f, 5.f, 0.0f};
-        particleEmitter->addGenerator(velGenerator);
+        m_emitters->addGenerator(velGenerator);
 
         auto timeGenerator       = std::make_shared<BasicTimeGen>();
         timeGenerator->m_minTime = 3.0f;
         timeGenerator->m_maxTime = 4.0f;
-        particleEmitter->addGenerator(timeGenerator);
+        m_emitters->addGenerator(timeGenerator);
     }
-    m_emitters.emplace_back(particleEmitter);
 
     auto timeUpdater = std::make_shared<BasicTimeUpdater>();
     m_updaters.emplace_back(timeUpdater);

@@ -8,6 +8,7 @@
 
 #include <Engine/Resources/ParticleSystem/ParticleData.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
+#include <Engine/Serialization/DataInspector.hpp>
 
 #include <memory>
 #include <vector>
@@ -17,11 +18,9 @@ namespace GPE
 
 class ParticleEmitter
 {
-protected:
-    std::vector<std::shared_ptr<ParticleGenerator>> m_generators;
-
 public:
-    float m_emitRate{0.0};
+    std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
+    float                                           m_emitRate{0.0};
 
 public:
     ParticleEmitter()
@@ -34,10 +33,32 @@ public:
     // calls all the generators and at the end it activates (wakes) particle
     virtual void emit(double dt, ParticleData* p);
 
-    void addGenerator(std::shared_ptr<ParticleGenerator> gen)
+    template <typename T, typename... TArg>
+    void addGenerator(TArg... arg)
     {
-        m_generators.push_back(gen);
+        for (auto&& generator : m_generators)
+        {
+            if (dynamic_cast<T>(generator)) // Already exist
+                return;
+        }
+        m_generators.emplace_back(arg...);
+    }
+
+    template <typename T>
+    void removeGenerator()
+    {
+        for (auto&& it = m_generators.begin(); it != m_generators.end(); ++it)
+        {
+            if (dynamic_cast<T>(generator)) // Already exist
+            {
+                m_generators.erase(it);
+                return;
+            }
+        }
     }
 };
+
+template <>
+void DataInspector::inspect(GPE::InspectContext& context, ParticleEmitter& inspected);
 
 } // namespace GPE

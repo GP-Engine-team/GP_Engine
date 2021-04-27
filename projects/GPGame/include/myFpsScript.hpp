@@ -31,12 +31,11 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) MyFpsScript : public GPE::BehaviourComponent
     {
     public:
-        inline MyFpsScript(GPE::GameObject & owner) noexcept
-            : GPE::BehaviourComponent(owner)
+        inline MyFpsScript(GPE::GameObject & owner) noexcept : GPE::BehaviourComponent(owner)
         {
 
-            input = &owner.addComponent<GPE::InputComponent>();
-            source = &owner.addComponent<GPE::AudioComponent>();
+            input      = &owner.addComponent<GPE::InputComponent>();
+            source     = &owner.addComponent<GPE::AudioComponent>();
             controller = &owner.addComponent<GPE::CharacterController>();
 
             enableFixedUpdate(true);
@@ -72,14 +71,14 @@ namespace GPG RFKNamespace()
             controller->setGravity(0.1f);
         }
 
-        //MyFpsScript() noexcept : GPE::BehaviourComponent()
+        // MyFpsScript() noexcept : GPE::BehaviourComponent()
         //{
         //    //enableFixedUpdate(true);
         //}
         MyFpsScript() noexcept                         = default;
         MyFpsScript(const MyFpsScript& other) noexcept = delete;
         MyFpsScript(MyFpsScript && other) noexcept     = delete;
-        virtual ~MyFpsScript() noexcept                
+        virtual ~MyFpsScript() noexcept
         {
             enableFixedUpdate(false);
         }
@@ -93,12 +92,11 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
 
         // Test to use a setter
-        RFKField(Inspect("setPrintHello")) 
-        bool printHello = false;
+        RFKField(Inspect("setPrintHello")) bool printHello = false;
 
         void setPrintHello(bool p)
         {
-            if (printHello != p) // Called everytime if no if 
+            if (printHello != p) // Called everytime if no if
             {
                 printHello = p;
 
@@ -114,7 +112,6 @@ namespace GPG RFKNamespace()
         }
 
     public:
-
         void rotate(const GPM::Vec2& deltaDisplacement)
         {
             if (deltaDisplacement.length() > 0.4f)
@@ -141,7 +138,7 @@ namespace GPG RFKNamespace()
         {
             GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
             vec.y         = 0;
-            controller->move(-vec);
+            controller->move(vec);
             // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
         }
 
@@ -149,7 +146,7 @@ namespace GPG RFKNamespace()
         {
             GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
             vec.y         = 0;
-            controller->move(vec);
+            controller->move(-vec);
             // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
         }
 

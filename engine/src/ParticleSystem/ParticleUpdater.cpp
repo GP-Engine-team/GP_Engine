@@ -23,6 +23,11 @@ void EulerUpdater::update(double dt, ParticleData* p)
     }
 }
 
+uint8_t EulerUpdater::getRequiereConfig() const
+{
+    return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
+}
+
 void FloorUpdater::update(double dt, ParticleData* p)
 {
     const float localDT = (float)dt;
@@ -48,6 +53,11 @@ void FloorUpdater::update(double dt, ParticleData* p)
             acc[i] = force;
         }
     }
+}
+
+uint8_t FloorUpdater::getRequiereConfig() const
+{
+    return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
 }
 
 void AttractorUpdater::update(double dt, ParticleData* p)
@@ -80,6 +90,11 @@ void AttractorUpdater::update(double dt, ParticleData* p)
     }
 }
 
+uint8_t AttractorUpdater::getRequiereConfig() const
+{
+    return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
+}
+
 void BasicColorUpdater::update(double dt, ParticleData* p)
 {
     Vec4* col      = p->m_col.get();
@@ -90,6 +105,12 @@ void BasicColorUpdater::update(double dt, ParticleData* p)
     const size_t endId = p->m_countAlive;
     for (size_t i = 0; i < endId; ++i)
         col[i] = startCol[i].lerp(endCol[i], t[i].z);
+}
+
+uint8_t BasicColorUpdater::getRequiereConfig() const
+{
+    return ParticleData::EParam::COLOR | ParticleData::EParam::START_COLOR | ParticleData::EParam::END_COLOR |
+           ParticleData::EParam::TIME;
 }
 
 void PosColorUpdater::update(double dt, ParticleData* p)
@@ -118,6 +139,12 @@ void PosColorUpdater::update(double dt, ParticleData* p)
     }
 }
 
+uint8_t PosColorUpdater::getRequiereConfig() const
+{
+    return ParticleData::EParam::COLOR | ParticleData::EParam::START_COLOR | ParticleData::EParam::END_COLOR |
+           ParticleData::EParam::TIME | ParticleData::EParam::POSITION;
+}
+
 void VelColorUpdater::update(double dt, ParticleData* p)
 {
     Vec4* col      = p->m_col.get();
@@ -143,6 +170,12 @@ void VelColorUpdater::update(double dt, ParticleData* p)
     }
 }
 
+uint8_t PosColorUpdater::getRequiereConfig() const
+{
+    return ParticleData::EParam::COLOR | ParticleData::EParam::START_COLOR | ParticleData::EParam::END_COLOR |
+           ParticleData::EParam::TIME | ParticleData::EParam::VELOCITY;
+}
+
 void BasicTimeUpdater::update(double dt, ParticleData* p)
 {
     unsigned int endId   = p->m_countAlive;
@@ -165,4 +198,9 @@ void BasicTimeUpdater::update(double dt, ParticleData* p)
             endId = p->m_countAlive < p->m_count ? p->m_countAlive : p->m_count;
         }
     }
+}
+
+uint8_t BasicTimeUpdater::getRequiereConfig() const
+{
+    return ParticleData::EParam::TIME;
 }

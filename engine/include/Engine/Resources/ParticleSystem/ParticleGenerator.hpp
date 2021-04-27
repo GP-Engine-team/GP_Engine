@@ -66,14 +66,27 @@ public:
 class BasicColorGen : public ParticleGenerator
 {
 public:
+    struct CreateArg
+    {
+        GPM::Vec4 minStartCol{0.0};
+        GPM::Vec4 maxStartCol{0.0};
+        GPM::Vec4 minEndCol{0.0};
+        GPM::Vec4 maxEndCol{0.0};
+    };
+
+public:
     GPM::Vec4 m_minStartCol{0.0};
     GPM::Vec4 m_maxStartCol{0.0};
     GPM::Vec4 m_minEndCol{0.0};
     GPM::Vec4 m_maxEndCol{0.0};
 
 public:
-    BasicColorGen()
+    BasicColorGen(const CreateArg& arg)
     {
+        m_minStartCol = arg.minEndCol;
+        m_maxStartCol = arg.minStartCol;
+        m_minEndCol   = arg.minEndCol;
+        m_maxEndCol   = arg.maxEndCol;
     }
 
     virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;

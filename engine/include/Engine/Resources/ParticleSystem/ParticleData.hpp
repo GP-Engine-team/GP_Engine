@@ -21,15 +21,17 @@ class ParticleData
 public:
     enum EParam : uint8_t
     {
-        POSITION            = (1u << 1),
-        COLOR_INTERPOLATION = (1u << 2),
-        VELOCITY            = (1u << 3),
-        TIME                = (1u << 4)
+        POSITION     = (1u << 1),
+        COLOR        = (1u << 2),
+        START_COLOR  = (1u << 3),
+        END_COLOR    = (1u << 4),
+        VELOCITY     = (1u << 5),
+        ACCELERATION = (1u << 6),
+        TIME         = (1u << 7),
     };
 
 public:
-    uint8_t m_maskType = 0;
-
+    uint8_t                      m_maskType = 0;
     std::unique_ptr<GPM::Vec4[]> m_pos;
     std::unique_ptr<GPM::Vec4[]> m_col;
     std::unique_ptr<GPM::Vec4[]> m_startCol;

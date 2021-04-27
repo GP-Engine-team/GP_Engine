@@ -14,3 +14,9 @@ void ParticleEmitter::emit(double dt, ParticleData* p)
     for (size_t i = startId; i < endId; ++i) // << wake loop
         p->wake(i);
 }
+
+template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, ParticleEmitter& inspected)
+{
+    inspect(context, inspected.m_emitRate);
+}

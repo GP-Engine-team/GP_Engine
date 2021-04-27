@@ -13,17 +13,23 @@ void ParticleData::generate(size_t maxSize, uint8_t maskType)
     m_count      = maxSize;
     m_countAlive = 0;
 
-    m_pos.reset(new Vec4[maxSize]);
-    m_startCol.reset(new Vec4[maxSize]);
+    if (m_maskType & EParam::POSITION)
+        m_pos.reset(new Vec4[maxSize]);
 
-    if (m_maskType & EParam::COLOR_INTERPOLATION)
+    if (m_maskType & EParam::COLOR)
+        m_col.reset(new Vec4[maxSize]);
+
+    if (m_maskType & EParam::START_COLOR)
+        m_startCol.reset(new Vec4[maxSize]);
+
+    if (m_maskType & EParam::END_COLOR)
         m_endCol.reset(new Vec4[maxSize]);
 
     if (m_maskType & EParam::VELOCITY)
         m_vel.reset(new Vec4[maxSize]);
 
-    m_col.reset(new Vec4[maxSize]);
-    m_acc.reset(new Vec4[maxSize]);
+    if (m_maskType & EParam::ACCELERATION)
+        m_acc.reset(new Vec4[maxSize]);
 
     if (m_maskType & EParam::TIME)
         m_time.reset(new Vec4[maxSize]);

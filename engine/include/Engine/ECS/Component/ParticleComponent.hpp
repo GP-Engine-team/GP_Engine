@@ -35,7 +35,7 @@ namespace GPE RFKNamespace()
         ParticleData m_particles;
         size_t       m_count;
 
-        std::vector<std::shared_ptr<ParticleEmitter>> m_emitters;
+        std::shared_ptr<ParticleEmitter>              m_emitters;
         std::vector<std::shared_ptr<ParticleUpdater>> m_updaters;
         std::shared_ptr<GPE::IParticleRenderer>       m_renderer;
 

@@ -59,7 +59,7 @@ public:
         bool      smooth = true;
     };
 
-    using RenderPipeline = std::function<void(const ResourceManagerType&, SceneRenderSystem&, std::vector<Renderer*>&,
+    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>&,
                                               std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
                                               std::vector<Light*>&, std::vector<ParticleComponent*>&,
                                               std::vector<DebugShape>&, std::vector<DebugLine>&, Camera&)>;

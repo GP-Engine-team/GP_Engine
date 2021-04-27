@@ -106,7 +106,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
       FBOIDheight{static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_},
       m_captureInputs{false}
 {
-    viewed.sceneRenderer.setMainCamera(camera);
+    // viewed.sceneRenderer.setMainCamera(camera);
 
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
