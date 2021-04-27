@@ -13,11 +13,13 @@ void SavedScene::loadFromMemory(const char* buffer, size_t loadedSize, EType loa
 
     if (type == EType::XML)
     {
-        XmlData& xmlInfo            = std::get<XmlData>(info);
+        XmlData xmlInfo;
         xmlInfo.rawData             = new char[loadedSize + 1];
         xmlInfo.rawData[loadedSize] = '\0';
         memcpy(xmlInfo.rawData, buffer, loadedSize);
-        xmlInfo.doc.parse<0>(xmlInfo.rawData);
+        xmlInfo.doc->parse<0>(xmlInfo.rawData);
+
+        info = std::variant<XmlData> (std::move(xmlInfo));
     }
 }
 

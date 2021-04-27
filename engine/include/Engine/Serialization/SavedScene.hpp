@@ -12,9 +12,17 @@ class SavedScene
 {
     struct XmlData
     {
-        rapidxml::xml_document<> doc;
+        std::unique_ptr<rapidxml::xml_document<>> doc;
         char*                    rawData = nullptr;
 
+        XmlData() = default;
+        XmlData& operator=(XmlData&& rhs)
+        {
+            doc         = std::move(rhs.doc);
+            rawData     = rhs.rawData;
+            rhs.rawData = nullptr;
+        }
+        XmlData& operator=(const XmlData& rhs) = delete;
         ~XmlData()
         {
             if (rawData != nullptr)
