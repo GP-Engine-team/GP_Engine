@@ -29,8 +29,6 @@ namespace Editor
 class Editor
 {
 private:
-    rapidxml::xml_document<> doc;
-
     SceneEditor        m_sceneEditor;
     GameViewer         m_gameViewer;
     LogInspector       m_logInspector;

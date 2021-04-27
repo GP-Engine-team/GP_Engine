@@ -224,9 +224,15 @@ void Editor::save()
 
     m_sceneEditor.view.unbindScene();
 
-    XmlSaver saver(doc);
-    auto     a = GET_PROCESS((*m_reloadableCpp), saveScene);
-    a(saver, scene);
+    SavedScene* savedScene = Engine::getInstance()->resourceManager.get<SavedScene>(scene->getName());
+    if (savedScene->type == SavedScene::EType::XML)
+    {
+        rapidxml::xml_document<>& doc = *std::get<SavedScene::XmlData>(savedScene->info).doc.get();
+
+        XmlSaver saver(doc);
+        auto     a = GET_PROCESS((*m_reloadableCpp), saveScene);
+        a(saver, scene);
+    }
 
     m_sceneEditor.view.bindScene(*scene);
 }

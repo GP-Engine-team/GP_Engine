@@ -10,7 +10,7 @@ namespace GPE
 
 class SavedScene
 {
-private:
+public:
     struct XmlData
     {
         std::unique_ptr<rapidxml::xml_document<>> doc;
@@ -31,7 +31,7 @@ public:
         EType       type;
     };
 
-private:
+public:
     std::variant<XmlData> info;
 
     EType type = EType::NONE;
