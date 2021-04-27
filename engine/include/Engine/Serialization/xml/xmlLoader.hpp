@@ -113,7 +113,7 @@ public:
         }
         else
         {
-            std::cout << "Node not found" << std::endl;
+            std::cout << "Node not found : " << info.name << " / " << info.typeId << " / " << info.typeName << std::endl;
             return false;
         }
     }
