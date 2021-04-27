@@ -4,6 +4,11 @@
 
 namespace GPE
 {
+SavedScene::SavedScene(const CreateArg& arg)
+{
+    loadFromMemory(arg.data.c_str(), arg.data.size(), arg.type);
+}
+
 void SavedScene::loadFromMemory(const char* buffer, size_t loadedSize, EType loadedType)
 {
     if (type == EType::XML && std::get<XmlData>(info).rawData != nullptr)
@@ -23,26 +28,27 @@ void SavedScene::loadFromMemory(const char* buffer, size_t loadedSize, EType loa
     }
 }
 
-std::unique_ptr<char[]> SavedScene::saveToMemory(size_t& savedSize, EType& savedType)
+std::string SavedScene::saveToMemory(EType& savedType)
 {
     savedType = type;
-
     std::string str;
-    std::unique_ptr<char[]> cbuffer;
 
     switch (type)
     {
-    case EType::XML:
+    case EType::XML: {
+
         XmlData&          xmlInfo = std::get<XmlData>(info);
         std::stringstream ss;
         ss << xmlInfo.doc;
         ss >> str;
-        cbuffer = std::make_unique<char[]>(str.size() + 1);
-        memcpy(cbuffer.get(), str.c_str(), str.size() + 1);
+    }
+    break;
+
+    default:
         break;
     }
 
-    return cbuffer;
+    return str;
 }
 
 } // namespace GPE

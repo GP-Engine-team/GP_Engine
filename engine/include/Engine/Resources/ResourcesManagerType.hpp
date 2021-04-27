@@ -15,12 +15,12 @@
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Sound.hpp"
 #include "Engine/Resources/Texture.hpp"
+#include "Engine/Serialization/SavedScene.hpp"
 
 #include <vector>
 
 namespace GPE
 {
 using ResourceManagerType = ResourcesManager<std::vector<Mesh>, Model::CreateArg, Mesh, Shader, Texture, RenderBuffer,
-                                             RenderTexture, std::vector<Material>, Material, Sound::Buffer>;
-
+                                             RenderTexture, std::vector<Material>, Material, Sound::Buffer, SavedScene>;
 } // namespace GPE
