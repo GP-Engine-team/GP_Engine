@@ -220,6 +220,7 @@
     <ClInclude Include="include\Engine\Core\Tools\FunctionPtr.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Hash.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\Raycast.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\AudioComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Camera.hpp" />
@@ -367,6 +368,7 @@
     <ClCompile Include="src\ObjParser.cpp" />
     <ClCompile Include="src\Physics\CharacterController\CharacterController.cpp" />
     <ClCompile Include="src\Physics\Collisions\BoxCollider.cpp" />
+    <ClCompile Include="src\Physics\Collisions\MeshCollider.cpp" />
     <ClCompile Include="src\Physics\Collisions\SphereCollider.cpp" />
     <ClCompile Include="src\Physics\PhysXSystem.cpp" />
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyDynamic.cpp" />

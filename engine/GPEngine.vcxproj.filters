@@ -244,6 +244,9 @@
     <ClCompile Include="src\Serialization\xml\xmlUtilities.cpp">
       <Filter>src\Serialization\xml</Filter>
     </ClCompile>
+    <ClCompile Include="src\Physics\Collisions\MeshCollider.cpp">
+      <Filter>src\Physics\Collisions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp">
@@ -653,6 +656,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\Light\SpotLight.hpp">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Raycast.hpp">
+      <Filter>include\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

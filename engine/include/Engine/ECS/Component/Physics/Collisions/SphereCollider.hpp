@@ -29,8 +29,8 @@ namespace GPE RFKNamespace()
         SphereCollider& operator=(SphereCollider&& other) noexcept = delete;
 
     private:
-        RFKField(Inspect(Setter("setRadius"))) GPM::Vector3 m_center;
-        RFKField(Inspect()) float                           m_radius;
+        RFKField(Inspect()) GPM::Vector3 m_center;
+        RFKField(Inspect()) float        m_radius;
 
     public:
         DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);
