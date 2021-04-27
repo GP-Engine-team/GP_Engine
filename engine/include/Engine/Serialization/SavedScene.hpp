@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <rapidxml/rapidxml.hpp>
 #include <string>
 #include <variant>
@@ -13,21 +14,7 @@ private:
     struct XmlData
     {
         std::unique_ptr<rapidxml::xml_document<>> doc;
-        char*                    rawData = nullptr;
-
-        XmlData() = default;
-        XmlData& operator=(XmlData&& rhs)
-        {
-            doc         = std::move(rhs.doc);
-            rawData     = rhs.rawData;
-            rhs.rawData = nullptr;
-        }
-        XmlData& operator=(const XmlData& rhs) = delete;
-        ~XmlData()
-        {
-            if (rawData != nullptr)
-                delete rawData;
-        }
+        std::unique_ptr<char[]>                   data;
     };
 
 public:

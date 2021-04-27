@@ -11,20 +11,17 @@ SavedScene::SavedScene(const CreateArg& arg)
 
 void SavedScene::loadFromMemory(const char* buffer, size_t loadedSize, EType loadedType)
 {
-    if (type == EType::XML && std::get<XmlData>(info).rawData != nullptr)
-        delete std::get<XmlData>(info).rawData;
-
     type = loadedType;
 
     if (type == EType::XML)
     {
         XmlData xmlInfo;
-        xmlInfo.rawData             = new char[loadedSize + 1];
-        xmlInfo.rawData[loadedSize] = '\0';
-        memcpy(xmlInfo.rawData, buffer, loadedSize);
-        xmlInfo.doc->parse<0>(xmlInfo.rawData);
+        xmlInfo.data = std::make_unique<char[]>(loadedSize + 1);
+        memcpy(xmlInfo.data.get(), buffer, loadedSize);
+        xmlInfo.data[loadedSize] = '\0';
+        xmlInfo.doc->parse<0>(xmlInfo.data.get());
 
-        info = std::variant<XmlData> (std::move(xmlInfo));
+        info = std::move(xmlInfo);
     }
 }
 
