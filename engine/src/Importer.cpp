@@ -453,7 +453,7 @@ Mesh* GPE::loadMeshFile(const char* src)
     return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), readMeshFile(src));
 }
 
-struct ShadeHeader
+struct ShaderHeader
 {
     char          assetID            = (char)EFileType::SHADER;
     int           vertexPathLenght   = 0;
@@ -461,7 +461,7 @@ struct ShadeHeader
     unsigned char featureMask        = 0;
 };
 
-void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
+void GPE::writeShaderFile(const char* dst, const ShaderCreateConfig& arg)
 {
     FILE* pFile = nullptr;
 
@@ -471,8 +471,8 @@ void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
         return;
     }
 
-    ShadeHeader header{(char)EFileType::SHADER, static_cast<int>(arg.vertexShaderPath.size()),
-                       static_cast<int>(arg.fragmentShaderPath.size()), arg.featureMask};
+    ShaderHeader header{(char)EFileType::SHADER, static_cast<int>(arg.vertexShaderPath.size()),
+                        static_cast<int>(arg.fragmentShaderPath.size()), arg.featureMask};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
     fwrite(arg.vertexShaderPath.data(), sizeof(char), arg.vertexShaderPath.size(), pFile);     // string buffer
@@ -483,11 +483,11 @@ void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
     Log::getInstance()->log(stringFormat("Shader write to \"%s\"", dst));
 }
 
-ShaderCreateonfig GPE::readShaderFile(const char* src)
+ShaderCreateConfig GPE::readShaderFile(const char* src)
 {
     FILE*                 pFile = nullptr;
     std::filesystem::path srcPath(src);
-    ShaderCreateonfig     arg;
+    ShaderCreateConfig    arg;
 
     if (srcPath.extension() != ENGINE_SHADER_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
@@ -495,7 +495,7 @@ ShaderCreateonfig GPE::readShaderFile(const char* src)
         return arg;
     }
 
-    ShadeHeader header;
+    ShaderHeader header;
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
     arg.featureMask = header.featureMask;
@@ -521,8 +521,70 @@ ShaderCreateonfig GPE::readShaderFile(const char* src)
 Shader* GPE::loadShaderFile(const char* src)
 {
     std::filesystem::path srcPath(src);
-    ShaderCreateonfig     arg = readShaderFile(src);
+    ShaderCreateConfig    arg = readShaderFile(src);
     return &Engine::getInstance()->resourceManager.add<Shader>(
         srcPath.filename().string(), (std::filesystem::current_path() / arg.vertexShaderPath).string().c_str(),
         (std::filesystem::current_path() / arg.fragmentShaderPath).string().c_str(), arg.featureMask);
+}
+
+struct SceneHeader
+{
+    char     assetID  = (char)EFileType::SCENE;
+    uint16_t type     = 0;
+    size_t   dataSize = 0;
+};
+
+void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
+{
+    FILE* pFile = nullptr;
+
+    if (fopen_s(&pFile, dst, "w+b"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
+        return;
+    }
+
+    SceneHeader header{(char)EFileType::SCENE, (uint16_t)arg.type, arg.data.size()};
+    fwrite(&header, sizeof(header), 1, pFile); // header
+
+    fwrite(arg.data.data(), sizeof(char), arg.data.size(), pFile); // string buffer
+    fclose(pFile);
+
+    Log::getInstance()->log(stringFormat("Scene write to \"%s\"", dst));
+}
+
+SavedScene::CreateArg GPE::readSceneFile(const char* src)
+{
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
+    SavedScene::CreateArg arg;
+
+    if (srcPath.extension() != ENGINE_SCENE_EXTENSION || fopen_s(&pFile, src, "rb"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
+        return arg;
+    }
+
+    SceneHeader header;
+    // copy the file into the buffer:
+    fread(&header, sizeof(header), 1, pFile);
+
+    arg.type = (SavedScene::EType)header.type;
+    if (header.dataSize)
+    {
+        arg.data.assign(header.dataSize, '\0');
+        fread(arg.data.data(), sizeof(char), header.dataSize, pFile); // string buffer
+    }
+
+    fclose(pFile);
+
+    Log::getInstance()->log(stringFormat("Scene read from \"%s\"", src));
+    return arg;
+}
+
+SavedScene* GPE::loadSceneFile(const char* src)
+{
+    std::filesystem::path srcPath(src);
+    SavedScene::CreateArg arg = readSceneFile(src);
+    return &Engine::getInstance()->resourceManager.add<SavedScene>(srcPath.filename().string(), arg);
 }
