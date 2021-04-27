@@ -49,7 +49,7 @@ public:
     {
         for (auto&& it = m_generators.begin(); it != m_generators.end(); ++it)
         {
-            if (dynamic_cast<T>(generator)) // Already exist
+            if (dynamic_cast<T>(*it)) // Already exist
             {
                 m_generators.erase(it);
                 return;
@@ -57,8 +57,8 @@ public:
         }
     }
 };
-
+/*
 template <>
 void DataInspector::inspect(GPE::InspectContext& context, ParticleEmitter& inspected);
-
+*/
 } // namespace GPE

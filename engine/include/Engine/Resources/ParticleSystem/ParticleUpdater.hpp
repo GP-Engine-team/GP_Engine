@@ -6,126 +6,135 @@
 
 #pragma once
 
-#include "Engine/Resources/ParticleSystem/ParticleData.hpp"
+#include <Engine/Resources/ParticleSystem/ParticleData.hpp>
+#include <Engine/Serialization/DataInspector.hpp>
 #include <vector>
 
-namespace GPE
+// Generated
+#include "Generated/ParticleUpdater.rfk.h"
+
+namespace GPE RFKNamespace()
 {
-class ParticleUpdater
-{
-public:
-    ParticleUpdater()
+    class RFKClass(Inspect(false)) ParticleUpdater
     {
-    }
-    virtual ~ParticleUpdater()
+    public:
+        ParticleUpdater()
+        {
+        }
+
+        virtual ~ParticleUpdater()
+        {
+        }
+
+        virtual void    update(double dt, ParticleData* p) = 0;
+        virtual uint8_t getRequiereConfig() const          = 0;
+
+        ParticleUpdater_GENERATED
+    };
+
+    class EulerUpdater : public ParticleUpdater
     {
-    }
+    public:
+        GPM::Vec4 m_globalAcceleration;
 
-    virtual void    update(double dt, ParticleData* p) = 0;
-    virtual uint8_t getRequiereConfig() const          = 0;
-};
+    public:
+        EulerUpdater() : m_globalAcceleration(0.0)
+        {
+        }
 
-class EulerUpdater : public ParticleUpdater
-{
-public:
-    GPM::Vec4 m_globalAcceleration;
+        virtual void update(double dt, ParticleData* p) override;
 
-public:
-    EulerUpdater() : m_globalAcceleration(0.0)
+        uint8_t getRequiereConfig() const override;
+    };
+
+    // collision with the floor :) todo: implement a collision model
+    class FloorUpdater : public ParticleUpdater
     {
-    }
+    public:
+        float m_floorY;
+        float m_bounceFactor;
 
-    virtual void update(double dt, ParticleData* p) override;
+    public:
+        FloorUpdater() : m_floorY(0.0), m_bounceFactor(0.5f)
+        {
+        }
 
-    uint8_t getRequiereConfig() const override;
-};
+        virtual void update(double dt, ParticleData* p) override;
 
-// collision with the floor :) todo: implement a collision model
-class FloorUpdater : public ParticleUpdater
-{
-public:
-    float m_floorY;
-    float m_bounceFactor;
+        uint8_t getRequiereConfig() const override;
+    };
 
-public:
-    FloorUpdater() : m_floorY(0.0), m_bounceFactor(0.5f)
+    class AttractorUpdater : public ParticleUpdater
     {
-    }
+    protected:
+        std::vector<GPM::Vec4> m_attractors; // .w is force
+    public:
+        virtual void update(double dt, ParticleData* p) override;
 
-    virtual void update(double dt, ParticleData* p) override;
+        uint8_t getRequiereConfig() const override;
 
-    uint8_t getRequiereConfig() const override;
-};
+        size_t collectionSize() const
+        {
+            return m_attractors.size();
+        }
 
-class AttractorUpdater : public ParticleUpdater
-{
-protected:
-    std::vector<GPM::Vec4> m_attractors; // .w is force
-public:
-    virtual void update(double dt, ParticleData* p) override;
+        void add(const GPM::Vec4& attr)
+        {
+            m_attractors.push_back(attr);
+        }
 
-    uint8_t getRequiereConfig() const override;
+        GPM::Vec4& get(size_t id)
+        {
+            return m_attractors[id];
+        }
+    };
 
-    size_t collectionSize() const
+    class BasicColorUpdater : public ParticleUpdater
     {
-        return m_attractors.size();
-    }
-    void add(const GPM::Vec4& attr)
+    public:
+        virtual void update(double dt, ParticleData* p) override;
+
+        uint8_t getRequiereConfig() const override;
+    };
+
+    class PosColorUpdater : public ParticleUpdater
     {
-        m_attractors.push_back(attr);
-    }
-    GPM::Vec4& get(size_t id)
+    public:
+        GPM::Vec4 m_minPos;
+        GPM::Vec4 m_maxPos;
+
+    public:
+        PosColorUpdater() : m_minPos(0.0), m_maxPos(1.0)
+        {
+        }
+
+        virtual void update(double dt, ParticleData* p) override;
+
+        uint8_t getRequiereConfig() const override;
+    };
+
+    class VelColorUpdater : public ParticleUpdater
     {
-        return m_attractors[id];
-    }
-};
+    public:
+        GPM::Vec4 m_minVel;
+        GPM::Vec4 m_maxVel;
 
-class BasicColorUpdater : public ParticleUpdater
-{
-public:
-    virtual void update(double dt, ParticleData* p) override;
+    public:
+        VelColorUpdater() : m_minVel(0.0), m_maxVel(1.0)
+        {
+        }
 
-    uint8_t getRequiereConfig() const override;
-};
+        virtual void update(double dt, ParticleData* p) override;
 
-class PosColorUpdater : public ParticleUpdater
-{
-public:
-    GPM::Vec4 m_minPos;
-    GPM::Vec4 m_maxPos;
+        uint8_t getRequiereConfig() const override;
+    };
 
-public:
-    PosColorUpdater() : m_minPos(0.0), m_maxPos(1.0)
+    class BasicTimeUpdater : public ParticleUpdater
     {
-    }
+    public:
+        virtual void update(double dt, ParticleData* p) override;
 
-    virtual void update(double dt, ParticleData* p) override;
+        uint8_t getRequiereConfig() const override
+    };
 
-    uint8_t getRequiereConfig() const override;
-};
-
-class VelColorUpdater : public ParticleUpdater
-{
-public:
-    GPM::Vec4 m_minVel;
-    GPM::Vec4 m_maxVel;
-
-public:
-    VelColorUpdater() : m_minVel(0.0), m_maxVel(1.0)
-    {
-    }
-
-    virtual void update(double dt, ParticleData* p) override;
-
-    uint8_t getRequiereConfig() const override;
-};
-
-class BasicTimeUpdater : public ParticleUpdater
-{
-public:
-    virtual void update(double dt, ParticleData* p) override;
-
-    uint8_t getRequiereConfig() const override;
-};
-
-} // namespace GPE
+} // namespace )

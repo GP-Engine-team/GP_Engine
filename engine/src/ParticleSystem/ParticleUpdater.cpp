@@ -1,8 +1,11 @@
 #include "Engine/Resources/ParticleSystem/ParticleUpdater.hpp"
+
+File_GENERATED
+
 #include <algorithm>
 #include <assert.h>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 void EulerUpdater::update(double dt, ParticleData* p)
@@ -170,7 +173,7 @@ void VelColorUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint8_t PosColorUpdater::getRequiereConfig() const
+uint8_t VelColorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::COLOR | ParticleData::EParam::START_COLOR | ParticleData::EParam::END_COLOR |
            ParticleData::EParam::TIME | ParticleData::EParam::VELOCITY;

@@ -72,7 +72,7 @@ void renderResourceExplorer(const char* name, T*& inRes)
 
 void ParticleComponent::inspect(InspectContext& context)
 {
-    DataInspector::inspect(context, m_emitters);
+    // DataInspector::inspect(context, *m_emitters.get());
 
     bool flag = m_particles.isParamEnable(ParticleData::EParam::POSITION);
     if (ImGui::Checkbox("##POSITION", &flag))
@@ -95,7 +95,7 @@ void ParticleComponent::inspect(InspectContext& context)
          (m_posGenerator);*/
     }
     ImGui::PopEnabled();
-
+    /*
     flag = m_particles.isParamEnable(ParticleData::EParam::COLOR_INTERPOLATION);
     if (ImGui::Checkbox("##COLOR_INTERPOLATION", &flag))
     {
@@ -125,7 +125,7 @@ void ParticleComponent::inspect(InspectContext& context)
         m_emitters->addGenerator<BasicColorGen>(arg);
     }
     ImGui::PopEnabled();
-
+    */
     // Shader
     {
         renderResourceExplorer<Shader>("Shader", m_shader);
@@ -154,7 +154,7 @@ void ParticleComponent::inspect(InspectContext& context)
         }
     }
 }
-
+/*
 bool ParticleComponent::initialize(size_t numParticles)
 {
     clean();
@@ -214,7 +214,7 @@ bool ParticleComponent::initialize(size_t numParticles)
     m_updaters.emplace_back(m_floorUpdater);
 
     return initializeRenderer();
-}
+}*/
 
 bool ParticleComponent::initializeRenderer()
 {
@@ -234,16 +234,12 @@ void ParticleComponent::clean()
     if (m_renderer)
         m_renderer->destroy();
 
-    m_emitters.clear();
     m_updaters.clear();
 }
 
 void ParticleComponent::update(double dt)
 {
-    for (auto& em : m_emitters)
-    {
-        em->emit(dt, &m_particles);
-    }
+    m_emitters->emit(dt, &m_particles);
 
     for (size_t i = 0; i < m_count; ++i)
     {
