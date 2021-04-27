@@ -244,7 +244,7 @@
     <ClCompile Include="src\Serialization\STDDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\Serialization\SaveFile.cpp">
+    <ClCompile Include="src\Serialization\SavedScene.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
   </ItemGroup>
@@ -648,7 +648,7 @@
     <ClInclude Include="include\Engine\Core\Tools\UnrolledListAllocator.hpp">
       <Filter>include\Core\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Serialization\SaveFile.hpp">
+    <ClInclude Include="include\Engine\Serialization\SavedScene.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
@@ -761,6 +761,9 @@
     </None>
     <None Include="include\Engine\Core\Tools\UnrolledListAllocator.inl">
       <Filter>include\Core\Tools</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\DataInspector.inl">
+      <Filter>include\Serialization</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
