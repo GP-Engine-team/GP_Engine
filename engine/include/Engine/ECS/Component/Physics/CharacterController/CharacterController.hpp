@@ -30,7 +30,7 @@ namespace GPE RFKNamespace()
         CharacterController& operator=(CharacterController const& other) noexcept = delete;
         CharacterController& operator=(CharacterController&& other) noexcept = delete;
 
-        void update(float deltaTime) noexcept;
+        void update(double deltaTime) noexcept;
 
         virtual ~CharacterController() noexcept;
 
