@@ -1,4 +1,4 @@
-#include "Engine/Serialization/STDDataInspector.hpp"
+#include <Engine/Serialization/STDDataInspector.hpp>
 
 template <typename T>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const rfk::Field& info)
@@ -41,6 +41,7 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
         size_t i = 0;
         for (auto&& it = inspected.begin(); it != inspected.end(); ++i)
         {
+            ImGui::PushID(&*it);
             const bool treeIsOpen =
                 ImGui::TreeNodeEx((void*)(intptr_t)i, nodeFlag, std::string("Element " + std::to_string(i)).c_str());
 
@@ -69,11 +70,14 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
                 if (treeIsOpen)
                 {
                     inspect(context, *it);
-                    ImGui::TreePop();
                 }
-
                 ++it;
             }
+
+            if (treeIsOpen)
+                ImGui::TreePop();
+
+            ImGui::PopID();
         }
         ImGui::TreePop();
     }

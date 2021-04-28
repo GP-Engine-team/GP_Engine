@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/InspectContext.hpp>
 
 // in inl
 #include <imgui/imgui.h>
