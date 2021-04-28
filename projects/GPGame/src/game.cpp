@@ -32,7 +32,7 @@ void Game::update(double unscaledDeltaTime, double deltaTime)
     ++unFixedUpdateFrameCount;
 
     bSys.update(float(deltaTime));
-    world->updateSelfAndChildren();
+    world.updateSelfAndChildren();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
@@ -48,6 +48,7 @@ void Game::render()
     // TODO: Put in-game UI in a module
     // UI code can be easly move in update because it's not real render function. It however her for simplicity
     // Initialize a new frame
+    /*
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
 
@@ -65,12 +66,12 @@ void Game::render()
     GPE::Engine::getInstance()->behaviourSystem.onGUI();
     ImGui::End();
     ImGui::Render();
-
+    */
     RenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
     sceneRS.draw(Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
 
     // draw UI
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 extern "C" GPE::AbstractGame* createGameInstance()
@@ -182,18 +183,20 @@ void Game::setViewport(float x, float y, float w, float h)
 // TODO: Put in-game UI in a module
 Game::~Game()
 {
+    /*
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    */
 }
 
 Game::Game()
     : bSys {GPE::Engine::getInstance()->behaviourSystem},
-      world{nullptr}
+      world{Engine::getInstance()->sceneManager.loadScene("main").getWorld()}
 {
     // ============= UI =============
     // TODO: Put in-game UI in a module
-    initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
+    //initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
 
     // ============ RNG =============
     initSeed();
@@ -202,29 +205,23 @@ Game::Game()
     { // Keys
         InputManager& io = Engine::getInstance()->inputManager;
 
-        io.bindInput(GLFW_KEY_W,            "forward");
-        io.bindInput(GLFW_KEY_S,            "backward");
-        io.bindInput(GLFW_KEY_A,            "left");
-        io.bindInput(GLFW_KEY_D,            "right");
-        io.bindInput(GLFW_KEY_SPACE,        "jump");
-        io.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-        io.bindInput(GLFW_KEY_ESCAPE,       "exitGame01");
-        io.bindInput(GLFW_KEY_ESCAPE,       "exitGame02");
-        io.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprintStart");
-        io.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprintEnd");
-        io.bindInput(GLFW_KEY_KP_ADD,       "growUpCollider");
-        io.bindInput(GLFW_KEY_KP_SUBTRACT,  "growDownCollider");
-        io.bindInput(GLFW_KEY_X,            "swapInputModeToGame01");
-        io.bindInput(GLFW_KEY_X,            "swapInputModeToGame02");
-        io.setInputMode("game02");
+        io.bindInput(GLFW_KEY_W,          "forward");
+        io.bindInput(GLFW_KEY_S,          "backward");
+        io.bindInput(GLFW_KEY_A,          "left");
+        io.bindInput(GLFW_KEY_D,          "right");
+        io.bindInput(GLFW_KEY_SPACE,      "jump");
+        io.bindInput(GLFW_KEY_ESCAPE,     "exit");
+        io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
+        io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
+        // io.bindInput(GLFW_KEY_KP_ADD,       "growUpCollider");
+        // io.bindInput(GLFW_KEY_KP_SUBTRACT,  "growDownCollider");
 
         // Cursor
         io.setCursorTrackingState(false);
     }
 
     // =========== Scene ===========
-    // Initialize world
-    world = &Engine::getInstance()->sceneManager.loadScene("main").getWorld();
+    // world is already initialized
     
     // Place content in the scene
     GameObject* ground, * player, * testPhysX;
@@ -234,18 +231,18 @@ Game::Game()
         const GameObject::CreateArg groundArg   {"GroundArg", TransformComponent::CreateArg{Vec3{0.f}}};
     
         // A ground, player, PhysX test
-        ground    = &world->addChild(groundArg);
-        player    = &world->addChild(playerArg);
-        testPhysX = &world->addChild(testPhysXArg);
+        ground    = &world.addChild(groundArg);
+        player    = &world.addChild(playerArg);
+        testPhysX = &world.addChild(testPhysXArg);
     }
 
     // Skybox
     loadSkyboxResource();
-    loadSkyBox(*world);
+    loadSkyBox(world);
 
     // Forest
     loadTreeResource();
-    loadTree(*world, 100u);
+    loadTree(world, 100u);
 
     { // Camera
         Camera::PerspectiveCreateArg camCreateArg{"Player camera"};
@@ -276,6 +273,9 @@ Game::Game()
         sphere.setRadius(10.f);
         testPhysX->addComponent<RigidbodyStatic>().collider = &sphere;
     }
+
+    // Set to true to show debug shapes
+    GPE::Engine::getInstance()->physXSystem.drawDebugShapes = false;
 
     /*
     // FreeFly must be used to compile properly with GPGame.dll, to not be optimized out, for serialization.
@@ -308,8 +308,8 @@ Game::Game()
     {
         logger.log(stringFormat("FPS (fixedUpdate): %f\n", fixedUpdateFrameCount / FPLogDelay));
         logger.log(stringFormat("FPS (unFixedUpdate): %f\n\n", unFixedUpdateFrameCount / FPLogDelay));
-        fixedUpdateFrameCount   = .0;
-        unFixedUpdateFrameCount = .0;
+        fixedUpdateFrameCount   = 0;
+        unFixedUpdateFrameCount = 0;
     };
 
     Engine::getInstance()->timeSystem.addScaledTimer(FPLogDelay, timer, true);
