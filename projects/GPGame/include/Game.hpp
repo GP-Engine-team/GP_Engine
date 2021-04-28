@@ -15,7 +15,7 @@ class Game final : public GPE::AbstractGame
 {
 protected:
     GPE::BehaviourSystem&     bSys;
-    GPE::GameObject*          world;
+    GPE::GameObject&          world;
 
     double FPLogDelay              = 1.;
     float  m_x = .0f, m_y = .0f, m_w = .0f, m_h = .0f;
