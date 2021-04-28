@@ -56,12 +56,10 @@ public:
     RFKMethod() void sprintEnd             ();
     //RFKMethod() void growUpSphereCollider  ();
     //RFKMethod() void growDownSphereCollider();
-    RFKMethod() void swapInputModeToGame01 ();
-    RFKMethod() void swapInputModeToGame02 ();
 
     void rotate                            (const GPM::Vec2& deltaDisplacement);
     void onGUI                             () final;
-    void fixedUpdate                       (float deltaTime) final;
+    void fixedUpdate                       (double deltaTime) final;
 
     MyFpsScript_GENERATED
 };
