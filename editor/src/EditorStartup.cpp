@@ -34,7 +34,7 @@ void EditorStartup::initializeDefaultInputs() const
 {
     GPE::InputManager& inputs = GPE::Engine::getInstance()->inputManager;
 
-    // Default editor-specific inputs
+    // Default editor-specific input bindings
     inputs.bindInput(GLFW_KEY_SPACE,        "up");
     inputs.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
     inputs.bindInput(GLFW_KEY_D,            "right");
@@ -43,10 +43,9 @@ void EditorStartup::initializeDefaultInputs() const
     inputs.bindInput(GLFW_KEY_S,            "backward");
     inputs.bindInput(GLFW_KEY_ESCAPE,       "exit");
     inputs.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprint");
+    inputs.bindInput(GLFW_KEY_LEFT_SHIFT,   "walk");
 
     inputs.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
-    // GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
-    //                                                        GLFW_CURSOR_NORMAL);
 }
 
 EditorStartup::EditorStartup()
@@ -64,7 +63,8 @@ EditorStartup::EditorStartup()
       }},
       m_editor{initDearImGuiProxy(GPE::Engine::getInstance()->window.getGLFWWindow()),
                GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
-      m_reloadableCpp{gameDllPath}, m_game{nullptr}
+      m_reloadableCpp{gameDllPath},
+      m_game{nullptr}
 {
     m_editor.m_reloadableCpp = &m_reloadableCpp;
 
@@ -107,7 +107,7 @@ void EditorStartup::openGame()
     const bool gameWasInstanciated = m_game != nullptr;
     if (gameWasInstanciated)
     {
-        pauseGame();
+        stopGame();
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
         destroyer(m_game);
     }
@@ -126,10 +126,10 @@ void EditorStartup::openGame()
 
 void EditorStartup::closeGame()
 {
-    stopGame();
-
     if (m_game != nullptr)
     {
+        stopGame();
+
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
         destroyer(m_game);
         m_game = nullptr;
@@ -142,7 +142,6 @@ void EditorStartup::closeGame()
 
 void EditorStartup::playGame()
 {
-    // TODO: update the way editor captures inputs?
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
     {
         m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
@@ -153,6 +152,8 @@ void EditorStartup::playGame()
         m_game->update(unscaledDeltaTime, deltaTime);
         m_editor.update(*this);
     };
+
+    m_game->state = EGameState::PLAYING;
 }
 
 
@@ -165,12 +166,16 @@ void EditorStartup::pauseGame()
         Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
         m_editor.update(*this);
     };
+
+    m_game->state = EGameState::PAUSED;
 }
 
 
 void EditorStartup::stopGame()
 {
     pauseGame();
+    // TODO: reload scene
+    m_game->state = EGameState::STOPPED;
 }
 
 
