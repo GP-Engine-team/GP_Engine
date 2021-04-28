@@ -10,12 +10,12 @@
 #include <string>
 #include <unordered_map>
 
-#include "Engine/Core/Tools/FunctionPtr.hpp"
-#include "Engine/ECS/Component/Component.hpp"
-#include "Engine/Serialization/ComponentGen.h"
+#include <Engine/Core/Tools/FunctionPtr.hpp>
+#include <Engine/ECS/Component/Component.hpp>
+#include <Engine/Serialization/ComponentGen.h>
 
 // Generated
-#include "Generated/InputComponent.rfk.h"
+#include <Generated/InputComponent.rfk.h>
 
 enum class EKeyMode
 {
