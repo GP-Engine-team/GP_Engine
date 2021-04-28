@@ -17,6 +17,7 @@ namespace GPE
 #define INV_DOWN_SAMPLING_COEF .25f
 
 // ========================== Private methods ==========================
+// TODO (Sami): needs factorization --> WindowFramebuffer
 void SceneViewer::initializeFramebuffer()
 {
     // TODO: factorize framebuffer and renderbuffer in classes
@@ -57,6 +58,7 @@ void SceneViewer::initializeFramebuffer()
     }
 }
 
+// TODO (Sami): needs factorization --> WindowFramebuffer
 void SceneViewer::initializePickingFBO()
 {
     // low sampling (we don't need 4K texture to select element)
@@ -101,16 +103,14 @@ void SceneViewer::initializePickingFBO()
 
 void SceneViewer::initializeInputs()
 {
-    GPE::InputComponent& input = cameraOwner->addComponent<GPE::InputComponent>();
-
-    input.bindAction("up",       EKeyMode::KEY_DOWN,     "Editor", &freeFly, "up");
-    input.bindAction("down",     EKeyMode::KEY_DOWN,     "Editor", &freeFly, "down");
-    input.bindAction("right",    EKeyMode::KEY_DOWN,     "Editor", &freeFly, "right");
-    input.bindAction("left",     EKeyMode::KEY_DOWN,     "Editor", &freeFly, "left");
-    input.bindAction("forward",  EKeyMode::KEY_DOWN,     "Editor", &freeFly, "forward");
-    input.bindAction("backward", EKeyMode::KEY_DOWN,     "Editor", &freeFly, "backward");
-    input.bindAction("sprint",   EKeyMode::KEY_PRESSED,  "Editor", &freeFly, "sprint");
-    input.bindAction("sprint",   EKeyMode::KEY_RELEASED, "Editor", &freeFly, "walk");
+    inputs.bindAction("up",       EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "up");
+    inputs.bindAction("down",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "down");
+    inputs.bindAction("right",    EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "right");
+    inputs.bindAction("left",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "left");
+    inputs.bindAction("forward",  EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "forward");
+    inputs.bindAction("backward", EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "backward");
+    inputs.bindAction("sprint",   EKeyMode::KEY_PRESSED,  "Level editor", &freeFly, "sprint");
+    inputs.bindAction("walk",     EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
 }
 
 
@@ -119,6 +119,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     : cameraOwner       {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
       freeFly           {cameraOwner->addComponent<FreeFly>()},
       camera            {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{"Editor camera", width_ / (float)height_, .001f, 1000.f, 90.f})},
+      inputs            {cameraOwner->addComponent<GPE::InputComponent>()},
       pScene            {&viewed},
       it                {viewed.getWorld().children.emplace(viewed.getWorld().children.end(), cameraOwner)},
       textureID         {0u},
@@ -131,10 +132,8 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
       FBOIDheight       {static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
       width             {width_},
       height            {height_},
-      m_captureInputs   {false}
+      m_capturingInputs {false}
 {
-    viewed.sceneRenderer.setMainCamera(camera);
-
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
                                                        "./resources/shaders/fGameObjectIdentifier.fs");
@@ -142,8 +141,8 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     initializePickingFBO();
     initializeInputs();
 
-    freeFly.enableFixedUpdate(m_captureInputs);
-    freeFly.setActive(m_captureInputs);
+    freeFly.setActive(m_capturingInputs);
+    inputs.setActive(m_capturingInputs);
 }
 
 SceneViewer::~SceneViewer()
@@ -164,18 +163,24 @@ SceneViewer::~SceneViewer()
 
 unsigned int SceneViewer::getHoveredGameObjectID() const
 {
-    // Render the picking texture in the identifier FBO
-    Shader& shaderGameObjectIdentifier = *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
+    // Set active view
+    pScene->sceneRenderer.setMainCamera(camera);
 
-    glUseProgram(shaderGameObjectIdentifier.getID());
+    { // Select the shader
+        Shader& shaderGameObjectIdentifier = *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
+        glUseProgram(shaderGameObjectIdentifier.getID());
+    }
+
+    // Setup the viewport and bind the picking framebuffer
     glViewport(0, 0, FBOIDwidth, FBOIDheight);
-
     glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
 
-    RenderSystem renderSys{pScene->sceneRenderer};
-    renderSys.draw(Engine::getInstance()->resourceManager, renderSys.gameObjectIdentifierPipeline());
+    { // Render in the picking framebuffer
+        RenderSystem renderSys{pScene->sceneRenderer};
+        renderSys.draw(Engine::getInstance()->resourceManager, renderSys.gameObjectIdentifierPipeline());
+    }
 
-    // Find the hovered game object, if any
+    // Find the hovered object, if any
     GLuint pixel = 0u;
     GLint  x, y;
 
@@ -185,8 +190,8 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
         const ImVec2 cursorRelativePos  {ceilf((cursPos.x - currentScreenStart.x)),
                                          ceilf((cursPos.y - currentScreenStart.y))};
 
-        x = static_cast<GLint>(cursorRelativePos.x * INV_DOWN_SAMPLING_COEF);
-        y = static_cast<GLint>((static_cast<float>(height) - cursorRelativePos.y) * INV_DOWN_SAMPLING_COEF);
+        x = GLint(cursorRelativePos.x * INV_DOWN_SAMPLING_COEF);
+        y = GLint((float(height) - cursorRelativePos.y) * INV_DOWN_SAMPLING_COEF);
     }
 
     glReadPixels(x, y, 1u, 1u, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
@@ -195,6 +200,7 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
     return static_cast<unsigned int>(pixel);
 }
 
+// TODO (Sami): needs factorization --> WindowFramebuffer
 void SceneViewer::resize(int width_, int height_)
 {
     if (width == width_ && height == height_)
@@ -214,10 +220,10 @@ void SceneViewer::resize(int width_, int height_)
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, width, height);
 
 
-    // ==== Update selection framebuffer ====
-    // Low sampling (we don't need 4K texture to select element)
-    FBOIDwidth  = static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF));
-    FBOIDheight = static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF));
+    // ==== Update picking framebuffer ====
+    // Low sampling (we don't need a 4K texture to select an element)
+    FBOIDwidth  = int(ceilf(width_ * INV_DOWN_SAMPLING_COEF));
+    FBOIDheight = int(ceilf(height_ * INV_DOWN_SAMPLING_COEF));
 
     // Resize texture and depth buffers
     glBindTexture(GL_TEXTURE_2D, FBOIDtextureID);
@@ -258,7 +264,6 @@ void SceneViewer::bindScene(Scene& scene)
     cameraOwner->setParent(scene.getWorld());
     cameraOwner->pOwnerScene = &scene;
     pScene                   = &scene;
-    scene.sceneRenderer.setMainCamera(camera);
 }
 
 void SceneViewer::unbindScene()
@@ -271,6 +276,15 @@ void SceneViewer::render() const
 {
     camera.updateView();
 
+    // When the game is not launched, behaviours are not updated
+    // Update FreeFly manually
+    if (m_capturingInputs)
+    {
+        freeFly.update(GPE::Engine::getInstance()->timeSystem.getUnscaledDeltaTime());
+    }
+
+    pScene->sceneRenderer.setMainCamera(camera);
+
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
@@ -279,13 +293,13 @@ void SceneViewer::render() const
 
 void SceneViewer::captureInputs(bool shouldCapture)
 {
-    if (m_captureInputs == shouldCapture)
+    if (m_capturingInputs == shouldCapture)
         return;
 
-    m_captureInputs = shouldCapture;
-
-    freeFly.enableUpdate(shouldCapture);
+    m_capturingInputs = shouldCapture;
+    
     freeFly.setActive(shouldCapture);
+    inputs.setActive(shouldCapture);
 }
 
 } // namespace GPE
