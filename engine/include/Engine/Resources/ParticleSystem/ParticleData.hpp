@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <Engine/Core/Tools/BinaryMask.hpp>
 #include <GPM/Vector4.hpp>
 #include <memory>
 
@@ -31,7 +32,7 @@ public:
     };
 
 public:
-    uint16_t                     m_maskType = 0;
+    U16BMask                     m_maskType = 0;
     std::unique_ptr<GPM::Vec4[]> m_pos;
     std::unique_ptr<GPM::Vec4[]> m_col;
     std::unique_ptr<GPM::Vec4[]> m_startCol;
@@ -64,12 +65,13 @@ public:
     void generate(size_t maxSize, uint8_t maskType);
     void kill(size_t id);
     void wake(size_t id);
-    void swapData(size_t a, size_t b);
 
-    bool isParamEnable(EParam param) const;
-    void addParam(EParam param);
-    void removeParam(EParam param);
-    void invertParamState(EParam param);
+    /**
+     * @brief Set data b in data a
+     * @param a
+     * @param b
+     */
+    void swapData(size_t a, size_t b);
 
     static void copyOnlyAlive(const ParticleData* source, ParticleData* destination);
 };

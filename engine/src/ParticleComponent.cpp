@@ -80,7 +80,7 @@ void renderResourceExplorer(const char* name, T*& inRes)
             if (flag)                                                                                                  \
             {                                                                                                          \
                 generator = static_cast<name*>(m_generators.emplace_back(std::make_unique<name>()).get());             \
-                m_particles.generate(m_count, generator->getRequiereConfig() | m_particles.m_maskType);                \
+                m_particles.generate(m_count, generator->getRequiereConfig() | m_particles.m_maskType.get());          \
             }                                                                                                          \
             else                                                                                                       \
             {                                                                                                          \
@@ -107,7 +107,7 @@ void renderResourceExplorer(const char* name, T*& inRes)
             if (flag)                                                                                                  \
             {                                                                                                          \
                 updater = static_cast<name*>(m_updaters.emplace_back(std::make_unique<name>()).get());                 \
-                m_particles.generate(m_count, updater->getRequiereConfig() | m_particles.m_maskType);                  \
+                m_particles.generate(m_count, updater->getRequiereConfig() | m_particles.m_maskType.get());            \
             }                                                                                                          \
             else                                                                                                       \
             {                                                                                                          \
@@ -132,7 +132,7 @@ void ParticleComponent::inspect(InspectContext& context)
 
     if (DataInspector::inspect(context, m_count, "Count"))
     {
-        m_particles.generate(m_count, m_particles.m_maskType);
+        m_particles.generate(m_count, m_particles.m_maskType.get());
     }
 
     ImGui::TextUnformatted("Generator");

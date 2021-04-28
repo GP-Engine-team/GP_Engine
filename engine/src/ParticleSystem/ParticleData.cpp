@@ -37,26 +37,6 @@ void ParticleData::generate(size_t maxSize, uint8_t maskType)
     m_alive.reset(new bool[maxSize]);
 }
 
-bool ParticleData::isParamEnable(EParam param) const
-{
-    return m_maskType & param;
-}
-
-void ParticleData::addParam(EParam param)
-{
-    m_maskType |= param;
-}
-
-void ParticleData::removeParam(EParam param)
-{
-    m_maskType &= ~param;
-}
-
-void ParticleData::invertParamState(EParam param)
-{
-    m_maskType ^= param;
-}
-
 void ParticleData::kill(size_t id)
 {
     // if (m_countAlive > 0) // maybe this if can be removed?
@@ -79,14 +59,6 @@ void ParticleData::wake(size_t id)
 
 void ParticleData::swapData(size_t a, size_t b)
 {
-    /*std::swap(m_pos[a], m_pos[b]);
-    std::swap(m_col[a], m_col[b]);
-    std::swap(m_startCol[a], m_startCol[b]);
-    std::swap(m_endCol[a], m_endCol[b]);
-    std::swap(m_vel[a], m_vel[b]);
-    std::swap(m_acc[a], m_acc[b]);
-    std::swap(m_time[a], m_time[b]);
-    std::swap(m_alive[a], m_alive[b]);*/
     m_pos[a]      = m_pos[b];
     m_col[a]      = m_col[b];
     m_startCol[a] = m_startCol[b];
