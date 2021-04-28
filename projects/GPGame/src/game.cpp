@@ -53,6 +53,8 @@ void Game::update(double unscaledDeltaTime, double deltaTime)
 
     bSys.update(static_cast<float>(deltaTime));
     sm.getCurrentScene()->getWorld().updateSelfAndChildren();
+
+    GPE::Engine::getInstance()->physXSystem.drawDebugScene();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
