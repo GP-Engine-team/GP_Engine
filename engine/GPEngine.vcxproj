@@ -213,6 +213,7 @@
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\BinaryMask.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\BranchPrediction.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Callback.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\ClassUtility.hpp" />

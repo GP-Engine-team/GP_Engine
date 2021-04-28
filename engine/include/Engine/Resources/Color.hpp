@@ -6,15 +6,37 @@
 
 #pragma once
 
+#include <GPM/Vector3.hpp>
+#include <GPM/Vector4.hpp>
+
 namespace GPE
 {
-struct ColorRGBA
-{
-    float r, g, b, a;
-};
 
 struct ColorRGB
 {
-    float r, g, b;
+    union {
+        struct
+        {
+            float r, g, b;
+        };
+        GPM::Vec3 v;
+        float     e[3];
+    };
 };
+
+struct ColorRGBA
+{
+    union {
+        struct
+        {
+            float r, g, b, a;
+        };
+        GPM::Vec4 v;
+        float     e[4];
+    };
+};
+
+using RGB  = ColorRGB;
+using RGBA = ColorRGBA;
+
 } /*namespace GPE*/

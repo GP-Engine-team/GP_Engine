@@ -7,6 +7,7 @@
 #pragma once
 
 #include <Engine/Core/Tools/BinaryMask.hpp>
+#include <Engine/Resources/Color.hpp>
 #include <GPM/Vector4.hpp>
 #include <memory>
 
@@ -32,15 +33,15 @@ public:
     };
 
 public:
-    U16BMask                     m_maskType = 0;
-    std::unique_ptr<GPM::Vec4[]> m_pos;
-    std::unique_ptr<GPM::Vec4[]> m_col;
-    std::unique_ptr<GPM::Vec4[]> m_startCol;
-    std::unique_ptr<GPM::Vec4[]> m_endCol;
-    std::unique_ptr<GPM::Vec4[]> m_vel;
-    std::unique_ptr<GPM::Vec4[]> m_acc;
-    std::unique_ptr<GPM::Vec4[]> m_time;
-    std::unique_ptr<bool[]>      m_alive;
+    U16BMask                     m_maskType;
+    std::unique_ptr<GPM::Vec4[]> m_pos      = nullptr;
+    std::unique_ptr<RGBA[]>      m_col      = nullptr;
+    std::unique_ptr<RGBA[]>      m_startCol = nullptr;
+    std::unique_ptr<RGBA[]>      m_endCol   = nullptr;
+    std::unique_ptr<GPM::Vec4[]> m_vel      = nullptr;
+    std::unique_ptr<GPM::Vec4[]> m_acc      = nullptr;
+    std::unique_ptr<GPM::Vec4[]> m_time     = nullptr;
+    std::unique_ptr<bool[]>      m_alive    = nullptr;
 
     size_t m_count{0};
     size_t m_countAlive{0};
@@ -50,7 +51,7 @@ public:
     {
     }
 
-    explicit ParticleData(size_t maxCount, uint16_t maskType)
+    explicit ParticleData(size_t maxCount, U16BMask maskType)
     {
         generate(maxCount, maskType);
     }
@@ -62,7 +63,7 @@ public:
     ParticleData(const ParticleData&) = delete;
     ParticleData& operator=(const ParticleData&) = delete;
 
-    void generate(size_t maxSize, uint8_t maskType);
+    void generate(size_t maxSize, U16BMask maskType);
     void kill(size_t id);
     void wake(size_t id);
 

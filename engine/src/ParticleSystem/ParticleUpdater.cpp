@@ -26,7 +26,7 @@ void EulerUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint16_t EulerUpdater::getRequiereConfig() const
+U16BMask EulerUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
 }
@@ -58,7 +58,7 @@ void FloorUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint16_t FloorUpdater::getRequiereConfig() const
+U16BMask FloorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
 }
@@ -93,24 +93,24 @@ void AttractorUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint16_t AttractorUpdater::getRequiereConfig() const
+U16BMask AttractorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
 }
 
 void BasicColorUpdater::update(double dt, ParticleData* p)
 {
-    Vec4* col      = p->m_col.get();
-    Vec4* startCol = p->m_startCol.get();
-    Vec4* endCol   = p->m_endCol.get();
+    RGBA* col      = p->m_col.get();
+    RGBA* startCol = p->m_startCol.get();
+    RGBA* endCol   = p->m_endCol.get();
     Vec4* t        = p->m_time.get();
 
     const size_t endId = p->m_countAlive;
     for (size_t i = 0; i < endId; ++i)
-        col[i] = startCol[i].lerp(endCol[i], t[i].z);
+        col[i].v = startCol[i].v.lerp(endCol[i].v, t[i].z);
 }
 
-uint16_t BasicColorUpdater::getRequiereConfig() const
+U16BMask BasicColorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::COLOR | ParticleData::EParam::START_COLOR | ParticleData::EParam::END_COLOR |
            ParticleData::EParam::TIME;
@@ -118,9 +118,9 @@ uint16_t BasicColorUpdater::getRequiereConfig() const
 
 void PosColorUpdater::update(double dt, ParticleData* p)
 {
-    Vec4* col      = p->m_col.get();
-    Vec4* startCol = p->m_startCol.get();
-    Vec4* endCol   = p->m_endCol.get();
+    RGBA* col      = p->m_col.get();
+    RGBA* startCol = p->m_startCol.get();
+    RGBA* endCol   = p->m_endCol.get();
     Vec4* t        = p->m_time.get();
     Vec4* pos      = p->m_pos.get();
 
@@ -135,14 +135,14 @@ void PosColorUpdater::update(double dt, ParticleData* p)
         scaler   = (pos[i].x - m_minPos.x) / diffr;
         scaleg   = (pos[i].y - m_minPos.y) / diffg;
         scaleb   = (pos[i].z - m_minPos.z) / diffb;
-        col[i].x = scaler; // glm::mix(p->m_startCol[i].r, p->m_endCol[i].r, scaler);
-        col[i].y = scaleg; // glm::mix(p->m_startCol[i].g, p->m_endCol[i].g, scaleg);
-        col[i].z = scaleb; // glm::mix(p->m_startCol[i].b, p->m_endCol[i].b, scaleb);
-        col[i].w = 1.f;    // glm::mix(startCol[i].a, endCol[i].a, t[i].z);
+        col[i].r = scaler; // glm::mix(p->m_startCol[i].r, p->m_endCol[i].r, scaler);
+        col[i].g = scaleg; // glm::mix(p->m_startCol[i].g, p->m_endCol[i].g, scaleg);
+        col[i].b = scaleb; // glm::mix(p->m_startCol[i].b, p->m_endCol[i].b, scaleb);
+        col[i].a = 1.f;    // glm::mix(startCol[i].a, endCol[i].a, t[i].z);
     }
 }
 
-uint16_t PosColorUpdater::getRequiereConfig() const
+U16BMask PosColorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::COLOR | ParticleData::EParam::START_COLOR | ParticleData::EParam::END_COLOR |
            ParticleData::EParam::TIME | ParticleData::EParam::POSITION;
@@ -150,9 +150,9 @@ uint16_t PosColorUpdater::getRequiereConfig() const
 
 void VelColorUpdater::update(double dt, ParticleData* p)
 {
-    Vec4* col      = p->m_col.get();
-    Vec4* startCol = p->m_startCol.get();
-    Vec4* endCol   = p->m_endCol.get();
+    RGBA* col      = p->m_col.get();
+    RGBA* startCol = p->m_startCol.get();
+    RGBA* endCol   = p->m_endCol.get();
     Vec4* t        = p->m_time.get();
     Vec4* vel      = p->m_vel.get();
 
@@ -166,14 +166,14 @@ void VelColorUpdater::update(double dt, ParticleData* p)
         scaler   = (vel[i].x - m_minVel.x) / diffr;
         scaleg   = (vel[i].y - m_minVel.y) / diffg;
         scaleb   = (vel[i].z - m_minVel.z) / diffb;
-        col[i].x = scaler; // glm::mix(p->m_startCol[i].r, p->m_endCol[i].r, scaler);
-        col[i].y = scaleg; // glm::mix(p->m_startCol[i].g, p->m_endCol[i].g, scaleg);
-        col[i].z = scaleb; // glm::mix(p->m_startCol[i].b, p->m_endCol[i].b, scaleb);
-        col[i].w = 1.f;    // glm::mix(startCol[i].a, endCol[i].a, t[i].z);
+        col[i].r = scaler; // glm::mix(p->m_startCol[i].r, p->m_endCol[i].r, scaler);
+        col[i].g = scaleg; // glm::mix(p->m_startCol[i].g, p->m_endCol[i].g, scaleg);
+        col[i].b = scaleb; // glm::mix(p->m_startCol[i].b, p->m_endCol[i].b, scaleb);
+        col[i].a = 1.f;    // glm::mix(startCol[i].a, endCol[i].a, t[i].z);
     }
 }
 
-uint16_t VelColorUpdater::getRequiereConfig() const
+U16BMask VelColorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::COLOR | ParticleData::EParam::START_COLOR | ParticleData::EParam::END_COLOR |
            ParticleData::EParam::TIME | ParticleData::EParam::VELOCITY;
@@ -203,7 +203,7 @@ void BasicTimeUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint16_t BasicTimeUpdater::getRequiereConfig() const
+U16BMask BasicTimeUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::TIME;
 }

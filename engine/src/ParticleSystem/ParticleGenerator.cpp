@@ -25,7 +25,7 @@ void BoxPosGen::generate(double dt, ParticleData* p, size_t startId, size_t endI
     }
 }
 
-uint16_t BoxPosGen::getRequiereConfig() const
+U16BMask BoxPosGen::getRequiereConfig() const
 {
     return ParticleData::EParam::POSITION;
 }
@@ -39,7 +39,7 @@ void RoundPosGen::generate(double dt, ParticleData* p, size_t startId, size_t en
     }
 }
 
-uint16_t RoundPosGen::getRequiereConfig() const
+U16BMask RoundPosGen::getRequiereConfig() const
 {
     return ParticleData::EParam::POSITION;
 }
@@ -48,19 +48,19 @@ void BasicColorGen::generate(double dt, ParticleData* p, size_t startId, size_t 
 {
     for (size_t i = startId; i < endId; ++i)
     {
-        p->m_startCol[i].x = Random::ranged(m_minStartCol.x, m_maxStartCol.x);
-        p->m_startCol[i].y = Random::ranged(m_minStartCol.y, m_maxStartCol.y);
-        p->m_startCol[i].z = Random::ranged(m_minStartCol.z, m_maxStartCol.z);
-        p->m_startCol[i].w = Random::ranged(m_minStartCol.w, m_maxStartCol.w);
+        p->m_startCol[i].r = Random::ranged(m_minStartCol.x, m_maxStartCol.x);
+        p->m_startCol[i].g = Random::ranged(m_minStartCol.y, m_maxStartCol.y);
+        p->m_startCol[i].b = Random::ranged(m_minStartCol.z, m_maxStartCol.z);
+        p->m_startCol[i].a = Random::ranged(m_minStartCol.w, m_maxStartCol.w);
 
-        p->m_endCol[i].x = Random::ranged(m_minEndCol.x, m_maxEndCol.x);
-        p->m_endCol[i].y = Random::ranged(m_minEndCol.y, m_maxEndCol.y);
-        p->m_endCol[i].z = Random::ranged(m_minEndCol.z, m_maxEndCol.z);
-        p->m_endCol[i].w = Random::ranged(m_minEndCol.w, m_maxEndCol.w);
+        p->m_endCol[i].r = Random::ranged(m_minEndCol.x, m_maxEndCol.x);
+        p->m_endCol[i].g = Random::ranged(m_minEndCol.y, m_maxEndCol.y);
+        p->m_endCol[i].b = Random::ranged(m_minEndCol.z, m_maxEndCol.z);
+        p->m_endCol[i].a = Random::ranged(m_minEndCol.w, m_maxEndCol.w);
     }
 }
 
-uint16_t BasicColorGen::getRequiereConfig() const
+U16BMask BasicColorGen::getRequiereConfig() const
 {
     return ParticleData::EParam::END_COLOR | ParticleData::EParam::START_COLOR;
 }
@@ -76,7 +76,7 @@ void BasicVelGen::generate(double dt, ParticleData* p, size_t startId, size_t en
     }
 }
 
-uint16_t BasicVelGen::getRequiereConfig() const
+U16BMask BasicVelGen::getRequiereConfig() const
 {
     return ParticleData::EParam::VELOCITY;
 }
@@ -97,7 +97,7 @@ void SphereVelGen::generate(double dt, ParticleData* p, size_t startId, size_t e
     }
 }
 
-uint16_t SphereVelGen::getRequiereConfig() const
+U16BMask SphereVelGen::getRequiereConfig() const
 {
     return ParticleData::EParam::VELOCITY;
 }
@@ -112,7 +112,7 @@ void VelFromPosGen::generate(double dt, ParticleData* p, size_t startId, size_t 
     }
 }
 
-uint16_t VelFromPosGen::getRequiereConfig() const
+U16BMask VelFromPosGen::getRequiereConfig() const
 {
     return ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
 }
@@ -127,7 +127,7 @@ void BasicTimeGen::generate(double dt, ParticleData* p, size_t startId, size_t e
     }
 }
 
-uint16_t BasicTimeGen::getRequiereConfig() const
+U16BMask BasicTimeGen::getRequiereConfig() const
 {
     return ParticleData::EParam::TIME;
 }

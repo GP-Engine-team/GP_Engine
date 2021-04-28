@@ -14,6 +14,8 @@
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/STDDataInspector.hpp>
 
+#include <Engine/Core/Tools/BinaryMask.hpp>
+
 // Generated
 #include <Generated/ParticleUpdater.rfk.h>
 
@@ -31,7 +33,7 @@ namespace GPE RFKNamespace()
         }
 
         virtual void     update(double dt, ParticleData* p) = 0;
-        virtual uint16_t getRequiereConfig() const          = 0;
+        virtual U16BMask getRequiereConfig() const          = 0;
 
         ParticleUpdater_GENERATED
     };
@@ -48,7 +50,7 @@ namespace GPE RFKNamespace()
 
         virtual void update(double dt, ParticleData* p) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         EulerUpdater_GENERATED
     };
@@ -67,7 +69,7 @@ namespace GPE RFKNamespace()
 
         virtual void update(double dt, ParticleData* p) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         FloorUpdater_GENERATED
     };
@@ -79,7 +81,7 @@ namespace GPE RFKNamespace()
     public:
         virtual void update(double dt, ParticleData* p) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         size_t collectionSize() const
         {
@@ -104,7 +106,7 @@ namespace GPE RFKNamespace()
     public:
         virtual void update(double dt, ParticleData* p) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         BasicColorUpdater_GENERATED
     };
@@ -122,7 +124,7 @@ namespace GPE RFKNamespace()
 
         virtual void update(double dt, ParticleData* p) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         PosColorUpdater_GENERATED
     };
@@ -140,7 +142,7 @@ namespace GPE RFKNamespace()
 
         virtual void update(double dt, ParticleData* p) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         VelColorUpdater_GENERATED
     };
@@ -150,7 +152,7 @@ namespace GPE RFKNamespace()
     public:
         virtual void update(double dt, ParticleData* p) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         BasicTimeUpdater_GENERATED
     };

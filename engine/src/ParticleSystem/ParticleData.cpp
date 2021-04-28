@@ -7,31 +7,31 @@
 using namespace GPE;
 using namespace GPM;
 
-void ParticleData::generate(size_t maxSize, uint8_t maskType)
+void ParticleData::generate(size_t maxSize, U16BMask maskType)
 {
     m_maskType   = maskType;
     m_count      = maxSize;
     m_countAlive = 0;
 
-    if (m_maskType & EParam::POSITION)
+    if (m_maskType.isSet(EParam::POSITION))
         m_pos.reset(new Vec4[maxSize]);
 
-    if (m_maskType & EParam::COLOR)
-        m_col.reset(new Vec4[maxSize]);
+    if (m_maskType.isSet(EParam::COLOR))
+        m_col.reset(new ColorRGBA[maxSize]);
 
-    if (m_maskType & EParam::START_COLOR)
-        m_startCol.reset(new Vec4[maxSize]);
+    if (m_maskType.isSet(EParam::START_COLOR))
+        m_startCol.reset(new ColorRGBA[maxSize]);
 
-    if (m_maskType & EParam::END_COLOR)
-        m_endCol.reset(new Vec4[maxSize]);
+    if (m_maskType.isSet(EParam::END_COLOR))
+        m_endCol.reset(new ColorRGBA[maxSize]);
 
-    if (m_maskType & EParam::VELOCITY)
+    if (m_maskType.isSet(EParam::VELOCITY))
         m_vel.reset(new Vec4[maxSize]);
 
-    if (m_maskType & EParam::ACCELERATION)
+    if (m_maskType.isSet(EParam::ACCELERATION))
         m_acc.reset(new Vec4[maxSize]);
 
-    if (m_maskType & EParam::TIME)
+    if (m_maskType.isSet(EParam::TIME))
         m_time.reset(new Vec4[maxSize]);
 
     m_alive.reset(new bool[maxSize]);

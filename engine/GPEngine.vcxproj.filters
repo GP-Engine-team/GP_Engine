@@ -681,6 +681,9 @@
     <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleUpdater.hpp">
       <Filter>include\Resources\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\BinaryMask.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

@@ -9,6 +9,7 @@
 #include <Engine/Resources/ParticleSystem/ParticleData.hpp>
 #include <GPM/Vector4.hpp>
 
+#include <Engine/Core/Tools/BinaryMask.hpp>
 #include <Engine/Serialization/DataInspector.hpp>
 #include <Engine/Serialization/GPMDataInspector.hpp>
 #include <Engine/Serialization/Inspect.hpp>
@@ -37,7 +38,7 @@ namespace GPE RFKNamespace()
 
         virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) = 0;
 
-        virtual uint16_t getRequiereConfig() const = 0;
+        virtual U16BMask getRequiereConfig() const = 0;
 
         ParticleGenerator_GENERATED
     };
@@ -55,7 +56,7 @@ namespace GPE RFKNamespace()
 
         virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         BoxPosGen_GENERATED
     };
@@ -78,7 +79,7 @@ namespace GPE RFKNamespace()
 
         virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         RoundPosGen_GENERATED
     };
@@ -115,7 +116,7 @@ namespace GPE RFKNamespace()
 
         virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         BasicColorGen_GENERATED
     };
@@ -133,7 +134,7 @@ namespace GPE RFKNamespace()
 
         virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         BasicVelGen_GENERATED
     };
@@ -151,7 +152,7 @@ namespace GPE RFKNamespace()
 
         virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         SphereVelGen_GENERATED
     };
@@ -174,7 +175,7 @@ namespace GPE RFKNamespace()
 
         virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         VelFromPosGen_GENERATED
     };
@@ -192,7 +193,7 @@ namespace GPE RFKNamespace()
 
         virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
 
-        uint16_t getRequiereConfig() const override;
+        U16BMask getRequiereConfig() const override;
 
         BasicTimeGen_GENERATED
     };

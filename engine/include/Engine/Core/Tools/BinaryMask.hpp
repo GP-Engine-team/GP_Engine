@@ -25,32 +25,38 @@ template <typename T>
 class BinaryMask
 {
 protected:
-    T m_mask;
+    T m_mask = static_cast<T>(0);
 
 public:
-    bool isSet(T param) const noexcept
+    constexpr inline BinaryMask() noexcept = default;
+
+    constexpr inline BinaryMask(T value) noexcept : m_mask{value}
+    {
+    }
+
+    constexpr inline T get() const noexcept
+    {
+        return m_mask;
+    }
+
+    constexpr inline bool isSet(T param) const noexcept
     {
         return m_mask & param;
     }
 
-    void add(T param) noexcept
+    constexpr inline void add(T param) noexcept
     {
         m_mask |= param;
     }
 
-    void remove(T param) noexcept
+    constexpr inline void remove(T param) noexcept
     {
         m_mask &= ~param;
     }
 
-    void reverse(T param) noexcept
+    constexpr inline void reverse(T param) noexcept
     {
         m_mask ^= param;
-    }
-
-    T get() const noexcept
-    {
-        m_mask;
     }
 };
 
