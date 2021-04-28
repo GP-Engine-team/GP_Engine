@@ -111,7 +111,7 @@ namespace GPG RFKNamespace()
             speed = sprintSpeed;
         }
 
-        void update(float deltaTime) final
+        void update(double deltaTime) final
         {
             speed = defaultSpeed;
 
