@@ -249,20 +249,12 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
-
-    Log::getInstance()->logCallBack = [&](const char* msg) {
-        // Log in console
-        std::cout << msg;
-
-        // Log in log inspector
-        if (ImGui::GetCurrentContext() != nullptr)
-            m_logInspector.addLog(msg);
-    };
 }
 
 void Editor::setSceneInEdition(GPE::Scene& scene)
 {
     m_sceneEditor.view.bindScene(scene);
+    GPE::Engine::getInstance()->inputManager.setInputMode("Editor");
 }
 
 void Editor::update(EditorStartup& startup)
