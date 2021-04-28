@@ -139,7 +139,7 @@ Frustum Camera::getFrustum() const noexcept
 {
     // TODO: Optimization with furstum matrix ??
     Frustum     frustum;
-    const Vec3& forward        = -getOwner().getTransform().getVectorForward();
+    const Vec3& forward        = getOwner().getTransform().getVectorForward();
     const Vec3& right          = getOwner().getTransform().getVectorRight();
     const Vec3& up             = getOwner().getTransform().getVectorUp();
     const Vec3& globalPosition = -getOwner().getTransform().getGlobalPosition();

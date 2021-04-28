@@ -16,13 +16,11 @@ using namespace GPM;
 ParticleComponent::ParticleComponent(GameObject& owner) : Component(owner)
 {
     owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
-    initialize(10000);
 }
 
 ParticleComponent::ParticleComponent(GameObject& owner, const CreateArg& arg) : Component(owner)
 {
     owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
-    initialize(10000);
 }
 
 ParticleComponent::~ParticleComponent()
@@ -69,7 +67,35 @@ void renderResourceExplorer(const char* name, T*& inRes)
         inRes = &it->second;
     }
 }
-#define PARTICLE_UPDATGER_INSPECT(name)                                                                                \
+
+#define PARTICLE_GENERATOR_INSPECT(name)                                                                               \
+    {                                                                                                                  \
+        name* generator = getGenerator<name>();                                                                        \
+        bool  flag      = generator;                                                                                   \
+                                                                                                                       \
+        if (ImGui::Checkbox("##" #name, &flag))                                                                        \
+        {                                                                                                              \
+            if (flag)                                                                                                  \
+            {                                                                                                          \
+                generator = static_cast<name*>(m_generators.emplace_back(std::make_unique<name>()).get());             \
+                m_particles.generate(m_count, generator->getRequiereConfig() | m_particles.m_maskType);                \
+            }                                                                                                          \
+            else                                                                                                       \
+            {                                                                                                          \
+                removeGenerator(*generator);                                                                           \
+                ImGui::SetNextItemOpen(false);                                                                         \
+            }                                                                                                          \
+        }                                                                                                              \
+        ImGui::SameLine();                                                                                             \
+        ImGui::PushEnabled(flag);                                                                                      \
+        if (ImGui::CollapsingHeader(#name))                                                                            \
+        {                                                                                                              \
+            DataInspector::inspect(context, *generator);                                                               \
+        }                                                                                                              \
+        ImGui::PopEnabled();                                                                                           \
+    }
+
+#define PARTICLE_UPDATER_INSPECT(name)                                                                                 \
     {                                                                                                                  \
         name* updater = getUpdater<name>();                                                                            \
         bool  flag    = updater;                                                                                       \
@@ -98,16 +124,30 @@ void renderResourceExplorer(const char* name, T*& inRes)
 
 void ParticleComponent::inspect(InspectContext& context)
 {
-    DataInspector::inspect(context, *m_emitters.get());
-    DataInspector::inspect(context, m_count, "Count");
+    DataInspector::inspect(context, m_emitRate, "EmitRate");
 
-    PARTICLE_UPDATGER_INSPECT(EulerUpdater)
-    PARTICLE_UPDATGER_INSPECT(FloorUpdater)
-    PARTICLE_UPDATGER_INSPECT(AttractorUpdater)
-    PARTICLE_UPDATGER_INSPECT(BasicColorUpdater)
-    PARTICLE_UPDATGER_INSPECT(PosColorUpdater)
-    PARTICLE_UPDATGER_INSPECT(VelColorUpdater)
-    PARTICLE_UPDATGER_INSPECT(BasicTimeUpdater)
+    if (DataInspector::inspect(context, m_count, "Count"))
+    {
+        m_particles.generate(m_count, m_particles.m_maskType);
+    }
+
+    ImGui::TextUnformatted("Generator");
+    PARTICLE_GENERATOR_INSPECT(BoxPosGen)
+    PARTICLE_GENERATOR_INSPECT(RoundPosGen)
+    PARTICLE_GENERATOR_INSPECT(BasicColorGen)
+    PARTICLE_GENERATOR_INSPECT(BasicVelGen)
+    PARTICLE_GENERATOR_INSPECT(SphereVelGen)
+    PARTICLE_GENERATOR_INSPECT(VelFromPosGen)
+    PARTICLE_GENERATOR_INSPECT(BasicTimeGen)
+
+    ImGui::TextUnformatted("Updater");
+    PARTICLE_UPDATER_INSPECT(EulerUpdater)
+    PARTICLE_UPDATER_INSPECT(FloorUpdater)
+    PARTICLE_UPDATER_INSPECT(AttractorUpdater)
+    PARTICLE_UPDATER_INSPECT(BasicColorUpdater)
+    PARTICLE_UPDATER_INSPECT(PosColorUpdater)
+    PARTICLE_UPDATER_INSPECT(VelColorUpdater)
+    PARTICLE_UPDATER_INSPECT(BasicTimeUpdater)
 
     // Shader
     {
@@ -136,12 +176,20 @@ void ParticleComponent::inspect(InspectContext& context)
             }
         }
     }
+
+    if (ImGui::Button("Start"))
+    {
+        start();
+    }
+}
+
+void ParticleComponent::start()
+{
+    initialize(m_count);
 }
 
 bool ParticleComponent::initialize(size_t numParticles)
 {
-    clean();
-
     //
     // particles
     //
@@ -154,7 +202,7 @@ bool ParticleComponent::initialize(size_t numParticles)
     //
     // emitter:
     //
-    m_emitters = std::make_shared<ParticleEmitter>();
+    // m_emitters = std::make_shared<ParticleEmitter>();
     //{
     //    m_emitters->m_emitRate = (float)numParticles * 0.25f;
 
@@ -221,9 +269,12 @@ void ParticleComponent::clean()
 
 void ParticleComponent::update(double dt)
 {
-    m_emitters->emit(dt, &m_particles);
+    if (!m_renderer)
+        return;
 
-    // Add acceleration updater
+    emit(dt);
+
+    // TODO: Add acceleration updater
     if (m_particles.m_acc)
     {
         for (size_t i = 0; i < m_count; ++i)
@@ -238,4 +289,17 @@ void ParticleComponent::update(double dt)
     }
 
     m_renderer->update();
+}
+
+void ParticleComponent::emit(double dt)
+{
+    const size_t maxNewParticles = static_cast<size_t>(dt * m_emitRate);
+    const size_t startId         = m_particles.m_countAlive;
+    const size_t endId           = std::min(startId + maxNewParticles, m_particles.m_count - 1);
+
+    for (auto& gen : m_generators) // << gen loop
+        gen->generate(dt, &m_particles, startId, endId);
+
+    for (size_t i = startId; i < endId; ++i) // << wake loop
+        m_particles.wake(i);
 }

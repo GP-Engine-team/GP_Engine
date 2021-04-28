@@ -1,12 +1,14 @@
 #include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
 
+File_GENERATED
+
 #include "GPM/Random.hpp"
 #include "GPM/Vector4.hpp"
 #include "GPM/constants.hpp"
 #include <algorithm>
 #include <assert.h>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 void BoxPosGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
@@ -23,6 +25,11 @@ void BoxPosGen::generate(double dt, ParticleData* p, size_t startId, size_t endI
     }
 }
 
+uint16_t BoxPosGen::getRequiereConfig() const
+{
+    return ParticleData::EParam::POSITION;
+}
+
 void RoundPosGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
@@ -30,6 +37,11 @@ void RoundPosGen::generate(double dt, ParticleData* p, size_t startId, size_t en
         float ang   = Random::ranged(0.f, PI * 2.f);
         p->m_pos[i] = m_center + Vec4(m_radX * sin(ang), m_radY * cos(ang), 0.f, 1.f);
     }
+}
+
+uint16_t RoundPosGen::getRequiereConfig() const
+{
+    return ParticleData::EParam::POSITION;
 }
 
 void BasicColorGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
@@ -48,6 +60,11 @@ void BasicColorGen::generate(double dt, ParticleData* p, size_t startId, size_t 
     }
 }
 
+uint16_t BasicColorGen::getRequiereConfig() const
+{
+    return ParticleData::EParam::END_COLOR | ParticleData::EParam::START_COLOR;
+}
+
 void BasicVelGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
@@ -57,6 +74,11 @@ void BasicVelGen::generate(double dt, ParticleData* p, size_t startId, size_t en
         p->m_vel[i].z = Random::ranged(m_minStartVel.z, m_maxStartVel.z);
         p->m_vel[i].w = Random::ranged(m_minStartVel.w, m_maxStartVel.w);
     }
+}
+
+uint16_t BasicVelGen::getRequiereConfig() const
+{
+    return ParticleData::EParam::VELOCITY;
 }
 
 void SphereVelGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
@@ -75,6 +97,11 @@ void SphereVelGen::generate(double dt, ParticleData* p, size_t startId, size_t e
     }
 }
 
+uint16_t SphereVelGen::getRequiereConfig() const
+{
+    return ParticleData::EParam::VELOCITY;
+}
+
 void VelFromPosGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
@@ -85,6 +112,11 @@ void VelFromPosGen::generate(double dt, ParticleData* p, size_t startId, size_t 
     }
 }
 
+uint16_t VelFromPosGen::getRequiereConfig() const
+{
+    return ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
+}
+
 void BasicTimeGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
@@ -93,4 +125,9 @@ void BasicTimeGen::generate(double dt, ParticleData* p, size_t startId, size_t e
         p->m_time[i].z                  = 0.f;
         p->m_time[i].w                  = 1.f / p->m_time[i].x;
     }
+}
+
+uint16_t BasicTimeGen::getRequiereConfig() const
+{
+    return ParticleData::EParam::TIME;
 }

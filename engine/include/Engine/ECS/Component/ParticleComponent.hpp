@@ -12,7 +12,6 @@
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
 #include <Engine/Resources/ParticleSystem/ParticleData.hpp>
-#include <Engine/Resources/ParticleSystem/ParticleEmitter.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleRenderer.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleUpdater.hpp>
@@ -34,10 +33,11 @@ namespace GPE RFKNamespace()
 
         ParticleData m_particles;
         size_t       m_count;
+        float        m_emitRate{0.0};
 
-        std::shared_ptr<ParticleEmitter>              m_emitters;
-        std::vector<std::shared_ptr<ParticleUpdater>> m_updaters;
-        std::shared_ptr<GPE::IParticleRenderer>       m_renderer;
+        std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
+        std::vector<std::shared_ptr<ParticleUpdater>>   m_updaters;
+        std::shared_ptr<GPE::IParticleRenderer>         m_renderer;
 
     public:
         ParticleComponent(GameObject & owner);
@@ -58,6 +58,8 @@ namespace GPE RFKNamespace()
         bool initializeRenderer();
         void reset();
         void clean();
+
+        void start();
 
         void update(double dt);
 
@@ -109,6 +111,45 @@ namespace GPE RFKNamespace()
                     return;
                 }
             }
+        }
+
+        // calls all the generators and at the end it activates (wakes) particle
+        void emit(double dt);
+
+        template <typename T, typename... TArg>
+        void addGenerator(TArg... arg)
+        {
+            for (auto&& generator : m_generators)
+            {
+                if (dynamic_cast<T*>(generator.get())) // Already exist
+                    return;
+            }
+            m_generators.emplace_back(arg...);
+        }
+
+        template <typename T>
+        void removeGenerator(T & genToRemove)
+        {
+            for (auto&& it = m_generators.begin(); it != m_generators.end(); ++it)
+            {
+                if (it->get() == &genToRemove)
+                {
+                    m_generators.erase(it);
+                    return;
+                }
+            }
+        }
+
+        template <typename T>
+        T* getGenerator()
+        {
+            T* rst = nullptr;
+            for (auto&& up : m_generators)
+            {
+                if (rst = dynamic_cast<T*>(up.get()))
+                    return rst;
+            }
+            return rst;
         }
 
         void sendDataToShader();

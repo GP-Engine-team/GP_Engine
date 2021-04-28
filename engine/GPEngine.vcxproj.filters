@@ -253,16 +253,10 @@
     <ClCompile Include="src\ParticleSystem\ParticleEffect.cpp">
       <Filter>src\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="src\ParticleSystem\ParticleEmitter.cpp">
-      <Filter>src\Particle</Filter>
-    </ClCompile>
     <ClCompile Include="src\ParticleSystem\ParticleGenerator.cpp">
       <Filter>src\Particle</Filter>
     </ClCompile>
     <ClCompile Include="src\ParticleSystem\ParticleRenderer.cpp">
-      <Filter>src\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ParticleSystem\ParticleSystem.cpp">
       <Filter>src\Particle</Filter>
     </ClCompile>
     <ClCompile Include="src\ParticleSystem\ParticleUpdater.cpp">
@@ -684,16 +678,10 @@
     <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleEffect.hpp">
       <Filter>include\Resources\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleEmitter.hpp">
-      <Filter>include\Resources\Particle</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleGenerator.hpp">
       <Filter>include\Resources\Particle</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleRenderer.hpp">
-      <Filter>include\Resources\Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleSystem.hpp">
       <Filter>include\Resources\Particle</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleUpdater.hpp">

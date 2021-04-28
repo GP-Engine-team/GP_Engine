@@ -26,7 +26,7 @@ void EulerUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint8_t EulerUpdater::getRequiereConfig() const
+uint16_t EulerUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
 }
@@ -58,7 +58,7 @@ void FloorUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint8_t FloorUpdater::getRequiereConfig() const
+uint16_t FloorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
 }
@@ -93,7 +93,7 @@ void AttractorUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint8_t AttractorUpdater::getRequiereConfig() const
+uint16_t AttractorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
 }
@@ -110,7 +110,7 @@ void BasicColorUpdater::update(double dt, ParticleData* p)
         col[i] = startCol[i].lerp(endCol[i], t[i].z);
 }
 
-uint8_t BasicColorUpdater::getRequiereConfig() const
+uint16_t BasicColorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::COLOR | ParticleData::EParam::START_COLOR | ParticleData::EParam::END_COLOR |
            ParticleData::EParam::TIME;
@@ -142,7 +142,7 @@ void PosColorUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint8_t PosColorUpdater::getRequiereConfig() const
+uint16_t PosColorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::COLOR | ParticleData::EParam::START_COLOR | ParticleData::EParam::END_COLOR |
            ParticleData::EParam::TIME | ParticleData::EParam::POSITION;
@@ -173,7 +173,7 @@ void VelColorUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint8_t VelColorUpdater::getRequiereConfig() const
+uint16_t VelColorUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::COLOR | ParticleData::EParam::START_COLOR | ParticleData::EParam::END_COLOR |
            ParticleData::EParam::TIME | ParticleData::EParam::VELOCITY;
@@ -203,7 +203,7 @@ void BasicTimeUpdater::update(double dt, ParticleData* p)
     }
 }
 
-uint8_t BasicTimeUpdater::getRequiereConfig() const
+uint16_t BasicTimeUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::TIME;
 }

@@ -398,6 +398,10 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         {
             for (auto&& particle : pParticleComponents)
             {
+                const size_t count = particle->numAliveParticles();
+                if (count == 0)
+                    continue;
+
                 glEnable(GL_PROGRAM_POINT_SIZE);
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -406,9 +410,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     rs.tryToBindShader(*particle->getShader());
                 rs.tryToBindMesh(particle->getMeshID());
 
-                const size_t count = particle->numAliveParticles();
-                if (count > 0)
-                    glDrawArrays(GL_POINTS, 0, count);
+                glDrawArrays(GL_POINTS, 0, count);
             }
         }
 

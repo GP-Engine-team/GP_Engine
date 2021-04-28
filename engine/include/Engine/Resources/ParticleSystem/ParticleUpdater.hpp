@@ -7,12 +7,12 @@
 #pragma once
 
 #include <Engine/Resources/ParticleSystem/ParticleData.hpp>
-#include <Engine/Serialization/DataInspector.hpp>
-#include <Engine/Serialization/GPMDataInspector.hpp>
-#include <Engine/Serialization/STDDataInspector.hpp>
 #include <vector>
 
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/GPMDataInspector.hpp>
 #include <Engine/Serialization/Inspect.hpp>
+#include <Engine/Serialization/STDDataInspector.hpp>
 
 // Generated
 #include <Generated/ParticleUpdater.rfk.h>
@@ -30,8 +30,8 @@ namespace GPE RFKNamespace()
         {
         }
 
-        virtual void    update(double dt, ParticleData* p) = 0;
-        virtual uint8_t getRequiereConfig() const          = 0;
+        virtual void     update(double dt, ParticleData* p) = 0;
+        virtual uint16_t getRequiereConfig() const          = 0;
 
         ParticleUpdater_GENERATED
     };
@@ -48,7 +48,7 @@ namespace GPE RFKNamespace()
 
         virtual void update(double dt, ParticleData* p) override;
 
-        uint8_t getRequiereConfig() const override;
+        uint16_t getRequiereConfig() const override;
 
         EulerUpdater_GENERATED
     };
@@ -67,7 +67,7 @@ namespace GPE RFKNamespace()
 
         virtual void update(double dt, ParticleData* p) override;
 
-        uint8_t getRequiereConfig() const override;
+        uint16_t getRequiereConfig() const override;
 
         FloorUpdater_GENERATED
     };
@@ -79,7 +79,7 @@ namespace GPE RFKNamespace()
     public:
         virtual void update(double dt, ParticleData* p) override;
 
-        uint8_t getRequiereConfig() const override;
+        uint16_t getRequiereConfig() const override;
 
         size_t collectionSize() const
         {
@@ -104,7 +104,7 @@ namespace GPE RFKNamespace()
     public:
         virtual void update(double dt, ParticleData* p) override;
 
-        uint8_t getRequiereConfig() const override;
+        uint16_t getRequiereConfig() const override;
 
         BasicColorUpdater_GENERATED
     };
@@ -122,7 +122,7 @@ namespace GPE RFKNamespace()
 
         virtual void update(double dt, ParticleData* p) override;
 
-        uint8_t getRequiereConfig() const override;
+        uint16_t getRequiereConfig() const override;
 
         PosColorUpdater_GENERATED
     };
@@ -140,7 +140,7 @@ namespace GPE RFKNamespace()
 
         virtual void update(double dt, ParticleData* p) override;
 
-        uint8_t getRequiereConfig() const override;
+        uint16_t getRequiereConfig() const override;
 
         VelColorUpdater_GENERATED
     };
@@ -150,7 +150,7 @@ namespace GPE RFKNamespace()
     public:
         virtual void update(double dt, ParticleData* p) override;
 
-        uint8_t getRequiereConfig() const override;
+        uint16_t getRequiereConfig() const override;
 
         BasicTimeUpdater_GENERATED
     };

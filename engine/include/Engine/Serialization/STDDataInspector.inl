@@ -84,3 +84,53 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
 
     return false;
 }
+
+template <typename T>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const rfk::Field& info)
+{
+    return inspect(context, inspected, info.name.c_str());
+}
+
+template <typename T>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const char* name)
+{
+    if (inspected.get())
+    {
+        return inspect(context, *inspected.get(), name);
+    }
+    return false;
+}
+
+template <typename T>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected)
+{
+    if (inspected.get())
+    {
+        inspect(context, *inspected.get());
+    }
+}
+
+template <typename T>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected, const rfk::Field& info)
+{
+    return inspect(context, inspected, info.name.c_str());
+}
+
+template <typename T>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected, const char* name)
+{
+    if (inspected.get())
+    {
+        return inspect(context, *inspected.get(), name);
+    }
+    return false;
+}
+
+template <typename T>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected)
+{
+    if (inspected.get())
+    {
+        inspect(context, *inspected.get());
+    }
+}

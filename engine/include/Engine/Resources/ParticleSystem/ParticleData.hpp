@@ -19,7 +19,7 @@ namespace GPE
 class ParticleData
 {
 public:
-    enum EParam : uint8_t
+    enum EParam : uint16_t
     {
         POSITION     = (1u << 1),
         COLOR        = (1u << 2),
@@ -31,7 +31,7 @@ public:
     };
 
 public:
-    uint8_t                      m_maskType = 0;
+    uint16_t                     m_maskType = 0;
     std::unique_ptr<GPM::Vec4[]> m_pos;
     std::unique_ptr<GPM::Vec4[]> m_col;
     std::unique_ptr<GPM::Vec4[]> m_startCol;
@@ -49,7 +49,7 @@ public:
     {
     }
 
-    explicit ParticleData(size_t maxCount, uint8_t maskType)
+    explicit ParticleData(size_t maxCount, uint16_t maskType)
     {
         generate(maxCount, maskType);
     }
