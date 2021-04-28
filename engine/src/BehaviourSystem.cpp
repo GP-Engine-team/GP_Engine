@@ -135,7 +135,7 @@ void BehaviourSystem::onGUI() const noexcept
     }
 }
 
-void BehaviourSystem::fixedUpdate(float deltaTime) noexcept
+void BehaviourSystem::fixedUpdate(double deltaTime) noexcept
 {
     for (auto&& behaviour : m_fixedUpdateFunctions)
     {
@@ -143,7 +143,7 @@ void BehaviourSystem::fixedUpdate(float deltaTime) noexcept
     }
 }
 
-void BehaviourSystem::update(float deltaTime) const noexcept
+void BehaviourSystem::update(double deltaTime) const noexcept
 {
     for (auto&& behaviour : m_updateFunctions)
     {

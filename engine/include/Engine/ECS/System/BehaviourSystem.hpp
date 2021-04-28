@@ -42,9 +42,9 @@ public:
     void start() const noexcept;
     void onGUI() const noexcept;
 
-    void fixedUpdate(float deltaTime) noexcept;
+    void fixedUpdate(double deltaTime) noexcept;
 
-    void update(float deltaTime) const noexcept;
+    void update(double deltaTime) const noexcept;
 };
 
 } /*namespace GPE*/
