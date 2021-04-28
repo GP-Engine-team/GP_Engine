@@ -48,15 +48,15 @@ void BasicColorGen::generate(double dt, ParticleData* p, size_t startId, size_t 
 {
     for (size_t i = startId; i < endId; ++i)
     {
-        p->m_startCol[i].r = Random::ranged(m_minStartCol.x, m_maxStartCol.x);
-        p->m_startCol[i].g = Random::ranged(m_minStartCol.y, m_maxStartCol.y);
-        p->m_startCol[i].b = Random::ranged(m_minStartCol.z, m_maxStartCol.z);
-        p->m_startCol[i].a = Random::ranged(m_minStartCol.w, m_maxStartCol.w);
+        p->m_startCol[i].r = Random::ranged(m_minStartCol.r, m_maxStartCol.r);
+        p->m_startCol[i].g = Random::ranged(m_minStartCol.g, m_maxStartCol.b);
+        p->m_startCol[i].b = Random::ranged(m_minStartCol.b, m_maxStartCol.b);
+        p->m_startCol[i].a = Random::ranged(m_minStartCol.a, m_maxStartCol.a);
 
-        p->m_endCol[i].r = Random::ranged(m_minEndCol.x, m_maxEndCol.x);
-        p->m_endCol[i].g = Random::ranged(m_minEndCol.y, m_maxEndCol.y);
-        p->m_endCol[i].b = Random::ranged(m_minEndCol.z, m_maxEndCol.z);
-        p->m_endCol[i].a = Random::ranged(m_minEndCol.w, m_maxEndCol.w);
+        p->m_endCol[i].r = Random::ranged(m_minEndCol.r, m_maxEndCol.r);
+        p->m_endCol[i].g = Random::ranged(m_minEndCol.g, m_maxEndCol.g);
+        p->m_endCol[i].b = Random::ranged(m_minEndCol.b, m_maxEndCol.b);
+        p->m_endCol[i].a = Random::ranged(m_minEndCol.a, m_maxEndCol.a);
     }
 }
 

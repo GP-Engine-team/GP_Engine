@@ -89,17 +89,17 @@ namespace GPE RFKNamespace()
     public:
         struct CreateArg
         {
-            GPM::Vec4 minStartCol{0.0};
-            GPM::Vec4 maxStartCol{0.0};
-            GPM::Vec4 minEndCol{0.0};
-            GPM::Vec4 maxEndCol{0.0};
+            RGBA minStartCol{0.0};
+            RGBA maxStartCol{0.0};
+            RGBA minEndCol{0.0};
+            RGBA maxEndCol{0.0};
         };
 
     public:
-        RFKField(Inspect()) GPM::Vec4 m_minStartCol{0.0};
-        RFKField(Inspect()) GPM::Vec4 m_maxStartCol{0.0};
-        RFKField(Inspect()) GPM::Vec4 m_minEndCol{0.0};
-        RFKField(Inspect()) GPM::Vec4 m_maxEndCol{0.0};
+        RFKField(Inspect()) RGBA m_minStartCol{0.0};
+        RFKField(Inspect()) RGBA m_maxStartCol{0.0};
+        RFKField(Inspect()) RGBA m_minEndCol{0.0};
+        RFKField(Inspect()) RGBA m_maxEndCol{0.0};
 
     public:
         BasicColorGen()

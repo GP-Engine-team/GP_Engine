@@ -210,10 +210,10 @@ void ParticleComponent::initializeDefaultSetting()
         m_generators.emplace_back(std::move(m_posGenerator));
 
         auto m_colGenerator           = std::make_unique<BasicColorGen>();
-        m_colGenerator->m_minStartCol = Vec4{0.7, 0.7, 0.7, 1.0};
-        m_colGenerator->m_maxStartCol = Vec4{1.0, 1.0, 1.0, 1.0};
-        m_colGenerator->m_minEndCol   = Vec4{0.5, 0.0, 0.6, 0.0};
-        m_colGenerator->m_maxEndCol   = Vec4{0.7, 0.5, 1.0, 0.0};
+        m_colGenerator->m_minStartCol = RGBA{0.7, 0.7, 0.7, 1.0};
+        m_colGenerator->m_maxStartCol = RGBA{1.0, 1.0, 1.0, 1.0};
+        m_colGenerator->m_minEndCol   = RGBA{0.5, 0.0, 0.6, 0.0};
+        m_colGenerator->m_maxEndCol   = RGBA{0.7, 0.5, 1.0, 0.0};
         m_generators.emplace_back(std::move(m_colGenerator));
 
         auto velGenerator           = std::make_unique<BasicVelGen>();
