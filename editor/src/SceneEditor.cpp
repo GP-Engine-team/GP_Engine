@@ -1,8 +1,7 @@
-﻿#include "Editor/SceneEditor.hpp"
+﻿#include <Editor/SceneEditor.hpp>
 
-#include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Scene.hpp"
-#include "imgui/imgui.h"
+#include <Engine/Engine.hpp>
+#include <imgui/imgui.h>
 
 namespace Editor
 {
@@ -10,37 +9,67 @@ namespace Editor
 using namespace GPE;
 
 // ========================== Private methods ==========================
+void SceneEditor::captureInputs(bool toggle)
+{
+    InputManager& io = Engine::getInstance()->inputManager;
+    io.setCursorLockState(toggle);
+    io.setCursorTrackingState(toggle);
+    view.captureInputs(toggle);
+
+    if (toggle)
+    {
+        io.setInputMode("Level editor");
+    }
+    else
+    {
+        io.restorePreviousInputMode();
+    }
+}
+
+
 void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
 {
-    if (ImGui::IsMouseClicked(0))
+    const bool hovered = ImGui::IsWindowHovered();
+
+    if (hovered)
     {
-        const bool hovered = ImGui::IsWindowHovered();
-        view.captureInputs(hovered);
-
-        const unsigned int idSelectedGameObject = view.getHoveredGameObjectID();
-
-        if (idSelectedGameObject && hovered)
+        if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
         {
-            if (GameObject* const selectionGameObject =
-                    view.pScene->getWorld().getGameObjectCorrespondingToID(idSelectedGameObject))
+            captureInputs(true);
+        }
 
-            {
-                inspectedObject = selectionGameObject;
-            }
+        else if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+        {
+            captureInputs(false);
+        }
 
-            else
+        else if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+        {
+            const unsigned int idSelectedGameObject = view.getHoveredGameObjectID();
+            if (idSelectedGameObject)
             {
-                GPE::Log::getInstance()->logError(
-                    stringFormat("No gameObject corresponding to the id %i", idSelectedGameObject));
+                if (GameObject* const selectionGameObject = view.pScene->getWorld()
+                                                            .getGameObjectCorrespondingToID(idSelectedGameObject))
+                {
+                    inspectedObject = selectionGameObject;
+                }
+
+                else
+                {
+                    GPE::Log::getInstance()->logError(
+                        stringFormat("No gameObject corresponding to the id %i", idSelectedGameObject));
+                }
             }
         }
     }
 }
 
+
 // ========================== Public methods ==========================
-SceneEditor::SceneEditor(GPE::Scene& scene) : view{scene}
-{
-}
+SceneEditor::SceneEditor(GPE::Scene& scene)
+    : view{scene}
+{}
+
 
 void SceneEditor::render(GPE::IInspectable*& inspectedObject)
 {
@@ -48,16 +77,17 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
-    if (ImGui::Begin(view.pScene->getWorld().getName().c_str(), nullptr, ImGuiWindowFlags_NoBackground))
+    const std::string windowName = "Scene editor (" + view.pScene->getWorld().getName() + ')';
+    if (ImGui::Begin(windowName.c_str()))
     {
-        checkCursor(inspectedObject);
-
         const ImVec2 size{ImGui::GetContentRegionAvail()};
 
-        view.resize(static_cast<int>(size.x), static_cast<int>(size.y));
+        checkCursor(inspectedObject);
+
+        view.resize(int(size.x), int(size.y));
         view.render();
 
-        ImGui::Image((void*)(intptr_t)view.textureID, size, {0.f, 1.f}, {1.f, 0.f});
+        ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
     }
 
     ImGui::End();

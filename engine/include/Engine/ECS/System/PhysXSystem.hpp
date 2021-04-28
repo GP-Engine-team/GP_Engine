@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -36,6 +36,18 @@ public:
 
 class PhysXSystem
 {
+public:
+    physx::PxFoundation*              foundation;
+    physx::PxPvd*                     pvd;
+    physx::PxPhysics*                 physics;
+    physx::PxCooking*                 cooking;
+    physx::PxScene*                   scene;
+    physx::PxControllerManager*       manager;
+    std::vector<RigidbodyStatic*>     rigidbodyStatics;
+    std::vector<RigidbodyDynamic*>    rigidbodyDynamics;
+    std::vector<CharacterController*> characterControllers;
+    bool                              drawDebugShapes{false};
+
 public:
     PhysXSystem();
     ~PhysXSystem();
@@ -92,17 +104,6 @@ public:
     static inline physx::PxExtendedVec3 GPMVec3ToPxExtendedVec3(const GPM::Vec3& vector) noexcept;
     static inline GPM::Quat             PxQuatToGPMQuat(const physx::PxQuat& quaternion) noexcept;
     static inline physx::PxQuat         GPMQuatToPxQuat(const GPM::Quat& quaternion) noexcept;
-
-public:
-    physx::PxFoundation*              foundation;
-    physx::PxPvd*                     pvd;
-    physx::PxPhysics*                 physics;
-    physx::PxCooking*                 cooking;
-    physx::PxScene*                   scene;
-    physx::PxControllerManager*       manager;
-    std::vector<RigidbodyStatic*>     rigidbodyStatics;
-    std::vector<RigidbodyDynamic*>    rigidbodyDynamics;
-    std::vector<CharacterController*> characterControllers;
 };
 
 #include <Engine/ECS/System/PhysXSystem.inl>

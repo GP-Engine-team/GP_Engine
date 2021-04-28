@@ -4,7 +4,6 @@
 
 #include <functional>
 
-// Generated
 #include "Generated/InputComponent.rfk.h"
 File_GENERATED
 
@@ -58,7 +57,7 @@ void InputComponent::setActive(bool newState) noexcept
 {
     m_isActivated = newState;
     if (m_isActivated)
-        Engine::getInstance()->inputManager.addComponent(*this);
+        m_key = Engine::getInstance()->inputManager.addComponent(*this);
     else
         Engine::getInstance()->inputManager.removeComponent(m_key);
 }

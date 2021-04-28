@@ -59,6 +59,7 @@ public:
                      EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING);
 
     void removeScene(const std::string& sceneName);
+    void removeScene(Scene& scene);
 };
 
 } /*namespace GPE*/

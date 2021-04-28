@@ -105,7 +105,8 @@ void PhysXSystem::advance(double deltaTime) noexcept
         }
     }
 
-    drawDebugScene();
+    if (drawDebugShapes)
+        drawDebugScene();
 }
 
 void PhysXSystem::drawDebugScene()

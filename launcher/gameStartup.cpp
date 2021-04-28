@@ -41,7 +41,7 @@ GameStartup::GameStartup()
     gameFunctionsPtr.render = [&]() {
         int h, w;
         GPE::Engine::getInstance()->window.getSize(w, h);
-        m_game->setViewport(0, 0, w, h);
+        m_game->setViewport(.0f, .0f, float(w), float(h));
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, w, h);
