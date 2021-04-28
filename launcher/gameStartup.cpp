@@ -31,10 +31,11 @@ GameStartup::GameStartup()
     m_game = createGameInstance();
 
     GPE_ASSERT(m_game != nullptr, "m_game should be valid since we're running the game.");
-    gameFunctionsPtr.update = [&](double a, double b) {
+    gameFunctionsPtr.update = [&](double unscaledDeltaTime, double deltaTime) {
         GPE::Engine::getInstance()->inputManager.processInput();
+        Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
 
-        m_game->update(a, b);
+        m_game->update(unscaledDeltaTime, deltaTime);
     };
     gameFunctionsPtr.fixedUpdate =
         std::bind(&AbstractGame::fixedUpdate, m_game, std::placeholders::_1, std::placeholders::_2);

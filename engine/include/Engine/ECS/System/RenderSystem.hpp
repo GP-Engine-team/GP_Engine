@@ -59,10 +59,10 @@ public:
         bool      smooth = true;
     };
 
-    using RenderPipeline = std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>&,
-                                              std::vector<SubModel*>&, std::vector<SubModel*>&, std::vector<Camera*>&,
-                                              std::vector<Light*>&, std::vector<ParticleComponent*>&,
-                                              std::vector<DebugShape>&, std::vector<DebugLine>&, Camera&)>;
+    using RenderPipeline =
+        std::function<void(RenderSystem&, std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
+                           std::vector<Camera*>&, std::vector<Light*>&, std::vector<ParticleComponent*>&,
+                           std::vector<DebugShape>&, std::vector<DebugLine>&, Camera&)>;
 
 protected:
     std::vector<Renderer*>          m_pRenderers;
@@ -107,7 +107,20 @@ public:
 
     RenderPipeline defaultRenderPipeline() const noexcept;
     RenderPipeline gameObjectIdentifierPipeline() const noexcept;
-    void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
+
+    /**
+     * @brief Render the scene thanks to the call back set in input. This callback will be used as the render pipeline.
+     * @param renderPipeline
+     * @return
+     */
+    void render(RenderPipeline renderPipeline) noexcept;
+
+    /**
+     * @brief Update particles (to call once by frame)
+     * @param dt
+     * @return
+     */
+    void update(double dt) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
                          const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},

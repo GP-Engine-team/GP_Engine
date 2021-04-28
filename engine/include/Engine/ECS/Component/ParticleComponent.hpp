@@ -54,13 +54,24 @@ namespace GPE RFKNamespace()
         void         moveTowardScene(class Scene & newOwner) override;
         virtual void inspect(InspectContext & context);
 
+        /**
+         * @brief Init fontaine effect by default. Work when user use start function
+         */
+        void initializeDefaultSetting();
         bool initialize(size_t numParticles);
         bool initializeRenderer();
         void reset();
         void clean();
 
+        /**
+         * @brief Start the particle effect
+         */
         void start();
 
+        /**
+         * @brief Update the particle effect and all it's updater
+         * @param dt
+         */
         void update(double dt);
 
         size_t numAllParticles() const

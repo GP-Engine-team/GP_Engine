@@ -144,7 +144,7 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
     glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
 
     RenderSystem renderSys{pScene->sceneRenderer};
-    renderSys.draw(Engine::getInstance()->resourceManager, renderSys.gameObjectIdentifierPipeline());
+    renderSys.render(renderSys.gameObjectIdentifierPipeline());
 
     // Find the hovered game object, if any
     unsigned int pixel = 0u;
@@ -243,7 +243,7 @@ void SceneViewer::render() const
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
-    pScene->sceneRenderer.draw(Engine::getInstance()->resourceManager, pScene->sceneRenderer.defaultRenderPipeline());
+    pScene->sceneRenderer.render(pScene->sceneRenderer.defaultRenderPipeline());
 }
 
 void SceneViewer::captureInputs(bool shouldCapture)

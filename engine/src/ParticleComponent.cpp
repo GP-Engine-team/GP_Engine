@@ -16,11 +16,13 @@ using namespace GPM;
 ParticleComponent::ParticleComponent(GameObject& owner) : Component(owner)
 {
     owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    initializeDefaultSetting();
 }
 
 ParticleComponent::ParticleComponent(GameObject& owner, const CreateArg& arg) : Component(owner)
 {
     owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    initializeDefaultSetting();
 }
 
 ParticleComponent::~ParticleComponent()
@@ -188,60 +190,67 @@ void ParticleComponent::start()
     initialize(m_count);
 }
 
+void ParticleComponent::initializeDefaultSetting()
+{
+    m_count    = 10000;
+    m_emitRate = (float)m_count * 0.25f;
+
+    {
+        // pos:
+        auto m_posGenerator                 = std::make_unique<BoxPosGen>();
+        m_posGenerator->m_pos               = Vec4{0.0, 0.0, 0.0, 0.0};
+        m_posGenerator->m_maxStartPosOffset = Vec4{0.0, 0.0, 0.0, 0.0};
+        m_generators.emplace_back(std::move(m_posGenerator));
+
+        auto m_colGenerator           = std::make_unique<BasicColorGen>();
+        m_colGenerator->m_minStartCol = Vec4{0.7, 0.7, 0.7, 1.0};
+        m_colGenerator->m_maxStartCol = Vec4{1.0, 1.0, 1.0, 1.0};
+        m_colGenerator->m_minEndCol   = Vec4{0.5, 0.0, 0.6, 0.0};
+        m_colGenerator->m_maxEndCol   = Vec4{0.7, 0.5, 1.0, 0.0};
+        m_generators.emplace_back(std::move(m_colGenerator));
+
+        auto velGenerator           = std::make_unique<BasicVelGen>();
+        velGenerator->m_minStartVel = Vec4{-5.f, 2.2f, -5.f, 0.0f};
+        velGenerator->m_maxStartVel = Vec4{50.f, 25.f, 5.f, 0.0f};
+        m_generators.emplace_back(std::move(velGenerator));
+
+        auto timeGenerator       = std::make_unique<BasicTimeGen>();
+        timeGenerator->m_minTime = 3.0f;
+        timeGenerator->m_maxTime = 4.0f;
+        m_generators.emplace_back(std::move(timeGenerator));
+    }
+
+    auto timeUpdater = std::make_unique<BasicTimeUpdater>();
+    m_updaters.emplace_back(std::move(timeUpdater));
+
+    auto colorUpdater = std::make_unique<BasicColorUpdater>();
+    m_updaters.emplace_back(std::move(colorUpdater));
+
+    auto m_eulerUpdater                  = std::make_unique<EulerUpdater>();
+    m_eulerUpdater->m_globalAcceleration = Vec4{0.0, -15.0, 0.0, 0.0};
+    m_updaters.emplace_back(std::move(m_eulerUpdater));
+
+    auto m_floorUpdater = std::make_unique<FloorUpdater>();
+    m_updaters.emplace_back(std::move(m_floorUpdater));
+
+    uint16_t mask = 0;
+
+    for (auto&& gen : m_generators)
+        mask |= gen->getRequiereConfig();
+
+    for (auto&& up : m_updaters)
+        mask |= up->getRequiereConfig();
+
+    m_particles.generate(m_count, mask);
+}
+
 bool ParticleComponent::initialize(size_t numParticles)
 {
-    //
-    // particles
-    //
     m_count = numParticles;
     m_particles.generate(numParticles, 0);
 
     for (size_t i = 0; i < numParticles; ++i)
         m_particles.m_alive[i] = false;
-
-    //
-    // emitter:
-    //
-    // m_emitters = std::make_shared<ParticleEmitter>();
-    //{
-    //    m_emitters->m_emitRate = (float)numParticles * 0.25f;
-
-    //    // pos:
-    //    auto m_posGenerator                 = std::make_shared<BoxPosGen>();
-    //    m_posGenerator->m_pos               = Vec4{0.0, 0.0, 0.0, 0.0};
-    //    m_posGenerator->m_maxStartPosOffset = Vec4{0.0, 0.0, 0.0, 0.0};
-    //    m_emitters->addGenerator(m_posGenerator);
-
-    //    auto m_colGenerator           = std::make_shared<BasicColorGen>();
-    //    m_colGenerator->m_minStartCol = Vec4{0.7, 0.7, 0.7, 1.0};
-    //    m_colGenerator->m_maxStartCol = Vec4{1.0, 1.0, 1.0, 1.0};
-    //    m_colGenerator->m_minEndCol   = Vec4{0.5, 0.0, 0.6, 0.0};
-    //    m_colGenerator->m_maxEndCol   = Vec4{0.7, 0.5, 1.0, 0.0};
-    //    m_emitters->addGenerator(m_colGenerator);
-
-    //    auto velGenerator           = std::make_shared<BasicVelGen>();
-    //    velGenerator->m_minStartVel = Vec4{-5.f, 2.2f, -5.f, 0.0f};
-    //    velGenerator->m_maxStartVel = Vec4{50.f, 25.f, 5.f, 0.0f};
-    //    m_emitters->addGenerator(velGenerator);
-
-    //    auto timeGenerator       = std::make_shared<BasicTimeGen>();
-    //    timeGenerator->m_minTime = 3.0f;
-    //    timeGenerator->m_maxTime = 4.0f;
-    //    m_emitters->addGenerator(timeGenerator);
-    //}
-
-    // auto timeUpdater = std::make_shared<BasicTimeUpdater>();
-    // m_updaters.emplace_back(timeUpdater);
-
-    // auto colorUpdater = std::make_shared<BasicColorUpdater>();
-    // m_updaters.emplace_back(colorUpdater);
-
-    // auto m_eulerUpdater                  = std::make_shared<EulerUpdater>();
-    // m_eulerUpdater->m_globalAcceleration = Vec4{0.0, -15.0, 0.0, 0.0};
-    // m_updaters.emplace_back(m_eulerUpdater);
-
-    // auto m_floorUpdater = std::make_shared<FloorUpdater>();
-    // m_updaters.emplace_back(m_floorUpdater);
 
     return initializeRenderer();
 }

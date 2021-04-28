@@ -59,6 +59,8 @@ EditorStartup::EditorStartup()
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
           GPE::Engine::getInstance()->inputManager.processInput();
 
+          Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+
           // First
           if (m_game != nullptr)
           {

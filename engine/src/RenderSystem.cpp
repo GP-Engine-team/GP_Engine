@@ -229,7 +229,7 @@ void RenderSystem::tryToBindShader(Shader& shader)
     m_currentShaderID   = shader.getID();
     m_currentPShaderUse = &shader;
 
-    sendDataToInitShader(*m_pCameras[0], m_currentPShaderUse);
+    sendDataToInitShader(*m_mainCamera, m_currentPShaderUse);
 }
 
 void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
@@ -310,19 +310,12 @@ void RenderSystem::resetCurrentRenderPassKey()
 
 RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
-    return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*>& pRenderers,
-              std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
-              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
-              std::vector<ParticleComponent*>& pParticleComponents, std::vector<DebugShape>& debugShape,
-              std::vector<DebugLine>& debugLines, Camera& mainCamera) {
+    return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
+              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
+              std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
+              std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines, Camera& mainCamera) {
         if (pCameras.empty())
             return;
-
-        // TODO : remove it
-        for (auto&& particle : pParticleComponents)
-        {
-            particle->update(1 / 60.0);
-        }
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
@@ -492,11 +485,11 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
 RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const noexcept
 {
-    return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*>& pRenderers,
-              std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
-              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
-              std::vector<ParticleComponent*>& pParticleComponents, std::vector<RenderSystem::DebugShape>& debugShape,
-              std::vector<RenderSystem::DebugLine>& debugLine, Camera& mainCamera) {
+    return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
+              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
+              std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
+              std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
+              Camera& mainCamera) {
         if (pCameras.empty())
             return;
 
@@ -553,7 +546,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
     };
 }
 
-void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
+void RenderSystem::render(RenderPipeline renderPipeline) noexcept
 {
     if (m_mainCamera == nullptr)
     {
@@ -561,8 +554,16 @@ void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPip
         m_mainCamera = m_pCameras[0];
     }
 
-    renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
+    renderPipeline(*this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
                    m_pParticleComponents, m_debugShape, m_debugLine, *m_mainCamera);
+}
+
+void RenderSystem::update(double dt) noexcept
+{
+    for (auto&& particle : m_pParticleComponents)
+    {
+        particle->update(dt);
+    }
 }
 
 void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, EDebugShapeMode mode,
