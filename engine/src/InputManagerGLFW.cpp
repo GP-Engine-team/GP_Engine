@@ -22,12 +22,17 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
         auto lastStateMapIt = m_lastStateMap.find(key);
         for (int i = 0; i < m_inputComponents.size(); i++)
         {
-            auto inputModeMapIp = m_inputComponents[i]->inputModeMap.find(action);
-            if (inputModeMapIp != m_inputComponents[i]->inputModeMap.end() &&
+            InputComponent* ic = m_inputComponents[i];
+
+            if (!ic)
+               continue;
+
+            auto inputModeMapIp = ic->inputModeMap.find(action);
+            if (inputModeMapIp != ic->inputModeMap.end() &&
                 inputModeMapIp->second == m_currentInputMode)
             {
-                auto keyModeMapIt = m_inputComponents[i]->keyModeMap.find(action);
-                if (keyModeMapIt != m_inputComponents[i]->keyModeMap.end())
+                auto keyModeMapIt = ic->keyModeMap.find(action);
+                if (keyModeMapIt != ic->keyModeMap.end())
                 {
                     if (stateMapIt->second == true)
                     {
@@ -37,11 +42,11 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
                             if (lastStateMapIt->second == false)
                             {
                                 lastStateMapIt->second = true;
-                                m_inputComponents[i]->fireAction(action);
+                                ic->fireAction(action);
                             }
                             break;
                         case EKeyMode::KEY_DOWN:
-                            m_inputComponents[i]->fireAction(action);
+                            ic->fireAction(action);
                             break;
                         }
                     }
@@ -53,11 +58,11 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
                             if (lastStateMapIt->second == true)
                             {
                                 lastStateMapIt->second = false;
-                                m_inputComponents[i]->fireAction(action);
+                                ic->fireAction(action);
                             }
                             break;
                         case EKeyMode::KEY_UP:
-                            m_inputComponents[i]->fireAction(action);
+                            ic->fireAction(action);
                             break;
                         }
                     }
@@ -88,10 +93,18 @@ void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, doubl
 {
     if (m_cursor.tracked)
     {
+        m_cursor.deltaPos.x = f32(xpos) - m_cursor.position.x;
+
         // GLFW cursor position is expressed relative to the top-left corner of the screen
         // Internally, we represent deltaPos' y-axis going up, not down like GLFW
-        m_cursor.deltaPos.x = f32(xpos) - m_cursor.position.x;
         m_cursor.deltaPos.y = m_cursor.position.y - f32(ypos);
+    }
+
+    if (m_cursor.locked)
+    {
+        GLFWwindow* window = Engine::getInstance()->window.getGLFWWindow();
+        glfwSetCursorPos(window, double(m_cursor.position.x), double(m_cursor.position.y));
+        return;
     }
 
     m_cursor.position.x = f32(xpos);
@@ -116,14 +129,15 @@ void InputManager::setupCallbacks(GLFWwindow* window) noexcept
     glfwSetCursorPosCallback(window, setCursorCallback);
 }
 
-void InputManager::setCursorMode(GLFWwindow* window, int mode) noexcept
+void InputManager::setCursorMode(int mode) noexcept
 {
-    glfwSetInputMode(window, GLFW_CURSOR, mode);
+    glfwSetInputMode(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR, mode);
 }
 
 void InputManager::processInput() noexcept
 {
-    m_cursor.deltaPos = {0, 0};
+    m_cursor.deltaPos.x = .0f;
+    m_cursor.deltaPos.y = .0f;
     glfwPollEvents();
 
     for (auto keyState : m_stateMap)
@@ -141,11 +155,11 @@ void InputManager::setCursorLockState(bool lockState) noexcept
     m_cursor.locked = lockState;
     if (lockState)
     {
-        setCursorMode(Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR_DISABLED);
+        setCursorMode(GLFW_CURSOR_DISABLED);
     }
 
     else
     {
-        setCursorMode(Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR_NORMAL);
+        setCursorMode(GLFW_CURSOR_NORMAL);
     }
 }
