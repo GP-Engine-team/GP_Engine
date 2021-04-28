@@ -9,7 +9,7 @@
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace physx;
 
 CharacterController::CharacterController(GameObject& owner) noexcept : Component(owner)
@@ -38,7 +38,7 @@ CharacterController::CharacterController() noexcept
     //GPE::Engine::getInstance()->physXSystem.addComponent(this);
 }
 
-void CharacterController::update(float deltaTime) noexcept
+void CharacterController::update(double deltaTime) noexcept
 {
     physx::PxControllerFilters filters;
     updateForce();
@@ -55,7 +55,7 @@ void CharacterController::update(float deltaTime) noexcept
 
         if (m_hasGravity)
         {
-            addForce(GPM::Vec3{0, -1.f, 0} * m_gravity);
+            addForce({.0f, -m_gravity, .0f});
         }
     }
 
