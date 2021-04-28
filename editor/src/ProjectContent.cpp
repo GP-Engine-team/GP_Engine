@@ -414,7 +414,22 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::EndTooltip();
             }
 
-            // Try to inspect
+            // On double left clic
+            if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
+            {
+                switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
+                {
+                case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
+
+                    loadSceneFile(pCurrentDirectory->files[i].path.string().c_str());
+                    break;
+
+                default:
+                    break;
+                }
+            }
+
+            // On left clic
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
             {
                 switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
@@ -449,7 +464,6 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     break;
 
                 default:
-                    renderUnknowFormat(size);
                     break;
                 }
             }
