@@ -8,14 +8,18 @@
 
 #include <Engine/Resources/ParticleSystem/ParticleData.hpp>
 #include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/GPMDataInspector.hpp>
+#include <Engine/Serialization/STDDataInspector.hpp>
 #include <vector>
 
+#include <Engine/Serialization/Inspect.hpp>
+
 // Generated
-#include "Generated/ParticleUpdater.rfk.h"
+#include <Generated/ParticleUpdater.rfk.h>
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(false)) ParticleUpdater
+    class RFKClass(Inspect()) ParticleUpdater
     {
     public:
         ParticleUpdater()
@@ -32,10 +36,10 @@ namespace GPE RFKNamespace()
         ParticleUpdater_GENERATED
     };
 
-    class EulerUpdater : public ParticleUpdater
+    class RFKClass(Inspect()) EulerUpdater : public ParticleUpdater
     {
     public:
-        GPM::Vec4 m_globalAcceleration;
+        RFKField(Inspect()) GPM::Vec4 m_globalAcceleration;
 
     public:
         EulerUpdater() : m_globalAcceleration(0.0)
@@ -45,14 +49,16 @@ namespace GPE RFKNamespace()
         virtual void update(double dt, ParticleData* p) override;
 
         uint8_t getRequiereConfig() const override;
+
+        EulerUpdater_GENERATED
     };
 
     // collision with the floor :) todo: implement a collision model
-    class FloorUpdater : public ParticleUpdater
+    class RFKClass(Inspect()) FloorUpdater : public ParticleUpdater
     {
     public:
-        float m_floorY;
-        float m_bounceFactor;
+        RFKField(Inspect()) float m_floorY;
+        RFKField(Inspect()) float m_bounceFactor;
 
     public:
         FloorUpdater() : m_floorY(0.0), m_bounceFactor(0.5f)
@@ -62,12 +68,14 @@ namespace GPE RFKNamespace()
         virtual void update(double dt, ParticleData* p) override;
 
         uint8_t getRequiereConfig() const override;
+
+        FloorUpdater_GENERATED
     };
 
-    class AttractorUpdater : public ParticleUpdater
+    class RFKClass(Inspect()) AttractorUpdater : public ParticleUpdater
     {
     protected:
-        std::vector<GPM::Vec4> m_attractors; // .w is force
+        RFKField(Inspect()) std::vector<GPM::Vec4> m_attractors; // .w is force
     public:
         virtual void update(double dt, ParticleData* p) override;
 
@@ -87,21 +95,25 @@ namespace GPE RFKNamespace()
         {
             return m_attractors[id];
         }
+
+        AttractorUpdater_GENERATED
     };
 
-    class BasicColorUpdater : public ParticleUpdater
+    class RFKClass(Inspect()) BasicColorUpdater : public ParticleUpdater
     {
     public:
         virtual void update(double dt, ParticleData* p) override;
 
         uint8_t getRequiereConfig() const override;
+
+        BasicColorUpdater_GENERATED
     };
 
-    class PosColorUpdater : public ParticleUpdater
+    class RFKClass(Inspect()) PosColorUpdater : public ParticleUpdater
     {
     public:
-        GPM::Vec4 m_minPos;
-        GPM::Vec4 m_maxPos;
+        RFKField(Inspect()) GPM::Vec4 m_minPos;
+        RFKField(Inspect()) GPM::Vec4 m_maxPos;
 
     public:
         PosColorUpdater() : m_minPos(0.0), m_maxPos(1.0)
@@ -111,13 +123,15 @@ namespace GPE RFKNamespace()
         virtual void update(double dt, ParticleData* p) override;
 
         uint8_t getRequiereConfig() const override;
+
+        PosColorUpdater_GENERATED
     };
 
-    class VelColorUpdater : public ParticleUpdater
+    class RFKClass(Inspect()) VelColorUpdater : public ParticleUpdater
     {
     public:
-        GPM::Vec4 m_minVel;
-        GPM::Vec4 m_maxVel;
+        RFKField(Inspect()) GPM::Vec4 m_minVel;
+        RFKField(Inspect()) GPM::Vec4 m_maxVel;
 
     public:
         VelColorUpdater() : m_minVel(0.0), m_maxVel(1.0)
@@ -127,14 +141,18 @@ namespace GPE RFKNamespace()
         virtual void update(double dt, ParticleData* p) override;
 
         uint8_t getRequiereConfig() const override;
+
+        VelColorUpdater_GENERATED
     };
 
-    class BasicTimeUpdater : public ParticleUpdater
+    class RFKClass(Inspect()) BasicTimeUpdater : public ParticleUpdater
     {
     public:
         virtual void update(double dt, ParticleData* p) override;
 
-        uint8_t getRequiereConfig() const override
+        uint8_t getRequiereConfig() const override;
+
+        BasicTimeUpdater_GENERATED
     };
 
 } // namespace )

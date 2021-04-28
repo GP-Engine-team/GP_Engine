@@ -69,63 +69,46 @@ void renderResourceExplorer(const char* name, T*& inRes)
         inRes = &it->second;
     }
 }
+#define PARTICLE_UPDATGER_INSPECT(name)                                                                                \
+    {                                                                                                                  \
+        name* updater = getUpdater<name>();                                                                            \
+        bool  flag    = updater;                                                                                       \
+                                                                                                                       \
+        if (ImGui::Checkbox("##" #name, &flag))                                                                        \
+        {                                                                                                              \
+            if (flag)                                                                                                  \
+            {                                                                                                          \
+                updater = static_cast<name*>(m_updaters.emplace_back(std::make_shared<name>()).get());                 \
+                m_particles.generate(m_count, updater->getRequiereConfig() | m_particles.m_maskType);                  \
+            }                                                                                                          \
+            else                                                                                                       \
+            {                                                                                                          \
+                removeUpdater(*updater);                                                                               \
+                ImGui::SetNextItemOpen(false);                                                                         \
+            }                                                                                                          \
+        }                                                                                                              \
+        ImGui::SameLine();                                                                                             \
+        ImGui::PushEnabled(flag);                                                                                      \
+        if (ImGui::CollapsingHeader(#name))                                                                            \
+        {                                                                                                              \
+            DataInspector::inspect(context, *updater);                                                                 \
+        }                                                                                                              \
+        ImGui::PopEnabled();                                                                                           \
+    }
 
 void ParticleComponent::inspect(InspectContext& context)
 {
-    // DataInspector::inspect(context, *m_emitters.get());
+    DataInspector::inspect(context, *m_emitters.get());
+    DataInspector::inspect(context, m_count, "Count");
 
-    bool flag = m_particles.isParamEnable(ParticleData::EParam::POSITION);
-    if (ImGui::Checkbox("##POSITION", &flag))
-    {
-        m_particles.invertParamState(ParticleData::EParam::POSITION);
+    PARTICLE_UPDATGER_INSPECT(EulerUpdater)
+    PARTICLE_UPDATGER_INSPECT(FloorUpdater)
+    PARTICLE_UPDATGER_INSPECT(AttractorUpdater)
+    PARTICLE_UPDATGER_INSPECT(BasicColorUpdater)
+    PARTICLE_UPDATGER_INSPECT(PosColorUpdater)
+    PARTICLE_UPDATGER_INSPECT(VelColorUpdater)
+    PARTICLE_UPDATGER_INSPECT(BasicTimeUpdater)
 
-        if (m_particles.isParamEnable(ParticleData::EParam::POSITION))
-        {
-        }
-        else
-        {
-        }
-    }
-    ImGui::SameLine();
-    ImGui::PushEnabled(flag);
-    if (ImGui::CollapsingHeader("Position"))
-    {
-        /* auto m_posGenerator = m_posGenerator->m_pos = Vec4{0.0, 0.0, 0.0, 0.0};
-         m_posGenerator->m_maxStartPosOffset         = Vec4{0.0, 0.0, 0.0, 0.0};
-         (m_posGenerator);*/
-    }
-    ImGui::PopEnabled();
-    /*
-    flag = m_particles.isParamEnable(ParticleData::EParam::COLOR_INTERPOLATION);
-    if (ImGui::Checkbox("##COLOR_INTERPOLATION", &flag))
-    {
-        m_particles.invertParamState(ParticleData::EParam::COLOR_INTERPOLATION);
-
-        if (m_particles.isParamEnable(ParticleData::EParam::COLOR_INTERPOLATION))
-        {
-            BasicColorGen::CreateArg arg;
-            m_emitters->addGenerator<BasicColorGen>(arg);
-        }
-        else
-        {
-            m_emitters->removeGenerator<BasicColorGen>();
-        }
-    }
-    ImGui::SameLine();
-    ImGui::PushEnabled(flag);
-    if (ImGui::CollapsingHeader("Color interpolation"))
-    {
-        BasicColorGen::CreateArg arg;
-
-        m_colGenerator->m_minStartCol = Vec4{0.7, 0.7, 0.7, 1.0};
-        m_colGenerator->m_maxStartCol = Vec4{1.0, 1.0, 1.0, 1.0};
-        m_colGenerator->m_minEndCol   = Vec4{0.5, 0.0, 0.6, 0.0};
-        m_colGenerator->m_maxEndCol   = Vec4{0.7, 0.5, 1.0, 0.0};
-
-        m_emitters->addGenerator<BasicColorGen>(arg);
-    }
-    ImGui::PopEnabled();
-    */
     // Shader
     {
         renderResourceExplorer<Shader>("Shader", m_shader);
@@ -154,7 +137,7 @@ void ParticleComponent::inspect(InspectContext& context)
         }
     }
 }
-/*
+
 bool ParticleComponent::initialize(size_t numParticles)
 {
     clean();
@@ -163,8 +146,7 @@ bool ParticleComponent::initialize(size_t numParticles)
     // particles
     //
     m_count = numParticles;
-    m_particles.generate(numParticles, ParticleData::EParam::COLOR_INTERPOLATION | ParticleData::EParam::VELOCITY |
-                                           ParticleData::EParam::POSITION | ParticleData::EParam::TIME);
+    m_particles.generate(numParticles, 0);
 
     for (size_t i = 0; i < numParticles; ++i)
         m_particles.m_alive[i] = false;
@@ -173,48 +155,48 @@ bool ParticleComponent::initialize(size_t numParticles)
     // emitter:
     //
     m_emitters = std::make_shared<ParticleEmitter>();
-    {
-        m_emitters->m_emitRate = (float)numParticles * 0.25f;
+    //{
+    //    m_emitters->m_emitRate = (float)numParticles * 0.25f;
 
-        // pos:
-        auto m_posGenerator                 = std::make_shared<BoxPosGen>();
-        m_posGenerator->m_pos               = Vec4{0.0, 0.0, 0.0, 0.0};
-        m_posGenerator->m_maxStartPosOffset = Vec4{0.0, 0.0, 0.0, 0.0};
-        m_emitters->addGenerator(m_posGenerator);
+    //    // pos:
+    //    auto m_posGenerator                 = std::make_shared<BoxPosGen>();
+    //    m_posGenerator->m_pos               = Vec4{0.0, 0.0, 0.0, 0.0};
+    //    m_posGenerator->m_maxStartPosOffset = Vec4{0.0, 0.0, 0.0, 0.0};
+    //    m_emitters->addGenerator(m_posGenerator);
 
-        auto m_colGenerator           = std::make_shared<BasicColorGen>();
-        m_colGenerator->m_minStartCol = Vec4{0.7, 0.7, 0.7, 1.0};
-        m_colGenerator->m_maxStartCol = Vec4{1.0, 1.0, 1.0, 1.0};
-        m_colGenerator->m_minEndCol   = Vec4{0.5, 0.0, 0.6, 0.0};
-        m_colGenerator->m_maxEndCol   = Vec4{0.7, 0.5, 1.0, 0.0};
-        m_emitters->addGenerator(m_colGenerator);
+    //    auto m_colGenerator           = std::make_shared<BasicColorGen>();
+    //    m_colGenerator->m_minStartCol = Vec4{0.7, 0.7, 0.7, 1.0};
+    //    m_colGenerator->m_maxStartCol = Vec4{1.0, 1.0, 1.0, 1.0};
+    //    m_colGenerator->m_minEndCol   = Vec4{0.5, 0.0, 0.6, 0.0};
+    //    m_colGenerator->m_maxEndCol   = Vec4{0.7, 0.5, 1.0, 0.0};
+    //    m_emitters->addGenerator(m_colGenerator);
 
-        auto velGenerator           = std::make_shared<BasicVelGen>();
-        velGenerator->m_minStartVel = Vec4{-5.f, 2.2f, -5.f, 0.0f};
-        velGenerator->m_maxStartVel = Vec4{50.f, 25.f, 5.f, 0.0f};
-        m_emitters->addGenerator(velGenerator);
+    //    auto velGenerator           = std::make_shared<BasicVelGen>();
+    //    velGenerator->m_minStartVel = Vec4{-5.f, 2.2f, -5.f, 0.0f};
+    //    velGenerator->m_maxStartVel = Vec4{50.f, 25.f, 5.f, 0.0f};
+    //    m_emitters->addGenerator(velGenerator);
 
-        auto timeGenerator       = std::make_shared<BasicTimeGen>();
-        timeGenerator->m_minTime = 3.0f;
-        timeGenerator->m_maxTime = 4.0f;
-        m_emitters->addGenerator(timeGenerator);
-    }
+    //    auto timeGenerator       = std::make_shared<BasicTimeGen>();
+    //    timeGenerator->m_minTime = 3.0f;
+    //    timeGenerator->m_maxTime = 4.0f;
+    //    m_emitters->addGenerator(timeGenerator);
+    //}
 
-    auto timeUpdater = std::make_shared<BasicTimeUpdater>();
-    m_updaters.emplace_back(timeUpdater);
+    // auto timeUpdater = std::make_shared<BasicTimeUpdater>();
+    // m_updaters.emplace_back(timeUpdater);
 
-    auto colorUpdater = std::make_shared<BasicColorUpdater>();
-    m_updaters.emplace_back(colorUpdater);
+    // auto colorUpdater = std::make_shared<BasicColorUpdater>();
+    // m_updaters.emplace_back(colorUpdater);
 
-    auto m_eulerUpdater                  = std::make_shared<EulerUpdater>();
-    m_eulerUpdater->m_globalAcceleration = Vec4{0.0, -15.0, 0.0, 0.0};
-    m_updaters.emplace_back(m_eulerUpdater);
+    // auto m_eulerUpdater                  = std::make_shared<EulerUpdater>();
+    // m_eulerUpdater->m_globalAcceleration = Vec4{0.0, -15.0, 0.0, 0.0};
+    // m_updaters.emplace_back(m_eulerUpdater);
 
-    auto m_floorUpdater = std::make_shared<FloorUpdater>();
-    m_updaters.emplace_back(m_floorUpdater);
+    // auto m_floorUpdater = std::make_shared<FloorUpdater>();
+    // m_updaters.emplace_back(m_floorUpdater);
 
     return initializeRenderer();
-}*/
+}
 
 bool ParticleComponent::initializeRenderer()
 {
@@ -241,9 +223,13 @@ void ParticleComponent::update(double dt)
 {
     m_emitters->emit(dt, &m_particles);
 
-    for (size_t i = 0; i < m_count; ++i)
+    // Add acceleration updater
+    if (m_particles.m_acc)
     {
-        m_particles.m_acc[i] = Vec4(0.0f);
+        for (size_t i = 0; i < m_count; ++i)
+        {
+            m_particles.m_acc[i] = Vec4(0.0f);
+        }
     }
 
     for (auto& up : m_updaters)

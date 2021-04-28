@@ -86,6 +86,31 @@ namespace GPE RFKNamespace()
             return m_shader;
         }
 
+        template <typename T>
+        T* getUpdater()
+        {
+            T* rst = nullptr;
+            for (auto&& up : m_updaters)
+            {
+                if (rst = dynamic_cast<T*>(up.get()))
+                    return rst;
+            }
+            return rst;
+        }
+
+        template <typename T>
+        void removeUpdater(T & updaterToRemove)
+        {
+            for (auto&& it = m_updaters.begin(); it != m_updaters.end(); ++it)
+            {
+                if (it->get() == &updaterToRemove)
+                {
+                    m_updaters.erase(it);
+                    return;
+                }
+            }
+        }
+
         void sendDataToShader();
 
         ParticleComponent_GENERATED

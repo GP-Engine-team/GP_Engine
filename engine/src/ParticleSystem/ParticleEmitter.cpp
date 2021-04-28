@@ -1,6 +1,8 @@
 #include <Engine/Resources/ParticleSystem/ParticleEmitter.hpp>
 
-using namespace GPE;
+File_GENERATED
+
+    using namespace GPE;
 
 void ParticleEmitter::emit(double dt, ParticleData* p)
 {
@@ -14,9 +16,3 @@ void ParticleEmitter::emit(double dt, ParticleData* p)
     for (size_t i = startId; i < endId; ++i) // << wake loop
         p->wake(i);
 }
-/*
-template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, ParticleEmitter& inspected)
-{
-    // inspect(context, inspected.m_emitRate);
-}*/

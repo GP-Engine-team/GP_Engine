@@ -13,52 +13,54 @@
 #include <memory>
 #include <vector>
 
-namespace GPE
+#include <Engine/Serialization/Inspect.hpp>
+
+// Generated
+#include <Generated/ParticleEmitter.rfk.h>
+
+namespace GPE RFKNamespace()
 {
-
-class ParticleEmitter
-{
-public:
-    std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
-    float                                           m_emitRate{0.0};
-
-public:
-    ParticleEmitter()
+    class RFKClass(Inspect()) ParticleEmitter
     {
-    }
-    virtual ~ParticleEmitter()
-    {
-    }
+    protected:
+        std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
+        RFKField(Inspect()) float                       m_emitRate{0.0};
 
-    // calls all the generators and at the end it activates (wakes) particle
-    virtual void emit(double dt, ParticleData* p);
-
-    template <typename T, typename... TArg>
-    void addGenerator(TArg... arg)
-    {
-        for (auto&& generator : m_generators)
+    public:
+        ParticleEmitter()
         {
-            if (dynamic_cast<T>(generator)) // Already exist
-                return;
         }
-        m_generators.emplace_back(arg...);
-    }
-
-    template <typename T>
-    void removeGenerator()
-    {
-        for (auto&& it = m_generators.begin(); it != m_generators.end(); ++it)
+        virtual ~ParticleEmitter()
         {
-            if (dynamic_cast<T>(*it)) // Already exist
+        }
+
+        // calls all the generators and at the end it activates (wakes) particle
+        virtual void emit(double dt, ParticleData* p);
+
+        template <typename T, typename... TArg>
+        void addGenerator(TArg... arg)
+        {
+            for (auto&& generator : m_generators)
             {
-                m_generators.erase(it);
-                return;
+                if (dynamic_cast<T*>(generator.get())) // Already exist
+                    return;
+            }
+            m_generators.emplace_back(arg...);
+        }
+
+        template <typename T>
+        void removeGenerator()
+        {
+            for (auto&& it = m_generators.begin(); it != m_generators.end(); ++it)
+            {
+                if (dynamic_cast<T*>(it->get())) // Already exist
+                {
+                    m_generators.erase(it);
+                    return;
+                }
             }
         }
-    }
-};
-/*
-template <>
-void DataInspector::inspect(GPE::InspectContext& context, ParticleEmitter& inspected);
-*/
-} // namespace GPE
+
+        ParticleEmitter_GENERATED
+    };
+} // namespace )
