@@ -19,6 +19,11 @@ bool inspect(GPE::InspectContext& context, std::vector<T>& inspected, const char
 // void  inspect(std::array<T, SIZE>& inspected, const rfk::Field& info);
 
 template <>
+bool inspect(GPE::InspectContext& context, size_t& inspected, const rfk::Field& info);
+template <>
+bool inspect(GPE::InspectContext& context, size_t& inspected, const char* name);
+
+template <>
 bool inspect(GPE::InspectContext& context, unsigned int& inspected, const rfk::Field& info);
 template <>
 bool inspect(GPE::InspectContext& context, unsigned int& inspected, const char* name);
