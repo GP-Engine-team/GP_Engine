@@ -106,7 +106,7 @@ void renderResourceExplorer(const char* name, T*& inRes)
         {                                                                                                              \
             if (flag)                                                                                                  \
             {                                                                                                          \
-                updater = static_cast<name*>(m_updaters.emplace_back(std::make_shared<name>()).get());                 \
+                updater = static_cast<name*>(m_updaters.emplace_back(std::make_unique<name>()).get());                 \
                 m_particles.generate(m_count, updater->getRequiereConfig() | m_particles.m_maskType);                  \
             }                                                                                                          \
             else                                                                                                       \
@@ -126,6 +126,8 @@ void renderResourceExplorer(const char* name, T*& inRes)
 
 void ParticleComponent::inspect(InspectContext& context)
 {
+    Component::inspect(context);
+
     DataInspector::inspect(context, m_emitRate, "EmitRate");
 
     if (DataInspector::inspect(context, m_count, "Count"))
@@ -187,7 +189,12 @@ void ParticleComponent::inspect(InspectContext& context)
 
 void ParticleComponent::start()
 {
-    initialize(m_count);
+    m_particles.generate(m_count, 0);
+
+    for (size_t i = 0; i < m_count; ++i)
+        m_particles.m_alive[i] = false;
+
+    initializeRenderer();
 }
 
 void ParticleComponent::initializeDefaultSetting()
@@ -244,36 +251,15 @@ void ParticleComponent::initializeDefaultSetting()
     m_particles.generate(m_count, mask);
 }
 
-bool ParticleComponent::initialize(size_t numParticles)
+void ParticleComponent::initializeRenderer()
 {
-    m_count = numParticles;
-    m_particles.generate(numParticles, 0);
-
-    for (size_t i = 0; i < numParticles; ++i)
-        m_particles.m_alive[i] = false;
-
-    return initializeRenderer();
-}
-
-bool ParticleComponent::initializeRenderer()
-{
-    m_renderer = RendererFactory::create("gl");
+    m_renderer = std::make_unique<ParticleRenderer>();
     m_renderer->generate(this, false);
-
-    return true;
 }
 
 void ParticleComponent::reset()
 {
     m_particles.m_countAlive = 0;
-}
-
-void ParticleComponent::clean()
-{
-    if (m_renderer)
-        m_renderer->destroy();
-
-    m_updaters.clear();
 }
 
 void ParticleComponent::update(double dt)
@@ -311,4 +297,21 @@ void ParticleComponent::emit(double dt)
 
     for (size_t i = startId; i < endId; ++i) // << wake loop
         m_particles.wake(i);
+}
+
+void ParticleComponent::setActive(bool newState) noexcept
+{
+    if (m_isActivated == newState)
+        return;
+
+    m_isActivated = newState;
+    if (m_isActivated)
+    {
+        getOwner().pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    }
+    else
+    {
+
+        getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
+    }
 }

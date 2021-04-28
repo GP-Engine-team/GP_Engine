@@ -6,33 +6,34 @@
 
 #pragma once
 
-#include <memory>
-
 namespace GPE
 {
-class ParticleComponent;
-
-class IParticleRenderer
+class ParticleRenderer
 {
+protected:
+    class ParticleComponent* m_system{nullptr};
+
+    unsigned int m_bufPos{0};
+    unsigned int m_bufCol{0};
+    unsigned int m_vao{0};
+
 public:
-    IParticleRenderer()
+    ParticleRenderer()
     {
     }
-    virtual ~IParticleRenderer()
+
+    ~ParticleRenderer()
     {
+        destroy();
     }
 
-    virtual void generate(ParticleComponent* sys, bool useQuads) = 0;
-    virtual void destroy()                                       = 0;
-    virtual void update()                                        = 0;
+    void generate(class ParticleComponent* sys, bool useQuads);
+    void destroy();
+    void update();
 
-    virtual unsigned int getID() = 0;
+    unsigned int getID()
+    {
+        return m_vao;
+    }
 };
-
-class RendererFactory
-{
-public:
-    static std::shared_ptr<IParticleRenderer> create(const char* name);
-};
-
 } // namespace GPE

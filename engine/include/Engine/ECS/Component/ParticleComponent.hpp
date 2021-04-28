@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <memory> //std::shared_ptr
+#include <memory> //std::unique_ptr
 #include <vector> //std::vector
 
 #include "Engine/ECS/Component/Component.hpp"
@@ -29,15 +29,39 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        class Shader* m_shader;
+        class Shader* m_shader = nullptr;
 
         ParticleData m_particles;
-        size_t       m_count;
-        float        m_emitRate{0.0};
+        size_t       m_count    = 0;
+        float        m_emitRate = 0.0;
 
+        /**
+         * @brief Is used to define how the particle must be generated (color ? velocity ? Position ?)
+         */
         std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
-        std::vector<std::shared_ptr<ParticleUpdater>>   m_updaters;
-        std::shared_ptr<GPE::IParticleRenderer>         m_renderer;
+
+        /**
+         * @brief Us used to define how the particle must be update (life time ? acceleration ? color changement ?)
+         */
+        std::vector<std::unique_ptr<ParticleUpdater>> m_updaters;
+        std::unique_ptr<GPE::ParticleRenderer>        m_renderer = nullptr;
+
+    protected:
+        /**
+         * @brief Init fontaine effect by default. Work when user use start function
+         */
+        void initializeDefaultSetting();
+
+        /**
+         * @brief Init render buffer and GPU data
+         */
+        void initializeRenderer();
+
+        /**
+         * @brief calls all the generators and at the end it activates (wakes) particle
+         * @param dt
+         */
+        void emit(double dt);
 
     public:
         ParticleComponent(GameObject & owner);
@@ -55,13 +79,9 @@ namespace GPE RFKNamespace()
         virtual void inspect(InspectContext & context);
 
         /**
-         * @brief Init fontaine effect by default. Work when user use start function
+         * @brief Kill all alive particle
          */
-        void initializeDefaultSetting();
-        bool initialize(size_t numParticles);
-        bool initializeRenderer();
         void reset();
-        void clean();
 
         /**
          * @brief Start the particle effect
@@ -74,97 +94,90 @@ namespace GPE RFKNamespace()
          */
         void update(double dt);
 
-        size_t numAllParticles() const
-        {
-            return m_particles.m_count;
-        }
+        /**
+         * @brief Get total particule count allocated. Alive and dead particule
+         * @return
+         */
+        inline size_t numAllParticles() const;
 
-        size_t numAliveParticles() const
-        {
-            return m_particles.m_countAlive;
-        }
+        /**
+         * @brief Get alive particule count only
+         * @return
+         */
+        inline size_t numAliveParticles() const;
 
-        ParticleData* getData()
-        {
-            return &m_particles;
-        }
+        /**
+         * @brief Get Particle data that contain buffer of data used to compute
+         * @return
+         */
+        inline const ParticleData* getData() const;
 
-        unsigned int getMeshID()
-        {
-            return m_renderer->getID();
-        }
+        inline unsigned int getMeshID();
 
-        Shader* getShader()
-        {
-            return m_shader;
-        }
+        inline Shader* getShader();
 
-        template <typename T>
-        T* getUpdater()
-        {
-            T* rst = nullptr;
-            for (auto&& up : m_updaters)
-            {
-                if (rst = dynamic_cast<T*>(up.get()))
-                    return rst;
-            }
-            return rst;
-        }
-
-        template <typename T>
-        void removeUpdater(T & updaterToRemove)
-        {
-            for (auto&& it = m_updaters.begin(); it != m_updaters.end(); ++it)
-            {
-                if (it->get() == &updaterToRemove)
-                {
-                    m_updaters.erase(it);
-                    return;
-                }
-            }
-        }
-
-        // calls all the generators and at the end it activates (wakes) particle
-        void emit(double dt);
-
+        /**
+         * @brief Try to add specific updater if its type doesn't exist
+         * @tparam T
+         * @param updaterToRemove
+         */
         template <typename T, typename... TArg>
-        void addGenerator(TArg... arg)
-        {
-            for (auto&& generator : m_generators)
-            {
-                if (dynamic_cast<T*>(generator.get())) // Already exist
-                    return;
-            }
-            m_generators.emplace_back(arg...);
-        }
+        void addUpdater(TArg && ... arg);
 
+        /**
+         * @brief Try to find specific updater
+         * @tparam T
+         * @return
+         */
         template <typename T>
-        void removeGenerator(T & genToRemove)
-        {
-            for (auto&& it = m_generators.begin(); it != m_generators.end(); ++it)
-            {
-                if (it->get() == &genToRemove)
-                {
-                    m_generators.erase(it);
-                    return;
-                }
-            }
-        }
+        T* getUpdater();
 
+        /**
+         * @brief Try to remove specific updater
+         * @tparam T
+         * @param updaterToRemove
+         */
         template <typename T>
-        T* getGenerator()
-        {
-            T* rst = nullptr;
-            for (auto&& up : m_generators)
-            {
-                if (rst = dynamic_cast<T*>(up.get()))
-                    return rst;
-            }
-            return rst;
-        }
+        void removeUpdater(T & updaterToRemove);
 
+        /**
+         * @brief Try to add specific generator if its type doesn't exist
+         * @tparam T
+         * @param updaterToRemove
+         */
+        template <typename T, typename... TArg>
+        void addGenerator(TArg && ... arg);
+
+        /**
+         * @brief Try to find specific generator
+         * @tparam T
+         * @return
+         */
+        template <typename T>
+        T* getGenerator();
+
+        /**
+         * @brief Try to remove specific generator
+         * @tparam T
+         * @param genToRemove
+         */
+        template <typename T>
+        void removeGenerator(T & genToRemove);
+
+        /**
+         * @brief Update GPU data with CPU buffer
+         */
         void sendDataToShader();
+
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept final;
 
         ParticleComponent_GENERATED
     };
 } // namespace )
+
+#include <Engine/Resources/ParticleSystem/ParticleComponent.inl>
