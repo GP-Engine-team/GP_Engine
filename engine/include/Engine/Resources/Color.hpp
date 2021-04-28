@@ -22,6 +22,31 @@ struct ColorRGB
         GPM::Vec3 v;
         float     e[3];
     };
+
+    static constexpr ColorRGB red() noexcept
+    {
+        return {1.f, 0.f, 0.f};
+    };
+
+    static constexpr ColorRGB green() noexcept
+    {
+        return {0.f, 1.f, 0.f};
+    };
+
+    static constexpr ColorRGB blue() noexcept
+    {
+        return {0.f, 0.f, 1.f};
+    };
+
+    static constexpr ColorRGB white() noexcept
+    {
+        return {1.f, 1.f, 1.f};
+    };
+
+    static constexpr ColorRGB black() noexcept
+    {
+        return {0.f, 0.f, 0.f};
+    };
 };
 
 struct ColorRGBA
@@ -33,6 +58,31 @@ struct ColorRGBA
         };
         GPM::Vec4 v;
         float     e[4];
+    };
+
+    static constexpr ColorRGBA red() noexcept
+    {
+        return {1.f, 0.f, 0.f, 1.f};
+    };
+
+    static constexpr ColorRGBA green() noexcept
+    {
+        return {0.f, 1.f, 0.f, 1.f};
+    };
+
+    static constexpr ColorRGBA blue() noexcept
+    {
+        return {0.f, 0.f, 1.f, 1.f};
+    };
+
+    static constexpr ColorRGBA white() noexcept
+    {
+        return {1.f, 1.f, 1.f, 1.f};
+    };
+
+    static constexpr ColorRGBA black() noexcept
+    {
+        return {0.f, 0.f, 0.f, 1.f};
     };
 };
 
