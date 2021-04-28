@@ -147,14 +147,14 @@ void Editor::renderInspector()
             GPE::InspectContext context;
             GPE::DataInspector::inspect(context, *m_inspectedObject);
 
-            if (glfwGetKey(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_KEY_R) == GLFW_PRESS)
-            {
-                save();
-            }
-            else if (glfwGetKey(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_KEY_T) == GLFW_PRESS)
-            {
-                load();
-            }
+            //if (glfwGetKey(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_KEY_R) == GLFW_PRESS)
+            //{
+            //    save();
+            //}
+            //else if (glfwGetKey(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_KEY_T) == GLFW_PRESS)
+            //{
+            //    load();
+            //}
         }
         else
         {
@@ -218,33 +218,22 @@ void Editor::renderExplorer()
     ImGui::End();
 }
 
-void Editor::save()
+void Editor::saveScene(GPE::Scene* scene, const char* path)
 {
-    GPE::Scene* scene = m_sceneEditor.view.pScene;
-
     m_sceneEditor.view.unbindScene();
 
-    SavedScene* savedScene = Engine::getInstance()->resourceManager.get<SavedScene>(scene->getName());
-    if (savedScene->type == SavedScene::EType::XML)
-    {
-        rapidxml::xml_document<>& doc = *std::get<SavedScene::XmlData>(savedScene->info).doc.get();
-
-        XmlSaver saver(doc);
-        auto     a = GET_PROCESS((*m_reloadableCpp), saveScene);
-        a(saver, scene);
-    }
+    auto a = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
+    a(scene, path, GPE::SavedScene::EType::XML);
 
     m_sceneEditor.view.bindScene(*scene);
 }
-
-void Editor::load()
+void Editor::loadScene(GPE::Scene* scene, const char* path)
 {
-    GPE::Scene* scene = m_sceneEditor.view.pScene;
     m_sceneEditor.view.unbindScene();
-    XmlLoader loader(doc);
-    auto      b = GET_PROCESS((*m_reloadableCpp), loadScene);
-    b(loader, scene);
     m_inspectedObject = nullptr;
+
+    auto a = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
+    a(scene, path);
 
     m_sceneEditor.view.bindScene(*scene);
 }
@@ -272,6 +261,8 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
         if (ImGui::GetCurrentContext() != nullptr)
             m_logInspector.addLog(msg);
     };
+
+    m_projectContent.editor = this;
 }
 
 void Editor::setSceneInEdition(GPE::Scene& scene)

@@ -3,6 +3,7 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
+#include "Engine/Resources/Importer/Importer.hpp"
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -56,6 +57,35 @@ extern "C" void loadScene(XmlLoader& context, GPE::Scene* scene)
     //GPE::Engine::getInstance()->sceneManager.getCurrentScene()->load(context);
     scene->load(context);
     context.updateLazyPtrs();
+}
 
+extern "C" void saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
+{
+    if (saveMode == GPE::SavedScene::EType::XML)
+    {
+        rapidxml::xml_document<> doc;
+        XmlSaver                 context(doc);
+        context.addWeakPtr(scene);
+        scene->save(context);
+        
+        GPE::SavedScene::CreateArg args;
+        args.data = docToString(doc);
+        args.type = GPE::SavedScene::EType::XML;
 
+        GPE::writeSceneFile(path, args);
+    }
+}
+
+extern "C" void loadSceneFromPath(GPE::Scene* scene, const char* path)
+{
+    GPE::SavedScene* savedScene = GPE::loadSceneFile(path);
+
+    if (savedScene->type == GPE::SavedScene::EType::XML)
+    {
+        rapidxml::xml_document<>& doc = *std::get<GPE::SavedScene::XmlData>(savedScene->info).doc.get();
+        XmlLoader context(doc);
+        context.addPersistentPtr(scene);
+        scene->load(context);
+        context.updateLazyPtrs();
+    }
 }

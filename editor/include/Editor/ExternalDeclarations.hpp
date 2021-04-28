@@ -21,3 +21,6 @@ inline void setLogInstance(GPE::Log& log) {}
 
 inline void saveScene(XmlSaver& context, GPE::Scene* scene) {}
 inline void loadScene(XmlLoader& context, GPE::Scene* scene) {}
+
+inline void saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode) {}
+inline void loadSceneFromPath(GPE::Scene* scene, const char* path) {}

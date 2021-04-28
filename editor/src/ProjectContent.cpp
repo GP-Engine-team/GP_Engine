@@ -15,6 +15,7 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Hash.hpp"
 #include "Engine/Engine.hpp"
+#include "Editor/Editor.hpp"
 
 using namespace Editor;
 using namespace GPE;
@@ -420,9 +421,15 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
                 {
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
+                {
 
-                    loadSceneFile(pCurrentDirectory->files[i].path.string().c_str());
+                    //GPE::SavedScene* savedScene =
+                    //    loadSceneFile(pCurrentDirectory->files[i].path.string().c_str()); // loads to ram
+
+                    Scene& scene = Engine::getInstance()->sceneManager.addEmpty("New Scene");
+                    editor->loadScene(&scene, pCurrentDirectory->files[i].path.string().c_str());
                     break;
+                }
 
                 default:
                     break;

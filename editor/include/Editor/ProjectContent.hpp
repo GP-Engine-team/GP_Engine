@@ -55,6 +55,9 @@ protected:
     std::unique_ptr<GPE::IInspectable> importationSetting;
 
 public:
+    class Editor* editor = nullptr;
+
+public:
     ProjectContent();
 
     void refreshResourcesList();
