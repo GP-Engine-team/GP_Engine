@@ -6,17 +6,18 @@
 
 #pragma once
 
-#include "Engine/Engine.hpp"
+#include <Engine/Engine.hpp>
 
-#include "Engine/Resources/Script/FreeFly.hpp"
-#include "Generated/FreeFly.rfk.h"
+#include <Engine/Resources/Script/FreeFly.hpp>
+#include <Generated/FreeFly.rfk.h>
 File_GENERATED
 
 namespace GPE
 {
 
 FreeFly::FreeFly(GameObject& owner) noexcept
-    : BehaviourComponent(owner)
+    : BehaviourComponent(owner),
+      timeSys{Engine::getInstance()->timeSystem}
 {
     enableUpdate(true);
 }
@@ -28,7 +29,7 @@ FreeFly::~FreeFly() noexcept
 }
 
 
-void FreeFly::update(float deltaTime)
+void FreeFly::update(double deltaTime)
 {
     const GPM::Vec2 deltaPos = Engine::getInstance()->inputManager.getCursor().deltaPos;
 
@@ -39,6 +40,7 @@ void FreeFly::update(float deltaTime)
 }
 
 
+// TODO: the rotation should depend on deltaTime
 void FreeFly::rotate(const GPM::Vector2& deltaDisplacement)
 {
     using namespace GPM;
