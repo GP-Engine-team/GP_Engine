@@ -27,18 +27,16 @@ MyFpsScript::MyFpsScript(GPE::GameObject& owner) noexcept
     enableUpdate(true);
     enableOnGUI(true);
 
-    input->bindAction("jump",                  EKeyMode::KEY_DOWN,     "game01", this, "jump");
-    input->bindAction("right",                 EKeyMode::KEY_DOWN,     "game01", this, "right");
-    input->bindAction("left",                  EKeyMode::KEY_DOWN,     "game01", this, "left");
-    input->bindAction("forward",               EKeyMode::KEY_DOWN,     "game01", this, "forward");
-    input->bindAction("backward",              EKeyMode::KEY_DOWN,     "game01", this, "backward");
-    input->bindAction("exitGame01",            EKeyMode::KEY_PRESSED,  "game01", this, "leave");
-    input->bindAction("sprint",                EKeyMode::KEY_PRESSED,  "game01", this, "sprintStart");
-    input->bindAction("sprint",                EKeyMode::KEY_RELEASED, "game01", this, "sprintEnd");
-    // input->bindAction("growUpCollider",        EKeyMode::KEY_DOWN,     "game01", this, "growUpSphereCollider");
-    // input->bindAction("growDownCollider",      EKeyMode::KEY_DOWN,     "game01", this, "growDownSphereCollider");
-    input->bindAction("swapInputModeToGame01", EKeyMode::KEY_PRESSED,  "game02", this, "swapInputModeToGame01");
-    input->bindAction("swapInputModeToGame02", EKeyMode::KEY_PRESSED,  "game01", this, "swapInputModeToGame02");
+    input->bindAction("forward",     EKeyMode::KEY_DOWN,     "Game", this, "forward");
+    input->bindAction("backward",    EKeyMode::KEY_DOWN,     "Game", this, "backward");
+    input->bindAction("left",        EKeyMode::KEY_DOWN,     "Game", this, "left");
+    input->bindAction("right",       EKeyMode::KEY_DOWN,     "Game", this, "right");
+    input->bindAction("jump",        EKeyMode::KEY_DOWN,     "Game", this, "jump");
+    input->bindAction("exit",        EKeyMode::KEY_PRESSED,  "Game", this, "leave");
+    input->bindAction("sprintStart", EKeyMode::KEY_PRESSED,  "Game", this, "sprintStart");
+    input->bindAction("sprintEnd",   EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+    // input->bindAction("growUpCollider",        EKeyMode::KEY_DOWN,     "Game", this, "growUpSphereCollider");
+    // input->bindAction("growDownCollider",      EKeyMode::KEY_DOWN,     "Game", this, "growDownSphereCollider");
 
     GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
@@ -51,8 +49,8 @@ MyFpsScript::MyFpsScript(GPE::GameObject& owner) noexcept
 
     controller->setHasGravity(true);
     controller->setSpeed(1.f);
-    controller->setMouseSpeed(0.0025f);
-    controller->setGravity(0.1f);
+    controller->setMouseSpeed(.0025f);
+    controller->setGravity(.1f);
 }
 
 
@@ -85,12 +83,10 @@ void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)
 {
     using namespace GPM;
 
-    const float speed = controller->getMouseSpeed();
-
     const Quat& orientation{getOwner().getTransform().getSpacialAttribut().rotation};
     const Vec2  axis       {deltaDisplacement.rotated90()};
-    const Quat  rotX       {Quat::angleAxis(axis.x * speed, Vec3::right())};
-    const Quat  rotY       {Quat::angleAxis(axis.y * speed, Vec3::up())};
+    const Quat  rotX       {Quat::angleAxis(axis.x * controller->getMouseSpeed(), Vec3::right())};
+    const Quat  rotY       {Quat::angleAxis(axis.y * controller->getMouseSpeed(), Vec3::up())};
     const Quat  newRot     {rotY * orientation * rotX};
 
     getOwner().getTransform().setRotation(newRot);
@@ -145,7 +141,7 @@ void MyFpsScript::right()
 
 void MyFpsScript::leave()
 {
-    // exit(666);
+    glfwWindowShouldClose(GPE::Engine::getInstance()->window.getGLFWWindow());
 }
 
 
@@ -210,29 +206,10 @@ void MyFpsScript::onGUI()
 }
 
 
-void MyFpsScript::swapInputModeToGame01()
+void MyFpsScript::fixedUpdate(double deltaTime)
 {
-    GPE::InputManager& iManager = GPE::Engine::getInstance()->inputManager;
-
-    iManager.setInputMode("game01");
-    iManager.setCursorTrackingState(true);
-    iManager.setCursorLockState(true);
-}
-
-
-void MyFpsScript::swapInputModeToGame02()
-{
-    GPE::InputManager& iManager = GPE::Engine::getInstance()->inputManager;
-
-    iManager.setInputMode("game02");
-    iManager.setCursorTrackingState(false);
-    iManager.setCursorLockState(false);
-}
-
-
-void MyFpsScript::fixedUpdate(float deltaTime)
-{
-    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "game01")
+    // TODO: find a fix to relieve the user from having to check this, or leave it like that?
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
     {
         const GPM::Vec2 deltaPos = GPE::Engine::getInstance()->inputManager.getCursor().deltaPos;
 
