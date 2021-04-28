@@ -1,5 +1,4 @@
 ﻿#define GLFW_INCLUDE_NONE
-#define GLFW_DLL
 #include "Engine/Core/Debug/Log.hpp"
 #include "GameStartup.hpp"
 
