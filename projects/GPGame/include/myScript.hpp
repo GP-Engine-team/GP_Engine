@@ -83,12 +83,12 @@ namespace GPG RFKNamespace()
 
         RFKMethod() inline void forward()
         {
-            getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -speed);
+            getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * speed);
         }
 
         RFKMethod() inline void back()
         {
-            getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * speed);
+            getOwner().getTransform().translate(getOwner().getTransform().getVectorForward() * -speed);
         }
 
         RFKMethod() inline void left()
@@ -111,7 +111,7 @@ namespace GPG RFKNamespace()
             speed = sprintSpeed;
         }
 
-        void update(float deltaTime) final
+        void update(double deltaTime) final
         {
             speed = defaultSpeed;
 

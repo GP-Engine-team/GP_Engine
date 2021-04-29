@@ -5,7 +5,7 @@
  */
 
 #pragma once
-#include <Engine/Core/Tools/ClassUtility.hpp>
+
 #include <Engine/ECS/Component/InputComponent.hpp>
 #include <Engine/Resources/Cursor.hpp>
 #include <string>
@@ -23,7 +23,8 @@ private:
     std::unordered_map<int, bool>             m_stateMap;
     std::unordered_map<int, bool>             m_lastStateMap;
     std::unordered_map<int, InputComponent*>  m_inputComponents;
-    std::string                               m_currentInputMode = "none";
+    std::string                               m_currentInputMode  = "";
+    std::string                               m_previousInputMode = "";
     Cursor                                    m_cursor;
 
 public:
@@ -66,7 +67,7 @@ public:
     /**
      * @brief Set cursor mode using GLFW Enum
      */
-    void setCursorMode(GLFWwindow* window, int mode) noexcept;
+    void setCursorMode(int mode) noexcept;
 
     /**
      * @brief Set the current input mode
@@ -74,6 +75,13 @@ public:
      * @return
      */
     inline void setInputMode(const std::string& inputMode) noexcept;
+
+     /**
+     * @brief Restore the input mode previously set before the one currently active
+     * 
+     * Internally, swaps m_previousInputMode and m_currentInputMode
+     */
+    inline void restorePreviousInputMode() noexcept;
 
     /**
      * @brief Set the current input mode

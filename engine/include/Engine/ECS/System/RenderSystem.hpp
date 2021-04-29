@@ -90,20 +90,21 @@ public:
     RenderSystem() noexcept;
     ~RenderSystem() noexcept;
 
-    void tryToBindShader(Shader& shader);
-    void tryToBindMaterial(Shader& shader, Material& material);
-    void tryToBindTexture(unsigned int textureID);
-    void tryToBindMesh(unsigned int meshID);
+    void tryToBindShader        (Shader& shader);
+    void tryToBindMaterial      (Shader& shader, Material& material);
+    void tryToBindTexture       (unsigned int textureID);
+    void tryToBindMesh          (unsigned int meshID);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
-    void setMainCamera(Camera& newMainCamera) noexcept;
+    void setMainCamera          (Camera& newMainCamera) noexcept;
+    Camera& setMainCamera       (int index) noexcept;
 
     void resetCurrentRenderPassKey();
 
-    bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept;
-    void drawModelPart(const SubModel& subModel);
-    void sendModelDataToShader(Camera& camToUse, Shader& shader, SubModel& subModel);
-    void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
+    bool isOnFrustum            (const Frustum& camFrustum, const SubModel* pSubModel) const noexcept;
+    void drawModelPart          (const SubModel& subModel);
+    void sendModelDataToShader  (Camera& camToUse, Shader& shader, SubModel& subModel);
+    void sendDataToInitShader   (Camera& camToUse, Shader* pCurrentShaderUse);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
     RenderPipeline gameObjectIdentifierPipeline() const noexcept;
@@ -125,15 +126,15 @@ public:
     void drawDebugSphere(const GPM::Vec3& position, float radius,
                          const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
                          EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
-    void drawDebugCube(const GPM::Vec3& position, const GPM::Quat& rotation, const GPM::Vec3& scale,
-                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
-                       EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
-    void drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
-                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
-                       EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
+    void drawDebugCube  (const GPM::Vec3& position, const GPM::Quat& rotation, const GPM::Vec3& scale,
+                         const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                         EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
+    void drawDebugQuad  (const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
+                         const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                         EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
 
-    void drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width = 1.f,
-                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, bool smooth = true) noexcept;
+    void drawDebugLine  (const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width = 1.f,
+                         const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, bool smooth = true) noexcept;
 
     void displayGameObjectRef(const GameObject& go, float dist = 100.f, float size = 10.f) noexcept;
 

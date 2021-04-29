@@ -5,25 +5,25 @@
 #include <map> //std::map
 #include <memory>
 
-#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/Core/Tools/BranchPrediction.hpp"
-#include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/ECS/Component/Light/Light.hpp"
-#include "Engine/ECS/Component/Model.hpp"
-#include "Engine/ECS/Component/ParticleComponent.hpp"
-#include "Engine/Engine.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Mesh.hpp"
-#include "Engine/Resources/RenderBuffer.hpp"
-#include "Engine/Resources/RenderTexture.hpp"
-#include "Engine/Resources/Shader.hpp"
-#include "GPM/Matrix4.hpp"
-#include "GPM/Shape3D/AABB.hpp"
-#include "GPM/Shape3D/Sphere.hpp"
-#include "GPM/Shape3D/Volume.hpp"
-#include "GPM/ShapeRelation/AABBPlane.hpp"
-#include "GPM/ShapeRelation/SpherePlane.hpp"
+#include <Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp>
+#include <Engine/Core/Rendering/Window/WindowGLFW.hpp>
+#include <Engine/Core/Tools/BranchPrediction.hpp>
+#include <Engine/ECS/Component/Camera.hpp>
+#include <Engine/ECS/Component/Light/Light.hpp>
+#include <Engine/ECS/Component/Model.hpp>
+#include <Engine/ECS/Component/ParticleComponent.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Mesh.hpp>
+#include <Engine/Resources/RenderBuffer.hpp>
+#include <Engine/Resources/RenderTexture.hpp>
+#include <Engine/Resources/Shader.hpp>
+#include <GPM/Matrix4.hpp>
+#include <GPM/Shape3D/AABB.hpp>
+#include <GPM/Shape3D/Sphere.hpp>
+#include <GPM/Shape3D/Volume.hpp>
+#include <GPM/ShapeRelation/AABBPlane.hpp>
+#include <GPM/ShapeRelation/SpherePlane.hpp>
 
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
@@ -291,6 +291,12 @@ void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
 void RenderSystem::setMainCamera(Camera& newMainCamera) noexcept
 {
     m_mainCamera = &newMainCamera;
+}
+
+Camera& RenderSystem::setMainCamera(int index) noexcept
+{
+    m_mainCamera = m_pCameras[index % m_pCameras.size()];
+    return *m_mainCamera;
 }
 
 void RenderSystem::resetCurrentRenderPassKey()

@@ -20,6 +20,7 @@
 
 namespace GPE
 {
+
 using ResourceManagerType = ResourcesManager<std::vector<Mesh>, Model::CreateArg, Mesh, Shader, Texture, RenderBuffer,
                                              RenderTexture, std::vector<Material>, Material, Sound::Buffer>;
 
