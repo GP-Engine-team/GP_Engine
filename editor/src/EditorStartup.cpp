@@ -35,36 +35,34 @@ void EditorStartup::initializeDefaultInputs() const
     GPE::InputManager& inputs = GPE::Engine::getInstance()->inputManager;
 
     // Default editor-specific input bindings
-    inputs.bindInput(GLFW_KEY_SPACE,        "up");
+    inputs.bindInput(GLFW_KEY_SPACE, "up");
     inputs.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-    inputs.bindInput(GLFW_KEY_D,            "right");
-    inputs.bindInput(GLFW_KEY_A,            "left");
-    inputs.bindInput(GLFW_KEY_W,            "forward");
-    inputs.bindInput(GLFW_KEY_S,            "backward");
-    inputs.bindInput(GLFW_KEY_ESCAPE,       "exit");
-    inputs.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprint");
-    inputs.bindInput(GLFW_KEY_LEFT_SHIFT,   "walk");
+    inputs.bindInput(GLFW_KEY_D, "right");
+    inputs.bindInput(GLFW_KEY_A, "left");
+    inputs.bindInput(GLFW_KEY_W, "forward");
+    inputs.bindInput(GLFW_KEY_S, "backward");
+    inputs.bindInput(GLFW_KEY_ESCAPE, "exit");
+    inputs.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
+    inputs.bindInput(GLFW_KEY_LEFT_SHIFT, "walk");
 
     inputs.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
 }
 
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {}},
-      m_update{[&](double unscaledDeltaTime, double deltaTime)
-      {
+      m_update{[&](double unscaledDeltaTime, double deltaTime) {
           GPE::Engine::getInstance()->inputManager.processInput();
           Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
           m_editor.update(*this);
+          Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
       }},
-      m_render{[&]()
-      {
+      m_render{[&]() {
           m_editor.render();
           GPE::Engine::getInstance()->renderer.swapBuffer();
       }},
       m_editor{initDearImGuiProxy(GPE::Engine::getInstance()->window.getGLFWWindow()),
                GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
-      m_reloadableCpp{gameDllPath},
-      m_game{nullptr}
+      m_reloadableCpp{gameDllPath}, m_game{nullptr}
 {
     m_editor.m_reloadableCpp = &m_reloadableCpp;
 
@@ -101,7 +99,6 @@ EditorStartup::~EditorStartup()
     ImGui::DestroyContext();
 }
 
-
 void EditorStartup::openGame()
 {
     const bool gameWasInstanciated = m_game != nullptr;
@@ -123,7 +120,6 @@ void EditorStartup::openGame()
     }
 }
 
-
 void EditorStartup::closeGame()
 {
     if (m_game != nullptr)
@@ -134,20 +130,17 @@ void EditorStartup::closeGame()
         destroyer(m_game);
         m_game = nullptr;
     }
-    
+
     // TODO: are the scene previously loaded removed by m_game's destructor?
     m_editor.setSceneInEdition(GPE::Engine::getInstance()->sceneManager.loadScene("Default scene"));
 }
 
-
 void EditorStartup::playGame()
 {
-    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
-    {
+    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
         m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
     };
-    m_update = [&](double unscaledDeltaTime, double deltaTime)
-    {
+    m_update = [&](double unscaledDeltaTime, double deltaTime) {
         GPE::Engine::getInstance()->inputManager.processInput();
         m_game->update(unscaledDeltaTime, deltaTime);
         m_editor.update(*this);
@@ -156,12 +149,10 @@ void EditorStartup::playGame()
     m_game->state = EGameState::PLAYING;
 }
 
-
 void EditorStartup::pauseGame()
 {
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
-    m_update = [&](double unscaledDeltaTime, double deltaTime)
-    {
+    m_update      = [&](double unscaledDeltaTime, double deltaTime) {
         GPE::Engine::getInstance()->inputManager.processInput();
         Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
         m_editor.update(*this);
@@ -170,7 +161,6 @@ void EditorStartup::pauseGame()
     m_game->state = EGameState::PAUSED;
 }
 
-
 void EditorStartup::stopGame()
 {
     pauseGame();
@@ -178,12 +168,10 @@ void EditorStartup::stopGame()
     m_game->state = EGameState::STOPPED;
 }
 
-
 GPE::AbstractGame& EditorStartup::game() const
 {
     return *m_game;
 }
-
 
 void EditorStartup::update()
 {

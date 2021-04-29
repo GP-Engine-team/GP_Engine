@@ -455,10 +455,10 @@ Mesh* GPE::loadMeshFile(const char* src)
 
 struct ShadeHeader
 {
-    char          assetID            = (char)EFileType::SHADER;
-    int           vertexPathLenght   = 0;
-    int           fragmentPathLenght = 0;
-    unsigned char featureMask        = 0;
+    char     assetID            = (char)EFileType::SHADER;
+    int      vertexPathLenght   = 0;
+    int      fragmentPathLenght = 0;
+    uint16_t featureMask        = 0;
 };
 
 void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)

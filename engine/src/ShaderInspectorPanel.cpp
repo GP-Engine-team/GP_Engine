@@ -53,6 +53,7 @@ File_GENERATED
         bool          unscaleTimeAccFlag = m_config.featureMask & UNSCALED_TIME_ACC;
         bool          projectionMatrix   = m_config.featureMask & PROJECTION_MATRIX;
         bool          viewMatrix         = m_config.featureMask & VIEW_MATRIX;
+        bool          PVMMatrix          = m_config.featureMask & PROJECTION_VIEW_MODEL_MATRIX;
 
         ImGui::PushEnabled(!ambiantOnlyFlag);
         if (ImGui::Checkbox("LIGHT BLIN PHONG", &blinPhongFlag))
@@ -97,6 +98,12 @@ File_GENERATED
         if (ImGui::Checkbox("VIEW MATRIX", &viewMatrix))
         {
             m_config.featureMask ^= VIEW_MATRIX;
+            m_isDirty = true;
+        }
+
+        if (ImGui::Checkbox("PROJECTION_VIEW_MODEL_MATRIX", &PVMMatrix))
+        {
+            m_config.featureMask ^= PROJECTION_VIEW_MODEL_MATRIX;
             m_isDirty = true;
         }
 

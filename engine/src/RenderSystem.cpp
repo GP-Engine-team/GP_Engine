@@ -147,9 +147,9 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
     }
 }
 
-void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
+void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
 {
-    if ((pCurrentShaderUse->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         std::vector<LightData> lightBuffer;
 
@@ -158,32 +158,32 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentShader
             light->addToLightToUseBuffer(lightBuffer);
         }
 
-        pCurrentShaderUse->setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
+        shader.setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
     }
 
-    if ((pCurrentShaderUse->getFeature() & PROJECTION_MATRIX) == PROJECTION_MATRIX)
+    if ((shader.getFeature() & PROJECTION_MATRIX) == PROJECTION_MATRIX)
     {
-        pCurrentShaderUse->setMat4("projectMatrix", camToUse.getProjection().e);
+        shader.setMat4("projectMatrix", camToUse.getProjection().e);
     }
 
-    if ((pCurrentShaderUse->getFeature() & VIEW_MATRIX) == VIEW_MATRIX)
+    if ((shader.getFeature() & VIEW_MATRIX) == VIEW_MATRIX)
     {
-        pCurrentShaderUse->setMat4("viewMatrix", camToUse.getView().e);
+        shader.setMat4("viewMatrix", camToUse.getView().e);
     }
 
     /*
-    if ((pCurrentShaderUse->getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
+    if ((shader.getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
     {
-        pCurrentShaderUse->setFloat("scaledTimeAcc", TimeSystem::getAccumulateTime());
+        shader.setFloat("scaledTimeAcc", TimeSystem::getAccumulateTime());
     }
 
-    if ((pCurrentShaderUse->getFeature() & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
+    if ((shader.getFeature() & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
     {
-        pCurrentShaderUse->setFloat("unscaledTimeAcc", TimeSystem::getAccumulateUnscaledTime());
+        shader.setFloat("unscaledTimeAcc", TimeSystem::getAccumulateUnscaledTime());
     }*/
 }
 
-void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, SubModel& subModel)
+void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const Mat4& modelMatrix)
 {
     if ((shader.getFeature() & SKYBOX) == SKYBOX)
     {
@@ -192,25 +192,26 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, SubMo
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
 
-        shader.setMat4(
-            "projectViewModelMatrix",
-            (camToUse.getProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjection() * view * modelMatrix).e);
         shader.setMat4("projection", camToUse.getProjection().e);
         shader.setMat4("view", view.e);
+
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
-    else
+
+    if ((shader.getFeature() & PROJECTION_VIEW_MODEL_MATRIX) == PROJECTION_VIEW_MODEL_MATRIX)
     {
-        shader.setMat4("projectViewModelMatrix",
-                       (camToUse.getProjectionView() * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
 
     if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        Mat3 inverseModelMatrix3(
-            toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()).transposed());
+        Mat3 inverseModelMatrix3(toMatrix3(modelMatrix.inversed()).transposed());
 
-        shader.setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
+        shader.setMat4("model", modelMatrix.e);
         shader.setMat3("inverseModelMatrix", inverseModelMatrix3.e);
+
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
 }
 
@@ -229,7 +230,7 @@ void RenderSystem::tryToBindShader(Shader& shader)
     m_currentShaderID   = shader.getID();
     m_currentPShaderUse = &shader;
 
-    sendDataToInitShader(*m_mainCamera, m_currentPShaderUse);
+    sendDataToInitShader(*m_mainCamera, shader);
 }
 
 void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
@@ -354,7 +355,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(mainCamera, *pSubModel->pShader, *pSubModel);
+                rs.sendModelDataToShader(mainCamera, *pSubModel->pShader,
+                                         pSubModel->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -388,7 +390,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(mainCamera, *it->second->pShader, *it->second);
+                rs.sendModelDataToShader(mainCamera, *it->second->pShader,
+                                         it->second->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*it->second);
             };
         }
@@ -406,7 +409,11 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
                 if (particle->getShader())
+                {
                     rs.tryToBindShader(*particle->getShader());
+                    rs.sendModelDataToShader(mainCamera, *particle->getShader(),
+                                             particle->getOwner().getTransform().getModelMatrix());
+                }
                 rs.tryToBindMesh(particle->getMeshID());
 
                 glDrawArrays(GL_POINTS, 0, count);

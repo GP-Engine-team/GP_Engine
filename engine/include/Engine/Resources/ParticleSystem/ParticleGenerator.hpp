@@ -14,7 +14,6 @@
 #include <Engine/Serialization/GPMDataInspector.hpp>
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/STDDataInspector.hpp>
-
 // Generated
 #include <Generated/ParticleGenerator.rfk.h>
 
