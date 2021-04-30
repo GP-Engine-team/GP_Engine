@@ -50,7 +50,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
     std::filesystem::path dstDirPath(dstPath);
 
-    for (size_t i = 1; i < scene->mNumMaterials; ++i)
+    for (size_t i = 0; i < scene->mNumMaterials; ++i)
     {
         Material::ImporteArg materialArg;
 
@@ -73,9 +73,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         std::filesystem::path fsDstPath;
         std::filesystem::path fsSrcPath;
 
-        if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_AMBIENT))
+        for (unsigned int iText = 0;
+             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_AMBIENT); ++iText)
         {
-            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_AMBIENT, 0, &path);
+            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_AMBIENT, iText, &path);
 
             if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
             {
@@ -113,9 +114,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
             }
         }
 
-        if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE))
+        for (unsigned int iText = 0;
+             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE); ++iText)
         {
-            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
+            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, iText, &path);
 
             if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
             {
@@ -153,9 +155,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
             }
         }
 
-        if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_BASE_COLOR))
+        for (unsigned int iText = 0;
+             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_BASE_COLOR); ++iText)
         {
-            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_BASE_COLOR, 0, &path);
+            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_BASE_COLOR, iText, &path);
 
             if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
             {
@@ -245,14 +248,18 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         }
 
         // Indices
-        for (size_t i = 0; i < pMesh->mNumFaces; ++i)
+        for (size_t iFace = 0; iFace < pMesh->mNumFaces; ++iFace)
         {
-            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[0]);
-            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[1]);
-            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[2]);
+            arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[0]);
+            arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[1]);
+            arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[2]);
         }
 
         std::filesystem::path dstMeshPath = dstDirPath / pMesh->mName.C_Str();
+        if (i != 0 &&
+            pMesh->mName == scene->mMeshes[i - 1]->mName) // Add differente name if the FBX containe mesh with same name
+            dstMeshPath += "0";
+
         dstMeshPath += ENGINE_MESH_EXTENSION;
 
         writeMeshFile(dstMeshPath.string().c_str(), arg);
@@ -400,9 +407,10 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
                           static_cast<int>(arg.baseColorTexturePath.size())};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
-    fwrite(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght, pFile);   // string buffer
-    fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);     // string buffer
-    fwrite(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght, pFile); // string buffer
+    fwrite(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght, pFile); // string buffer
+    fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);   // string buffer
+    fwrite(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
+           pFile); // string buffer
 
     fclose(pFile);
 
@@ -429,7 +437,8 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
     if (header.pathAmbianteTextureLenght) // If ambiante texture existe
     {
         arg.ambianteTexturePath.assign(header.pathAmbianteTextureLenght, '\0');
-        fread(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght, pFile); // string buffer
+        fread(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght,
+              pFile); // string buffer
     }
 
     if (header.pathDiffuseTextureLenght) // If diffuse texture existe
@@ -441,7 +450,8 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
     if (header.pathBaseColorTextureLenght) // If base color texture existe
     {
         arg.baseColorTexturePath.assign(header.pathBaseColorTextureLenght, '\0');
-        fread(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght, pFile); // string buffer
+        fread(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
+              pFile); // string buffer
     }
 
     fclose(pFile);
