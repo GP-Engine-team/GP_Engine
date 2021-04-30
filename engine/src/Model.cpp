@@ -22,7 +22,7 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
@@ -33,8 +33,7 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
            (lhs->pMaterial->isOpaque() && !rhs->pMaterial->isOpaque());
 }
 
-Model::Model(Model&& other) noexcept
-    : Component(other.getOwner()), m_subModels{other.m_subModels}
+Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{other.m_subModels}
 {
     auto&& itNew = m_subModels.begin();
     auto&& itOld = other.m_subModels.begin();
@@ -50,13 +49,11 @@ Model::~Model()
         getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
 }
 
-Model::Model(GameObject& owner)
-    : Model(owner, CreateArg{})
+Model::Model(GameObject& owner) : Model(owner, CreateArg{})
 {
 }
 
-Model::Model(GameObject& owner, const CreateArg& arg)
-    : Component{owner}, m_subModels{arg.subModels}
+Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subModels{arg.subModels}
 {
     for (SubModel& subMesh : m_subModels)
     {
