@@ -1,8 +1,9 @@
-﻿#include "Engine/Resources/Importer/Importer.hpp"
+﻿#include <Engine/Resources/Importer/Importer.hpp>
 
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/postprocess.h> // Post processing flags
 #include <assimp/scene.h>       // Output data structure
+
 #include <cstdio>
 #include <filesystem>
 #include <memory> // std::make_unique
@@ -12,13 +13,15 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Engine.hpp"
-#include "Engine/Resources/ResourcesManagerType.hpp"
-#include "Engine/Resources/Texture.hpp"
-#include "GPM/Shape3D/AABB.hpp"
-#include "GPM/Shape3D/Sphere.hpp"
+#include <Engine/Core/Debug/Assert.hpp>
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Resources/ResourcesManagerType.hpp>
+#include <Engine/Resources/Texture.hpp>
+#include <GPM/Shape3D/AABB.hpp>
+#include <GPM/Shape3D/Sphere.hpp>
+
+#include <Engine/Core/Tools/Hash.hpp>
 
 using namespace GPE;
 using namespace GPM;
@@ -74,45 +77,121 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         {
             scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_AMBIENT, 0, &path);
 
-            fsPath    = path.C_Str();
-            fsSrcPath = srcDirPath / fsPath;
+            if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
+            {
+                Texture::ImportArg arg;
 
-            fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-            fsDstPath = dstDirPath / fsPath;
+                if (texture->mHeight)
+                {
+                    arg.len = texture->mHeight * texture->mWidth * sizeof(texture->pcData);
+                }
+                else
+                {
+                    arg.len = texture->mWidth;
+                }
+                arg.pixels.reset((unsigned char*)texture->pcData);
+                arg.flipTexture = true;
 
-            materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
+                fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-            importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+                writeTextureFile(fsDstPath.string().c_str(), arg);
+                arg.pixels.release(); // Assimp manage it's mamory
+            }
+            else
+            {
+                fsPath    = path.C_Str();
+                fsSrcPath = srcDirPath / fsPath;
+
+                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                fsDstPath = dstDirPath / fsPath;
+
+                materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+
+                importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+            }
         }
 
         if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE))
         {
             scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
 
-            fsPath    = path.C_Str();
-            fsSrcPath = srcDirPath / fsPath;
+            if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
+            {
+                Texture::ImportArg arg;
 
-            fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-            fsDstPath = dstDirPath / fsPath;
+                if (texture->mHeight)
+                {
+                    arg.len = texture->mHeight * texture->mWidth * sizeof(texture->pcData);
+                }
+                else
+                {
+                    arg.len = texture->mWidth;
+                }
+                arg.pixels.reset((unsigned char*)texture->pcData);
+                arg.flipTexture = true;
 
-            materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
+                fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-            importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+                writeTextureFile(fsDstPath.string().c_str(), arg);
+                arg.pixels.release(); // Assimp manage it's mamory
+            }
+            else
+            {
+                fsPath    = path.C_Str();
+                fsSrcPath = srcDirPath / fsPath;
+
+                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                fsDstPath = dstDirPath / fsPath;
+
+                materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+
+                importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+            }
         }
 
         if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_BASE_COLOR))
         {
             scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_BASE_COLOR, 0, &path);
 
-            fsPath    = path.C_Str();
-            fsSrcPath = srcDirPath / fsPath;
+            if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
+            {
+                Texture::ImportArg arg;
 
-            fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-            fsDstPath = dstDirPath / fsPath;
+                if (texture->mHeight)
+                {
+                    arg.len = texture->mHeight * texture->mWidth * sizeof(texture->pcData);
+                }
+                else
+                {
+                    arg.len = texture->mWidth;
+                }
 
-            materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                arg.pixels.reset((unsigned char*)texture->pcData);
+                arg.flipTexture = true;
 
-            importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+                fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
+                fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+
+                writeTextureFile(fsDstPath.string().c_str(), arg);
+                arg.pixels.release(); // Assimp manage it's mamory
+            }
+            else
+            {
+                fsPath    = path.C_Str();
+                fsSrcPath = srcDirPath / fsPath;
+
+                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                fsDstPath = dstDirPath / fsPath;
+
+                materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+
+                importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+            }
         }
 
         std::filesystem::path dstMaterialPath = dstDirPath / scene->mMaterials[i]->GetName().C_Str();
@@ -184,8 +263,9 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
 struct TextureHeader
 {
-    char assetID       = (char)EFileType::TEXTURE;
-    int  textureLenght = 0;
+    char assetID            = (char)EFileType::TEXTURE;
+    int  textureLenght      = 0;
+    bool vflipTextureOnLoad = false;
 };
 
 void GPE::importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config)
@@ -223,6 +303,7 @@ void GPE::importeTextureFile(const char* srcPath, const char* dstPath, const Tex
     dstTexturePath += ENGINE_TEXTURE_EXTENSION;
 
     writeTextureFile(dstTexturePath.string().c_str(), arg);
+    stbi_set_flip_vertically_on_load(false);
 }
 
 void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data)
@@ -235,7 +316,7 @@ void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data)
         return;
     }
 
-    TextureHeader header{(char)EFileType::TEXTURE, data.len};
+    TextureHeader header{(char)EFileType::TEXTURE, data.len, data.flipTexture};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
     fwrite(data.pixels.get(), data.len, 1, pFile);
@@ -263,12 +344,16 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
         // copy the file into the buffer:
         fread(&header, sizeof(header), 1, pFile);
 
+        stbi_set_flip_vertically_on_load(header.vflipTextureOnLoad);
+
         std::vector<stbi_uc> texBuffer;
         texBuffer.assign(header.textureLenght, 0);
 
         fread(&texBuffer[0], sizeof(stbi_uc), header.textureLenght, pFile); // Texture buffer
 
         arg.pixels.reset(stbi_load_from_memory(texBuffer.data(), header.textureLenght, &arg.w, &arg.h, &arg.comp, 0));
+
+        stbi_set_flip_vertically_on_load(false);
     }
     else
     {
