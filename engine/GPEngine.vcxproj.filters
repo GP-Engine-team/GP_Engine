@@ -244,6 +244,24 @@
     <ClCompile Include="src\Serialization\STDDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\ParticleSystem\ParticleRenderer.cpp">
+      <Filter>src\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleSystem\ParticleData.cpp">
+      <Filter>src\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleSystem\ParticleEffect.cpp">
+      <Filter>src\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleSystem\ParticleGenerator.cpp">
+      <Filter>src\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleSystem\ParticleUpdater.cpp">
+      <Filter>src\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -645,6 +663,27 @@
     <ClInclude Include="include\Engine\Core\Tools\UnrolledListAllocator.hpp">
       <Filter>include\Core\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\ParticleComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleRenderer.hpp">
+      <Filter>include\Resources\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleData.hpp">
+      <Filter>include\Resources\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleEffect.hpp">
+      <Filter>include\Resources\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleGenerator.hpp">
+      <Filter>include\Resources\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleUpdater.hpp">
+      <Filter>include\Resources\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\BinaryMask.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -756,6 +795,9 @@
     <None Include="include\Engine\Core\Tools\UnrolledListAllocator.inl">
       <Filter>include\Core\Tools</Filter>
     </None>
+    <None Include="include\Engine\Resources\ParticleSystem\ParticleComponent.inl">
+      <Filter>include\Resources\Particle</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
@@ -862,6 +904,12 @@
     </Filter>
     <Filter Include="include\Core\Tools">
       <UniqueIdentifier>{76d92f2b-f611-41b7-aa82-035d95a366d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Particle">
+      <UniqueIdentifier>{33eda6b3-ef50-4d85-9e46-d074af359149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Resources\Particle">
+      <UniqueIdentifier>{ec495029-fcd3-4b29-aec8-279a8239fbf6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

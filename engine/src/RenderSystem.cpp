@@ -11,6 +11,7 @@
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/ECS/Component/Light/Light.hpp>
 #include <Engine/ECS/Component/Model.hpp>
+#include <Engine/ECS/Component/ParticleComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Mesh.hpp>
@@ -146,9 +147,9 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
     }
 }
 
-void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
+void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
 {
-    if ((pCurrentShaderUse->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         std::vector<LightData> lightBuffer;
 
@@ -157,22 +158,32 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentShader
             light->addToLightToUseBuffer(lightBuffer);
         }
 
-        pCurrentShaderUse->setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
+        shader.setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
+    }
+
+    if ((shader.getFeature() & PROJECTION_MATRIX) == PROJECTION_MATRIX)
+    {
+        shader.setMat4("projectMatrix", camToUse.getProjection().e);
+    }
+
+    if ((shader.getFeature() & VIEW_MATRIX) == VIEW_MATRIX)
+    {
+        shader.setMat4("viewMatrix", camToUse.getView().e);
     }
 
     /*
-    if ((pCurrentShaderUse->getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
+    if ((shader.getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
     {
-        pCurrentShaderUse->setFloat("scaledTimeAcc", TimeSystem::getAccumulateTime());
+        shader.setFloat("scaledTimeAcc", TimeSystem::getAccumulateTime());
     }
 
-    if ((pCurrentShaderUse->getFeature() & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
+    if ((shader.getFeature() & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
     {
-        pCurrentShaderUse->setFloat("unscaledTimeAcc", TimeSystem::getAccumulateUnscaledTime());
+        shader.setFloat("unscaledTimeAcc", TimeSystem::getAccumulateUnscaledTime());
     }*/
 }
 
-void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, SubModel& subModel)
+void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const Mat4& modelMatrix)
 {
     if ((shader.getFeature() & SKYBOX) == SKYBOX)
     {
@@ -181,25 +192,26 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, SubMo
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
 
-        shader.setMat4(
-            "projectViewModelMatrix",
-            (camToUse.getProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjection() * view * modelMatrix).e);
         shader.setMat4("projection", camToUse.getProjection().e);
         shader.setMat4("view", view.e);
+
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
-    else
+
+    if ((shader.getFeature() & PROJECTION_VIEW_MODEL_MATRIX) == PROJECTION_VIEW_MODEL_MATRIX)
     {
-        shader.setMat4("projectViewModelMatrix",
-                       (camToUse.getProjectionView() * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
 
     if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        Mat3 inverseModelMatrix3(
-            toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()).transposed());
+        Mat3 inverseModelMatrix3(toMatrix3(modelMatrix.inversed()).transposed());
 
-        shader.setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
+        shader.setMat4("model", modelMatrix.e);
         shader.setMat3("inverseModelMatrix", inverseModelMatrix3.e);
+
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
 }
 
@@ -218,7 +230,7 @@ void RenderSystem::tryToBindShader(Shader& shader)
     m_currentShaderID   = shader.getID();
     m_currentPShaderUse = &shader;
 
-    sendDataToInitShader(*m_pCameras[0], m_currentPShaderUse);
+    sendDataToInitShader(*m_mainCamera, shader);
 }
 
 void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
@@ -282,13 +294,11 @@ void RenderSystem::setMainCamera(Camera& newMainCamera) noexcept
     m_mainCamera = &newMainCamera;
 }
 
-
 Camera& RenderSystem::setMainCamera(int index) noexcept
 {
     m_mainCamera = m_pCameras[index % m_pCameras.size()];
     return *m_mainCamera;
 }
-
 
 void RenderSystem::resetCurrentRenderPassKey()
 {
@@ -307,12 +317,10 @@ void RenderSystem::resetCurrentRenderPassKey()
 
 RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
-    return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*>& pRenderers,
-              std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
-              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape,
-              std::vector<DebugLine>& debugLines, Camera& mainCamera)
-
-    {
+    return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
+              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
+              std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
+              std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines, Camera& mainCamera) {
         if (pCameras.empty())
             return;
 
@@ -347,7 +355,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(mainCamera, *pSubModel->pShader, *pSubModel);
+                rs.sendModelDataToShader(mainCamera, *pSubModel->pShader,
+                                         pSubModel->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -381,9 +390,34 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(mainCamera, *it->second->pShader, *it->second);
+                rs.sendModelDataToShader(mainCamera, *it->second->pShader,
+                                         it->second->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*it->second);
             };
+        }
+
+        // Draw particles
+        {
+            for (auto&& particle : pParticleComponents)
+            {
+                const size_t count = particle->numAliveParticles();
+                if (count == 0)
+                    continue;
+
+                glEnable(GL_PROGRAM_POINT_SIZE);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                if (particle->getShader())
+                {
+                    rs.tryToBindShader(*particle->getShader());
+                    rs.sendModelDataToShader(mainCamera, *particle->getShader(),
+                                             particle->getOwner().getTransform().getModelMatrix());
+                }
+                rs.tryToBindMesh(particle->getMeshID());
+
+                glDrawArrays(GL_POINTS, 0, count);
+            }
         }
 
         // Draw debug shape
@@ -464,9 +498,9 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
 RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const noexcept
 {
-    return [](const ResourceManagerType& rm, RenderSystem& rs, std::vector<Renderer*>& pRenderers,
-              std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
-              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
+    return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
+              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
+              std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
               std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
               Camera& mainCamera) {
         if (pCameras.empty())
@@ -525,7 +559,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
     };
 }
 
-void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
+void RenderSystem::render(RenderPipeline renderPipeline) noexcept
 {
     if (m_mainCamera == nullptr)
     {
@@ -533,8 +567,16 @@ void RenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPip
         m_mainCamera = m_pCameras[0];
     }
 
-    renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_debugShape, m_debugLine, *m_mainCamera);
+    renderPipeline(*this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
+                   m_pParticleComponents, m_debugShape, m_debugLine, *m_mainCamera);
+}
+
+void RenderSystem::update(double dt) noexcept
+{
+    for (auto&& particle : m_pParticleComponents)
+    {
+        particle->update(dt);
+    }
 }
 
 void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, EDebugShapeMode mode,
@@ -566,12 +608,45 @@ void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, flo
     m_debugLine.emplace_back(DebugLine{pt1, pt2, width, color, smooth});
 }
 
-void RenderSystem::addRenderer(Renderer* pRenderer) noexcept
+void RenderSystem::addParticleComponent(ParticleComponent& particleComponent) noexcept
 {
-    m_pRenderers.push_back(pRenderer);
+    m_pParticleComponents.push_back(&particleComponent);
+}
+
+void RenderSystem::updateParticleComponentPointer(ParticleComponent* newPointerParticleComponent,
+                                                  ParticleComponent* exPointerParticleComponent) noexcept
+{
+    const std::vector<ParticleComponent*>::const_iterator end{m_pParticleComponents.end()};
+    for (std::vector<ParticleComponent*>::iterator it = m_pParticleComponents.begin(); it != end; it++)
+    {
+        if ((*it) == exPointerParticleComponent)
+        {
+            *it = newPointerParticleComponent;
+            return;
+        }
+    }
+}
+
+void RenderSystem::removeParticleComponent(ParticleComponent& particleComponent) noexcept
+{
+    const std::vector<ParticleComponent*>::const_iterator end{m_pParticleComponents.end()};
+    for (std::vector<ParticleComponent*>::iterator it = m_pParticleComponents.begin(); it != end; it++)
+    {
+        if ((*it) == &particleComponent)
+        {
+            std::swap<ParticleComponent*>(m_pParticleComponents.back(), (*it));
+            m_pParticleComponents.pop_back();
+            return;
+        }
+    }
+}
+
+void RenderSystem::addRenderer(Renderer& renderer) noexcept
+{
+    m_pRenderers.push_back(&renderer);
 
     int h, w;
-    pRenderer->getWindow()->getSize(w, h);
+    renderer.getWindow()->getSize(w, h);
 
     Texture::CreateArg textureArg;
     textureArg.width  = w;

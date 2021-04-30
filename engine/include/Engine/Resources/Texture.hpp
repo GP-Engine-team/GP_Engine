@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Engine/Resources/Type.hpp"
+#include <memory>
 #include <string>
 
 // in inl

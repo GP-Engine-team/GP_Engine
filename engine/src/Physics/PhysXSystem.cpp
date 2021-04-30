@@ -104,9 +104,6 @@ void PhysXSystem::advance(double deltaTime) noexcept
             rigidbody->update();
         }
     }
-
-    if (drawDebugShapes)
-        drawDebugScene();
 }
 
 void PhysXSystem::drawDebugScene()

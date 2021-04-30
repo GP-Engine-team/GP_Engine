@@ -46,7 +46,6 @@ public:
     std::vector<RigidbodyStatic*>     rigidbodyStatics;
     std::vector<RigidbodyDynamic*>    rigidbodyDynamics;
     std::vector<CharacterController*> characterControllers;
-    bool                              drawDebugShapes{false};
 
 public:
     PhysXSystem();

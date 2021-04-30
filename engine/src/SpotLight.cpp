@@ -6,8 +6,7 @@
 
 File_GENERATED
 
-
-using namespace GPE;
+    using namespace GPE;
 
 SpotLight::~SpotLight()
 {

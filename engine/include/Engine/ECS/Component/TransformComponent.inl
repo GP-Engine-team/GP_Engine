@@ -123,5 +123,4 @@ inline constexpr const GPM::Vec3& TransformComponent::getScale() const noexcept
 {
     return m_spaceAttribut.scale;
 }
-
 } // namespace GPE

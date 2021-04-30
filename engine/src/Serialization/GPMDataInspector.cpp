@@ -48,6 +48,12 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& ins
 }
 
 template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& inspected)
+{
+    ImGui::DragFloat2("", inspected.e);
+}
+
+template <>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const rfk::Field& info)
 {
     Slider const* property = info.getProperty<Slider>();
@@ -69,6 +75,12 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& ins
     // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
     endProperty();
     return hasChanged;
+}
+
+template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected)
+{
+    ImGui::DragFloat3("", inspected.e);
 }
 
 template <>
@@ -96,6 +108,12 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& ins
 }
 
 template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& inspected)
+{
+    ImGui::DragFloat4("", inspected.e);
+}
+
+template <>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
@@ -109,4 +127,12 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& 
     inspected            = GPM::Quaternion::fromEuler(asRotation * PI / 180.f);    // to radians
 
     return hasChanged;
+}
+
+template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected)
+{
+    GPM::Vec3 asRotation = inspected.eulerAngles() * 180.f / PI;     // to degrees
+    GPE::DataInspector::inspect(context, asRotation);                // display as euler angles
+    inspected = GPM::Quaternion::fromEuler(asRotation * PI / 180.f); // to radians
 }

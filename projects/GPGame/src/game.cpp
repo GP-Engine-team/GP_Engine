@@ -18,10 +18,10 @@
 // Third_party
 #include <glfw/glfw3.h>
 
-#include <imgui/imgui_internal.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
 using namespace GPE;
 using namespace GPM;
@@ -33,6 +33,7 @@ void Game::update(double unscaledDeltaTime, double deltaTime)
 
     bSys.update(float(deltaTime));
     world.updateSelfAndChildren();
+    GPE::Engine::getInstance()->physXSystem.drawDebugScene();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
@@ -68,7 +69,7 @@ void Game::render()
     ImGui::Render();
     */
     RenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
-    sceneRS.draw(Engine::getInstance()->resourceManager, sceneRS.defaultRenderPipeline());
+    sceneRS.render(sceneRS.defaultRenderPipeline());
 
     // draw UI
     // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -96,11 +97,11 @@ extern "C" void destroyGameInstance(GPE::AbstractGame* game)
 void loadTreeResource()
 {
     ResourceManagerType& rm = Engine::getInstance()->resourceManager;
-    Model::CreateArg arg;
+    Model::CreateArg     arg;
 
     SubModel subModel;
     subModel.pShader   = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
-                                         "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
+                                       "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
     subModel.pMaterial = loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial");
     subModel.pMesh     = loadMeshFile("./resources/meshs/g1.GPMesh");
 
@@ -114,11 +115,10 @@ void loadTreeResource()
     rm.add<Model::CreateArg>("TreeModel", arg);
 }
 
-
 void loadTree(GameObject& parent, unsigned int number)
 {
     const ResourceManagerType& rm = Engine::getInstance()->resourceManager;
-    GameObject::CreateArg forestArg{"Forest"};
+    GameObject::CreateArg      forestArg{"Forest"};
 
     const Model::CreateArg& treeModelArg = *rm.get<Model::CreateArg>("TreeModel");
     GameObject&             forest       = parent.addChild(forestArg);
@@ -139,7 +139,7 @@ void loadTree(GameObject& parent, unsigned int number)
 void loadSkyboxResource()
 {
     ResourceManagerType& rm = Engine::getInstance()->resourceManager;
-    Model::CreateArg arg;
+    Model::CreateArg     arg;
 
     SubModel subModel;
     subModel.pShader               = loadShaderFile("./resources/Skybox.GPShader");
@@ -154,7 +154,7 @@ void loadSkyboxResource()
 
 void loadSkyBox(GameObject& parent)
 {
-    const ResourceManagerType& rm = Engine::getInstance()->resourceManager;
+    const ResourceManagerType&  rm = Engine::getInstance()->resourceManager;
     const GameObject::CreateArg skyboxArgGameObject{"Skybox", {{.0f}, {.0f}, {10.f}}};
 
     parent.addChild(skyboxArgGameObject).addComponent<Model>(*rm.get<Model::CreateArg>("SkyboxModel"));
@@ -191,12 +191,12 @@ Game::~Game()
 }
 
 Game::Game()
-    : bSys {GPE::Engine::getInstance()->behaviourSystem},
+    : bSys{GPE::Engine::getInstance()->behaviourSystem},
       world{Engine::getInstance()->sceneManager.loadScene("main").getWorld()}
 {
     // ============= UI =============
     // TODO: Put in-game UI in a module
-    //initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
+    // initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
 
     // ============ RNG =============
     initSeed();
@@ -205,12 +205,12 @@ Game::Game()
     { // Keys
         InputManager& io = Engine::getInstance()->inputManager;
 
-        io.bindInput(GLFW_KEY_W,          "forward");
-        io.bindInput(GLFW_KEY_S,          "backward");
-        io.bindInput(GLFW_KEY_A,          "left");
-        io.bindInput(GLFW_KEY_D,          "right");
-        io.bindInput(GLFW_KEY_SPACE,      "jump");
-        io.bindInput(GLFW_KEY_ESCAPE,     "exit");
+        io.bindInput(GLFW_KEY_W, "forward");
+        io.bindInput(GLFW_KEY_S, "backward");
+        io.bindInput(GLFW_KEY_A, "left");
+        io.bindInput(GLFW_KEY_D, "right");
+        io.bindInput(GLFW_KEY_SPACE, "jump");
+        io.bindInput(GLFW_KEY_ESCAPE, "exit");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
         // io.bindInput(GLFW_KEY_KP_ADD,       "growUpCollider");
@@ -222,14 +222,14 @@ Game::Game()
 
     // =========== Scene ===========
     // world is already initialized
-    
+
     // Place content in the scene
-    GameObject* ground, * player, * testPhysX;
-    { 
-        const GameObject::CreateArg playerArg   {"Player",    TransformComponent::CreateArg{Vec3{0.f, 50.f, 0.f}}};
+    GameObject *ground, *player, *testPhysX;
+    {
+        const GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{Vec3{0.f, 50.f, 0.f}}};
         const GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{Vec3{0.f, 0.f, 50.f}}};
-        const GameObject::CreateArg groundArg   {"GroundArg", TransformComponent::CreateArg{Vec3{0.f}}};
-    
+        const GameObject::CreateArg groundArg{"GroundArg", TransformComponent::CreateArg{Vec3{0.f}}};
+
         // A ground, player, PhysX test
         ground    = &world.addChild(groundArg);
         player    = &world.addChild(playerArg);
@@ -250,8 +250,8 @@ Game::Game()
     }
 
     { // Light
-        const PointLight::CreateArg lightArg{{1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f},
-                                             {1.f, 1.f, 1.f, 1.f}, 1.0f, .0014f, 7e-6f};
+        const PointLight::CreateArg lightArg{
+            {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, .0014f, 7e-6f};
         player->addComponent<PointLight>(lightArg);
     }
 
@@ -260,29 +260,26 @@ Game::Game()
 
     // Physics
     { // ground
-        BoxCollider& box    = ground->addComponent<BoxCollider>();
-        RigidbodyStatic& rb = ground->addComponent<RigidbodyStatic>();
-        rb.collider         = &box;
-        box.isVisible       = true;
+        BoxCollider&     box = ground->addComponent<BoxCollider>();
+        RigidbodyStatic& rb  = ground->addComponent<RigidbodyStatic>();
+        rb.collider          = &box;
+        box.isVisible        = true;
         box.setDimensions({1000.f, 10.f, 1000.f});
     }
 
     { // testPhysX
         SphereCollider& sphere = testPhysX->addComponent<SphereCollider>();
-        sphere.isVisible = true;
+        sphere.isVisible       = true;
         sphere.setRadius(10.f);
         testPhysX->addComponent<RigidbodyStatic>().collider = &sphere;
     }
-
-    // Set to true to show debug shapes
-    GPE::Engine::getInstance()->physXSystem.drawDebugShapes = false;
 
     /*
     // FreeFly must be used to compile properly with GPGame.dll, to not be optimized out, for serialization.
     {
         rfk::Entity const* a = rfk::Database::getEntity(GPE::FreeFly::staticGetArchetype().id);
     }
-    
+
     rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs",
                 "./resources/shaders/fTextureOnly.fs", AMBIANTE_COLOR_ONLY);
 
@@ -303,9 +300,8 @@ Game::Game()
     */
 
     // =========== Timer ===========
-    Log& logger = *Log::getInstance();
-    const std::function<void()> timer = [&]()
-    {
+    Log&                        logger = *Log::getInstance();
+    const std::function<void()> timer  = [&]() {
         logger.log(stringFormat("FPS (fixedUpdate): %f\n", fixedUpdateFrameCount / FPLogDelay));
         logger.log(stringFormat("FPS (unFixedUpdate): %f\n\n", unFixedUpdateFrameCount / FPLogDelay));
         fixedUpdateFrameCount   = 0;
