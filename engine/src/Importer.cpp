@@ -381,6 +381,8 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
 Texture* GPE::loadTextureFile(const char* src)
 {
     std::filesystem::path srcPath(src);
+    if (Texture* const pTexture = Engine::getInstance()->resourceManager.get<Texture>(srcPath.filename().string()))
+        return pTexture;
     return &Engine::getInstance()->resourceManager.add<Texture>(srcPath.filename().string(), readTextureFile(src));
 }
 
@@ -478,6 +480,8 @@ Material* GPE::loadMaterialFile(const char* src)
         arg.pBaseColorTexture =
             loadTextureFile((std::filesystem::current_path() / importeArg.baseColorTexturePath).string().c_str());
 
+    if (Material* const pMat = Engine::getInstance()->resourceManager.get<Material>(srcPath.filename().string()))
+        return pMat;
     return &Engine::getInstance()->resourceManager.add<Material>(srcPath.filename().string(), arg);
 }
 
@@ -545,6 +549,9 @@ Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
 Mesh* GPE::loadMeshFile(const char* src)
 {
     std::filesystem::path srcPath(src);
+
+    if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(srcPath.filename().string()))
+        return pMesh;
     return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), readMeshFile(src));
 }
 
@@ -617,6 +624,9 @@ Shader* GPE::loadShaderFile(const char* src)
 {
     std::filesystem::path srcPath(src);
     ShaderCreateonfig     arg = readShaderFile(src);
+
+    if (Shader* const pShader = Engine::getInstance()->resourceManager.get<Shader>(srcPath.filename().string()))
+        return pShader;
     return &Engine::getInstance()->resourceManager.add<Shader>(
         srcPath.filename().string(), (std::filesystem::current_path() / arg.vertexShaderPath).string().c_str(),
         (std::filesystem::current_path() / arg.fragmentShaderPath).string().c_str(), arg.featureMask);
