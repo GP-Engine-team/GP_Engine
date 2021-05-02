@@ -59,8 +59,9 @@ void Game::render()
 
     ImGui::SetNextWindowSize({m_w, m_h});
     ImGui::SetNextWindowPos({.0f, .0f});
-
-    ImGui::Begin("UI", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration);
+    ImGui::Begin("UI", nullptr,
+                 ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking |
+                     ImGuiWindowFlags_NoScrollWithMouse);
 
     // Draw GUI
     GPE::Engine::getInstance()->behaviourSystem.onGUI();
@@ -211,6 +212,9 @@ Game::Game()
         io.bindInput(GLFW_KEY_ESCAPE, "exit");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
+
+        io.bindInput(GLFW_KEY_T /*GLFW_MOUSE_BUTTON_LEFT*/, "shoot");
+
         // io.bindInput(GLFW_KEY_KP_ADD,       "growUpCollider");
         // io.bindInput(GLFW_KEY_KP_SUBTRACT,  "growDownCollider");
 

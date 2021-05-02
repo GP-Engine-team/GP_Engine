@@ -32,9 +32,13 @@
     <ClInclude Include="include\SingletonsSync.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Bullet.cpp" />
+    <ClCompile Include="src\FireArme.cpp" />
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\GunMagazine.cpp" />
     <ClCompile Include="src\myFpsScript.cpp" />
     <ClCompile Include="src\myScript.cpp" />
+    <ClCompile Include="src\PPSH41.cpp" />
     <ClCompile Include="src\SingletonsSync.cpp" />
   </ItemGroup>
   <ItemGroup>

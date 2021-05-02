@@ -6,8 +6,12 @@
 
 #pragma once
 
-#include "Generated/myFpsScript.rfk.h"
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
+#include <FireArme/PPSH41.hpp>
+
+#include <memory>
+
+#include "Generated/myFpsScript.rfk.h"
 
 namespace GPE
 {
@@ -28,6 +32,8 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
         RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
 
+        std::unique_ptr<FireArme> m_fireArme = nullptr;
+
     public:
         MyFpsScript(GPE::GameObject & owner) noexcept;
         MyFpsScript() noexcept                         = default;
@@ -47,11 +53,13 @@ namespace GPG RFKNamespace()
         RFKMethod() void leave();
         RFKMethod() void sprintStart();
         RFKMethod() void sprintEnd();
+        RFKMethod() void shoot();
         // RFKMethod() void growUpSphereCollider  ();
         // RFKMethod() void growDownSphereCollider();
 
         void rotate(const GPM::Vec2& deltaDisplacement);
         void onGUI() final;
+        void update(double deltaTime) final;
         void fixedUpdate(double deltaTime) final;
 
         MyFpsScript_GENERATED

@@ -7,7 +7,11 @@
 #pragma once
 
 #include "Engine/Serialization/Inspect.hpp"
+#include <Engine/Serialization/DataInspector.hpp>
+
 #include "Engine/Serialization/Serialize.hpp"
+#include "Engine/Serialization/xml/xmlLoader.hpp"
+#include "Engine/Serialization/xml/xmlSaver.hpp"
 
 #include <FireArme/GunMagazine.hpp>
 
@@ -15,20 +19,25 @@
 
 namespace GPG RFKNamespace()
 {
-
     class RFKClass(Inspect(), Serialize()) FireArme
     {
     protected:
-        RFKField(Inspect(), Serialize()) GunMagazine m_magazineStored;
+        RFKField(Inspect()) GunMagazine m_magazineStored;
 
-        RFKField(Inspect(), Serialize()) float m_reloadingDuration  = 0.f; // In second
-        RFKField(Inspect(), Serialize()) float m_reloadingTimeCount = 0.f; // In second
-        RFKField(Inspect(), Serialize()) bool  m_isReloading        = false;
+        RFKField(Inspect()) float m_rateOfFire               = 0.f; // In second
+        RFKField(Inspect()) float m_reloadingBulletTimeCount = 0.f; // In second
+
+        RFKField(Inspect()) float m_reloadingDuration  = 0.f; // In second
+        RFKField(Inspect()) float m_reloadingTimeCount = 0.f; // In second
+
+        RFKField(Inspect()) bool m_isReloadingNextBullet = false;
+        RFKField(Inspect()) bool m_isReloading           = false;
 
     public:
-        FireArme(const GunMagazine& magazineStored, float reloadingDuration) noexcept
-            : m_magazineStored{magazineStored}, m_reloadingDuration{reloadingDuration}
+        FireArme(const GunMagazine& magazineStored, float reloadingDuration, float rateOfFire) noexcept
+            : m_magazineStored{magazineStored}, m_reloadingDuration{reloadingDuration}, m_rateOfFire{rateOfFire}
         {
+            m_reloadingBulletTimeCount = m_rateOfFire;
         }
 
         bool isMagazineEmpty()
@@ -38,16 +47,39 @@ namespace GPG RFKNamespace()
 
         void triggered()
         {
-            m_magazineStored.triggeredBullet();
+            if (!m_isReloadingNextBullet && !m_isReloading)
+            {
+                m_magazineStored.triggeredBullet();
+                m_isReloadingNextBullet    = true;
+                m_reloadingBulletTimeCount = 0.f;
+            }
         }
 
-        void reload(double deltaTime)
+        void update(double deltaTime)
         {
+            m_isReloadingNextBullet =
+                (m_reloadingBulletTimeCount += (deltaTime * m_isReloadingNextBullet)) < m_rateOfFire;
+
             if (m_isReloading)
             {
-                m_reloadingTimeCount += deltaTime;
-                m_isReloading = m_reloadingTimeCount >= m_reloadingDuration;
+                m_reloadingTimeCount += deltaTime * m_isReloading;
+                if (m_reloadingTimeCount >= m_reloadingDuration)
+                {
+                    m_isReloading        = false;
+                    m_reloadingTimeCount = 0.f;
+                    m_magazineStored.reload();
+                }
             }
+        }
+
+        void reload()
+        {
+            m_isReloading = true;
+        }
+
+        const GunMagazine& getMagazine()
+        {
+            return m_magazineStored;
         }
 
         FireArme() noexcept                      = default;

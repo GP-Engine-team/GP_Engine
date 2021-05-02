@@ -7,9 +7,14 @@
 #pragma once
 
 #include "Engine/Serialization/Inspect.hpp"
-#include "Engine/Serialization/Serialize.hpp"
 
+#include <Engine/Core/Tools/ClassUtility.hpp>
+#include <Engine/Serialization/DataInspector.hpp>
 #include <FireArme/Bullet.hpp>
+
+#include "Engine/Serialization/Serialize.hpp"
+#include "Engine/Serialization/xml/xmlLoader.hpp"
+#include "Engine/Serialization/xml/xmlSaver.hpp"
 
 #include "Generated/GunMagazine.rfk.h"
 
@@ -19,10 +24,10 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), Serialize()) GunMagazine
     {
     protected:
-        RFKField(Inspect(), Serialize()) Bullet m_bulletStored;
+        RFKField(Inspect()) Bullet m_bulletStored;
 
-        RFKField(Inspect(), Serialize()) unsigned int m_magazineCapacity = 0;
-        RFKField(Inspect(), Serialize()) unsigned int m_bulletsRemaining = 0;
+        RFKField(Inspect()) unsigned int m_magazineCapacity = 0;
+        RFKField(Inspect()) unsigned int m_bulletsRemaining = 0;
 
     public:
         GunMagazine(const Bullet& bulletStored, unsigned int magazineCapacity, unsigned int bulletsRemaining) noexcept
@@ -39,12 +44,15 @@ namespace GPG RFKNamespace()
             }
         }
 
+        GETTER_BY_CONST_REF(Capacity, m_magazineCapacity)
+        GETTER_BY_CONST_REF(BulletsRemaining, m_bulletsRemaining)
+
         void reload()
         {
             m_bulletsRemaining = m_magazineCapacity;
         }
 
-        bool isEmpty()
+        bool isEmpty() const
         {
             return m_bulletsRemaining == 0;
         }

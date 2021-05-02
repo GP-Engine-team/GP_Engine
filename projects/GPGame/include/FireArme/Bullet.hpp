@@ -6,18 +6,21 @@
 
 #pragma once
 
-#include "Engine/Serialization/Inspect.hpp"
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/Inspect.hpp>
+
 #include "Engine/Serialization/Serialize.hpp"
+#include "Engine/Serialization/xml/xmlLoader.hpp"
+#include "Engine/Serialization/xml/xmlSaver.hpp"
 
 #include "Generated/Bullet.rfk.h"
 
 namespace GPG RFKNamespace()
 {
-
     class RFKClass(Inspect(), Serialize()) Bullet
     {
     protected:
-        RFKField(Inspect(), Serialize()) float m_dammage = 0.f;
+        RFKField(Inspect()) float m_dammage = 0.f;
 
     public:
         Bullet(float dammage) noexcept : m_dammage{dammage}
