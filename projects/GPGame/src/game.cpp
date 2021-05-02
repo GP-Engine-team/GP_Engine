@@ -49,12 +49,11 @@ void Game::render()
     // TODO: Put in-game UI in a module
     // UI code can be easly move in update because it's not real render function. It however her for simplicity
     // Initialize a new frame
-    /*
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
 
-    ImGui::GetIO().DisplaySize =  {m_w, m_h};
-    ImGui::GetIO().MousePos    -= {m_x, m_y};
+    ImGui::GetIO().DisplaySize = {m_w, m_h};
+    ImGui::GetIO().MousePos -= {m_x, m_y};
 
     ImGui::NewFrame();
 
@@ -67,12 +66,12 @@ void Game::render()
     GPE::Engine::getInstance()->behaviourSystem.onGUI();
     ImGui::End();
     ImGui::Render();
-    */
+
     RenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
     sceneRS.render(sceneRS.defaultRenderPipeline());
 
     // draw UI
-    // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 extern "C" GPE::AbstractGame* createGameInstance()
@@ -183,11 +182,10 @@ void Game::setViewport(float x, float y, float w, float h)
 // TODO: Put in-game UI in a module
 Game::~Game()
 {
-    /*
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-    */
 }
 
 Game::Game()
@@ -196,7 +194,7 @@ Game::Game()
 {
     // ============= UI =============
     // TODO: Put in-game UI in a module
-    // initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
+    initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
 
     // ============ RNG =============
     initSeed();
