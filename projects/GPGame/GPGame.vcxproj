@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClInclude Include="include\FireArme\Bullet.hpp" />
     <ClInclude Include="include\FireArme\FireArme.hpp" />
-    <ClInclude Include="include\FireArme\FuturistWeapon.hpp" />
+    <ClInclude Include="include\FireArme\PPSH41.hpp" />
     <ClInclude Include="include\FireArme\GunMagazine.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\GameApiMacros.hpp" />

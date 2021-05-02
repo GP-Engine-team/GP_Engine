@@ -48,7 +48,7 @@
     <ClInclude Include="include\FireArme\GunMagazine.hpp">
       <Filter>Header Files\FireArme</Filter>
     </ClInclude>
-    <ClInclude Include="include\FireArme\FuturistWeapon.hpp">
+    <ClInclude Include="include\FireArme\PPSH41.hpp">
       <Filter>Header Files\FireArme</Filter>
     </ClInclude>
   </ItemGroup>

@@ -110,7 +110,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
                 materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-                importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
             }
         }
 
@@ -151,7 +151,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
                 materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-                importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
             }
         }
 
@@ -193,7 +193,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
                 materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-                importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
             }
         }
 
@@ -305,11 +305,7 @@ void GPE::importeTextureFile(const char* srcPath, const char* dstPath, const Tex
     }
     }
 
-    std::filesystem::path srcTexturePath(srcPath);
-    std::filesystem::path dstTexturePath = dstPath / srcTexturePath.stem();
-    dstTexturePath += ENGINE_TEXTURE_EXTENSION;
-
-    writeTextureFile(dstTexturePath.string().c_str(), arg);
+    writeTextureFile(dstPath, arg);
     stbi_set_flip_vertically_on_load(false);
 }
 
