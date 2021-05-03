@@ -100,8 +100,10 @@ private:
 
 public:
     void addLazy(void*& data);
+    void addLazy(void** data);
 
     void addPersistentPtr(void* ptr);
+    void addConvertedPtr(void* oldPtr, void* newPtr);
 
     // Pass a weak ptr pointing to an old value
     void updateLazyPtr(void*& weak);

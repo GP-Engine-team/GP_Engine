@@ -82,14 +82,39 @@ extern "C" void loadSceneFromPath(GPE::Scene* scene, const char* path)
 
     if (savedScene.type == GPE::SavedScene::EType::XML)
     {
-        //rapidxml::xml_document<>& doc = *std::get<GPE::SavedScene::XmlData>(savedScene->info).doc.get();
+        // Load xml doc
         rapidxml::xml_document<> doc;
         std::unique_ptr<char[]>  buffer;
         GPE::SavedScene::toDoc(doc, buffer, savedScene.data.c_str(), savedScene.data.size());
 
         XmlLoader context(doc);
-        context.addPersistentPtr(scene);
+        // Load each element
         scene->load(context);
+
+        // Tell that pointers to the old scene should be replaced by pointers to the new scene
+        context.addConvertedPtr(scene->getWorld().pOwnerScene, scene);
+
+        // Update old pointers into new ones
         context.updateLazyPtrs();
+
+        // Awake GameObjects
+        struct Rec
+        {
+            static void rec(GPE::GameObject* g)
+            {
+                for (GPE::Component* comp : g->getComponents())
+                {
+                    comp->awake();
+                }
+
+                g->getTransform().awake();
+
+                for (GPE::GameObject* g2 : g->children)
+                {
+                    rec(g2);
+                }
+            };
+        };
+        Rec::rec(&scene->getWorld()); // can't do recursives with lambdas, and std::function would be overkill
     }
 }

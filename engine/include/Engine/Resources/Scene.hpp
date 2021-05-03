@@ -13,6 +13,11 @@
 
 namespace GPE
 {
+class Scene;
+
+template <>
+void load(XmlLoader& context, GPE::Scene*& inspected, const XmlLoader::LoadInfo& info);
+
 class Scene
 {
     friend class SceneManager;

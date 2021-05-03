@@ -12,8 +12,8 @@
 #include "Editor/ExternalDeclarations.hpp"
 #include "Engine/Core/HotReload/ReloadableCpp.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
 #include "Engine/Serialization/IInspectable.hpp"
+#include "Engine/Serialization/InspectContext.hpp"
 
 // Third-party
 #include "GLFW/glfw3.h"
@@ -71,9 +71,27 @@ void Editor::renderMenuBar()
         // File
         if (ImGui::BeginMenu("File"))
         {
-            ImGui::MenuItem("New");
-            ImGui::MenuItem("Open");
-            ImGui::MenuItem("Save");
+            std::string fileName = "NewScene";
+            std::string path = (std::filesystem::current_path() / RESOURCES_DIR).string() + '/' + fileName + ".GPScene";
+
+            if (ImGui::MenuItem("New"))
+            {
+                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(fileName.c_str());
+                saveScene(&scene, path.c_str());
+            }
+
+            if (ImGui::MenuItem("Open"))
+            {
+                Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(fileName);
+                loadScene(&scene, path.c_str());
+                Engine::getInstance()->sceneManager.loadScene(fileName);
+            }
+
+            if (ImGui::MenuItem("Save"))
+            {
+                saveScene(m_sceneEditor.view.pScene, path.c_str());
+            }
+
             ImGui::EndMenu();
         }
 
@@ -146,15 +164,6 @@ void Editor::renderInspector()
         {
             GPE::InspectContext context;
             GPE::DataInspector::inspect(context, *m_inspectedObject);
-
-            //if (glfwGetKey(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_KEY_R) == GLFW_PRESS)
-            //{
-            //    save();
-            //}
-            //else if (glfwGetKey(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_KEY_T) == GLFW_PRESS)
-            //{
-            //    load();
-            //}
         }
         else
         {
@@ -220,35 +229,29 @@ void Editor::renderExplorer()
 
 void Editor::saveScene(GPE::Scene* scene, const char* path)
 {
+    GPE::Scene* currentScene = m_sceneEditor.view.pScene;
     m_sceneEditor.view.unbindScene();
 
-    auto a = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
-    a(scene, path, GPE::SavedScene::EType::XML);
+    auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
+    saveFunc(scene, path, GPE::SavedScene::EType::XML);
 
-    m_sceneEditor.view.bindScene(*scene);
+    m_sceneEditor.view.bindScene(*currentScene);
 }
 void Editor::loadScene(GPE::Scene* scene, const char* path)
 {
     m_sceneEditor.view.unbindScene();
     m_inspectedObject = nullptr;
 
-    auto a = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
-    a(scene, path);
+    auto loadFunc = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
+    loadFunc(scene, path);
 
     m_sceneEditor.view.bindScene(*scene);
 }
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor       {editedScene},
-      m_gameViewer        {},
-      m_logInspector      {},
-      m_projectContent    {},
-      m_sceneGraph        {},
-      m_gameControlBar    {},
-      m_window            {window},
-      m_inspectedObject   {nullptr},
-      m_showAppStyleEditor{false}
+    : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{}, m_sceneGraph{},
+      m_gameControlBar{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();

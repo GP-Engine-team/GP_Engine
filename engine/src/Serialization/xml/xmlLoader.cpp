@@ -67,9 +67,19 @@ void XmlLoader::addLazy(void*& data)
     lazyPtrs.push_back(&data);
 }
 
+void XmlLoader::addLazy(void** data)
+{
+    lazyPtrs.push_back(data);
+}
+
 void XmlLoader::addPersistentPtr(void* ptr)
 {
     alreadyLoadedPtrs.insert({ptr, LoadedPtr{LoadInfo{"persistentPtr", "void*", 0}, ptr}});
+}
+
+void XmlLoader::addConvertedPtr(void* oldPtr, void* newPtr)
+{
+    alreadyLoadedPtrs.insert({oldPtr, LoadedPtr{LoadInfo{"newPtr", "void*", 0}, newPtr}});
 }
 
 // Pass a weak ptr pointing to an old value
