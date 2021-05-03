@@ -130,6 +130,8 @@ void ParticleComponent::inspect(InspectContext& context)
 
     bool isDurationUsed = !std::isinf(m_duration);
 
+    DataInspector::inspect(context, m_isInGlobalPosition, "Is in Global Position");
+
     ImGui::PushEnabled(!isDurationUsed);
     DataInspector::inspect(context, m_emitRate, "EmitRate");
     ImGui::PopEnabled();
@@ -218,6 +220,32 @@ void ParticleComponent::start()
 {
     reset();
     m_canEmit = true;
+}
+
+void ParticleComponent::emit(unsigned int count)
+{
+    const size_t startId = m_particles.m_countAlive;
+    const size_t endId   = std::min(startId + count, m_particles.m_count - 1);
+
+    for (auto& gen : m_generators) // << gen loop
+        gen->generate(&m_particles, startId, endId);
+
+    if (m_isInGlobalPosition)
+    {
+        if (m_particles.m_pos)
+            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+                m_particles.m_pos[i] = getOwner().getTransform().getModelMatrix() * m_particles.m_pos[i];
+
+        if (m_particles.m_vel)
+        {
+            Mat3 rotScaleMat = toMatrix3(getOwner().getTransform().getModelMatrix());
+            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+                m_particles.m_vel[i].xyz = rotScaleMat * m_particles.m_vel[i].xyz;
+        }
+    }
+
+    for (size_t i = startId; i < endId; ++i) // << wake loop
+        m_particles.wake(i);
 }
 
 void ParticleComponent::initializeDefaultSetting()
@@ -332,7 +360,21 @@ void ParticleComponent::emit(double dt)
     const size_t endId           = std::min(startId + maxNewParticles, m_particles.m_count - 1);
 
     for (auto& gen : m_generators) // << gen loop
-        gen->generate(dt, &m_particles, startId, endId);
+        gen->generate(&m_particles, startId, endId);
+
+    if (m_isInGlobalPosition)
+    {
+        if (m_particles.m_pos)
+            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+                m_particles.m_pos[i] = getOwner().getTransform().getModelMatrix() * m_particles.m_pos[i];
+
+        if (m_particles.m_vel)
+        {
+            Mat3 rotScaleMat = toMatrix3(getOwner().getTransform().getModelMatrix());
+            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+                m_particles.m_vel[i].xyz = rotScaleMat * m_particles.m_vel[i].xyz;
+        }
+    }
 
     for (size_t i = startId; i < endId; ++i) // << wake loop
         m_particles.wake(i);
