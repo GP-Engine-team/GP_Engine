@@ -14,26 +14,34 @@
 #include <MyFpsScript.hpp>
 File_GENERATED
 
-    namespace GPG
+namespace GPG
 {
 
-    MyFpsScript::MyFpsScript(GPE::GameObject & owner) noexcept
-        : GPE::BehaviourComponent(owner), input{&owner.addComponent<GPE::InputComponent>()},
-          source{&owner.addComponent<GPE::AudioComponent>()},
+    MyFpsScript::MyFpsScript(GPE::GameObject& owner) noexcept
+        : GPE::BehaviourComponent(owner),
+          input     {&owner.addComponent<GPE::InputComponent>()},
+          source    {&owner.addComponent<GPE::AudioComponent>()},
           controller{&owner.addComponent<GPE::CharacterController>()}
     {
         enableFixedUpdate(true);
         enableUpdate(true);
         enableOnGUI(true);
 
-        input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
-        input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
-        input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
-        input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
-        input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
-        input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
-        input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
-        input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+        input->bindAction("forward",     EKeyMode::KEY_DOWN,     "Game", this, "forward");
+        input->bindAction("backward",    EKeyMode::KEY_DOWN,     "Game", this, "backward");
+        input->bindAction("left",        EKeyMode::KEY_DOWN,     "Game", this, "left");
+        input->bindAction("right",       EKeyMode::KEY_DOWN,     "Game", this, "right");
+        input->bindAction("jump",        EKeyMode::KEY_DOWN,     "Game", this, "jump");
+        input->bindAction("exit",        EKeyMode::KEY_PRESSED,  "Game", this, "leave");
+        input->bindAction("sprintStart", EKeyMode::KEY_PRESSED,  "Game", this, "sprintStart");
+        input->bindAction("sprintEnd",   EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+
+        {
+            GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
+            io.setCursorTrackingState(true);
+            io.setCursorLockState(true);
+        }
+
         // input->bindAction("growUpCollider",        EKeyMode::KEY_DOWN,     "Game", this, "growUpSphereCollider");
         // input->bindAction("growDownCollider",      EKeyMode::KEY_DOWN,     "Game", this, "growDownSphereCollider");
 
@@ -133,7 +141,7 @@ File_GENERATED
 
     void MyFpsScript::leave()
     {
-        glfwWindowShouldClose(GPE::Engine::getInstance()->window.getGLFWWindow());
+        glfwSetWindowShouldClose(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_TRUE);
     }
 
     void MyFpsScript::sprintStart()
@@ -197,6 +205,11 @@ File_GENERATED
 
     void MyFpsScript::fixedUpdate(double deltaTime)
     {
+        controller->update(deltaTime);
+    }
+
+    void MyFpsScript::update(double deltaTime)
+    {
         // TODO: find a fix to relieve the user from having to check this, or leave it like that?
         if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
         {
@@ -205,7 +218,5 @@ File_GENERATED
             if (deltaPos.x || deltaPos.y)
                 rotate(deltaPos);
         }
-        controller->update(deltaTime);
     }
-
 } // End of namespace GPG

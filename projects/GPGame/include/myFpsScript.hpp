@@ -60,6 +60,7 @@ public:
     void rotate                            (const GPM::Vec2& deltaDisplacement);
     void onGUI                             () final;
     void fixedUpdate                       (double deltaTime) final;
+    void update                            (double deltaTime) final;
 
     MyFpsScript_GENERATED
 };
