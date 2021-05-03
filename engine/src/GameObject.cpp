@@ -300,15 +300,16 @@ void GameObject::inspect(GPE::InspectContext& context)
     for (auto&& it = comps.begin(); it != comps.end();)
     {
         ImGui::PushID(&*it);
-        GPE::DataInspector::inspect(context, **it);
+
+        const bool isCollapsingHOpen = ImGui::CollapsingHeader((*it)->getArchetype().name.c_str());
 
         if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
         {
-            ImGui::OpenPopup("SceneGraphContext");
+            ImGui::OpenPopup("GameObjectContextePopup");
         }
 
         bool isItCanIterator = true;
-        if (ImGui::BeginPopup("SceneGraphContext"))
+        if (ImGui::BeginPopup("GameObjectContextePopup"))
         {
             if (ImGui::MenuItem("Remove component", NULL, false))
             {
@@ -318,6 +319,10 @@ void GameObject::inspect(GPE::InspectContext& context)
 
             ImGui::EndPopup();
         }
+
+        if (isCollapsingHOpen)
+            GPE::DataInspector::inspect(context, **it);
+
         ImGui::PopID();
         if (isItCanIterator)
             ++it;

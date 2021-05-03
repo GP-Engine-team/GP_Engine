@@ -268,8 +268,8 @@ void ParticleComponent::initializeDefaultSetting()
         m_generators.emplace_back(std::move(m_colGenerator));
 
         auto velGenerator           = std::make_unique<BasicVelGen>();
-        velGenerator->m_minStartVel = Vec4{-5.f, 2.2f, -5.f, 0.0f};
-        velGenerator->m_maxStartVel = Vec4{50.f, 25.f, 5.f, 0.0f};
+        velGenerator->m_minStartVel = Vec4{0.f, 0.f, -50.f, 0.0f};
+        velGenerator->m_maxStartVel = Vec4{25.f, 25.f, 5.f, 0.0f};
         m_generators.emplace_back(std::move(velGenerator));
 
         auto timeGenerator       = std::make_unique<BasicTimeGen>();

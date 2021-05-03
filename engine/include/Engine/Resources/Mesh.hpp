@@ -91,7 +91,6 @@ protected:
 
 public:
     Mesh(CreateIndiceBufferArg& arg) noexcept;
-    Mesh(CreateContiguousVerticesArg& arg) noexcept;
 
     Mesh(const Mesh& other) = delete;
     Mesh(Mesh&& other)      = default;
@@ -109,6 +108,8 @@ public:
     GETTER_BY_VALUE(VerticesCount, m_verticesCount);
     DEFAULT_GETTER_SETTER_BY_REF(BoundingVolumeType, m_boundingVolumeType);
 
+    static CreateIndiceBufferArg convert(CreateContiguousVerticesArg& arg);
+
     /**
      * @brief Create a plae object of radius 1 and return it mesh. Plane is centered on the origin
      *
@@ -116,17 +117,17 @@ public:
      * @param indexTexture          : index of texture if split
      * @return MeshConstructorArg
      */
-    static CreateContiguousVerticesArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f,
-                                                  float textureRepetition = 1.f, unsigned int indexTextureX = 0,
-                                                  unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y,
-                                                  bool isRectoVerso = false) noexcept;
+    static CreateIndiceBufferArg createQuad(float halfWidth = 0.5f, float halfHeight = 0.5f,
+                                            float textureRepetition = 1.f, unsigned int indexTextureX = 0,
+                                            unsigned int indexTextureY = 0, Axis towardAxis = Axis::Y,
+                                            bool isRectoVerso = false) noexcept;
 
     /**
      * @brief Create a Cube object of radius 1 and return it mesh. Cube is centered on the origin
      *
      * @return MeshConstructorArg
      */
-    static CreateContiguousVerticesArg createCube(float textureRepetition = 1.f) noexcept;
+    static CreateIndiceBufferArg createCube(float textureRepetition = 1.f) noexcept;
 
     /**
      * @brief Create a Sphere object of radius 1 and return it mesh. Sphere is centered on the origin
@@ -135,7 +136,7 @@ public:
      * @param longitudeCount    : number of vertex in longitude
      * @return MeshConstructorArg
      */
-    static CreateContiguousVerticesArg createSphere(int latitudeCount, int longitudeCount) noexcept;
+    static CreateIndiceBufferArg createSphere(int latitudeCount, int longitudeCount) noexcept;
 
     /**
      * @brief Create a Cylindre object
@@ -143,9 +144,9 @@ public:
      * @param prescision
      * @return MeshConstructorArg
      */
-    static CreateContiguousVerticesArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace
-                                                                                         // Culling (bad
-                                                                                         // normal)
+    static CreateIndiceBufferArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace
+                                                                                   // Culling (bad
+                                                                                   // normal)
 };
 
 template <>
