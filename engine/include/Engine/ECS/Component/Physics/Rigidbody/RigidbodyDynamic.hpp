@@ -17,12 +17,12 @@
 namespace GPE RFKNamespace()
 {
 
-    class RFKClass(Serialize(), ComponentGen) RigidbodyDynamic : public Component
+    class RFKClass(ComponentGen(), Inspect()) RigidbodyDynamic : public Component
     {
     public:
         RigidbodyDynamic(GameObject & owner) noexcept;
 
-        RigidbodyDynamic() noexcept                              = default;
+        RigidbodyDynamic() noexcept                              = delete;
         RigidbodyDynamic(const RigidbodyDynamic& other) noexcept = delete;
         RigidbodyDynamic(RigidbodyDynamic && other) noexcept     = default;
         RigidbodyDynamic& operator=(RigidbodyDynamic const& other) noexcept = delete;
@@ -37,7 +37,7 @@ namespace GPE RFKNamespace()
         Collider*              collider;
 
     private:
-        bool m_isKinematic = false;
+        RFKField(Inspect()) bool m_isKinematic = false;
 
     public:
         void setKinematic(bool state) noexcept;

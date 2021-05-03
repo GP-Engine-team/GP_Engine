@@ -1,12 +1,12 @@
-﻿#include <Engine/Engine.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
+﻿#include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
+#include <Engine/Engine.hpp>
 
 // Generated
 #include "Generated/BoxCollider.rfk.h"
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 using namespace physx;
 

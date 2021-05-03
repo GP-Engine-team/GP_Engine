@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/AudioComponent.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/Engine.hpp>
@@ -67,6 +68,12 @@ namespace GPG RFKNamespace()
             if (!m_isReloadingNextBullet && !m_isReloading)
             {
                 m_magazineStored.triggeredBullet();
+
+                GPE::Raycast ray;
+                ray.Fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(),
+                         10000.f);
+                /*if (ray.hit.getNbAnyHits())
+                    GPE::Log::getInstance()->log(ray.hit.getAnyHit(0).actor->getName());*/
                 m_shootSound->playSound("Shoot");
                 m_isReloadingNextBullet    = true;
                 m_reloadingBulletTimeCount = 0.f;
