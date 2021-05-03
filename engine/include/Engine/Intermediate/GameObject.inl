@@ -130,6 +130,7 @@ inline constexpr const std::string& GameObject::getTag() const noexcept
 
 inline std::list<GameObject*>::iterator GameObject::destroyChild(const std::list<GameObject*>::iterator& it) noexcept
 {
+    delete *it;
     return children.erase(it);
 }
 
