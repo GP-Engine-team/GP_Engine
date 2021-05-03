@@ -31,15 +31,22 @@ GameStartup::GameStartup()
     m_game = createGameInstance();
 
     GPE_ASSERT(m_game != nullptr, "m_game should be valid since we're running the game.");
-    gameFunctionsPtr.update = [&](double unscaledDeltaTime, double deltaTime) {
+
+    gameFunctionsPtr.update = [&](double unscaledDeltaTime, double deltaTime)
+    {
         GPE::Engine::getInstance()->inputManager.processInput();
         Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
 
         m_game->update(unscaledDeltaTime, deltaTime);
     };
-    gameFunctionsPtr.fixedUpdate =
-        std::bind(&AbstractGame::fixedUpdate, m_game, std::placeholders::_1, std::placeholders::_2);
-    gameFunctionsPtr.render = [&]() {
+
+    gameFunctionsPtr.fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+    {
+       m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+    };
+
+    gameFunctionsPtr.render = [&]()
+    {
         int h, w;
         GPE::Engine::getInstance()->window.getSize(w, h);
         m_game->setViewport(.0f, .0f, float(w), float(h));
@@ -52,12 +59,15 @@ GameStartup::GameStartup()
     };
 
     GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
+    GPE::Engine::getInstance()->inputManager.setInputMode("Game");
 }
 
 void GameStartup::update()
 {
     GPE::Engine::getInstance()->timeSystem.update(gameFunctionsPtr.fixedUpdate, gameFunctionsPtr.update,
                                                   gameFunctionsPtr.render);
+
+    isRunning = !glfwWindowShouldClose(GPE::Engine::getInstance()->window.getGLFWWindow());
 }
 
 GameStartup::~GameStartup()
