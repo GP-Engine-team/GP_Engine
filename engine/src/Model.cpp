@@ -221,30 +221,6 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
             inspected.pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(inspected);
         }
     }
-
-    /*
-    // Drop
-    if (ImGui::BeginDragDropTarget())
-    {
-        const ImGuiPayload* payload = ImGui::GetDragDropPayload();
-
-        if (payload->IsDataType("RESOURCE_PATH"))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-            size_t hasedExtention = hash(path.extension().string().c_str());
-            if (hasedExtention == hash(".obj"))
-            {
-                // Can drop
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RESOURCE_PATH"))
-                {
-                    IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-                    std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-                }
-            }
-        }
-    }*/
 }
 
 void Model::inspect(InspectContext& context)
@@ -284,6 +260,7 @@ void Model::inspect(InspectContext& context)
         size_t i = 0;
         for (auto&& it = m_subModels.begin(); it != m_subModels.end(); ++i)
         {
+            ImGui::PushID(&*it);
             const bool treeIsOpen =
                 ImGui::TreeNodeEx((void*)(intptr_t)i, nodeFlag, std::string("Element " + std::to_string(i)).c_str());
 
@@ -313,13 +290,13 @@ void Model::inspect(InspectContext& context)
             {
                 // Check if user inspect the current element
                 if (treeIsOpen)
-                {
                     DataInspector::inspect(context, *it);
-                    ImGui::TreePop();
-                }
 
                 ++it;
             }
+            if (treeIsOpen)
+                ImGui::TreePop();
+            ImGui::PopID();
         }
         ImGui::TreePop();
     }
