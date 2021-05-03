@@ -166,9 +166,6 @@
     <ClCompile Include="src\RenderTexture.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ResourceImporter.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\Scene.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -519,9 +516,6 @@
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
       <Filter>include\Resources\Importer</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp">
-      <Filter>include\Resources\Importer</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Resources\Script\FreeFly.hpp">
       <Filter>include\Resources\Script</Filter>
     </ClInclude>
@@ -683,6 +677,24 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Tools\BinaryMask.hpp">
       <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\al.h">
+      <Filter>third_party\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\alc.h">
+      <Filter>third_party\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\alext.h">
+      <Filter>third_party\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\efx-creative.h">
+      <Filter>third_party\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\efx-presets.h">
+      <Filter>third_party\AL</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\efx.h">
+      <Filter>third_party\AL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -910,6 +922,9 @@
     </Filter>
     <Filter Include="include\Resources\Particle">
       <UniqueIdentifier>{ec495029-fcd3-4b29-aec8-279a8239fbf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\AL">
+      <UniqueIdentifier>{c431c26f-2921-4283-ae89-c214829977e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
