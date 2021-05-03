@@ -25,7 +25,7 @@ GameObject::~GameObject() noexcept
     {
         delete child;
     }
-    
+
     for (auto&& component : m_pComponents)
     {
         delete component;
@@ -285,7 +285,7 @@ std::string GameObject::getAbsolutePath() const noexcept
 void GameObject::detach(const GameObject::Children::iterator& itToParentPtr) noexcept
 {
     m_parent->children.erase(itToParentPtr);
-    m_parent = nullptr;
+    m_parent    = nullptr;
     pOwnerScene = nullptr;
 }
 
@@ -297,11 +297,30 @@ void GameObject::inspect(GPE::InspectContext& context)
 
     std::list<Component*>& comps = getComponents();
 
-    for (Component* comp : comps)
+    for (auto&& it = comps.begin(); it != comps.end();)
     {
-        ImGui::PushID(comp);
-        GPE::DataInspector::inspect(context, *comp);
+        ImGui::PushID(&*it);
+        GPE::DataInspector::inspect(context, **it);
+
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        {
+            ImGui::OpenPopup("SceneGraphContext");
+        }
+
+        bool isItCanIterator = true;
+        if (ImGui::BeginPopup("SceneGraphContext"))
+        {
+            if (ImGui::MenuItem("Remove component", NULL, false))
+            {
+                it              = destroyComponent(*it);
+                isItCanIterator = false;
+            }
+
+            ImGui::EndPopup();
+        }
         ImGui::PopID();
+        if (isItCanIterator)
+            ++it;
     }
 }
 
@@ -348,12 +367,12 @@ GameObject* GameObject::getGameObjectCorrespondingToID(unsigned int ID) noexcept
     return nullptr;
 }
 
-void* GameObject::operator new (std::size_t size)
+void* GameObject::operator new(std::size_t size)
 {
     return GPE::DataChunk<GameObject>::getInstance()->add();
 }
 
-void GameObject::operator delete (void* ptr)
+void GameObject::operator delete(void* ptr)
 {
     GPE::DataChunk<GameObject>::getInstance()->destroy(static_cast<GameObject*>(ptr));
 }
