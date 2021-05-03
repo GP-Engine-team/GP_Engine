@@ -24,7 +24,5 @@ std::string docToString(const xml_document<>& doc)
 {
     std::stringstream ss;
     ss << doc;
-    std::string s;
-    ss >> s;
-    return s;
+    return ss.str();
 }

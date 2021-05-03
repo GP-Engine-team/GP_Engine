@@ -25,6 +25,16 @@ void SavedScene::loadFromMemory(const char* buffer, size_t loadedSize, EType loa
     }
 }
 
+void SavedScene::toDoc(rapidxml::xml_document<>& doc, std::unique_ptr<char[]>& buffer, const char* data,
+                       size_t loadedSize)
+{
+    buffer = std::make_unique<char[]>(loadedSize + 1);
+    memcpy(buffer.get(), data, loadedSize);
+    buffer[loadedSize] = '\0';
+
+    doc.parse<0>(buffer.get());
+}
+
 std::string SavedScene::saveToMemory(EType& savedType)
 {
     savedType = type;

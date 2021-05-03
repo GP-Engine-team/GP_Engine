@@ -88,6 +88,6 @@ Shader*            loadShaderFile(const char* src);
 
 void                  writeSceneFile(const char* dst, const SavedScene::CreateArg& arg);
 SavedScene::CreateArg readSceneFile(const char* src);
-SavedScene*           loadSceneFile(const char* src);
+SavedScene::CreateArg loadSceneFile(const char* src);
 
 } // namespace GPE

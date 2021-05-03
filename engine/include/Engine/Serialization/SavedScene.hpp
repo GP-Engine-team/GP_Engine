@@ -47,6 +47,8 @@ public:
 
     void        loadFromMemory(const char* data, size_t loadedSize, EType loadedType);
     std::string saveToMemory(EType& savedType);
+
+    static void toDoc(rapidxml::xml_document<>& doc, std::unique_ptr<char[]>& buffer, const char* data, size_t loadedSize);
 };
 
 } // namespace GPE

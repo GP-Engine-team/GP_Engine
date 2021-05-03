@@ -582,9 +582,9 @@ SavedScene::CreateArg GPE::readSceneFile(const char* src)
     return arg;
 }
 
-SavedScene* GPE::loadSceneFile(const char* src)
+SavedScene::CreateArg GPE::loadSceneFile(const char* src)
 {
     std::filesystem::path srcPath(src);
-    SavedScene::CreateArg arg = readSceneFile(src);
-    return &Engine::getInstance()->resourceManager.add<SavedScene>(srcPath.filename().string(), arg);
+    return readSceneFile(src);
+    //return &Engine::getInstance()->resourceManager.add<SavedScene>(srcPath.filename().string(), arg);
 }

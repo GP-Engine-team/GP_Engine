@@ -78,11 +78,15 @@ extern "C" void saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedS
 
 extern "C" void loadSceneFromPath(GPE::Scene* scene, const char* path)
 {
-    GPE::SavedScene* savedScene = GPE::loadSceneFile(path);
+    GPE::SavedScene::CreateArg savedScene = GPE::loadSceneFile(path);
 
-    if (savedScene->type == GPE::SavedScene::EType::XML)
+    if (savedScene.type == GPE::SavedScene::EType::XML)
     {
-        rapidxml::xml_document<>& doc = *std::get<GPE::SavedScene::XmlData>(savedScene->info).doc.get();
+        //rapidxml::xml_document<>& doc = *std::get<GPE::SavedScene::XmlData>(savedScene->info).doc.get();
+        rapidxml::xml_document<> doc;
+        std::unique_ptr<char[]>  buffer;
+        GPE::SavedScene::toDoc(doc, buffer, savedScene.data.c_str(), savedScene.data.size());
+
         XmlLoader context(doc);
         context.addPersistentPtr(scene);
         scene->load(context);

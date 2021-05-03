@@ -422,12 +422,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 {
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                 {
-
-                    //GPE::SavedScene* savedScene =
-                    //    loadSceneFile(pCurrentDirectory->files[i].path.string().c_str()); // loads to ram
-
-                    Scene& scene = Engine::getInstance()->sceneManager.addEmpty("New Scene");
+                    std::string sceneName = "New Scene";
+                    Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(sceneName);
                     editor->loadScene(&scene, pCurrentDirectory->files[i].path.string().c_str());
+                    Engine::getInstance()->sceneManager.loadScene(sceneName);
                     break;
                 }
 
@@ -531,6 +529,23 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 materialDir /= materialName;
 
                 writeMaterialFile(materialDir.string().c_str());
+            }
+
+            if (ImGui::MenuItem("Scene"))
+            {
+                std::filesystem::path sceneDir  = pCurrentDirectory->path;
+                std::filesystem::path sceneName = "NewScene" ENGINE_SCENE_EXTENSION;
+
+                int id = 0;
+                while (pCurrentDirectory->containFile(sceneName))
+                {
+                    sceneName = stringFormat("NewScene(%i)" ENGINE_SCENE_EXTENSION, ++id);
+                }
+
+                sceneDir /= sceneName;
+
+                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(sceneName.stem().string().c_str());
+                editor->saveScene(&scene, sceneDir.string().c_str());
             }
 
             ImGui::EndMenu();
