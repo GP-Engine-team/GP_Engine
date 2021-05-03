@@ -1,3 +1,5 @@
+namespace GPE
+{
 inline Component::Component(GameObject& owner) noexcept : m_gameObject{&owner}
 {
 }
@@ -17,7 +19,8 @@ constexpr inline bool Component::isActivated() const noexcept
     return m_isActivated;
 }
 
-constexpr inline void Component::setActive(bool newState) noexcept
+inline void Component::setActive(bool newState) noexcept
 {
     m_isActivated = newState;
 }
+} // namespace GPE

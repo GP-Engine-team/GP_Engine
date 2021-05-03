@@ -2,16 +2,17 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Intermediate/DataChunk.hpp" //DataChunk
 #include "imgui.h"
-#include <iostream>
 #include <istream>
 #include <sstream>
 
 #include "Engine/Intermediate/GameObject.hpp"
-#include "Generated/GameObject.rfk.h"
+#include "Engine/Resources/Scene.hpp"
 
+// Generated
+#include "Generated/GameObject.rfk.h"
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 unsigned int GameObject::m_currentID = 0;
@@ -20,12 +21,15 @@ GameObject::~GameObject() noexcept
 {
     m_pTransform->destroy();
 
-    /*
+    for (GameObject* child : children)
+    {
+        delete child;
+    }
+    
     for (auto&& component : m_pComponents)
     {
-        component->destroy();
+        delete component;
     }
-    */
 }
 
 void GameObject::moveTowardScene(Scene& newOwner) noexcept
@@ -260,7 +264,7 @@ std::list<Component*>::iterator GameObject::destroyComponent(Component* pCompone
             return m_pComponents.erase(it);
         }
     }
-    
+
     return m_pComponents.end();
 }
 
@@ -276,6 +280,13 @@ std::string GameObject::getAbsolutePath() const noexcept
     }
 
     return path;
+}
+
+void GameObject::detach(const GameObject::Children::iterator& itToParentPtr) noexcept
+{
+    m_parent->children.erase(itToParentPtr);
+    m_parent = nullptr;
+    pOwnerScene = nullptr;
 }
 
 void GameObject::inspect(GPE::InspectContext& context)
@@ -335,4 +346,14 @@ GameObject* GameObject::getGameObjectCorrespondingToID(unsigned int ID) noexcept
     }
 
     return nullptr;
+}
+
+void* GameObject::operator new (std::size_t size)
+{
+    return GPE::DataChunk<GameObject>::getInstance()->add();
+}
+
+void GameObject::operator delete (void* ptr)
+{
+    GPE::DataChunk<GameObject>::getInstance()->destroy(static_cast<GameObject*>(ptr));
 }

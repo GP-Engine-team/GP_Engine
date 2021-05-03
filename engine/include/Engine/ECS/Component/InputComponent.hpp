@@ -10,12 +10,12 @@
 #include <string>
 #include <unordered_map>
 
-#include "Engine/Core/Tools/FunctionPtr.hpp"
-#include "Engine/ECS/Component/Component.hpp"
-#include "Engine/Serialization/ComponentGen.h"
+#include <Engine/Core/Tools/FunctionPtr.hpp>
+#include <Engine/ECS/Component/Component.hpp>
+#include <Engine/Serialization/ComponentGen.h>
 
 // Generated
-#include "Generated/InputComponent.rfk.h"
+#include <Generated/InputComponent.rfk.h>
 
 enum class EKeyMode
 {
@@ -33,7 +33,7 @@ enum class EInputMode
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(ComponentGen()) InputComponent : public Component
+    class RFKClass(ComponentGen(), Serialize()) InputComponent : public Component
     {
     public:
         InputComponent(GameObject & owner);
@@ -72,6 +72,13 @@ namespace GPE RFKNamespace()
          * @param action
          */
         void fireAction(const std::string& action) noexcept;
+
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
 
         InputComponent_GENERATED
     };

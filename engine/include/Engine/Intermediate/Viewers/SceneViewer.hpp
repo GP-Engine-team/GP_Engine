@@ -14,15 +14,17 @@ namespace GPE
 class FreeFly;
 class Scene;
 class Camera;
+class InputComponent;
 
 class SceneViewer
 {
 // ==== Data members ====
 public:
-    GameObject    cameraOwner;
-    FreeFly&      freeFly;
-    Camera&       camera;
-    Scene*        pScene;
+    GameObject*     cameraOwner;
+    FreeFly&        freeFly;
+    Camera&         camera;
+    InputComponent& inputs;
+    Scene*          pScene;
 
     // Keep track of cameraOwner, from the perspective of
     // its parent's list of child
@@ -45,12 +47,13 @@ public:
     int           height;
 
 private:
-    bool          m_captureInputs;
+    bool          m_capturingInputs;
     
 // ==== Methods ====
 private:
     void initializeFramebuffer();
     void initializePickingFBO ();
+    void initializeInputs();
 
 public:
     SceneViewer(GPE::Scene& viewed, int width = 1, int height = 1);
@@ -60,6 +63,7 @@ public:
 
     void         resize                (int width, int height);
     void         bindScene             (Scene& scene);
+    void         unbindScene           ();
     void         render                ()                       const;
     void         captureInputs         (bool shouldCapture);
 };

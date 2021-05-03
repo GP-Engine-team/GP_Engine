@@ -7,8 +7,7 @@ namespace GPE
 
 #ifdef _WIN64
 
-std::filesystem::path openFileExplorerAndGetAbsoluePath(LPCWSTR                        title,
-                                                        std::vector<COMDLG_FILTERSPEC> filter)
+std::filesystem::path openFileExplorerAndGetAbsoluePath(LPCWSTR title, std::vector<COMDLG_FILTERSPEC> filter)
 {
     std::filesystem::path src;
 
@@ -30,7 +29,7 @@ std::filesystem::path openFileExplorerAndGetAbsoluePath(LPCWSTR                 
                 return src;
             }
 
-            if (FAILED(pFileOpen->SetFileTypes(filter.size(), filter.data())))
+            if (FAILED(pFileOpen->SetFileTypes(static_cast<UINT>(filter.size()), filter.data())))
             {
                 FUNCT_ERROR("Invalid filter to init windows file explorer");
                 return src;
@@ -65,12 +64,11 @@ std::filesystem::path openFileExplorerAndGetAbsoluePath(LPCWSTR                 
     return src;
 }
 
-std::filesystem::path openFileExplorerAndGetRelativePath(LPCWSTR                        title,
-                                                         std::vector<COMDLG_FILTERSPEC> filter)
+std::filesystem::path openFileExplorerAndGetRelativePath(LPCWSTR title, std::vector<COMDLG_FILTERSPEC> filter)
 {
     return std::filesystem::relative(openFileExplorerAndGetAbsoluePath(title, filter));
 }
 
 #endif
 
-}
+} // namespace GPE

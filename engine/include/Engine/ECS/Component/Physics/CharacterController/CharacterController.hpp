@@ -19,7 +19,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(ComponentGen(), Inspect()) CharacterController : public Component
+    class RFKClass(ComponentGen(), Inspect(), Serialize()) CharacterController : public Component
     {
     public:
         CharacterController(GameObject & owner) noexcept;
@@ -30,7 +30,7 @@ namespace GPE RFKNamespace()
         CharacterController& operator=(CharacterController const& other) noexcept = delete;
         CharacterController& operator=(CharacterController&& other) noexcept = delete;
 
-        void update(float deltaTime) noexcept;
+        void update(double deltaTime) noexcept;
 
         virtual ~CharacterController() noexcept;
 

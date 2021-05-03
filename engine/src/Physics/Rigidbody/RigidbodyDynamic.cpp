@@ -1,16 +1,17 @@
-﻿#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
-#include <Engine/ECS/System/PhysXSystem.hpp>
+﻿#include <Engine/ECS/System/PhysXSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <GPM/Vector3.hpp>
 #include <PxPhysics.h>
+
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 
 // Generated
 #include "Generated/RigidbodyDynamic.rfk.h"
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace physx;
 
 RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner)

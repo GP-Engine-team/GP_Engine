@@ -80,3 +80,9 @@ void SceneManager::removeScene(const std::string& sceneName)
             m_pCurrentScene = &m_scenes.begin()->second;
     }
 }
+
+
+void SceneManager::removeScene(Scene& scene)
+{
+    removeScene(scene.m_name);
+}

@@ -1,25 +1,24 @@
 ﻿#include "Engine/ECS/Component/InputComponent.hpp"
-
-File_GENERATED
-
 #include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Engine.hpp"
 
 #include <functional>
+
+#include "Generated/InputComponent.rfk.h"
+File_GENERATED
 
 using namespace std;
 using namespace GPE;
 
 InputComponent::InputComponent(GameObject& owner) : Component(owner)
 {
-    m_key = Engine::getInstance()->inputManager.addComponent(this);
+    m_key = Engine::getInstance()->inputManager.addComponent(*this);
 }
 
-InputComponent::InputComponent() 
+InputComponent::InputComponent()
 {
-    m_key = Engine::getInstance()->inputManager.addComponent(this);
+    m_key = Engine::getInstance()->inputManager.addComponent(*this);
 }
-
 
 InputComponent::InputComponent(InputComponent&& other) : Component(other.getOwner())
 {
@@ -42,7 +41,6 @@ InputComponent& InputComponent::operator=(InputComponent&& other)
 InputComponent::~InputComponent()
 {
     Engine::getInstance()->inputManager.removeComponent(m_key);
-    DataChunk<InputComponent>::getInstance()->destroy(this);
 }
 
 void InputComponent::fireAction(const std::string& action) noexcept
@@ -53,4 +51,13 @@ void InputComponent::fireAction(const std::string& action) noexcept
         GPE::Function myfunc = it->second;
         myfunc();
     }
+}
+
+void InputComponent::setActive(bool newState) noexcept
+{
+    m_isActivated = newState;
+    if (m_isActivated)
+        m_key = Engine::getInstance()->inputManager.addComponent(*this);
+    else
+        Engine::getInstance()->inputManager.removeComponent(m_key);
 }

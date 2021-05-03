@@ -1,26 +1,28 @@
-﻿#include "Editor/Editor.hpp"
+﻿#include <Editor/EditorStartup.hpp>
 
 // Engine
-#include "Engine/Core/Game/AbstractGame.hpp"
-#include "Engine/Core/HotReload/ReloadableCpp.hpp"
-#include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/Engine.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Scene.hpp"
-#include "Engine/Resources/SceneManager.hpp"
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/IInspectable.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
+#include <Engine/Core/Game/AbstractGame.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+#include <Engine/ECS/Component/Camera.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Scene.hpp>
+#include <Engine/Resources/SceneManager.hpp>
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/IInspectable.hpp>
+#include <Engine/Serialization/InspectContext.hpp>
 
 // Editor
-#include "Editor/ExternalDeclarations.hpp"
+#include <Editor/ExternalDeclarations.hpp>
 
 // Third-party
-#include "GLFW/glfw3.h"
-#include "glad/glad.h"
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
+
+using namespace GPE;
 
 // Hint to use GPU if available
 extern "C"
@@ -35,11 +37,6 @@ namespace Editor
 using namespace GPE;
 
 /* ========================== Private methods ========================== */
-GPE::Scene& Editor::loadDefaultScene() const
-{
-    return GPE::Engine::getInstance()->sceneManager.loadScene("Empty scene");
-}
-
 void Editor::setupDearImGui()
 {
     ImGuiIO& io = ImGui::GetIO();
@@ -121,9 +118,9 @@ void Editor::renderMenuBar()
     }
 }
 
-void Editor::renderGameControlBar()
+void Editor::renderGameControlBar(EditorStartup& startup)
 {
-    m_gameControlBar.render(*this);
+    m_gameControlBar.render(startup);
 }
 
 void Editor::renderLevelEditor()
@@ -131,10 +128,9 @@ void Editor::renderLevelEditor()
     m_sceneEditor.render(m_inspectedObject);
 }
 
-
-void Editor::renderGameView(GPE::AbstractGame* game)
+void Editor::renderGameView(EditorStartup& startup)
 {
-    m_gameViewer.render(game);
+    m_gameViewer.render(startup);
 }
 
 void Editor::renderInspector()
@@ -146,22 +142,35 @@ void Editor::renderInspector()
             GPE::InspectContext context;
             GPE::DataInspector::inspect(context, *m_inspectedObject);
 
-            // static float s = 0;
+            //static float s = 0;
 
-            // s += 1.f/30.f;
+            //s += 1.f/30.f;
 
-            // if (s > 9)
+            //if (s > 3)
             //{
+            //    GPE::Scene* scene = m_sceneEditor.view.pScene;
+
+            //    m_sceneEditor.view.unbindScene();
+
             //    rapidxml::xml_document<> doc;
             //    XmlSaver saver(doc);
-            //    auto a = GET_PROCESS((*m_reloadableCpp), saveCurrentScene);
-            //    a(saver);
+            //    auto a = GET_PROCESS((*m_reloadableCpp), saveScene);
+            //    a(saver, scene);
             //    saver.print();
+
+            //    //GPE::SceneManager& sm      = GPE::Engine::getInstance()->sceneManager;
+            //    //std::string        newName = sm.getCurrentScene()->getName() + "_copy";
+            //    //sm.addEmpty(newName);
+            //    //sm.loadScene(newName);
+            //    setSceneInEdition(*scene);
+
             //    XmlLoader loader(doc);
-            //    auto b = GET_PROCESS((*m_reloadableCpp), loadCurrentScene);
-            //    b(loader);
+            //    auto      b = GET_PROCESS((*m_reloadableCpp), loadScene);
+            //    b(loader, scene);
             //    s = 0;
             //    m_inspectedObject = nullptr;
+
+            //    m_sceneEditor.view.bindScene(*scene);
             //}
         }
         else
@@ -240,28 +249,26 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
-
-    Log::getInstance()->logCallBack = [&](const char* msg) {
-        // Log in console
-        std::cout << msg;
-
-        // Log in log inspector
-        if (ImGui::GetCurrentContext() != nullptr)
-            m_logInspector.addLog(msg);
-    };
 }
 
 void Editor::setSceneInEdition(GPE::Scene& scene)
 {
     m_sceneEditor.view.bindScene(scene);
+    GPE::Engine::getInstance()->inputManager.setInputMode("Editor");
 }
 
-void Editor::update(GPE::AbstractGame* game)
+void Editor::update(EditorStartup& startup)
 {
+    auto syncImGui  = GET_PROCESS((*m_reloadableCpp), setImguiCurrentContext);
+    auto syncGameUI = GET_PROCESS((*m_reloadableCpp), getGameUIContext);
+
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
+    ImGuiContext* gameContext = syncGameUI();
+    syncImGui(ImGui::GetCurrentContext());
 
     // Start drawing
     if (m_showAppStyleEditor)
@@ -269,25 +276,27 @@ void Editor::update(GPE::AbstractGame* game)
         renderStyleEditor();
     }
 
+    // Editor
     renderMenuBar();
 
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
-    renderGameControlBar();
+    renderGameControlBar(startup);
     renderLevelEditor();
-    renderGameView(game);
     renderSceneGraph();
     renderExplorer();
     renderInspector();
 
     if (m_showImGuiDemoWindows)
         ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
+
+    // Game
+    syncImGui(gameContext);
+    renderGameView(startup);
 }
 
-void Editor::render(GPE::AbstractGame* game)
+void Editor::render()
 {
-    update(game);
-
     ImGui::Render();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0u);
@@ -297,6 +306,7 @@ void Editor::render(GPE::AbstractGame* game)
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
+
 
 bool Editor::isRunning()
 {

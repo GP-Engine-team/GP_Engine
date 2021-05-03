@@ -5,7 +5,7 @@ unsigned int Shader::getID() const noexcept
     return m_id;
 };
 
-unsigned char Shader::getFeature() const noexcept
+uint16_t Shader::getFeature() const noexcept
 {
     return m_featureMask;
 }

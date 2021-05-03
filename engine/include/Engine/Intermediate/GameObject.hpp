@@ -64,7 +64,7 @@ namespace GPE RFKNamespace()
         bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
     public:
-        Scene*                                       pOwnerScene;
+        RFKField(Serialize()) Scene*                 pOwnerScene = nullptr;
         RFKField(Serialize()) std::list<GameObject*> children = {};
 
     public:
@@ -240,7 +240,14 @@ namespace GPE RFKNamespace()
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 
+        [[nodiscard]] void detach(const GameObject::Children::iterator& itToParentPtr) noexcept;
+
          void inspect(GPE::InspectContext& context) override;
+
+         static void* operator new(std::size_t size);
+
+         static void operator delete(void* ptr);
+
 
         GameObject_GENERATED
     };

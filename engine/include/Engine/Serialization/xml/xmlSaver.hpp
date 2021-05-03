@@ -101,7 +101,20 @@ public:
 
     template<typename T>
     bool savePtrData(T* data, const SaveInfo& info);
+
+    void addWeakPtr(void* ptr)
+    {
+        alreadySavedPtrs.insert(LoadedPtr{SaveInfo{"weakPtr", "unknown", 0}, ptr});
+    }
 };
+
+inline XmlSaver::SaveInfo fieldToSaveInfo(rfk::Field const& field)
+{
+    if (field.type.archetype == nullptr)
+        return XmlSaver::SaveInfo{field.name, "unknown", 0};
+    else
+        return XmlSaver::SaveInfo{field.name, field.type.archetype->name, field.type.archetype->id};
+}
 
 namespace GPE
 {
@@ -135,7 +148,7 @@ void save(XmlSaver& context, T* const& inspected, const rfk::Field& info)
     context.push(info);
 
     context.saveAsString(std::to_string(size_t(inspected)), info);
-    context.savePtrData(inspected, XmlSaver::SaveInfo{info.name, info.type.archetype->name, info.type.archetype->id});
+    context.savePtrData(inspected, fieldToSaveInfo(info));
 
     context.pop();
 }
@@ -206,6 +219,11 @@ bool XmlSaver::savePtrData(T* data, const SaveInfo& info)
         std::stack<Node*> otherContextHierarchy;
         otherContextHierarchy.push(&doc);
         std::swap(otherContextHierarchy, hierarchy);
+
+        if constexpr (std::is_base_of<rfk::Object, T>::value)
+        {
+            assert(info.typeId != 0);
+        }
 
         SaveInfo newInfo{std::to_string(std::size_t(data)), info.typeName, info.typeId};
         GPE::save(*this, *data, newInfo);

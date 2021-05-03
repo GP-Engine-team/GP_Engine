@@ -6,9 +6,8 @@
 
 #pragma once
 
-#include "SceneEditor.hpp"
-#include "GameViewer.hpp"
 #include "GameControlBar.hpp"
+#include "GameViewer.hpp"
 #include "LogInspector.hpp"
 #include "ProjectContent.hpp"
 #include "SceneEditor.hpp"
@@ -18,14 +17,18 @@ struct GLFWwindow;
 
 namespace GPE
 {
-class Scene;
+class AbstractGame;
 class IInspectable;
 class GameObject;
 class ReloadableCpp;
+class Scene;
 } // namespace GPE
+
 
 namespace Editor
 {
+
+class EditorStartup;
 
 class Editor
 {
@@ -36,28 +39,26 @@ private:
     ProjectContent     m_projectContent;
     SceneGraph         m_sceneGraph;
     GameControlBar     m_gameControlBar;
-    GLFWwindow*        m_window               = nullptr;
-    GPE::IInspectable* m_inspectedObject      = nullptr;
-    bool               m_showAppStyleEditor   = false;
-    bool               m_showImGuiDemoWindows = false;
+    GLFWwindow*        m_window;
+    GPE::IInspectable* m_inspectedObject;
+    bool               m_showAppStyleEditor;
+    bool               m_showImGuiDemoWindows;
 
 public:
     GPE::ReloadableCpp* m_reloadableCpp = nullptr;
 
 private:
-    GPE::Scene& loadDefaultScene() const;
+    void setupDearImGui      ();
 
-    void setupDearImGui();
-
-    void renderLog();
-    void renderStyleEditor();
-    void renderMenuBar();
-    void renderGameControlBar();
-    void renderLevelEditor();
-    void renderGameView(GPE::AbstractGame* game);
-    void renderInspector();
-    void renderSceneGraph();
-    void renderExplorer();
+    void renderLog           ();
+    void renderStyleEditor   ();
+    void renderMenuBar       ();
+    void renderGameControlBar(EditorStartup& startup);
+    void renderLevelEditor   ();
+    void renderGameView      (EditorStartup& startup);
+    void renderInspector     ();
+    void renderSceneGraph    ();
+    void renderExplorer      ();
 
     /**
      * @brief Function that crate scene graph recursively for each node in imGui window.
@@ -71,8 +72,8 @@ public:
     Editor(GLFWwindow* window, GPE::Scene& editedScene);
 
     void setSceneInEdition(GPE::Scene& scene);
-    void update(GPE::AbstractGame* game);
-    void render(GPE::AbstractGame* game);
+    void update(EditorStartup& startup);
+    void render();
     bool isRunning();
 };
 

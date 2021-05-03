@@ -14,8 +14,6 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
 
-#include <iostream>
-
 namespace GPG
 {
 class MyFreeFlyScript : public GPE::BehaviourComponent
@@ -85,13 +83,13 @@ public:
     RFKMethod() inline void forward()
     {
         GPE::TransformComponent& transform = getOwner().getTransform();
-        transform.translate(transform.getVectorForward() * -speed);
+        transform.translate(transform.getVectorForward() * speed);
     }
 
     RFKMethod() inline void back()
     {
         GPE::TransformComponent& transform = getOwner().getTransform();
-        transform.translate(transform.getVectorForward() * speed);
+        transform.translate(transform.getVectorForward() * -speed);
     }
 
     RFKMethod() inline void left()

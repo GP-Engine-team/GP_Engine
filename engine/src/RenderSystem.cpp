@@ -1,33 +1,37 @@
-﻿#include "Engine/ECS/System/SceneRenderSystem.hpp"
+﻿#include "Engine/ECS/System/RenderSystem.hpp"
 
 #include <algorithm> //std::sort
 #include <cstdio>
 #include <map> //std::map
 #include <memory>
 
-#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/Core/Tools/BranchPrediction.hpp"
-#include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/ECS/Component/Light/Light.hpp"
-#include "Engine/ECS/Component/Model.hpp"
-#include "Engine/Engine.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Mesh.hpp"
-#include "Engine/Resources/RenderBuffer.hpp"
-#include "Engine/Resources/RenderTexture.hpp"
-#include "Engine/Resources/Shader.hpp"
-#include "GPM/Matrix4.hpp"
-#include "GPM/Shape3D/AABB.hpp"
-#include "GPM/Shape3D/Sphere.hpp"
-#include "GPM/Shape3D/Volume.hpp"
-#include "GPM/ShapeRelation/AABBPlane.hpp"
-#include "GPM/ShapeRelation/SpherePlane.hpp"
+#include <Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp>
+#include <Engine/Core/Rendering/Window/WindowGLFW.hpp>
+#include <Engine/Core/Tools/BranchPrediction.hpp>
+#include <Engine/ECS/Component/Camera.hpp>
+#include <Engine/ECS/Component/Light/Light.hpp>
+#include <Engine/ECS/Component/Model.hpp>
+#include <Engine/ECS/Component/ParticleComponent.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Mesh.hpp>
+#include <Engine/Resources/RenderBuffer.hpp>
+#include <Engine/Resources/RenderTexture.hpp>
+#include <Engine/Resources/Shader.hpp>
+#include <GPM/Matrix4.hpp>
+#include <GPM/Shape3D/AABB.hpp>
+#include <GPM/Shape3D/Sphere.hpp>
+#include <GPM/Shape3D/Volume.hpp>
+#include <GPM/ShapeRelation/AABBPlane.hpp>
+#include <GPM/ShapeRelation/SpherePlane.hpp>
+
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/imgui.h>
 
 using namespace GPE;
 using namespace GPM;
 
-void SceneRenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) noexcept
+void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) noexcept
 {
     switch (pSubModel->pMesh->getBoundingVolumeType())
     {
@@ -42,10 +46,9 @@ void SceneRenderSystem::displayBoundingVolume(const SubModel* pSubModel, const C
                           pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
 
         drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color,
-                        SceneRenderSystem::EDebugShapeMode::FILL);
-
-        break;
+                        RenderSystem::EDebugShapeMode::FILL);
     }
+    break;
 
     case Mesh::EBoundingVolume::AABB: {
 
@@ -58,14 +61,15 @@ void SceneRenderSystem::displayBoundingVolume(const SubModel* pSubModel, const C
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
                           pAABB->center * pSubModel->pModel->getOwner().getTransform().getScale());
 
-        drawDebugCube(pos, Quat::identity(), scale, color, SceneRenderSystem::EDebugShapeMode::FILL);
+        drawDebugCube(pos, Quat::identity(), scale, color, RenderSystem::EDebugShapeMode::FILL);
     }
+    break;
     default:
         break;
     }
 }
 
-void SceneRenderSystem::displayGameObjectRef(const GameObject& go, float dist, float size) noexcept
+void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float size) noexcept
 {
     const Vec3& pos = go.getTransform().getGlobalPosition();
 
@@ -76,7 +80,7 @@ void SceneRenderSystem::displayGameObjectRef(const GameObject& go, float dist, f
     drawDebugSphere(pos + go.getTransform().getVectorForward() * dist, size, ColorRGBA{0.f, 0.f, 1.f, 1.f});
 }
 
-SceneRenderSystem::SceneRenderSystem() noexcept
+RenderSystem::RenderSystem() noexcept
 {
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
@@ -87,11 +91,11 @@ SceneRenderSystem::SceneRenderSystem() noexcept
         "Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
 }
 
-SceneRenderSystem::~SceneRenderSystem() noexcept
+RenderSystem::~RenderSystem() noexcept
 {
 }
 
-bool SceneRenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
+bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
 {
     switch (pSubModel->pMesh->getBoundingVolumeType())
     {
@@ -143,9 +147,9 @@ bool SceneRenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* p
     }
 }
 
-void SceneRenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse)
+void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
 {
-    if ((pCurrentShaderUse->getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         std::vector<LightData> lightBuffer;
 
@@ -154,22 +158,32 @@ void SceneRenderSystem::sendDataToInitShader(Camera& camToUse, Shader* pCurrentS
             light->addToLightToUseBuffer(lightBuffer);
         }
 
-        pCurrentShaderUse->setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
+        shader.setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
+    }
+
+    if ((shader.getFeature() & PROJECTION_MATRIX) == PROJECTION_MATRIX)
+    {
+        shader.setMat4("projectMatrix", camToUse.getProjection().e);
+    }
+
+    if ((shader.getFeature() & VIEW_MATRIX) == VIEW_MATRIX)
+    {
+        shader.setMat4("viewMatrix", camToUse.getView().e);
     }
 
     /*
-    if ((pCurrentShaderUse->getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
+    if ((shader.getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
     {
-        pCurrentShaderUse->setFloat("scaledTimeAcc", TimeSystem::getAccumulateTime());
+        shader.setFloat("scaledTimeAcc", TimeSystem::getAccumulateTime());
     }
 
-    if ((pCurrentShaderUse->getFeature() & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
+    if ((shader.getFeature() & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
     {
-        pCurrentShaderUse->setFloat("unscaledTimeAcc", TimeSystem::getAccumulateUnscaledTime());
+        shader.setFloat("unscaledTimeAcc", TimeSystem::getAccumulateUnscaledTime());
     }*/
 }
 
-void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, SubModel& subModel)
+void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const Mat4& modelMatrix)
 {
     if ((shader.getFeature() & SKYBOX) == SKYBOX)
     {
@@ -178,34 +192,35 @@ void SceneRenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, 
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
 
-        shader.setMat4(
-            "projectViewModelMatrix",
-            (camToUse.getProjection() * view * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjection() * view * modelMatrix).e);
         shader.setMat4("projection", camToUse.getProjection().e);
         shader.setMat4("view", view.e);
+
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
-    else
+
+    if ((shader.getFeature() & PROJECTION_VIEW_MODEL_MATRIX) == PROJECTION_VIEW_MODEL_MATRIX)
     {
-        shader.setMat4("projectViewModelMatrix",
-                       (camToUse.getProjectionView() * subModel.pModel->getOwner().getTransform().getModelMatrix()).e);
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
 
     if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        Mat3 inverseModelMatrix3(
-            toMatrix3(subModel.pModel->getOwner().getTransform().getModelMatrix().inversed()).transposed());
+        Mat3 inverseModelMatrix3(toMatrix3(modelMatrix.inversed()).transposed());
 
-        shader.setMat4("model", subModel.pModel->getOwner().getTransform().getModelMatrix().e);
+        shader.setMat4("model", modelMatrix.e);
         shader.setMat3("inverseModelMatrix", inverseModelMatrix3.e);
+
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
 }
 
-void SceneRenderSystem::drawModelPart(const SubModel& subModel)
+void RenderSystem::drawModelPart(const SubModel& subModel)
 {
     glDrawElements(GL_TRIANGLES, subModel.pMesh->getVerticesCount(), GL_UNSIGNED_INT, 0);
 }
 
-void SceneRenderSystem::tryToBindShader(Shader& shader)
+void RenderSystem::tryToBindShader(Shader& shader)
 {
     if (m_currentShaderID == shader.getID())
         return;
@@ -215,10 +230,10 @@ void SceneRenderSystem::tryToBindShader(Shader& shader)
     m_currentShaderID   = shader.getID();
     m_currentPShaderUse = &shader;
 
-    sendDataToInitShader(*m_pCameras[0], m_currentPShaderUse);
+    sendDataToInitShader(*m_mainCamera, shader);
 }
 
-void SceneRenderSystem::tryToBindMaterial(Shader& shader, Material& material)
+void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
 {
     if (m_currentMaterialID == material.getID())
         return;
@@ -237,7 +252,7 @@ void SceneRenderSystem::tryToBindMaterial(Shader& shader, Material& material)
     m_currentMaterialID = material.getID();
 }
 
-void SceneRenderSystem::tryToBindTexture(unsigned int textureID)
+void RenderSystem::tryToBindTexture(unsigned int textureID)
 {
     if (m_currentTextureID == textureID)
         return;
@@ -247,7 +262,7 @@ void SceneRenderSystem::tryToBindTexture(unsigned int textureID)
     m_currentTextureID = textureID;
 }
 
-void SceneRenderSystem::tryToBindMesh(unsigned int meshID)
+void RenderSystem::tryToBindMesh(unsigned int meshID)
 {
     if (m_currentMeshID == meshID)
         return;
@@ -257,7 +272,7 @@ void SceneRenderSystem::tryToBindMesh(unsigned int meshID)
     m_currentMeshID = meshID;
 }
 
-void SceneRenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
+void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
 {
     if (m_currentBackFaceCullingModeEnable == useBackFaceCulling)
         return;
@@ -274,7 +289,18 @@ void SceneRenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
     m_currentBackFaceCullingModeEnable = useBackFaceCulling;
 }
 
-void SceneRenderSystem::resetCurrentRenderPassKey()
+void RenderSystem::setMainCamera(Camera& newMainCamera) noexcept
+{
+    m_mainCamera = &newMainCamera;
+}
+
+Camera& RenderSystem::setMainCamera(int index) noexcept
+{
+    m_mainCamera = m_pCameras[index % m_pCameras.size()];
+    return *m_mainCamera;
+}
+
+void RenderSystem::resetCurrentRenderPassKey()
 {
     m_currentShaderID                  = 0;
     m_currentTextureID                 = 0;
@@ -289,21 +315,22 @@ void SceneRenderSystem::resetCurrentRenderPassKey()
     glBindVertexArray(0);
 }
 
-SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() const noexcept
+RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
-    return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
-              std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
-              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights, std::vector<DebugShape>& debugShape,
-              std::vector<DebugLine>& debugLines)
+    return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
+              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
+              std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
+              std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines, Camera& mainCamera) {
+        if (pCameras.empty())
+            return;
 
-    {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Frustum camFrustum = pCameras[0]->getFrustum();
+        Frustum camFrustum = mainCamera.getFrustum();
 
         rs.resetCurrentRenderPassKey();
 
@@ -328,7 +355,8 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[0], *pSubModel->pShader, *pSubModel);
+                rs.sendModelDataToShader(mainCamera, *pSubModel->pShader,
+                                         pSubModel->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -344,7 +372,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
             {
                 if (rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    float distance = (pCameras[0]->getOwner().getTransform().getGlobalPosition() -
+                    float distance = (mainCamera.getOwner().getTransform().getGlobalPosition() -
                                       (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
                                          .sqrLength();
                     mapElemSortedByDistance[distance] = pSubModel;
@@ -362,9 +390,34 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pCameras[0], *it->second->pShader, *it->second);
+                rs.sendModelDataToShader(mainCamera, *it->second->pShader,
+                                         it->second->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*it->second);
             };
+        }
+
+        // Draw particles
+        {
+            for (auto&& particle : pParticleComponents)
+            {
+                const size_t count = particle->numAliveParticles();
+                if (count == 0)
+                    continue;
+
+                glEnable(GL_PROGRAM_POINT_SIZE);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                if (particle->getShader())
+                {
+                    rs.tryToBindShader(*particle->getShader());
+                    rs.sendModelDataToShader(mainCamera, *particle->getShader(),
+                                             particle->getOwner().getTransform().getModelMatrix());
+                }
+                rs.tryToBindMesh(particle->getMeshID());
+
+                glDrawArrays(GL_POINTS, 0, count);
+            }
         }
 
         // Draw debug shape
@@ -380,7 +433,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                     rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
 
                     shaderToUse->setMat4("projectViewModelMatrix",
-                                         (pCameras[0]->getProjectionView() * shape.transform.model).e);
+                                         (mainCamera.getProjectionView() * shape.transform.model).e);
 
                     shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
 
@@ -392,6 +445,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                 debugShape.clear();
             }
 
+            // Draw debug line
             if (!debugLines.empty())
             {
                 const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
@@ -414,7 +468,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
                     glEnableVertexAttribArray(0);
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 
-                    shaderToUse->setMat4("projectViewModelMatrix", pCameras[0]->getProjectionView().e);
+                    shaderToUse->setMat4("projectViewModelMatrix", mainCamera.getProjectionView().e);
 
                     shaderToUse->setVec4("Color", line.color.r, line.color.g, line.color.b, line.color.a);
 
@@ -442,20 +496,23 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::defaultRenderPipeline() con
     };
 }
 
-SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipeline() const noexcept
+RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const noexcept
 {
-    return [](const ResourceManagerType& rm, SceneRenderSystem& rs, std::vector<Renderer*>& pRenderers,
-              std::vector<SubModel*>& pOpaqueSubModels, std::vector<SubModel*>& pTransparenteSubModels,
-              std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
-              std::vector<SceneRenderSystem::DebugShape>& debugShape,
-              std::vector<SceneRenderSystem::DebugLine>&  debugLine) {
+    return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
+              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
+              std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
+              std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
+              Camera& mainCamera) {
+        if (pCameras.empty())
+            return;
+
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
         glClearColor(0.f, 0.f, 0.f, 0.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        const Frustum camFrustum = pCameras[0]->getFrustum();
+        const Frustum camFrustum = mainCamera.getFrustum();
 
         Shader& shaderGameObjectIdentifier =
             *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
@@ -476,8 +533,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipelin
 
                 shaderGameObjectIdentifier.setMat4(
                     "projectViewModelMatrix",
-                    (pCameras[0]->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                        .e);
+                    (mainCamera.getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix()).e);
                 rs.drawModelPart(*pSubModel);
             }
 
@@ -494,8 +550,7 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipelin
 
                 shaderGameObjectIdentifier.setMat4(
                     "projectViewModelMatrix",
-                    (pCameras[0]->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                        .e);
+                    (mainCamera.getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix()).e);
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -504,48 +559,94 @@ SceneRenderSystem::RenderPipeline SceneRenderSystem::gameObjectIdentifierPipelin
     };
 }
 
-void SceneRenderSystem::draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept
+void RenderSystem::render(RenderPipeline renderPipeline) noexcept
 {
-    renderPipeline(res, *this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_debugShape, m_debugLine);
+    if (m_mainCamera == nullptr)
+    {
+        GPE_ASSERT(!m_pCameras.empty(), "Empty main camera");
+        m_mainCamera = m_pCameras[0];
+    }
+
+    renderPipeline(*this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
+                   m_pParticleComponents, m_debugShape, m_debugLine, *m_mainCamera);
 }
 
-void SceneRenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color,
-                                        EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
+void RenderSystem::update(double dt) noexcept
+{
+    for (auto&& particle : m_pParticleComponents)
+    {
+        particle->update(dt);
+    }
+}
+
+void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, EDebugShapeMode mode,
+                                   bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(DebugShape{m_sphereMesh,
                                          toTransform(SplitTransform{Quat::identity(), position, Vec3(radius * 2.f)}),
                                          color, mode, enableBackFaceCullling});
 }
 
-void SceneRenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation, const Vec3& scale,
-                                      const ColorRGBA& color, EDebugShapeMode mode,
-                                      bool enableBackFaceCullling) noexcept
+void RenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation, const Vec3& scale, const ColorRGBA& color,
+                                 EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(DebugShape{m_cubeMesh, toTransform(SplitTransform{rotation, position, scale}), color,
                                          mode, enableBackFaceCullling});
 }
 
-void SceneRenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale, const ColorRGBA& color,
-                                      EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
+void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale, const ColorRGBA& color,
+                                 EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(
         DebugShape{m_planeMesh, toTransform(SplitTransform{Quaternion::lookAt(Vec3::zero(), dir), position, scale}),
                    color, mode, enableBackFaceCullling});
 }
 
-void SceneRenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width, const ColorRGBA& color,
-                                      bool smooth) noexcept
+void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width, const ColorRGBA& color,
+                                 bool smooth) noexcept
 {
     m_debugLine.emplace_back(DebugLine{pt1, pt2, width, color, smooth});
 }
 
-void SceneRenderSystem::addRenderer(Renderer* pRenderer) noexcept
+void RenderSystem::addParticleComponent(ParticleComponent& particleComponent) noexcept
 {
-    m_pRenderers.push_back(pRenderer);
+    m_pParticleComponents.push_back(&particleComponent);
+}
+
+void RenderSystem::updateParticleComponentPointer(ParticleComponent* newPointerParticleComponent,
+                                                  ParticleComponent* exPointerParticleComponent) noexcept
+{
+    const std::vector<ParticleComponent*>::const_iterator end{m_pParticleComponents.end()};
+    for (std::vector<ParticleComponent*>::iterator it = m_pParticleComponents.begin(); it != end; it++)
+    {
+        if ((*it) == exPointerParticleComponent)
+        {
+            *it = newPointerParticleComponent;
+            return;
+        }
+    }
+}
+
+void RenderSystem::removeParticleComponent(ParticleComponent& particleComponent) noexcept
+{
+    const std::vector<ParticleComponent*>::const_iterator end{m_pParticleComponents.end()};
+    for (std::vector<ParticleComponent*>::iterator it = m_pParticleComponents.begin(); it != end; it++)
+    {
+        if ((*it) == &particleComponent)
+        {
+            std::swap<ParticleComponent*>(m_pParticleComponents.back(), (*it));
+            m_pParticleComponents.pop_back();
+            return;
+        }
+    }
+}
+
+void RenderSystem::addRenderer(Renderer& renderer) noexcept
+{
+    m_pRenderers.push_back(&renderer);
 
     int h, w;
-    pRenderer->getWindow()->getSize(w, h);
+    renderer.getWindow()->getSize(w, h);
 
     Texture::CreateArg textureArg;
     textureArg.width  = w;
@@ -563,7 +664,7 @@ void SceneRenderSystem::addRenderer(Renderer* pRenderer) noexcept
     Engine::getInstance()->resourceManager.add<RenderTexture>("FBO", renderArg);
 }
 
-void SceneRenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept
+void RenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept
 {
     const std::vector<Renderer*>::const_iterator end{m_pRenderers.end()};
     for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != end; it++)
@@ -576,12 +677,12 @@ void SceneRenderSystem::updateRendererPointer(Renderer* newPointerRenderer, Rend
     }
 }
 
-void SceneRenderSystem::removeRenderer(Renderer* pRenderer) noexcept
+void RenderSystem::removeRenderer(Renderer& renderer) noexcept
 {
     const std::vector<Renderer*>::const_iterator end{m_pRenderers.end()};
     for (std::vector<Renderer*>::iterator it = m_pRenderers.begin(); it != end; it++)
     {
-        if ((*it) == pRenderer)
+        if ((*it) == &renderer)
         {
             std::swap<Renderer*>(m_pRenderers.back(), (*it));
             m_pRenderers.pop_back();
@@ -590,21 +691,21 @@ void SceneRenderSystem::removeRenderer(Renderer* pRenderer) noexcept
     }
 }
 
-void SceneRenderSystem::addSubModel(SubModel* pSubModel) noexcept
+void RenderSystem::addSubModel(SubModel& subModel) noexcept
 {
-    if (pSubModel->pMaterial->isOpaque())
+    if (subModel.pMaterial->isOpaque())
     {
-        m_pOpaqueSubModels.insert(std::upper_bound(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel,
+        m_pOpaqueSubModels.insert(std::upper_bound(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), &subModel,
                                                    isSubModelHasPriorityOverAnother),
-                                  pSubModel);
+                                  &subModel);
     }
     else
     {
-        m_pTransparenteSubModels.emplace_back(pSubModel);
+        m_pTransparenteSubModels.emplace_back(&subModel);
     }
 }
 
-void SceneRenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept
+void RenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel* exPointerSubModel) noexcept
 {
     const std::vector<SubModel*>::const_iterator end{
         newPointerSubModel->pMaterial->isOpaque() ? m_pOpaqueSubModels.end() : m_pTransparenteSubModels.end()};
@@ -619,27 +720,27 @@ void SceneRenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubM
     }
 }
 
-void SceneRenderSystem::removeSubModel(SubModel* pSubModel) noexcept
+void RenderSystem::removeSubModel(SubModel& subModel) noexcept
 {
-    if (pSubModel->pMaterial->isOpaque())
+    if (subModel.pMaterial->isOpaque())
     {
-        auto it = std::find(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), pSubModel);
+        auto it = std::find(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), &subModel);
         if (it != m_pOpaqueSubModels.end())
             m_pOpaqueSubModels.erase(it);
     }
     else
     {
-        auto it = std::find(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), pSubModel);
+        auto it = std::find(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), &subModel);
         if (it != m_pOpaqueSubModels.end())
             m_pTransparenteSubModels.erase(it);
     }
 }
-void SceneRenderSystem::addCamera(Camera* pCamera) noexcept
+void RenderSystem::addCamera(Camera& camera) noexcept
 {
-    m_pCameras.push_back(pCamera);
+    m_pCameras.push_back(&camera);
 }
 
-void SceneRenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept
+void RenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept
 {
     const std::vector<Camera*>::const_iterator end{m_pCameras.end()};
     for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != end; it++)
@@ -652,12 +753,12 @@ void SceneRenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* ex
     }
 }
 
-void SceneRenderSystem::removeCamera(Camera* pCamera) noexcept
+void RenderSystem::removeCamera(Camera& camera) noexcept
 {
     const std::vector<Camera*>::const_iterator end{m_pCameras.end()};
     for (std::vector<Camera*>::iterator it = m_pCameras.begin(); it != end; it++)
     {
-        if ((*it) == pCamera)
+        if ((*it) == &camera)
         {
             std::swap<Camera*>(m_pCameras.back(), (*it));
             m_pCameras.pop_back();
@@ -666,12 +767,12 @@ void SceneRenderSystem::removeCamera(Camera* pCamera) noexcept
     }
 }
 
-void SceneRenderSystem::addLight(Light* pLight) noexcept
+void RenderSystem::addLight(Light& light) noexcept
 {
-    m_pLights.push_back(pLight);
+    m_pLights.push_back(&light);
 }
 
-void SceneRenderSystem::updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept
+void RenderSystem::updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept
 {
     const std::vector<Light*>::const_iterator end{m_pLights.end()};
     for (std::vector<Light*>::iterator it = m_pLights.begin(); it != end; it++)
@@ -684,12 +785,12 @@ void SceneRenderSystem::updateLightPointer(Light* newPointerLight, Light* exPoin
     }
 }
 
-void SceneRenderSystem::removeLight(Light* pLight) noexcept
+void RenderSystem::removeLight(Light& light) noexcept
 {
     std::vector<Light*>::const_iterator end{m_pLights.end()};
     for (std::vector<Light*>::iterator it = m_pLights.begin(); it != end; it++)
     {
-        if ((*it) == pLight)
+        if ((*it) == &light)
         {
             std::swap<Light*>(m_pLights.back(), (*it));
             m_pLights.pop_back();

@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "Engine/ECS/Component/BehaviourComponent.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "GPM/Vector3.hpp"
-#include "Generated/FreeFly.rfk.h"
+#include <Engine/ECS/Component/BehaviourComponent.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <GPM/Vector3.hpp>
+#include <Generated/FreeFly.rfk.h>
 
 namespace GPE RFKNamespace()
 {
@@ -17,10 +17,14 @@ namespace GPE RFKNamespace()
 class RFKClass() FreeFly final : public BehaviourComponent
 {
 protected:
-    float m_speed         = 1.f;
-    float m_rotationSpeed = .001f;
+    TimeSystem& timeSys;
+    float       m_walkSpeed     = 15.f; // m/s
+    float       m_sprintSpeed   = 30.f;
+    float       m_speed         = m_walkSpeed;
+    float       m_rotationSpeed = .001f;
 
 public:
+    FreeFly() noexcept = default;
     FreeFly(GameObject& owner) noexcept;
     FreeFly(FreeFly&& other) noexcept = default;
     ~FreeFly() noexcept;
@@ -38,7 +42,7 @@ public:
     inline void forward();
 
     RFKMethod()
-    inline void back();
+    inline void backward();
 
     RFKMethod()
     inline void left();
@@ -47,9 +51,12 @@ public:
     inline void right();
 
     RFKMethod()
+    inline void walk();
+
+    RFKMethod()
     inline void sprint();
 
-    void update(float deltaTime) final;
+    void update(double deltaTime) final;
 
     FreeFly& operator=(FreeFly&& other) noexcept;
 

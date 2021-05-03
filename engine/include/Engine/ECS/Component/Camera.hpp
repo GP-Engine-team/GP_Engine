@@ -65,20 +65,20 @@ namespace GPE RFKNamespace()
 
         struct PerspectiveCreateArg
         {
+            const char* name    = "Camera";
             float       aspect  = 16.f / 9.f;
             float       nearVal = 0.001f;
-            float       farVal  = 10.f;
+            float       farVal  = 1000.f;
             float       fovY    = 70.f;
-            const char* name    = "Camera";
         };
 
         struct OrthographicCreateArg
         {
+            const char* name    = "Camera";
             float       hSide   = 1.f;
             float       vSide   = 1.f;
             float       nearVal = 0.001f;
-            float       farVal  = 10.f;
-            const char* name    = "Camera";
+            float       farVal  = 1000.f;
         };
 
     protected:
@@ -111,8 +111,7 @@ namespace GPE RFKNamespace()
         /**
          * @brief Update the view matrix in function of model matrix of it's parent
          */
-        RFKMethod()
-        void updateView();
+        RFKMethod() void updateView();
 
         /**
          * @brief Default constructor. Call perspective constructor by default
@@ -191,10 +190,15 @@ namespace GPE RFKNamespace()
          */
         Frustum getFrustum() const noexcept;
 
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
+
         Camera_GENERATED
     };
-
-#include "Camera.inl"
-
 } // namespace )
 
+#include "Camera.inl"

@@ -16,23 +16,23 @@
 namespace GPE RFKNamespace()
 {
 
-    class RFKClass(ComponentGen(), Inspect()) RigidbodyStatic : public Component
-    {
-    public:
-        RigidbodyStatic(GameObject & owner) noexcept;
+class RFKClass(Serialize(), ComponentGen) RigidbodyStatic : public Component
+{
+public:
+    RigidbodyStatic(GameObject& owner) noexcept;
 
-        RigidbodyStatic() noexcept                             = delete;
-        RigidbodyStatic(const RigidbodyStatic& other) noexcept = delete;
-        RigidbodyStatic(RigidbodyStatic && other) noexcept     = default;
-        RigidbodyStatic& operator=(RigidbodyStatic const& other) noexcept = delete;
-        RigidbodyStatic& operator=(RigidbodyStatic&& other) noexcept = delete;
+    RigidbodyStatic() noexcept                             = default;
+    RigidbodyStatic(const RigidbodyStatic& other) noexcept = delete;
+    RigidbodyStatic(RigidbodyStatic&& other) noexcept      = default;
+    RigidbodyStatic& operator=(RigidbodyStatic const& other) noexcept = delete;
+    RigidbodyStatic& operator=(RigidbodyStatic&& other) noexcept = delete;
 
-        virtual ~RigidbodyStatic() noexcept = default;
+    virtual ~RigidbodyStatic() noexcept = default;
 
-    public:
-        physx::PxRigidStatic* rigidbody;
-        Collider*             collider;
+public:
+    physx::PxRigidStatic* rigidbody;
+    Collider*             collider;
 
-        RigidbodyStatic_GENERATED
-    };
-} // namespace )
+    RigidbodyStatic_GENERATED
+};
+} // namespace GPE

@@ -18,8 +18,6 @@
 #include <Engine/Resources/Wave.hpp>
 #include <PxForceMode.h>
 
-#include <iostream>
-
 namespace GPG
 {
 class MyFreeFlyWithCollisionScript : public GPE::BehaviourComponent
@@ -93,14 +91,14 @@ public:
     RFKMethod() inline void forward()
     {
         getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(
-            GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorForward()) * -speed,
+            GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorForward()) * speed,
             physx::PxForceMode::eFORCE);
     }
 
     RFKMethod() inline void back()
     {
         getOwner().getComponent<GPE::RigidbodyDynamic>()->rigidbody->addForce(
-            GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorForward()) * speed,
+            GPE::PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getVectorForward()) * -speed,
             physx::PxForceMode::eFORCE);
     }
 

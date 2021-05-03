@@ -7,8 +7,9 @@
 
 #pragma once
 #include <Engine/Core/Tools/ClassUtility.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/collider.hpp>
+#include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <GPM/Vector3.hpp>
+#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 
 // Generated
 #include "Generated/SphereCollider.rfk.h"

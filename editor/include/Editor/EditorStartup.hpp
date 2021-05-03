@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "Editor/Editor.hpp"
-#include "Engine/Core/Game/ContextStartup.hpp"
-#include "Engine/Core/HotReload/ReloadableCpp.hpp"
+#include <Engine/Core/Game/ContextStartup.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+
 #include "Editor.hpp"
 
 #include <functional>
@@ -20,30 +20,38 @@ namespace Editor
 class EditorStartup final : public ContextStartup
 {
 private:
-	const std::function<void(double, double)> m_fixedUpdate;
-	const std::function<void(double, double)> m_update;
-	const std::function<void()>               m_render;
+	std::function<void(double, double)> m_fixedUpdate;
+	std::function<void(double, double)> m_update;
+	const std::function<void()>			m_render;
 
 #ifdef NDEBUG
-	const char* gameDllPath = "./bin/Release/GPGame.dll";
+    const char* gameDllPath = "./bin/Release/GPGame.dll";
 #else
-	const char* gameDllPath = "./bin/Debug/GPGame.dll";
+    const char* gameDllPath = "./bin/Debug/GPGame.dll";
 #endif
 
 	Editor			   m_editor;
 	GPE::ReloadableCpp m_reloadableCpp;
 	GPE::AbstractGame* m_game;
 
-	GLFWwindow* initDearImGui(GLFWwindow* window);
+protected:
+    GLFWwindow* initDearImGuiProxy(GLFWwindow* window);
 
 	void initializeDefaultInputs() const;
 
 public:
-	EditorStartup();
-	virtual ~EditorStartup() final;
+    EditorStartup();
+    virtual ~EditorStartup() final;
 
-	void startGame();
+	void openGame ();
 	void closeGame();
+
+	void playGame ();
+	void pauseGame();
+	void stopGame ();
+
+	GPE::AbstractGame& game() const;
+
 	virtual void update() override final;
 };
 

@@ -6,21 +6,21 @@
 
 #pragma once
 
-#include "Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
-#include "Engine/Core/Rendering/Window/WindowGLFW.hpp"
-#include "Engine/ECS/System/BehaviourSystem.hpp"
-#include "Engine/ECS/System/InputManagerGLFW.hpp"
-#include "Engine/ECS/System/PhysXSystem.hpp"
-#include "Engine/ECS/System/TimeSystem.hpp"
-#include "Engine/Resources/ResourcesManagerType.hpp"
-#include "Engine/Resources/SceneManager.hpp"
-#include <Engine/ECS/System/SoundSystem.hpp>
+#include "Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
+#include "Core/Rendering/Window/WindowGLFW.hpp"
+#include "ECS/System/BehaviourSystem.hpp"
+#include "ECS/System/InputManagerGLFW.hpp"
+#include "ECS/System/PhysXSystem.hpp"
+#include "ECS/System/SoundSystem.hpp"
+#include "ECS/System/TimeSystem.hpp"
+#include "Resources/ResourcesManagerType.hpp"
+#include "Resources/SceneManager.hpp"
 
 namespace GPE
 {
 
-/**
- * The Engine class defines the `GetInstance` method that serves as an
+/*
+ * The Engine class defines the `getInstance` method that serves as an
  * alternative to constructor and lets clients access the same instance of this
  * class over and over.
  */

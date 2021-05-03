@@ -1,24 +1,24 @@
-﻿#include "Engine/ECS/Component/Light/Light.hpp"
-
+﻿namespace GPE
+{
 Light::Light(GameObject& owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
              const SpecularComponent& specular)
     : Component{owner}, m_ambientComp(ambient), m_diffuseComp(diffuse), m_specularComp(specular)
 {
-    getOwner().pOwnerScene->sceneRenderer.addLight(this);
+    getOwner().pOwnerScene->sceneRenderer.addLight(*this);
 }
 
 Light::Light(GameObject& owner, const CreateArg& arg)
     : Component{owner}, m_ambientComp(arg.ambient), m_diffuseComp(arg.diffuse), m_specularComp(arg.specular)
 {
-    getOwner().pOwnerScene->sceneRenderer.addLight(this);
+    getOwner().pOwnerScene->sceneRenderer.addLight(*this);
 }
 
 Light::~Light()
 {
-    getOwner().pOwnerScene->sceneRenderer.removeLight(this);
+    getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
 }
 
-Light& Light::operator=(Light&& other)
+Light& Light::operator=(Light&& other) noexcept
 {
     m_ambientComp  = std::move(other.m_ambientComp);
     m_diffuseComp  = std::move(other.m_diffuseComp);
@@ -86,3 +86,4 @@ void Light::setSpecular(const GPM::Vec4& newSpecular) noexcept
 {
     m_specularComp.rgbi = newSpecular;
 }
+} // namespace GPE

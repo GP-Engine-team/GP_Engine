@@ -23,11 +23,13 @@ Window::Window(const CreateArg& arg) noexcept
     glfwSetErrorCallback([](int errorCode, const char* description) {
         Log::getInstance()->logError(stringFormat("GLFW error (%x) = %s\n", errorCode, description));
     });
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#else
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_FALSE);
 #endif
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     m_window = glfwCreateWindow(arg.width, arg.height, arg.name.c_str(), nullptr, nullptr);
