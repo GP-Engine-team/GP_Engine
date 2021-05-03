@@ -2,17 +2,16 @@
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU
  * license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <GPM/Vector3.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 
 // Generated
-#include "Generated/SphereCollider.rfk.h"
+#include <Generated/SphereCollider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
@@ -40,4 +39,4 @@ namespace GPE RFKNamespace()
 
         SphereCollider_GENERATED
     };
-} // namespace )
+} // namespace GPE

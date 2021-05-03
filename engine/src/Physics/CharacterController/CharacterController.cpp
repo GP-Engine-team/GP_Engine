@@ -1,30 +1,33 @@
-#include <Engine/Core/Debug/Log.hpp>
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
-#include <Engine/ECS/System/TimeSystem.hpp>
+
 #include <Engine/Engine.hpp>
-#include <string>
+#include <PhysX/characterkinematic/PxCapsuleController.h>
+#include <PhysX/characterkinematic/PxControllerManager.h>
+#include <PhysX/PxPhysics.h>
 
 // Generated
-#include "Generated/CharacterController.rfk.h"
+#include <Generated/CharacterController.rfk.h>
 
 File_GENERATED
 
 using namespace GPE;
 using namespace physx;
 
-CharacterController::CharacterController(GameObject& owner) noexcept : Component(owner)
+CharacterController::CharacterController(GameObject& owner) noexcept
+    : Component(owner)
 {
     physx::PxCapsuleControllerDesc desc;
 
-    desc.height   = 1;
-    desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
+    desc.height   = 1.f;
+    desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
     desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition());
-    desc.radius   = 1;
+    desc.radius   = 1.f;
 
     controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
     GPE::Engine::getInstance()->physXSystem.addComponent(this);
 }
 
+/*
 CharacterController::CharacterController() noexcept
 {
     //physx::PxCapsuleControllerDesc desc;
@@ -37,6 +40,7 @@ CharacterController::CharacterController() noexcept
     //controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
     //GPE::Engine::getInstance()->physXSystem.addComponent(this);
 }
+*/
 
 void CharacterController::update(double deltaTime) noexcept
 {
@@ -45,11 +49,11 @@ void CharacterController::update(double deltaTime) noexcept
 
     if (m_jumping == true)
     {
-        if (Engine::getInstance()->timeSystem.getAccumulatedTime() >= m_startJumpTime + m_jumpTimeDelay &&
-            canJump() == true)
+        if (const float accumulatedTime = float(Engine::getInstance()->timeSystem.getAccumulatedTime());
+            (accumulatedTime >= m_startJumpTime + m_jumpTimeDelay) && canJump() == true)
         {
             m_jumping       = false;
-            m_force         = {0, 0, 0};
+            m_force.x = m_force.y = m_force.z = .0f;
             m_startJumpTime = 0.f;
         }
 
@@ -59,7 +63,7 @@ void CharacterController::update(double deltaTime) noexcept
         }
     }
 
-    controller->move(GPE::PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, deltaTime, filters);
+    controller->move(GPE::PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, float(deltaTime), filters);
     m_displacement = {0, 0, 0};
     getOwner().getTransform().setTranslation(GPE::PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()));
 }
