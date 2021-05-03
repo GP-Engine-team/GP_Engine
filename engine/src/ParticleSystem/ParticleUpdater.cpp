@@ -5,20 +5,20 @@ File_GENERATED
 #include <algorithm>
 #include <assert.h>
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 void EulerUpdater::update(double dt, ParticleData* p)
 {
-    const Vec4  globalA(dt * m_globalAcceleration.x, dt * m_globalAcceleration.y, dt * m_globalAcceleration.z, 0.f);
+    const Vec4  globalA(f32(dt) * m_globalAcceleration.x, f32(dt) * m_globalAcceleration.y, f32(dt) * m_globalAcceleration.z, 0.f);
     const float localDT = (float)dt;
 
     Vec4* acc = p->m_acc.get();
     Vec4* vel = p->m_vel.get();
     Vec4* pos = p->m_pos.get();
 
-    const unsigned int endId = p->m_countAlive;
-    for (size_t i = 0; i < endId; ++i)
+    const size_t endId = p->m_countAlive;
+    for (size_t i = 0u; i < endId; ++i)
     {
         acc[i] += globalA;
         vel[i] += acc[i] * localDT;
@@ -181,21 +181,21 @@ U16BMask VelColorUpdater::getRequiereConfig() const
 
 void BasicTimeUpdater::update(double dt, ParticleData* p)
 {
-    unsigned int endId   = p->m_countAlive;
-    const float  localDT = (float)dt;
+    size_t      endId   = p->m_countAlive;
+    const float localDT = (float)dt;
 
     Vec4* t = p->m_time.get();
 
-    if (endId == 0)
+    if (endId == 0u)
         return;
 
-    for (size_t i = 0; i < endId; ++i)
+    for (size_t i = 0u; i < endId; ++i)
     {
         t[i].x -= localDT;
         // interpolation: from 0 (start of life) till 1 (end of life)
-        t[i].z = (float)1.0 - (t[i].x * t[i].w); // .w is 1.0/max life time
+        t[i].z = 1.f - (t[i].x * t[i].w); // .w is 1.0/max life time
 
-        if (t[i].x < (float)0.0)
+        if (t[i].x < .0f)
         {
             p->kill(i);
             endId = p->m_countAlive < p->m_count ? p->m_countAlive : p->m_count;
