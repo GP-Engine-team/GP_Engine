@@ -8,6 +8,7 @@
 
 #include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/AudioComponent.hpp>
+#include <Engine/ECS/Component/ParticleComponent.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
@@ -39,6 +40,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect()) bool m_isReloading           = false;
 
         RFKField(Serialize()) GPE::AudioComponent* m_shootSound = nullptr;
+        RFKField(Serialize()) GPE::ParticleComponent* m_muzzleFlash = nullptr;
 
     public:
         FireArme(GPE::GameObject & owner, const GunMagazine& magazineStored, float reloadingDuration,
@@ -49,6 +51,7 @@ namespace GPG RFKNamespace()
             m_reloadingBulletTimeCount = m_rateOfFire;
 
             m_shootSound = &owner.addComponent<GPE::AudioComponent>();
+            m_muzzleFlash = &owner.addComponent<GPE::ParticleComponent>();
 
             GPE::Wave           sound("./resources/sounds/FireArme/machinegun.wav", "Shoot");
             GPE::SourceSettings sourceSettings;
@@ -72,6 +75,8 @@ namespace GPG RFKNamespace()
                 GPE::Raycast ray;
                 ray.Fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(),
                          10000.f);
+
+                m_muzzleFlash->start();
                 /*if (ray.hit.getNbAnyHits())
                     GPE::Log::getInstance()->log(ray.hit.getAnyHit(0).actor->getName());*/
                 m_shootSound->playSound("Shoot");

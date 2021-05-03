@@ -32,8 +32,11 @@ namespace GPE RFKNamespace()
         class Shader* m_shader = nullptr;
 
         ParticleData m_particles;
-        size_t       m_count    = 0;
-        float        m_emitRate = 0.0;
+        size_t       m_count         = 0;
+        float        m_emitRate      = 0.0;
+        float        m_duration      = std::numeric_limits<float>::infinity();
+        float        m_durationCount = 0.f;
+        bool         m_canEmit       = false;
 
         /**
          * @brief Is used to define how the particle must be generated (color ? velocity ? Position ?)
@@ -82,6 +85,11 @@ namespace GPE RFKNamespace()
          * @brief Kill all alive particle
          */
         void reset();
+
+        /**
+         * @brief Init render buffer
+         */
+        void generate();
 
         /**
          * @brief Start the particle effect

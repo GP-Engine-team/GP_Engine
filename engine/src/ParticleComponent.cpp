@@ -128,7 +128,23 @@ void ParticleComponent::inspect(InspectContext& context)
 {
     Component::inspect(context);
 
+    bool isDurationUsed = !std::isinf(m_duration);
+
+    ImGui::PushEnabled(!isDurationUsed);
     DataInspector::inspect(context, m_emitRate, "EmitRate");
+    ImGui::PopEnabled();
+
+    if (ImGui::Checkbox("##isDurationUsed", &isDurationUsed))
+    {
+        if (isDurationUsed)
+            m_duration = 3.0f;
+        else
+            m_duration = std::numeric_limits<float>::infinity();
+    }
+    ImGui::SameLine();
+    ImGui::PushEnabled(isDurationUsed);
+    DataInspector::inspect(context, m_duration, "Duration");
+    ImGui::PopEnabled();
 
     if (DataInspector::inspect(context, m_count, "Count"))
     {
@@ -183,18 +199,25 @@ void ParticleComponent::inspect(InspectContext& context)
 
     if (ImGui::Button("Start"))
     {
+        generate();
         start();
     }
 }
 
-void ParticleComponent::start()
+void ParticleComponent::generate()
 {
+    if (!std::isinf(m_duration))
+        m_emitRate = m_count / m_duration;
+
     m_particles.generate(m_count, 0);
 
-    for (size_t i = 0; i < m_count; ++i)
-        m_particles.m_alive[i] = false;
-
     initializeRenderer();
+}
+
+void ParticleComponent::start()
+{
+    reset();
+    m_canEmit = true;
 }
 
 void ParticleComponent::initializeDefaultSetting()
@@ -259,7 +282,12 @@ void ParticleComponent::initializeRenderer()
 
 void ParticleComponent::reset()
 {
+    m_durationCount          = 0.f;
     m_particles.m_countAlive = 0;
+    m_canEmit                = false;
+
+    for (size_t i = 0; i < m_count; ++i)
+        m_particles.m_alive[i] = false;
 }
 
 void ParticleComponent::update(double dt)
@@ -267,7 +295,18 @@ void ParticleComponent::update(double dt)
     if (!m_renderer)
         return;
 
-    emit(dt);
+    if (m_canEmit)
+    {
+        m_durationCount += dt * !std::isinf(m_duration);
+        if (m_durationCount >= m_duration)
+        {
+            m_canEmit = false;
+            dt -= m_durationCount - m_duration;
+            m_durationCount = 0.f;
+        }
+
+        emit(dt);
+    }
 
     // TODO: Add acceleration updater
     if (m_particles.m_acc)
