@@ -31,8 +31,7 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) GPE::InputComponent*      input      = nullptr;
         RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
         RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
-
-        std::unique_ptr<FireArme> m_fireArme = nullptr;
+        RFKField(Serialize()) FireArme*                 m_fireArme = nullptr;
 
     public:
         MyFpsScript(GPE::GameObject & owner) noexcept;

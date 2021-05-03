@@ -5,7 +5,6 @@
 #include "Engine/Serialization/MeshInspectorPanel.hpp"
 #include "Engine/Serialization/ShaderInspectorPanel.hpp"
 
-#include "Engine/Resources/Importer/ResourceImporter.hpp"
 #include "Engine/Serialization/FileExplorer.hpp"
 #include "Engine/Serialization/TextureImporterSetting.hpp"
 

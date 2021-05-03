@@ -26,7 +26,7 @@ File_GENERATED
         enableUpdate(true);
         enableOnGUI(true);
 
-        m_fireArme = std::make_unique<PPSH41>();
+        m_fireArme = &owner.addComponent<PPSH41>();
 
         input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
         input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
@@ -42,14 +42,14 @@ File_GENERATED
         // input->bindAction("growUpCollider",        EKeyMode::KEY_DOWN,     "Game", this, "growUpSphereCollider");
         // input->bindAction("growDownCollider",      EKeyMode::KEY_DOWN,     "Game", this, "growDownSphereCollider");
 
-        GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+        // GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
-        GPE::SourceSettings sourceSettings;
-        sourceSettings.pitch = 1.f;
-        sourceSettings.loop  = AL_TRUE;
+        // GPE::SourceSettings sourceSettings;
+        // sourceSettings.pitch = 1.f;
+        // sourceSettings.loop  = AL_TRUE;
 
-        source->setSound("Western", "Western", sourceSettings);
-        source->playSound("Western");
+        // source->setSound("Western", "Western", sourceSettings);
+        // source->playSound("Western");
 
         controller->setHasGravity(true);
         controller->setSpeed(1.f);
