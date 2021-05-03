@@ -24,6 +24,7 @@ Mesh::CreateIndiceBufferArg Mesh::convert(CreateContiguousVerticesArg& arg)
     {
         newArg.vertices.emplace_back(
             Vertex{arg.vBuffer[arg.iBuffer[i].iv], arg.vnBuffer[arg.iBuffer[i].ivn], arg.vtBuffer[arg.iBuffer[i].ivt]});
+        newArg.indices.emplace_back(i);
     }
     return newArg;
 }
