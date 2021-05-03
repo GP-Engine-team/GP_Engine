@@ -37,18 +37,16 @@ namespace GPE RFKNamespace()
     private:
         RFKField(Inspect()) GPM::Vec3 m_displacement  = {0, 0, 0};
         RFKField(Inspect()) GPM::Vec3 m_force         = {0, 0, 0};
-        RFKField(Inspect(), Serialize()) float     m_gravity       = EARTH_GRAVITY;
-        RFKField(Inspect(), Serialize()) bool      m_hasGravity    = false;
-        RFKField(Inspect(), Serialize()) float     m_speed         = 1.f;
-        RFKField(Inspect(), Serialize()) float     m_mouseSpeed    = 1.f;
-        RFKField(Inspect(), Serialize()) bool      m_jumping       = false;
-        RFKField(Inspect(), Serialize()) float     m_startJumpTime = 0.f;
-        RFKField(Inspect(), Serialize()) float     m_jumpTimeDelay = 1.f;
-        // GPM::Vec3				m_velocity		= { 0,0,0 };
-        // GPM::Vec3				m_acceleration	= { 0,0,0 };
+        RFKField(Inspect()) float     m_gravity       = EARTH_GRAVITY;
+        RFKField(Inspect()) bool      m_hasGravity    = false;
+        RFKField(Inspect()) float     m_speed         = 1.f;
+        RFKField(Inspect()) float     m_mouseSpeed    = 1.f;
+        RFKField(Inspect()) bool      m_jumping       = false;
+        RFKField(Inspect()) float     m_startJumpTime = 0.f;
+        RFKField(Inspect()) float     m_jumpTimeDelay = 1.f;
 
     public:
-        /*RFKField(Inspect()) */ physx::PxController* controller;
+        physx::PxController* controller;
         DEFAULT_GETTER_SETTER_BY_VALUE(Speed, m_speed);
         DEFAULT_GETTER_SETTER_BY_VALUE(MouseSpeed, m_mouseSpeed);
         DEFAULT_GETTER_SETTER_BY_VALUE(HasGravity, m_hasGravity);

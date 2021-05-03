@@ -262,6 +262,12 @@
     <ClCompile Include="src\ParticleComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Physics\Collisions\MeshCollider.cpp">
+      <Filter>src\Physics\Collisions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\PhysXDataInspector.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -683,6 +689,12 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Tools\BinaryMask.hpp">
       <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Raycast.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\PhysXDataInspector.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
