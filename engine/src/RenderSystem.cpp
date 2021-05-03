@@ -401,7 +401,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             for (auto&& particle : pParticleComponents)
             {
                 const size_t count = particle->numAliveParticles();
-                if (count == 0)
+                if (count == 0u)
                     continue;
 
                 glEnable(GL_PROGRAM_POINT_SIZE);
@@ -416,7 +416,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 }
                 rs.tryToBindMesh(particle->getMeshID());
 
-                glDrawArrays(GL_POINTS, 0, count);
+                glDrawArrays(GL_POINTS, 0, int(count));
             }
         }
 
