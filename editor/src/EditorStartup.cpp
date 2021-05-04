@@ -50,13 +50,15 @@ void EditorStartup::initializeDefaultInputs() const
 
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {}},
-      m_update{[&](double unscaledDeltaTime, double deltaTime) {
+      m_update{[&](double unscaledDeltaTime, double deltaTime)
+      {
           GPE::Engine::getInstance()->inputManager.processInput();
           Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
           m_editor.update(*this);
           Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
       }},
-      m_render{[&]() {
+      m_render{[&]()
+      {
           m_editor.render();
           GPE::Engine::getInstance()->renderer.swapBuffer();
       }},
@@ -118,6 +120,10 @@ void EditorStartup::openGame()
     {
         GPE::Engine::getInstance()->sceneManager.removeScene("Default scene");
     }
+
+    GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
+    io.setCursorLockState(false);
+    io.setCursorTrackingState(false);
 }
 
 void EditorStartup::closeGame()
