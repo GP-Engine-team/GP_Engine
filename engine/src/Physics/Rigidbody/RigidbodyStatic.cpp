@@ -36,3 +36,15 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner)
         Engine::getInstance()->physXSystem.addComponent(this);
     }
 }
+
+void RigidbodyStatic::setActive(bool newState) noexcept
+{
+    if (m_isActivated == newState)
+        return;
+
+    m_isActivated = newState;
+    if (m_isActivated)
+        GPE::Engine::getInstance()->physXSystem.addComponent(this);
+    else
+        GPE::Engine::getInstance()->physXSystem.removeComponent(this);
+}

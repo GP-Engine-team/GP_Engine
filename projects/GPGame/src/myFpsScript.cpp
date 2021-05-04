@@ -27,6 +27,8 @@ File_GENERATED
         enableUpdate(true);
         enableOnGUI(true);
 
+        m_fireArme = &owner.addComponent<PPSH41>();
+
         input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
         input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
         input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
@@ -35,18 +37,20 @@ File_GENERATED
         input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
         input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
         input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-        input->bindAction("RaycastExample", EKeyMode::KEY_PRESSED, "Game", this, "RaycastExample");
+        input->bindAction("RaycastExample", EKeyMode::KEY_PRESSED, "Game", this, "raycastExample");
+        input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+
         // input->bindAction("growUpCollider",        EKeyMode::KEY_DOWN,     "Game", this, "growUpSphereCollider");
         // input->bindAction("growDownCollider",      EKeyMode::KEY_DOWN,     "Game", this, "growDownSphereCollider");
 
-        GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+        // GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
-        GPE::SourceSettings sourceSettings;
-        sourceSettings.pitch = 1.f;
-        sourceSettings.loop  = AL_TRUE;
+        // GPE::SourceSettings sourceSettings;
+        // sourceSettings.pitch = 1.f;
+        // sourceSettings.loop  = AL_TRUE;
 
-        source->setSound("Western", "Western", sourceSettings);
-        source->playSound("Western");
+        // source->setSound("Western", "Western", sourceSettings);
+        // source->playSound("Western");
 
         controller->setHasGravity(true);
         controller->setSpeed(1.f);
@@ -56,28 +60,7 @@ File_GENERATED
 
     MyFpsScript::~MyFpsScript() noexcept
     {
-        enableFixedUpdate(false);
-        enableUpdate(false);
     }
-
-    /* Variable setter serialization example
-    void MyFpsScript::setPrintHello(bool p)
-    {
-        if (printHello != p) // Called everytime if no if
-        {
-            printHello = p;
-
-            if (printHello)
-            {
-                GPE::Log::getInstance()->log("Hello world!");
-            }
-            else
-            {
-                GPE::Log::getInstance()->log("Set me to true!");
-            }
-        }
-    }
-    */
 
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)
     {
@@ -149,7 +132,7 @@ File_GENERATED
     }
 
     // Exemple de Raycast
-    void MyFpsScript::RaycastExample()
+    void MyFpsScript::raycastExample()
     {
         GPE::Raycast ray;
         ray.Fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(), 100000);
@@ -162,6 +145,14 @@ File_GENERATED
                 // Do some shit here;
             }
         }
+    }
+
+    void MyFpsScript::shoot()
+    {
+        m_fireArme->triggered();
+
+        if (m_fireArme->isMagazineEmpty())
+            m_fireArme->reload();
     }
 
     /*
@@ -186,31 +177,12 @@ File_GENERATED
         ImVec2 size = {ImGui::GetWindowSize().x * ratio, ImGui::GetWindowSize().y * ratio};
 
         ImGui::SetNextElementLayout(0.f, 0.f, size, ImGui::EHAlign::Left, ImGui::EVAlign::Top);
-        ImGui::Button("Top/Left", size);
+        ImGui::Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
+    }
 
-        ImGui::SetNextElementLayout(0.5, 0.f, size, ImGui::EHAlign::Middle, ImGui::EVAlign::Top);
-        ImGui::Button("Top", size);
-
-        ImGui::SetNextElementLayout(1.f, 0.f, size, ImGui::EHAlign::Right, ImGui::EVAlign::Top);
-        ImGui::Button("Top/Right", size);
-
-        ImGui::SetNextElementLayout(0.f, 0.5f, size, ImGui::EHAlign::Left);
-        ImGui::Button("Mid/Left", size);
-
-        ImGui::SetNextElementLayout(0.5f, 0.5f, size);
-        ImGui::Button("Mid", size);
-
-        ImGui::SetNextElementLayout(1.f, 0.5f, size, ImGui::EHAlign::Right);
-        ImGui::Button("Mid/Right", size);
-
-        ImGui::SetNextElementLayout(0.f, 1.f, size, ImGui::EHAlign::Left, ImGui::EVAlign::Bottom);
-        ImGui::Button("Bot/Left", size);
-
-        ImGui::SetNextElementLayout(0.5f, 1.f, size, ImGui::EHAlign::Middle, ImGui::EVAlign::Bottom);
-        ImGui::Button("Bot", size);
-
-        ImGui::SetNextElementLayout(1.f, 1.f, size, ImGui::EHAlign::Right, ImGui::EVAlign::Bottom);
-        ImGui::Button("Bot/Right", size);
+    void MyFpsScript::update(double deltaTime)
+    {
+        m_fireArme->update(deltaTime);
     }
 
     void MyFpsScript::fixedUpdate(double deltaTime)

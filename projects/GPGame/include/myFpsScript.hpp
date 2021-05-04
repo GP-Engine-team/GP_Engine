@@ -6,6 +6,11 @@
 
 #pragma once
 
+#include <Engine/ECS/Component/BehaviourComponent.hpp>
+#include <FireArme/PPSH41.hpp>
+
+#include <memory>
+
 #include "Generated/myFpsScript.rfk.h"
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 
@@ -27,13 +32,7 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) GPE::InputComponent*      input      = nullptr;
         RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
         RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
-
-        /* Variable setter serialization example
-        RFKField(Inspect("setPrintHello"))
-        bool printHello = false;
-
-        void setPrintHello(bool p);
-        */
+        RFKField(Serialize()) FireArme*                 m_fireArme = nullptr;
 
     public:
         MyFpsScript(GPE::GameObject & owner) noexcept;
@@ -54,12 +53,14 @@ namespace GPG RFKNamespace()
         RFKMethod() void leave();
         RFKMethod() void sprintStart();
         RFKMethod() void sprintEnd();
-        RFKMethod() void Shoot();
+        RFKMethod() void raycastExample();
+        RFKMethod() void shoot();
         // RFKMethod() void growUpSphereCollider  ();
         // RFKMethod() void growDownSphereCollider();
 
         void rotate(const GPM::Vec2& deltaDisplacement);
         void onGUI() final;
+        void update(double deltaTime) final;
         void fixedUpdate(double deltaTime) final;
 
         MyFpsScript_GENERATED

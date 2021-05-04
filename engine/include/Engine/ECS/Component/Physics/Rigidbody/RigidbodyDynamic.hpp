@@ -45,6 +45,13 @@ namespace GPE RFKNamespace()
         void setKinematic(bool state) noexcept;
         GETTER_BY_VALUE(KinematicState, m_isKinematic);
 
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
+
         RigidbodyDynamic_GENERATED
     };
 } // namespace )

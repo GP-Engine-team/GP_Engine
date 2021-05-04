@@ -102,7 +102,11 @@ void PhysXSystem::advance(double deltaTime) noexcept
         GameObject* owner = static_cast<GameObject*>(activeActors[i]->userData);
         if (owner)
         {
-            owner->getComponent<RigidbodyDynamic>()->update();
+            RigidbodyDynamic* rigidbody = owner->getComponent<RigidbodyDynamic>();
+            if (rigidbody)
+            {
+                rigidbody->update();
+            }
         }
     }
 }

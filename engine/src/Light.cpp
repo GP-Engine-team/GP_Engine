@@ -4,6 +4,9 @@ using namespace GPE;
 
 void Light::setActive(bool newState) noexcept
 {
+    if (m_isActivated == newState)
+        return;
+
     m_isActivated = newState;
     if (m_isActivated)
         getOwner().pOwnerScene->sceneRenderer.addLight(*this);
