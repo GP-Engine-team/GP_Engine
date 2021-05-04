@@ -139,7 +139,7 @@ namespace GPG
         // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
 
-    // TOOD: Temporary macro
+    // TOOD: Detect whether we are in editor or launcher
     void MyFpsScript::leave()
     {
         glfwSetWindowShouldClose(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_TRUE);
