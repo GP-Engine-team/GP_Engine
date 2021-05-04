@@ -10,11 +10,11 @@
 #include <string>
 #include <vector>
 
-#include "Engine/Core/Tools/ClassUtility.hpp"
-#include "Engine/Resources/Type.hpp"
-#include "Engine/Serialization/DataInspector.hpp"
-#include "GPM/Shape3D/Volume.hpp"
-#include "GPM/Vector3.hpp"
+#include <Engine/Core/Tools/ClassUtility.hpp>
+#include <Engine/Resources/Type.hpp>
+#include <Engine/Serialization/DataInspector.hpp>
+#include <GPM/Vector3.hpp>
+#include <GPM/Shape3D/Volume.hpp>
 
 namespace GPE
 {
