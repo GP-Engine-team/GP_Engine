@@ -10,14 +10,7 @@ File_GENERATED
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, Component& inspected)
 {
-    const char* name = inspected.getArchetype().name.c_str();
-
-    if (!ImGui::CollapsingHeader(name))
-        return;
-    else
-    {
-        inspected.inspect(context);
-    }
+    inspected.inspect(context);
 }
 
 void GPE::Component::awake()
