@@ -7,11 +7,13 @@
 #pragma once
 
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
-#include <FireArme/PPSH41.hpp>
 
-#include <memory>
+#include <Generated/myFpsScript.rfk.h>
 
-#include "Generated/myFpsScript.rfk.h"
+namespace GPG
+{
+class FireArme;
+}
 
 namespace GPE
 {
@@ -38,21 +40,21 @@ public:
     MyFpsScript()                         noexcept = default;
     MyFpsScript(const MyFpsScript& other) noexcept = delete;
     MyFpsScript(MyFpsScript&& other)      noexcept = delete;
-    virtual ~MyFpsScript()                noexcept;
+    virtual ~MyFpsScript()                noexcept = default;
 
     MyFpsScript& operator=(MyFpsScript const& other) noexcept = delete;
     MyFpsScript& operator=(MyFpsScript&& other)      noexcept = delete;
 
 public:
-    RFKMethod() void jump();
-    RFKMethod() void forward();
-    RFKMethod() void backward();
-    RFKMethod() void left();
-    RFKMethod() void right();
-    RFKMethod() void leave();
+    RFKMethod() void jump       ();
+    RFKMethod() void forward    ();
+    RFKMethod() void backward   ();
+    RFKMethod() void left       ();
+    RFKMethod() void right      ();
+    RFKMethod() void leave      ();
     RFKMethod() void sprintStart();
-    RFKMethod() void sprintEnd();
-    RFKMethod() void shoot();
+    RFKMethod() void sprintEnd  ();
+    RFKMethod() void shoot      ();
     // RFKMethod() void growUpSphereCollider  ();
     // RFKMethod() void growDownSphereCollider();
 
