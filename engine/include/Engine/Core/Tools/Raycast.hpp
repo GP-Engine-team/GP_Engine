@@ -28,6 +28,6 @@ struct Raycast
             maxDistance, hit);
     }
 
-    physx::PxRaycastBuffer& hit;
+    physx::PxRaycastBuffer hit;
 };
 } // namespace GPE

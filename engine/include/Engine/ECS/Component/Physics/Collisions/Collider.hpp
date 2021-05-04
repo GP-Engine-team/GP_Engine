@@ -13,27 +13,27 @@
 
 namespace GPE RFKNamespace()
 {
-class RFKClass(Inspect(), Serialize()) Collider : public Component
-{
-public:
-    Collider(GameObject& owner) noexcept : Component(owner)
+    class RFKClass(Inspect(), Serialize()) Collider : public Component
     {
-    }
+    public:
+        Collider(GameObject & owner) noexcept : Component(owner)
+        {
+        }
 
-    Collider() noexcept                      = default;
-    Collider(const Collider& other) noexcept = delete;
-    Collider(Collider&& other) noexcept      = default;
-    Collider& operator=(Collider const& other) noexcept = delete;
-    Collider& operator=(Collider&& other) noexcept = delete;
+        Collider() noexcept                      = default;
+        Collider(const Collider& other) noexcept = delete;
+        Collider(Collider && other) noexcept     = default;
+        Collider& operator=(Collider const& other) noexcept = delete;
+        Collider& operator=(Collider&& other) noexcept = delete;
 
-    virtual ~Collider() noexcept = default;
+        virtual ~Collider() noexcept = default;
 
-public:
-    physx::PxShape*    shape     = nullptr;
-    physx::PxMaterial* material  = nullptr;
-    bool               isTrigger = false;
-    bool               isVisible = false;
+    public:
+        physx::PxShape*    shape     = nullptr;
+        physx::PxMaterial* material  = nullptr;
+        bool               isTrigger = false;
+        bool               isVisible = false;
 
-    Collider_GENERATED
-};
-} // namespace GPE
+        Collider_GENERATED
+    };
+} // namespace )
