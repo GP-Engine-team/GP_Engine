@@ -41,10 +41,11 @@ enum class EVAlign
 inline void SetNextElementLayout(float xWindowSizeRatio, float yWindowSizeRatio, const ImVec2& size,
                                  EHAlign hItemAlign = EHAlign::Middle, EVAlign vItemAlign = EVAlign::Middle)
 {
-    ImGui::SetCursorPosX(ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+    ImGui::SetCursorPosX(ImGui::GetStyle().FramePadding.x + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
                          (ImGui::GetWindowSize().x - ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) *
                              xWindowSizeRatio -
                          size.x * (int)hItemAlign * 0.01f);
+
     ImGui::SetCursorPosY(ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y +
                          (ImGui::GetWindowSize().y - ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y) *
                              yWindowSizeRatio -

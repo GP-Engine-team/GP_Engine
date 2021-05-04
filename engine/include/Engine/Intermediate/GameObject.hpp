@@ -30,8 +30,8 @@ namespace GPE RFKNamespace()
     template <>
     void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
 
-    void save(XmlSaver& context, class GameObject& inspected);
-    void load(XmlLoader& context, class GameObject& sinspected);
+    void save(XmlSaver & context, class GameObject & inspected);
+    void load(XmlLoader & context, class GameObject & sinspected);
 
     class Scene;
 
@@ -65,7 +65,7 @@ namespace GPE RFKNamespace()
 
     public:
         RFKField(Serialize()) Scene*                 pOwnerScene = nullptr;
-        RFKField(Serialize()) std::list<GameObject*> children = {};
+        RFKField(Serialize()) std::list<GameObject*> children    = {};
 
     public:
         inline GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
@@ -242,16 +242,14 @@ namespace GPE RFKNamespace()
 
         [[nodiscard]] void detach(const GameObject::Children::iterator& itToParentPtr) noexcept;
 
-         void inspect(GPE::InspectContext& context) override;
+        void inspect(GPE::InspectContext & context) override;
 
-         static void* operator new(std::size_t size);
+        static void* operator new(std::size_t size);
 
-         static void operator delete(void* ptr);
-
+        static void operator delete(void* ptr);
 
         GameObject_GENERATED
     };
+} // namespace )
 
 #include "GameObject.inl"
-
-} // namespace )

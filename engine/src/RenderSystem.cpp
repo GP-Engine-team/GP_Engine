@@ -450,6 +450,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
                 glUseProgram(shaderToUse->getID());
+                shaderToUse->setMat4("projectViewModelMatrix", mainCamera.getProjectionView().e);
                 rs.tryToSetBackFaceCulling(false);
 
                 for (auto&& line : debugLines)
@@ -467,8 +468,6 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     glBufferData(GL_ARRAY_BUFFER, sizeof(lineSeg), &lineSeg, GL_STATIC_DRAW);
                     glEnableVertexAttribArray(0);
                     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-
-                    shaderToUse->setMat4("projectViewModelMatrix", mainCamera.getProjectionView().e);
 
                     shaderToUse->setVec4("Color", line.color.r, line.color.g, line.color.b, line.color.a);
 

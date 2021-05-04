@@ -58,7 +58,7 @@ template <>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const char* name)
 {
     startProperty(name);
-    const bool hasChanged = inspect(context, inspected.rgba, name);
+    const bool hasChanged = ImGui::ColorEdit4("", &inspected.e[0]);
     endProperty();
 
     return hasChanged;

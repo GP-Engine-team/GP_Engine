@@ -166,9 +166,6 @@
     <ClCompile Include="src\RenderTexture.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ResourceImporter.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\Scene.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -525,9 +522,6 @@
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp">
       <Filter>include\Resources\Importer</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Importer\ResourceImporter.hpp">
-      <Filter>include\Resources\Importer</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Resources\Script\FreeFly.hpp">
       <Filter>include\Resources\Script</Filter>
     </ClInclude>
@@ -696,6 +690,12 @@
     <ClInclude Include="include\Engine\Serialization\PhysXDataInspector.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="third_party\include\AL\al.h" />
+    <ClInclude Include="third_party\include\AL\alc.h" />
+    <ClInclude Include="third_party\include\AL\alext.h" />
+    <ClInclude Include="third_party\include\AL\efx-creative.h" />
+    <ClInclude Include="third_party\include\AL\efx-presets.h" />
+    <ClInclude Include="third_party\include\AL\efx.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

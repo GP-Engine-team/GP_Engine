@@ -11,7 +11,7 @@ File_GENERATED
     using namespace GPE;
 using namespace GPM;
 
-void BoxPosGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
+void BoxPosGen::generate(ParticleData* p, size_t startId, size_t endId)
 {
     Vec4 posMin{m_pos.x - m_maxStartPosOffset.x, m_pos.y - m_maxStartPosOffset.y, m_pos.z - m_maxStartPosOffset.z, 1.f};
     Vec4 posMax{m_pos.x + m_maxStartPosOffset.x, m_pos.y + m_maxStartPosOffset.y, m_pos.z + m_maxStartPosOffset.z, 1.f};
@@ -30,7 +30,7 @@ U16BMask BoxPosGen::getRequiereConfig() const
     return ParticleData::EParam::POSITION;
 }
 
-void RoundPosGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
+void RoundPosGen::generate(ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
     {
@@ -44,7 +44,7 @@ U16BMask RoundPosGen::getRequiereConfig() const
     return ParticleData::EParam::POSITION;
 }
 
-void BasicColorGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
+void BasicColorGen::generate(ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
     {
@@ -65,7 +65,7 @@ U16BMask BasicColorGen::getRequiereConfig() const
     return ParticleData::EParam::END_COLOR | ParticleData::EParam::START_COLOR;
 }
 
-void BasicVelGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
+void BasicVelGen::generate(ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
     {
@@ -81,7 +81,7 @@ U16BMask BasicVelGen::getRequiereConfig() const
     return ParticleData::EParam::VELOCITY;
 }
 
-void SphereVelGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
+void SphereVelGen::generate(ParticleData* p, size_t startId, size_t endId)
 {
     float phi, theta, v, r;
     for (size_t i = startId; i < endId; ++i)
@@ -102,7 +102,7 @@ U16BMask SphereVelGen::getRequiereConfig() const
     return ParticleData::EParam::VELOCITY;
 }
 
-void VelFromPosGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
+void VelFromPosGen::generate(ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
     {
@@ -117,7 +117,7 @@ U16BMask VelFromPosGen::getRequiereConfig() const
     return ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
 }
 
-void BasicTimeGen::generate(double dt, ParticleData* p, size_t startId, size_t endId)
+void BasicTimeGen::generate(ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
     {

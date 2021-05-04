@@ -11,6 +11,7 @@
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
+#include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleData.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleRenderer.hpp>
@@ -32,8 +33,12 @@ namespace GPE RFKNamespace()
         class Shader* m_shader = nullptr;
 
         ParticleData m_particles;
-        size_t       m_count    = 0;
-        float        m_emitRate = 0.0;
+        size_t       m_count              = 0;
+        float        m_emitRate           = 0.0;
+        float        m_duration           = std::numeric_limits<float>::infinity();
+        float        m_durationCount      = 0.f;
+        bool         m_canEmit            = false;
+        bool         m_isInGlobalPosition = true;
 
         /**
          * @brief Is used to define how the particle must be generated (color ? velocity ? Position ?)
@@ -78,15 +83,30 @@ namespace GPE RFKNamespace()
         void         moveTowardScene(class Scene & newOwner) override;
         virtual void inspect(InspectContext & context);
 
+        DEFAULT_GETTER_SETTER_BY_VALUE(Duration, m_duration)
+        DEFAULT_GETTER_SETTER_BY_VALUE(Count, m_count)
+        DEFAULT_GETTER_SETTER_BY_VALUE(EmitRate, m_emitRate)
+
         /**
          * @brief Kill all alive particle
          */
         void reset();
 
         /**
+         * @brief Init render buffer
+         */
+        void generate();
+
+        /**
          * @brief Start the particle effect
          */
         void start();
+
+        /**
+         * @brief Emite a specific number of particle
+         * @param count
+         */
+        void emit(unsigned int count);
 
         /**
          * @brief Update the particle effect and all it's updater
