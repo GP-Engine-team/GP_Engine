@@ -48,6 +48,7 @@ public:
         EDebugShapeMode     mode                   = EDebugShapeMode::FILL;
         bool                enableBackFaceCullling = true;
         EDebugDrawShapeMode drawMode               = EDebugDrawShapeMode::TRAINGLES;
+        float               duration               = 0.f;
     };
 
     struct DebugLine
@@ -124,13 +125,13 @@ public:
     void update(double dt) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
-                         const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                         const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, float duration = 0.f,
                          EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
     void drawDebugCube(const GPM::Vec3& position, const GPM::Quat& rotation, const GPM::Vec3& scale,
-                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, float duration = 0.f,
                        EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
     void drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
-                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, float duration = 0.f,
                        EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
 
     void drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width = 1.f,
