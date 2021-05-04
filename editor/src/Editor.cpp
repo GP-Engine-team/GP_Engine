@@ -82,12 +82,30 @@ void Editor::renderMenuBar()
         // View
         if (ImGui::BeginMenu("View"))
         {
-            if (ImGui::BeginMenu("Add window"))
+            if (ImGui::BeginMenu("Windows"))
             {
                 ImGui::MenuItem("Viewport");
                 ImGui::MenuItem("Scene graph");
                 ImGui::MenuItem("Project browser");
                 ImGui::MenuItem("Inspector");
+
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Layout"))
+            {
+                if (ImGui::MenuItem("Default"))
+                {
+                    ImGui::LoadIniSettingsFromDisk("Layout/defaultGUILayout.ini");
+                }
+                if (ImGui::MenuItem("Quick save"))
+                {
+                    ImGui::SaveIniSettingsToDisk("Layout/userGUILayout.ini");
+                }
+                if (ImGui::MenuItem("Quick laod"))
+                {
+                    ImGui::LoadIniSettingsFromDisk("Layout/userGUILayout.ini");
+                }
                 ImGui::EndMenu();
             }
             ImGui::EndMenu();
@@ -142,11 +160,11 @@ void Editor::renderInspector()
             GPE::InspectContext context;
             GPE::DataInspector::inspect(context, *m_inspectedObject);
 
-            //static float s = 0;
+            // static float s = 0;
 
-            //s += 1.f/30.f;
+            // s += 1.f/30.f;
 
-            //if (s > 3)
+            // if (s > 3)
             //{
             //    GPE::Scene* scene = m_sceneEditor.view.pScene;
 
@@ -237,15 +255,8 @@ void Editor::renderExplorer()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor       {editedScene},
-      m_gameViewer        {},
-      m_logInspector      {},
-      m_projectContent    {},
-      m_sceneGraph        {},
-      m_gameControlBar    {},
-      m_window            {window},
-      m_inspectedObject   {nullptr},
-      m_showAppStyleEditor{false}
+    : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{}, m_sceneGraph{},
+      m_gameControlBar{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
@@ -306,7 +317,6 @@ void Editor::render()
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-
 
 bool Editor::isRunning()
 {
