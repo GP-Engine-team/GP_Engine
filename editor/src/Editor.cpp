@@ -143,7 +143,12 @@ void Editor::renderGameControlBar(EditorStartup& startup)
 
 void Editor::renderLevelEditor()
 {
+    GPE::IInspectable const* const previousInspected = m_inspectedObject;
+
     m_sceneEditor.render(m_inspectedObject);
+
+    if (previousInspected != m_inspectedObject)
+        m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
 }
 
 void Editor::renderGameView(EditorStartup& startup)
@@ -203,8 +208,11 @@ void Editor::renderSceneGraph()
 {
     if (ImGui::Begin("Scene Graph"))
     {
-        GPE::GameObject& root{Engine::getInstance()->sceneManager.getCurrentScene()->getWorld()};
+        GPE::GameObject&               root{Engine::getInstance()->sceneManager.getCurrentScene()->getWorld()};
+        GPE::IInspectable const* const previousInspected = m_inspectedObject;
         m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
+        if (previousInspected != m_inspectedObject)
+            m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
     }
 
     ImGui::End();
@@ -268,7 +276,7 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
     GPE::Engine::getInstance()->inputManager.setInputMode("Editor");
 }
 
-void Editor::update(EditorStartup& startup)
+void Editor::update(double dt, EditorStartup& startup)
 {
     auto syncImGui  = GET_PROCESS((*m_reloadableCpp), setImguiCurrentContext);
     auto syncGameUI = GET_PROCESS((*m_reloadableCpp), getGameUIContext);
@@ -291,6 +299,8 @@ void Editor::update(EditorStartup& startup)
     renderMenuBar();
 
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
+
+    m_sceneEditor.update(dt);
 
     renderGameControlBar(startup);
     renderLevelEditor();
