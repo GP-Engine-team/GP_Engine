@@ -13,23 +13,23 @@
 using namespace GPE;
 using namespace GPM;
 
-Mesh::CreateIndiceBufferArg Mesh::convert(CreateContiguousVerticesArg& arg)
+Mesh::CreateIndiceBufferArg Mesh::convert(Mesh::CreateContiguousVerticesArg& arg)
 {
     CreateIndiceBufferArg newArg;
     newArg.boundingVolume.reset(arg.boundingVolume.get());
     arg.boundingVolume.release();
     newArg.boundingVolumeType = arg.boundingVolumeType;
 
-    for (size_t i = 0; i < arg.iBuffer.size(); ++i)
+    for (size_t i = 0u; i < arg.iBuffer.size(); ++i)
     {
-        newArg.vertices.emplace_back(
-            Vertex{arg.vBuffer[arg.iBuffer[i].iv], arg.vnBuffer[arg.iBuffer[i].ivn], arg.vtBuffer[arg.iBuffer[i].ivt]});
-        newArg.indices.emplace_back(i);
+        newArg.vertices.push_back({arg.vBuffer[arg.iBuffer[i].iv], arg.vnBuffer[arg.iBuffer[i].ivn],
+                                  arg.vtBuffer[arg.iBuffer[i].ivt]});
+        newArg.indices.push_back((unsigned int)i);
     }
     return newArg;
 }
 
-Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
+Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 {
     // m_boundingVolumeType = arg.boundingVolumeType;
 
