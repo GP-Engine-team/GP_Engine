@@ -7,7 +7,7 @@
 #include "Generated/InputComponent.rfk.h"
 File_GENERATED
 
-using namespace std;
+    using namespace std;
 using namespace GPE;
 
 InputComponent::InputComponent(GameObject& owner) : Component(owner)
@@ -55,6 +55,9 @@ void InputComponent::fireAction(const std::string& action) noexcept
 
 void InputComponent::setActive(bool newState) noexcept
 {
+    if (m_isActivated == newState)
+        return;
+
     m_isActivated = newState;
     if (m_isActivated)
         m_key = Engine::getInstance()->inputManager.addComponent(*this);

@@ -8,6 +8,9 @@ using namespace GPE;
 
 Wave::Wave(const char* filepath, const char* name)
 {
+    if (Engine::getInstance()->resourceManager.get<Buffer>(name))
+        return;
+
     drwav wav;
     if (!drwav_init_file(&wav, filepath, NULL))
     {
@@ -20,8 +23,8 @@ Wave::Wave(const char* filepath, const char* name)
     bitsPerSample = 16;
     channels      = static_cast<uint8_t>(wav.channels);
     sampleRate    = wav.sampleRate;
-    data          = pSampleData;
-    size          = wav.totalPCMFrameCount * wav.channels * sizeof(drwav_int16);
+    data.reset(pSampleData);
+    size = wav.totalPCMFrameCount * wav.channels * sizeof(drwav_int16);
 
     AL_CALL(alGenBuffers, 1, &buffer.buffer);
 
@@ -39,7 +42,7 @@ Wave::Wave(const char* filepath, const char* name)
                   << " bps of files : " << name << std::endl;
     }
 
-    AL_CALL(alBufferData, buffer.buffer, format, static_cast<const ALvoid*>(data), static_cast<ALsizei>(size),
+    AL_CALL(alBufferData, buffer.buffer, format, static_cast<const ALvoid*>(data.get()), static_cast<ALsizei>(size),
             static_cast<ALsizei>(sampleRate));
 
     Engine::getInstance()->resourceManager.add<Buffer>(name, buffer);

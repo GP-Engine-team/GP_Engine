@@ -1,8 +1,9 @@
-﻿#include "Engine/Resources/Importer/Importer.hpp"
+﻿#include <Engine/Resources/Importer/Importer.hpp>
 
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/postprocess.h> // Post processing flags
 #include <assimp/scene.h>       // Output data structure
+
 #include <cstdio>
 #include <filesystem>
 #include <memory> // std::make_unique
@@ -12,13 +13,15 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Engine.hpp"
-#include "Engine/Resources/ResourcesManagerType.hpp"
-#include "Engine/Resources/Texture.hpp"
-#include "GPM/Shape3D/AABB.hpp"
-#include "GPM/Shape3D/Sphere.hpp"
+#include <Engine/Core/Debug/Assert.hpp>
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Resources/ResourcesManagerType.hpp>
+#include <Engine/Resources/Texture.hpp>
+#include <GPM/Shape3D/AABB.hpp>
+#include <GPM/Shape3D/Sphere.hpp>
+
+#include <Engine/Core/Tools/Hash.hpp>
 
 using namespace GPE;
 using namespace GPM;
@@ -47,7 +50,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
     std::filesystem::path dstDirPath(dstPath);
 
-    for (size_t i = 1; i < scene->mNumMaterials; ++i)
+    for (size_t i = 0; i < scene->mNumMaterials; ++i)
     {
         Material::ImporteArg materialArg;
 
@@ -70,49 +73,128 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         std::filesystem::path fsDstPath;
         std::filesystem::path fsSrcPath;
 
-        if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_AMBIENT))
+        for (unsigned int iText = 0;
+             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_AMBIENT); ++iText)
         {
-            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_AMBIENT, 0, &path);
+            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_AMBIENT, iText, &path);
 
-            fsPath    = path.C_Str();
-            fsSrcPath = srcDirPath / fsPath;
+            if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
+            {
+                Texture::ImportArg arg;
 
-            fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-            fsDstPath = dstDirPath / fsPath;
+                if (texture->mHeight)
+                {
+                    arg.len = texture->mHeight * texture->mWidth * sizeof(texture->pcData);
+                }
+                else
+                {
+                    arg.len = texture->mWidth;
+                }
+                arg.pixels.reset((unsigned char*)texture->pcData);
+                arg.flipTexture = true;
 
-            materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
+                fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-            importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+                writeTextureFile(fsDstPath.string().c_str(), arg);
+                arg.pixels.release(); // Assimp manage it's mamory
+            }
+            else
+            {
+                fsPath    = path.C_Str();
+                fsSrcPath = srcDirPath / fsPath;
+
+                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                fsDstPath = dstDirPath / fsPath;
+
+                materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+
+                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
+            }
         }
 
-        if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE))
+        for (unsigned int iText = 0;
+             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE); ++iText)
         {
-            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, 0, &path);
+            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, iText, &path);
 
-            fsPath    = path.C_Str();
-            fsSrcPath = srcDirPath / fsPath;
+            if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
+            {
+                Texture::ImportArg arg;
 
-            fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-            fsDstPath = dstDirPath / fsPath;
+                if (texture->mHeight)
+                {
+                    arg.len = texture->mHeight * texture->mWidth * sizeof(texture->pcData);
+                }
+                else
+                {
+                    arg.len = texture->mWidth;
+                }
+                arg.pixels.reset((unsigned char*)texture->pcData);
+                arg.flipTexture = true;
 
-            materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
+                fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-            importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+                writeTextureFile(fsDstPath.string().c_str(), arg);
+                arg.pixels.release(); // Assimp manage it's mamory
+            }
+            else
+            {
+                fsPath    = path.C_Str();
+                fsSrcPath = srcDirPath / fsPath;
+
+                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                fsDstPath = dstDirPath / fsPath;
+
+                materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+
+                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
+            }
         }
 
-        if (scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_BASE_COLOR))
+        for (unsigned int iText = 0;
+             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_BASE_COLOR); ++iText)
         {
-            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_BASE_COLOR, 0, &path);
+            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_BASE_COLOR, iText, &path);
 
-            fsPath    = path.C_Str();
-            fsSrcPath = srcDirPath / fsPath;
+            if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
+            {
+                Texture::ImportArg arg;
 
-            fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-            fsDstPath = dstDirPath / fsPath;
+                if (texture->mHeight)
+                {
+                    arg.len = texture->mHeight * texture->mWidth * sizeof(texture->pcData);
+                }
+                else
+                {
+                    arg.len = texture->mWidth;
+                }
 
-            materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                arg.pixels.reset((unsigned char*)texture->pcData);
+                arg.flipTexture = true;
 
-            importeTextureFile(fsDstPath.string().c_str(), fsSrcPath.string().c_str(), textureArg);
+                fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
+                fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+
+                writeTextureFile(fsDstPath.string().c_str(), arg);
+                arg.pixels.release(); // Assimp manage it's mamory
+            }
+            else
+            {
+                fsPath    = path.C_Str();
+                fsSrcPath = srcDirPath / fsPath;
+
+                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
+                fsDstPath = dstDirPath / fsPath;
+
+                materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+
+                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
+            }
         }
 
         std::filesystem::path dstMaterialPath = dstDirPath / scene->mMaterials[i]->GetName().C_Str();
@@ -166,14 +248,18 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         }
 
         // Indices
-        for (size_t i = 0; i < pMesh->mNumFaces; ++i)
+        for (size_t iFace = 0; iFace < pMesh->mNumFaces; ++iFace)
         {
-            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[0]);
-            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[1]);
-            arg.indices.emplace_back(pMesh->mFaces[i].mIndices[2]);
+            arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[0]);
+            arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[1]);
+            arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[2]);
         }
 
         std::filesystem::path dstMeshPath = dstDirPath / pMesh->mName.C_Str();
+        if (i != 0 &&
+            pMesh->mName == scene->mMeshes[i - 1]->mName) // Add differente name if the FBX containe mesh with same name
+            dstMeshPath += "0";
+
         dstMeshPath += ENGINE_MESH_EXTENSION;
 
         writeMeshFile(dstMeshPath.string().c_str(), arg);
@@ -184,8 +270,9 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
 struct TextureHeader
 {
-    char assetID       = (char)EFileType::TEXTURE;
-    int  textureLenght = 0;
+    char assetID            = (char)EFileType::TEXTURE;
+    int  textureLenght      = 0;
+    bool vflipTextureOnLoad = false;
 };
 
 void GPE::importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config)
@@ -218,11 +305,8 @@ void GPE::importeTextureFile(const char* srcPath, const char* dstPath, const Tex
     }
     }
 
-    std::filesystem::path srcTexturePath(srcPath);
-    std::filesystem::path dstTexturePath = dstPath / srcTexturePath.stem();
-    dstTexturePath += ENGINE_TEXTURE_EXTENSION;
-
-    writeTextureFile(dstTexturePath.string().c_str(), arg);
+    writeTextureFile(dstPath, arg);
+    stbi_set_flip_vertically_on_load(false);
 }
 
 void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data)
@@ -235,7 +319,7 @@ void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data)
         return;
     }
 
-    TextureHeader header{(char)EFileType::TEXTURE, data.len};
+    TextureHeader header{(char)EFileType::TEXTURE, data.len, data.flipTexture};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
     fwrite(data.pixels.get(), data.len, 1, pFile);
@@ -263,12 +347,16 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
         // copy the file into the buffer:
         fread(&header, sizeof(header), 1, pFile);
 
+        stbi_set_flip_vertically_on_load(header.vflipTextureOnLoad);
+
         std::vector<stbi_uc> texBuffer;
         texBuffer.assign(header.textureLenght, 0);
 
         fread(&texBuffer[0], sizeof(stbi_uc), header.textureLenght, pFile); // Texture buffer
 
         arg.pixels.reset(stbi_load_from_memory(texBuffer.data(), header.textureLenght, &arg.w, &arg.h, &arg.comp, 0));
+
+        stbi_set_flip_vertically_on_load(false);
     }
     else
     {
@@ -289,6 +377,8 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
 Texture* GPE::loadTextureFile(const char* src)
 {
     std::filesystem::path srcPath(src);
+    if (Texture* const pTexture = Engine::getInstance()->resourceManager.get<Texture>(srcPath.filename().string()))
+        return pTexture;
     return &Engine::getInstance()->resourceManager.add<Texture>(srcPath.filename().string(), readTextureFile(src));
 }
 
@@ -315,9 +405,10 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
                           static_cast<int>(arg.baseColorTexturePath.size())};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
-    fwrite(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght, pFile);   // string buffer
-    fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);     // string buffer
-    fwrite(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght, pFile); // string buffer
+    fwrite(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght, pFile); // string buffer
+    fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);   // string buffer
+    fwrite(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
+           pFile); // string buffer
 
     fclose(pFile);
 
@@ -344,7 +435,8 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
     if (header.pathAmbianteTextureLenght) // If ambiante texture existe
     {
         arg.ambianteTexturePath.assign(header.pathAmbianteTextureLenght, '\0');
-        fread(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght, pFile); // string buffer
+        fread(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght,
+              pFile); // string buffer
     }
 
     if (header.pathDiffuseTextureLenght) // If diffuse texture existe
@@ -356,7 +448,8 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
     if (header.pathBaseColorTextureLenght) // If base color texture existe
     {
         arg.baseColorTexturePath.assign(header.pathBaseColorTextureLenght, '\0');
-        fread(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght, pFile); // string buffer
+        fread(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
+              pFile); // string buffer
     }
 
     fclose(pFile);
@@ -383,6 +476,8 @@ Material* GPE::loadMaterialFile(const char* src)
         arg.pBaseColorTexture =
             loadTextureFile((std::filesystem::current_path() / importeArg.baseColorTexturePath).string().c_str());
 
+    if (Material* const pMat = Engine::getInstance()->resourceManager.get<Material>(srcPath.filename().string()))
+        return pMat;
     return &Engine::getInstance()->resourceManager.add<Material>(srcPath.filename().string(), arg);
 }
 
@@ -450,6 +545,9 @@ Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
 Mesh* GPE::loadMeshFile(const char* src)
 {
     std::filesystem::path srcPath(src);
+
+    if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(srcPath.filename().string()))
+        return pMesh;
     return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), readMeshFile(src));
 }
 
@@ -521,7 +619,12 @@ ShaderCreateConfig GPE::readShaderFile(const char* src)
 Shader* GPE::loadShaderFile(const char* src)
 {
     std::filesystem::path srcPath(src);
-    ShaderCreateConfig    arg = readShaderFile(src);
+
+    ShaderCreateConfig     arg = readShaderFile(src);
+
+    if (Shader* const pShader = Engine::getInstance()->resourceManager.get<Shader>(srcPath.filename().string()))
+        return pShader;
+
     return &Engine::getInstance()->resourceManager.add<Shader>(
         srcPath.filename().string(), (std::filesystem::current_path() / arg.vertexShaderPath).string().c_str(),
         (std::filesystem::current_path() / arg.fragmentShaderPath).string().c_str(), arg.featureMask);

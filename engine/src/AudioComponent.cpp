@@ -129,6 +129,9 @@ void AudioComponent::stopSound(const char* name) noexcept
 
 void AudioComponent::setActive(bool newState) noexcept
 {
+    if (m_isActivated == newState)
+        return;
+
     m_isActivated = newState;
     if (m_isActivated)
         Engine::getInstance()->soundSystem.addComponent(this);

@@ -2,7 +2,6 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Intermediate/DataChunk.hpp"
-#include "Engine/Resources/Importer/ResourceImporter.hpp"
 
 #include <filesystem> //std::path
 #include <sstream>    //std::sstream, std::getline

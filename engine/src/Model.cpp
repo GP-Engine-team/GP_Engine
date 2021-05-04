@@ -22,7 +22,7 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
@@ -33,8 +33,7 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
            (lhs->pMaterial->isOpaque() && !rhs->pMaterial->isOpaque());
 }
 
-Model::Model(Model&& other) noexcept
-    : Component(other.getOwner()), m_subModels{other.m_subModels}
+Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{other.m_subModels}
 {
     auto&& itNew = m_subModels.begin();
     auto&& itOld = other.m_subModels.begin();
@@ -50,13 +49,11 @@ Model::~Model()
         getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
 }
 
-Model::Model(GameObject& owner)
-    : Model(owner, CreateArg{})
+Model::Model(GameObject& owner) : Model(owner, CreateArg{})
 {
 }
 
-Model::Model(GameObject& owner, const CreateArg& arg)
-    : Component{owner}, m_subModels{arg.subModels}
+Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subModels{arg.subModels}
 {
     for (SubModel& subMesh : m_subModels)
     {
@@ -297,30 +294,6 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
             inspected.pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(inspected);
         }
     }
-
-    /*
-    // Drop
-    if (ImGui::BeginDragDropTarget())
-    {
-        const ImGuiPayload* payload = ImGui::GetDragDropPayload();
-
-        if (payload->IsDataType("RESOURCE_PATH"))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-            size_t hasedExtention = hash(path.extension().string().c_str());
-            if (hasedExtention == hash(".obj"))
-            {
-                // Can drop
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RESOURCE_PATH"))
-                {
-                    IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-                    std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-                }
-            }
-        }
-    }*/
 }
 
 void Model::inspect(InspectContext& context)
@@ -360,6 +333,7 @@ void Model::inspect(InspectContext& context)
         size_t i = 0;
         for (auto&& it = m_subModels.begin(); it != m_subModels.end(); ++i)
         {
+            ImGui::PushID(&*it);
             const bool treeIsOpen =
                 ImGui::TreeNodeEx((void*)(intptr_t)i, nodeFlag, std::string("Element " + std::to_string(i)).c_str());
 
@@ -389,13 +363,13 @@ void Model::inspect(InspectContext& context)
             {
                 // Check if user inspect the current element
                 if (treeIsOpen)
-                {
                     DataInspector::inspect(context, *it);
-                    ImGui::TreePop();
-                }
 
                 ++it;
             }
+            if (treeIsOpen)
+                ImGui::TreePop();
+            ImGui::PopID();
         }
         ImGui::TreePop();
     }

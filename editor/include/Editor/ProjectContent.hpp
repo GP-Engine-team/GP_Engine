@@ -7,8 +7,8 @@
 #pragma once
 
 #include <filesystem>
+#include <list>
 #include <memory>
-#include <vector>
 
 namespace GPE
 {
@@ -29,18 +29,19 @@ struct FileInfo
 
 struct DirectoryInfo
 {
-    std::filesystem::path      name;
-    DirectoryInfo*             pParent = nullptr;
-    std::filesystem::path      path;
-    std::vector<DirectoryInfo> directories = {};
-    std::vector<FileInfo>      files       = {};
+    std::filesystem::path    name;
+    DirectoryInfo*           pParent = nullptr;
+    std::filesystem::path    path;
+    std::list<DirectoryInfo> directories = {};
+    std::list<FileInfo>      files       = {};
 
     bool containFile(std::filesystem::path name)
     {
         bool rst = false;
-        for (int i = 0; i < files.size() && !rst; ++i)
+
+        for (auto&& it = files.cbegin(); it != files.cend() && !rst; ++it)
         {
-            rst |= files[i].filename == name;
+            rst |= it->filename == name;
         }
         return rst;
     }

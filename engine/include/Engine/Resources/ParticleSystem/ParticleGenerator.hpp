@@ -35,7 +35,7 @@ namespace GPE RFKNamespace()
         {
         }
 
-        virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) = 0;
+        virtual void generate(ParticleData * p, size_t startId, size_t endId) = 0;
 
         virtual U16BMask getRequiereConfig() const = 0;
 
@@ -53,7 +53,7 @@ namespace GPE RFKNamespace()
         {
         }
 
-        virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
+        virtual void generate(ParticleData * p, size_t startId, size_t endId) override;
 
         U16BMask getRequiereConfig() const override;
 
@@ -76,7 +76,7 @@ namespace GPE RFKNamespace()
         {
         }
 
-        virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
+        virtual void generate(ParticleData * p, size_t startId, size_t endId) override;
 
         U16BMask getRequiereConfig() const override;
 
@@ -113,7 +113,7 @@ namespace GPE RFKNamespace()
             m_maxEndCol   = arg.maxEndCol;
         }
 
-        virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
+        virtual void generate(ParticleData * p, size_t startId, size_t endId) override;
 
         U16BMask getRequiereConfig() const override;
 
@@ -131,7 +131,7 @@ namespace GPE RFKNamespace()
         {
         }
 
-        virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
+        virtual void generate(ParticleData * p, size_t startId, size_t endId) override;
 
         U16BMask getRequiereConfig() const override;
 
@@ -149,7 +149,7 @@ namespace GPE RFKNamespace()
         {
         }
 
-        virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
+        virtual void generate(ParticleData * p, size_t startId, size_t endId) override;
 
         U16BMask getRequiereConfig() const override;
 
@@ -172,7 +172,7 @@ namespace GPE RFKNamespace()
         {
         }
 
-        virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
+        virtual void generate(ParticleData * p, size_t startId, size_t endId) override;
 
         U16BMask getRequiereConfig() const override;
 
@@ -190,7 +190,7 @@ namespace GPE RFKNamespace()
         {
         }
 
-        virtual void generate(double dt, ParticleData* p, size_t startId, size_t endId) override;
+        virtual void generate(ParticleData * p, size_t startId, size_t endId) override;
 
         U16BMask getRequiereConfig() const override;
 

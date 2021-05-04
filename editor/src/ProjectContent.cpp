@@ -5,7 +5,6 @@
 #include "Engine/Serialization/MeshInspectorPanel.hpp"
 #include "Engine/Serialization/ShaderInspectorPanel.hpp"
 
-#include "Engine/Resources/Importer/ResourceImporter.hpp"
 #include "Engine/Serialization/FileExplorer.hpp"
 #include "Engine/Serialization/TextureImporterSetting.hpp"
 
@@ -309,18 +308,17 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
     ImVec2      size  = ImVec2(32.0f, 32.0f); // Size of the image we want to make visible
     ImGuiStyle& style = ImGui::GetStyle();
 
-    for (int i = 0; i < pCurrentDirectory->directories.size(); ++i)
+    for (auto&& it = pCurrentDirectory->directories.begin(); it != pCurrentDirectory->directories.end(); ++it)
     {
-        ImGui::PushID(i);
+        ImGui::PushID(&*it);
 
         ImGui::BeginGroup();
         {
-            float posX = ImGui::GetCursorPosX() +
-                         ImGui::CalcTextSize(pCurrentDirectory->directories[i].name.string().c_str()).x / 2.f -
+            float posX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(it->name.string().c_str()).x / 2.f -
                          2 * ImGui::GetStyle().ItemSpacing.x;
             ImGui::SetCursorPosX(posX);
 
-            renderfolder(size, &pSelectedDirectory, pCurrentDirectory->directories[i]);
+            renderfolder(size, &pSelectedDirectory, *it);
 
             if (ImGui::IsItemHovered())
             {
@@ -328,7 +326,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 
                 size_t dirSize = 0;
-                for (auto&& file : pCurrentDirectory->directories[i].files)
+                for (auto&& file : it->files)
                     dirSize += file.size;
 
                 ImGui::Text("%lu bytes", dirSize);
@@ -336,33 +334,34 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::EndTooltip();
             }
 
-            ImGui::TextUnformatted(pCurrentDirectory->directories[i].name.string().c_str());
+            ImGui::TextUnformatted(it->name.string().c_str());
         }
         ImGui::EndGroup();
 
         float last_button_x2 = ImGui::GetItemRectMax().x;
         float next_button_x2 =
             last_button_x2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
-        if (i + 1 < pCurrentDirectory->directories.size() && next_button_x2 < windowVisibleX2)
+
+        if (++it != pCurrentDirectory->directories.cend() && next_button_x2 < windowVisibleX2)
         {
             ImGui::SameLine();
         }
+        --it; // decrement because incremented tyo check value + N above
 
         ImGui::PopID();
     }
 
-    for (int i = 0; i < pCurrentDirectory->files.size(); ++i)
+    for (auto&& it = pCurrentDirectory->files.cbegin(); it != pCurrentDirectory->files.cend(); ++it)
     {
-        ImGui::PushID(i);
+        ImGui::PushID(&*it);
 
         ImGui::BeginGroup();
         {
-            float posX = ImGui::GetCursorPosX() +
-                         ImGui::CalcTextSize(pCurrentDirectory->files[i].filename.string().c_str()).x / 2.f -
+            float posX = ImGui::GetCursorPosX() + ImGui::CalcTextSize(it->filename.string().c_str()).x / 2.f -
                          2 * ImGui::GetStyle().ItemSpacing.x;
             ImGui::SetCursorPosX(posX);
 
-            switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
+            switch (GPE::hash(it->extention.string().c_str())) // runtime
             {
             case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
                 renderModel(size);
@@ -397,10 +396,8 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             // Drag
             if (ImGui::BeginDragDropSource())
             {
-                ImGui::SetDragDropPayload(pCurrentDirectory->files[i].extention.string().c_str(),
-                                          (void*)&pCurrentDirectory->files[i].path,
-                                          sizeof(pCurrentDirectory->files[i].path));
-                ImGui::TextUnformatted(pCurrentDirectory->files[i].filename.string().c_str());
+                ImGui::SetDragDropPayload(it->extention.string().c_str(), (void*)&it->path, sizeof(it->path));
+                ImGui::TextUnformatted(it->filename.string().c_str());
                 ImGui::EndDragDropSource();
             }
 
@@ -410,7 +407,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::BeginTooltip();
                 ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 
-                ImGui::Text("%lu bytes", pCurrentDirectory->files[i].size);
+                ImGui::Text("%lu bytes", it->size);
                 ImGui::PopTextWrapPos();
                 ImGui::EndTooltip();
             }
@@ -418,13 +415,13 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             // On double left clic
             if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
             {
-                switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
+                switch (GPE::hash(it->extention.string().c_str())) // runtime
                 {
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                 {
-                    std::string sceneName = pCurrentDirectory->files[i].filename.stem().string();
+                    std::string sceneName = it->filename.stem().string();
                     Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(sceneName);
-                    editor->loadScene(&scene, pCurrentDirectory->files[i].path.string().c_str());
+                    editor->loadScene(&scene, it->path.string().c_str());
                     Engine::getInstance()->sceneManager.loadScene(sceneName);
                     break;
                 }
@@ -437,17 +434,15 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             // On left clic
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
             {
-                switch (GPE::hash(pCurrentDirectory->files[i].extention.string().c_str())) // runtime
+                switch (GPE::hash(it->extention.string().c_str())) // runtime
                 {
                 case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
-                    importationSetting =
-                        std::make_unique<GPE::MeshInspectorPanel>(pCurrentDirectory->files[i].path.string());
+                    importationSetting = std::make_unique<GPE::MeshInspectorPanel>(it->path.string());
                     selectedGameObject = importationSetting.get();
                     break;
 
                 case GPE::hash(ENGINE_MATERIAL_EXTENSION): // compile time
-                    importationSetting =
-                        std::make_unique<GPE::MaterialInspectorPanel>(pCurrentDirectory->files[i].path.string());
+                    importationSetting = std::make_unique<GPE::MaterialInspectorPanel>(it->path.string());
                     selectedGameObject = importationSetting.get();
                     break;
 
@@ -457,8 +452,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     break;
 
                 case GPE::hash(ENGINE_SHADER_EXTENSION): // compile time
-                    importationSetting =
-                        std::make_unique<GPE::ShaderInspectorPanel>(pCurrentDirectory->files[i].path.string());
+                    importationSetting = std::make_unique<GPE::ShaderInspectorPanel>(it->path.string());
                     selectedGameObject = importationSetting.get();
                     break;
 
@@ -473,17 +467,19 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 }
             }
 
-            ImGui::TextUnformatted(pCurrentDirectory->files[i].filename.string().c_str());
+            ImGui::TextUnformatted(it->filename.string().c_str());
         }
         ImGui::EndGroup();
 
         float lastButtonX2 = ImGui::GetItemRectMax().x;
         float nextButtonX2 =
             lastButtonX2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
-        if (i + 1 < pCurrentDirectory->files.size() && nextButtonX2 < windowVisibleX2)
+
+        if (++it != pCurrentDirectory->files.cend() && nextButtonX2 < windowVisibleX2)
         {
             ImGui::SameLine();
         }
+        --it; // decrement because incremented tyo check value + N above
 
         ImGui::PopID();
     }
