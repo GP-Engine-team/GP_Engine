@@ -110,7 +110,7 @@ namespace GPG
     void MyFpsScript::forward()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(vec);
         // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
     }
@@ -118,7 +118,7 @@ namespace GPG
     void MyFpsScript::backward()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(-vec);
         // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
@@ -126,7 +126,7 @@ namespace GPG
     void MyFpsScript::left()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorRight();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(-vec);
         // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
     }
@@ -134,11 +134,12 @@ namespace GPG
     void MyFpsScript::right()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorRight();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(vec);
         // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
 
+    // TOOD: Temporary macro
     void MyFpsScript::leave()
     {
         glfwSetWindowShouldClose(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_TRUE);
