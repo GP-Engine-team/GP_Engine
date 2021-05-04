@@ -1,5 +1,3 @@
-#include "Engine/Resources/Texture.hpp"
-
 inline unsigned int Texture::getID() const noexcept
 {
     return m_id;
