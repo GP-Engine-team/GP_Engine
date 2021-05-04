@@ -75,7 +75,7 @@ namespace GPG RFKNamespace()
                 m_magazineStored.triggeredBullet();
 
                 GPE::Raycast ray;
-                ray.Fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(),
+                ray.fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(),
                          10000.f);
 
                 m_muzzleFlash->emit(
