@@ -91,11 +91,11 @@ namespace GPG RFKNamespace()
         void update(double deltaTime)
         {
             m_isReloadingNextBullet =
-                (m_reloadingBulletTimeCount += (deltaTime * m_isReloadingNextBullet)) < m_rateOfFire;
+                (m_reloadingBulletTimeCount += (float(deltaTime) * m_isReloadingNextBullet)) < m_rateOfFire;
 
             if (m_isReloading)
             {
-                m_reloadingTimeCount += deltaTime * m_isReloading;
+                m_reloadingTimeCount += float(deltaTime) * m_isReloading;
                 if (m_reloadingTimeCount >= m_reloadingDuration)
                 {
                     m_isReloading        = false;
