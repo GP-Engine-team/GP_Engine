@@ -690,12 +690,24 @@
     <ClInclude Include="include\Engine\Serialization\PhysXDataInspector.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="third_party\include\AL\al.h" />
-    <ClInclude Include="third_party\include\AL\alc.h" />
-    <ClInclude Include="third_party\include\AL\alext.h" />
-    <ClInclude Include="third_party\include\AL\efx-creative.h" />
-    <ClInclude Include="third_party\include\AL\efx-presets.h" />
-    <ClInclude Include="third_party\include\AL\efx.h" />
+    <ClInclude Include="third_party\include\AL\al.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\alc.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\alext.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\efx.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\efx-creative.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\AL\efx-presets.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

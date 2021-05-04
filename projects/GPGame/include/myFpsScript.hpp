@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "Generated/myFpsScript.rfk.h"
+#include <Engine/ECS/Component/BehaviourComponent.hpp>
 
 namespace GPE
 {
@@ -52,6 +53,7 @@ namespace GPG RFKNamespace()
         RFKMethod() void leave();
         RFKMethod() void sprintStart();
         RFKMethod() void sprintEnd();
+        RFKMethod() void raycastExample();
         RFKMethod() void shoot();
         // RFKMethod() void growUpSphereCollider  ();
         // RFKMethod() void growDownSphereCollider();

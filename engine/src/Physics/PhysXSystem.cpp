@@ -1,4 +1,5 @@
 ﻿#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
+#include <Engine/ECS/Component/TransformComponent.hpp>
 #include <Engine/ECS/System/PhysXSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <PhysX/gpu/PxGpu.h>
@@ -98,10 +99,14 @@ void PhysXSystem::advance(double deltaTime) noexcept
 
     for (PxU32 i = 0; i < nbActiveActors; ++i)
     {
-        RigidbodyDynamic* rigidbody = static_cast<RigidbodyDynamic*>(activeActors[i]->userData);
-        if (rigidbody)
+        GameObject* owner = static_cast<GameObject*>(activeActors[i]->userData);
+        if (owner)
         {
-            rigidbody->update();
+            RigidbodyDynamic* rigidbody = owner->getComponent<RigidbodyDynamic>();
+            if (rigidbody)
+            {
+                rigidbody->update();
+            }
         }
     }
 }
@@ -115,4 +120,21 @@ void PhysXSystem::drawDebugScene()
         Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.drawDebugLine(PxVec3ToGPMVec3(line.pos0),
                                                                                            PxVec3ToGPMVec3(line.pos1));
     }
+}
+
+PxTransform PhysXSystem::GPETransformComponentToPxTransform(const TransformComponent& _transform) noexcept
+{
+    PxTransform transform;
+    transform.p = PhysXSystem::GPMVec3ToPxVec3(_transform.getGlobalPosition());
+    transform.q = PhysXSystem::GPMQuatToPxQuat(_transform.getGlobalRotation());
+
+    return transform;
+}
+TransformComponent PhysXSystem::PxTransformToGPETransformComponent(const PxTransform& _transform) noexcept
+{
+    TransformComponent transform;
+    transform.setTranslation(PhysXSystem::PxVec3ToGPMVec3(_transform.p));
+    transform.setRotation(PhysXSystem::PxQuatToGPMQuat(_transform.q));
+
+    return transform;
 }

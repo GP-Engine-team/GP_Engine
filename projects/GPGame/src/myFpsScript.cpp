@@ -1,5 +1,6 @@
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
+#include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/Engine.hpp>
@@ -36,7 +37,7 @@ File_GENERATED
         input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
         input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
         input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-
+        input->bindAction("RaycastExample", EKeyMode::KEY_PRESSED, "Game", this, "raycastExample");
         input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
 
         // input->bindAction("growUpCollider",        EKeyMode::KEY_DOWN,     "Game", this, "growUpSphereCollider");
@@ -128,6 +129,22 @@ File_GENERATED
     void MyFpsScript::sprintEnd()
     {
         controller->setSpeed(controller->getSpeed() * .5f);
+    }
+
+    // Exemple de Raycast
+    void MyFpsScript::raycastExample()
+    {
+        GPE::Raycast ray;
+        ray.Fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(), 100000);
+        if (ray.hit.hasBlock)
+        {
+            GPE::GameObject* owner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData);
+            if (owner)
+            {
+                std::cout << "yolo" << std::endl;
+                // Do some shit here;
+            }
+        }
     }
 
     void MyFpsScript::shoot()

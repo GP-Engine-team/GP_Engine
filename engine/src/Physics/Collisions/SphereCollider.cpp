@@ -21,3 +21,8 @@ void SphereCollider::setRadius(float newRadius) noexcept
     m_radius = newRadius;
     shape->setGeometry(PxSphereGeometry(m_radius));
 }
+
+/*void SphereCollider::updateTransform()
+{
+
+}*/
