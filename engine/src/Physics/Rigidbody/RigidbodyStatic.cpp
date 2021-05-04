@@ -10,7 +10,7 @@
 #include "Generated/RigidbodyStatic.rfk.h"
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace physx;
 
 RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner)
@@ -20,6 +20,8 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner)
                     PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
 
     collider = owner.getComponent<Collider>();
+
+    rigidbody->userData = &getOwner();
 
     if (!collider)
     {

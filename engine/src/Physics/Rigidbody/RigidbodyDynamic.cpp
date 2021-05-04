@@ -11,7 +11,7 @@
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace physx;
 
 RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner)
@@ -24,7 +24,7 @@ RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner
 
     rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
     rigidbody->setMass(1);
-    rigidbody->userData = this;
+    rigidbody->userData = &getOwner();
 
     if (!collider)
     {
@@ -43,8 +43,15 @@ RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner
 void RigidbodyDynamic::update() noexcept
 {
     getOwner().getTransform().setTranslation(PhysXSystem::PxVec3ToGPMVec3(rigidbody->getGlobalPose().p));
-    // rigidbody->setLinearVelocity(PxVec3{0, 0, 0});
-    // rigidbody->setAngularVelocity(PxVec3{0, 0, 0});
+}
+
+void RigidbodyDynamic::updatePosition() noexcept
+{
+    // getOwner().getTransform().
+    // getOwner().getTransform().setTranslation(PhysXSystem::PxVec3ToGPMVec3(rigidbody->getGlobalPose().p));
+    rigidbody->setGlobalPose(PhysXSystem::GPETransformComponentToPxTransform(getOwner().getTransform()));
+    // rigidbody->setKinematicTarget(physx::PxTransform::transform(physx::PxPlane::));
+    // collider->shape
 }
 
 void RigidbodyDynamic::setKinematic(bool state) noexcept
