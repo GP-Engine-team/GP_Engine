@@ -41,10 +41,17 @@ namespace GPE
 template <typename T>
 void load(XmlLoader& context, T& inspected, const rfk::Field& info)
 {
-    if (context.goToSubChild(info))
+    if constexpr (std::is_enum_v<T>)
     {
-        inspected.load(context);
-        context.pop();
+        GPE::load(context, *reinterpret_cast<std::underlying_type_t<T>*>(&inspected), info);
+    }
+    else
+    {
+        if (context.goToSubChild(info))
+        {
+            inspected.load(context);
+            context.pop();
+        }
     }
 }
 

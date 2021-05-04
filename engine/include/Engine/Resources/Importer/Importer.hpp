@@ -62,9 +62,9 @@ struct TextureImportConfig
 
 struct ShaderCreateConfig
 {
-    std::string   vertexShaderPath   = "";
-    std::string   fragmentShaderPath = "";
-    unsigned char featureMask        = 0;
+    std::string vertexShaderPath   = "";
+    std::string fragmentShaderPath = "";
+    uint16_t    featureMask        = 0;
 };
 
 void importeModel(const char* srcPath, const char* dstPath) noexcept;

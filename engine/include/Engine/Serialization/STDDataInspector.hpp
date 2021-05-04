@@ -1,7 +1,10 @@
 #pragma once
 
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/InspectContext.hpp>
+
+#include <memory>
+#include <vector>
 
 // in inl
 #include <imgui/imgui.h>
@@ -15,8 +18,31 @@ bool inspect(GPE::InspectContext& context, std::vector<T>& inspected, const rfk:
 template <typename T>
 bool inspect(GPE::InspectContext& context, std::vector<T>& inspected, const char* name);
 
+template <typename T>
+bool inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const rfk::Field& info);
+
+template <typename T>
+bool inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const char* name);
+
+template <typename T>
+void inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected);
+
+template <typename T>
+bool inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected, const rfk::Field& info);
+
+template <typename T>
+bool inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected, const char* name);
+
+template <typename T>
+void inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected);
+
 // template <typename T, typename SIZE>
 // void  inspect(std::array<T, SIZE>& inspected, const rfk::Field& info);
+
+template <>
+bool inspect(GPE::InspectContext& context, size_t& inspected, const rfk::Field& info);
+template <>
+bool inspect(GPE::InspectContext& context, size_t& inspected, const char* name);
 
 template <>
 bool inspect(GPE::InspectContext& context, unsigned int& inspected, const rfk::Field& info);

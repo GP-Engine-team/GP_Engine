@@ -6,7 +6,9 @@ Scene& SceneManager::addEmpty(const std::string& sceneName)
 {
     Log::getInstance()->log("New empty scene " + sceneName + " created");
 
-    return m_scenes[sceneName]; // emplace with default constructor of Scene
+    Scene& scene = m_scenes[sceneName];
+    scene.m_name = sceneName;
+    return scene; // emplace with default constructor of Scene
 }
 
 Scene& SceneManager::loadScene(const std::string& sceneName, ESceneGraphManagement sceneGraphloadType,
@@ -79,4 +81,10 @@ void SceneManager::removeScene(const std::string& sceneName)
         if (currentSceneSetNull && m_scenes.size() != 0u)
             m_pCurrentScene = &m_scenes.begin()->second;
     }
+}
+
+
+void SceneManager::removeScene(Scene& scene)
+{
+    removeScene(scene.m_name);
 }

@@ -30,7 +30,7 @@ void TransformComponent::inspect(GPE::InspectContext & context)
 {
     Component::inspect(context);
 
-    if (::GPE::DataInspector::inspect(context, m_spaceAttribut, "Transform"))
+    if (GPE::DataInspector::inspect(context, m_spaceAttribut, "Transform"))
     {
         m_isDirty = true;
     }

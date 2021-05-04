@@ -169,7 +169,7 @@ static const char* timeUnscaledAccVertexShaderStr = R"(
 uniform float unscaledTimeAcc;
 )";
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath, unsigned char featureMask)
+Shader::Shader(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
     : m_featureMask(featureMask), m_lightsUniformBuffer(0)
 {
     loadAndCompile(vertexPath, fragmentPath, featureMask);
@@ -180,7 +180,7 @@ Shader::~Shader() noexcept
     release();
 }
 
-void Shader::reload(const char* vertexPath, const char* fragmentPath, unsigned char featureMask)
+void Shader::reload(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
 {
     release();
     loadAndCompile(vertexPath, fragmentPath, featureMask);
@@ -363,7 +363,7 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
     }
 }
 
-void Shader::loadAndCompile(const char* vertexPath, const char* fragmentPath, unsigned char featureMask)
+void Shader::loadAndCompile(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
 {
     std::string vertexCode;
     std::string fragmentCode;

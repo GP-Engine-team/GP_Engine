@@ -9,8 +9,18 @@
 namespace GPE
 {
 
+enum class EGameState : unsigned char
+{
+    STOPPED = 0u,
+    PLAYING = (1u << 0),
+    PAUSED  = (1u << 1)
+};
+
 class AbstractGame
 {
+public:
+    EGameState state = EGameState::STOPPED;
+
 public:
     virtual ~AbstractGame() = default;
 

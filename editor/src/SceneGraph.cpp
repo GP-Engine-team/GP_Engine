@@ -11,6 +11,7 @@
 
 #include "Engine/ECS/Component/AudioComponent.hpp"
 #include "Engine/ECS/Component/InputComponent.hpp"
+#include "Engine/ECS/Component/ParticleComponent.hpp"
 
 #include "Engine/ECS/Component/Light/DirectionalLight.hpp"
 #include "Engine/ECS/Component/Light/PointLight.hpp"
@@ -119,6 +120,9 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
 
             // if (ImGui::MenuItem("Audio component"))
             // gameObject.addComponent<AudioComponent>();
+
+            if (ImGui::MenuItem("Particle component"))
+                gameObject.addComponent<ParticleComponent>();
 
             if (ImGui::MenuItem("Input component"))
                 gameObject.addComponent<InputComponent>();

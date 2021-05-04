@@ -53,6 +53,7 @@ namespace GPE RFKNamespace()
         {
             RFKField(Inspect(), Serialize())
             std::string     name = "";
+            RFKField(Serialize())
             EProjectionType type = EProjectionType::NONE;
 
             RFKField(Inspect(), Serialize())
@@ -75,20 +76,20 @@ namespace GPE RFKNamespace()
 
         struct PerspectiveCreateArg
         {
+            const char* name    = "Camera";
             float       aspect  = 16.f / 9.f;
             float       nearVal = 0.001f;
-            float       farVal  = 10.f;
+            float       farVal  = 1000.f;
             float       fovY    = 70.f;
-            const char* name    = "Camera";
         };
 
         struct OrthographicCreateArg
         {
+            const char* name    = "Camera";
             float       hSide   = 1.f;
             float       vSide   = 1.f;
             float       nearVal = 0.001f;
-            float       farVal  = 10.f;
-            const char* name    = "Camera";
+            float       farVal  = 1000.f;
         };
 
     protected:

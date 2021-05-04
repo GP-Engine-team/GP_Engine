@@ -21,6 +21,7 @@ class Camera;
 struct Frustum;
 class Model;
 class Shader;
+class ParticleComponent;
 
 class RenderSystem
 {
@@ -59,19 +60,20 @@ public:
     };
 
     using RenderPipeline =
-        std::function<void(const ResourceManagerType&, RenderSystem&, std::vector<Renderer*>&, std::vector<SubModel*>&,
-                           std::vector<SubModel*>&, std::vector<Camera*>&, std::vector<Light*>&,
+        std::function<void(RenderSystem&, std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
+                           std::vector<Camera*>&, std::vector<Light*>&, std::vector<ParticleComponent*>&,
                            std::vector<DebugShape>&, std::vector<DebugLine>&, Camera&)>;
 
 protected:
-    std::vector<Renderer*>  m_pRenderers;
-    std::vector<SubModel*>  m_pOpaqueSubModels;
-    std::vector<SubModel*>  m_pTransparenteSubModels;
-    std::vector<Camera*>    m_pCameras;
-    std::vector<Light*>     m_pLights;
-    std::vector<DebugShape> m_debugShape;
-    std::vector<DebugLine>  m_debugLine;
-    Camera*                 m_mainCamera = nullptr;
+    std::vector<Renderer*>          m_pRenderers;
+    std::vector<SubModel*>          m_pOpaqueSubModels;
+    std::vector<SubModel*>          m_pTransparenteSubModels;
+    std::vector<Camera*>            m_pCameras;
+    std::vector<Light*>             m_pLights;
+    std::vector<ParticleComponent*> m_pParticleComponents;
+    std::vector<DebugShape>         m_debugShape;
+    std::vector<DebugLine>          m_debugLine;
+    Camera*                         m_mainCamera = nullptr;
 
     unsigned int m_currentShaderID                  = 0;
     unsigned int m_currentTextureID                 = 0;
@@ -94,18 +96,32 @@ public:
     void tryToBindMesh(unsigned int meshID);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
-    void setMainCamera(Camera& newMainCamera) noexcept;
+    void    setMainCamera(Camera& newMainCamera) noexcept;
+    Camera& setMainCamera(int index) noexcept;
 
     void resetCurrentRenderPassKey();
 
     bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept;
     void drawModelPart(const SubModel& subModel);
-    void sendModelDataToShader(Camera& camToUse, Shader& shader, SubModel& subModel);
-    void sendDataToInitShader(Camera& camToUse, Shader* pCurrentShaderUse);
+    void sendModelDataToShader(Camera& camToUse, Shader& shader, const GPM::Mat4& modelMatrix);
+    void sendDataToInitShader(Camera& camToUse, Shader& shader);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
     RenderPipeline gameObjectIdentifierPipeline() const noexcept;
-    void           draw(const ResourceManagerType& res, RenderPipeline renderPipeline) noexcept;
+
+    /**
+     * @brief Render the scene thanks to the call back set in input. This callback will be used as the render pipeline.
+     * @param renderPipeline
+     * @return
+     */
+    void render(RenderPipeline renderPipeline) noexcept;
+
+    /**
+     * @brief Update particles (to call once by frame)
+     * @param dt
+     * @return
+     */
+    void update(double dt) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
                          const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
@@ -126,7 +142,15 @@ public:
 
 public:
     // TODO: Remove this shit and create variadic templated system
-    void addRenderer(Renderer* renderer) noexcept;
+    void addParticleComponent(ParticleComponent& particleComponent) noexcept;
+
+    void updateParticleComponentPointer(ParticleComponent* newPointerParticleComponent,
+                                        ParticleComponent* exPointerParticleComponent) noexcept;
+
+    void removeParticleComponent(ParticleComponent& particleComponent) noexcept;
+
+    // TODO: Remove this shit and create variadic templated system
+    void addRenderer(Renderer& renderer) noexcept;
 
     void updateRendererPointer(Renderer* newPointerRenderer, Renderer* exPointerRenderer) noexcept;
 

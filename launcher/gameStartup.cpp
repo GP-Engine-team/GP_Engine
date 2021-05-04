@@ -31,17 +31,18 @@ GameStartup::GameStartup()
     m_game = createGameInstance();
 
     GPE_ASSERT(m_game != nullptr, "m_game should be valid since we're running the game.");
-    gameFunctionsPtr.update = [&](double a, double b) {
+    gameFunctionsPtr.update = [&](double unscaledDeltaTime, double deltaTime) {
         GPE::Engine::getInstance()->inputManager.processInput();
+        Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
 
-        m_game->update(a, b);
+        m_game->update(unscaledDeltaTime, deltaTime);
     };
     gameFunctionsPtr.fixedUpdate =
         std::bind(&AbstractGame::fixedUpdate, m_game, std::placeholders::_1, std::placeholders::_2);
     gameFunctionsPtr.render = [&]() {
         int h, w;
         GPE::Engine::getInstance()->window.getSize(w, h);
-        m_game->setViewport(0, 0, w, h);
+        m_game->setViewport(.0f, .0f, float(w), float(h));
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, w, h);
@@ -51,10 +52,6 @@ GameStartup::GameStartup()
     };
 
     GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
-    // ImGuiIO& io = ImGui::GetIO();
-    // io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_NoMouseCursorChange;
-    // GPE::Engine::getInstance()->inputManager.setCursorMode(GPE::Engine::getInstance()->window.getGLFWWindow(),
-    // GLFW_CURSOR_DISABLED);
 }
 
 void GameStartup::update()

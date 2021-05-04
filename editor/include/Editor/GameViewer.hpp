@@ -8,26 +8,30 @@
 
 #include "WindowFramebuffer.hpp"
 
-namespace GPE
-{
-class AbstractGame;
-}
+struct GLFWwindow;
 
 namespace Editor
 {
 
+class EditorStartup;
+
 class GameViewer
 {
 public:
-    WindowFBO framebuffer;
+    WindowFBO            framebuffer;
+    GLFWwindow*          window;
 
 private:
-    bool      m_captureInputs;
+    bool                 m_captureInputs;
 
 public:
     GameViewer(int width = 1, int height = 1);
 
-    void render(GPE::AbstractGame* game);
+    void render(EditorStartup& startup);
+
+    void captureInputs();
+
+    void releaseInputs();
 };
 
 }

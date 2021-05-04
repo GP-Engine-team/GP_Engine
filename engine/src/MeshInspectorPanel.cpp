@@ -1,12 +1,12 @@
-#include "Engine/Core/Tools/ImGuiTools.hpp"
 #include "Engine/Serialization/FileExplorer.hpp"
+#include "Engine/Core/Tools/ImGuiTools.hpp"
 #include "Engine/Serialization/GPMDataInspector.hpp"
 #include "Engine/Serialization/STDDataInspector.hpp"
 
 #include "Engine/Serialization/MeshInspectorPanel.hpp"
 File_GENERATED
 
-    namespace GPE
+namespace GPE
 {
 
     MeshInspectorPanel::MeshInspectorPanel(const std::string& inPath)

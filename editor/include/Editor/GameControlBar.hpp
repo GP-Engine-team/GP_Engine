@@ -11,6 +11,7 @@
 namespace Editor
 {
 
+class EditorStartup;
 class Editor;
 
 class GameControlBar
@@ -37,7 +38,7 @@ public:
     GameControlBar();
 
     // Methods
-    void render(class Editor& editor);
+    void render(EditorStartup& startup);
 };
 
 } // End of namespace Editor
