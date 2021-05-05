@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/Resources/Texture.hpp"
+#include <Engine/Resources/Texture.hpp>
 
 namespace Editor
 {
@@ -16,15 +16,6 @@ class Editor;
 
 class GameControlBar
 {
-public:
-    // Helper used for clarity and readability
-    enum EButton
-    {
-        STOP  = 0u,
-        PLAY  = (1u << 0),
-        PAUSE = (1u << 1)
-    };
-
 private:
     // Data members
     GPE::Texture playButtonTex;
