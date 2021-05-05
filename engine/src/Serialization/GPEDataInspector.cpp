@@ -1,6 +1,8 @@
 #include "Engine/Serialization/GPEDataInspector.hpp"
 
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Importer/Importer.hpp>
+#include <filesystem>
 
 #include <imgui.h>
 
@@ -96,6 +98,30 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject*& insp
         ImGui::EndPopup();
     }
 
+    // Drop from content browser
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_PREFAB_EXTENSION))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            // if (Prefab* pPrefab = Engine::getInstance()->resourceManager.get<Prefab>(path.string().c_str()))
+            //{
+            //    inspected.pPrefab = pPrefab;
+            //}
+            // else
+            //{
+            //    if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pPrefab))
+            //        inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
+
+            //    inspected.pPrefab = loadPrefabFile(path.string().c_str());
+            //    inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
+            //}
+        }
+    }
+
+    // Drop from scene graph
     if (ImGui::BeginDragDropTarget())
     {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))

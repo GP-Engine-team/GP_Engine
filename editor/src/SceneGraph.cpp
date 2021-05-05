@@ -18,6 +18,8 @@
 #include "Engine/ECS/Component/Light/SpotLight.hpp"
 
 #include "Engine/Serialization/IInspectable.hpp"
+#include <Engine/Resources/Importer/Importer.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
 
 #include "Engine/Resources/Scene.hpp"
 #include <imgui/imgui.h>
@@ -142,6 +144,12 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             }
 
             ImGui::EndMenu();
+        }
+
+        if (ImGui::MenuItem("Save as prefab", NULL, false))
+        {
+            const std::filesystem::path path = openFileExplorerAndGetRelativePath(L"Select folder", {});
+            writePrefabFile(path.string().c_str(), gameObject);
         }
 
         if (ImGui::MenuItem("Remove", NULL, false))

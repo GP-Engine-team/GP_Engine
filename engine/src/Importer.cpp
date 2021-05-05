@@ -559,7 +559,7 @@ struct ShadeHeader
     uint16_t featureMask        = 0;
 };
 
-void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
+void GPE::writeShaderFile(const char* dst, const ShaderCreateConfig& arg)
 {
     FILE* pFile = nullptr;
 
@@ -581,11 +581,11 @@ void GPE::writeShaderFile(const char* dst, const ShaderCreateonfig& arg)
     Log::getInstance()->log(stringFormat("Shader write to \"%s\"", dst));
 }
 
-ShaderCreateonfig GPE::readShaderFile(const char* src)
+ShaderCreateConfig GPE::readShaderFile(const char* src)
 {
     FILE*                 pFile = nullptr;
     std::filesystem::path srcPath(src);
-    ShaderCreateonfig     arg;
+    ShaderCreateConfig    arg;
 
     if (srcPath.extension() != ENGINE_SHADER_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
@@ -619,11 +619,72 @@ ShaderCreateonfig GPE::readShaderFile(const char* src)
 Shader* GPE::loadShaderFile(const char* src)
 {
     std::filesystem::path srcPath(src);
-    ShaderCreateonfig     arg = readShaderFile(src);
+    ShaderCreateConfig    arg = readShaderFile(src);
 
     if (Shader* const pShader = Engine::getInstance()->resourceManager.get<Shader>(srcPath.filename().string()))
         return pShader;
     return &Engine::getInstance()->resourceManager.add<Shader>(
         srcPath.filename().string(), (std::filesystem::current_path() / arg.vertexShaderPath).string().c_str(),
         (std::filesystem::current_path() / arg.fragmentShaderPath).string().c_str(), arg.featureMask);
+}
+
+struct PrefabHeader
+{
+    char     assetID  = (char)EFileType::PREFAB;
+    uint16_t type     = 0;
+    size_t   dataSize = 0;
+};
+
+void GPE::writePrefabFile(const char* dst, const SavedPrefab::CreateArg& arg)
+{
+    FILE* pFile = nullptr;
+
+    if (fopen_s(&pFile, dst, "w+b"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
+        return;
+    }
+
+    PrefabHeader header{(char)EFileType::PREFAB, (uint16_t)arg.type, arg.data.size()};
+    fwrite(&header, sizeof(header), 1, pFile); // header
+
+    fwrite(arg.data.data(), sizeof(char), arg.data.size(), pFile); // string buffer
+    fclose(pFile);
+
+    Log::getInstance()->log(stringFormat("Prefab write to \"%s\"", dst));
+}
+
+SavedPrefab::CreateArg GPE::readPrefabFile(const char* src)
+{
+    FILE*                  pFile = nullptr;
+    std::filesystem::path  srcPath(src);
+    SavedPrefab::CreateArg arg;
+
+    if (srcPath.extension() != ENGINE_PREFAB_EXTENSION || fopen_s(&pFile, src, "rb"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
+        return arg;
+    }
+
+    PrefabHeader header;
+    // copy the file into the buffer:
+    fread(&header, sizeof(header), 1, pFile);
+
+    arg.type = (SavedPrefab::EType)header.type;
+    if (header.dataSize)
+    {
+        arg.data.assign(header.dataSize, '\0');
+        fread(arg.data.data(), sizeof(char), header.dataSize, pFile); // string buffer
+    }
+
+    fclose(pFile);
+
+    Log::getInstance()->log(stringFormat("Prefab read from \"%s\"", src));
+    return arg;
+}
+
+SavedPrefab::CreateArg GPE::loadPrefabFile(const char* src)
+{
+    std::filesystem::path srcPath(src);
+    return readPrefabFile(src);
 }
