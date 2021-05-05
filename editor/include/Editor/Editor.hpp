@@ -24,7 +24,6 @@ class ReloadableCpp;
 class Scene;
 } // namespace GPE
 
-
 namespace Editor
 {
 
@@ -48,17 +47,17 @@ public:
     GPE::ReloadableCpp* m_reloadableCpp = nullptr;
 
 private:
-    void setupDearImGui      ();
+    void setupDearImGui();
 
-    void renderLog           ();
-    void renderStyleEditor   ();
-    void renderMenuBar       ();
+    void renderLog();
+    void renderStyleEditor();
+    void renderMenuBar();
     void renderGameControlBar(EditorStartup& startup);
-    void renderLevelEditor   ();
-    void renderGameView      (EditorStartup& startup);
-    void renderInspector     ();
-    void renderSceneGraph    ();
-    void renderExplorer      ();
+    void renderLevelEditor();
+    void renderGameView(EditorStartup& startup);
+    void renderInspector();
+    void renderSceneGraph();
+    void renderExplorer();
 
     /**
      * @brief Function that crate scene graph recursively for each node in imGui window.
@@ -72,7 +71,7 @@ public:
     Editor(GLFWwindow* window, GPE::Scene& editedScene);
 
     void setSceneInEdition(GPE::Scene& scene);
-    void update(EditorStartup& startup);
+    void update(double dt, EditorStartup& startup);
     void render();
     bool isRunning();
 };

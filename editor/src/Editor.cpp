@@ -82,12 +82,30 @@ void Editor::renderMenuBar()
         // View
         if (ImGui::BeginMenu("View"))
         {
-            if (ImGui::BeginMenu("Add window"))
+            if (ImGui::BeginMenu("Windows"))
             {
                 ImGui::MenuItem("Viewport");
                 ImGui::MenuItem("Scene graph");
                 ImGui::MenuItem("Project browser");
                 ImGui::MenuItem("Inspector");
+
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Layout"))
+            {
+                if (ImGui::MenuItem("Default"))
+                {
+                    ImGui::LoadIniSettingsFromDisk("Layout/defaultGUILayout.ini");
+                }
+                if (ImGui::MenuItem("Quick save"))
+                {
+                    ImGui::SaveIniSettingsToDisk("Layout/userGUILayout.ini");
+                }
+                if (ImGui::MenuItem("Quick laod"))
+                {
+                    ImGui::LoadIniSettingsFromDisk("Layout/userGUILayout.ini");
+                }
                 ImGui::EndMenu();
             }
             ImGui::EndMenu();
@@ -126,6 +144,10 @@ void Editor::renderGameControlBar(EditorStartup& startup)
 void Editor::renderLevelEditor()
 {
     m_sceneEditor.render(m_inspectedObject);
+
+    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered() &&
+        dynamic_cast<GameObject*>(m_inspectedObject))
+        m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
 }
 
 void Editor::renderGameView(EditorStartup& startup)
@@ -142,11 +164,11 @@ void Editor::renderInspector()
             GPE::InspectContext context;
             GPE::DataInspector::inspect(context, *m_inspectedObject);
 
-            //static float s = 0;
+            // static float s = 0;
 
-            //s += 1.f/30.f;
+            // s += 1.f/30.f;
 
-            //if (s > 3)
+            // if (s > 3)
             //{
             //    GPE::Scene* scene = m_sceneEditor.view.pScene;
 
@@ -186,7 +208,11 @@ void Editor::renderSceneGraph()
     if (ImGui::Begin("Scene Graph"))
     {
         GPE::GameObject& root{Engine::getInstance()->sceneManager.getCurrentScene()->getWorld()};
+
         m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
+
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && dynamic_cast<GameObject*>(m_inspectedObject))
+            m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
     }
 
     ImGui::End();
@@ -237,15 +263,8 @@ void Editor::renderExplorer()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor       {editedScene},
-      m_gameViewer        {},
-      m_logInspector      {},
-      m_projectContent    {},
-      m_sceneGraph        {},
-      m_gameControlBar    {},
-      m_window            {window},
-      m_inspectedObject   {nullptr},
-      m_showAppStyleEditor{false}
+    : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{}, m_sceneGraph{},
+      m_gameControlBar{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
@@ -257,7 +276,7 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
     GPE::Engine::getInstance()->inputManager.setInputMode("Editor");
 }
 
-void Editor::update(EditorStartup& startup)
+void Editor::update(double dt, EditorStartup& startup)
 {
     auto syncImGui  = GET_PROCESS((*m_reloadableCpp), setImguiCurrentContext);
     auto syncGameUI = GET_PROCESS((*m_reloadableCpp), getGameUIContext);
@@ -280,6 +299,8 @@ void Editor::update(EditorStartup& startup)
     renderMenuBar();
 
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
+
+    m_sceneEditor.update(dt);
 
     renderGameControlBar(startup);
     renderLevelEditor();
@@ -306,7 +327,6 @@ void Editor::render()
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-
 
 bool Editor::isRunning()
 {
