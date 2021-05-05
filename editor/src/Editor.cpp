@@ -143,11 +143,10 @@ void Editor::renderGameControlBar(EditorStartup& startup)
 
 void Editor::renderLevelEditor()
 {
-    GPE::IInspectable const* const previousInspected = m_inspectedObject;
-
     m_sceneEditor.render(m_inspectedObject);
 
-    if (previousInspected != m_inspectedObject)
+    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered() &&
+        dynamic_cast<GameObject*>(m_inspectedObject))
         m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
 }
 
@@ -208,10 +207,11 @@ void Editor::renderSceneGraph()
 {
     if (ImGui::Begin("Scene Graph"))
     {
-        GPE::GameObject&               root{Engine::getInstance()->sceneManager.getCurrentScene()->getWorld()};
-        GPE::IInspectable const* const previousInspected = m_inspectedObject;
+        GPE::GameObject& root{Engine::getInstance()->sceneManager.getCurrentScene()->getWorld()};
+
         m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
-        if (previousInspected != m_inspectedObject)
+
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && dynamic_cast<GameObject*>(m_inspectedObject))
             m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
     }
 
