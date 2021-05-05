@@ -9,12 +9,14 @@
 #include "Engine/ECS/Component/Model.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
+#include "Engine/Serialization/SavedScene.hpp"
 
 #define ENGINE_MESH_EXTENSION ".GPMesh"
 #define ENGINE_MATERIAL_EXTENSION ".GPMaterial"
 #define ENGINE_TEXTURE_EXTENSION ".GPTexture"
 #define ENGINE_SHADER_EXTENSION ".GPShader"
 #define ENGINE_PREFAB_EXTENSION ".GPPrefab"
+#define ENGINE_SCENE_EXTENSION ".GPScene"
 
 namespace GPE
 {
@@ -24,6 +26,7 @@ enum class EFileType
     MATERIAL = 1,
     TEXTURE  = 2,
     SHADER   = 3,
+    SCENE    = 4,
     PREFAB   = 6
 };
 
@@ -88,5 +91,9 @@ Shader*            loadShaderFile(const char* src);
 void                    writePrefabFile(const char* dst, const SavedPrefab::CreateArg& arg = SavedPrefab::CreateArg{});
 SavedPrefab::CreateArg  readPrefabFile(const char* src);
 SavedPrefab::CreateArg* loadPrefabFile(const char* src);
+
+void                  writeSceneFile(const char* dst, const SavedScene::CreateArg& arg);
+SavedScene::CreateArg readSceneFile(const char* src);
+SavedScene::CreateArg loadSceneFile(const char* src);
 
 } // namespace GPE

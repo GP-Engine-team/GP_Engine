@@ -122,21 +122,35 @@ namespace GPE
 template <typename T>
 void save(XmlSaver& context, const T& inspected, const rfk::Field& info)
 {
-    context.push(info);
+    if constexpr (std::is_enum_v<T>)
+    {
+        GPE::save(context, *reinterpret_cast<const std::underlying_type_t<T>*>(&inspected), info);
+    }
+    else
+    {
+        context.push(info);
 
-    inspected.save(context);
+        inspected.save(context);
 
-    context.pop();
+        context.pop();
+    }
 }
 
 template <typename T>
 void save(XmlSaver& context, const T& inspected, const XmlSaver::SaveInfo& info)
 {
-    context.push(info);
+    if constexpr (std::is_enum_v<T>)
+    {
+        GPE::save(context, *reinterpret_cast<const std::underlying_type_t<T>*>(&inspected), info);
+    }
+    else
+    {
+        context.push(info);
 
-    inspected.save(context);
+        inspected.save(context);
 
-    context.pop();
+        context.pop();
+    }
 }
 
 template <typename T>
@@ -169,12 +183,19 @@ void save(XmlSaver& context, T* const & inspected, const XmlSaver::SaveInfo& inf
  */
 template <>
 void save(XmlSaver& context, const std::string& inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, const std::string& inspected, const XmlSaver::SaveInfo& info);
 
 /**
  * @brief Specialization for int data. See the original function for more comments.
  */
 template <>
 void save(XmlSaver& context, const int& inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, const int& inspected, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, const unsigned int& inspected, const rfk::Field& info);
 
 /**
  * @brief Specialization for size_t data. See the original function for more comments.
@@ -199,6 +220,8 @@ void save(XmlSaver& context, const float& inspected, const rfk::Field& info);
  */
 template <>
 void save(XmlSaver& context, const bool& inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, const bool& inspected, const XmlSaver::SaveInfo& info);
 
 template <>
 void save(XmlSaver& context, rfk::Object* const & inspected, const rfk::Field& info);

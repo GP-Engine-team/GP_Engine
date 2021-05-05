@@ -18,9 +18,12 @@ class RFKClass() FreeFly final : public BehaviourComponent
 {
 protected:
     TimeSystem& timeSys;
+    RFKField(Inspect())
     float       m_walkSpeed     = 15.f; // m/s
+    RFKField(Inspect())
     float       m_sprintSpeed   = 30.f;
     float       m_speed         = m_walkSpeed;
+    RFKField(Inspect())
     float       m_rotationSpeed = .001f;
 
 public:

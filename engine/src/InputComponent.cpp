@@ -64,3 +64,9 @@ void InputComponent::setActive(bool newState) noexcept
     else
         Engine::getInstance()->inputManager.removeComponent(m_key);
 }
+
+void InputComponent::awake() 
+{
+    setActive(false);
+    setActive(true);
+}

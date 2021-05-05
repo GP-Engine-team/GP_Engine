@@ -11,10 +11,7 @@ void startProperty(const char* name);
 void endProperty();
 
 template <typename T>
-void inspect(GPE::InspectContext& context, T& inspected)
-{
-    inspected.inspect(context);
-}
+void inspect(GPE::InspectContext& context, T& inspected);
 /**
  * @brief Shows the content of the inspected object.
  * @tparam T The type of the inspected element.
@@ -23,19 +20,10 @@ void inspect(GPE::InspectContext& context, T& inspected)
  * @return True if the inspected element has been modified, false otherwise.
  */
 template <typename T>
-bool inspect(GPE::InspectContext& context, T& inspected, const char* name)
-{
-    startProperty(name);
-    const bool hasBeenModified = GPE::DataInspector::inspect(inspected);
-    endProperty();
-    return hasBeenModified;
-}
+bool inspect(GPE::InspectContext& context, T& inspected, const char* name);
 
 template <typename T>
-void inspect(GPE::InspectContext& context, T& inspected, const std::string& name)
-{
-    DataInspector::inspect(inspected, name.c_str());
-}
+void inspect(GPE::InspectContext& context, T& inspected, const std::string& name);
 
 /**
  * @brief Shows the content of the inspected object.
@@ -45,11 +33,8 @@ void inspect(GPE::InspectContext& context, T& inspected, const std::string& name
  * @return True if the inspected element has been modified, false otherwise.
  */
 template <typename T>
-bool inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
-{
-    inspected.inspect(context);
-    return true;
-}
+bool inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info);
+
 }; // namespace DataInspector
 
 } // namespace GPE
@@ -57,3 +42,4 @@ bool inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 #include "GPEDataInspector.hpp"
 #include "GPMDataInspector.hpp"
 #include "STDDataInspector.hpp"
+#include "DataInspector.inl"

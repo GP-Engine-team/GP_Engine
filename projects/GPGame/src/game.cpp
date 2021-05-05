@@ -30,18 +30,12 @@ using namespace GPM::Random;
 void Game::update(double unscaledDeltaTime, double deltaTime)
 {
     ++unFixedUpdateFrameCount;
-
-    bSys.update(float(deltaTime));
-    world.updateSelfAndChildren();
     GPE::Engine::getInstance()->physXSystem.drawDebugScene();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
 {
     ++fixedUpdateFrameCount;
-
-    GPE::Engine::getInstance()->physXSystem.advance(float(fixedDeltaTime));
-    bSys.fixedUpdate(float(fixedDeltaTime));
 }
 
 void Game::render()
@@ -84,7 +78,6 @@ extern "C" GPE::AbstractGame* createGameInstance()
         exit(EXIT_FAILURE);
     }
     GPE::AbstractGame* const pGame = new Game();
-    GPE::Engine::getInstance()->behaviourSystem.awake();
     return pGame;
 }
 

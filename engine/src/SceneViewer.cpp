@@ -248,18 +248,19 @@ void SceneViewer::bindScene(Scene& scene)
     }
 
     // Update the Camera component and cameraOwner scene and parent
-
-    //
-    // SERIALIZATION CRASH : TODO : use setActive(false) when done,
-    // to remove camera from the old scene without adding it to a new scene
-    camera.moveTowardScene(scene);
     cameraOwner->setParent(scene.getWorld());
     cameraOwner->pOwnerScene = &scene;
-    pScene                   = &scene;
+
+    camera.setActive(true);
+
+    scene.sceneRenderer.setMainCamera(camera);
+
+    pScene = &scene;
 }
 
 void SceneViewer::unbindScene()
 {
+    camera.setActive(false);
     cameraOwner->detach(it);
     pScene = nullptr;
 }

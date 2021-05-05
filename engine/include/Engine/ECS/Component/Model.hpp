@@ -12,6 +12,7 @@
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
 #include "GPM/Shape3D/Volume.hpp"
+#include "Engine/Serialization/xml/xmlSaver.hpp"
 
 // Generated
 #include "Generated/Model.rfk.h"
@@ -23,6 +24,8 @@ namespace GPE RFKNamespace()
     class Shader;
     class Material;
     class Model;
+
+    struct SubModel;
 
     struct SubModel
     {
@@ -51,12 +54,17 @@ namespace GPE RFKNamespace()
         bool enableBackFaceCulling = true;
     };
 
+    template<>
+    void save(XmlSaver & context, const SubModel& inspected, const XmlSaver::SaveInfo& info);
+    template <>
+    void load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadInfo& info);
+
     template <>
     void DataInspector::inspect(GPE::InspectContext & context, SubModel & inspected);
 
     bool isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept;
 
-    class RFKClass(ComponentGen) Model : public Component
+    class RFKClass(ComponentGen, Serialize()) Model : public Component
     {
     public:
         struct CreateArg
@@ -65,7 +73,7 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect()) std::list<SubModel> m_subModels;
+        RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
 
     public:
         Model(GameObject & owner);
@@ -82,6 +90,7 @@ namespace GPE RFKNamespace()
 
         void moveTowardScene(class Scene & newOwner) override;
 
+        virtual void awake();
         virtual void inspect(InspectContext & context);
 
         void addSubModel(const SubModel::CreateArg& arg);
