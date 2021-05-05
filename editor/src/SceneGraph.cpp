@@ -92,12 +92,12 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
         }
     }
 
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+    if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
     {
         selectedGameObject = &gameObject;
     }
 
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
     {
         ImGui::OpenPopup((std::string("SceneGraphContext") + std::to_string(idElem)).c_str());
     }

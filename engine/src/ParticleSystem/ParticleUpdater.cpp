@@ -2,6 +2,7 @@
 
 File_GENERATED
 
+#include <Engine/Resources/Color.hpp>
 #include <algorithm>
 #include <assert.h>
 

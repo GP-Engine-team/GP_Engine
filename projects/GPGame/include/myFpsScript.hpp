@@ -34,6 +34,8 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
         RFKField(Serialize()) FireArme*                 m_fireArme = nullptr;
 
+        RFKField(Inspect(), Serialize()) GPE::GameObject* m_decalPrefab = nullptr;
+
     public:
         MyFpsScript(GPE::GameObject & owner) noexcept;
         MyFpsScript() noexcept                         = default;
