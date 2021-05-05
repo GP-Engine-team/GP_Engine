@@ -12,6 +12,8 @@
 #include <imgui_internal.h>
 
 #include <MyFpsScript.hpp>
+
+#include "Generated/myFpsScript.rfk.h"
 File_GENERATED
 
 namespace GPG
