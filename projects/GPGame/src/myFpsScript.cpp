@@ -11,6 +11,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include <Firearm/PPSH41.hpp>
 #include <MyFpsScript.hpp>
 File_GENERATED
 
@@ -22,7 +23,7 @@ namespace GPG
           input     {&owner.addComponent<GPE::InputComponent>()},
           source    {&owner.addComponent<GPE::AudioComponent>()},
           controller{&owner.addComponent<GPE::CharacterController>()},
-          m_fireArme{&owner.addComponent<PPSH41>()}
+          m_firearm {&owner.addComponent<PPSH41>()}
     {
         enableFixedUpdate(true);
         enableUpdate(true);
@@ -62,9 +63,6 @@ namespace GPG
         controller->setGravity(.1f);
     }
 
-    MyFpsScript::~MyFpsScript() noexcept
-    {
-    }
 
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)
     {
@@ -123,7 +121,7 @@ namespace GPG
     // TOOD: Detect whether we are in editor or launcher
     void MyFpsScript::leave()
     {
-        glfwSetWindowShouldClose(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_TRUE);
+        GPE::Engine::getInstance()->exit();
     }
 
     void MyFpsScript::sprintStart()
@@ -138,10 +136,10 @@ namespace GPG
 
     void MyFpsScript::shoot()
     {
-        m_fireArme->triggered();
+        m_firearm->triggered();
 
-        if (m_fireArme->isMagazineEmpty())
-            m_fireArme->reload();
+        if (m_firearm->isMagazineEmpty())
+            m_firearm->reload();
     }
 
     /*
@@ -166,12 +164,7 @@ namespace GPG
         ImVec2 size = {ImGui::GetWindowSize().x * ratio, ImGui::GetWindowSize().y * ratio};
 
         ImGui::SetNextElementLayout(0.f, 0.f, size, ImGui::EHAlign::Left, ImGui::EVAlign::Top);
-        ImGui::Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
-    }
-
-    void MyFpsScript::update(double deltaTime)
-    {
-        m_fireArme->update(deltaTime);
+        ImGui::Text("%d/%d", m_firearm->getMagazine().getBulletsRemaining(), m_firearm->getMagazine().getCapacity());
     }
 
     void MyFpsScript::fixedUpdate(double deltaTime)
