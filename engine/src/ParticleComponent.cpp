@@ -325,7 +325,7 @@ void ParticleComponent::update(double dt)
 
     if (m_canEmit)
     {
-        m_durationCount += dt * !std::isinf(m_duration);
+        m_durationCount += float(dt) * !std::isinf(m_duration);
         if (m_durationCount >= m_duration)
         {
             m_canEmit = false;
@@ -339,7 +339,7 @@ void ParticleComponent::update(double dt)
     // TODO: Add acceleration updater
     if (m_particles.m_acc)
     {
-        for (size_t i = 0; i < m_count; ++i)
+        for (size_t i = 0u; i < m_count; ++i)
         {
             m_particles.m_acc[i] = Vec4(0.0f);
         }
@@ -357,7 +357,7 @@ void ParticleComponent::emit(double dt)
 {
     const size_t maxNewParticles = static_cast<size_t>(dt * m_emitRate);
     const size_t startId         = m_particles.m_countAlive;
-    const size_t endId           = std::min(startId + maxNewParticles, m_particles.m_count - 1);
+    const size_t endId           = std::min(startId + maxNewParticles, m_particles.m_count - 1u);
 
     for (auto& gen : m_generators) // << gen loop
         gen->generate(&m_particles, startId, endId);
