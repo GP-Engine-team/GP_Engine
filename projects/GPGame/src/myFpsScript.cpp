@@ -59,10 +59,6 @@ namespace GPG
 
     MyFpsScript::MyFpsScript() noexcept : GPE::BehaviourComponent()
     {
-        enableFixedUpdate(false);
-        enableUpdate(false);
-        enableOnGUI(false);
-
         enableFixedUpdate(true);
         enableUpdate(true);
         enableOnGUI(true);
@@ -70,6 +66,7 @@ namespace GPG
 
     MyFpsScript::~MyFpsScript() noexcept
     {
+
     }
 
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)

@@ -25,14 +25,6 @@ enum class EKeyMode
     KEY_UP       = 4,
 };
 
-namespace GPE
-{
-template <>
-void save(XmlSaver& context, const EKeyMode& inspected, const XmlSaver::SaveInfo& info);
-template <>
-void load(XmlLoader& context, EKeyMode& inspected, const XmlLoader::LoadInfo& info);
-} // namespace GPE
-
 enum class EInputMode
 {
     EDITOR = 0,

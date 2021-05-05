@@ -70,20 +70,3 @@ void InputComponent::awake()
     setActive(false);
     setActive(true);
 }
-
-template<>
-void GPE::save(XmlSaver& context, const EKeyMode& inspected, const XmlSaver::SaveInfo& info)
-{
-    GPE::save(context, int(inspected), info);
-}
-
-template <>
-void GPE::load(XmlLoader& context, EKeyMode& inspected, const XmlLoader::LoadInfo& info)
-{
-    if (context.goToSubChild(info))
-    {
-        GPE::load(context, * reinterpret_cast<int*>(&inspected), info);
-
-        context.pop();
-    }
-}
