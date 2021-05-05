@@ -10,11 +10,6 @@
 
 #include <Generated/myFpsScript.rfk.h>
 
-namespace GPG
-{
-class FireArme;
-}
-
 namespace GPE
 {
 
@@ -27,13 +22,15 @@ class CharacterController;
 namespace GPG RFKNamespace()
 {
 
+class Firearm;
+
 class RFKClass(Inspect(), ComponentGen, Serialize()) MyFpsScript : public GPE::BehaviourComponent
 {
 private:
     RFKField(Serialize()) GPE::InputComponent*      input      = nullptr;
     RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
     RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
-    RFKField(Serialize()) FireArme*                 m_fireArme = nullptr;
+    RFKField(Serialize()) Firearm*                  m_firearm  = nullptr;
 
 public:
     MyFpsScript(GPE::GameObject& owner)   noexcept;
