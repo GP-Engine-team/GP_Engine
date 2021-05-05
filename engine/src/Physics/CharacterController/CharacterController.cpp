@@ -23,6 +23,9 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
 
     controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
     GPE::Engine::getInstance()->physXSystem.addComponent(this);
+
+    // controller->setUserData(&getOwner());
+    controller->getActor()->userData = &getOwner();
 }
 
 CharacterController::CharacterController() noexcept

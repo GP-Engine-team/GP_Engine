@@ -45,7 +45,7 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
                           pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
 
-        drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color,
+        drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color, 0.f,
                         RenderSystem::EDebugShapeMode::FILL);
     }
     break;
@@ -61,7 +61,7 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
                           pAABB->center * pSubModel->pModel->getOwner().getTransform().getScale());
 
-        drawDebugCube(pos, Quat::identity(), scale, color, RenderSystem::EDebugShapeMode::FILL);
+        drawDebugCube(pos, Quat::identity(), scale, color, 0.f, RenderSystem::EDebugShapeMode::FILL);
     }
     break;
     default:
@@ -441,8 +441,6 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                     glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
                 }
-
-                debugShape.clear();
             }
 
             // Draw debug line
@@ -572,33 +570,43 @@ void RenderSystem::render(RenderPipeline renderPipeline) noexcept
 
 void RenderSystem::update(double dt) noexcept
 {
+    // Update particle
     for (auto&& particle : m_pParticleComponents)
     {
         particle->update(dt);
     }
+
+    // Update debug shape life time
+    for (auto&& it = m_debugShape.begin(); it != m_debugShape.end();)
+    {
+        if ((it->duration -= dt) <= 0.f)
+            it = m_debugShape.erase(it);
+        else
+            ++it;
+    }
 }
 
-void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, EDebugShapeMode mode,
-                                   bool enableBackFaceCullling) noexcept
+void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, float duration,
+                                   EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{m_sphereMesh,
-                                         toTransform(SplitTransform{Quat::identity(), position, Vec3(radius * 2.f)}),
-                                         color, mode, enableBackFaceCullling});
+    m_debugShape.emplace_back(
+        DebugShape{m_sphereMesh, toTransform(SplitTransform{Quat::identity(), position, Vec3(radius * 2.f)}), color,
+                   mode, enableBackFaceCullling, EDebugDrawShapeMode::TRAINGLES, duration});
 }
 
 void RenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation, const Vec3& scale, const ColorRGBA& color,
-                                 EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
+                                 float duration, EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(DebugShape{m_cubeMesh, toTransform(SplitTransform{rotation, position, scale}), color,
-                                         mode, enableBackFaceCullling});
+                                         mode, enableBackFaceCullling, EDebugDrawShapeMode::TRAINGLES, duration});
 }
 
 void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale, const ColorRGBA& color,
-                                 EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
+                                 float duration, EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(
         DebugShape{m_planeMesh, toTransform(SplitTransform{Quaternion::lookAt(Vec3::zero(), dir), position, scale}),
-                   color, mode, enableBackFaceCullling});
+                   color, mode, enableBackFaceCullling, EDebugDrawShapeMode::TRAINGLES, duration});
 }
 
 void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width, const ColorRGBA& color,

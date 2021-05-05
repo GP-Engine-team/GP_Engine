@@ -53,7 +53,7 @@ EditorStartup::EditorStartup()
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
           GPE::Engine::getInstance()->inputManager.processInput();
           Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
-          m_editor.update(*this);
+          m_editor.update(deltaTime, *this);
           Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
       }},
       m_render{[&]() {
@@ -154,8 +154,7 @@ void EditorStartup::playGame()
         m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
 
         m_game->update(unscaledDeltaTime, deltaTime);
-
-        m_editor.update(*this);
+        m_editor.update(deltaTime, *this);
     };
 
     m_game->state = EGameState::PLAYING;
@@ -168,8 +167,8 @@ void EditorStartup::pauseGame()
         GPE::Engine* m_engine = GPE::Engine::getInstance();
         m_engine->inputManager.processInput();
         m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
-
-        m_editor.update(*this);
+        m_editor.update(deltaTime, *this);
+        m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
     };
 
     m_game->state = EGameState::PAUSED;

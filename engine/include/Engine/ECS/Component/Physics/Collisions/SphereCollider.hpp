@@ -8,8 +8,8 @@
 #pragma once
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
-#include <GPM/Vector3.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
+#include <GPM/Vector3.hpp>
 
 // Generated
 #include "Generated/SphereCollider.rfk.h"
@@ -29,9 +29,11 @@ namespace GPE RFKNamespace()
         SphereCollider& operator=(SphereCollider const& other) noexcept = delete;
         SphereCollider& operator=(SphereCollider&& other) noexcept = delete;
 
+        // void updateTransform() final;
+
     private:
-        RFKField(Inspect()) GPM::Vector3 m_center;
-        RFKField(Inspect()) float        m_radius;
+        RFKField(Inspect()) GPM::Vector3     m_center;
+        RFKField(Inspect("setRadius")) float m_radius;
 
     public:
         DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);

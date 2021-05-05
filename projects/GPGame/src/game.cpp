@@ -205,8 +205,8 @@ Game::Game()
         io.bindInput(GLFW_KEY_ESCAPE, "exit");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
-
-        io.bindInput(GLFW_KEY_T /*GLFW_MOUSE_BUTTON_LEFT*/, "shoot");
+        io.bindInput(GLFW_MOUSE_BUTTON_1, "RaycastExample");
+        io.bindInput(GLFW_MOUSE_BUTTON_1, "shoot");
 
         // io.bindInput(GLFW_KEY_KP_ADD,       "growUpCollider");
         // io.bindInput(GLFW_KEY_KP_SUBTRACT,  "growDownCollider");
@@ -266,7 +266,7 @@ Game::Game()
         SphereCollider& sphere = testPhysX->addComponent<SphereCollider>();
         sphere.isVisible       = true;
         sphere.setRadius(10.f);
-        testPhysX->addComponent<RigidbodyStatic>().collider = &sphere;
+        testPhysX->addComponent<RigidbodyDynamic>().collider = &sphere;
     }
 
     /*

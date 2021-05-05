@@ -30,6 +30,8 @@ namespace GPE RFKNamespace()
 
         void update() noexcept;
 
+        void updatePosition() noexcept;
+
         virtual ~RigidbodyDynamic() noexcept = default;
 
     public:
@@ -37,7 +39,7 @@ namespace GPE RFKNamespace()
         Collider*              collider;
 
     private:
-        RFKField(Inspect()) bool m_isKinematic = false;
+        RFKField(Inspect("setKinematic")) bool m_isKinematic = false;
 
     public:
         void setKinematic(bool state) noexcept;
