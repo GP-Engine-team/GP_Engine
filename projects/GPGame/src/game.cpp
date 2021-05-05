@@ -31,18 +31,12 @@ using namespace GPM::Random;
 void Game::update(double unscaledDeltaTime, double deltaTime)
 {
     ++unFixedUpdateFrameCount;
-
-    bSys.update(float(deltaTime));
-    world.updateSelfAndChildren();
     GPE::Engine::getInstance()->physXSystem.drawDebugScene();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
 {
     ++fixedUpdateFrameCount;
-
-    GPE::Engine::getInstance()->physXSystem.advance(fixedDeltaTime);
-    bSys.fixedUpdate(fixedDeltaTime);
 }
 
 void Game::render()
@@ -102,7 +96,7 @@ void loadTreeResource()
 
     SubModel subModel;
     subModel.pShader   = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
-                                       "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
+                                         "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
     subModel.pMaterial = loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial");
     subModel.pMesh     = loadMeshFile("./resources/meshs/g1.GPMesh");
 
