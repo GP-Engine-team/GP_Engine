@@ -140,13 +140,22 @@ void EditorStartup::closeGame()
 void EditorStartup::playGame()
 {
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
+        GPE::Engine* m_engine = GPE::Engine::getInstance();
+        m_engine->physXSystem.advance(fixedDeltaTime);
+        m_engine->behaviourSystem.fixedUpdate(fixedDeltaTime);
+
         m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
     };
     m_update = [&](double unscaledDeltaTime, double deltaTime) {
-        GPE::Engine::getInstance()->inputManager.processInput();
+        GPE::Engine* m_engine = GPE::Engine::getInstance();
+        m_engine->inputManager.processInput();
+        m_engine->behaviourSystem.update(deltaTime);
+        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+        m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+
         m_game->update(unscaledDeltaTime, deltaTime);
+
         m_editor.update(*this);
-        Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
     };
 
     m_game->state = EGameState::PLAYING;
@@ -156,10 +165,11 @@ void EditorStartup::pauseGame()
 {
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
     m_update      = [&](double unscaledDeltaTime, double deltaTime) {
-        GPE::Engine::getInstance()->inputManager.processInput();
-        Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+        GPE::Engine* m_engine = GPE::Engine::getInstance();
+        m_engine->inputManager.processInput();
+        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+
         m_editor.update(*this);
-        Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
     };
 
     m_game->state = EGameState::PAUSED;

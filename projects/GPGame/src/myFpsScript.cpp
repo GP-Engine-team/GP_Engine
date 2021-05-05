@@ -14,7 +14,7 @@
 #include <MyFpsScript.hpp>
 File_GENERATED
 
-    namespace GPG
+namespace GPG
 {
 
     MyFpsScript::MyFpsScript(GPE::GameObject & owner) noexcept
@@ -55,6 +55,17 @@ File_GENERATED
         controller->setSpeed(1.f);
         controller->setMouseSpeed(.0025f);
         controller->setGravity(.1f);
+    }
+
+    MyFpsScript::MyFpsScript() noexcept : GPE::BehaviourComponent()
+    {
+        enableFixedUpdate(false);
+        enableUpdate(false);
+        enableOnGUI(false);
+
+        enableFixedUpdate(true);
+        enableUpdate(true);
+        enableOnGUI(true);
     }
 
     MyFpsScript::~MyFpsScript() noexcept
