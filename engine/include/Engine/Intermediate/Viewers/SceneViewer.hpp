@@ -52,7 +52,7 @@ protected:
     GPM::Quat finalRotation;
 
     float lerpT              = 0.f; // coefficient
-    float transitionDuraiton = 1.f; // in second
+    float transitionDuration = 1.f; // in second
     float transitionRadius   = 10.f;
 
 public:

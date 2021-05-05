@@ -275,14 +275,14 @@ void SceneViewer::update(double dt)
 
     if (isTransitionActive)
     {
-        if ((lerpT += GPE::Engine::getInstance()->timeSystem.getUnscaledDeltaTime()) >= transitionDuraiton)
+        if ((lerpT += GPE::Engine::getInstance()->timeSystem.getUnscaledDeltaTime()) / transitionDuration >= 1)
         {
             isTransitionActive = false;
-            lerpT              = transitionDuraiton;
+            lerpT              = transitionDuration;
         }
 
         cameraOwner->getTransform().setTranslation(startPos.lerp(finalPos, lerpT));
-        // cameraOwner->getTransform().setRotation(startRotation.slerp(finalRotation, lerpT));
+        cameraOwner->getTransform().setRotation(startRotation.slerp(finalRotation, lerpT));
     }
 }
 
@@ -314,9 +314,8 @@ void SceneViewer::lookAtObject(GameObject& GOToLook)
                (startPos - GOToLook.getTransform().getGlobalPosition()).normalized() * transitionRadius;
 
     startRotation = cameraOwner->getTransform().getGlobalRotation();
-    finalRotation = GPM::toQuaternion(GPM::Mat3::lookAt(startPos, GOToLook.getTransform().getGlobalPosition(),
-                                                        GOToLook.getTransform().getVectorUp()));
-    cameraOwner->getTransform().setRotation(finalRotation);
+    finalRotation = GPM::toQuaternion(
+        GPM::Transform::lookAt(startPos, GOToLook.getTransform().getGlobalPosition(), GPM::Vec3::up()));
     lerpT = 0.f;
 }
 
