@@ -1,3 +1,3 @@
-﻿#include <FireArme/GunMagazine.hpp>
+﻿#include <Firearm/GunMagazine.hpp>
 
 File_GENERATED

@@ -1,3 +1,3 @@
-﻿#include <FireArme/Bullet.hpp>
+﻿#include <Firearm/Bullet.hpp>
 
 File_GENERATED

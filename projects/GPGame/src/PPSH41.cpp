@@ -1,3 +1,3 @@
-﻿#include <FireArme/PPSH41.hpp>
+﻿#include <Firearm/PPSH41.hpp>
 
 File_GENERATED
