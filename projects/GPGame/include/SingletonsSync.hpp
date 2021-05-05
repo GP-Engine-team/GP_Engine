@@ -14,3 +14,5 @@ extern "C" GAME_API void          setImguiCurrentContext(struct ImGuiContext* ct
 extern "C" GAME_API ImGuiContext* getGameUIContext();
 extern "C" GAME_API void          saveScene(XmlSaver& context, GPE::Scene* scene);
 extern "C" GAME_API void          loadScene(XmlLoader& context, GPE::Scene* scene);
+extern "C" GAME_API void          saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode);
+extern "C" GAME_API void          loadSceneFromPath(GPE::Scene* scene, const char* path);

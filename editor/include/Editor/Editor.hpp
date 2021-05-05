@@ -21,6 +21,7 @@ class AbstractGame;
 class IInspectable;
 class GameObject;
 class ReloadableCpp;
+class SavedScene;
 class Scene;
 } // namespace GPE
 
@@ -74,6 +75,11 @@ public:
     void update(double dt, EditorStartup& startup);
     void render();
     bool isRunning();
+
+    // Removes Editor elements from the scene before saving
+    void saveScene(GPE::Scene* scene, const char* path);
+    // Removes Editor elements from the scene before loading
+    void loadScene(GPE::Scene* scene, const char* path);
 };
 
 } // End of namespace Editor

@@ -111,14 +111,6 @@ void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
     }
 }
 
-void BehaviourSystem::awake() const noexcept
-{
-    for (auto&& behaviour : m_pBehaviours)
-    {
-        behaviour->awake();
-    }
-}
-
 void BehaviourSystem::start() const noexcept
 {
     for (auto&& behaviour : m_pBehaviours)

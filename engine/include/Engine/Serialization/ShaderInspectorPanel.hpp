@@ -17,9 +17,9 @@ namespace GPE RFKNamespace()
     class RFKClass() ShaderInspectorPanel : public IInspectable // Allow user to modify shader importation setting
     {
     protected:
-        std::string       m_path = nullptr;
-        ShaderCreateonfig m_config;
-        bool              m_isDirty = false;
+        std::string        m_path = nullptr;
+        ShaderCreateConfig m_config;
+        bool               m_isDirty = false;
 
     public:
         ShaderInspectorPanel() = delete;

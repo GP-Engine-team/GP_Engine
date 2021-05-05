@@ -9,6 +9,7 @@
 #include "Refureku/TypeInfo/Variables/Field.h"
 #include <map>
 #include <stack>
+#include <type_traits>
 
 class XmlLoader
 {
@@ -41,10 +42,7 @@ protected:
      * @param node An instance saved as a node, containing the class information data.
      * @return The type as a string.
      */
-    static std::string getValue(Node* node)
-    {
-        return findAttribValue(node, "value");
-    }
+    static std::string getValue(Node* node);
 
     /**
      * @brief Returns a node having the same attrib value as the one asked.
@@ -55,38 +53,15 @@ protected:
      */
     static rapidxml::xml_node<>* findNodeWithMatchingAttribValue(rapidxml::xml_node<>* parentNode,
                                                                  const std::string&    attribName,
-                                                                 const std::string&    askedValue)
-    {
-        for (Node* child = parentNode->first_node(); child; child = child->next_sibling())
-        {
-            std::string value = findAttribValue(child, attribName);
-            if (value == askedValue)
-            {
-                return child;
-            }
-        }
-        return nullptr;
-    }
+                                                                 const std::string&    askedValue);
 
-    static Node* findSubNode(Node* parentNode, const rfk::Field& info)
-    {
-        return findNodeWithMatchingAttribValue(parentNode, "name", info.name);
-    }
+    static Node* findSubNode(Node* parentNode, const rfk::Field& info);
 
-    static Node* findSubNode(Node* parentNode, const LoadInfo& info)
-    {
-        return findNodeWithMatchingAttribValue(parentNode, "name", info.name);
-    }
+    static Node* findSubNode(Node* parentNode, const LoadInfo& info);
 
-    Node* findSubNode(const rfk::Field& info)
-    {
-        return findSubNode(hierarchy.top(), info);
-    }
+    Node* findSubNode(const rfk::Field& info);
 
-    Node* findSubNode(const LoadInfo& info)
-    {
-        return findSubNode(hierarchy.top(), info);
-    }
+    Node* findSubNode(const LoadInfo& info);
 
 public:
     XmlLoader(rapidxml::xml_document<>& d) : doc(d)
@@ -103,39 +78,16 @@ public:
     bool loadFromStr(std::string& str, const rfk::Field& info);
     bool loadFromStr(std::string& str, const LoadInfo& info);
 
-    bool goToSubChild(const LoadInfo& info)
-    {
-        Node* child = findSubNode(info);
-        if (child)
-        {
-            hierarchy.push(child);
-            return true;
-        }
-        else
-        {
-            std::cout << "Node not found" << std::endl;
-            return false;
-        }
-    }
+    bool goToSubChild(const LoadInfo& info);
 
-    bool goToSubChild(const rfk::Field& info)
-    {
-        if (info.type.archetype == nullptr)
-        {
-            return goToSubChild(LoadInfo{info.name, "empty", 0});
-        }
-        else
-        {
-            return goToSubChild(LoadInfo{info.name, info.type.archetype->name, info.type.archetype->id});
-        }
-    }
+    bool goToSubChild(const rfk::Field& info);
 
-    void pop()
+    inline void pop()
     {
         hierarchy.pop();
     }
 
-    Node* top()
+    inline Node* top()
     {
         return hierarchy.top();
     }
@@ -148,17 +100,18 @@ private:
 
 public:
     void addLazy(void*& data);
+    void addLazy(void** data);
 
-    void addPersistentPtr(void* ptr)
-    {
-        alreadyLoadedPtrs.insert({ptr, LoadedPtr{LoadInfo{"persistentPtr", "void*", 0}, ptr}});
-    }
+    void addPersistentPtr(void* ptr);
+    void addConvertedPtr(void* oldPtr, void* newPtr);
 
     // Pass a weak ptr pointing to an old value
     void updateLazyPtr(void*& weak);
 
     void updateLazyPtrs();
 };
+
+XmlLoader::LoadInfo fieldToLoadInfo(rfk::Field const& field);
 
 namespace GPE
 {
@@ -177,6 +130,11 @@ void load(XmlLoader& context, T*& inspected, const XmlLoader::LoadInfo& info);
  */
 template <>
 void load(XmlLoader& context, int& data, const rfk::Field& info);
+template <>
+void load(XmlLoader& context, int& data, const XmlLoader::LoadInfo& info);
+
+template <>
+void load(XmlLoader& context, unsigned int& data, const rfk::Field& info);
 
 /**
  * @brief Specialization for size_t data. See the original function for more comments.
@@ -196,6 +154,9 @@ void load(XmlLoader& context, char& data, const rfk::Field& info);
 template <>
 void load(XmlLoader& context, std::string& data, const rfk::Field& info);
 
+template <>
+void load(XmlLoader& context, std::string& data, const XmlLoader::LoadInfo& info);
+
 /**
  * @brief Specialization for float data. See the original function for more comments.
  */
@@ -207,61 +168,14 @@ void load(XmlLoader& context, float& data, const rfk::Field& info);
  */
 template <>
 void load(XmlLoader& context, bool& data, const rfk::Field& info);
+template <>
+void load(XmlLoader& context, bool& data, const XmlLoader::LoadInfo& info);
 
 template <>
 void load(XmlLoader& context, rfk::Method const*& data, const XmlLoader::LoadInfo& info);
 
 } // namespace GPE
 
-#include <Refureku/Refureku.h>
-#include <type_traits>
-
-inline XmlLoader::LoadInfo fieldToLoadInfo(rfk::Field const& field)
-{
-    if (field.type.archetype == nullptr)
-        return XmlLoader::LoadInfo{field.name, "unknown", 0};
-    else
-        return XmlLoader::LoadInfo{field.name, field.type.archetype->name, field.type.archetype->id};
-}
-
-template <typename T>
-void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, void* key)
-{
-    auto pair = alreadyLoadedPtrs.insert({key, LoadedPtr{info}});
-    if (pair.second) // Has been inserted ?
-    {
-        if constexpr (std::is_base_of<rfk::Object, T>::value)
-        {
-            std::string       idStr     = findAttribValue(top(), "typeID");
-            size_t            s         = (std::stoull(idStr));
-            rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(s));
-            assert(archetype != 0);              // Type is not complete. Try adding corresponding include in game.cpp
-            data = archetype->makeInstance<T>(); // TODO : Call custom instantiator
-        }
-        else 
-        {
-            data = new T();
-        }
-
-        pair.first->second.data     = data;
-
-        assert(data != nullptr); // Type is not default constructible.
-
-        std::stack<Node*> otherContextHierarchy;
-        otherContextHierarchy.push(&doc);
-        std::swap(otherContextHierarchy, hierarchy);
-
-        LoadInfo newInfo{std::to_string(size_t(key)), info.typeName, info.typeId};
-        GPE::load(*this, *data, newInfo);
-
-        hierarchy = std::move(otherContextHierarchy);
-    }
-    else
-    {
-        data = static_cast<T*>(pair.first->second.data); // CAST
-    }
-}
-
-#include "Engine/Serialization/STDSave.hpp"
+#include "Engine/Serialization/STDLoad.hpp"
 #include "Engine/Serialization/GPMLoad.hpp"
 #include "Engine/Serialization/xml/xmlLoader.inl"

@@ -93,3 +93,9 @@ void Scene::load(XmlLoader& context)
     m_pWorld = nullptr;
     GPE::load(context, m_pWorld, XmlLoader::LoadInfo{"m_pWorld", "GameObject", GameObject::staticGetArchetype().id});
 }
+
+template <>
+void GPE::load(XmlLoader& context, GPE::Scene*& inspected, const XmlLoader::LoadInfo& info)
+{
+    context.addLazy((void**)&inspected);
+}

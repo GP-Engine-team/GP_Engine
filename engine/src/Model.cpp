@@ -76,6 +76,12 @@ Model& Model::operator=(Model&& other) noexcept
     return static_cast<Model&>(Component::operator=(std::move(other)));
 }
 
+void Model::awake()
+{
+    setActive(false);
+    setActive(true);
+}
+
 void Model::moveTowardScene(class Scene& newOwner)
 {
     for (SubModel& subMesh : m_subModels)
@@ -121,6 +127,73 @@ void renderResourceExplorer(const char* name, T*& inRes)
             ;
 
         inRes = &it->second;
+    }
+}
+
+template <>
+void GPE::save(XmlSaver & context, const SubModel& inspected, const XmlSaver::SaveInfo& info)
+{
+    context.push(info);
+
+    GPE::save(context, inspected.pModel, XmlSaver::SaveInfo{"pModel", "Model*", 0});
+
+    if (inspected.pShader != nullptr)
+    {
+        if (const std::string* shaderName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pShader))
+        {
+            GPE::save(context, *shaderName, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
+        }
+    }
+
+    if (inspected.pMaterial != nullptr)
+    {
+        if (const std::string* matName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pMaterial))
+        {
+            GPE::save(context, *matName, XmlSaver::SaveInfo{"pMaterial", "Material*", 0});
+        }
+    }
+
+    if (inspected.pMesh != nullptr)
+    {
+        if (const std::string* meshName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pMesh))
+        {
+            GPE::save(context, *meshName, XmlSaver::SaveInfo{"pMesh", "Mesh*", 0});
+        }
+    }
+
+    GPE::save(context, inspected.enableBackFaceCulling, XmlSaver::SaveInfo{"enableBackFaceCulling", "bool", 0});
+
+    context.pop();
+}
+
+template <>
+void GPE::load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadInfo& info)
+{
+    if (context.goToSubChild(info))
+    {
+        GPE::load(context, inspected.pModel, XmlLoader::LoadInfo{"pModel", "Model*", 0});
+
+        {
+            std::string shaderName;
+            GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
+            inspected.pShader = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName);
+        }
+
+        {
+            std::string matName;
+            GPE::load(context, matName, XmlLoader::LoadInfo{"pMaterial", "Material*", 0});
+            inspected.pMaterial = Engine::getInstance()->resourceManager.get<GPE::Material>(matName);
+        }
+
+        {
+            std::string meshName;
+            GPE::load(context, meshName, XmlLoader::LoadInfo{"pMesh", "Mesh*", 0});
+            inspected.pMesh = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName);
+        }
+
+        GPE::load(context, inspected.enableBackFaceCulling, XmlLoader::LoadInfo{"enableBackFaceCulling", "bool", 0});
+
+        context.pop();
     }
 }
 

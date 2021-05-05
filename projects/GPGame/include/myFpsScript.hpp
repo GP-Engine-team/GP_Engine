@@ -36,7 +36,7 @@ namespace GPG RFKNamespace()
 
     public:
         MyFpsScript(GPE::GameObject & owner) noexcept;
-        MyFpsScript() noexcept                         = default;
+        MyFpsScript() noexcept;
         MyFpsScript(const MyFpsScript& other) noexcept = delete;
         MyFpsScript(MyFpsScript && other) noexcept     = delete;
         virtual ~MyFpsScript() noexcept;
@@ -62,6 +62,7 @@ namespace GPG RFKNamespace()
         void onGUI() final;
         void update(double deltaTime) final;
         void fixedUpdate(double deltaTime) final;
+        virtual void awake();
 
         MyFpsScript_GENERATED
     };

@@ -21,7 +21,7 @@ namespace GPE RFKNamespace()
 
         virtual ~BoxCollider() noexcept = default;
 
-        BoxCollider() noexcept                         = delete;
+        BoxCollider() noexcept                         = default;
         BoxCollider(const BoxCollider& other) noexcept = delete;
         BoxCollider(BoxCollider && other) noexcept     = default;
         BoxCollider& operator=(BoxCollider const& other) noexcept = delete;
