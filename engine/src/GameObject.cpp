@@ -62,7 +62,7 @@ void GameObject::updateSelfAndChildren() noexcept
         }
         else
         {
-            getTransform().update(Mat4::identity());
+            getTransform().update();
         }
 
         // Update children
@@ -134,7 +134,7 @@ void GameObject::forceUpdate() noexcept
     }
     else
     {
-        getTransform().update(Mat4::identity());
+        getTransform().update();
     }
 
     // Force update children
