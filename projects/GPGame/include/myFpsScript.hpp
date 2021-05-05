@@ -60,6 +60,7 @@ namespace GPG RFKNamespace()
         void onGUI() final;
         void update(double deltaTime) final;
         void fixedUpdate(double deltaTime) final;
+        virtual void awake();
 
         MyFpsScript_GENERATED
     };

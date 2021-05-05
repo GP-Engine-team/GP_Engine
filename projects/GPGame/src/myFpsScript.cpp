@@ -71,6 +71,22 @@ namespace GPG
 
     }
 
+    void MyFpsScript::awake()
+    {
+        BehaviourComponent::awake();
+
+        input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
+        input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
+        input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
+        input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
+        input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
+        input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
+        input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
+        input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+
+        input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+    }
+
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)
     {
         using namespace GPM;
