@@ -6,17 +6,17 @@
 
 #pragma once
 
-#include "Engine/Serialization/Inspect.hpp"
+#include <Engine/Serialization/Inspect.hpp>
 
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Serialization/DataInspector.hpp>
-#include <FireArme/Bullet.hpp>
+#include "Bullet.hpp"
 
-#include "Engine/Serialization/Serialize.hpp"
-#include "Engine/Serialization/xml/xmlLoader.hpp"
-#include "Engine/Serialization/xml/xmlSaver.hpp"
+#include <Engine/Serialization/Serialize.hpp>
+#include <Engine/Serialization/xml/xmlLoader.hpp>
+#include <Engine/Serialization/xml/xmlSaver.hpp>
 
-#include "Generated/GunMagazine.rfk.h"
+#include <Generated/GunMagazine.rfk.h>
 
 namespace GPG RFKNamespace()
 {
