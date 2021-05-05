@@ -29,7 +29,6 @@ void GameViewer::releaseInputs()
 
 void GameViewer::captureInputs()
 {
-    Log::getInstance()->log("GameViewer::captureInputs()");
     InputManager& io = Engine::getInstance()->inputManager;
     io.setCursorLockState(true);
     io.setCursorTrackingState(true);
@@ -63,7 +62,8 @@ void GameViewer::render(EditorStartup& startup)
             captureInputs();
         }
 
-        // The input manager is not used here because this class and its methods cannot be serialized
+        // The input manager is not used here because this class and its methods cannot be serialized,
+        // which prevents the use of InputComponent::bindAction()
         else if (m_captureInputs && glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
             releaseInputs();
