@@ -257,6 +257,11 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
     GPE::Engine::getInstance()->inputManager.setInputMode("Editor");
 }
 
+void Editor::releaseGameInputs()
+{
+    m_gameViewer.releaseInputs();
+}
+
 void Editor::update(EditorStartup& startup)
 {
     auto syncImGui  = GET_PROCESS((*m_reloadableCpp), setImguiCurrentContext);

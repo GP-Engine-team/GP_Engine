@@ -72,6 +72,7 @@ public:
     Editor(GLFWwindow* window, GPE::Scene& editedScene);
 
     void setSceneInEdition(GPE::Scene& scene);
+    void releaseGameInputs();
     void update(EditorStartup& startup);
     void render();
     bool isRunning();
