@@ -15,6 +15,11 @@
 
 struct GLFWwindow;
 
+namespace GPE
+{
+class Engine;
+}
+
 namespace Editor
 {
 class EditorStartup final : public ContextStartup
@@ -33,6 +38,7 @@ private:
 	Editor			   m_editor;
 	GPE::ReloadableCpp m_reloadableCpp;
 	GPE::AbstractGame* m_game;
+	GPE::Engine* const m_engine;
 
 protected:
     GLFWwindow* initDearImGuiProxy(GLFWwindow* window);
