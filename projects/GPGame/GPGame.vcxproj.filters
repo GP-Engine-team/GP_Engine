@@ -13,7 +13,7 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files\FireArme">
+    <Filter Include="Header Files\Firearm">
       <UniqueIdentifier>{773ccffb-4009-4208-b9a9-f3024c3120c2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -39,17 +39,17 @@
     <ClInclude Include="include\myScript.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\FireArme\Bullet.hpp">
-      <Filter>Header Files\FireArme</Filter>
+    <ClInclude Include="include\Firearm\GunMagazine.hpp">
+      <Filter>Header Files\Firearm</Filter>
     </ClInclude>
-    <ClInclude Include="include\FireArme\FireArme.hpp">
-      <Filter>Header Files\FireArme</Filter>
+    <ClInclude Include="include\Firearm\PPSH41.hpp">
+      <Filter>Header Files\Firearm</Filter>
     </ClInclude>
-    <ClInclude Include="include\FireArme\GunMagazine.hpp">
-      <Filter>Header Files\FireArme</Filter>
+    <ClInclude Include="include\Firearm\Bullet.hpp">
+      <Filter>Header Files\Firearm</Filter>
     </ClInclude>
-    <ClInclude Include="include\FireArme\PPSH41.hpp">
-      <Filter>Header Files\FireArme</Filter>
+    <ClInclude Include="include\Firearm\Firearm.hpp">
+      <Filter>Header Files\Firearm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -68,13 +68,13 @@
     <ClCompile Include="src\Bullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FireArme.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\GunMagazine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\PPSH41.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Firearm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
