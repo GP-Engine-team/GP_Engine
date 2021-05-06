@@ -26,6 +26,7 @@ namespace GPE RFKNamespace()
         Collider& operator=(Collider const& other) noexcept = delete;
         Collider& operator=(Collider&& other) noexcept = delete;
 
+        // virtual void updateTransform() = 0;
         virtual ~Collider() noexcept = default;
 
     public:

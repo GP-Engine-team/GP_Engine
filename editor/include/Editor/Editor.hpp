@@ -21,9 +21,9 @@ class AbstractGame;
 class IInspectable;
 class GameObject;
 class ReloadableCpp;
+class SavedScene;
 class Scene;
 } // namespace GPE
-
 
 namespace Editor
 {
@@ -48,17 +48,17 @@ public:
     GPE::ReloadableCpp* m_reloadableCpp = nullptr;
 
 private:
-    void setupDearImGui      ();
+    void setupDearImGui();
 
-    void renderLog           ();
-    void renderStyleEditor   ();
-    void renderMenuBar       ();
+    void renderLog();
+    void renderStyleEditor();
+    void renderMenuBar();
     void renderGameControlBar(EditorStartup& startup);
-    void renderLevelEditor   ();
-    void renderGameView      (EditorStartup& startup);
-    void renderInspector     ();
-    void renderSceneGraph    ();
-    void renderExplorer      ();
+    void renderLevelEditor();
+    void renderGameView(EditorStartup& startup);
+    void renderInspector();
+    void renderSceneGraph();
+    void renderExplorer();
 
     /**
      * @brief Function that crate scene graph recursively for each node in imGui window.
@@ -76,6 +76,11 @@ public:
     void update(EditorStartup& startup);
     void render();
     bool isRunning();
+
+    // Removes Editor elements from the scene before saving
+    void saveScene(GPE::Scene* scene, const char* path);
+    // Removes Editor elements from the scene before loading
+    void loadScene(GPE::Scene* scene, const char* path);
 };
 
 } // End of namespace Editor

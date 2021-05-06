@@ -10,7 +10,7 @@
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace physx;
 
 CharacterController::CharacterController(GameObject& owner) noexcept
@@ -25,20 +25,23 @@ CharacterController::CharacterController(GameObject& owner) noexcept
 
     controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
     GPE::Engine::getInstance()->physXSystem.addComponent(this);
+
+    // controller->setUserData(&getOwner());
+    controller->getActor()->userData = &getOwner();
 }
 
 /*
 CharacterController::CharacterController() noexcept
 {
-    // physx::PxCapsuleControllerDesc desc;
+     physx::PxCapsuleControllerDesc desc;
 
-    // desc.height   = 1;
-    // desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    // desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
-    // desc.radius   = 1;
+     desc.height   = 1;
+     desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
+     desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
+     desc.radius   = 1;
 
-    // controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
-    // GPE::Engine::getInstance()->physXSystem.addComponent(this);
+     controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
+     GPE::Engine::getInstance()->physXSystem.addComponent(this);
 }
 */
 
@@ -63,8 +66,11 @@ void CharacterController::update(double deltaTime) noexcept
         }
     }
 
+    if (controller == nullptr)
+        return;
+
     controller->move(GPE::PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, float(deltaTime), filters);
-    m_displacement = {0, 0, 0};
+    m_displacement.x = m_displacement.y = m_displacement.z = .0f;
     getOwner().getTransform().setTranslation(GPE::PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()));
 }
 
@@ -104,6 +110,7 @@ void CharacterController::setJumping(float jumping) noexcept
 
 CharacterController::~CharacterController() noexcept
 {
+    GPE::Engine::getInstance()->physXSystem.removeComponent(this);
     // controller->release();
 }
 

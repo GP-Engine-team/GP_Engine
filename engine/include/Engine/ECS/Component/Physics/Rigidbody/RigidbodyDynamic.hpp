@@ -22,13 +22,15 @@ namespace GPE RFKNamespace()
     public:
         RigidbodyDynamic(GameObject & owner) noexcept;
 
-        RigidbodyDynamic() noexcept                              = delete;
+        RigidbodyDynamic() noexcept                              = default;
         RigidbodyDynamic(const RigidbodyDynamic& other) noexcept = delete;
         RigidbodyDynamic(RigidbodyDynamic && other) noexcept     = default;
         RigidbodyDynamic& operator=(RigidbodyDynamic const& other) noexcept = delete;
         RigidbodyDynamic& operator=(RigidbodyDynamic&& other) noexcept = delete;
 
         void update() noexcept;
+
+        void updatePosition() noexcept;
 
         virtual ~RigidbodyDynamic() noexcept = default;
 
@@ -37,7 +39,7 @@ namespace GPE RFKNamespace()
         Collider*              collider;
 
     private:
-        RFKField(Inspect()) bool m_isKinematic = false;
+        RFKField(Inspect("setKinematic")) bool m_isKinematic = false;
 
     public:
         void setKinematic(bool state) noexcept;

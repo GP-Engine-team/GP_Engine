@@ -18,7 +18,7 @@
 
 namespace GPG RFKNamespace()
 {
-    class RFKClass(Inspect(), Serialize()) PPSH41 : public Firearm
+    class RFKClass(ComponentGen, Serialize(), Inspect()) PPSH41 : public Firearm
     {
     public:
         PPSH41(GPE::GameObject & owner) noexcept : Firearm(owner, GunMagazine(Bullet(5.f), 30, 30), 3.f, 0.1f)

@@ -7,8 +7,13 @@
 #include "Generated/Component.rfk.h"
 File_GENERATED
 
-    template <>
-    void GPE::DataInspector::inspect(GPE::InspectContext& context, Component& inspected)
+template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, Component& inspected)
 {
     inspected.inspect(context);
+}
+
+void GPE::Component::awake()
+{
+
 }

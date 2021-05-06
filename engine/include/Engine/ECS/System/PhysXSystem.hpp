@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <Engine/ECS/Component/TransformComponent.hpp>
 #include <foundation/PxErrorCallback.h>
 #include <vector>
 
@@ -106,6 +107,8 @@ public:
     static inline physx::PxExtendedVec3 GPMVec3ToPxExtendedVec3(const GPM::Vec3& vector) noexcept;
     static inline GPM::Quat             PxQuatToGPMQuat(const physx::PxQuat& quaternion) noexcept;
     static inline physx::PxQuat         GPMQuatToPxQuat(const GPM::Quat& quaternion) noexcept;
+    static physx::PxTransform GPETransformComponentToPxTransform(const TransformComponent& transform) noexcept;
+    static TransformComponent PxTransformToGPETransformComponent(const physx::PxTransform& transform) noexcept;
 };
 
 #include <Engine/ECS/System/PhysXSystem.inl>

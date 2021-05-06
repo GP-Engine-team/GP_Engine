@@ -14,6 +14,7 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Hash.hpp"
 #include "Engine/Engine.hpp"
+#include "Editor/Editor.hpp"
 
 using namespace Editor;
 using namespace GPE;
@@ -115,6 +116,22 @@ static void renderMaterial(ImVec2& size)
     ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
     ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
     ImVec4 tint_col = ImVec4(0.0f, 1.0f, 1.0f, 1.0f);
+    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
+
+    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
+}
+
+static void renderSceneFile(ImVec2& size)
+{
+    ImGuiIO&    io        = ImGui::GetIO();
+    ImTextureID my_tex_id = io.Fonts->TexID;
+    float       my_tex_w  = (float)io.Fonts->TexWidth;
+    float       my_tex_h  = (float)io.Fonts->TexHeight;
+
+    // -1 == uses default padding (style.FramePadding)
+    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
+    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
+    ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
     ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
 
     ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
@@ -367,6 +384,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 renderImage(size);
                 break;
 
+            case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
+                renderSceneFile(size);
+                break;
+
             default:
                 renderUnknowFormat(size);
                 break;
@@ -391,7 +412,26 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::EndTooltip();
             }
 
-            // Try to inspect
+            // On double left clic
+            if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
+            {
+                switch (GPE::hash(it->extention.string().c_str())) // runtime
+                {
+                case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
+                {
+                    std::string sceneName = it->filename.stem().string();
+                    Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(sceneName);
+                    editor->loadScene(&scene, it->path.string().c_str());
+                    Engine::getInstance()->sceneManager.loadScene(sceneName);
+                    break;
+                }
+
+                default:
+                    break;
+                }
+            }
+
+            // On left clic
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
             {
                 switch (GPE::hash(it->extention.string().c_str())) // runtime
@@ -417,11 +457,12 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     break;
 
                 case GPE::hash(ENGINE_TEXTURE_EXTENSION): // compile time
+                    break;
 
+                case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                     break;
 
                 default:
-                    renderUnknowFormat(size);
                     break;
                 }
             }
@@ -484,6 +525,23 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 materialDir /= materialName;
 
                 writeMaterialFile(materialDir.string().c_str());
+            }
+
+            if (ImGui::MenuItem("Scene"))
+            {
+                std::filesystem::path sceneDir  = pCurrentDirectory->path;
+                std::filesystem::path sceneName = "NewScene" ENGINE_SCENE_EXTENSION;
+
+                int id = 0;
+                while (pCurrentDirectory->containFile(sceneName))
+                {
+                    sceneName = stringFormat("NewScene(%i)" ENGINE_SCENE_EXTENSION, ++id);
+                }
+
+                sceneDir /= sceneName;
+
+                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(sceneName.stem().string().c_str());
+                editor->saveScene(&scene, sceneDir.string().c_str());
             }
 
             ImGui::EndMenu();

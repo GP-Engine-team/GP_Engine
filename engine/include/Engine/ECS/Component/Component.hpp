@@ -48,9 +48,11 @@ namespace GPE RFKNamespace()
 
         virtual inline void setActive(bool newState) noexcept;
 
-        virtual void moveTowardScene(class Scene & newOwner){};
+        virtual void moveTowardScene(class Scene & newOwner){}
 
-        virtual void destroy(){};
+        virtual void destroy(){}
+
+        virtual void awake();
 
         Component_GENERATED
     };

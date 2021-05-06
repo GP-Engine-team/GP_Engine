@@ -11,8 +11,13 @@
 #include <Engine/Serialization/DataInspector.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Serialization/InspectContext.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/IInspectable.hpp>
+#include <Engine/Serialization/InspectContext.hpp>
 
 // Editor
+#include <Editor/ExternalDeclarations.hpp>
 #include <Editor/ExternalDeclarations.hpp>
 
 // Third-party
@@ -66,9 +71,27 @@ void Editor::renderMenuBar()
         // File
         if (ImGui::BeginMenu("File"))
         {
-            ImGui::MenuItem("New");
-            ImGui::MenuItem("Open");
-            ImGui::MenuItem("Save");
+            std::string fileName = "NewScene";
+            std::string path = (std::filesystem::current_path() / RESOURCES_DIR).string() + '/' + fileName + ".GPScene";
+
+            if (ImGui::MenuItem("New"))
+            {
+                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(fileName.c_str());
+                saveScene(&scene, path.c_str());
+            }
+
+            if (ImGui::MenuItem("Open"))
+            {
+                Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(fileName);
+                loadScene(&scene, path.c_str());
+                Engine::getInstance()->sceneManager.loadScene(fileName);
+            }
+
+            if (ImGui::MenuItem("Save"))
+            {
+                saveScene(m_sceneEditor.view.pScene, path.c_str());
+            }
+
             ImGui::EndMenu();
         }
 
@@ -82,12 +105,30 @@ void Editor::renderMenuBar()
         // View
         if (ImGui::BeginMenu("View"))
         {
-            if (ImGui::BeginMenu("Add window"))
+            if (ImGui::BeginMenu("Windows"))
             {
                 ImGui::MenuItem("Viewport");
                 ImGui::MenuItem("Scene graph");
                 ImGui::MenuItem("Project browser");
                 ImGui::MenuItem("Inspector");
+
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Layout"))
+            {
+                if (ImGui::MenuItem("Default"))
+                {
+                    ImGui::LoadIniSettingsFromDisk("Layout/defaultGUILayout.ini");
+                }
+                if (ImGui::MenuItem("Quick save"))
+                {
+                    ImGui::SaveIniSettingsToDisk("Layout/userGUILayout.ini");
+                }
+                if (ImGui::MenuItem("Quick laod"))
+                {
+                    ImGui::LoadIniSettingsFromDisk("Layout/userGUILayout.ini");
+                }
                 ImGui::EndMenu();
             }
             ImGui::EndMenu();
@@ -125,7 +166,12 @@ void Editor::renderGameControlBar(EditorStartup& startup)
 
 void Editor::renderLevelEditor()
 {
+    m_sceneEditor.view.update();
     m_sceneEditor.render(m_inspectedObject);
+
+    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered() &&
+        dynamic_cast<GameObject*>(m_inspectedObject))
+        m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
 }
 
 void Editor::renderGameView(EditorStartup& startup)
@@ -141,37 +187,6 @@ void Editor::renderInspector()
         {
             GPE::InspectContext context;
             GPE::DataInspector::inspect(context, *m_inspectedObject);
-
-            //static float s = 0;
-
-            //s += 1.f/30.f;
-
-            //if (s > 3)
-            //{
-            //    GPE::Scene* scene = m_sceneEditor.view.pScene;
-
-            //    m_sceneEditor.view.unbindScene();
-
-            //    rapidxml::xml_document<> doc;
-            //    XmlSaver saver(doc);
-            //    auto a = GET_PROCESS((*m_reloadableCpp), saveScene);
-            //    a(saver, scene);
-            //    saver.print();
-
-            //    //GPE::SceneManager& sm      = GPE::Engine::getInstance()->sceneManager;
-            //    //std::string        newName = sm.getCurrentScene()->getName() + "_copy";
-            //    //sm.addEmpty(newName);
-            //    //sm.loadScene(newName);
-            //    setSceneInEdition(*scene);
-
-            //    XmlLoader loader(doc);
-            //    auto      b = GET_PROCESS((*m_reloadableCpp), loadScene);
-            //    b(loader, scene);
-            //    s = 0;
-            //    m_inspectedObject = nullptr;
-
-            //    m_sceneEditor.view.bindScene(*scene);
-            //}
         }
         else
         {
@@ -186,7 +201,11 @@ void Editor::renderSceneGraph()
     if (ImGui::Begin("Scene Graph"))
     {
         GPE::GameObject& root{Engine::getInstance()->sceneManager.getCurrentScene()->getWorld()};
+
         m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
+
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && dynamic_cast<GameObject*>(m_inspectedObject))
+            m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
     }
 
     ImGui::End();
@@ -235,20 +254,37 @@ void Editor::renderExplorer()
     ImGui::End();
 }
 
+void Editor::saveScene(GPE::Scene* scene, const char* path)
+{
+    GPE::Scene* currentScene = m_sceneEditor.view.pScene;
+    m_sceneEditor.view.unbindScene();
+
+    auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
+    saveFunc(scene, path, GPE::SavedScene::EType::XML);
+
+    m_sceneEditor.view.bindScene(*currentScene);
+}
+
+void Editor::loadScene(GPE::Scene* scene, const char* path)
+{
+    m_sceneEditor.view.unbindScene();
+    m_inspectedObject = nullptr;
+
+    auto loadFunc = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
+    loadFunc(scene, path);
+
+    m_sceneEditor.view.bindScene(*scene);
+}
+
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor       {editedScene},
-      m_gameViewer        {},
-      m_logInspector      {},
-      m_projectContent    {},
-      m_sceneGraph        {},
-      m_gameControlBar    {},
-      m_window            {window},
-      m_inspectedObject   {nullptr},
-      m_showAppStyleEditor{false}
+    : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{}, m_sceneGraph{},
+      m_gameControlBar{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
+
+    m_projectContent.editor = this;
 }
 
 void Editor::setSceneInEdition(GPE::Scene& scene)
@@ -311,7 +347,6 @@ void Editor::render()
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-
 
 bool Editor::isRunning()
 {

@@ -18,19 +18,19 @@ namespace GPE RFKNamespace()
     class RFKClass(ComponentGen(), Inspect()) SphereCollider : public Collider
     {
     public:
-        SphereCollider(GameObject & owner) noexcept;
-
-        virtual ~SphereCollider() noexcept = default;
-
-        SphereCollider() noexcept                            = delete;
-        SphereCollider(const SphereCollider& other) noexcept = delete;
-        SphereCollider(SphereCollider && other) noexcept     = default;
+        SphereCollider(GameObject & owner)                     noexcept;
+        SphereCollider()                                       noexcept = default;
+        SphereCollider(const SphereCollider& other)            noexcept = delete;
+        SphereCollider(SphereCollider&& other)                 noexcept = default;
+        virtual ~SphereCollider()                              noexcept = default;
         SphereCollider& operator=(SphereCollider const& other) noexcept = delete;
-        SphereCollider& operator=(SphereCollider&& other) noexcept = delete;
+        SphereCollider& operator=(SphereCollider&& other)      noexcept = delete;
+
+        // void updateTransform() final;
 
     private:
-        RFKField(Inspect()) GPM::Vector3 m_center;
-        RFKField(Inspect()) float        m_radius;
+        RFKField(Inspect()) GPM::Vector3     m_center;
+        RFKField(Inspect("setRadius")) float m_radius;
 
     public:
         DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);

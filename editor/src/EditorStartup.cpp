@@ -78,6 +78,8 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, getGameUIContext);
     ADD_PROCESS(m_reloadableCpp, saveCurrentScene);
     ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
+    ADD_PROCESS(m_reloadableCpp, saveSceneToPath);
+    ADD_PROCESS(m_reloadableCpp, loadSceneFromPath);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
@@ -163,6 +165,7 @@ void EditorStartup::playGame()
 
         m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
     };
+    
     m_update = [&](double unscaledDeltaTime, double deltaTime)
     {
         m_engine->inputManager.processInput();

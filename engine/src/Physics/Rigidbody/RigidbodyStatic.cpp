@@ -21,6 +21,8 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner)
 
     collider = owner.getComponent<Collider>();
 
+    rigidbody->userData = &getOwner();
+
     if (!collider)
     {
         FUNCT_ERROR("No collider assigned to the game object!");

@@ -34,7 +34,7 @@ private:
 
 public:
     MyFpsScript(GPE::GameObject& owner)   noexcept;
-    MyFpsScript()                         noexcept = default;
+    MyFpsScript()                         noexcept;
     MyFpsScript(const MyFpsScript& other) noexcept = delete;
     MyFpsScript(MyFpsScript&& other)      noexcept = delete;
     virtual ~MyFpsScript()                noexcept = default;
@@ -43,15 +43,16 @@ public:
     MyFpsScript& operator=(MyFpsScript&& other)      noexcept = delete;
 
 public:
-    RFKMethod() void jump       ();
-    RFKMethod() void forward    ();
-    RFKMethod() void backward   ();
-    RFKMethod() void left       ();
-    RFKMethod() void right      ();
-    RFKMethod() void leave      ();
-    RFKMethod() void sprintStart();
-    RFKMethod() void sprintEnd  ();
-    RFKMethod() void shoot      ();
+    RFKMethod() void jump          ();
+    RFKMethod() void forward       ();
+    RFKMethod() void backward      ();
+    RFKMethod() void left          ();
+    RFKMethod() void right         ();
+    RFKMethod() void leave         ();
+    RFKMethod() void sprintStart   ();
+    RFKMethod() void sprintEnd     ();
+    RFKMethod() void raycastExample();
+    RFKMethod() void shoot         ();
     // RFKMethod() void growUpSphereCollider  ();
     // RFKMethod() void growDownSphereCollider();
 
@@ -59,6 +60,7 @@ public:
     void onGUI      () final;
     void fixedUpdate(double deltaTime) final;
     void update     (double deltaTime) final;
+    //void awake();
 
     MyFpsScript_GENERATED
 };

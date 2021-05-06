@@ -10,8 +10,7 @@
 #include <Engine/ECS/Component/Component.hpp>
 #include <GPM/Vector3.hpp>
 
-// Generated
-#include "Generated/CharacterController.rfk.h"
+#include <Generated/CharacterController.rfk.h>
 
 #define EARTH_GRAVITY 0.980665f
 

@@ -18,6 +18,11 @@ BehaviourComponent::BehaviourComponent() noexcept
     Engine::getInstance()->behaviourSystem.addBehaviour(*this);
 }
 
+void BehaviourComponent::awake()
+{
+
+}
+
 BehaviourComponent::~BehaviourComponent() noexcept
 {
     Engine::getInstance()->behaviourSystem.removeBehaviour(*this);
@@ -27,6 +32,9 @@ BehaviourComponent::~BehaviourComponent() noexcept
 
     if (m_useUpdate)
         Engine::getInstance()->behaviourSystem.removeUpdate(*this);
+
+    if (m_useOnGUI)
+        Engine::getInstance()->behaviourSystem.removeOnGUI(*this);
 }
 
 BehaviourComponent::BehaviourComponent(BehaviourComponent&& other) noexcept

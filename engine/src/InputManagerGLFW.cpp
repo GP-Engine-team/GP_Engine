@@ -25,11 +25,10 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
             InputComponent* ic = m_inputComponents[i];
 
             if (!ic)
-               continue;
+                continue;
 
             auto inputModeMapIp = ic->inputModeMap.find(action);
-            if (inputModeMapIp != ic->inputModeMap.end() &&
-                inputModeMapIp->second == m_currentInputMode)
+            if (inputModeMapIp != ic->inputModeMap.end() && inputModeMapIp->second == m_currentInputMode)
             {
                 auto keyModeMapIt = ic->keyModeMap.find(action);
                 if (keyModeMapIt != ic->keyModeMap.end())
@@ -89,6 +88,23 @@ void InputManager::keyCallback(GLFWwindow* window, int key, int scancode, int ac
     }
 }
 
+void InputManager::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) noexcept
+{
+    if (action >= 0 && action != GLFW_REPEAT)
+    {
+        if (m_stateMap.count(button))
+        {
+            auto stateMapIt        = m_stateMap.find(button);
+            m_lastStateMap[button] = stateMapIt->second;
+        }
+        else
+        {
+            m_lastStateMap[button] = false;
+        }
+        m_stateMap[button] = action != GLFW_RELEASE;
+    }
+}
+
 void InputManager::cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept
 {
     if (m_cursor.tracked)
@@ -126,9 +142,17 @@ void setKeycallback(GLFWwindow* window, int key, int scancode, int action, int m
     static_cast<InputManager*>(glfwGetWindowUserPointer(window))->keyCallback(window, key, scancode, action, mods);
 }
 
+void setMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (ImGui::GetCurrentContext() != nullptr)
+        ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+    static_cast<InputManager*>(glfwGetWindowUserPointer(window))->mouseButtonCallback(window, button, action, mods);
+}
+
 void InputManager::setupCallbacks(GLFWwindow* window) noexcept
 {
     glfwSetKeyCallback(window, setKeycallback);
+    glfwSetMouseButtonCallback(window, setMouseButtonCallback);
     glfwSetCursorPosCallback(window, setCursorCallback);
 }
 

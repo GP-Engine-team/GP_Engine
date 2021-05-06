@@ -14,16 +14,16 @@ class SceneEditor
 {
 
 public:
-	GPE::SceneViewer view;
+    GPE::SceneViewer view;
 
 private:
-	void captureInputs(bool toggle);
-	void checkCursor  (GPE::IInspectable*& inspectedObject);
+    void captureInputs(bool toggle);
+    void checkCursor(GPE::IInspectable*& inspectedObject);
 
 public:
-	SceneEditor		  (GPE::Scene& scene);
+    SceneEditor(GPE::Scene& scene);
 
-	void render		  (GPE::IInspectable*& inspectedObject);
+    void render(GPE::IInspectable*& inspectedObject);
 };
 
-}
+} // namespace Editor

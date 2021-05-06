@@ -42,6 +42,16 @@ public:
     void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept;
 
     /**
+     * @brief Callback to get the state of any mouse button keys
+     * @param window
+     * @param button
+     * @param action
+     * @param mods
+     * @return
+     */
+    void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) noexcept;
+
+    /**
      * @brief Callback to get the new position of the mouse cursor
      * @param window
      * @param xpos
@@ -76,9 +86,9 @@ public:
      */
     inline void setInputMode(const std::string& inputMode) noexcept;
 
-     /**
+    /**
      * @brief Restore the input mode previously set before the one currently active
-     * 
+     *
      * Internally, swaps m_previousInputMode and m_currentInputMode
      */
     inline void restorePreviousInputMode() noexcept;

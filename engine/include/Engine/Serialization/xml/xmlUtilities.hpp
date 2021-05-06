@@ -10,3 +10,5 @@
  * @return Returns the value of the searched attribute.
  */
 std::string findAttribValue(rapidxml::xml_node<>* parentNode, const std::string& key);
+
+std::string docToString(const rapidxml::xml_document<>& doc);

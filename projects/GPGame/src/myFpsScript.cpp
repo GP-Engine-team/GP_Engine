@@ -1,5 +1,6 @@
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
+#include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/Engine.hpp>
@@ -13,10 +14,21 @@
 
 #include <Firearm/PPSH41.hpp>
 #include <MyFpsScript.hpp>
+
+#include "Generated/myFpsScript.rfk.h"
 File_GENERATED
 
 namespace GPG
 {
+
+    
+    MyFpsScript::MyFpsScript() noexcept
+        : GPE::BehaviourComponent()
+    {
+        enableFixedUpdate(true);
+        enableUpdate(true);
+        enableOnGUI(true);
+    }
 
     MyFpsScript::MyFpsScript(GPE::GameObject& owner) noexcept
         : GPE::BehaviourComponent(owner),
@@ -29,15 +41,16 @@ namespace GPG
         enableUpdate(true);
         enableOnGUI(true);
 
-        input->bindAction("forward",     EKeyMode::KEY_DOWN,     "Game", this, "forward");
-        input->bindAction("backward",    EKeyMode::KEY_DOWN,     "Game", this, "backward");
-        input->bindAction("left",        EKeyMode::KEY_DOWN,     "Game", this, "left");
-        input->bindAction("right",       EKeyMode::KEY_DOWN,     "Game", this, "right");
-        input->bindAction("jump",        EKeyMode::KEY_DOWN,     "Game", this, "jump");
-        input->bindAction("exit",        EKeyMode::KEY_PRESSED,  "Game", this, "leave");
-        input->bindAction("sprintStart", EKeyMode::KEY_PRESSED,  "Game", this, "sprintStart");
-        input->bindAction("sprintEnd",   EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-        input->bindAction("shoot",       EKeyMode::KEY_DOWN,     "Game", this, "shoot");
+        input->bindAction("forward",        EKeyMode::KEY_DOWN,     "Game", this, "forward");
+        input->bindAction("backward",       EKeyMode::KEY_DOWN,     "Game", this, "backward");
+        input->bindAction("left",           EKeyMode::KEY_DOWN,     "Game", this, "left");
+        input->bindAction("right",          EKeyMode::KEY_DOWN,     "Game", this, "right");
+        input->bindAction("jump",           EKeyMode::KEY_DOWN,     "Game", this, "jump");
+        input->bindAction("exit",           EKeyMode::KEY_PRESSED,  "Game", this, "leave");
+        input->bindAction("sprintStart",    EKeyMode::KEY_PRESSED,  "Game", this, "sprintStart");
+        input->bindAction("sprintEnd",      EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+        input->bindAction("RaycastExample", EKeyMode::KEY_PRESSED,  "Game", this, "raycastExample");
+        input->bindAction("shoot",          EKeyMode::KEY_DOWN,     "Game", this, "shoot");
         
         {
             GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
@@ -62,8 +75,23 @@ namespace GPG
         controller->setMouseSpeed(.0025f);
         controller->setGravity(.1f);
     }
+    /*
+    void MyFpsScript::awake()
+    {
+        BehaviourComponent::awake();
 
+        input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
+        input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
+        input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
+        input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
+        input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
+        input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
+        input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
+        input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
 
+        input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+    }
+    */
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)
     {
         using namespace GPM;
@@ -132,6 +160,21 @@ namespace GPG
     void MyFpsScript::sprintEnd()
     {
         controller->setSpeed(controller->getSpeed() * .5f);
+    }
+
+    // Exemple de Raycast
+    void MyFpsScript::raycastExample()
+    {
+        GPE::Raycast ray;
+        ray.Fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(), 100000);
+        if (ray.hit.hasBlock)
+        {
+            GPE::GameObject* owner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData);
+            if (owner)
+            {
+                std::cout << "yolo" << std::endl;
+            }
+        }
     }
 
     void MyFpsScript::shoot()
