@@ -11,8 +11,8 @@
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
-#include "GPM/Shape3D/Volume.hpp"
 #include "Engine/Serialization/xml/xmlSaver.hpp"
+#include "GPM/Shape3D/Volume.hpp"
 
 // Generated
 #include "Generated/Model.rfk.h"
@@ -46,6 +46,11 @@ namespace GPE RFKNamespace()
 
         SubModel() = default;
 
+        bool isValide()
+        {
+            return pModel && pMesh && pShader && pMaterial;
+        }
+
         Model*    pModel    = nullptr;
         Shader*   pShader   = nullptr;
         Material* pMaterial = nullptr;
@@ -54,7 +59,7 @@ namespace GPE RFKNamespace()
         bool enableBackFaceCulling = true;
     };
 
-    template<>
+    template <>
     void save(XmlSaver & context, const SubModel& inspected, const XmlSaver::SaveInfo& info);
     template <>
     void load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadInfo& info);

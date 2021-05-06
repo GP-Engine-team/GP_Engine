@@ -46,7 +46,10 @@ Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{
 Model::~Model()
 {
     for (SubModel& subMesh : m_subModels)
-        getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+    {
+        if (subMesh.isValide())
+            getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+    }
 }
 
 Model::Model(GameObject& owner) : Model(owner, CreateArg{})
@@ -131,7 +134,7 @@ void renderResourceExplorer(const char* name, T*& inRes)
 }
 
 template <>
-void GPE::save(XmlSaver & context, const SubModel& inspected, const XmlSaver::SaveInfo& info)
+void GPE::save(XmlSaver& context, const SubModel& inspected, const XmlSaver::SaveInfo& info)
 {
     context.push(info);
 
@@ -167,7 +170,7 @@ void GPE::save(XmlSaver & context, const SubModel& inspected, const XmlSaver::Sa
 }
 
 template <>
-void GPE::load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadInfo& info)
+void GPE::load(XmlLoader& context, SubModel& inspected, const XmlLoader::LoadInfo& info)
 {
     if (context.goToSubChild(info))
     {
@@ -200,8 +203,7 @@ void GPE::load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadI
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspected)
 {
-    const bool isPreviousElementVoid =
-        !((size_t)inspected.pMesh & (size_t)inspected.pShader & (size_t)inspected.pMaterial);
+    const bool isPreviousElementVoid = !inspected.isValide();
 
     renderResourceExplorer<Mesh>("Mesh", inspected.pMesh);
     // Drop
@@ -279,11 +281,8 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
 
-    const bool isCurrentElementVoid =
-        !((size_t)inspected.pMesh & (size_t)inspected.pShader & (size_t)inspected.pMaterial);
-
     // This operation check if element must be added or remove from the the scene render system
-    if (isPreviousElementVoid != isCurrentElementVoid)
+    if (isPreviousElementVoid != !inspected.isValide())
     {
         if (isPreviousElementVoid)
         {
