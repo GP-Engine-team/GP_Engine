@@ -9,9 +9,12 @@ class IInspectable;
 
 namespace Editor
 {
+class Editor;
 
 class SceneEditor
 {
+protected:
+    Editor* m_pEditorContext;
 
 public:
     GPE::SceneViewer view;
@@ -21,7 +24,7 @@ private:
     void checkCursor(GPE::IInspectable*& inspectedObject);
 
 public:
-    SceneEditor(GPE::Scene& scene);
+    SceneEditor(Editor& editorContext, GPE::Scene& scene);
 
     void update(double dt);
     void render(GPE::IInspectable*& inspectedObject);

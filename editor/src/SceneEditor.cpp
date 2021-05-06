@@ -1,5 +1,6 @@
 ﻿#include <Editor/SceneEditor.hpp>
 
+#include <Editor/Editor.hpp>
 #include <Engine/Engine.hpp>
 #include <imgui/imgui.h>
 
@@ -64,7 +65,7 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
 }
 
 // ========================== Public methods ==========================
-SceneEditor::SceneEditor(GPE::Scene& scene) : view{scene}
+SceneEditor::SceneEditor(Editor& editorContext, GPE::Scene& scene) : m_pEditorContext{&editorContext}, view{scene}
 {
 }
 
@@ -90,8 +91,11 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
         view.render();
 
         ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
-    }
 
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered() &&
+            dynamic_cast<GameObject*>(inspectedObject))
+            m_pEditorContext->m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(inspectedObject));
+    }
     ImGui::End();
     ImGui::PopStyleVar(2);
 }

@@ -32,6 +32,10 @@ class EditorStartup;
 
 class Editor
 {
+    friend class SceneEditor;
+    friend class SceneGraph;
+    friend class ProjectContent;
+
 private:
     SceneEditor        m_sceneEditor;
     GameViewer         m_gameViewer;

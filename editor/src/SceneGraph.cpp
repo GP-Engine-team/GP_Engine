@@ -203,6 +203,10 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInsp
             ImGui::TreePop();
         }
     }
+    
+            if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() &&
+        dynamic_cast<GameObject*>(selectedGameObject))
+        m_pEditorContext->m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(selectedGameObject));
 }
 
 void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject)

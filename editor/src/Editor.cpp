@@ -1,4 +1,5 @@
-﻿#include <Editor/EditorStartup.hpp>
+﻿
+#include <Editor/EditorStartup.hpp>
 
 // Engine
 #include <Engine/Core/Game/AbstractGame.hpp>
@@ -162,10 +163,6 @@ void Editor::renderGameControlBar(EditorStartup& startup)
 void Editor::renderLevelEditor()
 {
     m_sceneEditor.render(m_inspectedObject);
-
-    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered() &&
-        dynamic_cast<GameObject*>(m_inspectedObject))
-        m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
 }
 
 void Editor::renderGameView(EditorStartup& startup)
@@ -197,9 +194,6 @@ void Editor::renderSceneGraph()
         GPE::GameObject& root{Engine::getInstance()->sceneManager.getCurrentScene()->getWorld()};
 
         m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
-
-        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && dynamic_cast<GameObject*>(m_inspectedObject))
-            m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
     }
 
     ImGui::End();
@@ -277,7 +271,7 @@ void Editor::unbindCameraEditor()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{},
+    : m_sceneEditor{*this, editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{},
       m_sceneGraph(*this), m_gameControlBar{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}
 {
     glfwMaximizeWindow(window);
