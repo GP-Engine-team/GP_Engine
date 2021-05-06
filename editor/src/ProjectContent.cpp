@@ -1,20 +1,20 @@
-﻿#include "Editor/ProjectContent.hpp"
+﻿#include <Editor/ProjectContent.hpp>
 
-#include "Engine/Serialization/IInspectable.hpp"
-#include "Engine/Serialization/MaterialInspectorPanel.hpp"
-#include "Engine/Serialization/MeshInspectorPanel.hpp"
-#include "Engine/Serialization/ShaderInspectorPanel.hpp"
+#include <Engine/Intermediate/GameObject.hpp>
 
-#include "Engine/Serialization/FileExplorer.hpp"
-#include "Engine/Serialization/TextureImporterSetting.hpp"
+#include <Engine/Serialization/MaterialInspectorPanel.hpp>
+#include <Engine/Serialization/MeshInspectorPanel.hpp>
+#include <Engine/Serialization/ShaderInspectorPanel.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
+#include <Engine/Serialization/TextureImporterSetting.hpp>
 
 #include <imgui/imgui.h>
 #include <string>
 
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Tools/Hash.hpp"
-#include "Engine/Engine.hpp"
-#include "Editor/Editor.hpp"
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/Hash.hpp>
+#include <Engine/Engine.hpp>
+#include <Editor/Editor.hpp>
 
 using namespace Editor;
 using namespace GPE;
