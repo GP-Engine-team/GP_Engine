@@ -132,7 +132,6 @@ void EditorStartup::openGame()
     // The editor handles exiting the whole application itself
     m_engine->exit = [&]()
     {
-        stopGame();
         m_editor.releaseGameInputs();
     };
 }
