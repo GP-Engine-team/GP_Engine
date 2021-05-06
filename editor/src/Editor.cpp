@@ -168,10 +168,6 @@ void Editor::renderLevelEditor()
 {
     m_sceneEditor.view.update();
     m_sceneEditor.render(m_inspectedObject);
-
-    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered() &&
-        dynamic_cast<GameObject*>(m_inspectedObject))
-        m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
 }
 
 void Editor::renderGameView(EditorStartup& startup)
@@ -204,8 +200,8 @@ void Editor::renderSceneGraph()
 
         m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
 
-        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && dynamic_cast<GameObject*>(m_inspectedObject))
-            m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(m_inspectedObject));
+        if (ImGui::IsWindowHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && m_inspectedObject)
+            m_sceneEditor.view.lookAtObject(*reinterpret_cast<GameObject*>(m_inspectedObject));
     }
 
     ImGui::End();
