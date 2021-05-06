@@ -3,7 +3,6 @@
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
-#include <Engine/ECS/Component/TransformComponent.hpp>
 #include <Engine/Engine.hpp>
 
 #include <PhysX/gpu/PxGpu.h>
