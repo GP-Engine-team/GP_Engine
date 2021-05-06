@@ -7,11 +7,8 @@
 #pragma once
 
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
-//#include <Engine/Serialization/DataInspector.hpp>
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/Serialize.hpp>
-//#include <Engine/Serialization/xml/xmlLoader.hpp>
-//#include <Engine/Serialization/xml/xmlSaver.hpp>
 
 #include <Firearm/GunMagazine.hpp>
 
