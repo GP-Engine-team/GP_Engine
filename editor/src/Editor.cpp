@@ -15,6 +15,7 @@
 
 // Editor
 #include <Editor/ExternalDeclarations.hpp>
+#include <Editor/StylePanel.hpp>
 
 // Third-party
 #include <GLFW/glfw3.h>
@@ -55,7 +56,7 @@ void Editor::renderStyleEditor()
     if (m_showAppStyleEditor)
     {
         ImGui::Begin("Style Editor", &m_showAppStyleEditor);
-        ImGui::ShowStyleEditor();
+        ShowStyleEditor();
         ImGui::End();
     }
 }
