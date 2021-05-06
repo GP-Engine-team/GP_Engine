@@ -7,8 +7,8 @@
 #include <Engine/Engine.hpp>
 
 #include <GLFW/glfw3.h>
-#include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
 namespace Editor
@@ -26,7 +26,6 @@ void GameViewer::releaseInputs()
     m_captureInputs = false;
 }
 
-
 void GameViewer::captureInputs()
 {
     Log::getInstance()->log("GameViewer::captureInputs()");
@@ -38,13 +37,10 @@ void GameViewer::captureInputs()
     m_captureInputs = true;
 }
 
-
 GameViewer::GameViewer(int width, int height)
-    : framebuffer{width, height},
-      window{GPE::Engine::getInstance()->window.getGLFWWindow()},
-      m_captureInputs{false}
-{}
-
+    : framebuffer{width, height}, window{GPE::Engine::getInstance()->window.getGLFWWindow()}, m_captureInputs{false}
+{
+}
 
 void GameViewer::render(EditorStartup& startup)
 {
@@ -55,9 +51,7 @@ void GameViewer::render(EditorStartup& startup)
     if (ImGui::Begin("Game view"))
     {
         // Decide what to do with inputs
-        if (startup.game().state == EGameState::PLAYING   &&
-            !m_captureInputs                              &&
-            ImGui::IsWindowHovered()                      &&
+        if (startup.game().state == EGameState::PLAYING && !m_captureInputs && ImGui::IsWindowHovered() &&
             ImGui::IsMouseClicked(ImGuiMouseButton_Left))
         {
             captureInputs();
@@ -78,7 +72,7 @@ void GameViewer::render(EditorStartup& startup)
         startup.game().setViewport(ImGui::GetWindowPos().x + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x,
                                    ImGui::GetWindowPos().y + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y,
                                    size.x, size.y);
-        
+
         // Update camera's aspect and resizing FBO
         cam.setAspect(size.x / size.y);
         framebuffer.resize(int(size.x), int(size.y));

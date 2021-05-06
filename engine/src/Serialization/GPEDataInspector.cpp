@@ -119,6 +119,7 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject*& insp
             //    inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
             //}
         }
+        ImGui::EndDragDropTarget();
     }
 
     // Drop from scene graph

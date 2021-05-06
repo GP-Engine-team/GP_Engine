@@ -17,9 +17,9 @@
 #include <Engine/ECS/Component/Model.hpp>
 #include <Engine/ECS/Component/ParticleComponent.hpp>
 
-#include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Serialization/FileExplorer.hpp>
+#include <Engine/Serialization/IInspectable.hpp>
 
 #include <Editor/ExternalDeclarations.hpp>
 #include <Engine/Core/HotReload/ReloadableCpp.hpp>
@@ -84,20 +84,12 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             Scene empty;
             auto  loadFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), loadSceneFromPath);
             loadFunc(&empty, path.string().c_str());
-            empty.getWorld().setParent(gameObject);
-
-            // if (Prefab* pPrefab = Engine::getInstance()->resourceManager.get<Prefab>(path.string().c_str()))
-            //{
-            //    inspected.pPrefab = pPrefab;
-            //}
-            // else
-            //{
-            //    if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pPrefab))
-            //        inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
-
-            //    inspected.pPrefab = loadPrefabFile(path.string().c_str());
-            //    inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
-            //}
+            if (!empty.getWorld().children.empty())
+            {
+                GameObject* const go = empty.getWorld().children.front();
+                go->setParent(gameObject);
+                go->getTransform().setDirty();
+            }
         }
         ImGui::EndDragDropTarget();
     }
@@ -154,15 +146,23 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             ImGui::EndMenu();
         }
 
-        // if (ImGui::MenuItem("Save as prefab", NULL, false))
-        //{
-        //    const std::filesystem::path path = openFileExplorerAndGetRelativePath(L"Select folder", {});
+        if (ImGui::MenuItem("Save as prefab", NULL, false))
+        {
+            const std::filesystem::path path = openFolderExplorerAndGetRelativePath(L"Select folder") /
+                                               (gameObject.getName() + ENGINE_PREFAB_EXTENSION);
 
-        //    Scene tempScene(gameObject);
-        //    gameObject.moveTowardScene(tempScene);
-        //    auto saveFunc = GET_PROCESS((*m_pEditorContext.m_reloadableCpp), saveSceneToPath);
-        //    saveFunc(tempScene, path, GPE::SavedScene::EType::XML);
-        //}
+            Scene             tempScene;
+            GameObject* const pPreviousParent = gameObject.getParent();
+
+            tempScene.getWorld().children.emplace_back(&gameObject);
+            gameObject.forceSetParent(tempScene.getWorld());
+
+            auto saveFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), saveSceneToPath);
+            saveFunc(&tempScene, path.string().c_str(), GPE::SavedScene::EType::XML);
+
+            gameObject.forceSetParent(*pPreviousParent);
+            tempScene.getWorld().children.clear();
+        }
 
         if (ImGui::MenuItem("Remove", NULL, false))
         {

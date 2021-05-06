@@ -239,12 +239,8 @@ void SceneViewer::bindScene(Scene& scene)
     }
 
     // Update the Camera component and cameraOwner scene and parent
-    cameraOwner->pOwnerScene = &scene;
-
     camera.setActive(true);
-
     scene.sceneRenderer.setMainCamera(camera);
-
     pScene = &scene;
 }
 

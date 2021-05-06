@@ -63,11 +63,21 @@ inline void GameObject::setParent(GameObject& newParent) noexcept
         }
     }
 
+    if (newParent.pOwnerScene)
+    {
+        moveTowardScene(*newParent.pOwnerScene);
+    }
+
     newParent.children.emplace_back(this);
     m_parent = &newParent;
 
     Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
                                          newParent.getName().c_str()));
+}
+
+inline void GameObject::forceSetParent(GameObject& newParent) noexcept
+{
+    m_parent = &newParent;
 }
 
 inline void GameObject::setName(const char* newName) noexcept
