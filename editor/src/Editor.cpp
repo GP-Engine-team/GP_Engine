@@ -271,13 +271,11 @@ void Editor::unbindCameraEditor()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor{*this, editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{},
+    : m_sceneEditor{*this, editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{*this},
       m_sceneGraph(*this), m_gameControlBar{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
-
-    m_projectContent.editor = this;
 }
 
 void Editor::setSceneInEdition(GPE::Scene& scene)

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/Resources/Texture.hpp"
+#include <Engine/Resources/Texture.hpp>
 
 namespace Editor
 {

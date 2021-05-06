@@ -20,7 +20,35 @@
 using namespace Editor;
 using namespace GPE;
 
-ProjectContent::ProjectContent()
+ProjectContent::ProjectContent(Editor& editorContext)
+    : m_folderIcone{{"..\\..\\editor\\resources\\\icone\\folder.png", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_textureIcone{{"..\\..\\editor\\resources\\\icone\\texture.png", Texture::ETextureMinFilter::LINEAR,
+                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                      Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_materialIcone{{"..\\..\\editor\\resources\\\icone\\material.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_sceneIcone{{"..\\..\\editor\\resources\\\icone\\scene.png", Texture::ETextureMinFilter::LINEAR,
+                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                    Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_meshIcone{{"..\\..\\editor\\resources\\\icone\\mesh.png", Texture::ETextureMinFilter::LINEAR,
+                   Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                   Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_shaderIcone{{"..\\..\\editor\\resources\\\icone\\shader.jpg", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_soundIcone{{"..\\..\\editor\\resources\\\icone\\sound.jpg", Texture::ETextureMinFilter::LINEAR,
+                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                    Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_prefabIcone{{"..\\..\\editor\\resources\\\icone\\prefab.png", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_unknowIcone{{"..\\..\\editor\\resources\\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_editorContext{&editorContext}
 {
     resourcesTree.name = RESOURCES_DIR;
     resourcesTree.path = std::filesystem::current_path() / RESOURCES_DIR;
@@ -203,7 +231,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                          2 * ImGui::GetStyle().ItemSpacing.x;
             ImGui::SetCursorPosX(posX);
 
-            if (renderIcone(size, ImVec4(1.0f, 1.0f, 0.0f, 1.0f)))
+            if (ImGui::ImageButton((void*)(intptr_t)m_folderIcone.getID(), size))
             {
                 pSelectedDirectory = &*it;
             }
@@ -252,36 +280,36 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             switch (GPE::hash(it->extention.string().c_str())) // runtime
             {
             case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
-                renderIcone(size, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+                ImGui::ImageButton((void*)(intptr_t)m_meshIcone.getID(), size);
                 break;
 
             case GPE::hash(ENGINE_MATERIAL_EXTENSION): // compile time
-                renderIcone(size, ImVec4(0.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::ImageButton((void*)(intptr_t)m_materialIcone.getID(), size);
                 break;
 
             case GPE::hash(".wav"): // compile time
             case GPE::hash(".mp3"): // compile time
-                renderIcone(size, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
+                ImGui::ImageButton((void*)(intptr_t)m_soundIcone.getID(), size);
                 break;
 
             case GPE::hash(ENGINE_SHADER_EXTENSION): // compile time
-                renderIcone(size, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+                ImGui::ImageButton((void*)(intptr_t)m_shaderIcone.getID(), size);
                 break;
 
             case GPE::hash(ENGINE_TEXTURE_EXTENSION): // compile time
-                renderIcone(size, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+                ImGui::ImageButton((void*)(intptr_t)m_textureIcone.getID(), size);
                 break;
 
             case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
-                renderIcone(size, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                ImGui::ImageButton((void*)(intptr_t)m_sceneIcone.getID(), size);
                 break;
 
             case GPE::hash(ENGINE_PREFAB_EXTENSION): // compile time
-                renderIcone(size, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
+                ImGui::ImageButton((void*)(intptr_t)m_prefabIcone.getID(), size);
                 break;
 
             default:
-                renderIcone(size, ImVec4(1.0f, 0.0f, 1.0f, 1.0f));
+                ImGui::ImageButton((void*)(intptr_t)m_unknowIcone.getID(), size);
                 break;
             }
 
@@ -313,7 +341,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 {
                     std::string sceneName = it->filename.stem().string();
                     Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(sceneName);
-                    editor->loadScene(&scene, it->path.string().c_str());
+                    m_editorContext->loadScene(&scene, it->path.string().c_str());
                     Engine::getInstance()->sceneManager.loadScene(sceneName);
                     break;
                 }
@@ -436,7 +464,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 sceneDir /= sceneName;
 
                 Scene& scene = Engine::getInstance()->sceneManager.addEmpty(sceneName.stem().string().c_str());
-                editor->saveScene(&scene, sceneDir.string().c_str());
+                m_editorContext->saveScene(&scene, sceneDir.string().c_str());
             }
 
             if (ImGui::MenuItem("Prefab"))
@@ -453,7 +481,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 PrefabDir /= PrefabName;
 
                 Scene prefab;
-                auto  saveFunc = GET_PROCESS((*editor->m_reloadableCpp), saveSceneToPath);
+                auto  saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
                 saveFunc(&prefab, PrefabDir.string().c_str(), GPE::SavedScene::EType::XML);
             }
 
