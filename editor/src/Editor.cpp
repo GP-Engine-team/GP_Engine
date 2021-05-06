@@ -270,6 +270,11 @@ void Editor::loadScene(GPE::Scene* scene, const char* path)
     m_sceneEditor.view.bindScene(*scene);
 }
 
+void Editor::unbindCameraEditor()
+{
+    m_sceneEditor.view.unbindScene();
+}
+
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
     : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{},

@@ -9,6 +9,8 @@
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Serialization/xml/xmlLoader.hpp>
+#include <map>
+#include <memory>
 #include <string> // std::string
 
 namespace GPE
@@ -24,8 +26,8 @@ class Scene
     friend class SceneManager;
 
 protected:
-    std::string m_name   = "Scene";
-    GameObject* m_pWorld = nullptr;
+    std::string                 m_name   = "Scene";
+    std::unique_ptr<GameObject> m_pWorld = nullptr;
 
     std::unordered_map<std::string, unsigned int>
         m_loadedResourcesPath; // Indicate witch resource is loaded with counter
@@ -35,7 +37,7 @@ public:
 
 public:
     Scene() noexcept;
-    ~Scene() noexcept = default;
+    ~Scene() noexcept;
 
     // TODO: Can scene be copied ? How to manage resource
     constexpr inline Scene(const Scene& other) noexcept = delete;

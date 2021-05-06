@@ -88,3 +88,8 @@ void SceneManager::removeScene(Scene& scene)
 {
     removeScene(scene.m_name);
 }
+
+void SceneManager::removeScenes()
+{
+    m_scenes.clear();
+}

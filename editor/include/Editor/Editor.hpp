@@ -80,6 +80,8 @@ public:
     void saveScene(GPE::Scene* scene, const char* path);
     // Removes Editor elements from the scene before loading
     void loadScene(GPE::Scene* scene, const char* path);
+
+    void unbindCameraEditor();
 };
 
 } // End of namespace Editor

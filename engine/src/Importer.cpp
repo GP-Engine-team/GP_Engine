@@ -722,7 +722,8 @@ SavedScene::CreateArg GPE::readSceneFile(const char* src)
     std::filesystem::path srcPath(src);
     SavedScene::CreateArg arg;
 
-    if (srcPath.extension() != ENGINE_SCENE_EXTENSION || fopen_s(&pFile, src, "rb"))
+    if ((srcPath.extension() == ENGINE_SCENE_EXTENSION || srcPath.extension() == ENGINE_PREFAB_EXTENSION) &&
+        fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
         return arg;
@@ -747,6 +748,5 @@ SavedScene::CreateArg GPE::readSceneFile(const char* src)
 
 SavedScene::CreateArg GPE::loadSceneFile(const char* src)
 {
-    std::filesystem::path srcPath(src);
     return readSceneFile(src);
 }

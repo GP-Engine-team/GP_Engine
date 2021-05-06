@@ -3,23 +3,26 @@
 #include <filesystem>
 
 #include "Engine/Core/Tools/Hash.hpp"
+#include <Editor/Editor.hpp>
+#include <Engine/Engine.hpp>
 
 // Components
 // TODO: Generat this automatically
-#include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/ECS/Component/Model.hpp"
+#include <Engine/ECS/Component/AudioComponent.hpp>
+#include <Engine/ECS/Component/Camera.hpp>
+#include <Engine/ECS/Component/InputComponent.hpp>
+#include <Engine/ECS/Component/Light/DirectionalLight.hpp>
+#include <Engine/ECS/Component/Light/PointLight.hpp>
+#include <Engine/ECS/Component/Light/SpotLight.hpp>
+#include <Engine/ECS/Component/Model.hpp>
+#include <Engine/ECS/Component/ParticleComponent.hpp>
 
-#include "Engine/ECS/Component/AudioComponent.hpp"
-#include "Engine/ECS/Component/InputComponent.hpp"
-#include "Engine/ECS/Component/ParticleComponent.hpp"
-
-#include "Engine/ECS/Component/Light/DirectionalLight.hpp"
-#include "Engine/ECS/Component/Light/PointLight.hpp"
-#include "Engine/ECS/Component/Light/SpotLight.hpp"
-
-#include "Engine/Serialization/IInspectable.hpp"
+#include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Serialization/FileExplorer.hpp>
+
+#include <Editor/ExternalDeclarations.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
 
 #include "Engine/Resources/Scene.hpp"
 #include <imgui/imgui.h>
@@ -59,7 +62,7 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
         ImGui::EndDragDropSource();
     }
 
-    // Drop
+    // Drop gameObject to set as child
     if (ImGui::BeginDragDropTarget())
     {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
@@ -70,32 +73,33 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
         ImGui::EndDragDropTarget();
     }
 
-    // Drop
+    // Drop prefab to instanciate and set as child
     if (ImGui::BeginDragDropTarget())
     {
-        const ImGuiPayload* payload = ImGui::GetDragDropPayload();
-
-        if (payload->IsDataType("RESOURCE_PATH"))
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_PREFAB_EXTENSION))
         {
             IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
             std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
-            size_t hasedExtention = hash(path.extension().string().c_str());
-            if (hasedExtention == hash(".obj"))
-            {
-                // Can drop
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RESOURCE_PATH"))
-                {
-                    IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-                    std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+            Scene empty;
+            auto  loadFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), loadSceneFromPath);
+            loadFunc(&empty, path.string().c_str());
+            empty.getWorld().setParent(gameObject);
 
-                    gameObject.pOwnerScene->addLoadedResourcePath(path.string().c_str());
-                    gameObject.addComponent<Model>();
+            // if (Prefab* pPrefab = Engine::getInstance()->resourceManager.get<Prefab>(path.string().c_str()))
+            //{
+            //    inspected.pPrefab = pPrefab;
+            //}
+            // else
+            //{
+            //    if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pPrefab))
+            //        inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
 
-                    std::cout << gameObject.getName() << "  " << path.string() << std::endl;
-                }
-            }
+            //    inspected.pPrefab = loadPrefabFile(path.string().c_str());
+            //    inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
+            //}
         }
+        ImGui::EndDragDropTarget();
     }
 
     if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())

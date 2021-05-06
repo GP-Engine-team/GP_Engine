@@ -47,7 +47,7 @@ inline GameObject* GameObject::getParent() noexcept
 
 inline void GameObject::setParent(GameObject& newParent) noexcept
 {
-    //GPE_ASSERT(m_parent, "You cannot move gameObject without parent");
+    // GPE_ASSERT(m_parent, "You cannot move gameObject without parent");
     GPE_ASSERT(newParent.getParent() != this,
                "You cannot associate new parent if it's the child of the current entity (leak)");
 
@@ -57,17 +57,17 @@ inline void GameObject::setParent(GameObject& newParent) noexcept
         {
             if (*it == this)
             {
-                Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(),
-                                                     m_parent->getName().c_str(), newParent.getName().c_str()));
-
-                newParent.children.emplace_back(std::move(*it));
                 m_parent->children.erase(it);
                 break;
             }
         }
     }
 
+    newParent.children.emplace_back(this);
     m_parent = &newParent;
+
+    Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
+                                         newParent.getName().c_str()));
 }
 
 inline void GameObject::setName(const char* newName) noexcept

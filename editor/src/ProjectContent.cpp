@@ -1,20 +1,21 @@
 ﻿#include "Editor/ProjectContent.hpp"
 
-#include "Engine/Serialization/IInspectable.hpp"
-#include "Engine/Serialization/MaterialInspectorPanel.hpp"
-#include "Engine/Serialization/MeshInspectorPanel.hpp"
-#include "Engine/Serialization/ShaderInspectorPanel.hpp"
+#include <Editor/Editor.hpp>
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/Hash.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
+#include <Engine/Serialization/IInspectable.hpp>
+#include <Engine/Serialization/MaterialInspectorPanel.hpp>
+#include <Engine/Serialization/MeshInspectorPanel.hpp>
+#include <Engine/Serialization/ShaderInspectorPanel.hpp>
+#include <Engine/Serialization/TextureImporterSetting.hpp>
 
-#include "Engine/Serialization/FileExplorer.hpp"
-#include "Engine/Serialization/TextureImporterSetting.hpp"
+#include <Editor/ExternalDeclarations.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
 
 #include <imgui/imgui.h>
 #include <string>
-
-#include "Editor/Editor.hpp"
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Tools/Hash.hpp"
-#include "Engine/Engine.hpp"
 
 using namespace Editor;
 using namespace GPE;
@@ -452,7 +453,8 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 PrefabDir /= PrefabName;
 
                 Scene prefab;
-                editor->saveScene(&prefab, PrefabDir.string().c_str());
+                auto  saveFunc = GET_PROCESS((*editor->m_reloadableCpp), saveSceneToPath);
+                saveFunc(&prefab, PrefabDir.string().c_str(), GPE::SavedScene::EType::XML);
             }
 
             ImGui::EndMenu();
