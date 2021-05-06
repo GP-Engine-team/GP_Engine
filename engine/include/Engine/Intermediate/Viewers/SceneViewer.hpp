@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Engine/Intermediate/GameObject.hpp"
+#include <Engine/Intermediate/GameObject.hpp>
 
 namespace GPE
 {
@@ -43,6 +43,7 @@ private:
     int          FBOIDheight;
 
 protected:
+    // TODO: move to class Camera, or to a new class
     // Camera controller to look object
     bool      isTransitionActive = false;
     GPM::Vec3 startPos;
@@ -84,7 +85,7 @@ public:
     /**
      * @brief Allow user to move and turn toward indicate GO
      */
-    void lookAtObject(GameObject& GOToLook);
+    void lookAtObject(const GameObject& GOToLook);
 };
 
 } // namespace GPE
