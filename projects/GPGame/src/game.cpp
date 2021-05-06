@@ -10,6 +10,7 @@
 #include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
@@ -304,7 +305,7 @@ Game::Game()
         unFixedUpdateFrameCount = 0;
     };
 
-    Engine::getInstance()->timeSystem.addScaledTimer(FPLogDelay, timer, true);
+    Engine::getInstance()->timeSystem.emplaceScaledTimer(timer, FPLogDelay, true);
 
     logger.logInitializationEnd("Game");
 }
