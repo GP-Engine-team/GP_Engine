@@ -7,6 +7,8 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
 
+#include <PhysX/PxRigidActor.h>
+
 #include <GLFW/glfw3.h>
 
 #include <imgui.h>
@@ -15,7 +17,7 @@
 #include <Firearm/PPSH41.hpp>
 #include <MyFpsScript.hpp>
 
-#include "Generated/myFpsScript.rfk.h"
+#include <Generated/myFpsScript.rfk.h>
 File_GENERATED
 
 namespace GPG
@@ -166,7 +168,7 @@ namespace GPG
     void MyFpsScript::raycastExample()
     {
         GPE::Raycast ray;
-        ray.Fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(), 100000);
+        ray.fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(), 100000);
         if (ray.hit.hasBlock)
         {
             GPE::GameObject* owner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData);
