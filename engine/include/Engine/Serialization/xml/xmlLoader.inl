@@ -77,7 +77,6 @@ void load(XmlLoader& context, T*& inspected, const XmlLoader::LoadInfo& info)
 {
     if (context.goToSubChild(info))
     {
-        //context.saveAsString(std::to_string(size_t(inspected)), info);
         std::string str;
         if (context.loadFromStr(str, info))
         {
