@@ -1,5 +1,4 @@
-﻿
-#include <Editor/EditorStartup.hpp>
+﻿#include <Editor/EditorStartup.hpp>
 
 // Engine
 #include <Engine/Core/Game/AbstractGame.hpp>
@@ -49,6 +48,7 @@ void Editor::setupDearImGui()
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
+    ImGuiLoadStyle(PATH_UI_STYLE, ImGui::GetStyle());
 }
 
 void Editor::renderStyleEditor()

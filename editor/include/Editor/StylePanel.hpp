@@ -63,10 +63,12 @@ To edit and save a style, you can use the default ImGui example and append to th
 // From <imgui.cpp>:--------------------------------------------------------
 #include <stdio.h> // vsnprintf
 #define IM_ARRAYSIZE(_ARR) ((int)(sizeof(_ARR) / sizeof(*_ARR)))
+#include <string.h>
+
+#define PATH_UI_STYLE "Layout/UIStyle.ini"
 
 namespace GPE
 {
-
 static size_t ImFormatString(char* buf, size_t buf_size, const char* fmt, ...)
 {
     va_list args;
@@ -77,8 +79,6 @@ static size_t ImFormatString(char* buf, size_t buf_size, const char* fmt, ...)
     return (w == -1) ? buf_size : (size_t)w;
 }
 //---------------------------------------------------------------------------
-
-#include <string.h>
 
 void ImGuiSaveStyle(const char* filename, const ImGuiStyle& style)
 {
@@ -484,12 +484,12 @@ void ShowStyleEditor(ImGuiStyle* ref = nullptr)
     // Save/Revert button
     if (ImGui::Button("Export"))
     {
-        ImGuiSaveStyle("Layout/UIStyle.ini", style);
+        ImGuiSaveStyle(PATH_UI_STYLE, style);
     }
     ImGui::SameLine();
     if (ImGui::Button("Import"))
     {
-        ImGuiLoadStyle("Layout/UIStyle.ini", style);
+        ImGuiLoadStyle(PATH_UI_STYLE, style);
     }
     ImGui::SameLine();
     if (ImGui::Button("Save Ref"))
