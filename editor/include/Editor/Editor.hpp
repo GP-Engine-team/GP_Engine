@@ -60,14 +60,6 @@ private:
     void renderSceneGraph();
     void renderExplorer();
 
-    /**
-     * @brief Function that crate scene graph recursively for each node in imGui window.
-     * @param gameObject
-     * @param idElem
-     * @return the pointer to selected game object. Else return null ptr
-     */
-    void recursiveSceneGraphNode(GPE::GameObject& gameObject, int idElem = 0);
-
 public:
     Editor(GLFWwindow* window, GPE::Scene& editedScene);
 
