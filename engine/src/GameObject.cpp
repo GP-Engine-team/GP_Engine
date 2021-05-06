@@ -299,6 +299,7 @@ void GameObject::detach(const GameObject::Children::iterator& itToParentPtr) noe
 void GameObject::inspect(GPE::InspectContext& context)
 {
     GPE::DataInspector::inspect(context, m_name, "name");
+    GPE::DataInspector::inspect(context, m_tag, "tag");
 
     getTransform().inspect(context);
 
