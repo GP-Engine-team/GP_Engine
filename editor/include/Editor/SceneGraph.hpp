@@ -24,6 +24,7 @@ class SceneGraph
 {
 protected:
     DeferedSetParent deferedSetParent;
+    class Editor*    m_pEditorContext = nullptr;
 
 protected:
     void controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject, int idElem);
@@ -31,6 +32,8 @@ protected:
     void recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject, int idElem = 0);
 
 public:
+    SceneGraph(class Editor& context);
+
     void renderAndGetSelected(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject);
 };
 } // namespace Editor

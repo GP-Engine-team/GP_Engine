@@ -79,6 +79,8 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
     ADD_PROCESS(m_reloadableCpp, saveSceneToPath);
     ADD_PROCESS(m_reloadableCpp, loadSceneFromPath);
+    ADD_PROCESS(m_reloadableCpp, saveGameObjectToPath);
+    ADD_PROCESS(m_reloadableCpp, loadGameObjectFromPath);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 

@@ -11,10 +11,10 @@
 #include <imgui/imgui.h>
 #include <string>
 
+#include "Editor/Editor.hpp"
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Hash.hpp"
 #include "Engine/Engine.hpp"
-#include "Editor/Editor.hpp"
 
 using namespace Editor;
 using namespace GPE;
@@ -105,7 +105,8 @@ void ProjectContent::refreshResourcesList()
     explore(resourcesTree);
 }
 
-static void renderMaterial(ImVec2& size)
+static bool renderIcone(const ImVec2& size, const ImVec4& tint_col = ImVec4(0.0f, 1.0f, 1.0f, 1.0f),
+                        const ImVec4& bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f))
 {
     ImGuiIO&    io        = ImGui::GetIO();
     ImTextureID my_tex_id = io.Fonts->TexID;
@@ -113,127 +114,10 @@ static void renderMaterial(ImVec2& size)
     float       my_tex_h  = (float)io.Fonts->TexHeight;
 
     // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(0.0f, 1.0f, 1.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
+    ImVec2 uv0 = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
+    ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
 
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderSceneFile(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderImage(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderModel(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderUnknowFormat(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(1.0f, 0.0f, 1.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderSound(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderShader(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderfolder(ImVec2& size, DirectoryInfo** pSelectectDir, DirectoryInfo& currentDir)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);             // Black background
-    ImVec4 tint_col = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
-
-    if (ImGui::ImageButton(my_tex_id, size, uv0, uv1, 2, bg_col, tint_col))
-    {
-        *pSelectectDir = &currentDir;
-    }
+    return ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
 }
 
 void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject)
@@ -318,7 +202,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                          2 * ImGui::GetStyle().ItemSpacing.x;
             ImGui::SetCursorPosX(posX);
 
-            renderfolder(size, &pSelectedDirectory, *it);
+            if (renderIcone(size, ImVec4(1.0f, 1.0f, 0.0f, 1.0f)))
+            {
+                pSelectedDirectory = &*it;
+            }
 
             if (ImGui::IsItemHovered())
             {
@@ -364,32 +251,36 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             switch (GPE::hash(it->extention.string().c_str())) // runtime
             {
             case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
-                renderModel(size);
+                renderIcone(size, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
                 break;
 
             case GPE::hash(ENGINE_MATERIAL_EXTENSION): // compile time
-                renderMaterial(size);
+                renderIcone(size, ImVec4(0.0f, 1.0f, 1.0f, 1.0f));
                 break;
 
             case GPE::hash(".wav"): // compile time
             case GPE::hash(".mp3"): // compile time
-                renderSound(size);
+                renderIcone(size, ImVec4(0.0f, 0.0f, 1.0f, 1.0f));
                 break;
 
             case GPE::hash(ENGINE_SHADER_EXTENSION): // compile time
-                renderShader(size);
+                renderIcone(size, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
                 break;
 
             case GPE::hash(ENGINE_TEXTURE_EXTENSION): // compile time
-                renderImage(size);
+                renderIcone(size, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
                 break;
 
             case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
-                renderSceneFile(size);
+                renderIcone(size, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                break;
+
+            case GPE::hash(ENGINE_PREFAB_EXTENSION): // compile time
+                renderIcone(size, ImVec4(0.0f, 0.0f, 0.5f, 1.0f));
                 break;
 
             default:
-                renderUnknowFormat(size);
+                renderIcone(size, ImVec4(1.0f, 0.0f, 1.0f, 1.0f));
                 break;
             }
 
@@ -462,6 +353,9 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                     break;
 
+                case GPE::hash(ENGINE_PREFAB_EXTENSION): // compile time
+                    break;
+
                 default:
                     break;
                 }
@@ -473,7 +367,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
         float lastButtonX2 = ImGui::GetItemRectMax().x;
         float nextButtonX2 =
-            lastButtonX2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
+            lastButtonX2 + style.ItemSpacing.x + size.x * 2; // Expected position if next button was on same line
 
         if (++it != pCurrentDirectory->files.cend() && nextButtonX2 < windowVisibleX2)
         {
@@ -542,6 +436,23 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
                 Scene& scene = Engine::getInstance()->sceneManager.addEmpty(sceneName.stem().string().c_str());
                 editor->saveScene(&scene, sceneDir.string().c_str());
+            }
+
+            if (ImGui::MenuItem("Prefab"))
+            {
+                std::filesystem::path PrefabDir  = pCurrentDirectory->path;
+                std::filesystem::path PrefabName = "NewPrefab" ENGINE_PREFAB_EXTENSION;
+
+                int id = 0;
+                while (pCurrentDirectory->containFile(PrefabName))
+                {
+                    PrefabName = stringFormat("NewPrefab(%i)" ENGINE_PREFAB_EXTENSION, ++id);
+                }
+
+                PrefabDir /= PrefabName;
+
+                Scene prefab;
+                editor->saveScene(&prefab, PrefabDir.string().c_str());
             }
 
             ImGui::EndMenu();

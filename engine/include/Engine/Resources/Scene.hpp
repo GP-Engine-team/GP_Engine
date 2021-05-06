@@ -6,13 +6,14 @@
 
 #pragma once
 
-#include "Engine/ECS/System/RenderSystem.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-
+#include <Engine/Core/Tools/ClassUtility.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
+#include <Engine/Serialization/xml/xmlLoader.hpp>
 #include <string> // std::string
 
 namespace GPE
 {
+class GameObject;
 class Scene;
 
 template <>

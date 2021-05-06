@@ -88,9 +88,9 @@ void               writeShaderFile(const char* dst, const ShaderCreateConfig& ar
 ShaderCreateConfig readShaderFile(const char* src);
 Shader*            loadShaderFile(const char* src);
 
-void                    writePrefabFile(const char* dst, const SavedPrefab::CreateArg& arg = SavedPrefab::CreateArg{});
-SavedPrefab::CreateArg  readPrefabFile(const char* src);
-SavedPrefab::CreateArg* loadPrefabFile(const char* src);
+void                  writePrefabFile(const char* dst, const SavedScene::CreateArg& arg = SavedScene::CreateArg{});
+SavedScene::CreateArg readPrefabFile(const char* src);
+SavedScene::CreateArg loadPrefabFile(const char* src);
 
 void                  writeSceneFile(const char* dst, const SavedScene::CreateArg& arg);
 SavedScene::CreateArg readSceneFile(const char* src);

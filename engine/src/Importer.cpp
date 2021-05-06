@@ -619,7 +619,7 @@ ShaderCreateConfig GPE::readShaderFile(const char* src)
 Shader* GPE::loadShaderFile(const char* src)
 {
     std::filesystem::path srcPath(src);
-    ShaderCreateConfig     arg = readShaderFile(src);
+    ShaderCreateConfig    arg = readShaderFile(src);
 
     if (Shader* const pShader = Engine::getInstance()->resourceManager.get<Shader>(srcPath.filename().string()))
         return pShader;
@@ -636,7 +636,7 @@ struct PrefabHeader
     size_t   dataSize = 0;
 };
 
-void GPE::writePrefabFile(const char* dst, const SavedPrefab::CreateArg& arg)
+void GPE::writePrefabFile(const char* dst, const SavedScene::CreateArg& arg)
 {
     FILE* pFile = nullptr;
 
@@ -655,11 +655,11 @@ void GPE::writePrefabFile(const char* dst, const SavedPrefab::CreateArg& arg)
     Log::getInstance()->log(stringFormat("Prefab write to \"%s\"", dst));
 }
 
-SavedPrefab::CreateArg GPE::readPrefabFile(const char* src)
+SavedScene::CreateArg GPE::readPrefabFile(const char* src)
 {
-    FILE*                  pFile = nullptr;
-    std::filesystem::path  srcPath(src);
-    SavedPrefab::CreateArg arg;
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
+    SavedScene::CreateArg arg;
 
     if (srcPath.extension() != ENGINE_PREFAB_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
@@ -671,7 +671,7 @@ SavedPrefab::CreateArg GPE::readPrefabFile(const char* src)
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
-    arg.type = (SavedPrefab::EType)header.type;
+    arg.type = (SavedScene::EType)header.type;
     if (header.dataSize)
     {
         arg.data.assign(header.dataSize, '\0');
@@ -684,7 +684,7 @@ SavedPrefab::CreateArg GPE::readPrefabFile(const char* src)
     return arg;
 }
 
-SavedPrefab::CreateArg GPE::loadPrefabFile(const char* src)
+SavedScene::CreateArg GPE::loadPrefabFile(const char* src)
 {
     std::filesystem::path srcPath(src);
     return readPrefabFile(src);

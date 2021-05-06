@@ -1,5 +1,7 @@
 #include "Engine/Resources/SceneManager.hpp"
 
+#include <Engine/Core/Debug/Log.hpp>
+
 using namespace GPE;
 
 Scene& SceneManager::addEmpty(const std::string& sceneName)
@@ -64,7 +66,6 @@ Scene& SceneManager::loadScene(const std::string& sceneName, ESceneGraphManageme
     */
 }
 
-
 void SceneManager::removeScene(const std::string& sceneName)
 {
     using const_iterator = std::unordered_map<std::string, Scene>::const_iterator;
@@ -82,7 +83,6 @@ void SceneManager::removeScene(const std::string& sceneName)
             m_pCurrentScene = &m_scenes.begin()->second;
     }
 }
-
 
 void SceneManager::removeScene(Scene& scene)
 {

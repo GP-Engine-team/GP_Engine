@@ -44,6 +44,10 @@ void DeferedSetParent::tryExecute()
     m_newParentGO = nullptr;
 }
 
+SceneGraph::SceneGraph(Editor& context) : m_pEditorContext{&context}
+{
+}
+
 void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject, int idElem)
 {
     // Drag
@@ -146,11 +150,15 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             ImGui::EndMenu();
         }
 
-        if (ImGui::MenuItem("Save as prefab", NULL, false))
-        {
-            const std::filesystem::path path = openFileExplorerAndGetRelativePath(L"Select folder", {});
-            writePrefabFile(path.string().c_str(), gameObject);
-        }
+        // if (ImGui::MenuItem("Save as prefab", NULL, false))
+        //{
+        //    const std::filesystem::path path = openFileExplorerAndGetRelativePath(L"Select folder", {});
+
+        //    Scene tempScene(gameObject);
+        //    gameObject.moveTowardScene(tempScene);
+        //    auto saveFunc = GET_PROCESS((*m_pEditorContext.m_reloadableCpp), saveSceneToPath);
+        //    saveFunc(tempScene, path, GPE::SavedScene::EType::XML);
+        //}
 
         if (ImGui::MenuItem("Remove", NULL, false))
         {

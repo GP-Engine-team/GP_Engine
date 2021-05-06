@@ -1,7 +1,9 @@
 #include "Engine/Resources/Scene.hpp"
 
 #include "Engine/Core/Debug/Assert.hpp"
+#include "Engine/ECS/System/RenderSystem.hpp"
 #include "Engine/Intermediate/DataChunk.hpp"
+#include "Engine/Intermediate/GameObject.hpp"
 
 #include <filesystem> //std::path
 #include <sstream>    //std::sstream, std::getline

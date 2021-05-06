@@ -11,13 +11,8 @@
 #include <Engine/Serialization/DataInspector.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Serialization/InspectContext.hpp>
-#include <Engine/Core/HotReload/ReloadableCpp.hpp>
-#include <Engine/Serialization/DataInspector.hpp>
-#include <Engine/Serialization/IInspectable.hpp>
-#include <Engine/Serialization/InspectContext.hpp>
 
 // Editor
-#include <Editor/ExternalDeclarations.hpp>
 #include <Editor/ExternalDeclarations.hpp>
 
 // Third-party
@@ -82,7 +77,7 @@ void Editor::renderMenuBar()
 
             if (ImGui::MenuItem("Open"))
             {
-                Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(fileName);
+                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(fileName);
                 loadScene(&scene, path.c_str());
                 Engine::getInstance()->sceneManager.loadScene(fileName);
             }
@@ -263,6 +258,7 @@ void Editor::saveScene(GPE::Scene* scene, const char* path)
 
     m_sceneEditor.view.bindScene(*currentScene);
 }
+
 void Editor::loadScene(GPE::Scene* scene, const char* path)
 {
     m_sceneEditor.view.unbindScene();
@@ -276,8 +272,8 @@ void Editor::loadScene(GPE::Scene* scene, const char* path)
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{}, m_sceneGraph{},
-      m_gameControlBar{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}
+    : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{},
+      m_sceneGraph(*this), m_gameControlBar{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
