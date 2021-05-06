@@ -1,15 +1,15 @@
-﻿#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/ECS/System/RenderSystem.hpp"
-#include "Engine/Resources/Scene.hpp"
-#include "GPM/Transform.hpp"
-#include "GPM/Vector3.hpp"
-#include "engine/serialization/xml/xmlsaver.hpp"
-#include "engine/serialization/xml/xmlloader.hpp"
+﻿#include <Engine/Engine.hpp>
+#include <Engine/Core/Debug/Assert.hpp>
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Serialization/xml/xmlLoader.hpp>
+#include <Engine/Serialization/xml/xmlSaver.hpp>
+#include <Engine/Resources/Scene.hpp>
+#include <GPM/Transform.hpp>
+#include <GPM/Vector3.hpp>
 
-#include "Engine/ECS/Component/Camera.hpp"
-#include "Generated/Camera.rfk.h"
-
+#include <Engine/ECS/Component/Camera.hpp>
 File_GENERATED
 
 using namespace GPM;
@@ -17,10 +17,17 @@ using namespace GPM;
 namespace GPE
 {
 
+// Static method
+float Camera::computeAspect(int width, int height) noexcept
+{
+    return width / float(height);
+}
+
 void Camera::updateView()
 {
     m_viewMatrix           = getOwner().getTransform().getModelMatrix().inversed();
     m_projectionViewMatrix = m_projection * m_viewMatrix;
+
 }
 
 void Camera::updateProjection()
@@ -52,7 +59,8 @@ Camera::Camera(GameObject& owner) noexcept : Camera(owner, PerspectiveCreateArg{
 {
 }
 
-Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Component(owner)
+Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept
+    : Component(owner)
 {
     GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");
 
