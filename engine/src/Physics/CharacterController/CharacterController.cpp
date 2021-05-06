@@ -4,6 +4,7 @@
 #include <PhysX/characterkinematic/PxCapsuleController.h>
 #include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PhysX/PxPhysics.h>
+#include <PhysX/PxRigidDynamic.h>
 
 // Generated
 #include <Generated/CharacterController.rfk.h>
