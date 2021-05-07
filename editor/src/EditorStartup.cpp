@@ -156,6 +156,8 @@ void EditorStartup::closeGame()
 
 void EditorStartup::playGame()
 {
+    m_editor.saveCurrentScene();
+
     // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
     {
@@ -198,6 +200,7 @@ void EditorStartup::pauseGame()
 void EditorStartup::stopGame()
 {
     pauseGame();
+    m_editor.reloadCurrentScene();
     // TODO: reload scene
     m_game->state = EGameState::STOPPED;
 }
