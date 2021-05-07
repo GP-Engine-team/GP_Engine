@@ -245,7 +245,8 @@ Game::Game()
 
     { // Camera
         Camera::PerspectiveCreateArg camCreateArg{"Player camera"};
-        player->addComponent<Camera>(camCreateArg);
+        Camera& mainCam = player->addComponent<Camera>(camCreateArg);
+        player->pOwnerScene->sceneRenderer.setMainCamera(&mainCam);
     }
 
     { // Light
