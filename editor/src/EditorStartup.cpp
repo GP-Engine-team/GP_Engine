@@ -93,7 +93,7 @@ EditorStartup::~EditorStartup()
     m_engine->timeSystem.clearScaledTimer();
     m_engine->timeSystem.clearUnscaledTimer();
 
-    m_editor.unbindCameraEditor();
+    m_editor.unbindCurrentScene();
     if (m_game != nullptr)
     {
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
@@ -206,11 +206,6 @@ void EditorStartup::stopGame()
     m_editor.reloadCurrentScene();
     // TODO: reload scene
     m_game->state = EGameState::STOPPED;
-}
-
-GPE::AbstractGame& EditorStartup::game() const
-{
-    return *m_game;
 }
 
 void EditorStartup::update()
