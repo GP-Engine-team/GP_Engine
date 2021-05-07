@@ -1,8 +1,8 @@
-﻿#include "Editor/SceneGraph.hpp"
+﻿#include <Editor/SceneGraph.hpp>
 
 #include <filesystem>
 
-#include "Engine/Core/Tools/Hash.hpp"
+#include <Engine/Core/Tools/Hash.hpp>
 #include <Editor/Editor.hpp>
 #include <Engine/Engine.hpp>
 
@@ -24,7 +24,7 @@
 #include <Editor/ExternalDeclarations.hpp>
 #include <Engine/Core/HotReload/ReloadableCpp.hpp>
 
-#include "Engine/Resources/Scene.hpp"
+#include <Engine/Resources/Scene.hpp>
 #include <imgui/imgui.h>
 
 using namespace Editor;
@@ -205,7 +205,7 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInsp
     }
     
     if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && selectedGameObject)
-        m_pEditorContext->m_sceneEditor.view.lookAtObject(*reinterpet_cast<GameObject*>(selectedGameObject));
+        m_pEditorContext->m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(selectedGameObject));
 }
 
 void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject)
