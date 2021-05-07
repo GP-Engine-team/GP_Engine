@@ -49,13 +49,16 @@ void Camera::updateProjection()
     }
 }
 
-void Camera::moveTowardScene(class Scene& newOwner)
+void Camera::moveTowardScene(Scene& newOwner)
 {
-    getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
+    if (getOwner().pOwnerScene)
+        getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
+
     newOwner.sceneRenderer.addCamera(*this);
 }
 
-Camera::Camera(GameObject& owner) noexcept : Camera(owner, PerspectiveCreateArg{})
+Camera::Camera(GameObject& owner) noexcept
+    : Camera(owner, PerspectiveCreateArg{})
 {
 }
 
