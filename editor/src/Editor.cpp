@@ -272,10 +272,46 @@ void Editor::loadScene(GPE::Scene* scene, const char* path)
     m_sceneEditor.view.bindScene(*scene);
 }
 
+void Editor::saveCurrentScene()
+{
+    GPE::Scene* currentScene = m_sceneEditor.view.pScene;
+    const std::string path   = saveFolder + currentScene->getName() + ".GPScene";
+    m_sceneEditor.view.unbindScene();
+
+    auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
+    saveFunc(currentScene, path.c_str(), GPE::SavedScene::EType::BINARY);
+
+    m_sceneEditor.view.bindScene(*currentScene);
+}
+
+
+void Editor::reloadCurrentScene()
+{
+    GPE::Scene* currentScene = m_sceneEditor.view.pScene;
+    const std::string path   = saveFolder + currentScene->getName() + ".GPScene";
+
+    m_sceneEditor.view.unbindScene();
+    m_inspectedObject = nullptr;
+
+    void (*const loadFunc)(GPE::Scene*, const char*) = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
+    loadFunc(currentScene, path.c_str());
+
+    m_sceneEditor.view.bindScene(*currentScene);
+}
+
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{}, m_sceneGraph{},
-      m_gameControlBar{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}
+    : m_sceneEditor         {editedScene},
+      m_gameViewer          {},
+      m_logInspector        {},
+      m_projectContent      {},
+      m_sceneGraph          {},
+      m_gameControlBar      {},
+      m_window              {window},
+      m_inspectedObject     {nullptr},
+      saveFolder            {((std::filesystem::current_path() / RESOURCES_DIR).string() + '/').c_str()},
+      m_showAppStyleEditor  {false},
+      m_showImGuiDemoWindows{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
