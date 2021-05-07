@@ -16,7 +16,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen) SpotLight : public PointLight
+    class RFKClass(Serialize(), Inspect(), ComponentGen) SpotLight : public PointLight
     {
     public:
         struct CreateArg
@@ -34,8 +34,8 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect()) float m_cutOff; // specifies the spotlight's radius.
-        RFKField(Inspect()) float m_cutOffExponent;
+        RFKField(Inspect(), Serialize()) float m_cutOff; // specifies the spotlight's radius.
+        RFKField(Inspect(), Serialize()) float m_cutOffExponent;
 
     public:
         SpotLight(const SpotLight& other) = delete;

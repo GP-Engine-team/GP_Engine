@@ -2,6 +2,11 @@
 
 using namespace GPE;
 
+void Light::awake()
+{
+    getOwner().pOwnerScene->sceneRenderer.addLight(*this);
+}
+
 void Light::setActive(bool newState) noexcept
 {
     if (m_isActivated == newState)

@@ -39,7 +39,7 @@ void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, void* key)
 namespace GPE
 {
 template <typename T>
-void load(XmlLoader& context, T& inspected, const rfk::Field& info)
+void load(XmlLoader& context, T& inspected, const XmlLoader::LoadInfo& info)
 {
     if constexpr (std::is_enum_v<T>)
     {
@@ -56,20 +56,9 @@ void load(XmlLoader& context, T& inspected, const rfk::Field& info)
 }
 
 template <typename T>
-void load(XmlLoader& context, T& inspected, const XmlLoader::LoadInfo& info)
+void load(XmlLoader& context, T& inspected, const rfk::Field& info)
 {
-    if constexpr (std::is_enum_v<T>)
-    {
-        GPE::load(context, *reinterpret_cast<std::underlying_type_t<T>*>(&inspected), info);
-    }
-    else
-    {
-        if (context.goToSubChild(info))
-        {
-            inspected.load(context);
-            context.pop();
-        }
-    }
+    GPE::load(context, inspected, fieldToLoadInfo(info));
 }
 
 template <typename T>

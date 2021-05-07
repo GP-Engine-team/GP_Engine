@@ -268,6 +268,12 @@
     <ClCompile Include="src\Serialization\PhysXDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\GPESave.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GPELoad.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -716,6 +722,12 @@
     </ClInclude>
     <ClInclude Include="third_party\include\AL\efx-presets.h">
       <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\GPELoad.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\GPESave.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

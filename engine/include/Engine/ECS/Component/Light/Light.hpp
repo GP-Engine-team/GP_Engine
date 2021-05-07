@@ -37,9 +37,9 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect()) AmbiantComponent  m_ambientComp;
-        RFKField(Inspect()) DiffuseComponent  m_diffuseComp;
-        RFKField(Inspect()) SpecularComponent m_specularComp;
+        RFKField(Inspect(), Serialize()) AmbiantComponent  m_ambientComp;
+        RFKField(Inspect(), Serialize()) DiffuseComponent  m_diffuseComp;
+        RFKField(Inspect(), Serialize()) SpecularComponent m_specularComp;
 
     public:
         inline Light(GameObject & owner, const CreateArg& arg);
@@ -55,6 +55,8 @@ namespace GPE RFKNamespace()
         Light& operator=(const Light& other) = delete;
 
         inline Light& operator=(Light&& other) noexcept;
+
+        virtual void awake();
 
         void moveTowardScene(Scene & newOwner) final
         {

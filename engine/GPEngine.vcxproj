@@ -281,6 +281,8 @@
     <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp" />
     <ClInclude Include="include\Engine\Serialization\FileExplorer.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPEDataInspector.hpp" />
+    <ClInclude Include="include\Engine\Serialization\GPELoad.hpp" />
+    <ClInclude Include="include\Engine\Serialization\GPESave.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPMDataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPMLoad.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPMSave.hpp" />
@@ -366,6 +368,8 @@
     <ClCompile Include="src\FreeFly.cpp" />
     <ClCompile Include="src\FunctionPtr.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\GPELoad.cpp" />
+    <ClCompile Include="src\GPESave.cpp" />
     <ClCompile Include="src\Importer.cpp" />
     <ClCompile Include="src\InputComponent.cpp" />
     <ClCompile Include="src\InputManagerGLFW.cpp" />

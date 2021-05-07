@@ -32,9 +32,9 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect()) float m_constant;
-        RFKField(Inspect()) float m_linear;
-        RFKField(Inspect()) float m_quadratic;
+        RFKField(Inspect(), Serialize()) float m_constant;
+        RFKField(Inspect(), Serialize()) float m_linear;
+        RFKField(Inspect(), Serialize()) float m_quadratic;
 
     public:
         PointLight(const PointLight& other) = delete;
