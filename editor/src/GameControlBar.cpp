@@ -11,6 +11,19 @@ namespace Editor
 
 using namespace GPE;
 
+unsigned int GameControlBar::pickColor(unsigned char flag) const
+{
+    const unsigned int buttonColors[2]
+    {
+        ImGui::ColorConvertFloat4ToU32(ImGui::GetStyleColorVec4(ImGuiCol_Button)),
+        ImGui::ColorConvertFloat4ToU32(ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive))
+    };
+
+    return buttonColors[(bool)(buttonMask & flag)];
+}
+
+
+
 GameControlBar::GameControlBar()
     : playButtonTex{{"..\\..\\editor\\resources\\play.png", Texture::ETextureMinFilter::LINEAR,
                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
@@ -21,7 +34,6 @@ GameControlBar::GameControlBar()
       stopButtonTex{{"..\\..\\editor\\resources\\stop.png", Texture::ETextureMinFilter::LINEAR,
                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
                      Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      buttonColors{IM_COL32(66u, 150u, 255u, 102u), IM_COL32(50u, 50u, 50u, 255u)},
       buttonMask{STOPPED}
 {
 }
@@ -54,7 +66,7 @@ void GameControlBar::render(EditorStartup& startup)
 
         // Render the "Play" button
         ImGui::SetCursorPos(cursorPos);
-        ImGui::PushStyleColor(ImGuiCol_Button, buttonColors[(bool)(buttonMask & PLAYING)]);
+        ImGui::PushStyleColor(ImGuiCol_Button, pickColor(PLAYING));
         ImGui::ImageButton((void*)(intptr_t)playButtonTex.getID(), buttonSize);
         ImGui::PopStyleColor();
         if (ImGui::IsItemClicked())
@@ -75,7 +87,7 @@ void GameControlBar::render(EditorStartup& startup)
         cursorPos.x += buttonSize.x;
         ImGui::SetCursorPos(cursorPos);
         ImGui::SameLine();
-        ImGui::PushStyleColor(ImGuiCol_Button, buttonColors[(bool)(buttonMask & PAUSED)]);
+        ImGui::PushStyleColor(ImGuiCol_Button, pickColor(PAUSED));
         ImGui::ImageButton((void*)(intptr_t)pauseButtonTex.getID(), buttonSize);
         ImGui::PopStyleColor();
         if (ImGui::IsItemClicked())
