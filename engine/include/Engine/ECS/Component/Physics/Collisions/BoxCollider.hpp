@@ -18,7 +18,7 @@ namespace GPE RFKNamespace()
     {
     public:
         BoxCollider(GameObject& owner)                   noexcept;
-        BoxCollider()                                    noexcept = delete;
+        BoxCollider()                                    noexcept = default;
         BoxCollider(const BoxCollider& other)            noexcept = delete;
         BoxCollider(BoxCollider&& other)                 noexcept = default;
         virtual ~BoxCollider()                           noexcept = default;

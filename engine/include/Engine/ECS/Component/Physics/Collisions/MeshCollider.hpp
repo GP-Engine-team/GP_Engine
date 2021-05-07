@@ -25,7 +25,7 @@ namespace GPE RFKNamespace()
 
         virtual ~MeshCollider() noexcept = default;
 
-        MeshCollider() noexcept                          = delete;
+        MeshCollider() noexcept                          = default;
         MeshCollider(const MeshCollider& other) noexcept = delete;
         MeshCollider(MeshCollider && other) noexcept     = default;
         MeshCollider& operator=(MeshCollider const& other) noexcept = delete;
