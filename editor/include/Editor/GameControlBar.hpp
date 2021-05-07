@@ -21,7 +21,8 @@ private:
     GPE::Texture playButtonTex;
     GPE::Texture pauseButtonTex;
     GPE::Texture stopButtonTex;
-    unsigned int buttonColors[2];
+
+    unsigned int pickColor(unsigned char flag) const;
 
 public:
     unsigned char buttonMask;
