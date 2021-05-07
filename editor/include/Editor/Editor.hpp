@@ -41,6 +41,7 @@ private:
     GameControlBar     m_gameControlBar;
     GLFWwindow*        m_window;
     GPE::IInspectable* m_inspectedObject;
+    const char*        saveFolder;
     bool               m_showAppStyleEditor;
     bool               m_showImGuiDemoWindows;
 
@@ -73,6 +74,9 @@ public:
     void saveScene(GPE::Scene* scene, const char* path);
     // Removes Editor elements from the scene before loading
     void loadScene(GPE::Scene* scene, const char* path);
+
+    void saveCurrentScene();
+    void reloadCurrentScene();
 };
 
 } // End of namespace Editor
