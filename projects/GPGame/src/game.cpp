@@ -61,7 +61,7 @@ void Game::render()
                      ImGuiWindowFlags_NoScrollWithMouse);
 
     // Draw GUI
-    GPE::Engine::getInstance()->behaviourSystem.onGUI();
+    Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.onGUI();
     ImGui::End();
     ImGui::Render();
 
@@ -186,9 +186,7 @@ Game::~Game()
     ImGui::DestroyContext();
 }
 
-Game::Game()
-    : bSys{GPE::Engine::getInstance()->behaviourSystem},
-      world{Engine::getInstance()->sceneManager.loadScene("main").getWorld()}
+Game::Game() : world{Engine::getInstance()->sceneManager.loadScene("main").getWorld()}
 {
     // ============= UI =============
     // TODO: Put in-game UI in a module

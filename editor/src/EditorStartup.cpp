@@ -143,16 +143,16 @@ void EditorStartup::closeGame()
 void EditorStartup::playGame()
 {
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
-        GPE::Engine* m_engine = GPE::Engine::getInstance();
+        GPE::Engine* const m_engine = GPE::Engine::getInstance();
         m_engine->physXSystem.advance(fixedDeltaTime);
-        m_engine->behaviourSystem.fixedUpdate(fixedDeltaTime);
+        m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
 
         m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
     };
     m_update = [&](double unscaledDeltaTime, double deltaTime) {
-        GPE::Engine* m_engine = GPE::Engine::getInstance();
+        GPE::Engine* const m_engine = GPE::Engine::getInstance();
         m_engine->inputManager.processInput();
-        m_engine->behaviourSystem.update(deltaTime);
+        m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
         m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
         m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
 

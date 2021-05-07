@@ -24,7 +24,7 @@ namespace GPE RFKNamespace()
     public:
         BehaviourComponent(GameObject & owner) noexcept;
 
-        BehaviourComponent() noexcept;
+        BehaviourComponent() noexcept                                = default;
         BehaviourComponent(const BehaviourComponent& other) noexcept = delete;
         BehaviourComponent(BehaviourComponent && other) noexcept;
         virtual ~BehaviourComponent() noexcept;

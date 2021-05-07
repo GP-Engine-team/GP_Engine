@@ -189,16 +189,16 @@ void GameObject::setParent(GameObject* pNewParent) noexcept
             moveTowardScene(*pNewParent->pOwnerScene);
         }
         pNewParent->children.emplace_back(this);
-
-        Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
-                                             pNewParent->getName().c_str()));
     }
     else
     {
         Log::getInstance()->log(stringFormat("Remove parent of %s", m_name.c_str()));
+        return;
     }
 
     m_parent = pNewParent;
+    Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
+                                         pNewParent->getName().c_str()));
 }
 
 GameObject* GameObject::getChild(const std::string& path) noexcept

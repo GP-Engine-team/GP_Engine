@@ -8,7 +8,6 @@
 
 #include "Core/Rendering/Renderer/RendererGLFW_GL46.hpp"
 #include "Core/Rendering/Window/WindowGLFW.hpp"
-#include "ECS/System/BehaviourSystem.hpp"
 #include "ECS/System/InputManagerGLFW.hpp"
 #include "ECS/System/PhysXSystem.hpp"
 #include "ECS/System/SoundSystem.hpp"
@@ -34,7 +33,6 @@ public:
     Renderer            renderer;
     TimeSystem          timeSystem;
     InputManager        inputManager;
-    BehaviourSystem     behaviourSystem;
     ResourceManagerType resourceManager;
     SceneManager        sceneManager;
     PhysXSystem         physXSystem;
@@ -43,7 +41,7 @@ public:
 protected:
     Engine()
         : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          behaviourSystem{}, resourceManager{}, sceneManager{}, physXSystem{}, soundSystem{}
+          resourceManager{}, sceneManager{}, physXSystem{}, soundSystem{}
     {
     }
 

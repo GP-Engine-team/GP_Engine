@@ -62,19 +62,19 @@ namespace GPG
 
     MyFpsScript::MyFpsScript() noexcept : GPE::BehaviourComponent()
     {
-        enableFixedUpdate(true);
-        enableUpdate(true);
-        enableOnGUI(true);
     }
 
     MyFpsScript::~MyFpsScript() noexcept
     {
-
     }
 
     void MyFpsScript::awake()
     {
         BehaviourComponent::awake();
+
+        enableFixedUpdate(true);
+        enableUpdate(true);
+        enableOnGUI(true);
 
         input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
         input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
