@@ -22,6 +22,8 @@
 
 namespace GPE RFKNamespace()
 {
+    class GameObject;
+
     class RFKClass(ComponentGen) ParticleComponent : public Component
     {
     public:

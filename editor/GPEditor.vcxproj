@@ -28,6 +28,7 @@
     <ClInclude Include="include\Editor\ProjectContent.hpp" />
     <ClInclude Include="include\Editor\SceneEditor.hpp" />
     <ClInclude Include="include\Editor\SceneGraph.hpp" />
+    <ClInclude Include="include\Editor\StylePanel.hpp" />
     <ClInclude Include="include\Editor\Viewport.hpp" />
     <ClInclude Include="include\Editor\WindowFramebuffer.hpp" />
   </ItemGroup>

@@ -32,6 +32,10 @@ class EditorStartup;
 
 class Editor
 {
+    friend class SceneEditor;
+    friend class SceneGraph;
+    friend class ProjectContent;
+
 private:
     SceneEditor        m_sceneEditor;
     GameViewer         m_gameViewer;
@@ -80,6 +84,8 @@ public:
     void saveScene(GPE::Scene* scene, const char* path);
     // Removes Editor elements from the scene before loading
     void loadScene(GPE::Scene* scene, const char* path);
+
+    void unbindCameraEditor();
 };
 
 } // End of namespace Editor

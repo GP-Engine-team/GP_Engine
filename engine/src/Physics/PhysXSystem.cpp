@@ -1,7 +1,9 @@
 ﻿#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <Engine/ECS/Component/TransformComponent.hpp>
 #include <Engine/ECS/System/PhysXSystem.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <PhysX/gpu/PxGpu.h>
 #include <PxPhysics.h>
 #include <PxPhysicsVersion.h>

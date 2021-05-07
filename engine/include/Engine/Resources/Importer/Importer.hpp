@@ -15,6 +15,7 @@
 #define ENGINE_MATERIAL_EXTENSION ".GPMaterial"
 #define ENGINE_TEXTURE_EXTENSION ".GPTexture"
 #define ENGINE_SHADER_EXTENSION ".GPShader"
+#define ENGINE_PREFAB_EXTENSION ".GPPrefab"
 #define ENGINE_SCENE_EXTENSION ".GPScene"
 
 namespace GPE
@@ -25,7 +26,8 @@ enum class EFileType
     MATERIAL = 1,
     TEXTURE  = 2,
     SHADER   = 3,
-    SCENE    = 4
+    SCENE    = 4,
+    PREFAB   = 6
 };
 
 struct TextureImportConfig
@@ -85,6 +87,10 @@ Mesh*                       loadMeshFile(const char* src);
 void               writeShaderFile(const char* dst, const ShaderCreateConfig& arg = ShaderCreateConfig{});
 ShaderCreateConfig readShaderFile(const char* src);
 Shader*            loadShaderFile(const char* src);
+
+void                  writePrefabFile(const char* dst, const SavedScene::CreateArg& arg = SavedScene::CreateArg{});
+SavedScene::CreateArg readPrefabFile(const char* src);
+SavedScene::CreateArg loadPrefabFile(const char* src);
 
 void                  writeSceneFile(const char* dst, const SavedScene::CreateArg& arg);
 SavedScene::CreateArg readSceneFile(const char* src);

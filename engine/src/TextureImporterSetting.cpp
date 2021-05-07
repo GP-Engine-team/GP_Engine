@@ -49,7 +49,10 @@ File_GENERATED
         ImGui::PushEnabled(!m_isImported);
         if (ImGui::Button("Import"))
         {
-            importeTextureFile(m_srcPath.c_str(), m_dstPath.c_str(), m_config);
+            std::filesystem::path src = m_srcPath;
+            std::filesystem::path dst = m_dstPath;
+            importeTextureFile(m_srcPath.c_str(), (dst / src.stem() += ENGINE_TEXTURE_EXTENSION).string().c_str(),
+                               m_config);
             m_isImported = true;
         }
 

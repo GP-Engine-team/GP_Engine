@@ -50,6 +50,9 @@
     <ClInclude Include="include\Editor\WindowFramebuffer.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\Editor\StylePanel.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GPEditor.props" />

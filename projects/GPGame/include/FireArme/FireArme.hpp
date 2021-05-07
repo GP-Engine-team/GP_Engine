@@ -83,6 +83,10 @@ namespace GPG RFKNamespace()
                 {
                     if (GPE::GameObject* pOwner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData))
                     {
+                        GPE::GameObject& decaleGO = pOwner->addChild(GPE::GameObject::CreateArg{"Decale"});
+                        decaleGO.getTransform().setTranslation(
+                            GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position));
+
                         getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(
                             GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position), 1.f, GPE::ColorRGBA::red(), 3.f);
                     }
