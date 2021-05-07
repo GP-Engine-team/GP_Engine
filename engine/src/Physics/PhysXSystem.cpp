@@ -3,7 +3,9 @@
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 
 #include <PhysX/gpu/PxGpu.h>
 #include <PhysX/PxPhysics.h>

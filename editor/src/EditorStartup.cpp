@@ -80,6 +80,8 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
     ADD_PROCESS(m_reloadableCpp, saveSceneToPath);
     ADD_PROCESS(m_reloadableCpp, loadSceneFromPath);
+    ADD_PROCESS(m_reloadableCpp, saveGameObjectToPath);
+    ADD_PROCESS(m_reloadableCpp, loadGameObjectFromPath);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
@@ -91,6 +93,7 @@ EditorStartup::~EditorStartup()
     m_engine->timeSystem.clearScaledTimer();
     m_engine->timeSystem.clearUnscaledTimer();
 
+    m_editor.unbindCameraEditor();
     if (m_game != nullptr)
     {
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);

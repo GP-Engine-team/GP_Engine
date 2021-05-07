@@ -1,4 +1,5 @@
 #include "Engine/ECS/Component/Light/Light.hpp"
+#include <Engine/ECS/System/RenderSystem.hpp>
 
 using namespace GPE;
 

@@ -1,5 +1,6 @@
 ﻿#include <Editor/SceneEditor.hpp>
 
+#include <Editor/Editor.hpp>
 #include <Engine/Engine.hpp>
 #include <imgui/imgui.h>
 
@@ -95,7 +96,6 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
 
         ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
     }
-
     ImGui::End();
     ImGui::PopStyleVar(2);
 }

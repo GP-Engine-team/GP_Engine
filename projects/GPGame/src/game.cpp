@@ -11,6 +11,7 @@
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
@@ -87,6 +88,7 @@ extern "C" void destroyGameInstance(GPE::AbstractGame* game)
 {
     GPE_ASSERT(game != nullptr, "m_editor should be valid since we've just ran the editor.");
     delete game;
+    GPE::Engine::getInstance()->sceneManager.removeScenes();
 }
 
 void loadTreeResource()

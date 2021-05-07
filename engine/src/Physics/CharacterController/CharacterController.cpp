@@ -1,6 +1,8 @@
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+
 #include <PhysX/characterkinematic/PxCapsuleController.h>
 #include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PhysX/PxPhysics.h>
@@ -11,7 +13,7 @@
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace physx;
 
 CharacterController::CharacterController(GameObject& owner) noexcept
@@ -34,15 +36,15 @@ CharacterController::CharacterController(GameObject& owner) noexcept
 /*
 CharacterController::CharacterController() noexcept
 {
-     physx::PxCapsuleControllerDesc desc;
+    physx::PxCapsuleControllerDesc desc;
 
-     desc.height   = 1;
-     desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-     desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
-     desc.radius   = 1;
+    desc.height   = 1;
+    desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
+    desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
+    desc.radius   = 1;
 
-     controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
-     GPE::Engine::getInstance()->physXSystem.addComponent(this);
+    controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
+    GPE::Engine::getInstance()->physXSystem.addComponent(this);
 }
 */
 

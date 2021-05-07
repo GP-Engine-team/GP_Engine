@@ -27,10 +27,11 @@ class Firearm;
 class RFKClass(Inspect(), ComponentGen, Serialize()) MyFpsScript : public GPE::BehaviourComponent
 {
 private:
-    RFKField(Serialize()) GPE::InputComponent*      input      = nullptr;
-    RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
-    RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
-    RFKField(Serialize()) Firearm*                  m_firearm  = nullptr;
+    RFKField(Serialize()) GPE::InputComponent*        input         = nullptr;
+    RFKField(Serialize()) GPE::AudioComponent*        source        = nullptr;
+    RFKField(Serialize()) GPE::CharacterController*   controller    = nullptr;
+    RFKField(Serialize()) Firearm*                    m_firearm     = nullptr;
+    RFKField(Inspect(), Serialize()) GPE::GameObject* m_decalPrefab = nullptr;
 
 public:
     MyFpsScript(GPE::GameObject& owner)   noexcept;

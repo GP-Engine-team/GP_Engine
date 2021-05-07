@@ -32,6 +32,8 @@ class EditorStartup;
 
 class Editor
 {
+    friend class SceneGraph;
+
 private:
     SceneEditor        m_sceneEditor;
     GameViewer         m_gameViewer;
@@ -77,6 +79,7 @@ public:
 
     void saveCurrentScene();
     void reloadCurrentScene();
+    void unbindCurrentScene();
 };
 
 } // End of namespace Editor

@@ -11,14 +11,10 @@
 #include <Engine/Serialization/DataInspector.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Serialization/InspectContext.hpp>
-#include <Engine/Core/HotReload/ReloadableCpp.hpp>
-#include <Engine/Serialization/DataInspector.hpp>
-#include <Engine/Serialization/IInspectable.hpp>
-#include <Engine/Serialization/InspectContext.hpp>
 
 // Editor
 #include <Editor/ExternalDeclarations.hpp>
-#include <Editor/ExternalDeclarations.hpp>
+#include <Editor/StylePanel.hpp>
 
 // Third-party
 #include <GLFW/glfw3.h>
@@ -52,6 +48,7 @@ void Editor::setupDearImGui()
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
+    ImGuiLoadStyle(PATH_UI_STYLE, ImGui::GetStyle());
 }
 
 void Editor::renderStyleEditor()
@@ -59,7 +56,7 @@ void Editor::renderStyleEditor()
     if (m_showAppStyleEditor)
     {
         ImGui::Begin("Style Editor", &m_showAppStyleEditor);
-        ImGui::ShowStyleEditor();
+        ShowStyleEditor();
         ImGui::End();
     }
 }
@@ -199,9 +196,6 @@ void Editor::renderSceneGraph()
         GPE::GameObject& root{Engine::getInstance()->sceneManager.getCurrentScene()->getWorld()};
 
         m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
-
-        if (ImGui::IsWindowHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && m_inspectedObject)
-            m_sceneEditor.view.lookAtObject(*(GameObject*)(m_inspectedObject));
     }
 
     ImGui::End();
@@ -299,13 +293,18 @@ void Editor::reloadCurrentScene()
     m_sceneEditor.view.bindScene(*currentScene);
 }
 
+void Editor::unbindCurrentScene()
+{
+    m_sceneEditor.view.unbindScene();
+}
+
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
     : m_sceneEditor         {editedScene},
       m_gameViewer          {},
       m_logInspector        {},
-      m_projectContent      {},
-      m_sceneGraph          {},
+      m_projectContent      {*this},
+      m_sceneGraph          {*this},
       m_gameControlBar      {},
       m_saveFolder          {(std::filesystem::current_path() / RESOURCES_DIR).string() + "\\Scene\\"},
       m_window              {window},

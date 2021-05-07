@@ -52,15 +52,11 @@ namespace GPE RFKNamespace()
 
     protected:
         RFKField(Inspect(), Serialize()) std::string m_name;
-
-        RFKField(Serialize()) TransformComponent* m_pTransform;
-
-        RFKField(Serialize()) std::list<Component*> m_pComponents;
-
-        std::string m_tag{"GameObject"};
-
-        RFKField(Serialize()) GameObject* m_parent = nullptr;
-        RFKField(Serialize()) unsigned int m_id;
+        RFKField(Serialize()) TransformComponent*    m_pTransform;
+        RFKField(Serialize()) std::list<Component*>  m_pComponents;
+        RFKField(Inspect(), Serialize()) std::string m_tag{"GameObject"};
+        RFKField(Serialize()) GameObject*            m_parent = nullptr;
+        RFKField(Serialize()) unsigned int           m_id;
         bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
 
     public:
@@ -108,6 +104,13 @@ namespace GPE RFKNamespace()
          * @param newName
          */
         inline void setParent(GameObject & newParent) noexcept;
+
+        /**
+         * @brief Warning ! This function only set the parent ptr and do not remove the children ptr of this parent
+         * @param newParent
+         * @return
+         */
+        inline void forceSetParent(GameObject & newParent) noexcept;
 
         /**
          * @brief Set the Name object

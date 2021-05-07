@@ -54,13 +54,26 @@ void Firearm::triggered()
         m_magazineStored.triggeredBullet();
 
         GPE::Raycast ray;
-        ray.fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(),
-                    10000.f);
+        ray.Fire(getOwner().getTransform().getGlobalPosition() +
+                        getOwner().getTransform().getVectorForward() * 10.f,
+                    getOwner().getTransform().getVectorForward(), 10000.f);
+
+        if (ray.hit.hasBlock)
+        {
+            if (GPE::GameObject* pOwner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData))
+            {
+                GPE::GameObject& decaleGO = pOwner->addChild(GPE::GameObject::CreateArg{"Decale"});
+                decaleGO.getTransform().setTranslation(
+                    GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position));
+
+                getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(
+                    GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position), 1.f, GPE::ColorRGBA::red(), 3.f);
+            }
+        }
 
         m_muzzleFlash->emit(
             static_cast<unsigned int>(m_muzzleFlash->getCount() / m_magazineStored.getCapacity()));
-        /*if (ray.hit.getNbAnyHits())
-            GPE::Log::getInstance()->log(ray.hit.getAnyHit(0).actor->getName());*/
+
         m_shootSound->playSound("Shoot");
         m_isReloadingNextBullet    = true;
         m_reloadingBulletTimeCount = 0.f;

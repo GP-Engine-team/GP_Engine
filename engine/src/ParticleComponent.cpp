@@ -3,9 +3,12 @@ File_GENERATED
 
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Shader.hpp>
+#include <GPM/Matrix3.hpp>
+#include <GPM/conversion.hpp>
 
 #include <filesystem>
 #include <imgui.h>

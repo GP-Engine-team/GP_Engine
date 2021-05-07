@@ -284,7 +284,14 @@ std::string GameObject::getAbsolutePath() const noexcept
 
 void GameObject::detach(const GameObject::Children::iterator& itToParentPtr) noexcept
 {
-    m_parent->children.erase(itToParentPtr);
+    for (auto&& it = m_parent->children.begin(); it != m_parent->children.end(); ++it)
+    {
+        if (this == *it)
+        {
+            m_parent->children.erase(it);
+            break;
+        }
+    }
     m_parent    = nullptr;
     pOwnerScene = nullptr;
 }
@@ -292,6 +299,7 @@ void GameObject::detach(const GameObject::Children::iterator& itToParentPtr) noe
 void GameObject::inspect(GPE::InspectContext& context)
 {
     GPE::DataInspector::inspect(context, m_name, "name");
+    GPE::DataInspector::inspect(context, m_tag, "tag");
 
     getTransform().inspect(context);
 

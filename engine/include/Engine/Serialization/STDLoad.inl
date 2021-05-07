@@ -106,7 +106,7 @@ void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const X
         for (size_t i = 0; i < size; i++)
         {
             std::pair<KEY, VALUE> pair;
-            //GPE::load(context, pair, XmlLoader::LoadInfo{std::to_string(i), "std::pair", info.typeId});
+            // GPE::load(context, pair, XmlLoader::LoadInfo{std::to_string(i), "std::pair", info.typeId});
             // Load Key
             if (context.goToSubChild(info))
             {
@@ -130,7 +130,9 @@ void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const r
 template <typename T>
 void load(XmlLoader& context, std::unique_ptr<T>& loaded, const XmlLoader::LoadInfo& info)
 {
-    GPE::load(context, loaded.get(), info);
+    T* ptr;
+    GPE::load(context, ptr, info);
+    loaded.reset(ptr);
 }
 
 } // namespace GPE

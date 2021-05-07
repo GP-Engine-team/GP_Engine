@@ -4,6 +4,7 @@
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/ECS/Component/InputComponent.hpp>
 #include <Engine/ECS/System/InputManagerGLFW.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
@@ -145,10 +146,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
 
 SceneViewer::~SceneViewer()
 {
-    pScene->getWorld().children.erase(it);
-    cameraOwner->destroyUniqueComponentNow<Camera>();
-    cameraOwner->destroyUniqueComponentNow<FreeFly>();
-    cameraOwner->destroyUniqueComponentNow<InputComponent>();
+    delete cameraOwner;
 
     glDeleteFramebuffers(1, &framebufferID);
     glDeleteTextures(1, &textureID);
@@ -242,25 +240,13 @@ void SceneViewer::bindScene(Scene& scene)
     }
 
     { // Move cameraOwner to the other scene
-        // Transfer ownership of &cameraOwner to the new scene
-        using iterator       = GameObject::Children::iterator;
-        const iterator newIt = scene.getWorld().children.emplace(scene.getWorld().children.end(), cameraOwner);
-
-        // Update the previous scene and the iterator to cameraOwner's parent's children list
-        if (pScene != nullptr)
-            pScene->getWorld().children.erase(it);
-
-        it = newIt;
+        cameraOwner->setParent(scene.getWorld());
+        it = scene.getWorld().children.end();
     }
 
     // Update the Camera component and cameraOwner scene and parent
-    cameraOwner->setParent(scene.getWorld());
-    cameraOwner->pOwnerScene = &scene;
-
     camera.setActive(true);
-
     scene.sceneRenderer.setMainCamera(camera);
-
     pScene = &scene;
 }
 

@@ -9,10 +9,10 @@ class IInspectable;
 
 namespace Editor
 {
+class Editor;
 
 class SceneEditor
 {
-
 public:
     GPE::SceneViewer view;
 
