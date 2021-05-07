@@ -48,7 +48,8 @@ void GameControlBar::render(EditorStartup& startup)
             const float  side     {winSize.y + extraSide};
 
             buttonSize.x = buttonSize.y = side;
-            cursorPos    = {winSize.x * .5f - side * 1.5f, extraSide};
+            cursorPos.x  = winSize.x * .5f - side * 1.5f;
+            cursorPos.y  = extraSide;
         }
 
         // Render the "Play" button
