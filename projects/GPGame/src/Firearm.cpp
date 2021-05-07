@@ -1,7 +1,10 @@
-﻿#include <Engine/Engine.hpp>
-#include <Engine/Core/Tools/Raycast.hpp>
+﻿#include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/ParticleComponent.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
+
+#include <PhysX/PxRigidActor.h>
 
 #include <Firearm/Firearm.hpp>
 File_GENERATED
@@ -54,7 +57,7 @@ void Firearm::triggered()
         m_magazineStored.triggeredBullet();
 
         GPE::Raycast ray;
-        ray.Fire(getOwner().getTransform().getGlobalPosition() +
+        ray.fire(getOwner().getTransform().getGlobalPosition() +
                         getOwner().getTransform().getVectorForward() * 10.f,
                     getOwner().getTransform().getVectorForward(), 10000.f);
 
