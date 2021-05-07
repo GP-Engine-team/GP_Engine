@@ -56,9 +56,11 @@ public:
 	void pauseGame();
 	void stopGame ();
 
-	GPE::AbstractGame& game() const;
+	constexpr GPE::AbstractGame& game() const;
 
 	virtual void update() override final;
 };
+
+#include "EditorStartup.inl"
 
 } // End of namespace Editor
