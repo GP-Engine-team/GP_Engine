@@ -298,7 +298,8 @@ Game::Game()
 
     // =========== Timer ===========
     Log&                        logger = *Log::getInstance();
-    const std::function<void()> timer  = [&]() {
+    const std::function<void()> timer  = [&]()
+    {
         logger.log(stringFormat("FPS (fixedUpdate): %f\n", fixedUpdateFrameCount / FPLogDelay));
         logger.log(stringFormat("FPS (unFixedUpdate): %f\n\n", unFixedUpdateFrameCount / FPLogDelay));
         fixedUpdateFrameCount   = 0;
