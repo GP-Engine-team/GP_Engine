@@ -39,9 +39,9 @@ private:
     ProjectContent     m_projectContent;
     SceneGraph         m_sceneGraph;
     GameControlBar     m_gameControlBar;
+    const std::string  m_saveFolder;
     GLFWwindow*        m_window;
     GPE::IInspectable* m_inspectedObject;
-    const char*        saveFolder;
     bool               m_showAppStyleEditor;
     bool               m_showImGuiDemoWindows;
 

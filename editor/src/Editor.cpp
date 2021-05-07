@@ -71,8 +71,8 @@ void Editor::renderMenuBar()
         // File
         if (ImGui::BeginMenu("File"))
         {
-            std::string fileName = "NewScene";
-            std::string path = (std::filesystem::current_path() / RESOURCES_DIR).string() + '/' + fileName + ".GPScene";
+            const std::string fileName = "NewScene";
+            const std::string path = m_saveFolder + fileName + ".GPScene";
 
             if (ImGui::MenuItem("New"))
             {
@@ -82,7 +82,7 @@ void Editor::renderMenuBar()
 
             if (ImGui::MenuItem("Open"))
             {
-                Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(fileName);
+                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(fileName);
                 loadScene(&scene, path.c_str());
                 Engine::getInstance()->sceneManager.loadScene(fileName);
             }
@@ -201,7 +201,7 @@ void Editor::renderSceneGraph()
         m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
 
         if (ImGui::IsWindowHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && m_inspectedObject)
-            m_sceneEditor.view.lookAtObject(*reinterpret_cast<GameObject*>(m_inspectedObject));
+            m_sceneEditor.view.lookAtObject(*(GameObject*)(m_inspectedObject));
     }
 
     ImGui::End();
@@ -275,11 +275,11 @@ void Editor::loadScene(GPE::Scene* scene, const char* path)
 void Editor::saveCurrentScene()
 {
     GPE::Scene* currentScene = m_sceneEditor.view.pScene;
-    const std::string path   = saveFolder + currentScene->getName() + ".GPScene";
+    const std::string path   = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
     m_sceneEditor.view.unbindScene();
 
     auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
-    saveFunc(currentScene, path.c_str(), GPE::SavedScene::EType::BINARY);
+    saveFunc(currentScene, path.c_str(), GPE::SavedScene::EType::XML);
 
     m_sceneEditor.view.bindScene(*currentScene);
 }
@@ -288,7 +288,7 @@ void Editor::saveCurrentScene()
 void Editor::reloadCurrentScene()
 {
     GPE::Scene* currentScene = m_sceneEditor.view.pScene;
-    const std::string path   = saveFolder + currentScene->getName() + ".GPScene";
+    const std::string path   = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
 
     m_sceneEditor.view.unbindScene();
     m_inspectedObject = nullptr;
@@ -307,14 +307,17 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
       m_projectContent      {},
       m_sceneGraph          {},
       m_gameControlBar      {},
+      m_saveFolder          {(std::filesystem::current_path() / RESOURCES_DIR).string() + "\\Scene\\"},
       m_window              {window},
       m_inspectedObject     {nullptr},
-      saveFolder            {((std::filesystem::current_path() / RESOURCES_DIR).string() + '/').c_str()},
       m_showAppStyleEditor  {false},
       m_showImGuiDemoWindows{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
+
+    if (!std::filesystem::exists(m_saveFolder))
+        std::filesystem::create_directory(m_saveFolder);
 
     m_projectContent.editor = this;
 }
