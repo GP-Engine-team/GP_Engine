@@ -103,14 +103,14 @@ void SceneViewer::initializePickingFBO()
 
 void SceneViewer::initializeInputs()
 {
-    inputs.bindAction("up", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "up");
-    inputs.bindAction("down", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "down");
-    inputs.bindAction("right", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "right");
-    inputs.bindAction("left", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "left");
-    inputs.bindAction("forward", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "forward");
-    inputs.bindAction("backward", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "backward");
-    inputs.bindAction("sprint", EKeyMode::KEY_PRESSED, "Level editor", &freeFly, "sprint");
-    inputs.bindAction("walk", EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
+    inputs.bindAction("up",       EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "up");
+    inputs.bindAction("down",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "down");
+    inputs.bindAction("right",    EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "right");
+    inputs.bindAction("left",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "left");
+    inputs.bindAction("forward",  EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "forward");
+    inputs.bindAction("backward", EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "backward");
+    inputs.bindAction("sprint",   EKeyMode::KEY_PRESSED,  "Level editor", &freeFly, "sprint");
+    inputs.bindAction("walk",     EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
 }
 
 // ========================== Public methods ==========================
@@ -160,7 +160,7 @@ SceneViewer::~SceneViewer()
 unsigned int SceneViewer::getHoveredGameObjectID() const
 {
     // Set active view
-    pScene->sceneRenderer.setMainCamera(camera);
+    pScene->sceneRenderer.setActiveCamera(&camera);
 
     { // Select the shader
         Shader& shaderGameObjectIdentifier =
@@ -246,7 +246,7 @@ void SceneViewer::bindScene(Scene& scene)
 
     // Update the Camera component and cameraOwner scene and parent
     camera.setActive(true);
-    scene.sceneRenderer.setMainCamera(camera);
+    scene.sceneRenderer.setActiveCamera(&camera);
     pScene = &scene;
 }
 
@@ -254,6 +254,7 @@ void SceneViewer::unbindScene()
 {
     camera.setActive(false);
     cameraOwner->detach(it);
+
     pScene = nullptr;
 }
 
@@ -284,7 +285,7 @@ void SceneViewer::update()
 
 void SceneViewer::render() const
 {
-    pScene->sceneRenderer.setMainCamera(camera);
+    pScene->sceneRenderer.setActiveCamera(&camera);
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
