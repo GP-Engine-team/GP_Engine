@@ -9,9 +9,9 @@
 #include <functional> //std::function
 #include <vector>     //std::vector
 
-#include "Engine/Resources/ResourcesManager.hpp"
-#include "Engine/Resources/ResourcesManagerType.hpp"
-#include "GPM/Transform.hpp"
+#include <Engine/Resources/ResourcesManager.hpp>
+#include <Engine/Resources/ResourcesManagerType.hpp>
+#include <GPM/Transform.hpp>
 
 namespace GPE
 {
@@ -74,12 +74,13 @@ protected:
     std::vector<ParticleComponent*> m_pParticleComponents;
     std::vector<DebugShape>         m_debugShape;
     std::vector<DebugLine>          m_debugLine;
-    Camera*                         m_mainCamera = nullptr;
+    Camera*                         m_mainCamera   = nullptr;
+    Camera*                         m_activeCamera = nullptr;
 
-    unsigned int m_currentShaderID                  = 0;
-    unsigned int m_currentTextureID                 = 0;
-    unsigned int m_currentMaterialID                = 0;
-    unsigned int m_currentMeshID                    = 0;
+    unsigned int m_currentShaderID                  = 0u;
+    unsigned int m_currentTextureID                 = 0u;
+    unsigned int m_currentMaterialID                = 0u;
+    unsigned int m_currentMeshID                    = 0u;
     Shader*      m_currentPShaderUse                = nullptr;
     bool         m_currentBackFaceCullingModeEnable = false;
 
@@ -97,8 +98,11 @@ public:
     void tryToBindMesh(unsigned int meshID);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
-    void    setMainCamera(Camera& newMainCamera) noexcept;
-    Camera& setMainCamera(int index) noexcept;
+    void    setMainCamera(Camera* newMainCamera) noexcept;
+    Camera* getMainCamera() noexcept;
+
+    void    setActiveCamera(Camera* newMainCamera) noexcept;
+    Camera* getActiveCamera() noexcept;
 
     void resetCurrentRenderPassKey();
 
