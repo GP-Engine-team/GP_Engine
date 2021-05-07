@@ -100,10 +100,11 @@ namespace GPE RFKNamespace()
         [[nodiscard]] inline GameObject*       getParent() noexcept;
 
         /**
-         * @brief Set the parent and remove to parent the child
+         * @brief Set the parent and remove to parent the child. Warning if pNewParent == nullptr, the gameObject must
+         * be remove manually or must be instancied somewhere. Normally parent is repsonsable to destroy it's child
          * @param newName
          */
-        inline void setParent(GameObject & newParent) noexcept;
+        void setParent(GameObject * pNewParent) noexcept;
 
         /**
          * @brief Warning ! This function only set the parent ptr and do not remove the children ptr of this parent

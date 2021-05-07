@@ -41,7 +41,7 @@ void DeferedSetParent::tryExecute()
     if (m_movedGO == nullptr)
         return;
 
-    m_movedGO->setParent(*m_newParentGO);
+    m_movedGO->setParent(m_newParentGO);
 
     m_movedGO     = nullptr;
     m_newParentGO = nullptr;
@@ -87,7 +87,7 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             if (!empty.getWorld().children.empty())
             {
                 GameObject* const go = empty.getWorld().children.front();
-                go->setParent(gameObject);
+                go->setParent(&gameObject);
                 go->getTransform().setDirty();
             }
         }
@@ -203,8 +203,8 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInsp
             ImGui::TreePop();
         }
     }
-    
-            if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() &&
+
+    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() &&
         dynamic_cast<GameObject*>(selectedGameObject))
         m_pEditorContext->m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(selectedGameObject));
 }

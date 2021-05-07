@@ -30,6 +30,7 @@
     <ClInclude Include="include\myFreeFlyWithCollisionScript.hpp" />
     <ClInclude Include="include\myScript.hpp" />
     <ClInclude Include="include\SingletonsSync.hpp" />
+    <ClInclude Include="include\WorldGenerator.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Bullet.cpp" />
@@ -40,6 +41,7 @@
     <ClCompile Include="src\myScript.cpp" />
     <ClCompile Include="src\PPSH41.cpp" />
     <ClCompile Include="src\SingletonsSync.cpp" />
+    <ClCompile Include="src\WorldGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Projects.props" />

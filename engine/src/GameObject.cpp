@@ -165,6 +165,42 @@ void GameObject::forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept
     }
 }
 
+void GameObject::setParent(GameObject* pNewParent) noexcept
+{
+    if (m_parent != nullptr)
+    {
+        for (std::list<GameObject*>::iterator it = m_parent->children.begin(); it != m_parent->children.end(); it++)
+        {
+            if (*it == this)
+            {
+                m_parent->children.erase(it);
+                break;
+            }
+        }
+    }
+
+    if (pNewParent)
+    {
+        GPE_ASSERT(pNewParent->getParent() != this,
+                   "You cannot associate new parent if it's the child of the current entity (leak)");
+
+        if (pNewParent->pOwnerScene)
+        {
+            moveTowardScene(*pNewParent->pOwnerScene);
+        }
+        pNewParent->children.emplace_back(this);
+
+        Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
+                                             pNewParent->getName().c_str()));
+    }
+    else
+    {
+        Log::getInstance()->log(stringFormat("Remove parent of %s", m_name.c_str()));
+    }
+
+    m_parent = pNewParent;
+}
+
 GameObject* GameObject::getChild(const std::string& path) noexcept
 {
     if (path.empty())

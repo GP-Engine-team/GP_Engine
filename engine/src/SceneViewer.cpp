@@ -234,7 +234,7 @@ void SceneViewer::bindScene(Scene& scene)
     }
 
     { // Move cameraOwner to the other scene
-        cameraOwner->setParent(scene.getWorld());
+        cameraOwner->setParent(&scene.getWorld());
         it = scene.getWorld().children.end();
     }
 

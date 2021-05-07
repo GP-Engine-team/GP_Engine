@@ -14,6 +14,8 @@
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
 
+#include <WorldGenerator.hpp>
+
 #include <GPM/Random.hpp>
 
 // Third_party
@@ -232,6 +234,8 @@ Game::Game()
         player    = &world.addChild(playerArg);
         testPhysX = &world.addChild(testPhysXArg);
     }
+
+    world.addComponent<GPG::WorldGenerator>();
 
     // Skybox
     loadSkyboxResource();

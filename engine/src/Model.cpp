@@ -45,6 +45,9 @@ Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{
 
 Model::~Model()
 {
+    if (!getOwner().pOwnerScene)
+        return;
+
     for (SubModel& subMesh : m_subModels)
     {
         if (subMesh.isValide())
@@ -87,8 +90,11 @@ void Model::awake()
 
 void Model::moveTowardScene(class Scene& newOwner)
 {
-    for (SubModel& subMesh : m_subModels)
-        getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+    if (getOwner().pOwnerScene)
+    {
+        for (SubModel& subMesh : m_subModels)
+            getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+    }
 
     for (SubModel& subMesh : m_subModels)
     {

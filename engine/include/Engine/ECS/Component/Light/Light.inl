@@ -15,7 +15,8 @@ Light::Light(GameObject& owner, const CreateArg& arg)
 
 Light::~Light()
 {
-    getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
+    if (getOwner().pOwnerScene)
+        getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
 }
 
 Light& Light::operator=(Light&& other) noexcept
