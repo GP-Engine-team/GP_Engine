@@ -1,7 +1,6 @@
 ﻿#include <Editor/ProjectContent.hpp>
 
 #include <Editor/Editor.hpp>
-#include <Editor/ExternalDeclarations.hpp>
 
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/HotReload/ReloadableCpp.hpp>
@@ -14,6 +13,9 @@
 #include <Engine/Serialization/ShaderInspectorPanel.hpp>
 #include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/TextureImporterSetting.hpp>
+
+// Don't move up
+#include <Editor/ExternalDeclarations.hpp>
 
 #include <imgui/imgui.h>
 #include <string>
@@ -470,20 +472,20 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
             if (ImGui::MenuItem("Prefab"))
             {
-                std::filesystem::path PrefabDir  = pCurrentDirectory->path;
-                std::filesystem::path PrefabName = "NewPrefab" ENGINE_PREFAB_EXTENSION;
+                std::filesystem::path prefabDir  = pCurrentDirectory->path;
+                std::filesystem::path prefabName = "NewPrefab" ENGINE_PREFAB_EXTENSION;
 
                 int id = 0;
-                while (pCurrentDirectory->containFile(PrefabName))
+                while (pCurrentDirectory->containFile(prefabName))
                 {
-                    PrefabName = stringFormat("NewPrefab(%i)" ENGINE_PREFAB_EXTENSION, ++id);
+                    prefabName = stringFormat("NewPrefab(%i)" ENGINE_PREFAB_EXTENSION, ++id);
                 }
 
-                PrefabDir /= PrefabName;
+                prefabDir /= prefabName;
 
                 Scene prefab;
                 auto  saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
-                saveFunc(&prefab, PrefabDir.string().c_str(), GPE::SavedScene::EType::XML);
+                saveFunc(&prefab, prefabDir.string().c_str(), GPE::SavedScene::EType::XML);
             }
 
             ImGui::EndMenu();
