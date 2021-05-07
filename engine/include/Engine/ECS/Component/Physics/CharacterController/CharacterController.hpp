@@ -26,7 +26,7 @@ namespace GPE RFKNamespace()
     public:
         CharacterController(GameObject& owner) noexcept;
 
-        //CharacterController() noexcept;
+        CharacterController() noexcept;
         CharacterController(const CharacterController& other) noexcept = delete;
         CharacterController(CharacterController&& other) noexcept     = default;
         CharacterController& operator=(CharacterController const& other) noexcept = delete;

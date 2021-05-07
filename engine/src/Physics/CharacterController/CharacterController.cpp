@@ -13,7 +13,7 @@
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace physx;
 
 CharacterController::CharacterController(GameObject& owner) noexcept
@@ -33,7 +33,6 @@ CharacterController::CharacterController(GameObject& owner) noexcept
     controller->getActor()->userData = &getOwner();
 }
 
-/*
 CharacterController::CharacterController() noexcept
 {
     physx::PxCapsuleControllerDesc desc;
@@ -46,7 +45,6 @@ CharacterController::CharacterController() noexcept
     controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
     GPE::Engine::getInstance()->physXSystem.addComponent(this);
 }
-*/
 
 void CharacterController::update(double deltaTime) noexcept
 {
