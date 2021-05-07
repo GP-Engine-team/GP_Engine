@@ -4,15 +4,15 @@
 #include "Engine/Resources/Scene.hpp"
 #include "GPM/Transform.hpp"
 #include "GPM/Vector3.hpp"
-#include "engine/serialization/xml/xmlsaver.hpp"
 #include "engine/serialization/xml/xmlloader.hpp"
+#include "engine/serialization/xml/xmlsaver.hpp"
 
 #include "Engine/ECS/Component/Camera.hpp"
 #include "Generated/Camera.rfk.h"
 
 File_GENERATED
 
-using namespace GPM;
+    using namespace GPM;
 
 namespace GPE
 {
@@ -44,7 +44,8 @@ void Camera::updateProjection()
 
 void Camera::moveTowardScene(class Scene& newOwner)
 {
-    getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
+    if (getOwner().pOwnerScene)
+        getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
     newOwner.sceneRenderer.addCamera(*this);
 }
 
@@ -105,7 +106,6 @@ void Camera::awake()
         Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
     getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
     updateView();
-
 }
 
 Camera::~Camera() noexcept
