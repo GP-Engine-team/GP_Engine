@@ -317,8 +317,6 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
 
     if (!std::filesystem::exists(m_saveFolder))
         std::filesystem::create_directory(m_saveFolder);
-
-    m_projectContent.editor = this;
 }
 
 void Editor::setSceneInEdition(GPE::Scene& scene)
