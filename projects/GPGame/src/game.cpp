@@ -187,8 +187,6 @@ Game::~Game()
 }
 
 Game::Game()
-    : bSys{GPE::Engine::getInstance()->behaviourSystem},
-      world{Engine::getInstance()->sceneManager.loadScene("main").getWorld()}
 {
     // ============= UI =============
     // TODO: Put in-game UI in a module
@@ -223,11 +221,12 @@ Game::Game()
     // world is already initialized
 
     // Place content in the scene
+    GPE::GameObject& world = Engine::getInstance()->sceneManager.loadScene("main").getWorld();
     GameObject *ground, *player, *testPhysX;
     {
-        const GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{Vec3{0.f, 50.f, 0.f}}};
-        const GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{Vec3{0.f, 0.f, 50.f}}};
-        const GameObject::CreateArg groundArg{"GroundArg", TransformComponent::CreateArg{Vec3{0.f}}};
+        const GameObject::CreateArg playerArg   {"Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}}};
+        const GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}};
+        const GameObject::CreateArg groundArg   {"GroundArg", TransformComponent::CreateArg{{0.f}}};
 
         // A ground, player, PhysX test
         ground    = &world.addChild(groundArg);
