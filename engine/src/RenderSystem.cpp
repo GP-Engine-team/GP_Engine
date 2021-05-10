@@ -592,7 +592,7 @@ void RenderSystem::update(double dt) noexcept
     // Update debug shape life time
     for (auto&& it = m_debugShape.begin(); it != m_debugShape.end();)
     {
-        if ((it->duration -= dt) <= 0.f)
+        if ((it->duration -= float(dt)) <= 0.f)
             it = m_debugShape.erase(it);
         else
             ++it;
