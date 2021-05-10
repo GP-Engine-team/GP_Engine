@@ -1,6 +1,9 @@
 template <typename T>
 void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, void* key)
 {
+    if (key == nullptr)
+        return;
+
     auto pair = alreadyLoadedPtrs.insert({key, LoadedPtr{info}});
     if (pair.second) // Has been inserted ?
     {
