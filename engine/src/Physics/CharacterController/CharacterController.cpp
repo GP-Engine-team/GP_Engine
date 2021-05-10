@@ -19,15 +19,15 @@ using namespace physx;
 CharacterController::CharacterController(GameObject& owner) noexcept
     : Component(owner)
 {
-    physx::PxCapsuleControllerDesc desc;
+    PxCapsuleControllerDesc desc;
 
     desc.height   = 1.f;
-    desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
-    desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition());
+    desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition());
     desc.radius   = 1.f;
 
-    controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
-    GPE::Engine::getInstance()->physXSystem.addComponent(this);
+    controller = Engine::getInstance()->physXSystem.manager->createController(desc);
+    Engine::getInstance()->physXSystem.addComponent(this);
 
     // controller->setUserData(&getOwner());
     controller->getActor()->userData = &getOwner();
@@ -35,20 +35,20 @@ CharacterController::CharacterController(GameObject& owner) noexcept
 
 CharacterController::CharacterController() noexcept
 {
-    physx::PxCapsuleControllerDesc desc;
+    PxCapsuleControllerDesc desc;
 
     desc.height   = 1;
-    desc.material = GPE::Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    desc.position = GPE::PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
+    desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
     desc.radius   = 1;
 
-    controller = GPE::Engine::getInstance()->physXSystem.manager->createController(desc);
-    GPE::Engine::getInstance()->physXSystem.addComponent(this);
+    controller = Engine::getInstance()->physXSystem.manager->createController(desc);
+    Engine::getInstance()->physXSystem.addComponent(this);
 }
 
 void CharacterController::update(double deltaTime) noexcept
 {
-    physx::PxControllerFilters filters;
+    PxControllerFilters filters;
     updateForce();
 
     if (m_jumping == true)
@@ -70,9 +70,9 @@ void CharacterController::update(double deltaTime) noexcept
     if (controller == nullptr)
         return;
 
-    controller->move(GPE::PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, float(deltaTime), filters);
+    controller->move(PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, float(deltaTime), filters);
     m_displacement.x = m_displacement.y = m_displacement.z = .0f;
-    getOwner().getTransform().setTranslation(GPE::PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()));
+    getOwner().getTransform().setTranslation(PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()));
 }
 
 void CharacterController::move(const GPM::Vec3& displacement) noexcept
@@ -111,7 +111,7 @@ void CharacterController::setJumping(float jumping) noexcept
 
 CharacterController::~CharacterController() noexcept
 {
-    GPE::Engine::getInstance()->physXSystem.removeComponent(this);
+    Engine::getInstance()->physXSystem.removeComponent(this);
     // controller->release();
 }
 
@@ -122,7 +122,7 @@ void CharacterController::setActive(bool newState) noexcept
 
     m_isActivated = newState;
     if (m_isActivated)
-        GPE::Engine::getInstance()->physXSystem.addComponent(this);
+        Engine::getInstance()->physXSystem.addComponent(this);
     else
-        GPE::Engine::getInstance()->physXSystem.removeComponent(this);
+        Engine::getInstance()->physXSystem.removeComponent(this);
 }
