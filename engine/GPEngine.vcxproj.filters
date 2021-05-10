@@ -271,6 +271,9 @@
     <ClCompile Include="src\Prefab.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Raycast.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
