@@ -1,7 +1,7 @@
-﻿#include "Engine/Core/Debug/Assert.hpp" //GPE_ASSERT
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Intermediate/DataChunk.hpp" //DataChunk
-#include "imgui.h"
+﻿#include <Engine/Core/Debug/Assert.hpp> //GPE_ASSERT
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Intermediate/DataChunk.hpp> //DataChunk
+#include <imgui/imgui.h>
 #include <istream>
 #include <sstream>
 
@@ -12,7 +12,7 @@
 #include "Generated/GameObject.rfk.h"
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 unsigned int GameObject::m_currentID = 0;
@@ -62,7 +62,7 @@ void GameObject::updateSelfAndChildren() noexcept
         }
         else
         {
-            getTransform().update(Mat4::identity());
+            getTransform().update();
         }
 
         // Update children
@@ -134,7 +134,7 @@ void GameObject::forceUpdate() noexcept
     }
     else
     {
-        getTransform().update(Mat4::identity());
+        getTransform().update();
     }
 
     // Force update children

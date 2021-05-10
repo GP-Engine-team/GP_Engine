@@ -1,18 +1,21 @@
-﻿#include "Editor/ProjectContent.hpp"
+﻿#include <Editor/ProjectContent.hpp>
 
 #include <Editor/Editor.hpp>
+
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
 #include <Engine/Core/Tools/Hash.hpp>
 #include <Engine/Engine.hpp>
-#include <Engine/Serialization/FileExplorer.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Serialization/MaterialInspectorPanel.hpp>
 #include <Engine/Serialization/MeshInspectorPanel.hpp>
 #include <Engine/Serialization/ShaderInspectorPanel.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/TextureImporterSetting.hpp>
 
+// Don't move up
 #include <Editor/ExternalDeclarations.hpp>
-#include <Engine/Core/HotReload/ReloadableCpp.hpp>
 
 #include <imgui/imgui.h>
 #include <string>
@@ -21,33 +24,33 @@ using namespace Editor;
 using namespace GPE;
 
 ProjectContent::ProjectContent(Editor& editorContext)
-    : m_folderIcone{{"..\\..\\editor\\resources\\\icone\\folder.png", Texture::ETextureMinFilter::LINEAR,
-                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_textureIcone{{"..\\..\\editor\\resources\\\icone\\texture.png", Texture::ETextureMinFilter::LINEAR,
-                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                      Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_materialIcone{{"..\\..\\editor\\resources\\\icone\\material.png", Texture::ETextureMinFilter::LINEAR,
+    : m_folderIcone  {{"..\\..\\editor\\resources\\icone\\folder.png", Texture::ETextureMinFilter::LINEAR,
                        Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
                        Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_sceneIcone{{"..\\..\\editor\\resources\\\icone\\scene.png", Texture::ETextureMinFilter::LINEAR,
-                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                    Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_meshIcone{{"..\\..\\editor\\resources\\\icone\\mesh.png", Texture::ETextureMinFilter::LINEAR,
-                   Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                   Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_shaderIcone{{"..\\..\\editor\\resources\\\icone\\shader.jpg", Texture::ETextureMinFilter::LINEAR,
-                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_soundIcone{{"..\\..\\editor\\resources\\\icone\\sound.jpg", Texture::ETextureMinFilter::LINEAR,
-                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                    Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_prefabIcone{{"..\\..\\editor\\resources\\\icone\\prefab.png", Texture::ETextureMinFilter::LINEAR,
-                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_unknowIcone{{"..\\..\\editor\\resources\\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
-                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_textureIcone {{"..\\..\\editor\\resources\\icone\\texture.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_materialIcone{{"..\\..\\editor\\resources\\icone\\material.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_sceneIcone   {{"..\\..\\editor\\resources\\icone\\scene.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_meshIcone    {{"..\\..\\editor\\resources\\icone\\mesh.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_shaderIcone  {{"..\\..\\editor\\resources\\icone\\shader.jpg", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_soundIcone   {{"..\\..\\editor\\resources\\icone\\sound.jpg", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_prefabIcone  {{"..\\..\\editor\\resources\\icone\\prefab.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_unknowIcone  {{"..\\..\\editor\\resources\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
       m_editorContext{&editorContext}
 {
     resourcesTree.name = RESOURCES_DIR;
@@ -469,20 +472,20 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
             if (ImGui::MenuItem("Prefab"))
             {
-                std::filesystem::path PrefabDir  = pCurrentDirectory->path;
-                std::filesystem::path PrefabName = "NewPrefab" ENGINE_PREFAB_EXTENSION;
+                std::filesystem::path prefabDir  = pCurrentDirectory->path;
+                std::filesystem::path prefabName = "NewPrefab" ENGINE_PREFAB_EXTENSION;
 
                 int id = 0;
-                while (pCurrentDirectory->containFile(PrefabName))
+                while (pCurrentDirectory->containFile(prefabName))
                 {
-                    PrefabName = stringFormat("NewPrefab(%i)" ENGINE_PREFAB_EXTENSION, ++id);
+                    prefabName = stringFormat("NewPrefab(%i)" ENGINE_PREFAB_EXTENSION, ++id);
                 }
 
-                PrefabDir /= PrefabName;
+                prefabDir /= prefabName;
 
                 Scene prefab;
                 auto  saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
-                saveFunc(&prefab, PrefabDir.string().c_str(), GPE::SavedScene::EType::XML);
+                saveFunc(&prefab, prefabDir.string().c_str(), GPE::SavedScene::EType::XML);
             }
 
             ImGui::EndMenu();

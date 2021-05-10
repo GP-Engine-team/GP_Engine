@@ -7,87 +7,63 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
 
+#include <PhysX/PxRigidActor.h>
+
 #include <GLFW/glfw3.h>
 
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include <Firearm/PPSH41.hpp>
 #include <MyFpsScript.hpp>
 
-#include "Generated/myFpsScript.rfk.h"
+#include <Generated/myFpsScript.rfk.h>
 File_GENERATED
 
 namespace GPG
 {
 
-    MyFpsScript::MyFpsScript(GPE::GameObject & owner) noexcept
-        : GPE::BehaviourComponent(owner), input{&owner.addComponent<GPE::InputComponent>()},
-          source{&owner.addComponent<GPE::AudioComponent>()},
-          controller{&owner.addComponent<GPE::CharacterController>()}
+    MyFpsScript::MyFpsScript(GPE::GameObject& owner) noexcept
+        : GPE::BehaviourComponent(owner),
+          input     {&owner.addComponent<GPE::InputComponent>()},
+          source    {&owner.addComponent<GPE::AudioComponent>()},
+          controller{&owner.addComponent<GPE::CharacterController>()},
+          m_firearm {&owner.addComponent<PPSH41>()}
     {
         enableFixedUpdate(true);
         enableUpdate(true);
         enableOnGUI(true);
 
-        m_fireArme = &owner.addComponent<PPSH41>();
+        // Keys
+        input->bindAction("forward",        EKeyMode::KEY_DOWN,     "Game", this, "forward");
+        input->bindAction("backward",       EKeyMode::KEY_DOWN,     "Game", this, "backward");
+        input->bindAction("left",           EKeyMode::KEY_DOWN,     "Game", this, "left");
+        input->bindAction("right",          EKeyMode::KEY_DOWN,     "Game", this, "right");
+        input->bindAction("jump",           EKeyMode::KEY_DOWN,     "Game", this, "jump");
+        input->bindAction("exit",           EKeyMode::KEY_PRESSED,  "Game", this, "leave");
+        input->bindAction("sprintStart",    EKeyMode::KEY_PRESSED,  "Game", this, "sprintStart");
+        input->bindAction("sprintEnd",      EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+        input->bindAction("RaycastExample", EKeyMode::KEY_PRESSED,  "Game", this, "raycastExample");
+        input->bindAction("shoot",          EKeyMode::KEY_DOWN,     "Game", this, "shoot");
 
-        input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
-        input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
-        input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
-        input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
-        input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
-        input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
-        input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
-        input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-        input->bindAction("RaycastExample", EKeyMode::KEY_PRESSED, "Game", this, "raycastExample");
-        input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+        { // Cursor
+            GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
+            io.setCursorTrackingState(true);
+            io.setCursorLockState(true);
+        }
 
-        // input->bindAction("growUpCollider",        EKeyMode::KEY_DOWN,     "Game", this, "growUpSphereCollider");
-        // input->bindAction("growDownCollider",      EKeyMode::KEY_DOWN,     "Game", this, "growDownSphereCollider");
-
-        // GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
-
-        // GPE::SourceSettings sourceSettings;
-        // sourceSettings.pitch = 1.f;
-        // sourceSettings.loop  = AL_TRUE;
-
-        // source->setSound("Western", "Western", sourceSettings);
-        // source->playSound("Western");
-
+        // Setup controller
         controller->setHasGravity(true);
         controller->setSpeed(1.f);
         controller->setMouseSpeed(.0025f);
         controller->setGravity(.1f);
     }
-
-    MyFpsScript::MyFpsScript() noexcept : GPE::BehaviourComponent()
-    {
-        enableFixedUpdate(true);
-        enableUpdate(true);
-        enableOnGUI(true);
-    }
-
-    MyFpsScript::~MyFpsScript() noexcept
-    {
-
-    }
-
+    
     void MyFpsScript::awake()
     {
         BehaviourComponent::awake();
-
-        input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
-        input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
-        input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
-        input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
-        input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
-        input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
-        input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
-        input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-
-        input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
     }
-
+    
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)
     {
         using namespace GPM;
@@ -113,7 +89,7 @@ namespace GPG
     void MyFpsScript::forward()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(vec);
         // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
     }
@@ -121,7 +97,7 @@ namespace GPG
     void MyFpsScript::backward()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(-vec);
         // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
@@ -129,7 +105,7 @@ namespace GPG
     void MyFpsScript::left()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorRight();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(-vec);
         // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
     }
@@ -137,14 +113,16 @@ namespace GPG
     void MyFpsScript::right()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorRight();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(vec);
         // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
 
+    // TOOD: Detect whether we are in editor or launcher
     void MyFpsScript::leave()
     {
-        glfwWindowShouldClose(GPE::Engine::getInstance()->window.getGLFWWindow());
+        
+        GPE::Engine::getInstance()->exit();
     }
 
     void MyFpsScript::sprintStart()
@@ -161,24 +139,23 @@ namespace GPG
     void MyFpsScript::raycastExample()
     {
         GPE::Raycast ray;
-        ray.Fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(), 100000);
+        ray.fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(), 100000);
         if (ray.hit.hasBlock)
         {
             GPE::GameObject* owner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData);
             if (owner)
             {
                 std::cout << "yolo" << std::endl;
-                // Do some shit here;
             }
         }
     }
 
     void MyFpsScript::shoot()
     {
-        m_fireArme->triggered();
+        m_firearm->triggered();
 
-        if (m_fireArme->isMagazineEmpty())
-            m_fireArme->reload();
+        if (m_firearm->isMagazineEmpty())
+            m_firearm->reload();
     }
 
     /*
@@ -203,15 +180,15 @@ namespace GPG
         ImVec2 size = {ImGui::GetWindowSize().x * ratio, ImGui::GetWindowSize().y * ratio};
 
         ImGui::SetNextElementLayout(0.f, 0.f, size, ImGui::EHAlign::Left, ImGui::EVAlign::Top);
-        ImGui::Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
-    }
-
-    void MyFpsScript::update(double deltaTime)
-    {
-        m_fireArme->update(deltaTime);
+        ImGui::Text("%d/%d", m_firearm->getMagazine().getBulletsRemaining(), m_firearm->getMagazine().getCapacity());
     }
 
     void MyFpsScript::fixedUpdate(double deltaTime)
+    {
+        controller->update(deltaTime);
+    }
+
+    void MyFpsScript::update(double deltaTime)
     {
         // TODO: find a fix to relieve the user from having to check this, or leave it like that?
         if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
@@ -221,7 +198,5 @@ namespace GPG
             if (deltaPos.x || deltaPos.y)
                 rotate(deltaPos);
         }
-        controller->update(deltaTime);
     }
-
 } // End of namespace GPG

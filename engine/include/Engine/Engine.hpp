@@ -37,13 +37,18 @@ public:
     BehaviourSystem     behaviourSystem;
     ResourceManagerType resourceManager;
     SceneManager        sceneManager;
-    PhysXSystem         physXSystem;
+    PhysXSystem         physXSystem;    
     SoundSystem         soundSystem;
+    std::function<void()> exit;
 
 protected:
     Engine()
-        : window{Window::CreateArg{"window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          behaviourSystem{}, resourceManager{}, sceneManager{}, physXSystem{}, soundSystem{}
+        : window{Window::CreateArg{"Window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
+          behaviourSystem{}, resourceManager{}, sceneManager{}, physXSystem{}, soundSystem{},
+          exit{[&]()
+          {
+              window.close();
+          }}
     {
     }
 

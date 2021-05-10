@@ -44,7 +44,7 @@ struct TextureImportConfig
     {
         switch (format)
         {
-        case GPE::TextureImportConfig::EFormatType::PNG:
+        case EFormatType::PNG:
             return "png";
             break;
         default:
@@ -66,7 +66,7 @@ struct ShaderCreateConfig
 {
     std::string vertexShaderPath   = "";
     std::string fragmentShaderPath = "";
-    uint16_t    featureMask        = 0;
+    uint8_t     featureMask        = 0u;
 };
 
 void importeModel(const char* srcPath, const char* dstPath) noexcept;

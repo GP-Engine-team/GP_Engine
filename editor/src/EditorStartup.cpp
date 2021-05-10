@@ -32,37 +32,38 @@ GLFWwindow* EditorStartup::initDearImGuiProxy(GLFWwindow* window)
 
 void EditorStartup::initializeDefaultInputs() const
 {
-    GPE::InputManager& inputs = GPE::Engine::getInstance()->inputManager;
-
     // Default editor-specific input bindings
-    inputs.bindInput(GLFW_KEY_SPACE, "up");
-    inputs.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-    inputs.bindInput(GLFW_KEY_D, "right");
-    inputs.bindInput(GLFW_KEY_A, "left");
-    inputs.bindInput(GLFW_KEY_W, "forward");
-    inputs.bindInput(GLFW_KEY_S, "backward");
-    inputs.bindInput(GLFW_KEY_ESCAPE, "exit");
-    inputs.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
-    inputs.bindInput(GLFW_KEY_LEFT_SHIFT, "walk");
+    m_engine->inputManager.bindInput(GLFW_KEY_SPACE,        "up");
+    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
+    m_engine->inputManager.bindInput(GLFW_KEY_D,            "right");
+    m_engine->inputManager.bindInput(GLFW_KEY_A,            "left");
+    m_engine->inputManager.bindInput(GLFW_KEY_W,            "forward");
+    m_engine->inputManager.bindInput(GLFW_KEY_S,            "backward");
+    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprint");
+    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_SHIFT,   "walk");
 
-    inputs.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
+    m_engine->inputManager.setupCallbacks(m_engine->window.getGLFWWindow());
 }
 
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {}},
-      m_update{[&](double unscaledDeltaTime, double deltaTime) {
-          GPE::Engine::getInstance()->inputManager.processInput();
-          Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
-          m_editor.update(deltaTime, *this);
-          Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+      m_update{[&](double unscaledDeltaTime, double deltaTime)
+      {
+          m_engine->inputManager.processInput();
+          m_editor.update(*this);
+
+          m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
       }},
-      m_render{[&]() {
+      m_render{[&]()
+      {
           m_editor.render();
-          GPE::Engine::getInstance()->renderer.swapBuffer();
+          m_engine->renderer.swapBuffer();
       }},
-      m_editor{initDearImGuiProxy(GPE::Engine::getInstance()->window.getGLFWWindow()),
-               GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
-      m_reloadableCpp{gameDllPath}, m_game{nullptr}
+      m_editor       {initDearImGuiProxy(GPE::Engine::getInstance()->window.getGLFWWindow()),
+                      GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
+      m_reloadableCpp{gameDllPath},
+      m_game         {nullptr},
+      m_engine       {GPE::Engine::getInstance()}
 {
     m_editor.m_reloadableCpp = &m_reloadableCpp;
 
@@ -89,10 +90,10 @@ EditorStartup::EditorStartup()
 
 EditorStartup::~EditorStartup()
 {
-    GPE::Engine::getInstance()->timeSystem.clearScaledTimer();
-    GPE::Engine::getInstance()->timeSystem.clearUnscaledTimer();
+    m_engine->timeSystem.clearScaledTimer();
+    m_engine->timeSystem.clearUnscaledTimer();
 
-    m_editor.unbindCameraEditor();
+    m_editor.unbindCurrentScene();
     if (m_game != nullptr)
     {
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
@@ -117,12 +118,25 @@ void EditorStartup::openGame()
     auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
     m_game = a();
 
-    m_editor.setSceneInEdition(*GPE::Engine::getInstance()->sceneManager.getCurrentScene());
+    m_editor.setSceneInEdition(*m_engine->sceneManager.getCurrentScene());
 
     if (gameWasInstanciated)
     {
-        GPE::Engine::getInstance()->sceneManager.removeScene("Default scene");
+        m_engine->sceneManager.removeScene("Default scene");
     }
+
+    { // Reset cursor state
+        GPE::InputManager& io = m_engine->inputManager;
+        io.setCursorLockState(false);
+        io.setCursorTrackingState(false);
+    }
+
+    // Ending the game must not close the whole engine when the editor is opened
+    // The editor handles exiting the whole application itself
+    m_engine->exit = [&]()
+    {
+        m_editor.releaseGameInputs();
+    };
 }
 
 void EditorStartup::closeGame()
@@ -137,27 +151,36 @@ void EditorStartup::closeGame()
     }
 
     // TODO: are the scene previously loaded removed by m_game's destructor?
-    m_editor.setSceneInEdition(GPE::Engine::getInstance()->sceneManager.loadScene("Default scene"));
+    m_editor.setSceneInEdition(m_engine->sceneManager.loadScene("Default scene"));
+
+    // There is no more active game, replace m_engine->exit to something not dependant on m_game
+    m_engine->exit = [&](){ m_engine->window.close(); };
 }
 
 void EditorStartup::playGame()
 {
-    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
-        GPE::Engine* m_engine = GPE::Engine::getInstance();
+    if (m_game->state == EGameState::STOPPED)
+        m_editor.saveCurrentScene();
+
+    // Do not change the order of instructions inside the lambdas
+    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+    {
         m_engine->physXSystem.advance(fixedDeltaTime);
         m_engine->behaviourSystem.fixedUpdate(fixedDeltaTime);
 
         m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
     };
-    m_update = [&](double unscaledDeltaTime, double deltaTime) {
-        GPE::Engine* m_engine = GPE::Engine::getInstance();
+    
+    m_update = [&](double unscaledDeltaTime, double deltaTime)
+    {
         m_engine->inputManager.processInput();
+        m_editor.update(*this);
+
         m_engine->behaviourSystem.update(deltaTime);
-        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
         m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
 
         m_game->update(unscaledDeltaTime, deltaTime);
-        m_editor.update(deltaTime, *this);
     };
 
     m_game->state = EGameState::PLAYING;
@@ -165,13 +188,14 @@ void EditorStartup::playGame()
 
 void EditorStartup::pauseGame()
 {
+    // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
-    m_update      = [&](double unscaledDeltaTime, double deltaTime) {
-        GPE::Engine* m_engine = GPE::Engine::getInstance();
+    m_update      = [&](double unscaledDeltaTime, double deltaTime)
+    {
         m_engine->inputManager.processInput();
+        m_editor.update(*this);
+
         m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
-        m_editor.update(deltaTime, *this);
-        m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
     };
 
     m_game->state = EGameState::PAUSED;
@@ -180,13 +204,9 @@ void EditorStartup::pauseGame()
 void EditorStartup::stopGame()
 {
     pauseGame();
+    m_editor.reloadCurrentScene();
     // TODO: reload scene
     m_game->state = EGameState::STOPPED;
-}
-
-GPE::AbstractGame& EditorStartup::game() const
-{
-    return *m_game;
 }
 
 void EditorStartup::update()
@@ -197,12 +217,12 @@ void EditorStartup::update()
         (*syncLog)(*GPE::Log::getInstance());
 
         auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
-        (*sync)(*GPE::Engine::getInstance());
+        (*sync)(*m_engine);
 
         openGame();
     }
 
-    GPE::Engine::getInstance()->timeSystem.update(m_fixedUpdate, m_update, m_render);
+    m_engine->timeSystem.update(m_fixedUpdate, m_update, m_render);
     isRunning = m_editor.isRunning();
 }
 } // End of namespace Editor

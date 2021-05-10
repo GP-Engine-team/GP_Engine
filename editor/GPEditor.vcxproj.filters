@@ -56,6 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GPEditor.props" />
+    <None Include="include\Editor\EditorStartup.inl">
+      <Filter>include</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorStartup.cpp">

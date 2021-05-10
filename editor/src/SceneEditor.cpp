@@ -60,18 +60,22 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
                         stringFormat("No gameObject corresponding to the id %i", idSelectedGameObject));
                 }
             }
+
+            else
+            {
+                inspectedObject = nullptr;
+            }
         }
+        
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && inspectedObject)
+            view.lookAtObject(*reinterpret_cast<GameObject*>(inspectedObject));
     }
 }
 
 // ========================== Public methods ==========================
-SceneEditor::SceneEditor(Editor& editorContext, GPE::Scene& scene) : m_pEditorContext{&editorContext}, view{scene}
+SceneEditor::SceneEditor(GPE::Scene& scene)
+    : view{scene}
 {
-}
-
-void SceneEditor::update(double dt)
-{
-    view.update(dt);
 }
 
 void SceneEditor::render(GPE::IInspectable*& inspectedObject)
@@ -91,10 +95,6 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
         view.render();
 
         ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
-
-        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered() &&
-            dynamic_cast<GameObject*>(inspectedObject))
-            m_pEditorContext->m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(inspectedObject));
     }
     ImGui::End();
     ImGui::PopStyleVar(2);

@@ -45,15 +45,15 @@ File_GENERATED
             m_isDirty = true;
         }
 
-        unsigned char featureMask        = m_config.featureMask;
-        bool          blinPhongFlag      = m_config.featureMask & LIGHT_BLIN_PHONG;
-        bool          skyboxFlag         = m_config.featureMask & SKYBOX;
-        bool          ambiantOnlyFlag    = m_config.featureMask & AMBIANTE_COLOR_ONLY;
-        bool          scaleTimeAccFlag   = m_config.featureMask & SCALE_TIME_ACC;
-        bool          unscaleTimeAccFlag = m_config.featureMask & UNSCALED_TIME_ACC;
-        bool          projectionMatrix   = m_config.featureMask & PROJECTION_MATRIX;
-        bool          viewMatrix         = m_config.featureMask & VIEW_MATRIX;
-        bool          PVMMatrix          = m_config.featureMask & PROJECTION_VIEW_MODEL_MATRIX;
+        uint8_t featureMask        = m_config.featureMask;
+        bool    blinPhongFlag      = m_config.featureMask & LIGHT_BLIN_PHONG;
+        bool    skyboxFlag         = m_config.featureMask & SKYBOX;
+        bool    ambiantOnlyFlag    = m_config.featureMask & AMBIANTE_COLOR_ONLY;
+        bool    scaleTimeAccFlag   = m_config.featureMask & SCALE_TIME_ACC;
+        bool    unscaleTimeAccFlag = m_config.featureMask & UNSCALED_TIME_ACC;
+        bool    projectionMatrix   = m_config.featureMask & PROJECTION_MATRIX;
+        bool    viewMatrix         = m_config.featureMask & VIEW_MATRIX;
+        bool    PVMMatrix          = m_config.featureMask & PROJECTION_VIEW_MODEL_MATRIX;
 
         ImGui::PushEnabled(!ambiantOnlyFlag);
         if (ImGui::Checkbox("LIGHT BLIN PHONG", &blinPhongFlag))

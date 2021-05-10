@@ -46,14 +46,16 @@ inline constexpr void TimeSystem::setTimeScale(double newtimeScale) noexcept
     m_fixedDeltaTime = m_fixedUnscaledDeltaTime * m_timeScale;
 }
 
-void TimeSystem::addScaledTimer(double delay, std::function<void()> functionToExecute, bool isLooping) noexcept
+void TimeSystem::emplaceScaledTimer(std::function<void()> functionToExecute, double delay,
+                                    bool isLooping) noexcept
 {
-    m_scaledTimerQueue.emplace(TimerTask{delay, delay + m_scaledTimeAcc, functionToExecute, isLooping});
+    m_scaledTimerQueue.emplace(functionToExecute, delay, delay + m_scaledTimeAcc, isLooping);
 }
 
-void TimeSystem::addUnscaledTimer(double delay, std::function<void()> functionToExecute, bool isLooping) noexcept
+void TimeSystem::emplaceUnscaledTimer(std::function<void()> functionToExecute, double delay,
+                                      bool isLooping) noexcept
 {
-    m_unscaledTimerQueue.emplace(TimerTask{delay, delay + m_unscaledTimeAcc, functionToExecute, isLooping});
+    m_unscaledTimerQueue.emplace(functionToExecute, delay, delay + m_unscaledTimeAcc, isLooping);
 }
 
 inline void TimeSystem::clearScaledTimer() noexcept
