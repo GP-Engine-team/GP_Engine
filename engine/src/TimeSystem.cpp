@@ -54,7 +54,7 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
 
         if (timerTask.isLooping)
         {
-            addUnscaledTimer(timerTask.localTimer, timerTask.task, timerTask.isLooping);
+            emplaceUnscaledTimer(timerTask.task, timerTask.localTimer, timerTask.isLooping);
         }
         m_unscaledTimerQueue.pop();
     }
@@ -66,7 +66,7 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
 
         if (timerTask.isLooping)
         {
-            addScaledTimer(timerTask.localTimer, timerTask.task, timerTask.isLooping);
+            emplaceScaledTimer(timerTask.task, timerTask.localTimer, timerTask.isLooping);
         }
         m_scaledTimerQueue.pop();
     }

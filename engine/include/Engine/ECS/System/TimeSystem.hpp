@@ -14,10 +14,14 @@ namespace GPE
 {
 struct TimerTask
 {
+    std::function<void()> task        = nullptr;
     double                localTimer  = 0.; // if current time egal 1s and local timer egal 0.5 global time egal 1.5
     double                globalTimer = 0.;
-    std::function<void()> task        = nullptr;
     bool                  isLooping   = false;
+
+    TimerTask(const std::function<void()>& task = nullptr, double localTimer = .0, double globalTimer = .0, bool isLooping = false)
+        : task{task}, localTimer{localTimer}, globalTimer{globalTimer}, isLooping{isLooping}
+    {}
 
     bool operator>(const TimerTask& other) const noexcept
     {
@@ -88,7 +92,8 @@ public:
      * @param isLooping
      * @return
      */
-    inline void addScaledTimer(double delay, std::function<void()> functionToExecute, bool isLooping = false) noexcept;
+    inline void emplaceScaledTimer(std::function<void()> functionToExecute, double delay,
+                                   bool isLooping = false) noexcept;
 
     /**
      * @brief Add Task into unscaled timer container. This container allow you to create event after a delay and allow
@@ -98,8 +103,8 @@ public:
      * @param isLooping
      * @return
      */
-    inline void addUnscaledTimer(double delay, std::function<void()> functionToExecute,
-                                 bool isLooping = false) noexcept;
+    inline void emplaceUnscaledTimer(std::function<void()> functionToExecute, double delay,
+                                     bool isLooping = false) noexcept;
 
     /**
      * @brief Clear all task of the scaled timer container

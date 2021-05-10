@@ -57,8 +57,8 @@ void FreeFly::rotate(const GPM::Vector2& deltaDisplacement)
 
 FreeFly& FreeFly::operator=(FreeFly&& other) noexcept
 {
-    m_speed         = std::move(other.m_speed);
-    m_rotationSpeed = std::move(other.m_rotationSpeed);
+    m_speed         = other.m_speed;
+    m_rotationSpeed = other.m_rotationSpeed;
 
     return static_cast<FreeFly&>(BehaviourComponent::operator=(std::move(other)));
 }

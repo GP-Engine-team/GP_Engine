@@ -14,6 +14,7 @@
 
 namespace GPE
 {
+class GameObject;
 class IInspectable;
 }
 
@@ -26,7 +27,7 @@ struct FileInfo
     std::filesystem::path path;
     std::filesystem::path filename;
     std::filesystem::path extention;
-    size_t                size = 0;
+    size_t                size = 0u;
 };
 
 struct DirectoryInfo

@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\FireArme\Bullet.hpp" />
-    <ClInclude Include="include\FireArme\FireArme.hpp" />
-    <ClInclude Include="include\FireArme\PPSH41.hpp" />
-    <ClInclude Include="include\FireArme\GunMagazine.hpp" />
+    <ClInclude Include="include\Firearm\Bullet.hpp" />
+    <ClInclude Include="include\Firearm\Firearm.hpp" />
+    <ClInclude Include="include\Firearm\GunMagazine.hpp" />
+    <ClInclude Include="include\Firearm\PPSH41.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\GameApiMacros.hpp" />
     <ClInclude Include="include\myFpsScript.hpp" />
@@ -34,7 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Bullet.cpp" />
-    <ClCompile Include="src\FireArme.cpp" />
+    <ClCompile Include="src\Firearm.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\GunMagazine.cpp" />
     <ClCompile Include="src\myFpsScript.cpp" />

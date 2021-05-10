@@ -11,59 +11,85 @@
 
 using namespace GPE;
 
-GameStartup::GameStartup()
+
+static Engine* initEngineProxy()
 {
-    setGameEngineInstance(*GPE::Engine::getInstance());
-    setLogInstance(*GPE::Log::getInstance());
+    Engine* const engine = Engine::getInstance();
 
-    // setImguiCurrentContext(ImGui::GetCurrentContext());
+    setGameEngineInstance(*engine);
+    setLogInstance(*Log::getInstance());
 
-    for (auto&& str : GPE::Log::getInstance()->getLogs())
+    return engine;
+}
+
+
+GameStartup::GameStartup()
+    : m_engine{initEngineProxy()},
+      m_game  {createGameInstance()},
+
+      // Make all systems update their components
+      m_update{[&](double unscaledDeltaTime, double deltaTime)
+      {
+          m_engine->behaviourSystem.update(deltaTime);
+          m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+          m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+          m_engine->inputManager.processInput();
+      
+          m_game->update(unscaledDeltaTime, deltaTime);
+      }},
+
+      // Update physics
+      m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+      {
+         m_engine->physXSystem.advance(fixedDeltaTime);
+         m_engine->behaviourSystem.fixedUpdate(fixedDeltaTime);
+
+         m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+      }},
+
+      // Rendering
+      m_render{[&]()
+      {
+          int h, w;
+          m_engine->window.getSize(w, h);
+          m_game->setViewport(.0f, .0f, float(w), float(h));
+      
+          glBindFramebuffer(GL_FRAMEBUFFER, 0);
+          glViewport(0, 0, w, h);
+          m_game->render();
+      
+          m_engine->renderer.swapBuffer();
+      }}
+{
+    // ============= Logs =============
+    for (auto&& str : Log::getInstance()->getLogs())
     {
-        std::cout << str;
+        std::cerr << str;
     }
 
-    Log::getInstance()->logCallBack = [&](const char* msg) {
+    Log::getInstance()->logCallBack = [&](const char* msg)
+    {
         // Log in console
-        std::cout << msg;
+        std::cerr << msg;
     };
 
-    m_game = createGameInstance();
 
-    GPE_ASSERT(m_game != nullptr, "m_game should be valid since we're running the game.");
-    gameFunctionsPtr.update = [&](double unscaledDeltaTime, double deltaTime) {
-        GPE::Engine::getInstance()->inputManager.processInput();
-        Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
-
-        m_game->update(unscaledDeltaTime, deltaTime);
-    };
-    gameFunctionsPtr.fixedUpdate =
-        std::bind(&AbstractGame::fixedUpdate, m_game, std::placeholders::_1, std::placeholders::_2);
-    gameFunctionsPtr.render = [&]() {
-        int h, w;
-        GPE::Engine::getInstance()->window.getSize(w, h);
-        m_game->setViewport(.0f, .0f, float(w), float(h));
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, w, h);
-        m_game->render();
-
-        GPE::Engine::getInstance()->renderer.swapBuffer();
-    };
-
-    GPE::Engine::getInstance()->inputManager.setupCallbacks(GPE::Engine::getInstance()->window.getGLFWWindow());
+    // ============= Inputs =============
+    m_engine->inputManager.setupCallbacks(m_engine->window.getGLFWWindow());
+    m_engine->inputManager.setInputMode("Game");
 }
 
 void GameStartup::update()
 {
-    GPE::Engine::getInstance()->timeSystem.update(gameFunctionsPtr.fixedUpdate, gameFunctionsPtr.update,
-                                                  gameFunctionsPtr.render);
+    m_engine->timeSystem.update(m_fixedUpdate, m_update, m_render);
+
+    isRunning = !glfwWindowShouldClose(m_engine->window.getGLFWWindow());
 }
 
 GameStartup::~GameStartup()
 {
-    GPE::Engine::getInstance()->timeSystem.clearScaledTimer();
-    GPE::Engine::getInstance()->timeSystem.clearUnscaledTimer();
+    m_engine->timeSystem.clearScaledTimer();
+    m_engine->timeSystem.clearUnscaledTimer();
 
     destroyGameInstance(m_game);
 }

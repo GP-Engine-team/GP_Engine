@@ -16,21 +16,13 @@ class Editor;
 
 class GameControlBar
 {
-public:
-    // Helper used for clarity and readability
-    enum EButton
-    {
-        STOP  = 0u,
-        PLAY  = (1u << 0),
-        PAUSE = (1u << 1)
-    };
-
 private:
     // Data members
     GPE::Texture playButtonTex;
     GPE::Texture pauseButtonTex;
     GPE::Texture stopButtonTex;
-    unsigned int buttonColors[2];
+
+    unsigned int pickColor(unsigned char flag) const;
 
 public:
     unsigned char buttonMask;

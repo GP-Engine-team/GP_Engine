@@ -1,4 +1,4 @@
-﻿#include "Engine/Intermediate/Viewers/SceneViewer.hpp"
+﻿#include <Engine/Intermediate/Viewers/SceneViewer.hpp>
 
 // Engine
 #include <Engine/ECS/Component/Camera.hpp>
@@ -103,29 +103,35 @@ void SceneViewer::initializePickingFBO()
 
 void SceneViewer::initializeInputs()
 {
-    inputs.bindAction("up", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "up");
-    inputs.bindAction("down", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "down");
-    inputs.bindAction("right", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "right");
-    inputs.bindAction("left", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "left");
-    inputs.bindAction("forward", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "forward");
-    inputs.bindAction("backward", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "backward");
-    inputs.bindAction("sprint", EKeyMode::KEY_PRESSED, "Level editor", &freeFly, "sprint");
-    inputs.bindAction("walk", EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
+    inputs.bindAction("up",       EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "up");
+    inputs.bindAction("down",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "down");
+    inputs.bindAction("right",    EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "right");
+    inputs.bindAction("left",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "left");
+    inputs.bindAction("forward",  EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "forward");
+    inputs.bindAction("backward", EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "backward");
+    inputs.bindAction("sprint",   EKeyMode::KEY_PRESSED,  "Level editor", &freeFly, "sprint");
+    inputs.bindAction("walk",     EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
 }
 
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : cameraOwner{new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
-      freeFly{cameraOwner->addComponent<FreeFly>()}, camera{cameraOwner->addComponent<Camera>(
-                                                         Camera::PerspectiveCreateArg{"Editor camera",
-                                                                                      width_ / (float)height_, .001f,
-                                                                                      1000.f, 90.f})},
-      inputs{cameraOwner->addComponent<GPE::InputComponent>()}, pScene{&viewed},
-      it{viewed.getWorld().children.emplace(viewed.getWorld().children.end(), cameraOwner)}, textureID{0u},
-      depthStencilID{0u}, framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u}, FBOIDframebufferID{0u},
-      FBOIDwidth{static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight{static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_},
-      m_capturingInputs{false}
+    : cameraOwner       {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
+      freeFly           {cameraOwner->addComponent<FreeFly>()},
+      camera            {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{"Editor camera", width_ / (float)height_, .001f, 1000.f, 90.f})},
+      inputs            {cameraOwner->addComponent<GPE::InputComponent>()},
+      pScene            {&viewed},
+      it                {viewed.getWorld().children.emplace(viewed.getWorld().children.end(), cameraOwner)},
+      textureID         {0u},
+      depthStencilID    {0u},
+      framebufferID     {0u},
+      FBOIDtextureID    {0u},
+      FBOIDdepthID      {0u},
+      FBOIDframebufferID{0u},
+      FBOIDwidth        {int(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight       {int(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
+      width             {width_},
+      height            {height_},
+      m_capturingInputs {false}
 {
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
@@ -134,7 +140,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     initializePickingFBO();
     initializeInputs();
 
-    freeFly.setActive(m_capturingInputs);
+    freeFly.setActive(false);
     inputs.setActive(m_capturingInputs);
 }
 
@@ -154,7 +160,7 @@ SceneViewer::~SceneViewer()
 unsigned int SceneViewer::getHoveredGameObjectID() const
 {
     // Set active view
-    pScene->sceneRenderer.setMainCamera(camera);
+    pScene->sceneRenderer.setActiveCamera(&camera);
 
     { // Select the shader
         Shader& shaderGameObjectIdentifier =
@@ -240,7 +246,7 @@ void SceneViewer::bindScene(Scene& scene)
 
     // Update the Camera component and cameraOwner scene and parent
     camera.setActive(true);
-    scene.sceneRenderer.setMainCamera(camera);
+    scene.sceneRenderer.setActiveCamera(&camera);
     pScene = &scene;
 }
 
@@ -248,10 +254,11 @@ void SceneViewer::unbindScene()
 {
     camera.setActive(false);
     cameraOwner->detach(it);
+
     pScene = nullptr;
 }
 
-void SceneViewer::update(double dt)
+void SceneViewer::update()
 {
     // When the game is not launched, behaviours are not updated
     // Update FreeFly manually
@@ -260,12 +267,15 @@ void SceneViewer::update(double dt)
         freeFly.update(GPE::Engine::getInstance()->timeSystem.getUnscaledDeltaTime());
     }
 
+    // TODO: move to class Camera, or to a new class
     if (isTransitionActive)
     {
-        if ((lerpT += GPE::Engine::getInstance()->timeSystem.getUnscaledDeltaTime()) / transitionDuration >= 1)
+        lerpT += float(GPE::Engine::getInstance()->timeSystem.getUnscaledDeltaTime());
+
+        if (lerpT / transitionDuration >= 1.f)
         {
             isTransitionActive = false;
-            lerpT              = transitionDuration;
+            lerpT              = 1.f;
         }
 
         cameraOwner->getTransform().setTranslation(startPos.lerp(finalPos, lerpT));
@@ -275,7 +285,7 @@ void SceneViewer::update(double dt)
 
 void SceneViewer::render() const
 {
-    pScene->sceneRenderer.setMainCamera(camera);
+    pScene->sceneRenderer.setActiveCamera(&camera);
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
@@ -289,21 +299,22 @@ void SceneViewer::captureInputs(bool shouldCapture)
 
     m_capturingInputs = shouldCapture;
 
-    freeFly.setActive(shouldCapture);
     inputs.setActive(shouldCapture);
 }
 
-void SceneViewer::lookAtObject(GameObject& GOToLook)
+// TODO: move to class Camera, or to a new class
+void SceneViewer::lookAtObject(const GameObject& GOToLook)
 {
     isTransitionActive = true;
     startPos           = cameraOwner->getTransform().getGlobalPosition();
-    finalPos           = GOToLook.getTransform().getGlobalPosition() +
-               (startPos - GOToLook.getTransform().getGlobalPosition()).normalized() * transitionRadius;
+    finalPos           = GOToLook.getTransform().getGlobalPosition();
+    finalPos           += (startPos - finalPos).normalized() * transitionRadius;
+
+    const GPM::Transform toGO{GPM::Transform::lookAt(startPos, finalPos, GPM::Vec3::up())};
 
     startRotation = cameraOwner->getTransform().getGlobalRotation();
-    finalRotation = GPM::toQuaternion(
-        GPM::Transform::lookAt(startPos, GOToLook.getTransform().getGlobalPosition(), GPM::Vec3::up()));
-    lerpT = 0.f;
+    finalRotation = GPM::toQuaternion(toGO.rotation());
+    lerpT         = 0.f;
 }
 
 } // namespace GPE
