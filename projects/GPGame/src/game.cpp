@@ -9,8 +9,8 @@
 #include <Engine/ECS/Component/Light/PointLight.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
-#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
@@ -100,7 +100,7 @@ void loadTreeResource()
 
     SubModel subModel;
     subModel.pShader   = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
-                                         "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
+                                       "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
     subModel.pMaterial = loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial");
     subModel.pMesh     = loadMeshFile("./resources/meshs/g1.GPMesh");
 
@@ -182,7 +182,6 @@ void Game::setViewport(float x, float y, float w, float h)
 // TODO: Put in-game UI in a module
 Game::~Game()
 {
-
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -223,12 +222,12 @@ Game::Game()
     // world is already initialized
 
     // Place content in the scene
-    GPE::GameObject& world = Engine::getInstance()->sceneManager.loadScene("main").getWorld();
-    GameObject *ground, *player, *testPhysX;
+    GPE::GameObject& world = Engine::getInstance()->sceneManager.setCurrentScene("main").getWorld();
+    GameObject *     ground, *player, *testPhysX;
     {
-        const GameObject::CreateArg playerArg   {"Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}}};
+        const GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}}};
         const GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}};
-        const GameObject::CreateArg groundArg   {"GroundArg", TransformComponent::CreateArg{{0.f}}};
+        const GameObject::CreateArg groundArg{"GroundArg", TransformComponent::CreateArg{{0.f}}};
 
         // A ground, player, PhysX test
         ground    = &world.addChild(groundArg);
@@ -248,7 +247,7 @@ Game::Game()
 
     { // Camera
         Camera::PerspectiveCreateArg camCreateArg{"Player camera"};
-        Camera& mainCam = player->addComponent<Camera>(camCreateArg);
+        Camera&                      mainCam = player->addComponent<Camera>(camCreateArg);
         player->pOwnerScene->sceneRenderer.setMainCamera(&mainCam);
     }
 
@@ -304,8 +303,7 @@ Game::Game()
 
     // =========== Timer ===========
     Log&                        logger = *Log::getInstance();
-    const std::function<void()> timer  = [&]()
-    {
+    const std::function<void()> timer  = [&]() {
         logger.log(stringFormat("FPS (fixedUpdate): %f\n", fixedUpdateFrameCount / FPLogDelay));
         logger.log(stringFormat("FPS (unFixedUpdate): %f\n\n", unFixedUpdateFrameCount / FPLogDelay));
         fixedUpdateFrameCount   = 0;

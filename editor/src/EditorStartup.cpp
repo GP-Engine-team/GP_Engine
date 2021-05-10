@@ -58,7 +58,7 @@ EditorStartup::EditorStartup()
           m_engine->renderer.swapBuffer();
       }},
       m_editor{initDearImGuiProxy(GPE::Engine::getInstance()->window.getGLFWWindow()),
-               GPE::Engine::getInstance()->sceneManager.loadScene("Default scene")},
+               GPE::Engine::getInstance()->sceneManager.setCurrentScene("Default scene")},
       m_reloadableCpp{gameDllPath}, m_game{nullptr}, m_engine{GPE::Engine::getInstance()}
 {
     m_editor.m_reloadableCpp = &m_reloadableCpp;
@@ -111,6 +111,7 @@ void EditorStartup::openGame()
         destroyer(m_game);
     }
 
+    m_editor.m_sceneEditor.view.pScene = nullptr;
     auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
     m_game = a();
 
@@ -144,7 +145,7 @@ void EditorStartup::closeGame()
     }
 
     // TODO: are the scene previously loaded removed by m_game's destructor?
-    m_editor.setSceneInEdition(m_engine->sceneManager.loadScene("Default scene"));
+    m_editor.setSceneInEdition(m_engine->sceneManager.setCurrentScene("Default scene"));
 
     // There is no more active game, replace m_engine->exit to something not dependant on m_game
     m_engine->exit = [&]() { m_engine->window.close(); };

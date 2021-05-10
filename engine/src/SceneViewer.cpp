@@ -1,6 +1,6 @@
 ﻿#include <Engine/Intermediate/Viewers/SceneViewer.hpp>
-
 // Engine
+
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/ECS/Component/InputComponent.hpp>
 #include <Engine/ECS/System/InputManagerGLFW.hpp>
@@ -103,35 +103,27 @@ void SceneViewer::initializePickingFBO()
 
 void SceneViewer::initializeInputs()
 {
-    inputs.bindAction("up",       EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "up");
-    inputs.bindAction("down",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "down");
-    inputs.bindAction("right",    EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "right");
-    inputs.bindAction("left",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "left");
-    inputs.bindAction("forward",  EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "forward");
-    inputs.bindAction("backward", EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "backward");
-    inputs.bindAction("sprint",   EKeyMode::KEY_PRESSED,  "Level editor", &freeFly, "sprint");
-    inputs.bindAction("walk",     EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
+    inputs.bindAction("up", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "up");
+    inputs.bindAction("down", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "down");
+    inputs.bindAction("right", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "right");
+    inputs.bindAction("left", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "left");
+    inputs.bindAction("forward", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "forward");
+    inputs.bindAction("backward", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "backward");
+    inputs.bindAction("sprint", EKeyMode::KEY_PRESSED, "Level editor", &freeFly, "sprint");
+    inputs.bindAction("walk", EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
 }
 
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : cameraOwner       {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
-      freeFly           {cameraOwner->addComponent<FreeFly>()},
-      camera            {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{"Editor camera", width_ / (float)height_, .001f, 1000.f, 90.f})},
-      inputs            {cameraOwner->addComponent<GPE::InputComponent>()},
-      pScene            {&viewed},
-      it                {viewed.getWorld().children.emplace(viewed.getWorld().children.end(), cameraOwner)},
-      textureID         {0u},
-      depthStencilID    {0u},
-      framebufferID     {0u},
-      FBOIDtextureID    {0u},
-      FBOIDdepthID      {0u},
-      FBOIDframebufferID{0u},
-      FBOIDwidth        {int(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight       {int(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
-      width             {width_},
-      height            {height_},
-      m_capturingInputs {false}
+    : cameraOwner{new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
+      freeFly{cameraOwner->addComponent<FreeFly>()},
+      camera{cameraOwner->addComponent<Camera>(
+          Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
+      inputs{cameraOwner->addComponent<GPE::InputComponent>()}, pScene{&viewed}, it{}, textureID{0u},
+      depthStencilID{0u}, framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u}, FBOIDframebufferID{0u},
+      FBOIDwidth{static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight{static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_},
+      m_capturingInputs{false}
 {
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
@@ -140,7 +132,15 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     initializePickingFBO();
     initializeInputs();
 
-    freeFly.setActive(false);
+    { // Move cameraOwner to the other scene
+        cameraOwner->setParent(&pScene->getWorld());
+        it = pScene->getWorld().children.end();
+    }
+    // Update the Camera component and cameraOwner scene and parent
+    camera.setActive(true);
+    pScene->sceneRenderer.setMainCamera(&camera);
+
+    freeFly.setActive(m_capturingInputs);
     inputs.setActive(m_capturingInputs);
 }
 
@@ -308,7 +308,7 @@ void SceneViewer::lookAtObject(const GameObject& GOToLook)
     isTransitionActive = true;
     startPos           = cameraOwner->getTransform().getGlobalPosition();
     finalPos           = GOToLook.getTransform().getGlobalPosition();
-    finalPos           += (startPos - finalPos).normalized() * transitionRadius;
+    finalPos += (startPos - finalPos).normalized() * transitionRadius;
 
     const GPM::Transform toGO{GPM::Transform::lookAt(startPos, finalPos, GPM::Vec3::up())};
 

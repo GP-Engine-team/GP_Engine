@@ -343,9 +343,8 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                 {
                     std::string sceneName = it->filename.stem().string();
-                    Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(sceneName);
+                    Scene&      scene     = Engine::getInstance()->sceneManager.setCurrentScene(sceneName);
                     m_editorContext->loadScene(&scene, it->path.string().c_str());
-                    Engine::getInstance()->sceneManager.loadScene(sceneName);
                     break;
                 }
 
@@ -466,7 +465,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
                 sceneDir /= sceneName;
 
-                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(sceneName.stem().string().c_str());
+                Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName.stem().string().c_str());
                 m_editorContext->saveScene(&scene, sceneDir.string().c_str());
             }
 

@@ -73,15 +73,14 @@ void Editor::renderMenuBar()
 
             if (ImGui::MenuItem("New"))
             {
-                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(fileName.c_str());
+                Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(fileName.c_str());
                 saveScene(&scene, path.c_str());
             }
 
             if (ImGui::MenuItem("Open"))
             {
-                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(fileName);
+                Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(fileName);
                 loadScene(&scene, path.c_str());
-                Engine::getInstance()->sceneManager.loadScene(fileName);
             }
 
             if (ImGui::MenuItem("Save"))
