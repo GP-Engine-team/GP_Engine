@@ -159,7 +159,8 @@ void EditorStartup::closeGame()
 
 void EditorStartup::playGame()
 {
-    m_editor.saveCurrentScene();
+    if (m_game->state == EGameState::STOPPED)
+        m_editor.saveCurrentScene();
 
     // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
