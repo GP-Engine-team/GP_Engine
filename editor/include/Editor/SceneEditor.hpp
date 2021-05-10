@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Engine/Intermediate/Viewers/SceneViewer.hpp"
+#include <Engine/Intermediate/Viewers/SceneViewer.hpp>
 
 namespace GPE
 {
@@ -9,10 +9,10 @@ class IInspectable;
 
 namespace Editor
 {
+class Editor;
 
 class SceneEditor
 {
-
 public:
     GPE::SceneViewer view;
 
@@ -23,7 +23,6 @@ private:
 public:
     SceneEditor(GPE::Scene& scene);
 
-    void update(double dt);
     void render(GPE::IInspectable*& inspectedObject);
 };
 

@@ -46,7 +46,10 @@ Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{
 Model::~Model()
 {
     for (SubModel& subMesh : m_subModels)
-        getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+    {
+        if (subMesh.isValide())
+            getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+    }
 }
 
 Model::Model(GameObject& owner) : Model(owner, CreateArg{})
@@ -76,7 +79,7 @@ Model& Model::operator=(Model&& other) noexcept
     return static_cast<Model&>(Component::operator=(std::move(other)));
 }
 
-void Model::awake()
+void Model::onPostLoad()
 {
     setActive(false);
     setActive(true);
@@ -131,7 +134,7 @@ void renderResourceExplorer(const char* name, T*& inRes)
 }
 
 template <>
-void GPE::save(XmlSaver & context, const SubModel& inspected, const XmlSaver::SaveInfo& info)
+void GPE::save(XmlSaver& context, const SubModel& inspected, const XmlSaver::SaveInfo& info)
 {
     context.push(info);
 
@@ -167,7 +170,7 @@ void GPE::save(XmlSaver & context, const SubModel& inspected, const XmlSaver::Sa
 }
 
 template <>
-void GPE::load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadInfo& info)
+void GPE::load(XmlLoader& context, SubModel& inspected, const XmlLoader::LoadInfo& info)
 {
     if (context.goToSubChild(info))
     {
@@ -200,8 +203,7 @@ void GPE::load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadI
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspected)
 {
-    const bool isPreviousElementVoid =
-        !((size_t)inspected.pMesh & (size_t)inspected.pShader & (size_t)inspected.pMaterial);
+    const bool isPreviousElementVoid = !inspected.isValide();
 
     renderResourceExplorer<Mesh>("Mesh", inspected.pMesh);
     // Drop
@@ -279,11 +281,8 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
 
-    const bool isCurrentlementVoid =
-        !((size_t)inspected.pMesh & (size_t)inspected.pShader & (size_t)inspected.pMaterial);
-
     // This operation check if element must be added or remove from the the scene render system
-    if (isPreviousElementVoid != isCurrentlementVoid)
+    if (isPreviousElementVoid != !inspected.isValide())
     {
         if (isPreviousElementVoid)
         {
@@ -373,6 +372,15 @@ void Model::inspect(InspectContext& context)
         }
         ImGui::TreePop();
     }
+}
+
+void Model::addSubModel(const SubModel::CreateArg& arg)
+{
+    GPE_ASSERT(!((size_t)arg.pMesh & (size_t)arg.pShader & (size_t)arg.pMaterial),
+               "Invalid arguments to create submodel")
+
+    SubModel& newSsub = m_subModels.emplace_back(*this, arg);
+    getOwner().pOwnerScene->sceneRenderer.addSubModel(newSsub);
 }
 
 void Model::setActive(bool newState) noexcept

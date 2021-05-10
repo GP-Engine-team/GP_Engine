@@ -1,25 +1,30 @@
-﻿#include "Editor/SceneGraph.hpp"
+﻿#include <Editor/SceneGraph.hpp>
 
 #include <filesystem>
 
-#include "Engine/Core/Tools/Hash.hpp"
+#include <Engine/Core/Tools/Hash.hpp>
+#include <Editor/Editor.hpp>
+#include <Engine/Engine.hpp>
 
 // Components
 // TODO: Generat this automatically
-#include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/ECS/Component/Model.hpp"
+#include <Engine/ECS/Component/AudioComponent.hpp>
+#include <Engine/ECS/Component/Camera.hpp>
+#include <Engine/ECS/Component/InputComponent.hpp>
+#include <Engine/ECS/Component/Light/DirectionalLight.hpp>
+#include <Engine/ECS/Component/Light/PointLight.hpp>
+#include <Engine/ECS/Component/Light/SpotLight.hpp>
+#include <Engine/ECS/Component/Model.hpp>
+#include <Engine/ECS/Component/ParticleComponent.hpp>
 
-#include "Engine/ECS/Component/AudioComponent.hpp"
-#include "Engine/ECS/Component/InputComponent.hpp"
-#include "Engine/ECS/Component/ParticleComponent.hpp"
+#include <Engine/Resources/Importer/Importer.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
+#include <Engine/Serialization/IInspectable.hpp>
 
-#include "Engine/ECS/Component/Light/DirectionalLight.hpp"
-#include "Engine/ECS/Component/Light/PointLight.hpp"
-#include "Engine/ECS/Component/Light/SpotLight.hpp"
+#include <Editor/ExternalDeclarations.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
 
-#include "Engine/Serialization/IInspectable.hpp"
-
-#include "Engine/Resources/Scene.hpp"
+#include <Engine/Resources/Scene.hpp>
 #include <imgui/imgui.h>
 
 using namespace Editor;
@@ -42,6 +47,10 @@ void DeferedSetParent::tryExecute()
     m_newParentGO = nullptr;
 }
 
+SceneGraph::SceneGraph(Editor& context) : m_pEditorContext{&context}
+{
+}
+
 void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject, int idElem)
 {
     // Drag
@@ -53,7 +62,7 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
         ImGui::EndDragDropSource();
     }
 
-    // Drop
+    // Drop gameObject to set as child
     if (ImGui::BeginDragDropTarget())
     {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
@@ -64,40 +73,33 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
         ImGui::EndDragDropTarget();
     }
 
-    // Drop
+    // Drop prefab to instanciate and set as child
     if (ImGui::BeginDragDropTarget())
     {
-        const ImGuiPayload* payload = ImGui::GetDragDropPayload();
-
-        if (payload->IsDataType("RESOURCE_PATH"))
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_PREFAB_EXTENSION))
         {
             IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
             std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
-            size_t hasedExtention = hash(path.extension().string().c_str());
-            if (hasedExtention == hash(".obj"))
+            Scene empty;
+            auto  loadFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), loadSceneFromPath);
+            loadFunc(&empty, path.string().c_str());
+            if (!empty.getWorld().children.empty())
             {
-                // Can drop
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("RESOURCE_PATH"))
-                {
-                    IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-                    std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-                    gameObject.pOwnerScene->addLoadedResourcePath(path.string().c_str());
-                    gameObject.addComponent<Model>();
-
-                    std::cout << gameObject.getName() << "  " << path.string() << std::endl;
-                }
+                GameObject* const go = empty.getWorld().children.front();
+                go->setParent(gameObject);
+                go->getTransform().setDirty();
             }
         }
+        ImGui::EndDragDropTarget();
     }
 
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+    if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
     {
         selectedGameObject = &gameObject;
     }
 
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
     {
         ImGui::OpenPopup((std::string("SceneGraphContext") + std::to_string(idElem)).c_str());
     }
@@ -144,6 +146,24 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             ImGui::EndMenu();
         }
 
+        if (ImGui::MenuItem("Save as prefab", NULL, false))
+        {
+            const std::filesystem::path path = openFolderExplorerAndGetRelativePath(L"Select folder") /
+                                               (gameObject.getName() + ENGINE_PREFAB_EXTENSION);
+
+            Scene             tempScene;
+            GameObject* const pPreviousParent = gameObject.getParent();
+
+            tempScene.getWorld().children.emplace_back(&gameObject);
+            gameObject.forceSetParent(tempScene.getWorld());
+
+            auto saveFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), saveSceneToPath);
+            saveFunc(&tempScene, path.string().c_str(), GPE::SavedScene::EType::XML);
+
+            gameObject.forceSetParent(*pPreviousParent);
+            tempScene.getWorld().children.clear();
+        }
+
         if (ImGui::MenuItem("Remove", NULL, false))
         {
             selectedGameObject = nullptr;
@@ -183,6 +203,9 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInsp
             ImGui::TreePop();
         }
     }
+    
+    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && selectedGameObject)
+        m_pEditorContext->m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(selectedGameObject));
 }
 
 void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject)

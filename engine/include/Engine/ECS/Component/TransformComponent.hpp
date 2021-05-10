@@ -51,7 +51,7 @@ namespace GPE RFKNamespace()
         TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
         TransformComponent& operator                                            =(TransformComponent&& other);
 
-        virtual void awake() override;
+        virtual void onPostLoad() override;
 
         [[nodiscard]] constexpr inline bool isDirty() const;
         constexpr void                      setDirty();

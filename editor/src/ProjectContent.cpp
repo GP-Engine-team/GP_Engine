@@ -1,25 +1,57 @@
-﻿#include "Editor/ProjectContent.hpp"
+﻿#include <Editor/ProjectContent.hpp>
 
-#include "Engine/Serialization/IInspectable.hpp"
-#include "Engine/Serialization/MaterialInspectorPanel.hpp"
-#include "Engine/Serialization/MeshInspectorPanel.hpp"
-#include "Engine/Serialization/ShaderInspectorPanel.hpp"
+#include <Editor/Editor.hpp>
 
-#include "Engine/Serialization/FileExplorer.hpp"
-#include "Engine/Serialization/TextureImporterSetting.hpp"
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+#include <Engine/Core/Tools/Hash.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Serialization/IInspectable.hpp>
+#include <Engine/Serialization/MaterialInspectorPanel.hpp>
+#include <Engine/Serialization/MeshInspectorPanel.hpp>
+#include <Engine/Serialization/ShaderInspectorPanel.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
+#include <Engine/Serialization/TextureImporterSetting.hpp>
+
+// Don't move up
+#include <Editor/ExternalDeclarations.hpp>
 
 #include <imgui/imgui.h>
 #include <string>
 
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Tools/Hash.hpp"
-#include "Engine/Engine.hpp"
-#include "Editor/Editor.hpp"
-
 using namespace Editor;
 using namespace GPE;
 
-ProjectContent::ProjectContent()
+ProjectContent::ProjectContent(Editor& editorContext)
+    : m_folderIcone  {{"..\\..\\editor\\resources\\icone\\folder.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_textureIcone {{"..\\..\\editor\\resources\\icone\\texture.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_materialIcone{{"..\\..\\editor\\resources\\icone\\material.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_sceneIcone   {{"..\\..\\editor\\resources\\icone\\scene.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_meshIcone    {{"..\\..\\editor\\resources\\icone\\mesh.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_shaderIcone  {{"..\\..\\editor\\resources\\icone\\shader.jpg", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_soundIcone   {{"..\\..\\editor\\resources\\icone\\sound.jpg", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_prefabIcone  {{"..\\..\\editor\\resources\\icone\\prefab.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_unknowIcone  {{"..\\..\\editor\\resources\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_editorContext{&editorContext}
 {
     resourcesTree.name = RESOURCES_DIR;
     resourcesTree.path = std::filesystem::current_path() / RESOURCES_DIR;
@@ -105,7 +137,8 @@ void ProjectContent::refreshResourcesList()
     explore(resourcesTree);
 }
 
-static void renderMaterial(ImVec2& size)
+static bool renderIcone(const ImVec2& size, const ImVec4& tint_col = ImVec4(0.0f, 1.0f, 1.0f, 1.0f),
+                        const ImVec4& bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f))
 {
     ImGuiIO&    io        = ImGui::GetIO();
     ImTextureID my_tex_id = io.Fonts->TexID;
@@ -113,127 +146,10 @@ static void renderMaterial(ImVec2& size)
     float       my_tex_h  = (float)io.Fonts->TexHeight;
 
     // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(0.0f, 1.0f, 1.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
+    ImVec2 uv0 = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
+    ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
 
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderSceneFile(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderImage(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderModel(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderUnknowFormat(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(1.0f, 0.0f, 1.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderSound(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderShader(ImVec2& size)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 tint_col = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black background
-
-    ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
-static void renderfolder(ImVec2& size, DirectoryInfo** pSelectectDir, DirectoryInfo& currentDir)
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0      = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1      = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-    ImVec4 bg_col   = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);             // Black background
-    ImVec4 tint_col = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
-
-    if (ImGui::ImageButton(my_tex_id, size, uv0, uv1, 2, bg_col, tint_col))
-    {
-        *pSelectectDir = &currentDir;
-    }
+    return ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
 }
 
 void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject)
@@ -318,7 +234,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                          2 * ImGui::GetStyle().ItemSpacing.x;
             ImGui::SetCursorPosX(posX);
 
-            renderfolder(size, &pSelectedDirectory, *it);
+            if (ImGui::ImageButton((void*)(intptr_t)m_folderIcone.getID(), size))
+            {
+                pSelectedDirectory = &*it;
+            }
 
             if (ImGui::IsItemHovered())
             {
@@ -364,32 +283,36 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             switch (GPE::hash(it->extention.string().c_str())) // runtime
             {
             case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
-                renderModel(size);
+                ImGui::ImageButton((void*)(intptr_t)m_meshIcone.getID(), size);
                 break;
 
             case GPE::hash(ENGINE_MATERIAL_EXTENSION): // compile time
-                renderMaterial(size);
+                ImGui::ImageButton((void*)(intptr_t)m_materialIcone.getID(), size);
                 break;
 
             case GPE::hash(".wav"): // compile time
             case GPE::hash(".mp3"): // compile time
-                renderSound(size);
+                ImGui::ImageButton((void*)(intptr_t)m_soundIcone.getID(), size);
                 break;
 
             case GPE::hash(ENGINE_SHADER_EXTENSION): // compile time
-                renderShader(size);
+                ImGui::ImageButton((void*)(intptr_t)m_shaderIcone.getID(), size);
                 break;
 
             case GPE::hash(ENGINE_TEXTURE_EXTENSION): // compile time
-                renderImage(size);
+                ImGui::ImageButton((void*)(intptr_t)m_textureIcone.getID(), size);
                 break;
 
             case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
-                renderSceneFile(size);
+                ImGui::ImageButton((void*)(intptr_t)m_sceneIcone.getID(), size);
+                break;
+
+            case GPE::hash(ENGINE_PREFAB_EXTENSION): // compile time
+                ImGui::ImageButton((void*)(intptr_t)m_prefabIcone.getID(), size);
                 break;
 
             default:
-                renderUnknowFormat(size);
+                ImGui::ImageButton((void*)(intptr_t)m_unknowIcone.getID(), size);
                 break;
             }
 
@@ -421,7 +344,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 {
                     std::string sceneName = it->filename.stem().string();
                     Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(sceneName);
-                    editor->loadScene(&scene, it->path.string().c_str());
+                    m_editorContext->loadScene(&scene, it->path.string().c_str());
                     Engine::getInstance()->sceneManager.loadScene(sceneName);
                     break;
                 }
@@ -462,6 +385,9 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                     break;
 
+                case GPE::hash(ENGINE_PREFAB_EXTENSION): // compile time
+                    break;
+
                 default:
                     break;
                 }
@@ -473,7 +399,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
         float lastButtonX2 = ImGui::GetItemRectMax().x;
         float nextButtonX2 =
-            lastButtonX2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
+            lastButtonX2 + style.ItemSpacing.x + size.x * 2; // Expected position if next button was on same line
 
         if (++it != pCurrentDirectory->files.cend() && nextButtonX2 < windowVisibleX2)
         {
@@ -541,7 +467,25 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 sceneDir /= sceneName;
 
                 Scene& scene = Engine::getInstance()->sceneManager.addEmpty(sceneName.stem().string().c_str());
-                editor->saveScene(&scene, sceneDir.string().c_str());
+                m_editorContext->saveScene(&scene, sceneDir.string().c_str());
+            }
+
+            if (ImGui::MenuItem("Prefab"))
+            {
+                std::filesystem::path prefabDir  = pCurrentDirectory->path;
+                std::filesystem::path prefabName = "NewPrefab" ENGINE_PREFAB_EXTENSION;
+
+                int id = 0;
+                while (pCurrentDirectory->containFile(prefabName))
+                {
+                    prefabName = stringFormat("NewPrefab(%i)" ENGINE_PREFAB_EXTENSION, ++id);
+                }
+
+                prefabDir /= prefabName;
+
+                Scene prefab;
+                auto  saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
+                saveFunc(&prefab, prefabDir.string().c_str(), GPE::SavedScene::EType::XML);
             }
 
             ImGui::EndMenu();

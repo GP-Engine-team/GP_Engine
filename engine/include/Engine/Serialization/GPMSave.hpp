@@ -25,6 +25,9 @@ void save(XmlSaver& context, const GPM::SplitTransform& data, const rfk::Field& 
 template <>
 void save(XmlSaver& context, const GPM::Vector3& data, const XmlSaver::SaveInfo& info);
 
+template <>
+void save(XmlSaver& context, const GPM::Vector3& data, const rfk::Field& info);
+
 /**
  * @brief Specialization for Vec4 data. See the original function for more comments.
  */

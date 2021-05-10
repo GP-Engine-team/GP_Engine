@@ -230,7 +230,7 @@ void RenderSystem::tryToBindShader(Shader& shader)
     m_currentShaderID   = shader.getID();
     m_currentPShaderUse = &shader;
 
-    sendDataToInitShader(*m_mainCamera, shader);
+    sendDataToInitShader(*m_activeCamera, shader);
 }
 
 void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
@@ -289,15 +289,28 @@ void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
     m_currentBackFaceCullingModeEnable = useBackFaceCulling;
 }
 
-void RenderSystem::setMainCamera(Camera& newMainCamera) noexcept
+void RenderSystem::setMainCamera(Camera* newMainCamera) noexcept
 {
-    m_mainCamera = &newMainCamera;
+    m_mainCamera = newMainCamera;
+
+    if (!m_activeCamera)
+        m_activeCamera = newMainCamera;
 }
 
-Camera& RenderSystem::setMainCamera(int index) noexcept
+Camera* RenderSystem::getMainCamera() noexcept
 {
-    m_mainCamera = m_pCameras[index % m_pCameras.size()];
-    return *m_mainCamera;
+    return m_mainCamera;
+}
+
+
+void RenderSystem::setActiveCamera(Camera* newActiveCamera) noexcept
+{
+    m_activeCamera = newActiveCamera;
+}
+
+Camera* RenderSystem::getActiveCamera() noexcept
+{
+    return m_activeCamera;
 }
 
 void RenderSystem::resetCurrentRenderPassKey()
@@ -401,7 +414,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             for (auto&& particle : pParticleComponents)
             {
                 const size_t count = particle->numAliveParticles();
-                if (count == 0)
+                if (count == 0u)
                     continue;
 
                 glEnable(GL_PROGRAM_POINT_SIZE);
@@ -416,7 +429,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 }
                 rs.tryToBindMesh(particle->getMeshID());
 
-                glDrawArrays(GL_POINTS, 0, count);
+                glDrawArrays(GL_POINTS, 0, int(count));
             }
         }
 
@@ -558,14 +571,14 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
 
 void RenderSystem::render(RenderPipeline renderPipeline) noexcept
 {
-    if (m_mainCamera == nullptr)
+    if (m_activeCamera == nullptr)
     {
         GPE_ASSERT(!m_pCameras.empty(), "Empty main camera");
-        m_mainCamera = m_pCameras[0];
+        m_activeCamera = m_mainCamera ? m_mainCamera : m_pCameras[0];
     }
 
     renderPipeline(*this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_pParticleComponents, m_debugShape, m_debugLine, *m_mainCamera);
+                   m_pParticleComponents, m_debugShape, m_debugLine, *m_activeCamera);
 }
 
 void RenderSystem::update(double dt) noexcept
@@ -579,7 +592,7 @@ void RenderSystem::update(double dt) noexcept
     // Update debug shape life time
     for (auto&& it = m_debugShape.begin(); it != m_debugShape.end();)
     {
-        if ((it->duration -= dt) <= 0.f)
+        if ((it->duration -= float(dt)) <= 0.f)
             it = m_debugShape.erase(it);
         else
             ++it;

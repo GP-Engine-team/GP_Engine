@@ -7,12 +7,8 @@
 #pragma once
 
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
-#include <FireArme/PPSH41.hpp>
 
-#include <memory>
-
-#include "Generated/myFpsScript.rfk.h"
-#include <Engine/ECS/Component/BehaviourComponent.hpp>
+#include <Generated/myFpsScript.rfk.h>
 
 namespace GPE
 {
@@ -26,45 +22,48 @@ class CharacterController;
 namespace GPG RFKNamespace()
 {
 
-    class RFKClass(Inspect(), ComponentGen, Serialize()) MyFpsScript : public GPE::BehaviourComponent
-    {
-    private:
-        RFKField(Serialize()) GPE::InputComponent*      input      = nullptr;
-        RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
-        RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
-        RFKField(Serialize()) FireArme*                 m_fireArme = nullptr;
+class Firearm;
 
-    public:
-        MyFpsScript(GPE::GameObject & owner) noexcept;
-        MyFpsScript() noexcept;
-        MyFpsScript(const MyFpsScript& other) noexcept = delete;
-        MyFpsScript(MyFpsScript && other) noexcept     = delete;
-        virtual ~MyFpsScript() noexcept;
+class RFKClass(Inspect(), ComponentGen, Serialize()) MyFpsScript : public GPE::BehaviourComponent
+{
+private:
+    RFKField(Serialize()) GPE::InputComponent*        input         = nullptr;
+    RFKField(Serialize()) GPE::AudioComponent*        source        = nullptr;
+    RFKField(Serialize()) GPE::CharacterController*   controller    = nullptr;
+    RFKField(Serialize()) Firearm*                    m_firearm     = nullptr;
+    RFKField(Inspect(), Serialize()) GPE::GameObject* m_decalPrefab = nullptr;
 
-        MyFpsScript& operator=(MyFpsScript const& other) noexcept = delete;
-        MyFpsScript& operator=(MyFpsScript&& other) noexcept = delete;
+public:
+    MyFpsScript()                         noexcept = default;
+    MyFpsScript(GPE::GameObject& owner)   noexcept;
+    MyFpsScript(const MyFpsScript& other) noexcept = delete;
+    MyFpsScript(MyFpsScript&& other)      noexcept = delete;
+    virtual ~MyFpsScript()                noexcept = default;
 
-    public:
-        RFKMethod() void jump();
-        RFKMethod() void forward();
-        RFKMethod() void backward();
-        RFKMethod() void left();
-        RFKMethod() void right();
-        RFKMethod() void leave();
-        RFKMethod() void sprintStart();
-        RFKMethod() void sprintEnd();
-        RFKMethod() void raycastExample();
-        RFKMethod() void shoot();
-        // RFKMethod() void growUpSphereCollider  ();
-        // RFKMethod() void growDownSphereCollider();
+    MyFpsScript& operator=(MyFpsScript const& other) noexcept = delete;
+    MyFpsScript& operator=(MyFpsScript&& other)      noexcept = delete;
 
-        void rotate(const GPM::Vec2& deltaDisplacement);
-        void onGUI() final;
-        void update(double deltaTime) final;
-        void fixedUpdate(double deltaTime) final;
-        virtual void awake();
+public:
+    RFKMethod() void jump          ();
+    RFKMethod() void forward       ();
+    RFKMethod() void backward      ();
+    RFKMethod() void left          ();
+    RFKMethod() void right         ();
+    RFKMethod() void leave         ();
+    RFKMethod() void sprintStart   ();
+    RFKMethod() void sprintEnd     ();
+    RFKMethod() void raycastExample();
+    RFKMethod() void shoot         ();
+    // RFKMethod() void growUpSphereCollider  ();
+    // RFKMethod() void growDownSphereCollider();
 
-        MyFpsScript_GENERATED
-    };
+    void rotate     (const GPM::Vec2& deltaDisplacement);
+    void onGUI      () final;
+    void fixedUpdate(double deltaTime) final;
+    void update     (double deltaTime) final;
+    void onPostLoad() final;
+
+    MyFpsScript_GENERATED
+};
 
 } // namespace )

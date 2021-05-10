@@ -18,7 +18,7 @@ BehaviourComponent::BehaviourComponent() noexcept
     Engine::getInstance()->behaviourSystem.addBehaviour(*this);
 }
 
-void BehaviourComponent::awake()
+void BehaviourComponent::onPostLoad()
 {
 
 }

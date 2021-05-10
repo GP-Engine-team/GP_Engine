@@ -9,7 +9,7 @@
 #include <PxShape.h>
 
 // Generated
-#include "Generated/Collider.rfk.h"
+#include <Generated/Collider.rfk.h>
 
 namespace GPE RFKNamespace()
 {

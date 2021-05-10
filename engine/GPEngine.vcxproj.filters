@@ -273,6 +273,9 @@
     </ClCompile>
     <ClCompile Include="src\GPELoad.cpp">
       <Filter>src\Serialization</Filter>
+	</ClCompile>
+    <ClCompile Include="src\Raycast.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -53,6 +53,13 @@ Window::~Window() noexcept
     Log::getInstance()->log("GLFW window release");
 }
 
+
+void Window::close()
+{
+    glfwSetWindowShouldClose(m_window, GLFW_TRUE);
+}
+
+
 void Window::getSize(int& width, int& height) const noexcept
 {
     glfwGetWindowSize(m_window, &width, &height);

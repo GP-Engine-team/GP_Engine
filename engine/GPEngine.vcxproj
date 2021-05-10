@@ -396,6 +396,7 @@
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyDynamic.cpp" />
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyStatic.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
+    <ClCompile Include="src\Raycast.cpp" />
     <ClCompile Include="src\ReloadableCpp.cpp" />
     <ClCompile Include="src\RenderBuffer.cpp" />
     <ClCompile Include="src\RendererGLFW_GL46.cpp" />

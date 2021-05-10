@@ -10,33 +10,32 @@
 #include <GPM/Vector3.hpp>
 
 // Generated
-#include "Generated/BoxCollider.rfk.h"
+#include <Generated/BoxCollider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
     class RFKClass(ComponentGen(), Inspect()) BoxCollider : public Collider
     {
     public:
-        BoxCollider(GameObject & owner) noexcept;
+        BoxCollider(GameObject& owner)                   noexcept;
+        BoxCollider()                                    noexcept = default;
+        BoxCollider(const BoxCollider& other)            noexcept = delete;
+        BoxCollider(BoxCollider&& other)                 noexcept = default;
+        virtual ~BoxCollider()                           noexcept = default;
 
-        virtual ~BoxCollider() noexcept = default;
-
-        BoxCollider() noexcept                         = default;
-        BoxCollider(const BoxCollider& other) noexcept = delete;
-        BoxCollider(BoxCollider && other) noexcept     = default;
         BoxCollider& operator=(BoxCollider const& other) noexcept = delete;
-        BoxCollider& operator=(BoxCollider&& other) noexcept = delete;
+        BoxCollider& operator=(BoxCollider&& other)      noexcept = delete;
 
     private:
         RFKField(Inspect()) GPM::Vector3 m_center = {0,0,0};
         RFKField(Inspect()) GPM::Vector3 m_dimensions = {10,10,10};
 
-        virtual void awake() override;
+        virtual void onPostLoad() override;
 
     public:
         DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);
         GETTER_BY_VALUE(Dimensions, m_dimensions);
-        void setDimensions(GPM::Vec3 newDimensions) noexcept;
+        void setDimensions(const GPM::Vec3& newDimensions) noexcept;
 
         BoxCollider_GENERATED
     };

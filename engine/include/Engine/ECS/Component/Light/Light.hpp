@@ -56,7 +56,7 @@ namespace GPE RFKNamespace()
 
         inline Light& operator=(Light&& other) noexcept;
 
-        virtual void awake();
+        virtual void onPostLoad();
 
         void moveTowardScene(Scene & newOwner) final
         {

@@ -1,43 +1,47 @@
 #include <Engine/ECS/Component/Physics/Collisions/MeshCollider.hpp>
+
 #include <Engine/Engine.hpp>
+#include <PhysX/geometry/PxConvexMesh.h>
+#include <PhysX/cooking/PxConvexMeshDesc.h>
+#include <PhysX/cooking/PxCooking.h>
 #include <PhysX/extensions/PxRigidActorExt.h>
-
-// Generated
-#include "Generated/MeshCollider.rfk.h"
-
+#include <Generated/MeshCollider.rfk.h>
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace physx;
 using namespace std;
 
-MeshCollider::MeshCollider(GameObject& owner) noexcept : Collider(owner)
+MeshCollider::MeshCollider(GameObject& owner) noexcept
+    : Collider(owner)
 {
-    static const PxVec3 convexVerts[] = {PxVec3(0, 1, 0), PxVec3(1, 0, 0), PxVec3(-1, 0, 0), PxVec3(0, 0, 1),
-                                         PxVec3(0, 0, -1)};
+    static const PxVec3 convexVerts[] =
+    {
+        {.0f, 1.f, .0f},
+        {1.f, .0f, .0f},
+        {-1.f, .0f, .0f},
+        {.0f, .0f, 1.f},
+        {.0f, .0f, -1.f}
+    };
 
     PxConvexMeshDesc convexDesc;
-    convexDesc.points.count  = 5;
+    convexDesc.points.count  = 5u;
     convexDesc.points.stride = sizeof(PxVec3);
     convexDesc.points.data   = convexVerts;
     convexDesc.flags         = PxConvexFlag::eCOMPUTE_CONVEX | PxConvexFlag::eDISABLE_MESH_VALIDATION |
-                       PxConvexFlag::eFAST_INERTIA_COMPUTATION;
+                               PxConvexFlag::eFAST_INERTIA_COMPUTATION;
+
+    const Engine* engine = Engine::getInstance();
 
 #ifdef _DEBUG
     // mesh should be validated before cooking without the mesh cleaning
-    bool res = Engine::getInstance()->physXSystem.cooking->validateConvexMesh(convexDesc);
-    PX_ASSERT(res);
+    PX_ASSERT(engine->physXSystem.cooking->validateConvexMesh(convexDesc));
 #endif
 
-    convexMesh = Engine::getInstance()->physXSystem.cooking->createConvexMesh(
-        convexDesc, Engine::getInstance()->physXSystem.physics->getPhysicsInsertionCallback());
+    convexMesh = engine->physXSystem.cooking->createConvexMesh(
+        convexDesc, engine->physXSystem.physics->getPhysicsInsertionCallback());
 
-    material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
+    material = engine->physXSystem.physics->createMaterial(1, 1, 0);
 
-    shape = Engine::getInstance()->physXSystem.physics->createShape(PxConvexMeshGeometry(convexMesh), *material);
-}
-
-void MeshCollider::awake() 
-{
-
+    shape = engine->physXSystem.physics->createShape(PxConvexMeshGeometry(convexMesh), *material);
 }

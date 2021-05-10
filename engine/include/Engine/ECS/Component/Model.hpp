@@ -11,8 +11,8 @@
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
-#include "GPM/Shape3D/Volume.hpp"
 #include "Engine/Serialization/xml/xmlSaver.hpp"
+#include "GPM/Shape3D/Volume.hpp"
 
 // Generated
 #include "Generated/Model.rfk.h"
@@ -29,6 +29,28 @@ namespace GPE RFKNamespace()
 
     struct SubModel
     {
+        struct CreateArg
+        {
+            Shader*   pShader;
+            Material* pMaterial;
+            Mesh*     pMesh;
+
+            bool enableBackFaceCulling = true;
+        };
+
+        SubModel(Model& model, const CreateArg& arg)
+            : pModel{&model}, pShader{arg.pShader}, pMaterial{arg.pMaterial}, pMesh{arg.pMesh},
+              enableBackFaceCulling{arg.enableBackFaceCulling}
+        {
+        }
+
+        SubModel() = default;
+
+        bool isValide()
+        {
+            return pModel && pMesh && pShader && pMaterial;
+        }
+
         Model*    pModel    = nullptr;
         Shader*   pShader   = nullptr;
         Material* pMaterial = nullptr;
@@ -37,7 +59,7 @@ namespace GPE RFKNamespace()
         bool enableBackFaceCulling = true;
     };
 
-    template<>
+    template <>
     void save(XmlSaver & context, const SubModel& inspected, const XmlSaver::SaveInfo& info);
     template <>
     void load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadInfo& info);
@@ -59,9 +81,9 @@ namespace GPE RFKNamespace()
         RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
 
     public:
-        Model(GameObject& owner);
+        Model(GameObject & owner);
 
-        Model(GameObject& owner, const CreateArg& arg);
+        Model(GameObject & owner, const CreateArg& arg);
 
         Model(const Model& other) noexcept = delete;
         Model(Model && other) noexcept;
@@ -73,8 +95,10 @@ namespace GPE RFKNamespace()
 
         void moveTowardScene(class Scene & newOwner) override;
 
-        virtual void awake();
+        virtual void onPostLoad();
         virtual void inspect(InspectContext & context);
+
+        void addSubModel(const SubModel::CreateArg& arg);
 
         /**
          * @brief Add or remove current component from it's system which have for effect to enable or disable it

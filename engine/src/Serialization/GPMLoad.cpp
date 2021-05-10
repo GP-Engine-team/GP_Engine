@@ -45,6 +45,12 @@ void load(XmlLoader& context, GPM::Vector4& data, const XmlLoader::LoadInfo& inf
 }
 
 template <>
+void load(XmlLoader& context, GPM::Vector3& data, const rfk::Field& info)
+{
+    load(context, data, fieldToLoadInfo(info));
+}
+
+template <>
 void load(XmlLoader& context, GPM::Quaternion& data, const XmlLoader::LoadInfo& info)
 {
     loadFloatArray(context, data.e, 4, info);

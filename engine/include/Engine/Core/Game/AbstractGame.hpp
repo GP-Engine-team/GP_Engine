@@ -9,7 +9,7 @@
 namespace GPE
 {
 
-enum class EGameState : unsigned char
+enum EGameState
 {
     STOPPED = 0u,
     PLAYING = (1u << 0),
