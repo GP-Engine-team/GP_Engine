@@ -13,7 +13,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), Serialize()) Collider : public Component
+    class RFKClass(Inspect(), Serialize(), ComponentGen()) Collider : public Component
     {
     public:
         Collider(GameObject & owner) noexcept : Component(owner)

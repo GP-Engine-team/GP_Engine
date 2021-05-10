@@ -25,10 +25,10 @@
 
 namespace GPG RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen, Serialize()) FireArme : public GPE::BehaviourComponent
+    class RFKClass(Inspect(), ComponentGen(), Serialize()) FireArme : public GPE::BehaviourComponent
     {
     protected:
-        RFKField(Inspect()) GunMagazine m_magazineStored;
+        RFKField(Inspect(), Serialize()) GunMagazine m_magazineStored;
 
         RFKField(Inspect()) float m_rateOfFire               = 0.f; // In second
         RFKField(Inspect()) float m_reloadingBulletTimeCount = 0.f; // In second
@@ -70,7 +70,7 @@ namespace GPG RFKNamespace()
 
         void triggered()
         {
-            if (!m_isReloadingNextBullet && !m_isReloading)
+            if (!m_isReloadingNextBullet && !m_isReloading && m_magazineStored.getCapacity() != 0)
             {
                 m_magazineStored.triggeredBullet();
 
@@ -91,7 +91,8 @@ namespace GPG RFKNamespace()
                 m_muzzleFlash->emit(
                     static_cast<unsigned int>(m_muzzleFlash->getCount() / m_magazineStored.getCapacity()));
 
-                m_shootSound->playSound("Shoot");
+                if (m_shootSound->findSource("Shoot") != nullptr)
+                    m_shootSound->playSound("Shoot");
                 m_isReloadingNextBullet    = true;
                 m_reloadingBulletTimeCount = 0.f;
             }

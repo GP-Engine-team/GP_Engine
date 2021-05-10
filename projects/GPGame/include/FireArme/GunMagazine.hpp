@@ -24,10 +24,10 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), Serialize()) GunMagazine
     {
     protected:
-        RFKField(Inspect()) Bullet m_bulletStored;
+        RFKField(Inspect(), Serialize()) Bullet m_bulletStored;
 
-        RFKField(Inspect()) unsigned int m_magazineCapacity = 0;
-        RFKField(Inspect()) unsigned int m_bulletsRemaining = 0;
+        RFKField(Inspect(), Serialize()) unsigned int m_magazineCapacity = 0;
+        RFKField(Inspect(), Serialize()) unsigned int m_bulletsRemaining = 0;
 
     public:
         GunMagazine(const Bullet& bulletStored, unsigned int magazineCapacity, unsigned int bulletsRemaining) noexcept

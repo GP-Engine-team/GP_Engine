@@ -36,3 +36,8 @@ MeshCollider::MeshCollider(GameObject& owner) noexcept : Collider(owner)
 
     shape = Engine::getInstance()->physXSystem.physics->createShape(PxConvexMeshGeometry(convexMesh), *material);
 }
+
+void MeshCollider::awake() 
+{
+
+}

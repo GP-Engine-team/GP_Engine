@@ -28,6 +28,8 @@ namespace GPE RFKNamespace()
         MeshCollider& operator=(MeshCollider const& other) noexcept = delete;
         MeshCollider& operator=(MeshCollider&& other) noexcept = delete;
 
+        virtual void awake() override;
+
     public:
         physx::PxConvexMesh* convexMesh = nullptr;
 
