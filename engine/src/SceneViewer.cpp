@@ -270,7 +270,7 @@ void SceneViewer::update()
     // TODO: move to class Camera, or to a new class
     if (isTransitionActive)
     {
-        lerpT += GPE::Engine::getInstance()->timeSystem.getUnscaledDeltaTime();
+        lerpT += float(GPE::Engine::getInstance()->timeSystem.getUnscaledDeltaTime());
 
         if (lerpT / transitionDuration >= 1.f)
         {
