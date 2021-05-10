@@ -25,6 +25,10 @@ void load(XmlLoader& context, GPM::SplitTransform& data, const rfk::Field& info)
 template <>
 void load(XmlLoader& context, GPM::Vector3& data, const XmlLoader::LoadInfo& info);
 
+
+template <>
+void load(XmlLoader& context, GPM::Vector3& data, const rfk::Field& info);
+
 /**
  * @brief Specialization for Quaternion data. See the original function for more comments.
  */
