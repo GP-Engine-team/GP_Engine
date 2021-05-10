@@ -34,8 +34,8 @@ private:
     RFKField(Inspect(), Serialize()) GPE::GameObject* m_decalPrefab = nullptr;
 
 public:
+    MyFpsScript()                         noexcept = default;
     MyFpsScript(GPE::GameObject& owner)   noexcept;
-    MyFpsScript()                         noexcept;
     MyFpsScript(const MyFpsScript& other) noexcept = delete;
     MyFpsScript(MyFpsScript&& other)      noexcept = delete;
     virtual ~MyFpsScript()                noexcept = default;
@@ -61,7 +61,7 @@ public:
     void onGUI      () final;
     void fixedUpdate(double deltaTime) final;
     void update     (double deltaTime) final;
-    //void awake();
+    void awake() final;
 
     MyFpsScript_GENERATED
 };

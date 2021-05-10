@@ -23,15 +23,6 @@ File_GENERATED
 namespace GPG
 {
 
-    
-    MyFpsScript::MyFpsScript() noexcept
-        : GPE::BehaviourComponent()
-    {
-        enableFixedUpdate(true);
-        enableUpdate(true);
-        enableOnGUI(true);
-    }
-
     MyFpsScript::MyFpsScript(GPE::GameObject& owner) noexcept
         : GPE::BehaviourComponent(owner),
           input     {&owner.addComponent<GPE::InputComponent>()},
@@ -43,6 +34,7 @@ namespace GPG
         enableUpdate(true);
         enableOnGUI(true);
 
+        // Keys
         input->bindAction("forward",        EKeyMode::KEY_DOWN,     "Game", this, "forward");
         input->bindAction("backward",       EKeyMode::KEY_DOWN,     "Game", this, "backward");
         input->bindAction("left",           EKeyMode::KEY_DOWN,     "Game", this, "left");
@@ -53,47 +45,25 @@ namespace GPG
         input->bindAction("sprintEnd",      EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
         input->bindAction("RaycastExample", EKeyMode::KEY_PRESSED,  "Game", this, "raycastExample");
         input->bindAction("shoot",          EKeyMode::KEY_DOWN,     "Game", this, "shoot");
-        
-        {
+
+        { // Cursor
             GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
             io.setCursorTrackingState(true);
             io.setCursorLockState(true);
         }
 
-        // input->bindAction("growUpCollider",        EKeyMode::KEY_DOWN,     "Game", this, "growUpSphereCollider");
-        // input->bindAction("growDownCollider",      EKeyMode::KEY_DOWN,     "Game", this, "growDownSphereCollider");
-
-        // GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
-
-        // GPE::SourceSettings sourceSettings;
-        // sourceSettings.pitch = 1.f;
-        // sourceSettings.loop  = AL_TRUE;
-
-        // source->setSound("Western", "Western", sourceSettings);
-        // source->playSound("Western");
-
+        // Setup controller
         controller->setHasGravity(true);
         controller->setSpeed(1.f);
         controller->setMouseSpeed(.0025f);
         controller->setGravity(.1f);
     }
-    /*
+    
     void MyFpsScript::awake()
     {
         BehaviourComponent::awake();
-
-        input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
-        input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
-        input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
-        input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
-        input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
-        input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
-        input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
-        input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-
-        input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
     }
-    */
+    
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)
     {
         using namespace GPM;
@@ -151,6 +121,7 @@ namespace GPG
     // TOOD: Detect whether we are in editor or launcher
     void MyFpsScript::leave()
     {
+        
         GPE::Engine::getInstance()->exit();
     }
 
