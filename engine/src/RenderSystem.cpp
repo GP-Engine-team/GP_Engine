@@ -298,8 +298,8 @@ void RenderSystem::setMainCamera(Camera* newMainCamera) noexcept
 {
     m_mainCamera = newMainCamera;
 
-    if (!m_activeCamera)
-        m_activeCamera = newMainCamera;
+    if (!m_mainCamera && m_activeCamera)
+        m_mainCamera = m_activeCamera;
 }
 
 Camera* RenderSystem::getMainCamera() noexcept
@@ -310,7 +310,13 @@ Camera* RenderSystem::getMainCamera() noexcept
 
 void RenderSystem::setActiveCamera(Camera* newActiveCamera) noexcept
 {
-    m_activeCamera = newActiveCamera;
+    if (!m_activeCamera || newActiveCamera)
+    {
+        m_activeCamera = newActiveCamera;
+
+        if (!m_mainCamera)
+            m_mainCamera = m_activeCamera;
+    }
 }
 
 Camera* RenderSystem::getActiveCamera() noexcept
