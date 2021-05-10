@@ -107,11 +107,11 @@ void EditorStartup::openGame()
     if (gameWasInstanciated)
     {
         stopGame();
+        m_editor.unbindCurrentScene();
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
         destroyer(m_game);
     }
 
-    m_editor.m_sceneEditor.view.pScene = nullptr;
     auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
     m_game = a();
 
@@ -138,7 +138,7 @@ void EditorStartup::closeGame()
     if (m_game != nullptr)
     {
         stopGame();
-
+        m_editor.unbindCurrentScene();
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
         destroyer(m_game);
         m_game = nullptr;

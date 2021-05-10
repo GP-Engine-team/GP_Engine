@@ -120,7 +120,7 @@ Camera::~Camera() noexcept
 {
     getOwner().getTransform().OnUpdate -= GPE::Function::make(this, "updateView");
 
-    if (getOwner().pOwnerScene)
+    if (m_isActivated && getOwner().pOwnerScene)
         getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
 }
 

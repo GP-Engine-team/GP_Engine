@@ -18,22 +18,13 @@ void BehaviourComponent::awake()
 {
     if (m_isActivated)
     {
-        if (m_useUpdate)
-            getOwner().pOwnerScene->behaviourSystem.addUpdate(*this);
-
-        if (m_useFixedUpdate)
-            getOwner().pOwnerScene->behaviourSystem.addFixedUpdate(*this);
-
-        if (m_useOnGUI)
-            getOwner().pOwnerScene->behaviourSystem.addOnGUI(*this);
-
         getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
     }
 }
 
 BehaviourComponent::~BehaviourComponent() noexcept
 {
-    if (!getOwner().pOwnerScene)
+    if (!m_isActivated || !getOwner().pOwnerScene)
         return;
 
     getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);

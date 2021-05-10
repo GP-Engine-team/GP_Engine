@@ -25,12 +25,7 @@ public:
     Camera&         camera;
     InputComponent& inputs;
     Scene*          pScene = nullptr;
-
-    // Keep track of cameraOwner, from the perspective of
-    // its parent's list of child
-    GameObject::Children::iterator it;
-
-    unsigned int textureID;
+    unsigned int    textureID;
 
 private:
     // TODO: factorize framebuffer and renderbuffer in classes

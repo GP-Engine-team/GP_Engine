@@ -98,6 +98,11 @@ public:
     void tryToBindMesh(unsigned int meshID);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
+    /**
+     * @brief Try to affect the first camera found by the system in the scene.
+     * @return 
+    */
+    void    setDefaultMainCamera() noexcept;
     void    setMainCamera(Camera* newMainCamera) noexcept;
     Camera* getMainCamera() noexcept;
 

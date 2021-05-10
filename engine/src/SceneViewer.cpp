@@ -119,8 +119,8 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
       freeFly{cameraOwner->addComponent<FreeFly>()},
       camera{cameraOwner->addComponent<Camera>(
           Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
-      inputs{cameraOwner->addComponent<GPE::InputComponent>()}, pScene{&viewed}, it{}, textureID{0u},
-      depthStencilID{0u}, framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u}, FBOIDframebufferID{0u},
+      inputs{cameraOwner->addComponent<GPE::InputComponent>()}, pScene{&viewed}, textureID{0u}, depthStencilID{0u},
+      framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u}, FBOIDframebufferID{0u},
       FBOIDwidth{static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
       FBOIDheight{static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_},
       m_capturingInputs{false}
@@ -132,10 +132,6 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     initializePickingFBO();
     initializeInputs();
 
-    { // Move cameraOwner to the other scene
-        cameraOwner->setParent(&pScene->getWorld());
-        it = pScene->getWorld().children.end();
-    }
     // Update the Camera component and cameraOwner scene and parent
     camera.setActive(true);
     pScene->sceneRenderer.setMainCamera(&camera);
@@ -234,17 +230,12 @@ void SceneViewer::resize(int width_, int height_)
 
 void SceneViewer::bindScene(Scene& scene)
 {
-    if (pScene == &scene)
-    {
-        return;
-    }
-
-    { // Move cameraOwner to the other scene
-        cameraOwner->setParent(&scene.getWorld());
-        it = scene.getWorld().children.end();
-    }
+    // Move cameraOwner to the other scene
+    cameraOwner->forceSetParent(scene.getWorld());
 
     // Update the Camera component and cameraOwner scene and parent
+    inputs.setActive(true);
+    freeFly.setActive(true);
     camera.setActive(true);
     scene.sceneRenderer.setActiveCamera(&camera);
     pScene = &scene;
@@ -252,14 +243,17 @@ void SceneViewer::bindScene(Scene& scene)
 
 void SceneViewer::unbindScene()
 {
+    inputs.setActive(false);
+    freeFly.setActive(false);
     camera.setActive(false);
-    cameraOwner->detach(it);
-
     pScene = nullptr;
 }
 
 void SceneViewer::update()
 {
+    // Camera is not set as child of wolrd. So we need to update it.
+    cameraOwner->updateSelfAndChildren();
+
     // When the game is not launched, behaviours are not updated
     // Update FreeFly manually
     if (m_capturingInputs)

@@ -69,7 +69,7 @@ void Editor::renderMenuBar()
         if (ImGui::BeginMenu("File"))
         {
             const std::string fileName = "NewScene";
-            const std::string path = m_saveFolder + fileName + ".GPScene";
+            const std::string path     = m_saveFolder + fileName + ".GPScene";
 
             if (ImGui::MenuItem("New"))
             {
@@ -263,12 +263,13 @@ void Editor::loadScene(GPE::Scene* scene, const char* path)
     loadFunc(scene, path);
 
     m_sceneEditor.view.bindScene(*scene);
+    scene->getWorld().pOwnerScene->sceneRenderer.setDefaultMainCamera();
 }
 
 void Editor::saveCurrentScene()
 {
-    GPE::Scene* currentScene = m_sceneEditor.view.pScene;
-    const std::string path   = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
+    GPE::Scene*       currentScene = m_sceneEditor.view.pScene;
+    const std::string path         = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
     m_sceneEditor.view.unbindScene();
 
     auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
@@ -277,11 +278,10 @@ void Editor::saveCurrentScene()
     m_sceneEditor.view.bindScene(*currentScene);
 }
 
-
 void Editor::reloadCurrentScene()
 {
-    GPE::Scene* currentScene = m_sceneEditor.view.pScene;
-    const std::string path   = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
+    GPE::Scene*       currentScene = m_sceneEditor.view.pScene;
+    const std::string path         = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
 
     m_sceneEditor.view.unbindScene();
     m_inspectedObject = nullptr;
@@ -299,17 +299,9 @@ void Editor::unbindCurrentScene()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor         {editedScene},
-      m_gameViewer          {},
-      m_logInspector        {},
-      m_projectContent      {*this},
-      m_sceneGraph          {*this},
-      m_gameControlBar      {},
-      m_saveFolder          {(std::filesystem::current_path() / RESOURCES_DIR).string() + "\\Scene\\"},
-      m_window              {window},
-      m_inspectedObject     {nullptr},
-      m_showAppStyleEditor  {false},
-      m_showImGuiDemoWindows{false}
+    : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{*this}, m_sceneGraph{*this},
+      m_gameControlBar{}, m_saveFolder{(std::filesystem::current_path() / RESOURCES_DIR).string() + "\\Scene\\"},
+      m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false}, m_showImGuiDemoWindows{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();

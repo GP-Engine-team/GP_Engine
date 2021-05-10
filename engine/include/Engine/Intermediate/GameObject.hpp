@@ -244,8 +244,6 @@ namespace GPE RFKNamespace()
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 
-        [[nodiscard]] void detach(const GameObject::Children::iterator& itToParentPtr) noexcept;
-
         void inspect(GPE::InspectContext & context) override;
 
         static void* operator new(std::size_t size);

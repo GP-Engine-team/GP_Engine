@@ -289,6 +289,11 @@ void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
     m_currentBackFaceCullingModeEnable = useBackFaceCulling;
 }
 
+void RenderSystem::setDefaultMainCamera() noexcept
+{
+    setMainCamera(m_pCameras.at(0));
+}
+
 void RenderSystem::setMainCamera(Camera* newMainCamera) noexcept
 {
     m_mainCamera = newMainCamera;
