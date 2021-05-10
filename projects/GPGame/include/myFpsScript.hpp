@@ -55,6 +55,9 @@ namespace GPG RFKNamespace()
         RFKMethod() void sprintEnd();
         RFKMethod() void raycastExample();
         RFKMethod() void shoot();
+        RFKMethod() void playAmbiantMusic();
+        RFKMethod() void playAmbiantMusicForce();
+        RFKMethod() void stopAllMusic();
         // RFKMethod() void growUpSphereCollider  ();
         // RFKMethod() void growDownSphereCollider();
 

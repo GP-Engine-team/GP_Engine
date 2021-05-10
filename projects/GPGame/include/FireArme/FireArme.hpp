@@ -82,7 +82,7 @@ namespace GPG RFKNamespace()
                     static_cast<unsigned int>(m_muzzleFlash->getCount() / m_magazineStored.getCapacity()));
                 /*if (ray.hit.getNbAnyHits())
                     GPE::Log::getInstance()->log(ray.hit.getAnyHit(0).actor->getName());*/
-                m_shootSound->playSound("Shoot");
+                m_shootSound->playSound("Shoot", true);
                 m_isReloadingNextBullet    = true;
                 m_reloadingBulletTimeCount = 0.f;
             }
