@@ -2,8 +2,8 @@
 
 #include <filesystem>
 
-#include <Engine/Core/Tools/Hash.hpp>
 #include <Editor/Editor.hpp>
+#include <Engine/Core/Tools/Hash.hpp>
 #include <Engine/Engine.hpp>
 
 // Components
@@ -152,14 +152,17 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
                                                (gameObject.getName() + ENGINE_PREFAB_EXTENSION);
 
             Scene             tempScene;
-            GameObject* const pPreviousParent = gameObject.getParent();
+            GameObject* const pPreviousParent     = gameObject.getParent();
+            Scene* const      pPreviousOwnedScene = gameObject.pOwnerScene;
 
             tempScene.getWorld().children.emplace_back(&gameObject);
             gameObject.forceSetParent(tempScene.getWorld());
+            gameObject.pOwnerScene = nullptr;
 
             auto saveFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), saveSceneToPath);
             saveFunc(&tempScene, path.string().c_str(), GPE::SavedScene::EType::XML);
 
+            gameObject.pOwnerScene = pPreviousOwnedScene;
             gameObject.forceSetParent(*pPreviousParent);
             tempScene.getWorld().children.clear();
         }
@@ -203,7 +206,7 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInsp
             ImGui::TreePop();
         }
     }
-    
+
     if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && selectedGameObject)
         m_pEditorContext->m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(selectedGameObject));
 }
