@@ -27,21 +27,21 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) Firearm : public GPE::BehaviourComponent
     {
     protected:
-        RFKField(Inspect()) GunMagazine m_magazineStored;
+        RFKField(Serialize(), Inspect()) GunMagazine m_magazineStored;
 
         RFKField(Serialize()) GPE::AudioComponent*    m_shootSound  = nullptr;
         RFKField(Serialize()) GPE::ParticleComponent* m_muzzleFlash = nullptr;
 
-        RFKField(Inspect()) float m_rateOfFire               = 0.f; // In second
-        RFKField(Inspect()) float m_reloadingBulletTimeCount = 0.f; // In second
+        RFKField(Serialize(), Inspect()) float m_rateOfFire               = 0.f; // In second
+        RFKField(Serialize(), Inspect()) float m_reloadingBulletTimeCount = 0.f; // In second
 
-        RFKField(Inspect()) float m_reloadingDuration  = 0.f; // In second
-        RFKField(Inspect()) float m_reloadingTimeCount = 0.f; // In second
+        RFKField(Serialize(), Inspect()) float m_reloadingDuration  = 0.f; // In second
+        RFKField(Serialize(), Inspect()) float m_reloadingTimeCount = 0.f; // In second
 
-        RFKField(Inspect()) bool m_isReloadingNextBullet = false;
-        RFKField(Inspect()) bool m_isReloading           = false;
+        RFKField(Serialize(), Inspect()) bool m_isReloadingNextBullet = false;
+        RFKField(Serialize(), Inspect()) bool m_isReloading           = false;
 
-        RFKField(Inspect(), Serialize()) GPE::Prefab m_decalePrefab;
+        RFKField(Serialize(), Inspect()) GPE::Prefab m_decalePrefab;
 
     public:
         Firearm() noexcept = default;

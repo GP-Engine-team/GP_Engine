@@ -30,10 +30,7 @@ namespace GPG RFKNamespace()
             enableOnGUI(true);
         }
 
-        WorldGenerator() noexcept : GPE::BehaviourComponent()
-        {
-            enableOnGUI(true);
-        }
+        WorldGenerator() noexcept = default;
 
         WorldGenerator(const WorldGenerator& other) noexcept = delete;
         WorldGenerator(WorldGenerator && other) noexcept     = delete;

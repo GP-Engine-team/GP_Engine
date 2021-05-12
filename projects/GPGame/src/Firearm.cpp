@@ -58,14 +58,18 @@ File_GENERATED
             {
                 if (GPE::GameObject* pOwner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData))
                 {
-                    GPE::GameObject& decaleGO = *m_decalePrefab.clone(*pOwner);
-                    decaleGO.getTransform().setTranslation(GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position));
+                    if (!m_decalePrefab.isEmpty())
+                    {
+                        GPE::GameObject& decaleGO = *m_decalePrefab.clone(*pOwner);
+                        decaleGO.getTransform().setTranslation(
+                            GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position));
 
-                    decaleGO.getTransform().setVecForward(
-                        GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal),
-                        (GPM::Vec3::right()
-                             .cross(GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal))
-                             .normalized()));
+                        decaleGO.getTransform().setVecForward(
+                            GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal),
+                            (GPM::Vec3::right()
+                                 .cross(GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal))
+                                 .normalized()));
+                    }
 
                     getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(
                         GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position), 1.f, GPE::ColorRGBA::red(), 3.f);
