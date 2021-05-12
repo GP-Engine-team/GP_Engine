@@ -292,11 +292,12 @@ GameObject::Children::iterator GameObject::destroyChild(GameObject* pGameObject)
 
 std::list<Component*>::iterator GameObject::destroyComponent(Component* pComponent) noexcept
 {
-    const std::list<Component*>::const_iterator end{m_pComponents.end()};
+    const std::list<Component*>::const_iterator end{m_pComponents.cend()};
     for (std::list<Component*>::iterator it = m_pComponents.begin(); it != end; it++)
     {
         if (*it == pComponent)
         {
+            delete *it;
             return m_pComponents.erase(it);
         }
     }
