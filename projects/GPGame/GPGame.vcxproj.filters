@@ -39,20 +39,20 @@
     <ClInclude Include="include\myScript.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\FireArme\Bullet.hpp">
-      <Filter>Header Files\FireArme</Filter>
-    </ClInclude>
-    <ClInclude Include="include\FireArme\FireArme.hpp">
-      <Filter>Header Files\FireArme</Filter>
-    </ClInclude>
-    <ClInclude Include="include\FireArme\GunMagazine.hpp">
-      <Filter>Header Files\FireArme</Filter>
-    </ClInclude>
-    <ClInclude Include="include\FireArme\PPSH41.hpp">
-      <Filter>Header Files\FireArme</Filter>
-    </ClInclude>
     <ClInclude Include="include\WorldGenerator.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Firearm\Bullet.hpp">
+      <Filter>Header Files\FireArme</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Firearm\Firearm.hpp">
+      <Filter>Header Files\FireArme</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Firearm\GunMagazine.hpp">
+      <Filter>Header Files\FireArme</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Firearm\PPSH41.hpp">
+      <Filter>Header Files\FireArme</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -71,9 +71,6 @@
     <ClCompile Include="src\Bullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FireArme.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\GunMagazine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -82,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="src\WorldGenerator.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Firearm.cpp">
+      <Filter>Header Files\FireArme</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
