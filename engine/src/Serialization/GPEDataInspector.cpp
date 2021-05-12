@@ -128,7 +128,7 @@ bool DataInspector::inspect(InspectContext& context, Prefab& inspected, const ch
     startProperty(name);
     bool hasChanged = false;
 
-    ImGui::Selectable(inspected.get() == nullptr ? "None" : inspected.get()->getName().c_str());
+    ImGui::Selectable(inspected.isEmpty() ? "None" : inspected.getName());
 
     if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
     {

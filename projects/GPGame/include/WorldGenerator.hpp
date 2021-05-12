@@ -27,9 +27,14 @@ namespace GPG RFKNamespace()
     public:
         WorldGenerator(GPE::GameObject & owner) noexcept : GPE::BehaviourComponent(owner)
         {
+            enableOnGUI(true);
         }
 
-        WorldGenerator() noexcept                            = default;
+        WorldGenerator() noexcept : GPE::BehaviourComponent()
+        {
+            enableOnGUI(true);
+        }
+
         WorldGenerator(const WorldGenerator& other) noexcept = delete;
         WorldGenerator(WorldGenerator && other) noexcept     = delete;
         virtual ~WorldGenerator() noexcept                   = default;
@@ -42,13 +47,25 @@ namespace GPG RFKNamespace()
 
         virtual void start()
         {
-            if (!m_treeContainer)
-            {
-                GPE::Log::getInstance()->logError("Missing tree container GO");
-                return;
-            }
+        }
 
-            loadTree(*m_treeContainer, 100);
+        void onGUI() final
+        {
+            if (ImGui::Button("Generate"))
+            {
+                if (!m_treeContainer || m_treePrefab.isEmpty())
+                {
+                    GPE::Log::getInstance()->logError("Missing tree container GO or tree prefab");
+                    return;
+                }
+                for (auto&& child : m_treeContainer->children)
+                {
+                    delete child;
+                }
+                m_treeContainer->children.clear();
+
+                loadTree(*m_treeContainer, 100);
+            }
         }
 
         WorldGenerator_GENERATED

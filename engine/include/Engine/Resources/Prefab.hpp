@@ -19,7 +19,9 @@ namespace GPE RFKNamespace()
     class RFKClass(Serialize()) Prefab
     {
     protected:
-        std::unique_ptr<GameObject> m_pPrefab = nullptr;
+        std::unique_ptr<rapidxml::xml_document<>> m_pPrefabBluePrint = nullptr;
+        std::unique_ptr<char[]>                   m_pData            = nullptr;
+        std::string                               m_name             = "";
 
     public:
         Prefab()
@@ -30,16 +32,20 @@ namespace GPE RFKNamespace()
 
         void loadPrefabFromPath(const char* path);
 
-        GameObject& clone(GameObject & parent);
+        GameObject* clone(GameObject & parent);
 
-        const GameObject* get() const
+        const char* getName() const;
+
+        bool isEmpty() const
         {
-            return m_pPrefab.get();
+            return !m_pPrefabBluePrint.get();
         }
 
         void reset()
         {
-            m_pPrefab.reset();
+            m_pPrefabBluePrint.reset();
+            m_pData.reset();
+            m_name = "";
         }
 
         Prefab_GENERATED

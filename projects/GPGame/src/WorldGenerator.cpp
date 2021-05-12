@@ -16,19 +16,23 @@ void WorldGenerator::loadTree(GameObject& parent, unsigned int number)
     const ResourceManagerType& rm = Engine::getInstance()->resourceManager;
     GameObject::CreateArg      forestArg{"Forest"};
 
-    const Model::CreateArg& treeModelArg = *rm.get<Model::CreateArg>("TreeModel");
-    GameObject&             forest       = parent.addChild(forestArg);
-
     // Create trees with random sizes,
     // positions and rotations and add them to the forest
     for (unsigned int i = 0u; i < number; ++i)
     {
-        forestArg.name                         = "Tree" + std::to_string(i);
-        forestArg.transformArg.position.x      = Random::ranged<float>(-100.f, 100.f);
-        forestArg.transformArg.position.z      = Random::ranged<float>(-100.f, 100.f);
-        forestArg.transformArg.eulerRotation.y = Random::ranged<float>(TWO_PI);
-        forestArg.transformArg.scale           = {Random::ranged<float>(4.f, 8.f)};
+        GameObject* const newGO = m_treePrefab.clone(*m_treeContainer);
 
-        forest.addChild(forestArg).addComponent<Model>(treeModelArg);
+        newGO->setName(("Tree" + std::to_string(i)).c_str());
+        Vec3 pos;
+        pos.x = Random::ranged<float>(-100.f, 100.f);
+        pos.y = newGO->getTransform().getGlobalPosition().y;
+        pos.z = Random::ranged<float>(-100.f, 100.f);
+        newGO->getTransform().setTranslation(pos);
+
+        Vec3 rotEuler = newGO->getTransform().getRotation().eulerAngles();
+        rotEuler.y    = Random::ranged<float>(TWO_PI);
+        newGO->getTransform().setRotation(Quat::fromEuler(rotEuler));
+
+        newGO->getTransform().setScale({Random::ranged<float>(4.f, 8.f)});
     }
 }

@@ -4,6 +4,8 @@
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Scene.hpp>
 
+#include <filesystem>
+
 // Generated
 #include "Generated/Prefab.rfk.h"
 File_GENERATED
@@ -12,31 +14,46 @@ File_GENERATED
 
 void Prefab::loadPrefabFromPath(const char* path)
 {
-    Scene                      prefabScene;
     GPE::SavedScene::CreateArg savedScene = GPE::readPrefabFile(path);
 
     if (savedScene.type == GPE::SavedScene::EType::XML)
     {
-        // Load xml doc
-        rapidxml::xml_document<> doc;
-        std::unique_ptr<char[]>  buffer;
-        GPE::SavedScene::toDoc(doc, buffer, savedScene.data.c_str(), savedScene.data.size());
-
-        XmlLoader context(doc);
-        // Load each element
-        prefabScene.load(context);
+        m_pPrefabBluePrint = std::make_unique<rapidxml::xml_document<>>();
+        GPE::SavedScene::toDoc(*m_pPrefabBluePrint, m_pData, savedScene.data.c_str(), savedScene.data.size());
     }
 
-    if (!prefabScene.getWorld().children.empty())
-    {
-        GameObject* const pGo = prefabScene.getWorld().children.front();
-        pGo->setParent(nullptr);
-        m_pPrefab.reset(pGo);
-    }
+    std::filesystem::path fsPath = path;
+    m_name                       = fsPath.stem().string();
 }
 
-GameObject& Prefab::clone(GameObject& parent)
+const char* Prefab::getName() const
 {
+    return m_name.c_str();
+}
+
+GameObject* Prefab::clone(GameObject& parent)
+{
+    if (m_pPrefabBluePrint == nullptr)
+        return nullptr;
+
+    Scene     prefabScene;
+    XmlLoader prefab(*m_pPrefabBluePrint);
+
+    // Load each element
+    prefabScene.load(prefab);
+
+    // Tell that pointers to the old scene should be replaced by pointers to the new scene
+    prefab.addConvertedPtr(prefabScene.getWorld().pOwnerScene, &prefabScene);
+
+    // Update old pointers into new ones
+    prefab.updateLazyPtrs();
+
+    if (prefabScene.getWorld().children.empty())
+        return nullptr;
+
+    GameObject* const pGo = prefabScene.getWorld().children.front();
+    pGo->setParent(&parent);
+
     // Awake GameObjects
     struct Rec
     {
@@ -55,7 +72,7 @@ GameObject& Prefab::clone(GameObject& parent)
             }
         };
     };
-    Rec::rec(*m_pPrefab.get()); // can't do recursives with lambdas, and std::function would be overkill
+    Rec::rec(*pGo); // can't do recursives with lambdas, and std::function would be overkill
 
-    return parent;
+    return pGo;
 }
