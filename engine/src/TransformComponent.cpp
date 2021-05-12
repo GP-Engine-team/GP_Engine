@@ -25,12 +25,13 @@ TransformComponent& TransformComponent::operator=(TransformComponent&& other)
     return static_cast<TransformComponent&>(Component::operator=(std::move(other)));
 }
 
-void TransformComponent::setVecForward(const Vec3& newForward) noexcept
+void TransformComponent::setVecForward(const Vec3& newForward, const Vec3& up) noexcept
 {
-    m_transform.setVectorForward(newForward.normalized());
-    m_transform.setVectorRight(m_transform.forward().cross(m_transform.up()).normalized());
-    m_transform.setVectorUp(m_transform.forward().cross(m_transform.right()).normalized());
-    m_transform.model *= Transform::scaling(m_spaceAttribut.scale);
+    const GPM::Transform toGO{
+        GPM::Transform::lookAt(m_spaceAttribut.position, m_spaceAttribut.position + newForward, up)};
+    m_spaceAttribut.rotation = GPM::toQuaternion(toGO.rotation());
+
+    m_isDirty = true;
 }
 
 void TransformComponent::setVecRight(const Vec3& newRight) noexcept

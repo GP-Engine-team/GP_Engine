@@ -88,7 +88,7 @@ namespace GPE RFKNamespace()
 
         void setRotationZ(const float& z) noexcept;
 
-        void setVecForward(const GPM::Vec3& newForward) noexcept;
+        void setVecForward(const GPM::Vec3& newForward, const GPM::Vec3& up) noexcept;
 
         void setVecRight(const GPM::Vec3& newRight) noexcept;
 
