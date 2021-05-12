@@ -6,14 +6,13 @@
 
 File_GENERATED
 
-namespace GPE
-{
+    using namespace GPE;
+using namespace GPM;
 
-TransformComponent::TransformComponent(GameObject & refGameObject,
-                                        const TransformComponent::CreateArg& arg) noexcept
-    : Component(refGameObject),
-        m_spaceAttribut{GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)), arg.position, arg.scale},
-        m_transform{GPM::toTransform(m_spaceAttribut)}
+TransformComponent::TransformComponent(GameObject& refGameObject, const TransformComponent::CreateArg& arg) noexcept
+    : Component(refGameObject), m_spaceAttribut{GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)),
+                                                arg.position, arg.scale},
+      m_transform{GPM::toTransform(m_spaceAttribut)}
 {
 }
 
@@ -26,7 +25,31 @@ TransformComponent& TransformComponent::operator=(TransformComponent&& other)
     return static_cast<TransformComponent&>(Component::operator=(std::move(other)));
 }
 
-void TransformComponent::inspect(GPE::InspectContext & context)
+void TransformComponent::setVecForward(const Vec3& newForward) noexcept
+{
+    m_transform.setVectorForward(newForward.normalized());
+    m_transform.setVectorRight(m_transform.forward().cross(m_transform.up()).normalized());
+    m_transform.setVectorUp(m_transform.forward().cross(m_transform.right()).normalized());
+    m_transform.model *= Transform::scaling(m_spaceAttribut.scale);
+}
+
+void TransformComponent::setVecRight(const Vec3& newRight) noexcept
+{
+    m_transform.setVectorRight(newRight.normalized());
+    m_transform.setVectorForward(m_transform.right().cross(m_transform.up()).normalized());
+    m_transform.setVectorUp(m_transform.forward().cross(m_transform.right()).normalized());
+    m_transform.model *= Transform::scaling(m_spaceAttribut.scale);
+}
+
+void TransformComponent::setVecUp(const Vec3& newUp) noexcept
+{
+    m_transform.setVectorUp(newUp.normalized());
+    m_transform.setVectorForward(m_transform.right().cross(m_transform.up()).normalized());
+    m_transform.setVectorRight(m_transform.forward().cross(m_transform.up()).normalized());
+    m_transform.model *= Transform::scaling(m_spaceAttribut.scale);
+}
+
+void TransformComponent::inspect(GPE::InspectContext& context)
 {
     Component::inspect(context);
 
@@ -41,5 +64,3 @@ void TransformComponent::awake()
     setDirty();
     update();
 }
-
-} // End of namespace GPE

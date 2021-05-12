@@ -44,7 +44,7 @@ void GameObject::moveTowardScene(Scene& newOwner) noexcept
 
 void GameObject::updateSelfAndChildren() noexcept
 {
-    const Children::const_iterator end{children.end()};
+    const Children::const_iterator end{children.cend()};
 
     if (m_pTransform->isDirty())
     {
@@ -58,6 +58,11 @@ void GameObject::updateSelfAndChildren() noexcept
                 // NOTE (Sami): what happens to the children?
                 m_parent->destroyChild(this);
                 return;
+            }
+            else
+            {
+                for (auto&& child : children)
+                    child->getTransform().setDirty();
             }
         }
         else
@@ -100,10 +105,15 @@ void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
 {
     // Update self
     if (m_pTransform->isDirty())
+    {
         getTransform().update(m_parent->getTransform().getModelMatrix());
 
+        for (auto&& child : children)
+            child->getTransform().setDirty();
+    }
+
     // Update children
-    const Children::const_iterator end{children.end()};
+    const Children::const_iterator end{children.cend()};
     for (Children::iterator i = children.begin(); i != end;)
     {
         if ((*i)->m_isDead)
@@ -138,7 +148,7 @@ void GameObject::forceUpdate() noexcept
     }
 
     // Force update children
-    const Children::const_iterator end{children.end()};
+    const Children::const_iterator end{children.cend()};
     for (auto&& i = children.begin(); i != end; i++)
     {
         if ((*i)->m_isDead)
@@ -158,7 +168,7 @@ void GameObject::forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept
     getTransform().update(m_parent->getTransform().getModelMatrix());
 
     // Force update children
-    const Children::const_iterator end{children.end()};
+    const Children::const_iterator end{children.cend()};
     for (auto&& i = children.begin(); i != end; i++)
     {
         (*i)->forceUpdate(m_pTransform->getModelMatrix());

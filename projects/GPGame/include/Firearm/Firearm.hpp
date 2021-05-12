@@ -10,6 +10,7 @@
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/Serialize.hpp>
 
+#include <Engine/Resources/Prefab.hpp>
 #include <Firearm/GunMagazine.hpp>
 
 #include <Generated/Firearm.rfk.h>
@@ -19,7 +20,7 @@ namespace GPE
 class AudioComponent;
 class ParticleComponent;
 class GameObject;
-}
+} // namespace GPE
 
 namespace GPG RFKNamespace()
 {
@@ -40,25 +41,24 @@ namespace GPG RFKNamespace()
         RFKField(Inspect()) bool m_isReloadingNextBullet = false;
         RFKField(Inspect()) bool m_isReloading           = false;
 
+        RFKField(Inspect(), Serialize()) GPE::Prefab m_decalePrefab;
 
     public:
-        Firearm()                                     noexcept = default;
-        Firearm(GPE::GameObject& owner)               noexcept;
-        Firearm(GPE::GameObject&   owner,
-                const GunMagazine& magazineStored,
-                float              reloadingDuration,
-                float              rateOfFire)        noexcept;
-        Firearm(const Firearm& other)                 noexcept = delete;
-        Firearm(Firearm&& other)                      noexcept = delete;
-        virtual ~Firearm()                            noexcept = default;
-        
+        Firearm() noexcept = default;
+        Firearm(GPE::GameObject & owner) noexcept;
+        Firearm(GPE::GameObject & owner, const GunMagazine& magazineStored, float reloadingDuration,
+                float rateOfFire) noexcept;
+        Firearm(const Firearm& other) noexcept = delete;
+        Firearm(Firearm && other) noexcept     = delete;
+        virtual ~Firearm() noexcept            = default;
+
         Firearm& operator=(Firearm const& other) noexcept = delete;
-        Firearm& operator=(Firearm&& other)      noexcept = delete;
+        Firearm& operator=(Firearm&& other) noexcept = delete;
 
         bool isMagazineEmpty() const;
-        void triggered      ();
-        void reload         ();
-        void update         (double deltaTime) final;
+        void triggered();
+        void reload();
+        void update(double deltaTime) final;
 
         const GunMagazine& getMagazine() const;
 

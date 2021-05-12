@@ -20,31 +20,28 @@
 #include <Generated/myFpsScript.rfk.h>
 File_GENERATED
 
-namespace GPG
+    namespace GPG
 {
 
-    MyFpsScript::MyFpsScript(GPE::GameObject& owner) noexcept
-        : GPE::BehaviourComponent(owner),
-          input     {&owner.addComponent<GPE::InputComponent>()},
-          source    {&owner.addComponent<GPE::AudioComponent>()},
-          controller{&owner.addComponent<GPE::CharacterController>()},
-          m_firearm {&owner.addComponent<PPSH41>()}
+    MyFpsScript::MyFpsScript(GPE::GameObject & owner) noexcept
+        : GPE::BehaviourComponent(owner), input{&owner.addComponent<GPE::InputComponent>()},
+          source{&owner.addComponent<GPE::AudioComponent>()},
+          controller{&owner.addComponent<GPE::CharacterController>()}, m_firearm{&owner.addComponent<PPSH41>()}
     {
         enableFixedUpdate(true);
         enableUpdate(true);
         enableOnGUI(true);
 
         // Keys
-        input->bindAction("forward",        EKeyMode::KEY_DOWN,     "Game", this, "forward");
-        input->bindAction("backward",       EKeyMode::KEY_DOWN,     "Game", this, "backward");
-        input->bindAction("left",           EKeyMode::KEY_DOWN,     "Game", this, "left");
-        input->bindAction("right",          EKeyMode::KEY_DOWN,     "Game", this, "right");
-        input->bindAction("jump",           EKeyMode::KEY_DOWN,     "Game", this, "jump");
-        input->bindAction("exit",           EKeyMode::KEY_PRESSED,  "Game", this, "leave");
-        input->bindAction("sprintStart",    EKeyMode::KEY_PRESSED,  "Game", this, "sprintStart");
-        input->bindAction("sprintEnd",      EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-        input->bindAction("RaycastExample", EKeyMode::KEY_PRESSED,  "Game", this, "raycastExample");
-        input->bindAction("shoot",          EKeyMode::KEY_DOWN,     "Game", this, "shoot");
+        input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
+        input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
+        input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
+        input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
+        input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
+        input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
+        input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
+        input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+        input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
 
         { // Cursor
             GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
@@ -58,12 +55,12 @@ namespace GPG
         controller->setMouseSpeed(.0025f);
         controller->setGravity(.1f);
     }
-    
+
     void MyFpsScript::awake()
     {
         BehaviourComponent::awake();
     }
-    
+
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)
     {
         using namespace GPM;
@@ -121,7 +118,7 @@ namespace GPG
     // TOOD: Detect whether we are in editor or launcher
     void MyFpsScript::leave()
     {
-        
+
         GPE::Engine::getInstance()->exit();
     }
 
