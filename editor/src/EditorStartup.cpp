@@ -110,7 +110,6 @@ void EditorStartup::openGame()
     const bool gameWasInstanciated = m_game != nullptr;
     if (gameWasInstanciated)
     {
-        stopGame();
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
         destroyer(m_game);
     }
@@ -141,17 +140,18 @@ void EditorStartup::openGame()
 
 void EditorStartup::closeGame()
 {
+    //// TODO: are the scene previously loaded removed by m_game's destructor?
+    // m_editor.setSceneInEdition(m_engine->sceneManager.loadScene("Default scene"));
+    m_editor.unbindCurrentScene();
+
     if (m_game != nullptr)
     {
-        stopGame();
+        //stopGame();
 
         auto destroyer = GET_PROCESS(m_reloadableCpp, destroyGameInstance);
         destroyer(m_game);
         m_game = nullptr;
     }
-
-    // TODO: are the scene previously loaded removed by m_game's destructor?
-    m_editor.setSceneInEdition(m_engine->sceneManager.loadScene("Default scene"));
 
     // There is no more active game, replace m_engine->exit to something not dependant on m_game
     m_engine->exit = [&](){ m_engine->window.close(); };
@@ -211,7 +211,16 @@ void EditorStartup::stopGame()
 
 void EditorStartup::update()
 {
-    if (m_reloadableCpp.refresh())
+    bool forceReload = glfwGetKey(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_KEY_T) == GLFW_PRESS; // TODO : Remove
+    if (forceReload)
+    {
+        if (m_reloadableCpp.onUnload)
+        {
+            m_reloadableCpp.onUnload();
+        }    
+    }
+
+    if (m_reloadableCpp.refresh() || forceReload)
     {
         auto syncLog = GET_PROCESS(m_reloadableCpp, setLogInstance);
         (*syncLog)(*GPE::Log::getInstance());
