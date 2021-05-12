@@ -21,9 +21,6 @@
     <ClInclude Include="include\game.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GameApiMacros.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\myFpsScript.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -31,9 +28,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\myFreeFlyWithCollisionScript.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SingletonsSync.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\myScript.hpp">
@@ -54,9 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SingletonsSync.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\myScript.cpp">

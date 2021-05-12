@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <Engine/Core/Game/AbstractGame.hpp>
-#include "GameApiMacros.hpp"
+#include "Engine/Core/HotReload/EngineApiMacros.hpp"
 
 struct GLFWwindow;
 
@@ -34,9 +34,9 @@ public:
 /**
  * @brief Called by the exe, by retriewing the dll functions. Can't be inlined.
  */
-extern "C" GAME_API class GPE::AbstractGame* createGameInstance();
+extern "C" ENGINE_API class GPE::AbstractGame* createGameInstance();
 /**
  * @brief Called by the exe, by retriewing the dll functions. Can't be inlined.
  * The class is created in the dll, so it must be deleted in the dll.
  */
-extern "C" GAME_API void destroyGameInstance(class GPE::AbstractGame* game);
+extern "C" ENGINE_API void destroyGameInstance(class GPE::AbstractGame* game);

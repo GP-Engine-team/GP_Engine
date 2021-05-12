@@ -11,9 +11,9 @@
 #include <Engine/Serialization/DataInspector.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Serialization/InspectContext.hpp>
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 
 // Editor
-#include <Editor/ExternalDeclarations.hpp>
 #include <Editor/StylePanel.hpp>
 
 // Third-party

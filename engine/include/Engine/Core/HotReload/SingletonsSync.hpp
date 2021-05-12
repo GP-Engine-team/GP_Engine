@@ -1,4 +1,10 @@
-﻿#include "SingletonsSync.hpp"
+#pragma once
+
+// You should only include this file in .cpp files.
+
+#include "EngineApiMacros.hpp"
+#include "Engine/Engine.hpp"
+#include "Engine/Core/Debug/Log.hpp"
 
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Importer/Importer.hpp"
@@ -10,56 +16,38 @@
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
-#include <Windows.h>
 #include <memory>
 
-extern "C" void setLogInstance(GPE::Log& log)
-{
-    GPE::Log::setInstance(log);
-}
+struct ImGuiContext;
 
-extern "C" GPE::Log& getLogInstance()
+extern "C"
 {
-    return *GPE::Log::getInstance();
-}
-
-extern "C" void setGameEngineInstance(GPE::Engine& engine)
+ENGINE_API inline void          setGameEngineInstance (GPE::Engine & engine)
 {
     GPE::Engine::setInstance(engine);
 }
-
-extern "C" GPE::Engine& getGameEngineInstance()
+ENGINE_API inline void          setLogInstance        (GPE::Log & log)
+{
+    GPE::Log::setInstance(log);
+}
+ENGINE_API inline GPE::Engine&  getGameEngineInstance ()
 {
     return *GPE::Engine::getInstance();
 }
-
-extern "C" void setImguiCurrentContext(ImGuiContext* ctx)
+ENGINE_API inline GPE::Log&     getLogInstance        ()
+{
+    return *GPE::Log::getInstance();
+}
+ENGINE_API inline void          setImguiCurrentContext(struct ImGuiContext* ctx)
 {
     ImGui::SetCurrentContext(ctx);
 }
-
-extern "C" ImGuiContext* getGameUIContext()
+ENGINE_API inline ImGuiContext* getGameUIContext()
 {
     return ImGui::GetCurrentContext();
 }
 
-extern "C" void saveScene(XmlSaver& context, GPE::Scene* scene)
-{
-    // GPE::Engine::getInstance()->sceneManager.getCurrentScene()->save(context);
-    context.addWeakPtr(scene);
-    scene->save(context);
-}
-
-extern "C" void loadScene(XmlLoader& context, GPE::Scene* scene)
-{
-    context.addPersistentPtr(scene);
-
-    // GPE::Engine::getInstance()->sceneManager.getCurrentScene()->load(context);
-    scene->load(context);
-    context.updateLazyPtrs();
-}
-
-extern "C" void saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
+ENGINE_API inline void          saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
 {
     if (saveMode == GPE::SavedScene::EType::XML)
     {
@@ -75,8 +63,7 @@ extern "C" void saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedS
         GPE::writeSceneFile(path, args);
     }
 }
-
-extern "C" void loadSceneFromPath(GPE::Scene* scene, const char* path)
+ENGINE_API inline void          loadSceneFromPath(GPE::Scene* scene, const char* path)
 {
     GPE::SavedScene::CreateArg savedScene = GPE::readSceneFile(path);
 
@@ -117,4 +104,10 @@ extern "C" void loadSceneFromPath(GPE::Scene* scene, const char* path)
         };
         Rec::rec(&scene->getWorld()); // can't do recursives with lambdas, and std::function would be overkill
     }
+}
+
+ENGINE_API class GPE::AbstractGame* createGameInstance();
+ENGINE_API void destroyGameInstance(class GPE::AbstractGame* game);
+
+
 }

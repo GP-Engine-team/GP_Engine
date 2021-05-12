@@ -26,6 +26,8 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
+
 using namespace GPE;
 using namespace GPM;
 using namespace GPM::Random;

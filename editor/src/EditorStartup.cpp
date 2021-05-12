@@ -10,7 +10,7 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
 
-#include <Editor/ExternalDeclarations.hpp>
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 
 namespace Editor
 {

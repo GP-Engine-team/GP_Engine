@@ -273,7 +273,7 @@
     </ClCompile>
     <ClCompile Include="src\GPELoad.cpp">
       <Filter>src\Serialization</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="src\Raycast.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -731,6 +731,12 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\GPESave.hpp">
       <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\HotReload\SingletonsSync.hpp">
+      <Filter>include\Core\HotReload</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\HotReload\EngineApiMacros.hpp">
+      <Filter>include\Core\HotReload</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
