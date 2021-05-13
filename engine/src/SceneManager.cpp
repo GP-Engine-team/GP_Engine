@@ -1,12 +1,16 @@
 #include "Engine/Resources/SceneManager.hpp"
 
+#include <Engine/Core/Debug/Log.hpp>
+
 using namespace GPE;
 
 Scene& SceneManager::addEmpty(const std::string& sceneName)
 {
     Log::getInstance()->log("New empty scene " + sceneName + " created");
 
-    return m_scenes[sceneName]; // emplace with default constructor of Scene
+    Scene& scene = m_scenes[sceneName];
+    scene.m_name = sceneName;
+    return scene; // emplace with default constructor of Scene
 }
 
 Scene& SceneManager::loadScene(const std::string& sceneName, ESceneGraphManagement sceneGraphloadType,
@@ -62,7 +66,6 @@ Scene& SceneManager::loadScene(const std::string& sceneName, ESceneGraphManageme
     */
 }
 
-
 void SceneManager::removeScene(const std::string& sceneName)
 {
     using const_iterator = std::unordered_map<std::string, Scene>::const_iterator;
@@ -81,8 +84,12 @@ void SceneManager::removeScene(const std::string& sceneName)
     }
 }
 
-
 void SceneManager::removeScene(Scene& scene)
 {
     removeScene(scene.m_name);
+}
+
+void SceneManager::removeScenes()
+{
+    m_scenes.clear();
 }

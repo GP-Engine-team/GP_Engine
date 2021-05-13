@@ -7,7 +7,7 @@
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace std;
 
 AudioComponent::AudioComponent(GameObject& owner) : Component(owner)

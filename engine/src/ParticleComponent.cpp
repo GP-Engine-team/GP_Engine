@@ -3,14 +3,17 @@ File_GENERATED
 
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Shader.hpp>
+#include <GPM/Matrix3.hpp>
+#include <GPM/conversion.hpp>
 
 #include <filesystem>
 #include <imgui.h>
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 ParticleComponent::ParticleComponent(GameObject& owner) : Component(owner)
@@ -60,7 +63,7 @@ void renderResourceExplorer(const char* name, T*& inRes)
             ;
     }
 
-    if (ImGui::Combo(name, &itemCurrent, items.data(), items.size()))
+    if (ImGui::Combo(name, &itemCurrent, items.data(), int(items.size())))
     {
         auto&& it = resourceContainer.begin();
         for (int i = 0; i < itemCurrent; ++i, ++it)
@@ -256,15 +259,15 @@ void ParticleComponent::initializeDefaultSetting()
     {
         // pos:
         auto m_posGenerator                 = std::make_unique<BoxPosGen>();
-        m_posGenerator->m_pos               = Vec4{0.0, 0.0, 0.0, 0.0};
-        m_posGenerator->m_maxStartPosOffset = Vec4{0.0, 0.0, 0.0, 0.0};
+        m_posGenerator->m_pos               = Vec4{.0f, .0f, .0f, .0f};
+        m_posGenerator->m_maxStartPosOffset = Vec4{.0f, .0f, .0f, .0f};
         m_generators.emplace_back(std::move(m_posGenerator));
 
         auto m_colGenerator           = std::make_unique<BasicColorGen>();
-        m_colGenerator->m_minStartCol = RGBA{0.7, 0.7, 0.7, 1.0};
-        m_colGenerator->m_maxStartCol = RGBA{1.0, 1.0, 1.0, 1.0};
-        m_colGenerator->m_minEndCol   = RGBA{0.5, 0.0, 0.6, 0.0};
-        m_colGenerator->m_maxEndCol   = RGBA{0.7, 0.5, 1.0, 0.0};
+        m_colGenerator->m_minStartCol = RGBA{0.7f, 0.7f, 0.7f, 1.0f};
+        m_colGenerator->m_maxStartCol = RGBA{1.0f, 1.0f, 1.0f, 1.0f};
+        m_colGenerator->m_minEndCol   = RGBA{0.5f, 0.0f, 0.6f, 0.0f};
+        m_colGenerator->m_maxEndCol   = RGBA{0.7f, 0.5f, 1.0f, 0.0f};
         m_generators.emplace_back(std::move(m_colGenerator));
 
         auto velGenerator           = std::make_unique<BasicVelGen>();
@@ -285,7 +288,7 @@ void ParticleComponent::initializeDefaultSetting()
     m_updaters.emplace_back(std::move(colorUpdater));
 
     auto m_eulerUpdater                  = std::make_unique<EulerUpdater>();
-    m_eulerUpdater->m_globalAcceleration = Vec4{0.0, -15.0, 0.0, 0.0};
+    m_eulerUpdater->m_globalAcceleration = Vec4{0.0f, -15.0f, 0.0f, 0.0f};
     m_updaters.emplace_back(std::move(m_eulerUpdater));
 
     auto m_floorUpdater = std::make_unique<FloorUpdater>();
@@ -325,7 +328,7 @@ void ParticleComponent::update(double dt)
 
     if (m_canEmit)
     {
-        m_durationCount += dt * !std::isinf(m_duration);
+        m_durationCount += float(dt) * !std::isinf(m_duration);
         if (m_durationCount >= m_duration)
         {
             m_canEmit = false;
@@ -339,7 +342,7 @@ void ParticleComponent::update(double dt)
     // TODO: Add acceleration updater
     if (m_particles.m_acc)
     {
-        for (size_t i = 0; i < m_count; ++i)
+        for (size_t i = 0u; i < m_count; ++i)
         {
             m_particles.m_acc[i] = Vec4(0.0f);
         }
@@ -357,7 +360,7 @@ void ParticleComponent::emit(double dt)
 {
     const size_t maxNewParticles = static_cast<size_t>(dt * m_emitRate);
     const size_t startId         = m_particles.m_countAlive;
-    const size_t endId           = std::min(startId + maxNewParticles, m_particles.m_count - 1);
+    const size_t endId           = std::min(startId + maxNewParticles, m_particles.m_count - 1u);
 
     for (auto& gen : m_generators) // << gen loop
         gen->generate(&m_particles, startId, endId);

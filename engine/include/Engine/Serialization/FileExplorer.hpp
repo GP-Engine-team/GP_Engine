@@ -34,6 +34,10 @@ std::filesystem::path openFileExplorerAndGetAbsoluePath(LPCWSTR                 
 std::filesystem::path openFileExplorerAndGetRelativePath(LPCWSTR                        title  = L"Open",
                                                          std::vector<COMDLG_FILTERSPEC> filter = {{L"All", L"*.*"}});
 
+std::filesystem::path openFolderExplorerAndGetAbsoluePath(LPCWSTR title = L"Open");
+
+std::filesystem::path openFolderExplorerAndGetRelativePath(LPCWSTR title = L"Open");
+
 #endif
 
 } // namespace GPE

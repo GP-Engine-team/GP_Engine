@@ -6,12 +6,15 @@
 
 #pragma once
 
+#include <Engine/Resources/Texture.hpp>
+
 #include <filesystem>
 #include <list>
 #include <memory>
 
 namespace GPE
 {
+class GameObject;
 class IInspectable;
 }
 
@@ -24,7 +27,7 @@ struct FileInfo
     std::filesystem::path path;
     std::filesystem::path filename;
     std::filesystem::path extention;
-    size_t                size = 0;
+    size_t                size = 0u;
 };
 
 struct DirectoryInfo
@@ -50,13 +53,25 @@ struct DirectoryInfo
 class ProjectContent
 {
 protected:
+    GPE::Texture m_folderIcone;
+    GPE::Texture m_textureIcone;
+    GPE::Texture m_materialIcone;
+    GPE::Texture m_sceneIcone;
+    GPE::Texture m_meshIcone;
+    GPE::Texture m_shaderIcone;
+    GPE::Texture m_soundIcone;
+    GPE::Texture m_unknowIcone;
+    GPE::Texture m_prefabIcone;
+
     DirectoryInfo  resourcesTree;
     DirectoryInfo* pCurrentDirectory = nullptr;
 
     std::unique_ptr<GPE::IInspectable> importationSetting;
 
+    class Editor* m_editorContext = nullptr;
+
 public:
-    ProjectContent();
+    ProjectContent(Editor& editorContext);
 
     void refreshResourcesList();
 

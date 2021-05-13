@@ -7,12 +7,17 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
 
+#include <PhysX/PxRigidActor.h>
+
 #include <GLFW/glfw3.h>
 
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include <Firearm/PPSH41.hpp>
 #include <MyFpsScript.hpp>
+
+#include <Generated/myFpsScript.rfk.h>
 File_GENERATED
 
     namespace GPG
@@ -21,7 +26,7 @@ File_GENERATED
     MyFpsScript::MyFpsScript(GPE::GameObject & owner) noexcept
         : GPE::BehaviourComponent(owner), input{&owner.addComponent<GPE::InputComponent>()},
           source{&owner.addComponent<GPE::AudioComponent>()},
-          controller{&owner.addComponent<GPE::CharacterController>()}
+          controller{&owner.addComponent<GPE::CharacterController>()}, m_fireArme{&owner.addComponent<PPSH41>()}
     {
         enableFixedUpdate(true);
         enableUpdate(true);
@@ -29,6 +34,16 @@ File_GENERATED
 
         m_fireArme = &owner.addComponent<PPSH41>();
 
+        GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+
+        GPE::SourceSettings sourceSettings;
+        sourceSettings.pitch = 1.f;
+        sourceSettings.loop  = AL_TRUE;
+
+        source->setSound("Western", "Western", sourceSettings);
+        source->playSound("Western", true);
+
+        // Keys
         input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
         input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
         input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
@@ -42,26 +57,23 @@ File_GENERATED
         input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
         input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
         input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
-        // input->bindAction("growUpCollider",        EKeyMode::KEY_DOWN,     "Game", this, "growUpSphereCollider");
-        // input->bindAction("growDownCollider",      EKeyMode::KEY_DOWN,     "Game", this, "growDownSphereCollider");
 
-        GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+        { // Cursor
+            GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
+            io.setCursorTrackingState(true);
+            io.setCursorLockState(true);
+        }
 
-        GPE::SourceSettings sourceSettings;
-        sourceSettings.pitch = 1.f;
-        sourceSettings.loop  = AL_TRUE;
-
-        source->setSound("Western", "Western", sourceSettings);
-        source->playSound("Western", true);
-
+        // Setup controller
         controller->setHasGravity(true);
         controller->setSpeed(1.f);
         controller->setMouseSpeed(.0025f);
         controller->setGravity(.1f);
     }
 
-    MyFpsScript::~MyFpsScript() noexcept
+    void MyFpsScript::awake()
     {
+        BehaviourComponent::awake();
     }
 
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)
@@ -89,7 +101,7 @@ File_GENERATED
     void MyFpsScript::forward()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(vec);
         // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
     }
@@ -97,7 +109,7 @@ File_GENERATED
     void MyFpsScript::backward()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorForward();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(-vec);
         // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
@@ -105,7 +117,7 @@ File_GENERATED
     void MyFpsScript::left()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorRight();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(-vec);
         // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
     }
@@ -113,14 +125,16 @@ File_GENERATED
     void MyFpsScript::right()
     {
         GPM::Vec3 vec = getOwner().getTransform().getVectorRight();
-        vec.y         = 0;
+        vec.y         = .0f;
         controller->move(vec);
         // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
     }
 
+    // TOOD: Detect whether we are in editor or launcher
     void MyFpsScript::leave()
     {
-        glfwWindowShouldClose(GPE::Engine::getInstance()->window.getGLFWWindow());
+
+        GPE::Engine::getInstance()->exit();
     }
 
     void MyFpsScript::sprintStart()
@@ -137,14 +151,13 @@ File_GENERATED
     void MyFpsScript::raycastExample()
     {
         GPE::Raycast ray;
-        ray.Fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(), 100000);
+        ray.fire(getOwner().getTransform().getGlobalPosition(), getOwner().getTransform().getVectorForward(), 100000);
         if (ray.hit.hasBlock)
         {
             GPE::GameObject* owner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData);
             if (owner)
             {
                 std::cout << "yolo" << std::endl;
-                // Do some shit here;
             }
         }
     }
@@ -196,12 +209,12 @@ File_GENERATED
         ImGui::Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
     }
 
-    void MyFpsScript::update(double deltaTime)
+    void MyFpsScript::fixedUpdate(double deltaTime)
     {
-        m_fireArme->update(deltaTime);
+        controller->update(deltaTime);
     }
 
-    void MyFpsScript::fixedUpdate(double deltaTime)
+    void MyFpsScript::update(double deltaTime)
     {
         // TODO: find a fix to relieve the user from having to check this, or leave it like that?
         if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
@@ -211,7 +224,5 @@ File_GENERATED
             if (deltaPos.x || deltaPos.y)
                 rotate(deltaPos);
         }
-        controller->update(deltaTime);
     }
-
 } // End of namespace GPG

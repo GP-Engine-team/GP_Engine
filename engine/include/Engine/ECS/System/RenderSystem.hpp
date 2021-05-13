@@ -9,9 +9,9 @@
 #include <functional> //std::function
 #include <vector>     //std::vector
 
-#include "Engine/Resources/ResourcesManager.hpp"
-#include "Engine/Resources/ResourcesManagerType.hpp"
-#include "GPM/Transform.hpp"
+#include <Engine/Resources/ResourcesManager.hpp>
+#include <Engine/Resources/ResourcesManagerType.hpp>
+#include <GPM/Transform.hpp>
 
 namespace GPE
 {
@@ -48,6 +48,7 @@ public:
         EDebugShapeMode     mode                   = EDebugShapeMode::FILL;
         bool                enableBackFaceCullling = true;
         EDebugDrawShapeMode drawMode               = EDebugDrawShapeMode::TRAINGLES;
+        float               duration               = 0.f;
     };
 
     struct DebugLine
@@ -73,12 +74,13 @@ protected:
     std::vector<ParticleComponent*> m_pParticleComponents;
     std::vector<DebugShape>         m_debugShape;
     std::vector<DebugLine>          m_debugLine;
-    Camera*                         m_mainCamera = nullptr;
+    Camera*                         m_mainCamera   = nullptr;
+    Camera*                         m_activeCamera = nullptr;
 
-    unsigned int m_currentShaderID                  = 0;
-    unsigned int m_currentTextureID                 = 0;
-    unsigned int m_currentMaterialID                = 0;
-    unsigned int m_currentMeshID                    = 0;
+    unsigned int m_currentShaderID                  = 0u;
+    unsigned int m_currentTextureID                 = 0u;
+    unsigned int m_currentMaterialID                = 0u;
+    unsigned int m_currentMeshID                    = 0u;
     Shader*      m_currentPShaderUse                = nullptr;
     bool         m_currentBackFaceCullingModeEnable = false;
 
@@ -96,8 +98,11 @@ public:
     void tryToBindMesh(unsigned int meshID);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
-    void    setMainCamera(Camera& newMainCamera) noexcept;
-    Camera& setMainCamera(int index) noexcept;
+    void    setMainCamera(Camera* newMainCamera) noexcept;
+    Camera* getMainCamera() noexcept;
+
+    void    setActiveCamera(Camera* newMainCamera) noexcept;
+    Camera* getActiveCamera() noexcept;
 
     void resetCurrentRenderPassKey();
 
@@ -124,13 +129,13 @@ public:
     void update(double dt) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
-                         const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                         const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, float duration = 0.f,
                          EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
     void drawDebugCube(const GPM::Vec3& position, const GPM::Quat& rotation, const GPM::Vec3& scale,
-                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, float duration = 0.f,
                        EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
     void drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
-                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f},
+                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, float duration = 0.f,
                        EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
 
     void drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width = 1.f,

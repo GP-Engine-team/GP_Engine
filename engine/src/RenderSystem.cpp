@@ -45,7 +45,7 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
                           pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
 
-        drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color,
+        drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color, 0.f,
                         RenderSystem::EDebugShapeMode::FILL);
     }
     break;
@@ -61,7 +61,7 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
         const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
                           pAABB->center * pSubModel->pModel->getOwner().getTransform().getScale());
 
-        drawDebugCube(pos, Quat::identity(), scale, color, RenderSystem::EDebugShapeMode::FILL);
+        drawDebugCube(pos, Quat::identity(), scale, color, 0.f, RenderSystem::EDebugShapeMode::FILL);
     }
     break;
     default:
@@ -230,7 +230,7 @@ void RenderSystem::tryToBindShader(Shader& shader)
     m_currentShaderID   = shader.getID();
     m_currentPShaderUse = &shader;
 
-    sendDataToInitShader(*m_mainCamera, shader);
+    sendDataToInitShader(*m_activeCamera, shader);
 }
 
 void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
@@ -289,15 +289,28 @@ void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
     m_currentBackFaceCullingModeEnable = useBackFaceCulling;
 }
 
-void RenderSystem::setMainCamera(Camera& newMainCamera) noexcept
+void RenderSystem::setMainCamera(Camera* newMainCamera) noexcept
 {
-    m_mainCamera = &newMainCamera;
+    m_mainCamera = newMainCamera;
+
+    if (!m_activeCamera)
+        m_activeCamera = newMainCamera;
 }
 
-Camera& RenderSystem::setMainCamera(int index) noexcept
+Camera* RenderSystem::getMainCamera() noexcept
 {
-    m_mainCamera = m_pCameras[index % m_pCameras.size()];
-    return *m_mainCamera;
+    return m_mainCamera;
+}
+
+
+void RenderSystem::setActiveCamera(Camera* newActiveCamera) noexcept
+{
+    m_activeCamera = newActiveCamera;
+}
+
+Camera* RenderSystem::getActiveCamera() noexcept
+{
+    return m_activeCamera;
 }
 
 void RenderSystem::resetCurrentRenderPassKey()
@@ -401,7 +414,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             for (auto&& particle : pParticleComponents)
             {
                 const size_t count = particle->numAliveParticles();
-                if (count == 0)
+                if (count == 0u)
                     continue;
 
                 glEnable(GL_PROGRAM_POINT_SIZE);
@@ -416,7 +429,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 }
                 rs.tryToBindMesh(particle->getMeshID());
 
-                glDrawArrays(GL_POINTS, 0, count);
+                glDrawArrays(GL_POINTS, 0, int(count));
             }
         }
 
@@ -441,8 +454,6 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                     glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
                 }
-
-                debugShape.clear();
             }
 
             // Draw debug line
@@ -560,45 +571,55 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
 
 void RenderSystem::render(RenderPipeline renderPipeline) noexcept
 {
-    if (m_mainCamera == nullptr)
+    if (m_activeCamera == nullptr)
     {
         GPE_ASSERT(!m_pCameras.empty(), "Empty main camera");
-        m_mainCamera = m_pCameras[0];
+        m_activeCamera = m_mainCamera ? m_mainCamera : m_pCameras[0];
     }
 
     renderPipeline(*this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_pParticleComponents, m_debugShape, m_debugLine, *m_mainCamera);
+                   m_pParticleComponents, m_debugShape, m_debugLine, *m_activeCamera);
 }
 
 void RenderSystem::update(double dt) noexcept
 {
+    // Update particle
     for (auto&& particle : m_pParticleComponents)
     {
         particle->update(dt);
     }
+
+    // Update debug shape life time
+    for (auto&& it = m_debugShape.begin(); it != m_debugShape.end();)
+    {
+        if ((it->duration -= float(dt)) <= 0.f)
+            it = m_debugShape.erase(it);
+        else
+            ++it;
+    }
 }
 
-void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, EDebugShapeMode mode,
-                                   bool enableBackFaceCullling) noexcept
+void RenderSystem::drawDebugSphere(const Vec3& position, float radius, const ColorRGBA& color, float duration,
+                                   EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
-    m_debugShape.emplace_back(DebugShape{m_sphereMesh,
-                                         toTransform(SplitTransform{Quat::identity(), position, Vec3(radius * 2.f)}),
-                                         color, mode, enableBackFaceCullling});
+    m_debugShape.emplace_back(
+        DebugShape{m_sphereMesh, toTransform(SplitTransform{Quat::identity(), position, Vec3(radius * 2.f)}), color,
+                   mode, enableBackFaceCullling, EDebugDrawShapeMode::TRAINGLES, duration});
 }
 
 void RenderSystem::drawDebugCube(const Vec3& position, const Quat& rotation, const Vec3& scale, const ColorRGBA& color,
-                                 EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
+                                 float duration, EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(DebugShape{m_cubeMesh, toTransform(SplitTransform{rotation, position, scale}), color,
-                                         mode, enableBackFaceCullling});
+                                         mode, enableBackFaceCullling, EDebugDrawShapeMode::TRAINGLES, duration});
 }
 
 void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Vec3& scale, const ColorRGBA& color,
-                                 EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
+                                 float duration, EDebugShapeMode mode, bool enableBackFaceCullling) noexcept
 {
     m_debugShape.emplace_back(
         DebugShape{m_planeMesh, toTransform(SplitTransform{Quaternion::lookAt(Vec3::zero(), dir), position, scale}),
-                   color, mode, enableBackFaceCullling});
+                   color, mode, enableBackFaceCullling, EDebugDrawShapeMode::TRAINGLES, duration});
 }
 
 void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width, const ColorRGBA& color,

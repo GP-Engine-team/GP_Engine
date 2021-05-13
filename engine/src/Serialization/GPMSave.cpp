@@ -1,5 +1,6 @@
 #include "Engine/Serialization/GPMSave.hpp"
 #include "GPM/Transform.hpp"
+#include "GPM/Matrix4.hpp"
 #include "Engine/Serialization/xml/xmlSaver.hpp"
 
 namespace GPE
@@ -36,9 +37,28 @@ void save(XmlSaver& context, const GPM::Vector3& data, const XmlSaver::SaveInfo&
 }
 
 template <>
+void save(XmlSaver& context, const GPM::Vector3& data, const rfk::Field& info)
+{
+    save(context, data, fieldToSaveInfo(info));
+}
+
+template <>
 void save(XmlSaver& context, const GPM::Quaternion& data, const XmlSaver::SaveInfo& info)
 {
     saveFloatArray(context, data.e, 4, info);
+}
+
+
+template <>
+void save(XmlSaver& context, const GPM::Matrix4& data, const XmlSaver::SaveInfo& info)
+{
+    saveFloatArray(context, data.e, 16, info);
+}
+
+template <>
+void save(XmlSaver& context, const GPM::Matrix4& data, const rfk::Field& info)
+{
+    GPE::save(context, data, fieldToSaveInfo(info));
 }
 
 }

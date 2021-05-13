@@ -1,5 +1,6 @@
 ﻿#include <Editor/SceneEditor.hpp>
 
+#include <Editor/Editor.hpp>
 #include <Engine/Engine.hpp>
 #include <imgui/imgui.h>
 
@@ -26,7 +27,6 @@ void SceneEditor::captureInputs(bool toggle)
     }
 }
 
-
 void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
 {
     const bool hovered = ImGui::IsWindowHovered();
@@ -48,8 +48,8 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
             const unsigned int idSelectedGameObject = view.getHoveredGameObjectID();
             if (idSelectedGameObject)
             {
-                if (GameObject* const selectionGameObject = view.pScene->getWorld()
-                                                            .getGameObjectCorrespondingToID(idSelectedGameObject))
+                if (GameObject* const selectionGameObject =
+                        view.pScene->getWorld().getGameObjectCorrespondingToID(idSelectedGameObject))
                 {
                     inspectedObject = selectionGameObject;
                 }
@@ -60,16 +60,23 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
                         stringFormat("No gameObject corresponding to the id %i", idSelectedGameObject));
                 }
             }
+
+            else
+            {
+                inspectedObject = nullptr;
+            }
         }
+        
+        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && inspectedObject)
+            view.lookAtObject(*reinterpret_cast<GameObject*>(inspectedObject));
     }
 }
-
 
 // ========================== Public methods ==========================
 SceneEditor::SceneEditor(GPE::Scene& scene)
     : view{scene}
-{}
-
+{
+}
 
 void SceneEditor::render(GPE::IInspectable*& inspectedObject)
 {
@@ -89,7 +96,6 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
 
         ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
     }
-
     ImGui::End();
     ImGui::PopStyleVar(2);
 }

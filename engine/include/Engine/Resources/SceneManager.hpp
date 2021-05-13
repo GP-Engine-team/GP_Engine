@@ -60,6 +60,7 @@ public:
 
     void removeScene(const std::string& sceneName);
     void removeScene(Scene& scene);
+    void removeScenes();
 };
 
 } /*namespace GPE*/

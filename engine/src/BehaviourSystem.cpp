@@ -89,7 +89,7 @@ void BehaviourSystem::updateBehaviourPointer(BehaviourComponent*       newPointo
 
 void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
 {
-    const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();
+    const std::vector<BehaviourComponent*>::const_iterator end = m_pBehaviours.end();
 
     if (behaviour.isFixedUpdateEnable())
         removeFixedUpdate(behaviour);
@@ -108,14 +108,6 @@ void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
             m_pBehaviours.pop_back();
             return;
         }
-    }
-}
-
-void BehaviourSystem::awake() const noexcept
-{
-    for (auto&& behaviour : m_pBehaviours)
-    {
-        behaviour->awake();
     }
 }
 

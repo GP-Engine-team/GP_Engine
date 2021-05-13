@@ -1,7 +1,9 @@
 #include "Engine/Resources/Scene.hpp"
 
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Intermediate/DataChunk.hpp"
+#include <Engine/Core/Debug/Assert.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
+#include <Engine/Intermediate/DataChunk.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 
 #include <filesystem> //std::path
 #include <sstream>    //std::sstream, std::getline
@@ -19,13 +21,19 @@ Scene::Scene() noexcept : m_pWorld(new GameObject(*this))
     }
 }
 
+Scene::~Scene() noexcept
+{
+    if (m_pWorld->getParent())
+        m_pWorld.release(); // The parent will manage the memory
+}
+
 GameObject* Scene::getGameObject(const std::string& path) noexcept
 {
     GPE_ASSERT(!path.empty(), "Empty path");
 
     std::stringstream sPath(path);
     std::string       word;
-    GameObject*       currentEntity = m_pWorld;
+    GameObject*       currentEntity = m_pWorld.get();
 
     while (std::getline(sPath, word, '/'))
     {
@@ -89,7 +97,12 @@ void Scene::save(XmlSaver& context) const
 
 void Scene::load(XmlLoader& context)
 {
-    delete m_pWorld;
-    m_pWorld = nullptr;
+    m_pWorld.reset();
     GPE::load(context, m_pWorld, XmlLoader::LoadInfo{"m_pWorld", "GameObject", GameObject::staticGetArchetype().id});
+}
+
+template <>
+void GPE::load(XmlLoader& context, GPE::Scene*& inspected, const XmlLoader::LoadInfo& info)
+{
+    context.addLazy((void**)&inspected);
 }

@@ -2,32 +2,29 @@
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU
  * license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <GPM/Vector3.hpp>
 
 // Generated
-#include "Generated/SphereCollider.rfk.h"
+#include <Generated/SphereCollider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
     class RFKClass(ComponentGen(), Inspect()) SphereCollider : public Collider
     {
     public:
-        SphereCollider(GameObject & owner) noexcept;
-
-        virtual ~SphereCollider() noexcept = default;
-
-        SphereCollider() noexcept                            = delete;
-        SphereCollider(const SphereCollider& other) noexcept = delete;
-        SphereCollider(SphereCollider && other) noexcept     = default;
+        SphereCollider(GameObject & owner)                     noexcept;
+        SphereCollider()                                       noexcept = default;
+        SphereCollider(const SphereCollider& other)            noexcept = delete;
+        SphereCollider(SphereCollider&& other)                 noexcept = default;
+        virtual ~SphereCollider()                              noexcept = default;
         SphereCollider& operator=(SphereCollider const& other) noexcept = delete;
-        SphereCollider& operator=(SphereCollider&& other) noexcept = delete;
+        SphereCollider& operator=(SphereCollider&& other)      noexcept = delete;
 
         // void updateTransform() final;
 
@@ -42,4 +39,4 @@ namespace GPE RFKNamespace()
 
         SphereCollider_GENERATED
     };
-} // namespace )
+} // namespace GPE

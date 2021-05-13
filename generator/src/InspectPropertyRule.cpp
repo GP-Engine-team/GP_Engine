@@ -65,7 +65,7 @@ std::string InspectPropertyRule::generateInspectFunction(const kodgen::StructCla
         serializeInside += callParents;
     }
 
-    std::string getArchetype = "rfk::Class const& c = " + entity.name + "::staticGetArchetype();";
+    std::string getArchetype = "rfk::Struct const& c = " + entity.name + "::staticGetArchetype();";
     serializeInside += getArchetype;
 
     // For each fields of the Reflected Class :

@@ -7,12 +7,8 @@
 #pragma once
 
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
-#include <FireArme/PPSH41.hpp>
 
-#include <memory>
-
-#include "Generated/myFpsScript.rfk.h"
-#include <Engine/ECS/Component/BehaviourComponent.hpp>
+#include <Generated/myFpsScript.rfk.h>
 
 namespace GPE
 {
@@ -26,20 +22,23 @@ class CharacterController;
 namespace GPG RFKNamespace()
 {
 
+    class Firearm;
+
     class RFKClass(Inspect(), ComponentGen, Serialize()) MyFpsScript : public GPE::BehaviourComponent
     {
     private:
-        RFKField(Serialize()) GPE::InputComponent*      input      = nullptr;
-        RFKField(Serialize()) GPE::AudioComponent*      source     = nullptr;
-        RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
-        RFKField(Serialize()) FireArme*                 m_fireArme = nullptr;
+        RFKField(Serialize()) GPE::InputComponent*        input         = nullptr;
+        RFKField(Serialize()) GPE::AudioComponent*        source        = nullptr;
+        RFKField(Serialize()) GPE::CharacterController*   controller    = nullptr;
+        RFKField(Serialize()) Firearm*                    m_fireArme    = nullptr;
+        RFKField(Inspect(), Serialize()) GPE::GameObject* m_decalPrefab = nullptr;
 
     public:
+        MyFpsScript() noexcept = default;
         MyFpsScript(GPE::GameObject & owner) noexcept;
-        MyFpsScript() noexcept                         = default;
         MyFpsScript(const MyFpsScript& other) noexcept = delete;
         MyFpsScript(MyFpsScript && other) noexcept     = delete;
-        virtual ~MyFpsScript() noexcept;
+        virtual ~MyFpsScript() noexcept                = default;
 
         MyFpsScript& operator=(MyFpsScript const& other) noexcept = delete;
         MyFpsScript& operator=(MyFpsScript&& other) noexcept = delete;
@@ -63,8 +62,9 @@ namespace GPG RFKNamespace()
 
         void rotate(const GPM::Vec2& deltaDisplacement);
         void onGUI() final;
-        void update(double deltaTime) final;
         void fixedUpdate(double deltaTime) final;
+        void update(double deltaTime) final;
+        void awake() final;
 
         MyFpsScript_GENERATED
     };

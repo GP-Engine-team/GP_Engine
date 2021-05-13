@@ -45,6 +45,8 @@ public:
      */
     [[nodiscard]] constexpr inline const GLFWwindow* getGLFWWindow() const noexcept;
     [[nodiscard]] constexpr inline GLFWwindow*       getGLFWWindow() noexcept;
+    
+    void close();
 
     /**
      * @brief return the size of the window
@@ -53,6 +55,7 @@ public:
      * @return
      */
     void getSize(int& width, int& height) const noexcept;
+
 };
 
 #include "WindowGLFW.inl"

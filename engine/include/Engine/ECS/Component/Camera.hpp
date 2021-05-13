@@ -8,22 +8,23 @@
 
 #include <string>
 
-#include "Engine/ECS/Component/Component.hpp"
-#include "Engine/Serialization/ComponentGen.h"
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/Inspect.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
-#include "GPM/Matrix4.hpp"
-#include "GPM/Shape3D/Plane.hpp"
+#include "Component.hpp"
 
-// in inl
-#include "Engine/Intermediate/GameObject.hpp"
+#include <Engine/Serialization/ComponentGen.h>
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/Inspect.hpp>
+#include <Engine/Serialization/InspectContext.hpp>
+
+#include <GPM/Matrix4.hpp>
+#include <GPM/Shape3D/Plane.hpp>
 
 // Generated
-#include "Generated/Camera.rfk.h"
+#include <Generated/Camera.rfk.h>
 
 namespace GPE RFKNamespace()
 {
+    class GameObject;
+    class TransformComponent;
 
     // TODO: Furstum must be inside Camera but is forwarding in file RenderSystem. While camera do not own it's frustum,
     // frustum struct must be outside
@@ -49,18 +50,29 @@ namespace GPE RFKNamespace()
             NONE
         };
 
-        struct ProjectionInfo
+        struct RFKStruct(Inspect(), Serialize()) ProjectionInfo
         {
+            RFKField(Inspect(), Serialize())
             std::string     name = "";
+            RFKField(Serialize())
             EProjectionType type = EProjectionType::NONE;
 
+            RFKField(Inspect(), Serialize())
             float aspect = 16.f / 9.f;
+            RFKField(Inspect(), Serialize())
             float znear  = 0.001f;
+            RFKField(Inspect(), Serialize())
             float zfar   = 10.f;
+            RFKField(Inspect(), Serialize())
             float hSide  = 1.f;
+            RFKField(Inspect(), Serialize())
             float vSide  = 1.f;
+            RFKField(Inspect(), Serialize())
             float fovY   = 70.f;
+            RFKField(Inspect(), Serialize())
             float fovX   = 70.f;
+
+            ProjectionInfo_GENERATED
         };
 
         struct PerspectiveCreateArg
@@ -82,43 +94,30 @@ namespace GPE RFKNamespace()
         };
 
     protected:
+        RFKField(Inspect(), Serialize())
         ProjectionInfo m_projInfo;
+        RFKField(Serialize())
         GPM::Mat4      m_projection;
 
+        RFKField(Serialize())
         GPM::Mat4 m_viewMatrix;
+        RFKField(Serialize())
         GPM::Mat4 m_projectionViewMatrix;
 
         void updateProjection();
 
     public:
-        static float computeAspect(int width, int height) noexcept
-        {
-            return width / static_cast<float>(height);
-        }
+        static float computeAspect(int width, int height) noexcept;
 
     public:
-        virtual ~Camera() noexcept;
-
-        Camera() noexcept                    = default;
-        Camera(const Camera& other) noexcept = delete;
-        Camera& operator=(Camera const& other) noexcept = delete;
-
-        Camera(Camera && other) noexcept = default;
-        Camera& operator                 =(Camera&& other) noexcept;
-
-        void moveTowardScene(class Scene & newOwner) override;
-
-        /**
-         * @brief Update the view matrix in function of model matrix of it's parent
-         */
-        RFKMethod() void updateView();
+        Camera() noexcept = default;
 
         /**
          * @brief Default constructor. Call perspective constructor by default
          * @param owner
          * @return
          */
-        Camera(GameObject & owner) noexcept;
+        Camera(GameObject& owner) noexcept;
 
         /**
          * @brief Construct a new perspective camera object
@@ -130,22 +129,32 @@ namespace GPE RFKNamespace()
          * @param zfar     * @param fovY      : by default to 70 (human FovY)
          * @param name
          */
-        Camera(GameObject & owner, const PerspectiveCreateArg& arg) noexcept;
+        Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept;
 
         /**
          * @brief Construct a new orthographic camera object
          *
-         * @param position
-         * @param rotation
-         * @param left
-         * @param right
-         * @param bottom
-         * @param top
-         * @param znear
-         * @param zfar
-         * @param name
+         * @param owner
+         * @param arg
          */
-        Camera(GameObject & owner, const OrthographicCreateArg& arg) noexcept;
+        Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept;
+
+        Camera(const Camera& other)            noexcept = delete;
+
+        Camera(Camera&& other)                 noexcept = default;
+
+        virtual ~Camera()                      noexcept;
+
+        Camera& operator=(Camera&& other)      noexcept;
+
+        Camera& operator=(Camera const& other) noexcept = delete;
+
+        void moveTowardScene(class Scene & newOwner) override;
+
+        /**
+         * @brief Update the view matrix in function of model matrix of it's parent
+         */
+        RFKMethod() void updateView();
 
         /**
          * @brief Set the Fov Y object
@@ -196,6 +205,8 @@ namespace GPE RFKNamespace()
          * @return
          */
         void setActive(bool newState) noexcept override;
+
+        virtual void awake() override;
 
         Camera_GENERATED
     };
