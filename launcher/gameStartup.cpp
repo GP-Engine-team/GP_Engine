@@ -11,7 +11,6 @@
 
 using namespace GPE;
 
-
 static Engine* initEngineProxy()
 {
     Engine* const engine = Engine::getInstance();
@@ -22,42 +21,37 @@ static Engine* initEngineProxy()
     return engine;
 }
 
-
 GameStartup::GameStartup()
-    : m_engine{initEngineProxy()},
-      m_game  {createGameInstance()},
+    : m_engine{initEngineProxy()}, m_game{createGameInstance()},
 
       // Make all systems update their components
-      m_update{[&](double unscaledDeltaTime, double deltaTime)
-      {
+      m_update{[&](double unscaledDeltaTime, double deltaTime) {
           m_engine->behaviourSystem.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
-          m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+          // m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
           m_engine->inputManager.processInput();
-      
+
           m_game->update(unscaledDeltaTime, deltaTime);
       }},
 
       // Update physics
-      m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
-      {
-         m_engine->physXSystem.advance(fixedDeltaTime);
-         m_engine->behaviourSystem.fixedUpdate(fixedDeltaTime);
+      m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
+          m_engine->physXSystem.advance(fixedDeltaTime);
+          m_engine->behaviourSystem.fixedUpdate(fixedDeltaTime);
 
-         m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+          m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
       }},
 
       // Rendering
-      m_render{[&]()
-      {
+      m_render{[&]() {
           int h, w;
           m_engine->window.getSize(w, h);
           m_game->setViewport(.0f, .0f, float(w), float(h));
-      
+
           glBindFramebuffer(GL_FRAMEBUFFER, 0);
           glViewport(0, 0, w, h);
           m_game->render();
-      
+
           m_engine->renderer.swapBuffer();
       }}
 {
@@ -67,12 +61,10 @@ GameStartup::GameStartup()
         std::cerr << str;
     }
 
-    Log::getInstance()->logCallBack = [&](const char* msg)
-    {
+    Log::getInstance()->logCallBack = [&](const char* msg) {
         // Log in console
         std::cerr << msg;
     };
-
 
     // ============= Inputs =============
     m_engine->inputManager.setupCallbacks(m_engine->window.getGLFWWindow());
