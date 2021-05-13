@@ -4,6 +4,7 @@
 #include "Engine/Engine.hpp"
 #include "Game.hpp"
 #include "SingletonsSync.hpp"
+#include <Engine/Intermediate/GameObject.hpp>
 
 #include <GLFW/glfw3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
@@ -28,7 +29,7 @@ GameStartup::GameStartup()
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
           m_engine->behaviourSystem.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
-          // m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+          m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
           m_engine->inputManager.processInput();
 
           m_game->update(unscaledDeltaTime, deltaTime);
