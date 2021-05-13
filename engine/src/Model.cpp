@@ -185,19 +185,28 @@ void GPE::load(XmlLoader& context, SubModel& inspected, const XmlLoader::LoadInf
         {
             std::string shaderName;
             GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
-            inspected.pShader = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName);
+            if (!(inspected.pShader = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
+            {
+                inspected.pShader = loadShaderFile(shaderName.c_str());
+            }
         }
 
         {
             std::string matName;
             GPE::load(context, matName, XmlLoader::LoadInfo{"pMaterial", "Material*", 0});
-            inspected.pMaterial = Engine::getInstance()->resourceManager.get<GPE::Material>(matName);
+            if (!(inspected.pMaterial = Engine::getInstance()->resourceManager.get<GPE::Material>(matName)))
+            {
+                inspected.pMaterial = loadMaterialFile(matName.c_str());
+            }
         }
 
         {
             std::string meshName;
             GPE::load(context, meshName, XmlLoader::LoadInfo{"pMesh", "Mesh*", 0});
-            inspected.pMesh = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName);
+            if (!(inspected.pMesh = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName)))
+            {
+                inspected.pMesh = loadMeshFile(meshName.c_str());
+            }
         }
 
         GPE::load(context, inspected.enableBackFaceCulling, XmlLoader::LoadInfo{"enableBackFaceCulling", "bool", 0});
