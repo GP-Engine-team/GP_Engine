@@ -1,4 +1,4 @@
-﻿#include "GameStartup.hpp"
+#include "GameStartup.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
 #include "Engine/Engine.hpp"

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ShadowMap.hpp" />
     <ClInclude Include="include\Firearm\Bullet.hpp" />
     <ClInclude Include="include\Firearm\Firearm.hpp" />
     <ClInclude Include="include\Firearm\GunMagazine.hpp" />

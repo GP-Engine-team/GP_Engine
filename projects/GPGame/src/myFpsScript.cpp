@@ -26,11 +26,22 @@ File_GENERATED
     MyFpsScript::MyFpsScript(GPE::GameObject & owner) noexcept
         : GPE::BehaviourComponent(owner), input{&owner.addComponent<GPE::InputComponent>()},
           source{&owner.addComponent<GPE::AudioComponent>()},
-          controller{&owner.addComponent<GPE::CharacterController>()}, m_firearm{&owner.addComponent<PPSH41>()}
+          controller{&owner.addComponent<GPE::CharacterController>()}, m_fireArme{&owner.addComponent<PPSH41>()}
     {
         enableFixedUpdate(true);
         enableUpdate(true);
         enableOnGUI(true);
+
+        m_fireArme = &owner.addComponent<PPSH41>();
+
+        GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+
+        GPE::SourceSettings sourceSettings;
+        sourceSettings.pitch = 1.f;
+        sourceSettings.loop  = AL_TRUE;
+
+        source->setSound("Western", "Western", sourceSettings);
+        source->playSound("Western", true);
 
         // Keys
         input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
@@ -42,6 +53,9 @@ File_GENERATED
         input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
         input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
         input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+        input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
+        input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
+        input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
 
         { // Cursor
             GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
@@ -149,12 +163,26 @@ File_GENERATED
 
     void MyFpsScript::shoot()
     {
-        m_firearm->triggered();
+        m_fireArme->triggered();
 
-        if (m_firearm->isMagazineEmpty())
-            m_firearm->reload();
+        if (m_fireArme->isMagazineEmpty())
+            m_fireArme->reload();
     }
 
+    void MyFpsScript::playAmbiantMusic()
+    {
+        source->playSound("Western", false);
+    }
+
+    void MyFpsScript::playAmbiantMusicForce()
+    {
+        source->playSound("Western", true);
+    }
+
+    void MyFpsScript::stopAllMusic()
+    {
+        source->stopAllSound();
+    }
     /*
     void MyFpsScript::growUpSphereCollider()
     {
@@ -177,7 +205,7 @@ File_GENERATED
         ImVec2 size = {ImGui::GetWindowSize().x * ratio, ImGui::GetWindowSize().y * ratio};
 
         ImGui::SetNextElementLayout(0.f, 0.f, size, ImGui::EHAlign::Left, ImGui::EVAlign::Top);
-        ImGui::Text("%d/%d", m_firearm->getMagazine().getBulletsRemaining(), m_firearm->getMagazine().getCapacity());
+        ImGui::Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
     }
 
     void MyFpsScript::fixedUpdate(double deltaTime)

@@ -20,12 +20,12 @@ public:
     ~Sound() = default;
 
 public:
-    std::uint8_t              channels      = 0;
-    std::int32_t              sampleRate    = 0;
-    std::uint8_t              bitsPerSample = 0;
+    std::uint8_t             channels      = 0;
+    std::int32_t             sampleRate    = 0;
+    std::uint8_t             bitsPerSample = 0;
     std::unique_ptr<int16_t> data          = nullptr;
-    drwav_uint64              size          = 0;
-    ALenum                    format        = 0;
+    drwav_uint64             size          = 0;
+    ALenum                   format        = 0;
 
     struct Buffer
     {

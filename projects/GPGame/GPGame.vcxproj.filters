@@ -54,6 +54,9 @@
     <ClInclude Include="include\Firearm\PPSH41.hpp">
       <Filter>Header Files\FireArme</Filter>
     </ClInclude>
+    <ClInclude Include="ShadowMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">

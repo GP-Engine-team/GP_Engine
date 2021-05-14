@@ -78,7 +78,7 @@ File_GENERATED
 
             m_muzzleFlash->emit(static_cast<unsigned int>(m_muzzleFlash->getCount() / m_magazineStored.getCapacity()));
 
-            m_shootSound->playSound("Shoot");
+            m_shootSound->playSound("Shoot", true);
             m_isReloadingNextBullet    = true;
             m_reloadingBulletTimeCount = 0.f;
         }
