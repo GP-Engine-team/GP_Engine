@@ -12,48 +12,13 @@ using namespace std;
 
 AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
 {
-    // Check if OpenAL Soft handle m_enumeration
-    {
-        m_enumeration = alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT");
-        if (m_enumeration == AL_FALSE)
-        {
-            FUNCT_ERROR("Enumeration not supported !");
-        }
-    }
-
-    // Gen device
-    {
-        m_device = alcOpenDevice(NULL);
-        if (!m_device)
-        {
-            FUNCT_ERROR("No Device set !");
-        }
-    }
-
-    // Gen Context
-    if (!ALC_CALL(alcCreateContext, m_openALContext, m_device, m_device, nullptr) || !m_openALContext)
-    {
-        FUNCT_ERROR("ERROR: Could not create audio context");
-    }
-
-    if (!ALC_CALL(alcMakeContextCurrent, m_contextMadeCurrent, m_device, m_openALContext) ||
-        m_contextMadeCurrent != ALC_TRUE)
-    {
-        FUNCT_ERROR("ERROR: Could not create audio context");
-    }
-
     m_key = Engine::getInstance()->soundSystem.addComponent(this);
 }
 
 AudioComponent& AudioComponent::operator=(AudioComponent&& other)
 {
-    m_enumeration        = std::move(other.m_enumeration);
-    m_device             = std::move(other.m_device);
-    m_openALContext      = std::move(other.m_openALContext);
-    m_contextMadeCurrent = std::move(other.m_contextMadeCurrent);
-    m_closed             = std::move(other.m_closed);
-    m_key                = std::move(other.m_key);
-    sources              = std::move(other.sources);
+    m_key   = std::move(other.m_key);
+    sources = std::move(other.sources);
 
     Engine::getInstance()->soundSystem.updateComponent(this);
 
@@ -89,21 +54,17 @@ AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept
     }
 }
 
-void AudioComponent::playSound(const char* name) noexcept
+void AudioComponent::playSound(const char* name, bool forceStart) noexcept
 {
-    SourceData* source = findSource(name);
-    AL_CALL(alSourcePlay, source->source);
-    source->state = AL_PLAYING;
-}
-
-AudioComponent::~AudioComponent()
-{
-    // AL_CALL(alDeleteSources, 1, &sources[i].source);
-    // AL_CALL(alDeleteBuffers, 1, &buffer);
-
-    ALC_CALL(alcMakeContextCurrent, m_contextMadeCurrent, m_device, nullptr);
-    ALC_CALL(alcDestroyContext, m_device, m_openALContext);
-    ALC_CALL(alcCloseDevice, m_closed, m_device, m_device);
+    if (m_isActivated)
+    {
+        SourceData* source = findSource(name);
+        if (source->state != AL_PLAYING || forceStart)
+        {
+            AL_CALL(alSourcePlay, source->source);
+            source->state = AL_PLAYING;
+        }
+    }
 }
 
 AudioComponent::SourceData* AudioComponent::findSource(const char* name) noexcept
@@ -127,6 +88,18 @@ void AudioComponent::stopSound(const char* name) noexcept
     source->state = AL_STOPPED;
 }
 
+void AudioComponent::stopAllSound() noexcept
+{
+    for (auto& [key, value] : sources)
+    {
+        if (value.state == AL_PLAYING)
+        {
+            AL_CALL(alSourceStop, value.source);
+            value.state = AL_STOPPED;
+        }
+    }
+}
+
 void AudioComponent::setActive(bool newState) noexcept
 {
     if (m_isActivated == newState)
@@ -136,5 +109,13 @@ void AudioComponent::setActive(bool newState) noexcept
     if (m_isActivated)
         Engine::getInstance()->soundSystem.addComponent(this);
     else
+    {
+        stopAllSound();
         Engine::getInstance()->soundSystem.removeComponent(m_key);
+    }
+}
+
+AudioComponent::~AudioComponent()
+{
+    Engine::getInstance()->soundSystem.removeComponent(m_key);
 }

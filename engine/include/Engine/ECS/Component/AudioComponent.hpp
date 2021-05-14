@@ -18,7 +18,6 @@
 
 namespace GPE RFKNamespace()
 {
-
     struct SourceSettings
     {
         ALfloat   pitch       = 1.f;
@@ -26,10 +25,6 @@ namespace GPE RFKNamespace()
         ALfloat   position[3] = {0, 0, 0};
         ALfloat   velocity[3] = {0, 0, 0};
         ALboolean loop        = AL_FALSE;
-
-        // SourceSettings() = default;
-        // SourceSettings(ALfloat pitch, ALfloat gain, ALfloat position[3], ALfloat velocity[3], ALboolean loop =
-        // AL_FALSE)
     };
 
     class RFKClass(Inspect(), Serialize()) AudioComponent : public Component
@@ -48,12 +43,7 @@ namespace GPE RFKNamespace()
         AudioComponent(AudioComponent && other) noexcept = default;
 
     private:
-        ALboolean   m_enumeration;
-        ALCdevice*  m_device;
-        ALCcontext* m_openALContext;
-        ALCboolean  m_contextMadeCurrent = false;
-        ALCboolean  m_closed;
-        int         m_key = -1;
+        int m_key = -1;
 
     public:
         struct SourceData
@@ -79,14 +69,20 @@ namespace GPE RFKNamespace()
         /**
          * @brief Play the current bound sound
          */
-        void playSound(const char* name) noexcept;
+        void playSound(const char* name, bool forceStart) noexcept;
 
         /**
          * @brief Stop the current bound sound
          */
         void stopSound(const char* name) noexcept;
 
-        int getKey() const noexcept
+        /**
+         * @brief Stop all the sound bound to the Audio Component
+         * @return
+         */
+        void stopAllSound() noexcept;
+
+        [[nodiscard]] int getKey() const noexcept
         {
             return m_key;
         }
