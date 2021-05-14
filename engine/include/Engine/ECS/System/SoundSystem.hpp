@@ -10,11 +10,12 @@
 
 namespace GPE
 {
+
 class SoundSystem
 {
 public:
-    SoundSystem()  = default;
-    ~SoundSystem() = default;
+    SoundSystem();
+    ~SoundSystem();
 
     std::unordered_map<int, AudioComponent*> m_audioComponents;
 
@@ -43,6 +44,13 @@ public:
      * @return
      */
     inline void removeComponent(int key) noexcept;
+
+private:
+    ALboolean   m_enumeration;
+    ALCdevice*  m_device;
+    ALCcontext* m_openALContext;
+    ALCboolean  m_contextMadeCurrent = false;
+    ALCboolean  m_closed;
 };
 
 #include "Engine/ECS/System/SoundSystem.inl"
