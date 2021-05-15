@@ -232,6 +232,7 @@ void SceneViewer::bindScene(Scene& scene)
 {
     // Move cameraOwner to the other scene
     cameraOwner->forceSetParent(scene.getWorld());
+    cameraOwner->pOwnerScene = &scene;
 
     // Update the Camera component and cameraOwner scene and parent
     inputs.setActive(true);
