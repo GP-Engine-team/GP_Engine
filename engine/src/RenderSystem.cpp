@@ -85,6 +85,10 @@ RenderSystem::RenderSystem() noexcept
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
 
+    Engine::getInstance()->resourceManager.add<Shader>("DepthOnly", "./resources/shaders/vDepthOnly.vs",
+                                                       "./resources/shaders/fDepthOnly.fs",
+                                                       PROJECTION_VIEW_MODEL_MATRIX);
+
     m_sphereMesh = &Engine::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
     m_cubeMesh   = &Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
     m_planeMesh  = &Engine::getInstance()->resourceManager.add<Mesh>(
@@ -307,7 +311,6 @@ Camera* RenderSystem::getMainCamera() noexcept
     return m_mainCamera;
 }
 
-
 void RenderSystem::setActiveCamera(Camera* newActiveCamera) noexcept
 {
     if (!m_activeCamera || newActiveCamera)
@@ -344,7 +347,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
               std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
-              std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines, Camera& mainCamera) {
+              std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines,
+              std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
         if (pCameras.empty())
             return;
 
@@ -523,7 +527,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
               std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
               std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
-              Camera& mainCamera) {
+              std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
         if (pCameras.empty())
             return;
 
@@ -580,6 +584,79 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
     };
 }
 
+RenderSystem::RenderPipeline RenderSystem::shadowMapPipeline() const noexcept
+{
+    return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
+              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
+              std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
+              std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
+              std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
+        GLint drawFboId = 0;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFboId);
+
+        GLint viewportSize[2];
+        glGetIntegerv(GL_MAX_VIEWPORT_DIMS, &viewportSize[0]);
+
+        for (auto&& shadowMap : shadowMaps)
+        {
+            // 1. first render to depth map
+            glViewport(0, 0, shadowMap.width, shadowMap.height);
+            glBindFramebuffer(GL_FRAMEBUFFER, shadowMap.depthMapFBO);
+            glClear(GL_DEPTH_BUFFER_BIT);
+
+            const Frustum camFrustum = mainCamera.getFrustum();
+
+            Shader& shaderGameObjectIdentifier = *Engine::getInstance()->resourceManager.get<Shader>("DepthOnly");
+
+            /*Display opaque element*/
+            {
+                for (auto&& pSubModel : pOpaqueSubModels)
+                {
+                    if (!rs.isOnFrustum(camFrustum, pSubModel))
+                        continue;
+
+                    rs.tryToBindMesh(pSubModel->pMesh->getID());
+                    rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
+
+                    shaderGameObjectIdentifier.setMat4("projectViewModelMatrix",
+                                                       (shadowMap.pOwner->getLightSpaceMatrix() *
+                                                        pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                                                           .e);
+                    rs.drawModelPart(*pSubModel);
+                }
+
+                for (auto&& pSubModel : pTransparenteSubModels)
+                {
+                    if (!rs.isOnFrustum(camFrustum, pSubModel))
+                        continue;
+
+                    rs.tryToBindMesh(pSubModel->pMesh->getID());
+                    rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
+
+                    shaderGameObjectIdentifier.setMat4("projectViewModelMatrix",
+                                                       (shadowMap.pOwner->getLightSpaceMatrix() *
+                                                        pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                                                           .e);
+                    rs.drawModelPart(*pSubModel);
+                }
+            }
+
+            rs.resetCurrentRenderPassKey();
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, drawFboId);
+
+        // 2. then render scene as normal with shadow mapping (using depth map)
+        glViewport(0, 0, viewportSize[0], viewportSize[1]);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+
+        glClearColor(0.f, 0.f, 0.f, 0.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    };
+}
+
 void RenderSystem::render(RenderPipeline renderPipeline) noexcept
 {
     if (m_activeCamera == nullptr)
@@ -589,7 +666,7 @@ void RenderSystem::render(RenderPipeline renderPipeline) noexcept
     }
 
     renderPipeline(*this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_pParticleComponents, m_debugShape, m_debugLine, *m_activeCamera);
+                   m_pParticleComponents, m_debugShape, m_debugLine, m_shadowMaps, *m_activeCamera);
 }
 
 void RenderSystem::update(double dt) noexcept
@@ -798,6 +875,17 @@ void RenderSystem::removeCamera(Camera& camera) noexcept
     }
 }
 
+void RenderSystem::tryToResize(unsigned int w, unsigned int h)
+{
+    if (w == m_w && h == m_h)
+        return;
+
+    for (auto&& shadowMap : m_shadowMaps)
+    {
+        shadowMap.resize(w, h);
+    }
+}
+
 void RenderSystem::addLight(Light& light) noexcept
 {
     m_pLights.push_back(&light);
@@ -825,6 +913,25 @@ void RenderSystem::removeLight(Light& light) noexcept
         {
             std::swap<Light*>(m_pLights.back(), (*it));
             m_pLights.pop_back();
+            return;
+        }
+    }
+}
+
+void RenderSystem::addShadowMap(Light& light) noexcept
+{
+    m_shadowMaps.emplace_back(light);
+}
+
+void RenderSystem::removeShadowMap(Light& light) noexcept
+{
+    std::vector<ShadowMap>::const_iterator end{m_shadowMaps.end()};
+    for (std::vector<ShadowMap>::iterator it = m_shadowMaps.begin(); it != end; it++)
+    {
+        if (it->pOwner == &light)
+        {
+            std::swap<ShadowMap>(m_shadowMaps.back(), (*it));
+            m_shadowMaps.pop_back();
             return;
         }
     }

@@ -26,7 +26,7 @@
 namespace GPE RFKNamespace()
 {
     // TODO: Can be more optimize change information only when light is update
-    class RFKClass(Serialize(), Inspect(), ComponentGen) Light : public Component
+    class RFKClass(Serialize(), ComponentGen) Light : public Component
     {
     public:
         struct CreateArg
@@ -36,10 +36,19 @@ namespace GPE RFKNamespace()
             SpecularComponent specular = SpecularComponent{0.5f, 0.5f, 0.5f, 1.f};
         };
 
+        struct ShadowProperties
+        {
+            bool  isEnable             = false;
+            float shadowMapSampleScale = 1.f;
+            float bias;
+        };
+
     protected:
-        RFKField(Inspect()) AmbiantComponent  m_ambientComp;
-        RFKField(Inspect()) DiffuseComponent  m_diffuseComp;
-        RFKField(Inspect()) SpecularComponent m_specularComp;
+        AmbiantComponent  m_ambientComp;
+        DiffuseComponent  m_diffuseComp;
+        SpecularComponent m_specularComp;
+
+        ShadowProperties m_shadowProterties;
 
     public:
         inline Light(GameObject & owner, const CreateArg& arg);
@@ -80,6 +89,7 @@ namespace GPE RFKNamespace()
         inline const AmbiantComponent&  getAmbient() const noexcept;
         inline const DiffuseComponent&  getDiffuse() const noexcept;
         inline const SpecularComponent& getSpecular() const noexcept;
+        inline const ShadowProperties&  getShadowProperties() const noexcept;
 
         inline void setGlobalComponent(const ColorRGBA& newComponent) noexcept;
         inline void setGlobalComponent(const GPM::Vec4& newComponent) noexcept;
@@ -91,6 +101,10 @@ namespace GPE RFKNamespace()
         inline void setAmbient(const GPM::Vec4& newAmbient) noexcept;
         inline void setDiffuse(const GPM::Vec4& newDiffuse) noexcept;
         inline void setSpecular(const GPM::Vec4& newSpecular) noexcept;
+
+        virtual GPM::Mat4 getLightSpaceMatrix() noexcept;
+
+        virtual void inspect(InspectContext & context);
 
         /**
          * @brief Add or remove current component from it's system which have for effect to enable or disable it

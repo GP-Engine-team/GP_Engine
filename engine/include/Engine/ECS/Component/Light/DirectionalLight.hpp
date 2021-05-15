@@ -49,7 +49,8 @@ namespace GPE RFKNamespace()
 
         DirectionalLight(GameObject & owner, const CreateArg& arg) noexcept;
 
-        void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept final;
+        void      addToLightToUseBuffer(std::vector<LightData> & lb) noexcept final;
+        GPM::Mat4 getLightSpaceMatrix() noexcept final;
 
         DEFAULT_GETTER_SETTER_BY_REF(Direction, m_direction);
 

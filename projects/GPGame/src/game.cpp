@@ -68,6 +68,8 @@ void Game::render()
     ImGui::Render();
 
     RenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
+
+    sceneRS.tryToResize(m_w, m_h);
     sceneRS.render(sceneRS.defaultRenderPipeline());
 
     // draw UI

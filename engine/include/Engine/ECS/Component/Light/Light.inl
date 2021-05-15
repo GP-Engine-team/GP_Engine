@@ -44,6 +44,11 @@ const SpecularComponent& Light::getSpecular() const noexcept
     return m_specularComp;
 }
 
+const Light::ShadowProperties& Light::getShadowProperties() const noexcept
+{
+    return m_shadowProterties;
+}
+
 void Light::setGlobalComponent(const ColorRGBA& newComponent) noexcept
 {
     m_ambientComp.rgba  = newComponent;

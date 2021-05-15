@@ -283,6 +283,7 @@ void SceneViewer::render() const
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
+    pScene->sceneRenderer.tryToResize(width, height);
     pScene->sceneRenderer.render(pScene->sceneRenderer.defaultRenderPipeline());
 }
 

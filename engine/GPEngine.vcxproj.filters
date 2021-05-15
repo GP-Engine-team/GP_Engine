@@ -274,6 +274,9 @@
     <ClCompile Include="src\Raycast.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ShadowMap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -724,6 +727,9 @@
       <Filter>third_party</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Resources\Prefab.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ShadowMap.hpp">
       <Filter>include\Resources</Filter>
     </ClInclude>
   </ItemGroup>
