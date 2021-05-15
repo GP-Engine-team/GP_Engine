@@ -47,7 +47,7 @@ void GameViewer::render(EditorStartup& startup)
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
-    if (ImGui::Begin("Game view"))
+    if (ImGui::Begin("Game view") && &startup.game() != nullptr)
     {
         // Decide what to do with inputs
         if (startup.game().state == EGameState::PLAYING && !m_captureInputs && ImGui::IsWindowHovered() &&

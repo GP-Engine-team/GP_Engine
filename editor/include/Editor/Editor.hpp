@@ -43,7 +43,11 @@ private:
     GameControlBar     m_gameControlBar;
     const std::string  m_saveFolder;
     GLFWwindow*        m_window;
+
+public:
     GPE::IInspectable* m_inspectedObject;
+
+private:
     bool               m_showAppStyleEditor;
     bool               m_showImGuiDemoWindows;
 

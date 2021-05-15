@@ -228,6 +228,8 @@ void EditorStartup::update()
         auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
         (*sync)(*m_engine);
 
+        m_editor.m_inspectedObject = nullptr;
+
         openGame();
     }
 

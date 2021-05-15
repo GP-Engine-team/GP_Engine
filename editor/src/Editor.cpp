@@ -340,7 +340,7 @@ void Editor::update(EditorStartup& startup)
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGuiContext* gameContext = syncGameUI();
+    ImGuiContext* gameContext = (syncGameUI == nullptr) ? nullptr : syncGameUI();
     syncImGui(ImGui::GetCurrentContext());
 
     // Start drawing
