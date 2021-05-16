@@ -48,9 +48,9 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Serialize()) AmbiantComponent  m_ambientComp;
-        RFKField(Serialize()) DiffuseComponent  m_diffuseComp;
-        RFKField(Serialize()) SpecularComponent m_specularComp;
+        AmbiantComponent  m_ambientComp;
+        DiffuseComponent  m_diffuseComp;
+        SpecularComponent m_specularComp;
 
         RFKField(Serialize()) ShadowProperties m_shadowProterties;
 
