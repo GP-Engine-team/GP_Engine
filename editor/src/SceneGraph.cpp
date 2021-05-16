@@ -27,6 +27,8 @@
 #include <Engine/Resources/Scene.hpp>
 #include <imgui/imgui.h>
 
+#include <map>
+
 using namespace Editor;
 using namespace GPE;
 
@@ -123,16 +125,43 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
 
             getAllComponentsClassesFunct(&componnentList);
 
+            std::map<std::string, std::vector<rfk::Archetype const*>> archetypeSorted;
+
             for (auto&& compArchetype : componnentList)
             {
-                // const rfk::Class* classArchetype = static_cast<const rfk::Class*>(compArchetype);
-                // for (auto& parent : classArchetype->directParents)
-                //{
-                //    // for each parents
-                //}
+                const rfk::Class* classArchetype = static_cast<const rfk::Class*>(compArchetype);
+                for (auto& parent : classArchetype->directParents)
+                {
+                    if (!parent.type->directParents.empty())
+                    {
+                        archetypeSorted[parent.type->name].emplace_back(compArchetype);
+                    }
+                    else
+                    {
+                        archetypeSorted[compArchetype->name].emplace_back(compArchetype);
+                    }
+                }
+            }
 
-                if (ImGui::MenuItem(compArchetype->name.c_str()))
-                    createComponentByIDFunct(gameObject, compArchetype->id);
+            for (const auto& [key, value] : archetypeSorted)
+            {
+                if (value.size() > 1)
+                {
+                    if (ImGui::BeginMenu(key.c_str()))
+                    {
+                        for (auto&& archetype : value)
+                        {
+                            if (ImGui::MenuItem(archetype->name.c_str()))
+                                createComponentByIDFunct(gameObject, archetype->id);
+                        }
+                        ImGui::EndMenu();
+                    }
+                }
+                else
+                {
+                    if (ImGui::MenuItem(key.c_str()))
+                        createComponentByIDFunct(gameObject, value.front()->id);
+                }
             }
 
             ImGui::EndMenu();
