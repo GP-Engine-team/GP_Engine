@@ -82,7 +82,7 @@ Model& Model::operator=(Model&& other) noexcept
     return static_cast<Model&>(Component::operator=(std::move(other)));
 }
 
-void Model::awake()
+void Model::onPostLoad()
 {
     setActive(false);
     setActive(true);

@@ -52,7 +52,7 @@ namespace GPE RFKNamespace()
 
         virtual void destroy(){}
 
-        virtual void awake();
+        virtual void onPostLoad();
 
         Component_GENERATED
     };

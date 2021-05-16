@@ -61,6 +61,11 @@ void Light::setShadowActive(bool newState) noexcept
         getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);
 }
 
+void Light::onPostLoad()
+{
+    getOwner().pOwnerScene->sceneRenderer.addLight(*this);
+}
+
 void Light::setActive(bool newState) noexcept
 {
     if (m_isActivated == newState)

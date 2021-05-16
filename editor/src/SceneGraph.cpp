@@ -21,7 +21,7 @@
 #include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 
-#include <Editor/ExternalDeclarations.hpp>
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 #include <Engine/Core/HotReload/ReloadableCpp.hpp>
 
 #include <Engine/Resources/Scene.hpp>

@@ -23,9 +23,6 @@
     <ClInclude Include="include\Editor\Viewport.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\Editor\ExternalDeclarations.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Editor\LogInspector.hpp">
       <Filter>include</Filter>
     </ClInclude>

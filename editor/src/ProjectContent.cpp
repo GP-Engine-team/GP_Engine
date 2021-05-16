@@ -15,7 +15,7 @@
 #include <Engine/Serialization/TextureImporterSetting.hpp>
 
 // Don't move up
-#include <Editor/ExternalDeclarations.hpp>
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 
 #include <imgui/imgui.h>
 #include <string>

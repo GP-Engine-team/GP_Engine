@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  * found in the top-level directory of this distribution.
@@ -32,9 +32,9 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Serialize(), Inspect()) float m_constant;
-        RFKField(Serialize(), Inspect()) float m_linear;
-        RFKField(Serialize(), Inspect()) float m_quadratic;
+        RFKField(Inspect(), Serialize()) float m_constant;
+        RFKField(Inspect(), Serialize()) float m_linear;
+        RFKField(Inspect(), Serialize()) float m_quadratic;
 
     public:
         PointLight(const PointLight& other) = delete;

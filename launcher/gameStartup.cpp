@@ -3,7 +3,7 @@
 #include "Engine/Core/Game/AbstractGame.hpp"
 #include "Engine/Engine.hpp"
 #include "Game.hpp"
-#include "SingletonsSync.hpp"
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 #include <Engine/Intermediate/GameObject.hpp>
 
 #include <GLFW/glfw3.h>

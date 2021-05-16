@@ -69,10 +69,10 @@ File_GENERATED
         controller->setMouseSpeed(.0025f);
         controller->setGravity(.1f);
     }
-
-    void MyFpsScript::awake()
+    
+    void MyFpsScript::onPostLoad()
     {
-        BehaviourComponent::awake();
+        BehaviourComponent::onPostLoad();
     }
 
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)

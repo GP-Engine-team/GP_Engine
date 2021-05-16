@@ -48,12 +48,12 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        AmbiantComponent  m_ambientComp;
-        DiffuseComponent  m_diffuseComp;
-        SpecularComponent m_specularComp;
+        RFKField(Serialize()) AmbiantComponent  m_ambientComp;
+        RFKField(Serialize()) DiffuseComponent  m_diffuseComp;
+        RFKField(Serialize()) SpecularComponent m_specularComp;
 
         RFKField(Serialize()) ShadowProperties m_shadowProterties;
-
+        
     public:
         inline Light(GameObject & owner, const CreateArg& arg);
 
@@ -68,6 +68,8 @@ namespace GPE RFKNamespace()
         Light& operator=(const Light& other) = delete;
 
         inline Light& operator=(Light&& other) noexcept;
+
+        virtual void onPostLoad();
 
         void moveTowardScene(Scene & newOwner) final
         {

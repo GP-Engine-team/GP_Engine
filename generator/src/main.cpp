@@ -88,6 +88,7 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir,
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/gameDir/include");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(gameDir + "/include");
     settings.setOutputDirectory(gameDir + "/include/Generated/");
     settings.supportedExtensions = {".h", ".hpp"};
     settings.addToParseDirectory(gameDir + "/include/");

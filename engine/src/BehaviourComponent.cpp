@@ -14,7 +14,7 @@ BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(o
     getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
 }
 
-void BehaviourComponent::awake()
+void BehaviourComponent::onPostLoad()
 {
     if (m_isActivated)
     {

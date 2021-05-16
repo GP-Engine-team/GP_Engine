@@ -193,7 +193,7 @@ namespace GPE RFKNamespace()
          */
         void setActive(bool newState) noexcept override;
 
-        virtual void awake() override;
+        virtual void onPostLoad() override;
 
         Camera_GENERATED
     };

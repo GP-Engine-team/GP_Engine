@@ -8,6 +8,7 @@ struct Transform;
 struct SplitTransform;
 union alignas(16) Matrix4;
 union Vector3;
+union Vector4;
 union Quaternion;
 } // namespace GPM
 
@@ -28,6 +29,12 @@ void load(XmlLoader& context, GPM::Vector3& data, const XmlLoader::LoadInfo& inf
 
 template <>
 void load(XmlLoader& context, GPM::Vector3& data, const rfk::Field& info);
+
+/**
+ * @brief Specialization for Vec4 data. See the original function for more comments.
+ */
+template <>
+void load(XmlLoader& context, GPM::Vector4& data, const XmlLoader::LoadInfo& info);
 
 /**
  * @brief Specialization for Quaternion data. See the original function for more comments.

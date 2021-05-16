@@ -10,7 +10,7 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
 
-#include <Editor/ExternalDeclarations.hpp>
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 
 namespace Editor
 {
@@ -69,15 +69,16 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, setLogInstance);
     ADD_PROCESS(m_reloadableCpp, setImguiCurrentContext);
     ADD_PROCESS(m_reloadableCpp, getGameUIContext);
-    ADD_PROCESS(m_reloadableCpp, saveScene);
-    ADD_PROCESS(m_reloadableCpp, loadScene);
     ADD_PROCESS(m_reloadableCpp, getGameUIContext);
-    ADD_PROCESS(m_reloadableCpp, saveCurrentScene);
-    ADD_PROCESS(m_reloadableCpp, loadCurrentScene);
     ADD_PROCESS(m_reloadableCpp, saveSceneToPath);
     ADD_PROCESS(m_reloadableCpp, loadSceneFromPath);
-    ADD_PROCESS(m_reloadableCpp, saveGameObjectToPath);
-    ADD_PROCESS(m_reloadableCpp, loadGameObjectFromPath);
+    ADD_PROCESS(m_reloadableCpp, getAllComponentsName);
+    ADD_PROCESS(m_reloadableCpp, getAllComponentsClasses);
+    ADD_PROCESS(m_reloadableCpp, createGameObject);
+    ADD_PROCESS(m_reloadableCpp, destroyGameObject);
+    ADD_PROCESS(m_reloadableCpp, createComponentByName);
+    ADD_PROCESS(m_reloadableCpp, createComponentByID);
+    ADD_PROCESS(m_reloadableCpp, destroyComponent);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
