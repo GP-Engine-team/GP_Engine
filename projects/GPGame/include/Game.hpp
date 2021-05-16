@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-#include <Engine/Core/Game/AbstractGame.hpp>
 #include "Engine/Core/HotReload/EngineApiMacros.hpp"
+#include <Engine/Core/Game/AbstractGame.hpp>
+#include <Engine/ECS/Component/ComponentInclude.hpp>
 
 struct GLFWwindow;
 
@@ -14,7 +15,7 @@ class GameObject;
 class Game final : public GPE::AbstractGame
 {
 protected:
-    double FPLogDelay              = 1.;
+    double FPLogDelay = 1.;
     float  m_x = .0f, m_y = .0f, m_w = .0f, m_h = .0f;
     int    fixedUpdateFrameCount   = 0;
     int    unFixedUpdateFrameCount = 0;
@@ -23,10 +24,10 @@ public:
     Game();
     virtual ~Game() final;
 
-    void update     (double unscaledDeltaTime, double deltaTime)           final;
+    void update(double unscaledDeltaTime, double deltaTime) final;
     void fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime) final;
-    void render     ()                                                     final;
-    
+    void render() final;
+
     void initDearImGui(GLFWwindow* window);
     void setViewport(float x, float y, float w, float h);
 };

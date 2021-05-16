@@ -4,13 +4,6 @@
 #include <Game.hpp>
 #include <myFpsScript.hpp>
 
-#include <Engine/ECS/Component/Camera.hpp>
-#include <Engine/ECS/Component/Light/DirectionalLight.hpp>
-#include <Engine/ECS/Component/Light/PointLight.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
-#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
-#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>

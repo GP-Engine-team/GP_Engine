@@ -6,17 +6,6 @@
 #include <Engine/Core/Tools/Hash.hpp>
 #include <Engine/Engine.hpp>
 
-// Components
-// TODO: Generat this automatically
-#include <Engine/ECS/Component/AudioComponent.hpp>
-#include <Engine/ECS/Component/Camera.hpp>
-#include <Engine/ECS/Component/InputComponent.hpp>
-#include <Engine/ECS/Component/Light/DirectionalLight.hpp>
-#include <Engine/ECS/Component/Light/PointLight.hpp>
-#include <Engine/ECS/Component/Light/SpotLight.hpp>
-#include <Engine/ECS/Component/Model.hpp>
-#include <Engine/ECS/Component/ParticleComponent.hpp>
-
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/IInspectable.hpp>

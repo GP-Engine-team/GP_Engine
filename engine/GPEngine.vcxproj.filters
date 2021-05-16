@@ -750,6 +750,9 @@
     <ClInclude Include="include\Engine\Resources\ShadowMap.hpp">
       <Filter>include\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\ComponentInclude.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

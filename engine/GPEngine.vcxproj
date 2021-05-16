@@ -238,6 +238,7 @@
     <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Camera.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Component.hpp" />
+    <ClInclude Include="include\Engine\ECS\Component\ComponentInclude.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\InputComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Light\DirectionalLight.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Light\Light.hpp" />
