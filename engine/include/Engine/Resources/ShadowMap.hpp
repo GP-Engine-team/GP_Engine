@@ -17,15 +17,14 @@ struct ShadowMap
     unsigned int depthMapFBO = 0;
     unsigned int depthMap    = 0;
     Light*       pOwner      = nullptr;
-    unsigned int height      = 0;
-    unsigned int width       = 0;
+    unsigned int height      = 1;
+    unsigned int width       = 1;
 
     ShadowMap(Light& pOwner);
     ~ShadowMap();
 
     void init(unsigned int w, unsigned int h);
 
-    void reset();
     void resize(unsigned int w, unsigned int h);
 };
 } // namespace GPE

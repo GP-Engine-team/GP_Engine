@@ -42,7 +42,7 @@ namespace GPE RFKNamespace()
         SpotLight(SpotLight && other)     = default;
         virtual ~SpotLight();
 
-        SpotLight()        = delete;
+        SpotLight()        = default;
         SpotLight& operator=(SpotLight const& other) = delete;
         SpotLight& operator=(SpotLight&& other) = default;
 

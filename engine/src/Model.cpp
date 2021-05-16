@@ -391,8 +391,7 @@ void Model::inspect(InspectContext& context)
 
 void Model::addSubModel(const SubModel::CreateArg& arg)
 {
-    GPE_ASSERT(!((size_t)arg.pMesh & (size_t)arg.pShader & (size_t)arg.pMaterial),
-               "Invalid arguments to create submodel")
+    GPE_ASSERT(arg.pMesh && arg.pShader && arg.pMaterial, "Invalid arguments to create submodel")
 
     SubModel& newSsub = m_subModels.emplace_back(*this, arg);
     getOwner().pOwnerScene->sceneRenderer.addSubModel(newSsub);

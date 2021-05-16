@@ -1,18 +1,18 @@
-#include <Engine/Engine.hpp>
 #include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
+#include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Scene.hpp>
 #include <Engine/Serialization/xml/xmlLoader.hpp>
 #include <Engine/Serialization/xml/xmlSaver.hpp>
-#include <Engine/Resources/Scene.hpp>
 #include <GPM/Transform.hpp>
 #include <GPM/Vector3.hpp>
 
 #include <Engine/ECS/Component/Camera.hpp>
 File_GENERATED
 
-using namespace GPM;
+    using namespace GPM;
 namespace GPE
 {
 
@@ -26,7 +26,6 @@ void Camera::updateView()
 {
     m_viewMatrix           = getOwner().getTransform().getModelMatrix().inversed();
     m_projectionViewMatrix = m_projection * m_viewMatrix;
-
 }
 
 void Camera::updateProjection()
@@ -34,8 +33,8 @@ void Camera::updateProjection()
     switch (m_projInfo.type)
     {
     case EProjectionType::ORTHOGRAPHIC:
-        m_projection =
-            Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
+        m_projection = Transform::orthographic(m_projInfo.hSide * .5f, -m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
+                                               -m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
         break;
 
     case EProjectionType::PERSPECTIVE:
@@ -55,13 +54,11 @@ void Camera::moveTowardScene(Scene& newOwner)
     newOwner.sceneRenderer.addCamera(*this);
 }
 
-Camera::Camera(GameObject& owner) noexcept
-    : Camera(owner, PerspectiveCreateArg{})
+Camera::Camera(GameObject& owner) noexcept : Camera(owner, PerspectiveCreateArg{})
 {
 }
 
-Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept
-    : Component(owner)
+Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Component(owner)
 {
     GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");
 
@@ -98,8 +95,8 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
     m_projInfo.hSide  = arg.hSide;
     m_projInfo.vSide  = arg.vSide;
 
-    m_projection =
-        Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
+    m_projection = Transform::orthographic(m_projInfo.hSide * .5f, -m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
+                                           -m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
 
     getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
     getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
@@ -110,8 +107,8 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
 
 void Camera::awake()
 {
-    m_projection =
-        Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
+    m_projection = Transform::orthographic(m_projInfo.hSide * .5f, -m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
+                                           -m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
     getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
     updateView();
 }
@@ -150,8 +147,12 @@ void Camera::setFovY(const float fovY) noexcept
 void Camera::setAspect(const float newAspect) noexcept
 {
     m_projInfo.aspect = newAspect;
-    m_projInfo.fovX   = m_projInfo.aspect * m_projInfo.fovY;
-    m_projInfo.hSide  = m_projInfo.zfar * tanf(m_projInfo.fovX * .5f) * 2.f;
+
+    if (m_projInfo.type != EProjectionType::ORTHOGRAPHIC)
+    {
+        m_projInfo.fovX  = m_projInfo.aspect * m_projInfo.fovY;
+        m_projInfo.hSide = m_projInfo.zfar * tanf(m_projInfo.fovX * .5f) * 2.f;
+    }
 
     updateProjection();
     updateView();

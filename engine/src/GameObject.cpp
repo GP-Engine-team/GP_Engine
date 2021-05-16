@@ -333,6 +333,10 @@ void GameObject::inspect(GPE::InspectContext& context)
 {
     GPE::DataInspector::inspect(context, m_name, "name");
     GPE::DataInspector::inspect(context, m_tag, "tag");
+    if (GPE::DataInspector::inspect(context, m_isActive, "isActive"))
+    {
+        setActive(m_isActive);
+    }
 
     getTransform().inspect(context);
 

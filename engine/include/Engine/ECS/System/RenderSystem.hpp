@@ -76,7 +76,7 @@ protected:
     std::vector<DebugShape>         m_debugShape;
     std::vector<DebugLine>          m_debugLine;
     std::vector<ShadowMap>          m_shadowMaps;
-    unsigned int                    m_w, m_h;
+    unsigned int                    m_w = 0, m_h = 0;
     Camera*                         m_mainCamera   = nullptr;
     Camera*                         m_activeCamera = nullptr;
 
@@ -121,7 +121,7 @@ public:
 
     RenderPipeline defaultRenderPipeline() const noexcept;
     RenderPipeline gameObjectIdentifierPipeline() const noexcept;
-    RenderPipeline shadowMapPipeline() const noexcept;
+    void           shadowMapPipeline() noexcept;
 
     /**
      * @brief Render the scene thanks to the call back set in input. This callback will be used as the render pipeline.

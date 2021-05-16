@@ -36,19 +36,23 @@ namespace GPE RFKNamespace()
             SpecularComponent specular = SpecularComponent{0.5f, 0.5f, 0.5f, 1.f};
         };
 
-        struct ShadowProperties
+        struct RFKStruct(Serialize()) ShadowProperties
         {
-            bool  isEnable             = false;
-            float shadowMapSampleScale = 1.f;
-            float bias;
+            RFKField(Serialize()) bool         isEnable             = false;
+            RFKField(Serialize()) float        shadowMapSampleScale = 4.f;
+            RFKField(Serialize()) unsigned int PCF                  = 3;
+            RFKField(Serialize()) float        bias                 = 0.05f;
+            RFKField(Serialize()) float        size                 = 1000.f;
+
+            ShadowProperties_GENERATED
         };
 
     protected:
-        AmbiantComponent  m_ambientComp;
-        DiffuseComponent  m_diffuseComp;
-        SpecularComponent m_specularComp;
+        RFKField(Serialize()) AmbiantComponent  m_ambientComp;
+        RFKField(Serialize()) DiffuseComponent  m_diffuseComp;
+        RFKField(Serialize()) SpecularComponent m_specularComp;
 
-        ShadowProperties m_shadowProterties;
+        RFKField(Serialize()) ShadowProperties m_shadowProterties;
 
     public:
         inline Light(GameObject & owner, const CreateArg& arg);
@@ -105,6 +109,8 @@ namespace GPE RFKNamespace()
         virtual GPM::Mat4 getLightSpaceMatrix() noexcept;
 
         virtual void inspect(InspectContext & context);
+
+        void setShadowActive(bool newState) noexcept;
 
         /**
          * @brief Add or remove current component from it's system which have for effect to enable or disable it

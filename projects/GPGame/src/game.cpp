@@ -101,8 +101,12 @@ void loadTreeResource()
     Model::CreateArg     arg;
 
     SubModel subModel;
-    subModel.pShader   = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
-                                       "./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
+    subModel.pShader = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLightAndShadow.vs",
+                                       "./resources/shaders/fTextureWithLightAndShadow.fs", LIGHT_BLIN_PHONG);
+    subModel.pShader->use();
+    subModel.pShader->setInt("ourTexture", 0);
+    subModel.pShader->setInt("shadowMap", 1);
+
     subModel.pMaterial = loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial");
     subModel.pMesh     = loadMeshFile("./resources/meshs/g1.GPMesh");
 
@@ -227,13 +231,17 @@ Game::Game()
 
     // Place content in the scene
     GPE::GameObject& world = Engine::getInstance()->sceneManager.setCurrentScene("main").getWorld();
-    GameObject *     ground, *player, *testPhysX;
+    GameObject *     ground, *player, *testPhysX, *sun, *cube;
     {
+        const GameObject::CreateArg cubeArg{"Cube", TransformComponent::CreateArg{{0.f, 10, 0.f}}};
+        const GameObject::CreateArg sunArg{"Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}}};
         const GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}}};
         const GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}};
         const GameObject::CreateArg groundArg{"GroundArg", TransformComponent::CreateArg{{0.f}}};
 
         // A ground, player, PhysX test
+        cube      = &world.addChild(cubeArg);
+        sun       = &world.addChild(sunArg);
         ground    = &world.addChild(groundArg);
         player    = &world.addChild(playerArg);
         testPhysX = &world.addChild(testPhysXArg);
@@ -247,7 +255,7 @@ Game::Game()
 
     // Forest
     loadTreeResource();
-    loadTree(world, 100u);
+    loadTree(world, 10u);
 
     { // Camera
         Camera::PerspectiveCreateArg camCreateArg{"Player camera"};
@@ -256,21 +264,42 @@ Game::Game()
     }
 
     { // Light
-        const PointLight::CreateArg lightArg{
-            {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, .0014f, 7e-6f};
-        player->addComponent<PointLight>(lightArg);
+        sun->getTransform().setTranslation({0, 500, 0});
+        const DirectionalLight::CreateArg lightArg{
+            {0.f, -0.5f, 0.5f}, {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}};
+        sun->addComponent<DirectionalLight>(lightArg).setShadowActive(true);
     }
+
+    //{ // Light
+    //    const PointLight::CreateArg lightArg{
+    //        {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, .0014f, 7e-6f};
+    //    player->addComponent<PointLight>(lightArg);
+    //}
 
     // Scripts
     player->addComponent<GPG::MyFpsScript>();
 
+    { // cube
+        cube->getTransform().setScale(Vec3{10, 10, 10});
+        Model& mod = cube->addComponent<Model>();
+        mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
+                                            loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial"),
+                                            Engine::getInstance()->resourceManager.get<Mesh>("Sphere"), true});
+    }
+
     // Physics
     { // ground
+        ground->getTransform().setScale(Vec3{1000, 1000, 1});
+        ground->getTransform().setRotation(Quaternion::fromEuler({PI / 2.f, 0.f, 0.f}));
         BoxCollider&     box = ground->addComponent<BoxCollider>();
         RigidbodyStatic& rb  = ground->addComponent<RigidbodyStatic>();
+        Model&           mod = ground->addComponent<Model>();
         rb.collider          = &box;
         box.isVisible        = true;
-        box.setDimensions({1000.f, 10.f, 1000.f});
+        box.setDimensions({1000.f, 1.f, 1000.f});
+        mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
+                                            loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial"),
+                                            Engine::getInstance()->resourceManager.get<Mesh>("Plane"), false});
     }
 
     { // testPhysX

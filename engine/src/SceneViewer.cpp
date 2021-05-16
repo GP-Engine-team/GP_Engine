@@ -169,7 +169,7 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
     glBindFramebuffer(GL_FRAMEBUFFER, FBOIDframebufferID);
 
     { // Render in the picking framebuffer
-        RenderSystem renderSys{pScene->sceneRenderer};
+        RenderSystem& renderSys = pScene->sceneRenderer;
         renderSys.render(renderSys.gameObjectIdentifierPipeline());
     }
 

@@ -22,7 +22,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen) DirectionalLight : public Light
+    class RFKClass(Serialize(), Inspect(), ComponentGen) DirectionalLight : public Light
     {
     public:
         struct CreateArg
@@ -34,14 +34,14 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect()) GPM::Vec3 m_direction;
+        RFKField(Serialize(), Inspect()) GPM::Vec3 m_direction;
 
     public:
         DirectionalLight(const DirectionalLight& other) = delete;
         DirectionalLight(DirectionalLight && other)     = default;
         virtual ~DirectionalLight();
 
-        DirectionalLight()        = delete;
+        DirectionalLight()        = default;
         DirectionalLight& operator=(DirectionalLight const& other) = delete;
         DirectionalLight& operator=(DirectionalLight&& other) = default;
 

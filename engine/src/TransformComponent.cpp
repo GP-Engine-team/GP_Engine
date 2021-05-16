@@ -52,8 +52,6 @@ void TransformComponent::setVecUp(const Vec3& newUp) noexcept
 
 void TransformComponent::inspect(GPE::InspectContext& context)
 {
-    Component::inspect(context);
-
     if (GPE::DataInspector::inspect(context, m_spaceAttribut, "Transform"))
     {
         m_isDirty = true;

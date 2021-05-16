@@ -34,9 +34,31 @@ void Light::inspect(InspectContext& context)
     ImGui::PushEnabled(m_shadowProterties.isEnable);
     if (ImGui::CollapsingHeader("Shadow"))
     {
-        // DataInspector::inspect(context, *m_shadow);
+        if (DataInspector::inspect(context, m_shadowProterties.shadowMapSampleScale, "SampleScale"))
+        {
+            // Remove previouse
+            getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);
+
+            // Re create it with new size
+            getOwner().pOwnerScene->sceneRenderer.addShadowMap(*this);
+        }
+        DataInspector::inspect(context, m_shadowProterties.PCF, "PCF");
+        DataInspector::inspect(context, m_shadowProterties.bias, "Bias");
+        DataInspector::inspect(context, m_shadowProterties.size, "Size");
     }
     ImGui::PopEnabled();
+}
+
+void Light::setShadowActive(bool newState) noexcept
+{
+    if (m_shadowProterties.isEnable == newState)
+        return;
+
+    m_shadowProterties.isEnable = newState;
+    if (m_isActivated)
+        getOwner().pOwnerScene->sceneRenderer.addShadowMap(*this);
+    else
+        getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);
 }
 
 void Light::setActive(bool newState) noexcept

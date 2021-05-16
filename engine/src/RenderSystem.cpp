@@ -85,9 +85,11 @@ RenderSystem::RenderSystem() noexcept
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
 
-    Engine::getInstance()->resourceManager.add<Shader>("DepthOnly", "./resources/shaders/vDepthOnly.vs",
-                                                       "./resources/shaders/fDepthOnly.fs",
-                                                       PROJECTION_VIEW_MODEL_MATRIX);
+    Shader& shader = Engine::getInstance()->resourceManager.add<Shader>(
+        "DepthOnly", "./resources/shaders/vDepthOnly.vs", "./resources/shaders/fDepthOnly.fs",
+        PROJECTION_VIEW_MODEL_MATRIX);
+    shader.use();
+    shader.setInt("depthMap", 0);
 
     m_sphereMesh = &Engine::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
     m_cubeMesh   = &Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
@@ -163,6 +165,12 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
         }
 
         shader.setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
+
+        if (!m_shadowMaps.empty())
+        {
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, m_shadowMaps.front().depthMap);
+        }
     }
 
     if ((shader.getFeature() & PROJECTION_MATRIX) == PROJECTION_MATRIX)
@@ -214,8 +222,20 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
 
         shader.setMat4("model", modelMatrix.e);
         shader.setMat3("inverseModelMatrix", inverseModelMatrix3.e);
-
         shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
+
+        if (!m_shadowMaps.empty())
+        {
+            shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
+            shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
+            shader.setMat4("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix().e);
+        }
+        else
+        {
+            shader.setMat4("lightSpaceMatrix", Mat4::identity().e);
+            shader.setInt("PCF", 1);
+            shader.setFloat("bias", 0.0f);
+        }
     }
 }
 
@@ -261,6 +281,7 @@ void RenderSystem::tryToBindTexture(unsigned int textureID)
     if (m_currentTextureID == textureID)
         return;
 
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
     m_currentTextureID = textureID;
@@ -351,6 +372,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
               std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
         if (pCameras.empty())
             return;
+
+        rs.shadowMapPipeline();
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
@@ -528,9 +551,6 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
               std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
               std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
               std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
-        if (pCameras.empty())
-            return;
-
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -541,6 +561,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
 
         Shader& shaderGameObjectIdentifier =
             *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
+        shaderGameObjectIdentifier.use();
 
         /*Display opaque element*/
         {
@@ -584,77 +605,58 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
     };
 }
 
-RenderSystem::RenderPipeline RenderSystem::shadowMapPipeline() const noexcept
+void RenderSystem::shadowMapPipeline() noexcept
 {
-    return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
-              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
-              std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
-              std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
-              std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
-        GLint drawFboId = 0;
-        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFboId);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
-        GLint viewportSize[2];
-        glGetIntegerv(GL_MAX_VIEWPORT_DIMS, &viewportSize[0]);
+    GLint drawFboId = 0;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawFboId);
+    Shader& shader = *Engine::getInstance()->resourceManager.get<Shader>("DepthOnly");
+    shader.use();
 
-        for (auto&& shadowMap : shadowMaps)
+    glCullFace(GL_FRONT);
+
+    for (auto&& shadowMap : m_shadowMaps)
+    {
+        // 1. first render to depth map
+        glViewport(0, 0, shadowMap.width, shadowMap.height);
+        glBindFramebuffer(GL_FRAMEBUFFER, shadowMap.depthMapFBO);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, shadowMap.depthMap);
+
+        const Mat4 pv = shadowMap.pOwner->getLightSpaceMatrix();
+
+        /*Display opaque element*/
         {
-            // 1. first render to depth map
-            glViewport(0, 0, shadowMap.width, shadowMap.height);
-            glBindFramebuffer(GL_FRAMEBUFFER, shadowMap.depthMapFBO);
-            glClear(GL_DEPTH_BUFFER_BIT);
-
-            const Frustum camFrustum = mainCamera.getFrustum();
-
-            Shader& shaderGameObjectIdentifier = *Engine::getInstance()->resourceManager.get<Shader>("DepthOnly");
-
-            /*Display opaque element*/
+            for (auto&& pSubModel : m_pOpaqueSubModels)
             {
-                for (auto&& pSubModel : pOpaqueSubModels)
-                {
-                    if (!rs.isOnFrustum(camFrustum, pSubModel))
-                        continue;
+                tryToBindMesh(pSubModel->pMesh->getID());
+                tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
-                    rs.tryToBindMesh(pSubModel->pMesh->getID());
-                    rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
-
-                    shaderGameObjectIdentifier.setMat4("projectViewModelMatrix",
-                                                       (shadowMap.pOwner->getLightSpaceMatrix() *
-                                                        pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                                                           .e);
-                    rs.drawModelPart(*pSubModel);
-                }
-
-                for (auto&& pSubModel : pTransparenteSubModels)
-                {
-                    if (!rs.isOnFrustum(camFrustum, pSubModel))
-                        continue;
-
-                    rs.tryToBindMesh(pSubModel->pMesh->getID());
-                    rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
-
-                    shaderGameObjectIdentifier.setMat4("projectViewModelMatrix",
-                                                       (shadowMap.pOwner->getLightSpaceMatrix() *
-                                                        pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                                                           .e);
-                    rs.drawModelPart(*pSubModel);
-                }
+                const Mat4 pvm = pv * pSubModel->pModel->getOwner().getTransform().getModelMatrix();
+                shader.setMat4("projectViewModelMatrix", pvm.e);
+                drawModelPart(*pSubModel);
             }
 
-            rs.resetCurrentRenderPassKey();
+            for (auto&& pSubModel : m_pTransparenteSubModels)
+            {
+                tryToBindMesh(pSubModel->pMesh->getID());
+                tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
+
+                const Mat4 pvm = pv * pSubModel->pModel->getOwner().getTransform().getModelMatrix();
+                shader.setMat4("projectViewModelMatrix", pvm.e);
+
+                drawModelPart(*pSubModel);
+            }
         }
+    }
+    glCullFace(GL_BACK);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, drawFboId);
-
-        // 2. then render scene as normal with shadow mapping (using depth map)
-        glViewport(0, 0, viewportSize[0], viewportSize[1]);
-
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
-
-        glClearColor(0.f, 0.f, 0.f, 0.f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    };
+    // 2. then render scene as normal with shadow mapping (using depth map)
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFboId);
+    glViewport(0, 0, m_w, m_h);
 }
 
 void RenderSystem::render(RenderPipeline renderPipeline) noexcept
@@ -879,6 +881,9 @@ void RenderSystem::tryToResize(unsigned int w, unsigned int h)
 {
     if (w == m_w && h == m_h)
         return;
+
+    m_w = w;
+    m_h = h;
 
     for (auto&& shadowMap : m_shadowMaps)
     {

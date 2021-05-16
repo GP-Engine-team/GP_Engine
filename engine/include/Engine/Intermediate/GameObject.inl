@@ -137,9 +137,15 @@ inline void GameObject::destroyUniqueComponentNow() noexcept
 
 inline void GameObject::setActive(bool newState)
 {
+    m_isActive = newState;
     for (auto&& i : m_pComponents)
     {
         i->setActive(newState);
+    }
+
+    for (auto&& child : children)
+    {
+        child->setActive(newState);
     }
 }
 

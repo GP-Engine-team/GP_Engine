@@ -57,7 +57,9 @@ namespace GPE RFKNamespace()
         RFKField(Inspect(), Serialize()) std::string m_tag{"GameObject"};
         RFKField(Serialize()) GameObject*            m_parent = nullptr;
         RFKField(Serialize()) unsigned int           m_id;
-        bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
+        RFKField(Serialize()) bool                   m_isDead{
+            false}; // Flag that inform it parent that this transform must be destroy on update loop
+        RFKField(Serialize()) bool m_isActive = true;
 
     public:
         RFKField(Serialize()) Scene*                 pOwnerScene = nullptr;

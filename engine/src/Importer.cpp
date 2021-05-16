@@ -374,9 +374,9 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
 
 Texture* GPE::loadTextureFile(const char* src)
 {
-
     if (Texture* const pTexture = Engine::getInstance()->resourceManager.get<Texture>(src))
         return pTexture;
+
     return &Engine::getInstance()->resourceManager.add<Texture>(src, readTextureFile(src));
 }
 
@@ -613,10 +613,10 @@ ShaderCreateConfig GPE::readShaderFile(const char* src)
 
 Shader* GPE::loadShaderFile(const char* src)
 {
-    ShaderCreateConfig arg = readShaderFile(src);
-
     if (Shader* const pShader = Engine::getInstance()->resourceManager.get<Shader>(src))
         return pShader;
+
+    ShaderCreateConfig arg = readShaderFile(src);
 
     return &Engine::getInstance()->resourceManager.add<Shader>(
         src, (std::filesystem::current_path() / arg.vertexShaderPath).string().c_str(),
