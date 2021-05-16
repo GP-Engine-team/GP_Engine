@@ -211,16 +211,7 @@ void EditorStartup::stopGame()
 
 void EditorStartup::update()
 {
-    bool forceReload = glfwGetKey(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_KEY_T) == GLFW_PRESS; // TODO : Remove
-    if (forceReload)
-    {
-        if (m_reloadableCpp.onUnload)
-        {
-            m_reloadableCpp.onUnload();
-        }    
-    }
-
-    if (m_reloadableCpp.refresh() || forceReload)
+    if (m_reloadableCpp.refresh())
     {
         auto syncLog = GET_PROCESS(m_reloadableCpp, setLogInstance);
         (*syncLog)(*GPE::Log::getInstance());
