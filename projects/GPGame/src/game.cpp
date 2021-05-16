@@ -291,8 +291,11 @@ Game::Game()
 
     // Physics
     { // ground
-        ground->getTransform().setScale(Vec3{1000, 1000, 1});
-        ground->getTransform().setRotation(Quaternion::fromEuler({PI / 2.f, 0.f, 0.f}));
+        Mesh* planeMesh = &Engine::getInstance()->resourceManager.add<Mesh>(
+            "PlaneFround", Mesh::createQuad(1.f, 1.f, 100.f, 0, 0, Mesh::Axis::Y));
+
+        ground->getTransform().setScale(Vec3{1000, 1, 1000});
+        // ground->getTransform().setRotation(Quaternion::fromEuler({PI / 2.f, 0.f, 0.f}));
         BoxCollider&     box = ground->addComponent<BoxCollider>();
         RigidbodyStatic& rb  = ground->addComponent<RigidbodyStatic>();
         Model&           mod = ground->addComponent<Model>();
@@ -300,8 +303,8 @@ Game::Game()
         box.isVisible        = true;
         box.setDimensions({1000.f, 1.f, 1000.f});
         mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
-                                            loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial"),
-                                            Engine::getInstance()->resourceManager.get<Mesh>("Plane"), false});
+                                            loadMaterialFile("./resources/Materials/GroundMat.GPMaterial"), planeMesh,
+                                            true});
     }
 
     { // testPhysX
