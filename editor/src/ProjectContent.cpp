@@ -434,6 +434,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 shaderDir /= shaderName;
 
                 writeShaderFile(shaderDir.string().c_str());
+                refreshResourcesList();
             }
 
             if (ImGui::MenuItem("Material"))
@@ -450,6 +451,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 materialDir /= materialName;
 
                 writeMaterialFile(materialDir.string().c_str());
+                refreshResourcesList();
             }
 
             if (ImGui::MenuItem("Scene"))
@@ -467,6 +469,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
                 Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName.stem().string().c_str());
                 m_editorContext->saveScene(&scene, sceneDir.string().c_str());
+                refreshResourcesList();
             }
 
             if (ImGui::MenuItem("Prefab"))
@@ -485,6 +488,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 Scene prefab;
                 auto  saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
                 saveFunc(&prefab, prefabDir.string().c_str(), GPE::SavedScene::EType::XML);
+                refreshResourcesList();
             }
 
             ImGui::EndMenu();
