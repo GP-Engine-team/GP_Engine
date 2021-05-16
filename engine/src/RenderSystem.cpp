@@ -925,7 +925,15 @@ void RenderSystem::removeLight(Light& light) noexcept
 
 void RenderSystem::addShadowMap(Light& light) noexcept
 {
-    m_shadowMaps.emplace_back(light);
+    // TODO : Enable user to use multiple shadow map
+    if (m_shadowMaps.empty())
+    {
+        m_shadowMaps.emplace_back(light);
+    }
+    else
+    {
+        Log::getInstance()->logWarning("Multiple shadow map not implemented for now");
+    }
 }
 
 void RenderSystem::removeShadowMap(Light& light) noexcept
