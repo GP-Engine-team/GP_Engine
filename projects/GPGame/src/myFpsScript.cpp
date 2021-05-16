@@ -32,8 +32,6 @@ File_GENERATED
         enableUpdate(true);
         enableOnGUI(true);
 
-        m_fireArme = &owner.addComponent<PPSH41>();
-
         GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
         GPE::SourceSettings sourceSettings;
@@ -69,7 +67,7 @@ File_GENERATED
         controller->setMouseSpeed(.0025f);
         controller->setGravity(.1f);
     }
-    
+
     void MyFpsScript::onPostLoad()
     {
         BehaviourComponent::onPostLoad();

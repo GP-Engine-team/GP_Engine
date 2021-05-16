@@ -114,33 +114,25 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
 
         if (ImGui::BeginMenu("Add component"))
         {
-            if (ImGui::MenuItem("Camera"))
-                gameObject.addComponent<Camera>();
+            std::vector<rfk::Archetype const*> componnentList;
+            componnentList.reserve(64); // Default value
 
-            if (ImGui::MenuItem("Model"))
-                gameObject.addComponent<Model>();
+            auto getAllComponentsClassesFunct =
+                GET_PROCESS((*m_pEditorContext->m_reloadableCpp), getAllComponentsClasses);
+            auto createComponentByIDFunct = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), createComponentByID);
 
-            // if (ImGui::MenuItem("Audio component"))
-            // gameObject.addComponent<AudioComponent>();
+            getAllComponentsClassesFunct(&componnentList);
 
-            if (ImGui::MenuItem("Particle component"))
-                gameObject.addComponent<ParticleComponent>();
-
-            if (ImGui::MenuItem("Input component"))
-                gameObject.addComponent<InputComponent>();
-
-            if (ImGui::BeginMenu("Lights"))
+            for (auto&& compArchetype : componnentList)
             {
-                if (ImGui::MenuItem("Dircetional light"))
-                    gameObject.addComponent<DirectionalLight>();
+                // const rfk::Class* classArchetype = static_cast<const rfk::Class*>(compArchetype);
+                // for (auto& parent : classArchetype->directParents)
+                //{
+                //    // for each parents
+                //}
 
-                if (ImGui::MenuItem("PointLight"))
-                    gameObject.addComponent<PointLight>();
-
-                if (ImGui::MenuItem("Spot light"))
-                    gameObject.addComponent<SpotLight>();
-
-                ImGui::EndMenu();
+                if (ImGui::MenuItem(compArchetype->name.c_str()))
+                    createComponentByIDFunct(gameObject, compArchetype->id);
             }
 
             ImGui::EndMenu();

@@ -143,6 +143,8 @@ namespace GPE RFKNamespace()
         template <typename T, typename... Args>
         T& addComponent(Args && ... args) noexcept;
 
+        inline Component* addExistingComponent(Component * pExistingComponent) noexcept;
+
         /**
          * @brief Get the first Component type object
          *

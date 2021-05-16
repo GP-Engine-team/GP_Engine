@@ -15,6 +15,11 @@ inline T& GameObject::addComponent(Args&&... args) noexcept
     return *newComponent;
 }
 
+inline Component* GameObject::addExistingComponent(Component* pExistingComponent) noexcept
+{
+    return m_pComponents.emplace_back(pExistingComponent);
+}
+
 template <typename T>
 inline T* GameObject::getComponent() noexcept
 {
