@@ -27,7 +27,8 @@ struct FileInfo
     std::filesystem::path path;
     std::filesystem::path filename;
     std::filesystem::path extention;
-    size_t                size = 0u;
+    size_t                size           = 0u;
+    bool                  isInRenameMode = false;
 };
 
 struct DirectoryInfo

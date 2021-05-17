@@ -283,7 +283,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
     }
 
     std::filesystem::path fileToRemovePath;
-    for (auto&& it = pCurrentDirectory->files.cbegin(); it != pCurrentDirectory->files.cend(); ++it)
+    for (auto&& it = pCurrentDirectory->files.begin(); it != pCurrentDirectory->files.end(); ++it)
     {
         ImGui::PushID(&*it);
 
@@ -363,6 +363,11 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     fileToRemovePath = it->path;
                 }
 
+                if (ImGui::MenuItem("Rename"))
+                {
+                    it->isInRenameMode = true;
+                }
+
                 ImGui::EndPopup();
             }
 
@@ -425,7 +430,29 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 }
             }
 
-            ImGui::TextUnformatted(it->filename.string().c_str());
+            if (it->isInRenameMode)
+            {
+                ImGui::SetNextItemWidth(size.x * 2);
+                constexpr size_t bufferSize = 256;
+                char             buffer[bufferSize];
+                strcpy_s(buffer, it->filename.stem().string().c_str());
+                if (ImGui::InputText("", buffer, bufferSize, ImGuiInputTextFlags_EnterReturnsTrue))
+                {
+                    std::filesystem::path oldPath = it->path;
+                    it->filename.replace_filename(buffer);
+                    it->filename.replace_extension(it->extention);
+                    it->path.replace_filename(buffer);
+                    it->path.replace_extension(it->extention);
+                    std::filesystem::rename(oldPath, it->path);
+                    it->isInRenameMode = false;
+                }
+                ImGui::SameLine();
+                ImGui::TextUnformatted(it->extention.string().c_str());
+            }
+            else
+            {
+                ImGui::TextUnformatted(it->filename.string().c_str());
+            }
         }
         ImGui::EndGroup();
 
