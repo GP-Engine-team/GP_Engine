@@ -305,16 +305,49 @@ void SceneViewer::captureInputs(bool shouldCapture)
 // TODO: move to class Camera, or to a new class
 void SceneViewer::lookAtObject(const GameObject& GOToLook)
 {
+    using namespace GPM;
+
+    const TransformComponent& cam   {cameraOwner->getTransform()},
+                            & target{GOToLook.getTransform()};
+
+    { // Find the position which must be reached at the end of the transition
+        const Vec3 pos0{cam.getGlobalPosition()};
+        const Vec3 pos1 = [&]() -> const Vec3
+        {
+            Vec3 flatForward{target.getGlobalPosition() - cam.getGlobalPosition()};
+            flatForward.y = .0f;
+            flatForward.safelyNormalize();
+
+            return target.getGlobalPosition() - flatForward * transitionRadius;
+        }();
+
+        // Check whether a transition really is necessary
+        if (pos0.isEqualTo(pos1))
+        {
+            return;
+        }
+
+        startPos = pos0;
+        finalPos = pos1;
+    }
+    
+    { // Find the orientation which must be reached at the end of the transition
+        const f32 angle = [&]() -> const f32
+        {
+            const Vec3 flatTargetPos{target.getGlobalPosition().x, .0f, target.getGlobalPosition().z};
+            const Vec3 to{flatTargetPos - finalPos};
+
+            // The camera looks toward negative z
+            return (-Vec3::forward()).signedAngleWithUnitary(to.normalized());
+        }();
+
+        startRotation = cam.getGlobalRotation();
+        finalRotation = Quat::angleAxis(angle, Vec3::up());
+    }
+
+    // Start the transition
+    lerpT              = 0.f;
     isTransitionActive = true;
-    startPos           = cameraOwner->getTransform().getGlobalPosition();
-    finalPos           = GOToLook.getTransform().getGlobalPosition();
-    finalPos           += (startPos - finalPos).normalized() * transitionRadius;
-
-    const GPM::Transform toGO{GPM::Transform::lookAt(startPos, finalPos, GPM::Vec3::up())};
-
-    startRotation = cameraOwner->getTransform().getGlobalRotation();
-    finalRotation = GPM::toQuaternion(toGO.rotation());
-    lerpT         = 0.f;
 }
 
 } // namespace GPE
