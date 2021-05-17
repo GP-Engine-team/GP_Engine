@@ -7,7 +7,7 @@
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 
 RigidBodyBase::RigidBodyBase(EShapeType _type) noexcept : type(_type)
 {

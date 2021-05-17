@@ -8,17 +8,20 @@
 #include <Engine/Serialization/InspectContext.hpp>
 #include <Engine/Serialization/xml/xmlLoader.hpp>
 #include <Engine/Serialization/xml/xmlSaver.hpp>
+#include <Engine/Serialization/Inspect.hpp>
 #include <GPM/Vector3.hpp>
 #include <PxMaterial.h>
 #include <PxShape.h>
 #include <Refureku/Refureku.h>
+#include <Engine/Serialization/Inspect.hpp>
+#include <Engine/Serialization/Serialize.hpp>
 
 // Generated
 #include <Generated/Collider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(false), Serialize()) Collider : rfk::Object
+    class RFKClass(Inspect(false), Serialize(false)) Collider : rfk::Object
     {
     public:
         Collider() noexcept                      = default;

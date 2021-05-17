@@ -2,6 +2,8 @@
 #include <Engine/Core/Physics/Collisions/Collider.hpp>
 #include <Refureku/Refureku.h>
 #include <memory>
+#include <Engine/Serialization/Inspect.hpp>
+#include <Engine/Serialization/Serialize.hpp>
 
 // Generated
 #include <Generated/RigidBodyBase.rfk.h>
@@ -14,7 +16,7 @@ namespace GPE RFKNamespace()
         E_BOX,
     };
 
-    class RFKClass(Inspect(false), Serialize()) RigidBodyBase : rfk::Object
+    class RFKClass(Inspect(false), Serialize(false)) RigidBodyBase : rfk::Object
     {
     public:
         RigidBodyBase(EShapeType _type) noexcept;

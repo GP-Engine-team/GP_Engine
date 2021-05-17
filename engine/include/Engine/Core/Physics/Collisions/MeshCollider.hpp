@@ -6,7 +6,7 @@
  */
 #pragma once
 
-#include <Engine/Core/Physics/Collisions/MeshCollider.hpp>
+#include <Engine/Core/Physics/Collisions/Collider.hpp>
 
 // Generated
 #include <Generated/MeshCollider.rfk.h>
@@ -18,6 +18,8 @@ class PxConvexMesh;
 
 namespace GPE RFKNamespace()
 {
+    class GameObject;
+
     class RFKClass(ComponentGen(), Inspect()) MeshCollider : public Collider
     {
     public:
