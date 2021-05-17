@@ -78,6 +78,7 @@ public:
     void renderAndGetSelected(GPE::IInspectable*& selectedGameObject);
 
     void createNewScene();
+    void removeFile(const std::filesystem::path& path);
 };
 
 } // End of namespace Editor

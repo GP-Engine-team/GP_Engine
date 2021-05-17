@@ -42,7 +42,7 @@ public:
     ProjectContent      m_projectContent;
     SceneGraph          m_sceneGraph;
     GameControlBar      m_gameControlBar;
-    const std::string   m_saveFolder;
+    std::string         m_saveFolder;
     GPE::IInspectable*  m_inspectedObject;
     GPE::ReloadableCpp* m_reloadableCpp = nullptr;
     bool                m_showAppStyleEditor;

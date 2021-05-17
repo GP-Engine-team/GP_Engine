@@ -137,21 +137,6 @@ void ProjectContent::refreshResourcesList()
     explore(resourcesTree);
 }
 
-static bool renderIcone(const ImVec2& size, const ImVec4& tint_col = ImVec4(0.0f, 1.0f, 1.0f, 1.0f),
-                        const ImVec4& bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f))
-{
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
-
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0 = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
-
-    return ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
-}
-
 void ProjectContent::createNewScene()
 {
     std::filesystem::path sceneDir  = pCurrentDirectory->path;
@@ -169,6 +154,13 @@ void ProjectContent::createNewScene()
     Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName.stem().string().c_str());
     m_editorContext->saveScene(&scene, sceneDir.string().c_str());
     m_editorContext->m_sceneEditor.view.bindScene(scene);
+    refreshResourcesList();
+    m_editorContext->m_saveFolder = sceneDir.string().c_str();
+}
+
+void ProjectContent::removeFile(const std::filesystem::path& path)
+{
+    std::filesystem::remove(path);
     refreshResourcesList();
 }
 
@@ -366,7 +358,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     m_editorContext->m_sceneEditor.view.unbindScene();
                     Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName);
                     m_editorContext->loadScene(&scene, it->path.string().c_str());
-
+                    m_editorContext->m_saveFolder = it->path.string().c_str();
                     break;
                 }
 
