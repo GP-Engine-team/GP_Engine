@@ -15,7 +15,8 @@ Light::Light(GameObject& owner, const CreateArg& arg)
 
 Light::~Light()
 {
-    getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
+    if (getOwner().pOwnerScene)
+        getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
 }
 
 Light& Light::operator=(Light&& other) noexcept
@@ -41,6 +42,11 @@ const DiffuseComponent& Light::getDiffuse() const noexcept
 const SpecularComponent& Light::getSpecular() const noexcept
 {
     return m_specularComp;
+}
+
+const Light::ShadowProperties& Light::getShadowProperties() const noexcept
+{
+    return m_shadowProterties;
 }
 
 void Light::setGlobalComponent(const ColorRGBA& newComponent) noexcept

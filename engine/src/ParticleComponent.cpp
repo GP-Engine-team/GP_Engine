@@ -30,7 +30,8 @@ ParticleComponent::ParticleComponent(GameObject& owner, const CreateArg& arg) : 
 
 ParticleComponent::~ParticleComponent()
 {
-    getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
+    if (getOwner().pOwnerScene)
+        getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
 }
 
 void ParticleComponent::moveTowardScene(Scene& newOwner)

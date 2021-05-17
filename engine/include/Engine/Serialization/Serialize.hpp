@@ -1,8 +1,11 @@
 #pragma once
 
-#include <string>
-#include <Refureku/TypeInfo/Properties/PropertySettings.h>
 #include "Engine/Serialization/xml/xmlManager.hpp"
+#include <Engine/Serialization/xml/xmlLoader.hpp> // alway used in serialization
+#include <Engine/Serialization/xml/xmlSaver.hpp>  // alway used in serialization
+#include <Refureku/TypeInfo/Properties/PropertySettings.h>
+#include <string>
+
 #include "Generated/Serialize.rfk.h"
 
 struct RFKStruct(PropertySettings(rfk::EEntityKind::Struct | rfk::EEntityKind::Class | rfk::EEntityKind::Field |
@@ -13,4 +16,3 @@ struct RFKStruct(PropertySettings(rfk::EEntityKind::Struct | rfk::EEntityKind::C
 
     Serialize_GENERATED
 };
-

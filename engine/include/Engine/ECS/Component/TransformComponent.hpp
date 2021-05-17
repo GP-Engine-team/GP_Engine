@@ -51,7 +51,7 @@ namespace GPE RFKNamespace()
         TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
         TransformComponent& operator                                            =(TransformComponent&& other);
 
-        virtual void awake() override;
+        virtual void onPostLoad() override;
 
         [[nodiscard]] constexpr inline bool isDirty() const;
         constexpr void                      setDirty();
@@ -87,6 +87,12 @@ namespace GPE RFKNamespace()
         void setRotation(const GPM::Quaternion& q) noexcept;
 
         void setRotationZ(const float& z) noexcept;
+
+        void setVecForward(const GPM::Vec3& newForward, const GPM::Vec3& up) noexcept;
+
+        void setVecRight(const GPM::Vec3& newRight) noexcept;
+
+        void setVecUp(const GPM::Vec3& newUp) noexcept;
 
         GPM::Vec3 getVectorForward() const noexcept;
 

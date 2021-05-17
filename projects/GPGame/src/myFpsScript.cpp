@@ -32,8 +32,6 @@ File_GENERATED
         enableUpdate(true);
         enableOnGUI(true);
 
-        m_fireArme = &owner.addComponent<PPSH41>();
-
         GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
         GPE::SourceSettings sourceSettings;
@@ -52,7 +50,6 @@ File_GENERATED
         input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
         input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
         input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-        input->bindAction("RaycastExample", EKeyMode::KEY_PRESSED, "Game", this, "raycastExample");
         input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
         input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
         input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
@@ -71,9 +68,22 @@ File_GENERATED
         controller->setGravity(.1f);
     }
 
-    void MyFpsScript::awake()
+    void MyFpsScript::onPostLoad()
     {
-        BehaviourComponent::awake();
+        BehaviourComponent::onPostLoad();
+
+        GPE::SourceSettings sourceSettings;
+        sourceSettings.pitch = 1.f;
+        sourceSettings.loop  = AL_TRUE;
+
+        source->setSound("Western", "Western", sourceSettings);
+        source->playSound("Western", true);
+
+        // Setup controller
+        controller->setHasGravity(true);
+        controller->setSpeed(1.f);
+        controller->setMouseSpeed(.0025f);
+        controller->setGravity(.1f);
     }
 
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)

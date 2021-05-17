@@ -117,5 +117,19 @@ void AudioComponent::setActive(bool newState) noexcept
 
 AudioComponent::~AudioComponent()
 {
+    stopAllSound();
     Engine::getInstance()->soundSystem.removeComponent(m_key);
+}
+
+void AudioComponent::onPostLoad()
+{
+    if (m_isActivated)
+    {
+        Engine::getInstance()->soundSystem.addComponent(this);
+    }
+    else
+    {
+        stopAllSound();
+        Engine::getInstance()->soundSystem.removeComponent(m_key);
+    }
 }

@@ -3,45 +3,47 @@
 File_GENERATED
 
 #include "Engine/ECS/System/BehaviourSystem.hpp"
-#include "Engine/Engine.hpp"
 #include "imgui.h"
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Scene.hpp>
 
 using namespace GPE;
 
 BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(owner)
 {
-    Engine::getInstance()->behaviourSystem.addBehaviour(*this);
+    getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
 }
 
-BehaviourComponent::BehaviourComponent() noexcept
+void BehaviourComponent::onPostLoad()
 {
-    Engine::getInstance()->behaviourSystem.addBehaviour(*this);
-}
-
-void BehaviourComponent::awake()
-{
-
+    if (m_isActivated)
+    {
+        getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
+    }
 }
 
 BehaviourComponent::~BehaviourComponent() noexcept
 {
-    Engine::getInstance()->behaviourSystem.removeBehaviour(*this);
+    if (!m_isActivated || !getOwner().pOwnerScene)
+        return;
+
+    getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);
 
     if (m_useFixedUpdate)
-        Engine::getInstance()->behaviourSystem.removeFixedUpdate(*this);
+        getOwner().pOwnerScene->behaviourSystem.removeFixedUpdate(*this);
 
     if (m_useUpdate)
-        Engine::getInstance()->behaviourSystem.removeUpdate(*this);
+        getOwner().pOwnerScene->behaviourSystem.removeUpdate(*this);
 
     if (m_useOnGUI)
-        Engine::getInstance()->behaviourSystem.removeOnGUI(*this);
+        getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
 }
 
 BehaviourComponent::BehaviourComponent(BehaviourComponent&& other) noexcept
     : Component(*other.m_gameObject), m_useUpdate(std::move(other.m_useUpdate)),
       m_useFixedUpdate(std::move(other.m_useFixedUpdate)), m_useOnGUI(std::move(other.m_useOnGUI))
 {
-    Engine::getInstance()->behaviourSystem.updateBehaviourPointer(this, &other);
+    getOwner().pOwnerScene->behaviourSystem.updateBehaviourPointer(this, &other);
 }
 
 BehaviourComponent& BehaviourComponent::operator=(BehaviourComponent&& other) noexcept
@@ -50,7 +52,7 @@ BehaviourComponent& BehaviourComponent::operator=(BehaviourComponent&& other) no
     m_useFixedUpdate = std::move(other.m_useFixedUpdate);
     m_useOnGUI       = std::move(other.m_useOnGUI);
 
-    Engine::getInstance()->behaviourSystem.updateBehaviourPointer(this, &other);
+    getOwner().pOwnerScene->behaviourSystem.updateBehaviourPointer(this, &other);
 
     return static_cast<BehaviourComponent&>(Component::operator=(std::move(other)));
 }
@@ -61,9 +63,9 @@ void BehaviourComponent::enableUpdate(bool flag) noexcept
         return;
 
     if (m_useUpdate = flag)
-        Engine::getInstance()->behaviourSystem.addUpdate(*this);
+        getOwner().pOwnerScene->behaviourSystem.addUpdate(*this);
     else
-        Engine::getInstance()->behaviourSystem.removeUpdate(*this);
+        getOwner().pOwnerScene->behaviourSystem.removeUpdate(*this);
 }
 
 void BehaviourComponent::enableFixedUpdate(bool flag) noexcept
@@ -72,9 +74,9 @@ void BehaviourComponent::enableFixedUpdate(bool flag) noexcept
         return;
 
     if (m_useFixedUpdate = flag)
-        Engine::getInstance()->behaviourSystem.addFixedUpdate(*this);
+        getOwner().pOwnerScene->behaviourSystem.addFixedUpdate(*this);
     else
-        Engine::getInstance()->behaviourSystem.removeFixedUpdate(*this);
+        getOwner().pOwnerScene->behaviourSystem.removeFixedUpdate(*this);
 }
 
 void BehaviourComponent::enableOnGUI(bool flag) noexcept
@@ -83,9 +85,9 @@ void BehaviourComponent::enableOnGUI(bool flag) noexcept
         return;
 
     if (m_useOnGUI = flag)
-        Engine::getInstance()->behaviourSystem.addOnGUI(*this);
+        getOwner().pOwnerScene->behaviourSystem.addOnGUI(*this);
     else
-        Engine::getInstance()->behaviourSystem.removeOnGUI(*this);
+        getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
 }
 
 bool BehaviourComponent::isUpdateEnable() const noexcept
@@ -110,7 +112,7 @@ void BehaviourComponent::setActive(bool newState) noexcept
 
     m_isActivated = newState;
     if (m_isActivated)
-        Engine::getInstance()->behaviourSystem.addBehaviour(*this);
+        getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
     else
-        Engine::getInstance()->behaviourSystem.removeBehaviour(*this);
+        getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);
 }

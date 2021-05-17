@@ -16,7 +16,7 @@ namespace GPE
 {
 class GameObject;
 class IInspectable;
-}
+} // namespace GPE
 
 #define RESOURCES_DIR "resources"
 
@@ -76,6 +76,9 @@ public:
     void refreshResourcesList();
 
     void renderAndGetSelected(GPE::IInspectable*& selectedGameObject);
+
+    void createNewScene();
+    void removeFile(const std::filesystem::path& path);
 };
 
 } // End of namespace Editor
