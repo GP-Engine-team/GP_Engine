@@ -279,7 +279,11 @@ void SceneViewer::update()
         }
 
         cameraOwner->getTransform().setTranslation(startPos.lerp(finalPos, lerpT));
-        cameraOwner->getTransform().setRotation(startRotation.slerp(finalRotation, lerpT));
+
+        if (startRotation.angleWith(finalRotation) > .0f)
+        {
+            cameraOwner->getTransform().setRotation(startRotation.slerp(finalRotation, lerpT));
+        }
     }
 }
 
@@ -310,6 +314,9 @@ void SceneViewer::lookAtObject(const GameObject& GOToLook)
     const TransformComponent& cam   {cameraOwner->getTransform()},
                             & target{GOToLook.getTransform()};
 
+    startPos      = finalPos      = cameraOwner->getTransform().getGlobalPosition();
+    startRotation = finalRotation = cameraOwner->getTransform().getGlobalRotation();
+
     { // Find the position which must be reached at the end of the transition
         const Vec3 pos0{cam.getGlobalPosition()};
         const Vec3 pos1 = [&]() -> const Vec3
@@ -322,13 +329,15 @@ void SceneViewer::lookAtObject(const GameObject& GOToLook)
         }();
 
         // Check whether a transition really is necessary
-        if (pos0.isEqualTo(pos1))
+        if (pos0.isNotEqualTo(pos1))
         {
-            return;
-        }
+            startPos = pos0;
+            finalPos = pos1;
 
-        startPos = pos0;
-        finalPos = pos1;
+            // Start the transition
+            lerpT              = 0.f;
+            isTransitionActive = true;
+        }
     }
     
     { // Find the orientation which must be reached at the end of the transition
@@ -338,16 +347,15 @@ void SceneViewer::lookAtObject(const GameObject& GOToLook)
             const Vec3 to{flatTargetPos - finalPos};
 
             // The camera looks toward negative z
-            return (-Vec3::forward()).signedAngleWithUnitary(to.normalized());
+            return (-Vec3::forward()).signedAngleWithUnitary(to.safelyNormalized());
         }();
 
         startRotation = cam.getGlobalRotation();
         finalRotation = Quat::angleAxis(angle, Vec3::up());
-    }
 
-    // Start the transition
-    lerpT              = 0.f;
-    isTransitionActive = true;
+        lerpT              = 0.f;
+        isTransitionActive = true;
+    }
 }
 
 } // namespace GPE
