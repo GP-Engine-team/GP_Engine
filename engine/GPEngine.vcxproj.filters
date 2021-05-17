@@ -271,6 +271,15 @@
     <ClCompile Include="src\Raycast.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\AnimationSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimationComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Skeleton.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -719,6 +728,18 @@
     </ClInclude>
     <ClInclude Include="third_party\include\AL\efx-presets.h">
       <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\AnimationComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\AnimationSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Animation.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Skeleton.hpp">
+      <Filter>include\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

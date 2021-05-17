@@ -6,7 +6,7 @@ File_GENERATED
 #include "Engine/Engine.hpp"
 #include "imgui.h"
 
-    using namespace GPE;
+using namespace GPE;
 
 BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(owner)
 {

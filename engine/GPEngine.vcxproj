@@ -223,6 +223,7 @@
     <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Raycast.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\UnrolledListAllocator.hpp" />
+    <ClInclude Include="include\Engine\ECS\Component\AnimationComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\AudioComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Camera.hpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyDynamic.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyStatic.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp" />
+    <ClInclude Include="include\Engine\ECS\System\AnimationSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\BehaviourSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp" />
     <ClInclude Include="include\Engine\ECS\System\PhysXSystem.hpp" />
@@ -253,6 +255,7 @@
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
     <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp" />
+    <ClInclude Include="include\Engine\Resources\Animation.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
     <ClInclude Include="include\Engine\Resources\Cursor.hpp" />
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp" />
@@ -272,6 +275,7 @@
     <ClInclude Include="include\Engine\Resources\Script\FreeFly.hpp" />
     <ClInclude Include="include\Engine\Resources\Shader.hpp" />
     <ClInclude Include="include\Engine\Resources\ShaderType.hpp" />
+    <ClInclude Include="include\Engine\Resources\Skeleton.hpp" />
     <ClInclude Include="include\Engine\Resources\Sound.hpp" />
     <ClInclude Include="include\Engine\Resources\Texture.hpp" />
     <ClInclude Include="include\Engine\Resources\Type.hpp" />
@@ -354,6 +358,8 @@
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AnimationComponent.cpp" />
+    <ClCompile Include="src\AnimationSystem.cpp" />
     <ClCompile Include="src\AudioComponent.cpp" />
     <ClCompile Include="src\BehaviourComponent.cpp" />
     <ClCompile Include="src\BehaviourSystem.cpp" />
@@ -420,6 +426,7 @@
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\ShaderInspectorPanel.cpp" />
     <ClCompile Include="src\ShaderParser.cpp" />
+    <ClCompile Include="src\Skeleton.cpp" />
     <ClCompile Include="src\SoundSystem.cpp" />
     <ClCompile Include="src\SpotLight.cpp" />
     <ClCompile Include="src\Texture.cpp" />
