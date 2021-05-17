@@ -33,7 +33,8 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
     Log::getInstance()->logInitializationStart("Model importation");
 
     unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
-                                    aiProcess_GenNormals | aiProcess_GenUVCoords;
+                                    aiProcess_GenNormals | aiProcess_GenUVCoords | aiProcess_FlipUVs |
+                                    aiProcess_CalcTangentSpace;
 
     Assimp::Importer importer;
     const aiScene*   scene = importer.ReadFile(srcPath, postProcessflags);
@@ -154,9 +155,9 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         }
 
         for (unsigned int iText = 0;
-             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_BASE_COLOR); ++iText)
+             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_NORMALS); ++iText)
         {
-            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_BASE_COLOR, iText, &path);
+            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_NORMALS, iText, &path);
 
             if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
             {
@@ -176,7 +177,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
                 fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
                 fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-                materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                materialArg.normalMapTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
                 writeTextureFile(fsDstPath.string().c_str(), arg);
                 arg.pixels.release(); // Assimp manage it's mamory
@@ -189,7 +190,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
                 fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
                 fsDstPath = dstDirPath / fsPath;
 
-                materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                materialArg.normalMapTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
                 importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
             }
@@ -240,9 +241,11 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
             const aiVector3D& vertice   = pMesh->mVertices[verticeId];
             const aiVector3D& textCoord = pMesh->mTextureCoords[0][verticeId];
             const aiVector3D& normal    = pMesh->mNormals[verticeId];
+            const aiVector3D& tangeante = pMesh->mTangents[verticeId];
 
             arg.vertices.emplace_back(Mesh::Vertex{Vec3{vertice.x, vertice.y, vertice.z},
-                                                   Vec3{normal.x, normal.y, normal.z}, Vec2{textCoord.x, textCoord.y}});
+                                                   Vec3{normal.x, normal.y, normal.z}, Vec2{textCoord.x, textCoord.y},
+                                                   Vec3{tangeante.x, tangeante.y, tangeante.z}});
         }
 
         // Indices
@@ -400,12 +403,12 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
 
     MaterialHeader header{(char)EFileType::MATERIAL, arg.comp, static_cast<int>(arg.ambianteTexturePath.size()),
                           static_cast<int>(arg.diffuseTexturePath.size()),
-                          static_cast<int>(arg.baseColorTexturePath.size())};
+                          static_cast<int>(arg.normalMapTexturePath.size())};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
     fwrite(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght, pFile); // string buffer
     fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);   // string buffer
-    fwrite(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
+    fwrite(arg.normalMapTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
            pFile); // string buffer
 
     fclose(pFile);
@@ -445,8 +448,8 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
 
     if (header.pathBaseColorTextureLenght) // If base color texture existe
     {
-        arg.baseColorTexturePath.assign(header.pathBaseColorTextureLenght, '\0');
-        fread(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
+        arg.normalMapTexturePath.assign(header.pathBaseColorTextureLenght, '\0');
+        fread(arg.normalMapTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
               pFile); // string buffer
     }
 
@@ -469,9 +472,9 @@ Material* GPE::loadMaterialFile(const char* src)
         arg.pDiffuseTexture =
             loadTextureFile((std::filesystem::current_path() / importeArg.diffuseTexturePath).string().c_str());
 
-    if (!importeArg.baseColorTexturePath.empty())
-        arg.pBaseColorTexture =
-            loadTextureFile((std::filesystem::current_path() / importeArg.baseColorTexturePath).string().c_str());
+    if (!importeArg.normalMapTexturePath.empty())
+        arg.pNormalMapTexture =
+            loadTextureFile((std::filesystem::current_path() / importeArg.normalMapTexturePath).string().c_str());
 
     if (Material* const pMat = Engine::getInstance()->resourceManager.get<Material>(src))
         return pMat;

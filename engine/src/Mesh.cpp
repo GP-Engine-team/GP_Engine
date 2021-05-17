@@ -24,8 +24,31 @@ Mesh::CreateIndiceBufferArg Mesh::convert(Mesh::CreateContiguousVerticesArg& arg
     {
         newArg.vertices.push_back(
             {arg.vBuffer[arg.iBuffer[i].iv], arg.vnBuffer[arg.iBuffer[i].ivn], arg.vtBuffer[arg.iBuffer[i].ivt]});
+
         newArg.indices.push_back((unsigned int)i);
     }
+
+    // Compute tangeantes
+    Vec3  edge1, edge2, tangent, deltaUV1, deltaUV2;
+    float f;
+    for (size_t i = 0u; i < arg.iBuffer.size(); i += 3)
+    {
+        // calculate tangent/bitangent vectors of both triangles
+        edge1    = newArg.vertices[i + 1].v - newArg.vertices[i].v;
+        edge2    = newArg.vertices[i + 2].v - newArg.vertices[i].v;
+        deltaUV1 = newArg.vertices[i + 1].vt - newArg.vertices[i].vt;
+        deltaUV2 = newArg.vertices[i + 2].vt - newArg.vertices[i].vt;
+
+        f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+        tangent.x                  = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent.y                  = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent.z                  = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+        newArg.vertices[i].vtg     = tangent;
+        newArg.vertices[i + 1].vtg = tangent;
+        newArg.vertices[i + 2].vtg = tangent;
+    }
+
     return newArg;
 }
 
@@ -39,15 +62,15 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
     m_verticesCount = static_cast<unsigned int>(arg.indices.size());
 
     // Generate buffer and bind VAO
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(2, &m_EBOBuffers.vbo);
-    glBindVertexArray(m_VAO);
+    glGenVertexArrays(1, &m_buffers.vao);
+    glGenBuffers(2, &m_buffers.vbo);
+    glBindVertexArray(m_buffers.vao);
 
     // define properties of EBO and VBO buffers
-    glBindBuffer(GL_ARRAY_BUFFER, m_EBOBuffers.vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_buffers.vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(arg.vertices[0]) * arg.vertices.size(), arg.vertices.data(), GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBOBuffers.ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffers.ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(arg.indices[0]) * arg.indices.size(), arg.indices.data(),
                  GL_STATIC_DRAW);
 
@@ -59,9 +82,13 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vn));
 
-    // 3nd attribute buffer : UVs
+    // 3th attribute buffer : UVs
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vt));
+
+    // 4th attribute buffer : Tangeantes
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vtg));
 
     glBindVertexArray(0);
 
@@ -70,23 +97,12 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 
 Mesh::~Mesh() noexcept
 {
-    if (m_vertexbuffer == 0)
-    {
-        glDeleteBuffers(2, &m_EBOBuffers.vbo);
-    }
-    else
-    {
-        glDeleteBuffers(1, &m_vertexbuffer);
-        glDeleteBuffers(1, &m_normalbuffer);
-        glDeleteBuffers(1, &m_uvbuffer);
-    }
-
-    glDeleteBuffers(1, &m_VAO);
+    glDeleteBuffers(3, &m_buffers.vao);
 }
 
 void Mesh::draw() const noexcept
 {
-    glBindVertexArray(m_VAO);
+    glBindVertexArray(m_buffers.vao);
 
     unsigned int first = 0;
     glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_verticesCount));

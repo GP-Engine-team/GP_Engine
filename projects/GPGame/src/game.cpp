@@ -96,11 +96,12 @@ void loadTreeResource()
     Model::CreateArg     arg;
 
     SubModel subModel;
-    subModel.pShader = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLightAndShadow.vs",
-                                       "./resources/shaders/fTextureWithLightAndShadow.fs", LIGHT_BLIN_PHONG);
+    subModel.pShader = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLightAndShadowAndNM.vs",
+                                       "./resources/shaders/fTextureWithLightAndShadowAndNM.fs", LIGHT_BLIN_PHONG);
     subModel.pShader->use();
     subModel.pShader->setInt("ourTexture", 0);
     subModel.pShader->setInt("shadowMap", 1);
+    subModel.pShader->setInt("normalMap", 2);
 
     subModel.pMaterial = loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial");
     subModel.pMesh     = loadMeshFile("./resources/meshs/g1.GPMesh");

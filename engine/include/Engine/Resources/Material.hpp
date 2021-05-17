@@ -25,7 +25,7 @@ public:
         MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
         std::string       ambianteTexturePath  = "";
         std::string       diffuseTexturePath   = "";
-        std::string       baseColorTexturePath = "";
+        std::string       normalMapTexturePath = "";
     };
 
     struct CreateArg
@@ -33,7 +33,7 @@ public:
         MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
         Texture*          pAmbianteTexture{nullptr};
         Texture*          pDiffuseTexture{nullptr};
-        Texture*          pBaseColorTexture{nullptr};
+        Texture*          pNormalMapTexture{nullptr};
     };
 
 protected:
@@ -43,7 +43,7 @@ protected:
     MaterialComponent m_comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
     Texture*          m_pAmbianteTexture{nullptr};
     Texture*          m_pDiffuseTexture{nullptr};
-    Texture*          m_pBaseColorTexture{nullptr};
+    Texture*          m_pNormalMapTexture{nullptr};
     unsigned int      m_ID = 0;
 
 public:
@@ -59,7 +59,7 @@ public:
     DEFAULT_GETTER_SETTER_BY_REF(Component, m_comp);
     DEFAULT_GETTER_SETTER_BY_REF(AmbianteTexture, m_pAmbianteTexture);
     DEFAULT_GETTER_SETTER_BY_REF(DiffuseTexture, m_pDiffuseTexture);
-    DEFAULT_GETTER_SETTER_BY_REF(BaseColorTexture, m_pBaseColorTexture);
+    DEFAULT_GETTER_SETTER_BY_REF(NormalMapTexture, m_pNormalMapTexture);
 
     inline bool isOpaque() const noexcept;
 
