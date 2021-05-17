@@ -6,8 +6,8 @@
  */
 
 #pragma once
+#include <Engine/Core/Physics/RigidBodyBase.hpp>
 #include <Engine/ECS/Component/Component.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <PxRigidStatic.h>
 
 // Generated
@@ -16,10 +16,10 @@
 namespace GPE RFKNamespace()
 {
 
-    class RFKClass(Serialize(), ComponentGen) RigidbodyStatic : public Component
+    class RFKClass(Serialize(), ComponentGen) RigidbodyStatic : public Component, RigidBodyBase
     {
     public:
-        RigidbodyStatic(GameObject & owner) noexcept;
+        RigidbodyStatic(GameObject & owner, EShapeType _type) noexcept;
 
         RigidbodyStatic() noexcept                             = default;
         RigidbodyStatic(const RigidbodyStatic& other) noexcept = delete;
@@ -27,11 +27,10 @@ namespace GPE RFKNamespace()
         RigidbodyStatic& operator=(RigidbodyStatic const& other) noexcept = delete;
         RigidbodyStatic& operator=(RigidbodyStatic&& other) noexcept = delete;
 
-        virtual ~RigidbodyStatic() noexcept = default;
+        virtual ~RigidbodyStatic() noexcept;
 
     public:
         physx::PxRigidStatic* rigidbody;
-        Collider*             collider;
 
         /**
          * @brief Add or remove current component from it's system which have for effect to enable or disable it

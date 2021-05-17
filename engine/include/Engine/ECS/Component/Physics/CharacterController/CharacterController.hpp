@@ -24,11 +24,11 @@ namespace GPE RFKNamespace()
     class RFKClass(ComponentGen(), Inspect(), Serialize()) CharacterController : public Component
     {
     public:
-        CharacterController(GameObject& owner) noexcept;
+        CharacterController(GameObject & owner) noexcept;
 
         CharacterController() noexcept;
         CharacterController(const CharacterController& other) noexcept = delete;
-        CharacterController(CharacterController&& other) noexcept     = default;
+        CharacterController(CharacterController && other) noexcept     = default;
         CharacterController& operator=(CharacterController const& other) noexcept = delete;
         CharacterController& operator=(CharacterController&& other) noexcept = delete;
 
@@ -72,4 +72,4 @@ namespace GPE RFKNamespace()
 
         CharacterController_GENERATED
     };
-} // namespace GPE
+} // namespace )

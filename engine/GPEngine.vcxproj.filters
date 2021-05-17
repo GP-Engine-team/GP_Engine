@@ -271,6 +271,12 @@
     <ClCompile Include="src\Raycast.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Physics\Rigidbody\RigidBodyBase.cpp">
+      <Filter>src\Physics\Rigidbody</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Physics\Collisions\Collider.cpp">
+      <Filter>src\Physics\Collisions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -600,21 +606,6 @@
     <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyStatic.hpp">
       <Filter>include\ECS\Component\Physics\Rigidbody</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp">
-      <Filter>include\ECS\Component\Physics\Collisions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\CapsuleCollider.hpp">
-      <Filter>include\ECS\Component\Physics\Collisions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\Collider.hpp">
-      <Filter>include\ECS\Component\Physics\Collisions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\MeshCollider.hpp">
-      <Filter>include\ECS\Component\Physics\Collisions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\SphereCollider.hpp">
-      <Filter>include\ECS\Component\Physics\Collisions</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
       <Filter>include\Core\Debug</Filter>
     </ClInclude>
@@ -719,6 +710,24 @@
     </ClInclude>
     <ClInclude Include="third_party\include\AL\efx-presets.h">
       <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Physics\RigidBodyBase.hpp">
+      <Filter>include\Core\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\CapsuleCollider.hpp">
+      <Filter>include\Core\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\MeshCollider.hpp">
+      <Filter>include\Core\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\BoxCollider.hpp">
+      <Filter>include\Core\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\Collider.hpp">
+      <Filter>include\Core\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\SphereCollider.hpp">
+      <Filter>include\Core\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -917,9 +926,6 @@
     <Filter Include="include\ECS\Component\Physics\CharacterController">
       <UniqueIdentifier>{858fd582-7868-4b02-8a0a-a81b09087f38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\ECS\Component\Physics\Collisions">
-      <UniqueIdentifier>{c9757943-57ff-42de-8a53-3b01c0312aaf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\ECS\Component\Physics\Rigidbody">
       <UniqueIdentifier>{c944e1a1-4a35-4615-8465-f56569a8c40e}</UniqueIdentifier>
     </Filter>
@@ -952,6 +958,9 @@
     </Filter>
     <Filter Include="include\Resources\Particle">
       <UniqueIdentifier>{ec495029-fcd3-4b29-aec8-279a8239fbf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Core\Physics">
+      <UniqueIdentifier>{a89435ed-8365-4a7c-8f28-1d88c6e46316}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

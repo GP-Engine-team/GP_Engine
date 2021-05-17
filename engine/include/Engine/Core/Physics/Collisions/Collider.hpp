@@ -5,28 +5,25 @@
  */
 
 #pragma once
-#include <Engine/ECS/Component/Component.hpp>
+#include <GPM/Vector3.hpp>
+#include <PxMaterial.h>
 #include <PxShape.h>
+#include <Refureku/Refureku.h>
 
 // Generated
 #include <Generated/Collider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), Serialize()) Collider : public Component
+    class RFKClass(Inspect(), Serialize()) Collider : rfk::Object
     {
     public:
-        Collider(GameObject & owner) noexcept : Component(owner)
-        {
-        }
-
         Collider() noexcept                      = default;
         Collider(const Collider& other) noexcept = delete;
         Collider(Collider && other) noexcept     = default;
         Collider& operator=(Collider const& other) noexcept = delete;
         Collider& operator=(Collider&& other) noexcept = delete;
 
-        // virtual void updateTransform() = 0;
         virtual ~Collider() noexcept = default;
 
     public:
@@ -34,6 +31,7 @@ namespace GPE RFKNamespace()
         physx::PxMaterial* material  = nullptr;
         bool               isTrigger = false;
         bool               isVisible = false;
+        GPM::Vector3       center    = {0.f, 0.f, 0.f};
 
         Collider_GENERATED
     };

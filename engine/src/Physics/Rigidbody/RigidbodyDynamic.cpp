@@ -14,30 +14,21 @@ File_GENERATED
     using namespace GPE;
 using namespace physx;
 
-RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner)
+RigidbodyDynamic::RigidbodyDynamic(GameObject& owner, EShapeType _type) noexcept
+    : Component(owner), RigidBodyBase(_type)
 {
     rigidbody = PxGetPhysics().createRigidDynamic(
         PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
                     PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
 
-    collider = owner.getComponent<Collider>();
-
     rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
     rigidbody->setMass(1);
     rigidbody->userData = &getOwner();
 
-    if (!collider)
-    {
-        FUNCT_ERROR("No collider assigned to the game object!");
-    }
+    rigidbody->attachShape(*collider->shape);
+    collider->shape->release();
 
-    else
-    {
-        rigidbody->attachShape(*collider->shape);
-        collider->shape->release();
-
-        Engine::getInstance()->physXSystem.addComponent(this);
-    }
+    Engine::getInstance()->physXSystem.addComponent(this);
 }
 
 void RigidbodyDynamic::update() noexcept
@@ -70,4 +61,13 @@ void RigidbodyDynamic::setActive(bool newState) noexcept
         GPE::Engine::getInstance()->physXSystem.addComponent(this);
     else
         GPE::Engine::getInstance()->physXSystem.removeComponent(this);
+}
+
+RigidbodyDynamic::~RigidbodyDynamic() noexcept
+{
+    if (rigidbody != nullptr && rigidbody->isReleasable())
+    {
+        rigidbody->release();
+    }
+    Engine::getInstance()->physXSystem.removeComponent(this);
 }

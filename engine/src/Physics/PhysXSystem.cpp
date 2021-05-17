@@ -7,20 +7,20 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 
-#include <PhysX/gpu/PxGpu.h>
 #include <PhysX/PxPhysics.h>
 #include <PhysX/PxPhysicsVersion.h>
 #include <PhysX/PxScene.h>
 #include <PhysX/PxSceneDesc.h>
 #include <PhysX/Pxfoundation.h>
-#include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PhysX/characterkinematic/PxController.h>
-#include <PhysX/cooking/PxCooking.h>
+#include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PhysX/common/PxRenderBuffer.h>
 #include <PhysX/common/PxTolerancesScale.h>
+#include <PhysX/cooking/PxCooking.h>
 #include <PhysX/extensions/PxDefaultAllocator.h>
 #include <PhysX/extensions/PxDefaultSimulationFilterShader.h>
 #include <PhysX/extensions/PxExtensionsAPI.h>
+#include <PhysX/gpu/PxGpu.h>
 
 using namespace GPE;
 using namespace physx;
@@ -28,32 +28,26 @@ using namespace physx;
 static UserErrorCallback  gDefaultErrorCallback;
 static PxDefaultAllocator gDefaultAllocatorCallback;
 
-void UserErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file, int line) noexcept
+void UserErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file,
+                                    int line) noexcept
 {
     FUNCT_ERROR(message);
 }
 
-
 PhysXSystem::PhysXSystem()
-    : foundation          {nullptr},
-      physics             {nullptr},
-      cooking             {nullptr},
-      scene               {nullptr},
-      manager             {nullptr},
-      rigidbodyStatics    {},
-      rigidbodyDynamics   {},
-      characterControllers{}
+    : foundation{nullptr}, physics{nullptr}, cooking{nullptr}, scene{nullptr}, manager{nullptr}, rigidbodyStatics{},
+      rigidbodyDynamics{}, characterControllers{}
 {
     foundation = PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
     if (!foundation)
         FUNCT_ERROR("PxCreateFoundation failed!");
 
     bool recordMemoryAllocations = true;
-//#ifdef ENABLE_PVD
-//    pvd                       = PxCreatePvd(*foundation);
-//    PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-//    pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
-//#endif
+    //#ifdef ENABLE_PVD
+    //    pvd                       = PxCreatePvd(*foundation);
+    //    PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+    //    pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+    //#endif
     PxTolerancesScale scale;
     physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, recordMemoryAllocations, nullptr);
     if (!physics)
@@ -106,7 +100,6 @@ PhysXSystem::~PhysXSystem()
     scene->release();
     cooking->release();
     physics->release();
-    // pvd->release();
     foundation->release();
 }
 

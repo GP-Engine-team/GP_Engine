@@ -6,9 +6,9 @@
  */
 
 #pragma once
+#include <Engine/Core/Physics/RigidBodyBase.hpp>
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/Component/Component.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <PxRigidDynamic.h>
 
 // Generated
@@ -17,10 +17,10 @@
 namespace GPE RFKNamespace()
 {
 
-    class RFKClass(ComponentGen(), Inspect()) RigidbodyDynamic : public Component
+    class RFKClass(ComponentGen(), Inspect()) RigidbodyDynamic : public Component, RigidBodyBase
     {
     public:
-        RigidbodyDynamic(GameObject & owner) noexcept;
+        RigidbodyDynamic(GameObject & owner, EShapeType _type) noexcept;
 
         RigidbodyDynamic() noexcept                              = default;
         RigidbodyDynamic(const RigidbodyDynamic& other) noexcept = delete;
@@ -32,14 +32,13 @@ namespace GPE RFKNamespace()
 
         void updatePosition() noexcept;
 
-        virtual ~RigidbodyDynamic() noexcept = default;
+        virtual ~RigidbodyDynamic() noexcept;
 
     public:
         physx::PxRigidDynamic* rigidbody;
-        Collider*              collider;
 
     private:
-        RFKField(Inspect("setKinematic")) bool m_isKinematic = false;
+        bool m_isKinematic = false;
 
     public:
         void setKinematic(bool state) noexcept;
