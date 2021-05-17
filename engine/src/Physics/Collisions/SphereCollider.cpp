@@ -11,8 +11,7 @@ using namespace GPE;
 using namespace physx;
 using namespace std;
 
-SphereCollider::SphereCollider(GameObject& owner) noexcept
-    : Collider(owner), m_center(.0f, .0f, .0f), m_radius(10.f)
+SphereCollider::SphereCollider(GameObject& owner) noexcept : Collider(owner)
 {
     material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
     shape    = Engine::getInstance()->physXSystem.physics->createShape(PxSphereGeometry(m_radius), *material, true);
@@ -28,3 +27,8 @@ void SphereCollider::setRadius(float newRadius) noexcept
 {
 
 }*/
+
+void SphereCollider::onPostLoad()
+{
+
+}

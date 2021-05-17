@@ -1,11 +1,13 @@
-﻿#include "Engine/Intermediate/DataChunk.hpp"
+﻿#include "Engine/ECS/Component/Light/PointLight.hpp"
+
+#include "Engine/Intermediate/DataChunk.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
-#include "Engine/ECS/Component/Light/PointLight.hpp"
-
+// Generated
+#include "Generated/PointLight.rfk.h"
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 
 PointLight::PointLight(GameObject& owner) noexcept : PointLight(owner, CreateArg{})
 {

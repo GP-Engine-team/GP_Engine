@@ -15,7 +15,7 @@
 #include <Engine/Serialization/TextureImporterSetting.hpp>
 
 // Don't move up
-#include <Editor/ExternalDeclarations.hpp>
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 
 #include <imgui/imgui.h>
 #include <string>
@@ -135,27 +135,39 @@ void ProjectContent::refreshResourcesList()
                     pCurrentNode = pCurrentNode->pParent;
                 }
             }
-            pCurrentNode->files.emplace_back(
-                FileInfo{next->path(), next->path().filename(), next->path().extension(), next->file_size()});
+            pCurrentNode->files.emplace_back(FileInfo{std::filesystem::relative(next->path()), next->path().filename(),
+                                                      next->path().extension(), next->file_size()});
         }
     }
 
     explore(resourcesTree);
 }
 
-static bool renderIcone(const ImVec2& size, const ImVec4& tint_col = ImVec4(0.0f, 1.0f, 1.0f, 1.0f),
-                        const ImVec4& bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f))
+void ProjectContent::createNewScene()
 {
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
+    std::filesystem::path sceneDir  = pCurrentDirectory->path;
+    std::filesystem::path sceneName = "NewScene" ENGINE_SCENE_EXTENSION;
 
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0 = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
+    int id = 0;
+    while (pCurrentDirectory->containFile(sceneName))
+    {
+        sceneName = stringFormat("NewScene(%i)" ENGINE_SCENE_EXTENSION, ++id);
+    }
 
-    return ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
+    sceneDir /= sceneName;
+
+    m_editorContext->m_sceneEditor.view.unbindScene();
+    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName.stem().string().c_str());
+    m_editorContext->saveScene(&scene, sceneDir.string().c_str());
+    m_editorContext->m_sceneEditor.view.bindScene(scene);
+    refreshResourcesList();
+    m_editorContext->m_saveFolder = sceneDir.string().c_str();
+}
+
+void ProjectContent::removeFile(const std::filesystem::path& path)
+{
+    std::filesystem::remove(path);
+    refreshResourcesList();
 }
 
 void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject)
@@ -357,9 +369,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                 {
                     std::string sceneName = it->filename.stem().string();
-                    Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(sceneName);
+                    m_editorContext->m_sceneEditor.view.unbindScene();
+                    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName);
                     m_editorContext->loadScene(&scene, it->path.string().c_str());
-                    Engine::getInstance()->sceneManager.loadScene(sceneName);
+                    m_editorContext->m_saveFolder = it->path.string().c_str();
                     break;
                 }
 
@@ -455,6 +468,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 shaderDir /= shaderName;
 
                 writeShaderFile(shaderDir.string().c_str());
+                refreshResourcesList();
             }
 
             if (ImGui::MenuItem("Material"))
@@ -471,23 +485,12 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 materialDir /= materialName;
 
                 writeMaterialFile(materialDir.string().c_str());
+                refreshResourcesList();
             }
 
             if (ImGui::MenuItem("Scene"))
             {
-                std::filesystem::path sceneDir  = pCurrentDirectory->path;
-                std::filesystem::path sceneName = "NewScene" ENGINE_SCENE_EXTENSION;
-
-                int id = 0;
-                while (pCurrentDirectory->containFile(sceneName))
-                {
-                    sceneName = stringFormat("NewScene(%i)" ENGINE_SCENE_EXTENSION, ++id);
-                }
-
-                sceneDir /= sceneName;
-
-                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(sceneName.stem().string().c_str());
-                m_editorContext->saveScene(&scene, sceneDir.string().c_str());
+                createNewScene();
             }
 
             if (ImGui::MenuItem("Prefab"))
@@ -506,6 +509,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 Scene prefab;
                 auto  saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
                 saveFunc(&prefab, prefabDir.string().c_str(), GPE::SavedScene::EType::XML);
+                refreshResourcesList();
             }
 
             ImGui::EndMenu();

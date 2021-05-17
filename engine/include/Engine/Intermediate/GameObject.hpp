@@ -57,7 +57,9 @@ namespace GPE RFKNamespace()
         RFKField(Inspect(), Serialize()) std::string m_tag{"GameObject"};
         RFKField(Serialize()) GameObject*            m_parent = nullptr;
         RFKField(Serialize()) unsigned int           m_id;
-        bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
+        RFKField(Serialize()) bool                   m_isDead{
+            false}; // Flag that inform it parent that this transform must be destroy on update loop
+        RFKField(Serialize()) bool m_isActive = true;
 
     public:
         RFKField(Serialize()) Scene*                 pOwnerScene = nullptr;
@@ -100,10 +102,11 @@ namespace GPE RFKNamespace()
         [[nodiscard]] inline GameObject*       getParent() noexcept;
 
         /**
-         * @brief Set the parent and remove to parent the child
+         * @brief Set the parent and remove to parent the child. Warning if pNewParent == nullptr, the gameObject must
+         * be remove manually or must be instancied somewhere. Normally parent is repsonsable to destroy it's child
          * @param newName
          */
-        inline void setParent(GameObject & newParent) noexcept;
+        void setParent(GameObject * pNewParent) noexcept;
 
         /**
          * @brief Warning ! This function only set the parent ptr and do not remove the children ptr of this parent
@@ -139,6 +142,8 @@ namespace GPE RFKNamespace()
          */
         template <typename T, typename... Args>
         T& addComponent(Args && ... args) noexcept;
+
+        inline Component* addExistingComponent(Component * pExistingComponent) noexcept;
 
         /**
          * @brief Get the first Component type object
@@ -242,8 +247,6 @@ namespace GPE RFKNamespace()
         [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
-
-        [[nodiscard]] void detach(const GameObject::Children::iterator& itToParentPtr) noexcept;
 
         void inspect(GPE::InspectContext & context) override;
 

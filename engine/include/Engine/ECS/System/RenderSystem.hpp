@@ -11,6 +11,7 @@
 
 #include <Engine/Resources/ResourcesManager.hpp>
 #include <Engine/Resources/ResourcesManagerType.hpp>
+#include <Engine/Resources/ShadowMap.hpp>
 #include <GPM/Transform.hpp>
 
 namespace GPE
@@ -63,7 +64,7 @@ public:
     using RenderPipeline =
         std::function<void(RenderSystem&, std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
                            std::vector<Camera*>&, std::vector<Light*>&, std::vector<ParticleComponent*>&,
-                           std::vector<DebugShape>&, std::vector<DebugLine>&, Camera&)>;
+                           std::vector<DebugShape>&, std::vector<DebugLine>&, std::vector<ShadowMap>&, Camera&)>;
 
 protected:
     std::vector<Renderer*>          m_pRenderers;
@@ -74,6 +75,8 @@ protected:
     std::vector<ParticleComponent*> m_pParticleComponents;
     std::vector<DebugShape>         m_debugShape;
     std::vector<DebugLine>          m_debugLine;
+    std::vector<ShadowMap>          m_shadowMaps;
+    unsigned int                    m_w = 0, m_h = 0;
     Camera*                         m_mainCamera   = nullptr;
     Camera*                         m_activeCamera = nullptr;
 
@@ -98,6 +101,11 @@ public:
     void tryToBindMesh(unsigned int meshID);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
+    /**
+     * @brief Try to affect the first camera found by the system in the scene.
+     * @return
+     */
+    void    setDefaultMainCamera() noexcept;
     void    setMainCamera(Camera* newMainCamera) noexcept;
     Camera* getMainCamera() noexcept;
 
@@ -113,6 +121,7 @@ public:
 
     RenderPipeline defaultRenderPipeline() const noexcept;
     RenderPipeline gameObjectIdentifierPipeline() const noexcept;
+    void           shadowMapPipeline() noexcept;
 
     /**
      * @brief Render the scene thanks to the call back set in input. This callback will be used as the render pipeline.
@@ -146,6 +155,8 @@ public:
     void displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) noexcept;
 
 public:
+    void tryToResize(unsigned int w, unsigned int h);
+
     // TODO: Remove this shit and create variadic templated system
     void addParticleComponent(ParticleComponent& particleComponent) noexcept;
 
@@ -181,6 +192,9 @@ public:
     void updateLightPointer(Light* newPointerLight, Light* exPointerLight) noexcept;
 
     void removeLight(Light& light) noexcept;
+
+    void addShadowMap(Light& light) noexcept;
+    void removeShadowMap(Light& light) noexcept;
 };
 
 } /*namespace GPE*/

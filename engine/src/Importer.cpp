@@ -32,8 +32,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
 
     Log::getInstance()->logInitializationStart("Model importation");
 
-    ResourceManagerType& resourceManager = Engine::getInstance()->resourceManager;
-
     unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
                                     aiProcess_GenNormals | aiProcess_GenUVCoords;
 
@@ -376,10 +374,10 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
 
 Texture* GPE::loadTextureFile(const char* src)
 {
-    std::filesystem::path srcPath(src);
-    if (Texture* const pTexture = Engine::getInstance()->resourceManager.get<Texture>(srcPath.filename().string()))
+    if (Texture* const pTexture = Engine::getInstance()->resourceManager.get<Texture>(src))
         return pTexture;
-    return &Engine::getInstance()->resourceManager.add<Texture>(srcPath.filename().string(), readTextureFile(src));
+
+    return &Engine::getInstance()->resourceManager.add<Texture>(src, readTextureFile(src));
 }
 
 struct MaterialHeader
@@ -459,9 +457,8 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
 
 Material* GPE::loadMaterialFile(const char* src)
 {
-    std::filesystem::path srcPath(src);
-    Material::ImporteArg  importeArg = readMaterialFile(src);
-    Material::CreateArg   arg;
+    Material::ImporteArg importeArg = readMaterialFile(src);
+    Material::CreateArg  arg;
     arg.comp = importeArg.comp;
 
     if (!importeArg.ambianteTexturePath.empty())
@@ -476,9 +473,9 @@ Material* GPE::loadMaterialFile(const char* src)
         arg.pBaseColorTexture =
             loadTextureFile((std::filesystem::current_path() / importeArg.baseColorTexturePath).string().c_str());
 
-    if (Material* const pMat = Engine::getInstance()->resourceManager.get<Material>(srcPath.filename().string()))
+    if (Material* const pMat = Engine::getInstance()->resourceManager.get<Material>(src))
         return pMat;
-    return &Engine::getInstance()->resourceManager.add<Material>(srcPath.filename().string(), arg);
+    return &Engine::getInstance()->resourceManager.add<Material>(src, arg);
 }
 
 struct MeshHeader
@@ -544,11 +541,9 @@ Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
 
 Mesh* GPE::loadMeshFile(const char* src)
 {
-    std::filesystem::path srcPath(src);
-
-    if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(srcPath.filename().string()))
+    if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(src))
         return pMesh;
-    return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), readMeshFile(src));
+    return &Engine::getInstance()->resourceManager.add<Mesh>(src, readMeshFile(src));
 }
 
 struct ShaderHeader
@@ -618,14 +613,13 @@ ShaderCreateConfig GPE::readShaderFile(const char* src)
 
 Shader* GPE::loadShaderFile(const char* src)
 {
-    std::filesystem::path srcPath(src);
-    ShaderCreateConfig    arg = readShaderFile(src);
-
-    if (Shader* const pShader = Engine::getInstance()->resourceManager.get<Shader>(srcPath.filename().string()))
+    if (Shader* const pShader = Engine::getInstance()->resourceManager.get<Shader>(src))
         return pShader;
 
+    ShaderCreateConfig arg = readShaderFile(src);
+
     return &Engine::getInstance()->resourceManager.add<Shader>(
-        srcPath.filename().string(), (std::filesystem::current_path() / arg.vertexShaderPath).string().c_str(),
+        src, (std::filesystem::current_path() / arg.vertexShaderPath).string().c_str(),
         (std::filesystem::current_path() / arg.fragmentShaderPath).string().c_str(), arg.featureMask);
 }
 

@@ -1,4 +1,10 @@
-﻿#pragma once
+﻿/*
+ * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
+ * This file is subject to the LGNU license terms in the LICENSE file
+ * found in the top-level directory of this distribution.
+ */
+
+#pragma once
 
 #include <Refureku/Refureku.h>
 #include "Engine/Serialization/xml/xmlUtilities.hpp"
@@ -117,10 +123,10 @@ namespace GPE
 {
 
 template <typename T>
-void load(XmlLoader& context, T& inspected, const rfk::Field& info);
+void load(XmlLoader& context, T& inspected, const XmlLoader::LoadInfo& info);
 
 template <typename T>
-void load(XmlLoader& context, T& inspected, const XmlLoader::LoadInfo& info);
+void load(XmlLoader& context, T& inspected, const rfk::Field& info);
 
 template <typename T>
 void load(XmlLoader& context, T*& inspected, const XmlLoader::LoadInfo& info);
@@ -178,4 +184,5 @@ void load(XmlLoader& context, rfk::Method const*& data, const XmlLoader::LoadInf
 
 #include "Engine/Serialization/STDLoad.hpp"
 #include "Engine/Serialization/GPMLoad.hpp"
+#include "Engine/Serialization/GPELoad.hpp"
 #include "Engine/Serialization/xml/xmlLoader.inl"
