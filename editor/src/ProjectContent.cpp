@@ -160,7 +160,7 @@ void ProjectContent::createNewScene()
 
 void ProjectContent::removeFile(const std::filesystem::path& path)
 {
-    std::filesystem::remove(path);
+    recycleFileOrDirectory(path);
     refreshResourcesList();
 }
 
@@ -282,6 +282,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
         ImGui::PopID();
     }
 
+    std::filesystem::path fileToRemovePath;
     for (auto&& it = pCurrentDirectory->files.cbegin(); it != pCurrentDirectory->files.cend(); ++it)
     {
         ImGui::PushID(&*it);
@@ -345,6 +346,24 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::Text("%lu bytes", it->size);
                 ImGui::PopTextWrapPos();
                 ImGui::EndTooltip();
+            }
+
+            // On double left clic
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
+            {
+                ImGui::OpenPopup("FileContext");
+            }
+
+            if (ImGui::BeginPopup("FileContext"))
+            {
+                ImGui::Text(it->path.stem().string().c_str());
+
+                if (ImGui::MenuItem("Delete"))
+                {
+                    fileToRemovePath = it->path;
+                }
+
+                ImGui::EndPopup();
             }
 
             // On double left clic
@@ -496,5 +515,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
         }
 
         ImGui::EndPopup();
+    }
+
+    if (!fileToRemovePath.empty())
+    {
+        removeFile(fileToRemovePath);
     }
 }
