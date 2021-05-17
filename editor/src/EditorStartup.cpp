@@ -150,7 +150,7 @@ void EditorStartup::closeGame()
         m_game = nullptr;
     }
 
-    // TODO: are the scene previously loaded removed by m_game's destructor?
+    // TODO: are the scenes previously loaded removed by m_game's destructor?
     m_editor.setSceneInEdition(m_engine->sceneManager.loadScene("Default scene"));
 
     // There is no more active game, replace m_engine->exit to something not dependant on m_game
