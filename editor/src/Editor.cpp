@@ -1,6 +1,7 @@
 ﻿#include <Editor/EditorStartup.hpp>
 
 // Engine
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 #include <Engine/Core/Game/AbstractGame.hpp>
 #include <Engine/Core/HotReload/ReloadableCpp.hpp>
 #include <Engine/ECS/Component/Camera.hpp>
@@ -11,7 +12,6 @@
 #include <Engine/Serialization/DataInspector.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Serialization/InspectContext.hpp>
-#include "Engine/Core/HotReload/SingletonsSync.hpp"
 
 // Editor
 #include <Editor/StylePanel.hpp>
@@ -73,15 +73,15 @@ void Editor::renderMenuBar()
 
             if (ImGui::MenuItem("New"))
             {
-                Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(fileName.c_str());
-                saveScene(&scene, path.c_str());
+                m_projectContent.createNewScene();
             }
 
-            if (ImGui::MenuItem("Open"))
-            {
-                Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(fileName);
-                loadScene(&scene, path.c_str());
-            }
+            // if (ImGui::MenuItem("Open"))
+            //{
+            //    m_sceneEditor.view.unbindScene();
+            //    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(fileName);
+            //    loadScene(&scene, path.c_str());
+            //}
 
             if (ImGui::MenuItem("Save"))
             {
@@ -245,18 +245,12 @@ void Editor::renderExplorer()
 
 void Editor::saveScene(GPE::Scene* scene, const char* path)
 {
-    GPE::Scene* currentScene = m_sceneEditor.view.pScene;
-    m_sceneEditor.view.unbindScene();
-
     auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
     saveFunc(scene, path, GPE::SavedScene::EType::XML);
-
-    m_sceneEditor.view.bindScene(*currentScene);
 }
 
 void Editor::loadScene(GPE::Scene* scene, const char* path)
 {
-    m_sceneEditor.view.unbindScene();
     m_inspectedObject = nullptr;
 
     auto loadFunc = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);

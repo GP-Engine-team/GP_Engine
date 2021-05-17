@@ -152,6 +152,26 @@ static bool renderIcone(const ImVec2& size, const ImVec4& tint_col = ImVec4(0.0f
     return ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
 }
 
+void ProjectContent::createNewScene()
+{
+    std::filesystem::path sceneDir  = pCurrentDirectory->path;
+    std::filesystem::path sceneName = "NewScene" ENGINE_SCENE_EXTENSION;
+
+    int id = 0;
+    while (pCurrentDirectory->containFile(sceneName))
+    {
+        sceneName = stringFormat("NewScene(%i)" ENGINE_SCENE_EXTENSION, ++id);
+    }
+
+    sceneDir /= sceneName;
+
+    m_editorContext->m_sceneEditor.view.unbindScene();
+    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName.stem().string().c_str());
+    m_editorContext->saveScene(&scene, sceneDir.string().c_str());
+    m_editorContext->m_sceneEditor.view.bindScene(scene);
+    refreshResourcesList();
+}
+
 void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject)
 {
     float          windowVisibleX2    = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
@@ -343,8 +363,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                 {
                     std::string sceneName = it->filename.stem().string();
-                    Scene&      scene     = Engine::getInstance()->sceneManager.setCurrentScene(sceneName);
+                    m_editorContext->m_sceneEditor.view.unbindScene();
+                    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName);
                     m_editorContext->loadScene(&scene, it->path.string().c_str());
+
                     break;
                 }
 
@@ -456,20 +478,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
             if (ImGui::MenuItem("Scene"))
             {
-                std::filesystem::path sceneDir  = pCurrentDirectory->path;
-                std::filesystem::path sceneName = "NewScene" ENGINE_SCENE_EXTENSION;
-
-                int id = 0;
-                while (pCurrentDirectory->containFile(sceneName))
-                {
-                    sceneName = stringFormat("NewScene(%i)" ENGINE_SCENE_EXTENSION, ++id);
-                }
-
-                sceneDir /= sceneName;
-
-                Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName.stem().string().c_str());
-                m_editorContext->saveScene(&scene, sceneDir.string().c_str());
-                refreshResourcesList();
+                createNewScene();
             }
 
             if (ImGui::MenuItem("Prefab"))
