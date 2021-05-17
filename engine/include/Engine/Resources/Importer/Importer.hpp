@@ -17,17 +17,21 @@
 #define ENGINE_SHADER_EXTENSION ".GPShader"
 #define ENGINE_PREFAB_EXTENSION ".GPPrefab"
 #define ENGINE_SCENE_EXTENSION ".GPScene"
+#define ENGINE_SKELETON_EXTENSION ".GPSkeleton"
+#define ENGINE_ANIMATION_EXTENSION ".GPAnimation"
 
 namespace GPE
 {
 enum class EFileType
 {
-    MESH     = 0,
-    MATERIAL = 1,
-    TEXTURE  = 2,
-    SHADER   = 3,
-    SCENE    = 4,
-    PREFAB   = 6
+    MESH      = 0,
+    MATERIAL  = 1,
+    TEXTURE   = 2,
+    SHADER    = 3,
+    SCENE     = 4,
+    PREFAB    = 6,
+    SKELETON  = 7,
+    ANIMATION = 8
 };
 
 struct TextureImportConfig
@@ -95,5 +99,13 @@ SavedScene::CreateArg loadPrefabFile(const char* src);
 void                  writeSceneFile(const char* dst, const SavedScene::CreateArg& arg);
 SavedScene::CreateArg readSceneFile(const char* src);
 SavedScene::CreateArg loadSceneFile(const char* src);
+
+void                        writeSkeletonFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
+Mesh::CreateIndiceBufferArg readSkeletonFile(const char* src);
+Mesh*                       loadSkeletonFile(const char* src);
+
+void                        writeAnimationFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
+Mesh::CreateIndiceBufferArg readAnimatoinFile(const char* src);
+Mesh*                       loadAnimatoinFile(const char* src);
 
 } // namespace GPE

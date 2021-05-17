@@ -16,7 +16,7 @@ namespace GPE
 {
 class GameObject;
 class IInspectable;
-}
+} // namespace GPE
 
 #define RESOURCES_DIR "resources"
 
@@ -62,6 +62,8 @@ protected:
     GPE::Texture m_soundIcone;
     GPE::Texture m_unknowIcone;
     GPE::Texture m_prefabIcone;
+    GPE::Texture m_skeletonIcone;
+    GPE::Texture m_animationIcone;
 
     DirectoryInfo  resourcesTree;
     DirectoryInfo* pCurrentDirectory = nullptr;

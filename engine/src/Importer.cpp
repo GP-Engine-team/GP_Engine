@@ -325,7 +325,7 @@ void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data)
     fwrite(data.pixels.get(), data.len, 1, pFile);
     fclose(pFile);
 
-    Log::getInstance()->log(stringFormat("Texture write to \"%s\"", dst));
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
 }
 
 Texture::ImportArg GPE::readTextureFile(const char* src)
@@ -370,7 +370,7 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
 
     fclose(pFile);
 
-    Log::getInstance()->log(stringFormat("Texture read from \"%s\"", src));
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
     return arg;
 }
 
@@ -412,7 +412,7 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
 
     fclose(pFile);
 
-    Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
 }
 
 Material::ImporteArg GPE::readMaterialFile(const char* src)
@@ -453,7 +453,7 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
     }
 
     fclose(pFile);
-    Log::getInstance()->log(stringFormat("Material read from \"%s\"", src));
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
     return arg;
 }
 
@@ -505,7 +505,7 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
     fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
 
     fclose(pFile);
-    Log::getInstance()->log(stringFormat("Mesh write to \"%s\"", dst));
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
 }
 
 Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
@@ -537,7 +537,7 @@ Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
     }
 
     fclose(pFile);
-    Log::getInstance()->log(stringFormat("Mesh read from \"%s\"", src));
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
 
     return arg;
 }
@@ -553,10 +553,10 @@ Mesh* GPE::loadMeshFile(const char* src)
 
 struct ShaderHeader
 {
-    char     assetID            = (char)EFileType::SHADER;
-    int      vertexPathLenght   = 0;
-    int      fragmentPathLenght = 0;
-    uint8_t  featureMask        = 0;
+    char    assetID            = (char)EFileType::SHADER;
+    int     vertexPathLenght   = 0;
+    int     fragmentPathLenght = 0;
+    uint8_t featureMask        = 0;
 };
 
 void GPE::writeShaderFile(const char* dst, const ShaderCreateConfig& arg)
@@ -578,7 +578,7 @@ void GPE::writeShaderFile(const char* dst, const ShaderCreateConfig& arg)
 
     fclose(pFile);
 
-    Log::getInstance()->log(stringFormat("Shader write to \"%s\"", dst));
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
 }
 
 ShaderCreateConfig GPE::readShaderFile(const char* src)
@@ -612,7 +612,7 @@ ShaderCreateConfig GPE::readShaderFile(const char* src)
 
     fclose(pFile);
 
-    Log::getInstance()->log(stringFormat("Shader read from \"%s\"", src));
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
     return arg;
 }
 
@@ -652,7 +652,7 @@ void GPE::writePrefabFile(const char* dst, const SavedScene::CreateArg& arg)
     fwrite(arg.data.data(), sizeof(char), arg.data.size(), pFile); // string buffer
     fclose(pFile);
 
-    Log::getInstance()->log(stringFormat("Prefab write to \"%s\"", dst));
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
 }
 
 SavedScene::CreateArg GPE::readPrefabFile(const char* src)
@@ -680,7 +680,7 @@ SavedScene::CreateArg GPE::readPrefabFile(const char* src)
 
     fclose(pFile);
 
-    Log::getInstance()->log(stringFormat("Prefab read from \"%s\"", src));
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
     return arg;
 }
 
@@ -713,7 +713,7 @@ void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
     fwrite(arg.data.data(), sizeof(char), arg.data.size(), pFile); // string buffer
     fclose(pFile);
 
-    Log::getInstance()->log(stringFormat("Scene write to \"%s\"", dst));
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
 }
 
 SavedScene::CreateArg GPE::readSceneFile(const char* src)
@@ -742,11 +742,151 @@ SavedScene::CreateArg GPE::readSceneFile(const char* src)
 
     fclose(pFile);
 
-    Log::getInstance()->log(stringFormat("Scene read from \"%s\"", src));
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
     return arg;
 }
 
 SavedScene::CreateArg GPE::loadSceneFile(const char* src)
 {
     return readSceneFile(src);
+}
+
+struct SkeletonHeader
+{
+    char assetID       = (char)EFileType::SKELETON;
+    int  verticeLenght = 0;
+    int  indiceLenght  = 0;
+};
+
+void GPE::writeSkeletonFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
+{
+    FILE* pFile = nullptr;
+
+    if (fopen_s(&pFile, dst, "w+b"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
+        return;
+    }
+
+    MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
+                      static_cast<int>(arg.indices.size())};
+    fwrite(&header, sizeof(header), 1, pFile);                                         // header
+    fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
+    fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
+}
+
+Mesh::CreateIndiceBufferArg GPE::readSkeletonFile(const char* src)
+{
+    FILE*                       pFile = nullptr;
+    std::filesystem::path       srcPath(src);
+    Mesh::CreateIndiceBufferArg arg;
+
+    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
+        return arg;
+    }
+
+    MeshHeader header;
+    // copy the file into the buffer:
+    fread(&header, sizeof(header), 1, pFile);
+
+    if (header.verticeLenght)
+    {
+        arg.vertices.assign(header.verticeLenght, Mesh::Vertex{});
+        fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
+    }
+
+    if (header.indiceLenght)
+    {
+        arg.indices.assign(header.indiceLenght, 0);
+        fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile); // indice buffer
+    }
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
+
+    return arg;
+}
+
+Mesh* GPE::loadSkeletonFile(const char* src)
+{
+    std::filesystem::path srcPath(src);
+
+    if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(srcPath.filename().string()))
+        return pMesh;
+    return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), readMeshFile(src));
+}
+
+struct AnimationHeader
+{
+    char assetID       = (char)EFileType::ANIMATION;
+    int  verticeLenght = 0;
+    int  indiceLenght  = 0;
+};
+
+void GPE::writeAnimationFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
+{
+    FILE* pFile = nullptr;
+
+    if (fopen_s(&pFile, dst, "w+b"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
+        return;
+    }
+
+    MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
+                      static_cast<int>(arg.indices.size())};
+    fwrite(&header, sizeof(header), 1, pFile);                                         // header
+    fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
+    fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
+}
+
+Mesh::CreateIndiceBufferArg GPE::readAnimatoinFile(const char* src)
+{
+    FILE*                       pFile = nullptr;
+    std::filesystem::path       srcPath(src);
+    Mesh::CreateIndiceBufferArg arg;
+
+    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
+        return arg;
+    }
+
+    MeshHeader header;
+    // copy the file into the buffer:
+    fread(&header, sizeof(header), 1, pFile);
+
+    if (header.verticeLenght)
+    {
+        arg.vertices.assign(header.verticeLenght, Mesh::Vertex{});
+        fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
+    }
+
+    if (header.indiceLenght)
+    {
+        arg.indices.assign(header.indiceLenght, 0);
+        fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile); // indice buffer
+    }
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
+
+    return arg;
+}
+
+Mesh* GPE::loadAnimatoinFile(const char* src)
+{
+    std::filesystem::path srcPath(src);
+
+    if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(srcPath.filename().string()))
+        return pMesh;
+    return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), readMeshFile(src));
 }

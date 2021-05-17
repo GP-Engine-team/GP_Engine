@@ -7,11 +7,11 @@
 #include <Engine/Core/Tools/Hash.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Serialization/MaterialInspectorPanel.hpp>
 #include <Engine/Serialization/MeshInspectorPanel.hpp>
 #include <Engine/Serialization/ShaderInspectorPanel.hpp>
-#include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/TextureImporterSetting.hpp>
 
 // Don't move up
@@ -24,33 +24,39 @@ using namespace Editor;
 using namespace GPE;
 
 ProjectContent::ProjectContent(Editor& editorContext)
-    : m_folderIcone  {{"..\\..\\editor\\resources\\icone\\folder.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_textureIcone {{"..\\..\\editor\\resources\\icone\\texture.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+    : m_folderIcone{{"..\\..\\editor\\resources\\icone\\folder.png", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_textureIcone{{"..\\..\\editor\\resources\\icone\\texture.png", Texture::ETextureMinFilter::LINEAR,
+                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                      Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
       m_materialIcone{{"..\\..\\editor\\resources\\icone\\material.png", Texture::ETextureMinFilter::LINEAR,
                        Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
                        Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_sceneIcone   {{"..\\..\\editor\\resources\\icone\\scene.png", Texture::ETextureMinFilter::LINEAR,
+      m_sceneIcone{{"..\\..\\editor\\resources\\icone\\scene.png", Texture::ETextureMinFilter::LINEAR,
+                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                    Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_meshIcone{{"..\\..\\editor\\resources\\icone\\mesh.png", Texture::ETextureMinFilter::LINEAR,
+                   Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                   Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_shaderIcone{{"..\\..\\editor\\resources\\icone\\shader.jpg", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_soundIcone{{"..\\..\\editor\\resources\\icone\\sound.jpg", Texture::ETextureMinFilter::LINEAR,
+                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                    Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_prefabIcone{{"..\\..\\editor\\resources\\icone\\prefab.png", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_skeletonIcone{{"..\\..\\editor\\resources\\icone\\skeleton.png", Texture::ETextureMinFilter::LINEAR,
                        Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
                        Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_meshIcone    {{"..\\..\\editor\\resources\\icone\\mesh.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_shaderIcone  {{"..\\..\\editor\\resources\\icone\\shader.jpg", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_soundIcone   {{"..\\..\\editor\\resources\\icone\\sound.jpg", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_prefabIcone  {{"..\\..\\editor\\resources\\icone\\prefab.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_unknowIcone  {{"..\\..\\editor\\resources\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_animationIcone{{"..\\..\\editor\\resources\\icone\\animation.png", Texture::ETextureMinFilter::LINEAR,
+                        Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                        Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+      m_unknowIcone{{"..\\..\\editor\\resources\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
+                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
       m_editorContext{&editorContext}
 {
     resourcesTree.name = RESOURCES_DIR;
@@ -311,6 +317,14 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::ImageButton((void*)(intptr_t)m_prefabIcone.getID(), size);
                 break;
 
+            case GPE::hash(ENGINE_SKELETON_EXTENSION): // compile time
+                ImGui::ImageButton((void*)(intptr_t)m_skeletonIcone.getID(), size);
+                break;
+
+            case GPE::hash(ENGINE_ANIMATION_EXTENSION): // compile time
+                ImGui::ImageButton((void*)(intptr_t)m_animationIcone.getID(), size);
+                break;
+
             default:
                 ImGui::ImageButton((void*)(intptr_t)m_unknowIcone.getID(), size);
                 break;
@@ -386,6 +400,12 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     break;
 
                 case GPE::hash(ENGINE_PREFAB_EXTENSION): // compile time
+                    break;
+
+                case GPE::hash(ENGINE_SKELETON_EXTENSION): // compile time
+                    break;
+
+                case GPE::hash(ENGINE_ANIMATION_EXTENSION): // compile time
                     break;
 
                 default:
