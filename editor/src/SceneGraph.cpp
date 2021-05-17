@@ -105,53 +105,75 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
 
         if (ImGui::BeginMenu("Add component"))
         {
-            std::vector<rfk::Archetype const*> componnentList;
-            componnentList.reserve(64); // Default value
-
-            auto getAllComponentsClassesFunct =
-                GET_PROCESS((*m_pEditorContext->m_reloadableCpp), getAllComponentsClasses);
+            auto getComponentClassFunct   = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), getComponentClass);
             auto createComponentByIDFunct = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), createComponentByID);
 
-            getAllComponentsClassesFunct(&componnentList);
-
-            std::map<std::string, std::vector<rfk::Archetype const*>> archetypeSorted;
-
-            for (auto&& compArchetype : componnentList)
+            for (auto&& child : getComponentClassFunct().children)
             {
-                const rfk::Class* classArchetype = static_cast<const rfk::Class*>(compArchetype);
-                for (auto& parent : classArchetype->directParents)
-                {
-                    if (!parent.type->directParents.empty())
-                    {
-                        archetypeSorted[parent.type->name].emplace_back(compArchetype);
-                    }
-                    else
-                    {
-                        archetypeSorted[compArchetype->name].emplace_back(compArchetype);
-                    }
-                }
+                if (ImGui::MenuItem(child->name.c_str()))
+                    createComponentByIDFunct(gameObject, child->id);
             }
 
-            for (const auto& [key, value] : archetypeSorted)
-            {
-                if (value.size() > 1)
-                {
-                    if (ImGui::BeginMenu(key.c_str()))
-                    {
-                        for (auto&& archetype : value)
-                        {
-                            if (ImGui::MenuItem(archetype->name.c_str()))
-                                createComponentByIDFunct(gameObject, archetype->id);
-                        }
-                        ImGui::EndMenu();
-                    }
-                }
-                else
-                {
-                    if (ImGui::MenuItem(key.c_str()))
-                        createComponentByIDFunct(gameObject, value.front()->id);
-                }
-            }
+            // Sorting mus be apply when RFK will be update with directChildren function
+            // std::vector<std::map<std::string, std::vector<rfk::Archetype const*>>> archetypeSortedByDepth;
+            // for (auto& parent : classArchetype->directParents)
+            //{
+            //    if (!parent.type->directParents.empty())
+            //    {
+            //        archetypeSorted[parent.type->name].emplace_back(compArchetype);
+            //    }
+            //    else
+            //    {
+            //        archetypeSorted[compArchetype->name].emplace_back(compArchetype);
+            //    }
+            //}
+
+            // std::vector < std::map<std::string, std::vector<rfk::Archetype const*>> archetypeSortedByDepth;
+
+            // for (auto&& compArchetype : componnentList)
+            //{
+            //    if (ImGui::MenuItem(key.c_str()))
+            //        createComponentByIDFunct(gameObject, value.front()->id);
+            //}
+
+            // std::map<std::string, std::vector<rfk::Archetype const*>> archetypeSorted;
+
+            // for (auto&& compArchetype : componnentList)
+            //{
+            //    const rfk::Class* classArchetype = static_cast<const rfk::Class*>(compArchetype);
+            //    for (auto& parent : classArchetype->directParents)
+            //    {
+            //        if (!parent.type->directParents.empty())
+            //        {
+            //            archetypeSorted[parent.type->name].emplace_back(compArchetype);
+            //        }
+            //        else
+            //        {
+            //            archetypeSorted[compArchetype->name].emplace_back(compArchetype);
+            //        }
+            //    }
+            //}
+
+            // for (const auto& [key, value] : archetypeSorted)
+            //{
+            //    if (value.size() > 1)
+            //    {
+            //        if (ImGui::BeginMenu(key.c_str()))
+            //        {
+            //            for (auto&& archetype : value)
+            //            {
+            //                if (ImGui::MenuItem(archetype->name.c_str()))
+            //                    createComponentByIDFunct(gameObject, archetype->id);
+            //            }
+            //            ImGui::EndMenu();
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (ImGui::MenuItem(key.c_str()))
+            //            createComponentByIDFunct(gameObject, value.front()->id);
+            //    }
+            //}
 
             ImGui::EndMenu();
         }

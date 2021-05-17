@@ -6,6 +6,7 @@
 #include "Engine/Engine.hpp"
 #include "EngineApiMacros.hpp"
 
+#include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Importer/Importer.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
@@ -167,6 +168,11 @@ extern "C"
                 out->emplace_back(archetype);
             }
         }
+    }
+
+    ENGINE_API inline const rfk::Class& getComponentClass()
+    {
+        return GPE::Component::staticGetArchetype();
     }
 
     ENGINE_API inline GPE::GameObject* createGameObject()

@@ -73,6 +73,7 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, saveSceneToPath);
     ADD_PROCESS(m_reloadableCpp, loadSceneFromPath);
     ADD_PROCESS(m_reloadableCpp, getAllComponentsName);
+    ADD_PROCESS(m_reloadableCpp, getComponentClass);
     ADD_PROCESS(m_reloadableCpp, getAllComponentsClasses);
     ADD_PROCESS(m_reloadableCpp, createGameObject);
     ADD_PROCESS(m_reloadableCpp, destroyGameObject);
