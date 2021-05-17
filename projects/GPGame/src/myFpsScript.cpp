@@ -71,6 +71,19 @@ File_GENERATED
     void MyFpsScript::onPostLoad()
     {
         BehaviourComponent::onPostLoad();
+
+        GPE::SourceSettings sourceSettings;
+        sourceSettings.pitch = 1.f;
+        sourceSettings.loop  = AL_TRUE;
+
+        source->setSound("Western", "Western", sourceSettings);
+        source->playSound("Western", true);
+
+        // Setup controller
+        controller->setHasGravity(true);
+        controller->setSpeed(1.f);
+        controller->setMouseSpeed(.0025f);
+        controller->setGravity(.1f);
     }
 
     void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)

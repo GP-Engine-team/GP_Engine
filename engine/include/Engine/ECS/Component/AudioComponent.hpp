@@ -46,10 +46,14 @@ namespace GPE RFKNamespace()
         int m_key = -1;
 
     public:
-        struct SourceData
+        struct RFKStruct(Serialize()) SourceData
         {
+            RFKField(Serialize())
             ALuint source;
+            RFKField(Serialize())
             ALint  state = AL_INITIAL;
+
+            SourceData_GENERATED
         };
         std::unordered_map<std::string, SourceData> sources;
 
@@ -93,6 +97,8 @@ namespace GPE RFKNamespace()
          * @return
          */
         void setActive(bool newState) noexcept override;
+
+        virtual void onPostLoad() override;
 
     private:
         [[nodiscard]] SourceData* getSource(const char* name) noexcept;
