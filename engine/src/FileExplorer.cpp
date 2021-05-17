@@ -131,6 +131,21 @@ std::filesystem::path openFileExplorerAndGetRelativePath(LPCWSTR title, std::vec
     return std::filesystem::relative(openFileExplorerAndGetAbsoluePath(title, filter));
 }
 
+void recycleFileOrDirectory(const std::filesystem::path& path)
+{
+    SHFILEOPSTRUCT fileOp;
+    memset(&fileOp, 0, sizeof(SHFILEOPSTRUCT));
+    fileOp.hwnd      = NULL;
+    fileOp.wFunc     = FO_DELETE;
+    std::string temp = path.string() + '\0' + '\0';
+    fileOp.pFrom     = temp.c_str();
+    fileOp.pTo       = NULL;
+    fileOp.fFlags    = FOF_ALLOWUNDO | FOF_NOERRORUI | FOF_NOCONFIRMATION | FOF_SILENT;
+
+    if (SHFileOperation(&fileOp))
+        FUNCT_ERROR(stringFormat("Failed to move file '%s' to Recycle Bin", path.c_str()));
+}
+
 #endif
 
 } // namespace GPE

@@ -15,7 +15,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(ComponentGen(), Inspect()) SphereCollider : public Collider
+    class RFKClass(ComponentGen(), Inspect(), Serialize()) SphereCollider : public Collider
     {
     public:
         SphereCollider(GameObject & owner)                     noexcept;
@@ -29,13 +29,15 @@ namespace GPE RFKNamespace()
         // void updateTransform() final;
 
     private:
-        RFKField(Inspect()) GPM::Vector3     m_center;
-        RFKField(Inspect("setRadius")) float m_radius;
+        RFKField(Inspect(), Serialize()) GPM::Vector3 m_center = {0, 0, 0};
+        RFKField(Inspect("setRadius"), Serialize()) float m_radius = 10.f;
 
     public:
         DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);
         GETTER_BY_VALUE(Radius, m_radius);
         void setRadius(float newRadius) noexcept;
+
+        virtual void onPostLoad() override;
 
         SphereCollider_GENERATED
     };

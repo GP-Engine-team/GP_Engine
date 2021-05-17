@@ -45,6 +45,9 @@ Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{
 
 Model::~Model()
 {
+    if (!getOwner().pOwnerScene)
+        return;
+
     for (SubModel& subMesh : m_subModels)
     {
         if (subMesh.isValide())
@@ -79,7 +82,7 @@ Model& Model::operator=(Model&& other) noexcept
     return static_cast<Model&>(Component::operator=(std::move(other)));
 }
 
-void Model::awake()
+void Model::onPostLoad()
 {
     setActive(false);
     setActive(true);
@@ -87,8 +90,11 @@ void Model::awake()
 
 void Model::moveTowardScene(class Scene& newOwner)
 {
-    for (SubModel& subMesh : m_subModels)
-        getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+    if (getOwner().pOwnerScene)
+    {
+        for (SubModel& subMesh : m_subModels)
+            getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+    }
 
     for (SubModel& subMesh : m_subModels)
     {
@@ -179,19 +185,28 @@ void GPE::load(XmlLoader& context, SubModel& inspected, const XmlLoader::LoadInf
         {
             std::string shaderName;
             GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
-            inspected.pShader = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName);
+            if (!(inspected.pShader = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
+            {
+                inspected.pShader = loadShaderFile(shaderName.c_str());
+            }
         }
 
         {
             std::string matName;
             GPE::load(context, matName, XmlLoader::LoadInfo{"pMaterial", "Material*", 0});
-            inspected.pMaterial = Engine::getInstance()->resourceManager.get<GPE::Material>(matName);
+            if (!(inspected.pMaterial = Engine::getInstance()->resourceManager.get<GPE::Material>(matName)))
+            {
+                inspected.pMaterial = loadMaterialFile(matName.c_str());
+            }
         }
 
         {
             std::string meshName;
             GPE::load(context, meshName, XmlLoader::LoadInfo{"pMesh", "Mesh*", 0});
-            inspected.pMesh = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName);
+            if (!(inspected.pMesh = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName)))
+            {
+                inspected.pMesh = loadMeshFile(meshName.c_str());
+            }
         }
 
         GPE::load(context, inspected.enableBackFaceCulling, XmlLoader::LoadInfo{"enableBackFaceCulling", "bool", 0});
@@ -376,8 +391,7 @@ void Model::inspect(InspectContext& context)
 
 void Model::addSubModel(const SubModel::CreateArg& arg)
 {
-    GPE_ASSERT(!((size_t)arg.pMesh & (size_t)arg.pShader & (size_t)arg.pMaterial),
-               "Invalid arguments to create submodel")
+    GPE_ASSERT(arg.pMesh && arg.pShader && arg.pMaterial, "Invalid arguments to create submodel")
 
     SubModel& newSsub = m_subModels.emplace_back(*this, arg);
     getOwner().pOwnerScene->sceneRenderer.addSubModel(newSsub);

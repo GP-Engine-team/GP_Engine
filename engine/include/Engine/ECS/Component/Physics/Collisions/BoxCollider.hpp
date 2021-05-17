@@ -14,7 +14,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(ComponentGen(), Inspect()) BoxCollider : public Collider
+    class RFKClass(ComponentGen(), Inspect(), Serialize()) BoxCollider : public Collider
     {
     public:
         BoxCollider(GameObject& owner)                   noexcept;
@@ -27,8 +27,10 @@ namespace GPE RFKNamespace()
         BoxCollider& operator=(BoxCollider&& other)      noexcept = delete;
 
     private:
-        RFKField(Inspect()) GPM::Vector3 m_center;
-        RFKField(Inspect()) GPM::Vector3 m_dimensions;
+        RFKField(Inspect(), Serialize()) GPM::Vector3 m_center = {0,0,0};
+        RFKField(Inspect(), Serialize()) GPM::Vector3 m_dimensions = {10,10,10};
+
+        virtual void onPostLoad() override;
 
     public:
         DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);

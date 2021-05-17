@@ -15,7 +15,7 @@
 
 namespace GPE
 {
-typedef union {
+union AmbiantComponent {
     struct
     {
         float kr, kg, kb, ki;
@@ -24,7 +24,7 @@ typedef union {
     GPM::Vec4 rgbi;
     ColorRGBA rgba;
 
-} AmbiantComponent;
+};
 
 typedef AmbiantComponent DiffuseComponent;
 typedef AmbiantComponent SpecularComponent;

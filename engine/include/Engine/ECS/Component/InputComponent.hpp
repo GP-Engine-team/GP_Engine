@@ -46,14 +46,14 @@ namespace GPE RFKNamespace()
         InputComponent& operator=(InputComponent&& other);
 
     private:
-        RFKField(Serialize())
+        //RFKField(Serialize())
         std::unordered_map<std::string, GPE::Function> m_functionMap;
         int                                            m_key = -1;
 
     public:
-        RFKField(Serialize())
+        //RFKField(Serialize())
         std::unordered_map<std::string, EKeyMode>    keyModeMap;
-        RFKField(Serialize())
+        //RFKField(Serialize())
         std::unordered_map<std::string, std::string> inputModeMap;
         /**
          * @brief Bind a function to an action
@@ -83,7 +83,7 @@ namespace GPE RFKNamespace()
          */
         void setActive(bool newState) noexcept override;
 
-        virtual void awake() override;
+        virtual void onPostLoad() override;
 
         InputComponent_GENERATED
     };
