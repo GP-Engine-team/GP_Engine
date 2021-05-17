@@ -6,7 +6,7 @@
  */
 #pragma once
 
-#include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
+#include <Engine/Core/Physics/Collisions/MeshCollider.hpp>
 
 // Generated
 #include <Generated/MeshCollider.rfk.h>

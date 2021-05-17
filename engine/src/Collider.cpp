@@ -1,4 +1,4 @@
-#include "Engine/ECS/Component/Physics/Collisions/Collider.hpp"
+#include <Engine/Core/Physics/Collisions/Collider.hpp>
 
 // Generated
 #include "Generated/Collider.rfk.h"

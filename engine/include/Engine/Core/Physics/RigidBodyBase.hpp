@@ -14,7 +14,7 @@ namespace GPE RFKNamespace()
         E_BOX,
     };
 
-    class RFKClass(Inspect(), Serialize()) RigidBodyBase
+    class RFKClass(Inspect(false), Serialize()) RigidBodyBase : rfk::Object
     {
     public:
         RigidBodyBase(EShapeType _type) noexcept;

@@ -5,6 +5,9 @@
  */
 
 #pragma once
+#include <Engine/Serialization/InspectContext.hpp>
+#include <Engine/Serialization/xml/xmlLoader.hpp>
+#include <Engine/Serialization/xml/xmlSaver.hpp>
 #include <GPM/Vector3.hpp>
 #include <PxMaterial.h>
 #include <PxShape.h>
@@ -15,7 +18,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), Serialize()) Collider : rfk::Object
+    class RFKClass(Inspect(false), Serialize()) Collider : rfk::Object
     {
     public:
         Collider() noexcept                      = default;
