@@ -80,7 +80,7 @@ public:
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
         ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
         unsigned int      anisotropy       = 8;
-        bool              flipTexture      = true;
+        bool              flipTexture      = false;
         bool              generateMipmaps  = true;
     };
 
@@ -93,7 +93,7 @@ public:
         ETextureWrapS                  textureWrapS     = ETextureWrapS::REPEAT;
         ETextureWrapT                  textureWrapT     = ETextureWrapT::REPEAT;
         unsigned int                   anisotropy       = 8;
-        bool                           flipTexture      = true;
+        bool                           flipTexture      = false;
         bool                           generateMipmaps  = true;
     };
 

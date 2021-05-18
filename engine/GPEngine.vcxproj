@@ -219,7 +219,6 @@
     <ClInclude Include="include\Engine\Core\HotReload\EngineApiMacros.hpp" />
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp" />
     <ClInclude Include="include\Engine\Core\HotReload\SingletonsSync.hpp" />
-    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
@@ -395,7 +394,6 @@
     <ClCompile Include="src\MeshInspectorPanel.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\ModelImporterSetting.cpp" />
-    <ClCompile Include="src\ObjParser.cpp" />
     <ClCompile Include="src\ParticleComponent.cpp" />
     <ClCompile Include="src\ParticleSystem\ParticleRenderer.cpp" />
     <ClCompile Include="src\ParticleSystem\ParticleData.cpp" />

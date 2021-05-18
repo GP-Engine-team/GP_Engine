@@ -19,7 +19,7 @@ namespace GPE RFKNamespace()
     protected:
         Mesh::CreateIndiceBufferArg m_config;
         std::string                 m_path;
-        bool                        m_isDirty;
+        bool                        m_isDirty = false;
 
     public:
         MeshInspectorPanel() = delete;

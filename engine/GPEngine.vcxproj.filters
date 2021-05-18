@@ -148,9 +148,6 @@
     <ClCompile Include="src\ModelImporterSetting.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ObjParser.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\PointLight.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -641,9 +638,6 @@
     </ClInclude>
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
       <Filter>include\Core\HotReload</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
-      <Filter>include\Core\Parsers</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
       <Filter>include\Core\Parsers</Filter>

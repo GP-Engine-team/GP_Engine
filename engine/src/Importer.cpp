@@ -26,7 +26,7 @@
 using namespace GPE;
 using namespace GPM;
 
-void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
+void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBoundingVolume boundingVolumeType) noexcept
 {
     GPE_ASSERT(srcPath != nullptr, "Void path");
 
@@ -90,7 +90,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
                     arg.len = texture->mWidth;
                 }
                 arg.pixels.reset((unsigned char*)texture->pcData);
-                arg.flipTexture = true;
 
                 fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
                 fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
@@ -131,7 +130,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
                     arg.len = texture->mWidth;
                 }
                 arg.pixels.reset((unsigned char*)texture->pcData);
-                arg.flipTexture = true;
 
                 fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
                 fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
@@ -173,7 +171,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
                 }
 
                 arg.pixels.reset((unsigned char*)texture->pcData);
-                arg.flipTexture = true;
 
                 fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
                 fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
@@ -255,6 +252,9 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
             arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[1]);
             arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[2]);
         }
+
+        // Generate bounding volume
+        arg.boundingVolumeType = boundingVolumeType;
 
         std::filesystem::path dstMeshPath = dstDirPath / pMesh->mName.C_Str();
         if (i != 0 &&
@@ -486,6 +486,7 @@ struct MeshHeader
     char assetID       = (char)EFileType::MESH;
     int  verticeLenght = 0;
     int  indiceLenght  = 0;
+    unsigned char  boundingVolumeType = (unsigned char)Mesh::EBoundingVolume::NONE;
 };
 
 void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
@@ -499,7 +500,7 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
     }
 
     MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
-                      static_cast<int>(arg.indices.size())};
+                      static_cast<int>(arg.indices.size()), static_cast<unsigned char>(arg.boundingVolumeType)};
     fwrite(&header, sizeof(header), 1, pFile);                                         // header
     fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
     fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
@@ -535,6 +536,8 @@ Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
         arg.indices.assign(header.indiceLenght, 0);
         fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile); // indice buffer
     }
+
+    arg.boundingVolumeType = (Mesh::EBoundingVolume)header.boundingVolumeType;
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("Mesh read from \"%s\"", src));

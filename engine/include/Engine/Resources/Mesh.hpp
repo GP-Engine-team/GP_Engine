@@ -24,9 +24,10 @@ class Mesh
 public:
     enum class EBoundingVolume
     {
-        NONE,
-        SPHERE,
-        AABB
+        NONE   = 0,
+        SPHERE = 1,
+        AABB   = 2,
+        COUNT
     };
 
     struct Vertex
@@ -48,7 +49,6 @@ public:
         std::vector<Vertex>          vertices;
         std::vector<unsigned int>    indices;
         EBoundingVolume              boundingVolumeType{EBoundingVolume::NONE};
-        std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
     };
 
     // Allow user to construct mesh thank's to multiple VBO
@@ -59,7 +59,6 @@ public:
         std::vector<GPM::Vec3>       vnBuffer;
         std::vector<Indice>          iBuffer; // optional
         EBoundingVolume              boundingVolumeType{EBoundingVolume::NONE};
-        std::unique_ptr<GPM::Volume> boundingVolume = nullptr;
     };
 
     enum class Axis
@@ -100,9 +99,22 @@ public:
 
     inline const GPM::Volume* getBoundingVolume() const noexcept;
 
+    /**
+     * @brief Recompute the bounding volume without conciderate the previous volume.
+     * This function can be slow because vertice will be get from GPU.
+     * The mesh must also be loaded in GPU to use this funciton.
+     */
+    void setBoundingVolume(EBoundingVolume boundingVolumeType) noexcept;
+
+    /**
+     * @brief This function will obtain the vertices data from the GPU. This operation can be slow.
+     * @return
+     */
+    void getData(std::vector<Vertex>& buffer);
+
     GETTER_BY_VALUE(ID, m_buffers.vao);
     GETTER_BY_VALUE(VerticesCount, m_verticesCount);
-    DEFAULT_GETTER_SETTER_BY_REF(BoundingVolumeType, m_boundingVolumeType);
+    GETTER_BY_VALUE(BoundingVolumeType, m_boundingVolumeType);
 
     static CreateIndiceBufferArg convert(CreateContiguousVerticesArg& arg);
 
@@ -143,6 +155,27 @@ public:
     static CreateIndiceBufferArg createCylindre(unsigned int prescision) noexcept; // TODO:: add uv and backFace
                                                                                    // Culling (bad
                                                                                    // normal)
+
+    /**
+     * @brief Generate AABB min and max value in function og list of vertices
+     * @param vertices
+     * @param minAABB
+     * @param maxAABB
+     * @return
+     */
+    static void generateAABB(const std::vector<Vertex>& vertices, GPM::Vec3& minAABB, GPM::Vec3& maxAABB) noexcept;
+
+    /**
+     * @brief Generate bounding volume in function of min and max AABB found.
+     * User can use function generateAABB to found this value in function of vertices
+     * @param boundingVolumeType
+     * @param minAABB
+     * @param maxAABB
+     * @return
+     */
+    static std::unique_ptr<GPM::Volume> generateBoundingVolume(EBoundingVolume  boundingVolumeType,
+                                                               const GPM::Vec3& minAABB,
+                                                               const GPM::Vec3& maxAABB) noexcept;
 };
 
 template <>
@@ -151,6 +184,6 @@ void DataInspector::inspect(GPE::InspectContext& context, Mesh::Vertex& inspecte
 template <>
 void DataInspector::inspect(GPE::InspectContext& context, Mesh::Indice& inspected);
 
-#include "Mesh.inl"
-
 } /*namespace GPE*/
+
+#include "Mesh.inl"

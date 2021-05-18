@@ -69,7 +69,8 @@ struct ShaderCreateConfig
     uint16_t    featureMask        = 0u;
 };
 
-void importeModel(const char* srcPath, const char* dstPath) noexcept;
+void importeModel(const char* srcPath, const char* dstPath,
+                  Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE) noexcept;
 
 void               importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config = {});
 void               writeTextureFile(const char* dst, const Texture::ImportArg& arg);
