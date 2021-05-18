@@ -66,7 +66,7 @@ struct ShaderCreateConfig
 {
     std::string vertexShaderPath   = "";
     std::string fragmentShaderPath = "";
-    uint8_t     featureMask        = 0u;
+    uint16_t    featureMask        = 0u;
 };
 
 void importeModel(const char* srcPath, const char* dstPath) noexcept;
