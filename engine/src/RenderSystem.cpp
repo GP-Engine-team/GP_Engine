@@ -845,6 +845,7 @@ void RenderSystem::removeSubModel(SubModel& subModel) noexcept
             m_pTransparenteSubModels.erase(it);
     }
 }
+
 void RenderSystem::addCamera(Camera& camera) noexcept
 {
     m_pCameras.push_back(&camera);

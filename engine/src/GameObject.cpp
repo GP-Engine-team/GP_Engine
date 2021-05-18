@@ -40,6 +40,9 @@ void GameObject::moveTowardScene(Scene& newOwner) noexcept
     }
 
     pOwnerScene = &newOwner;
+
+    for (auto&& child : children)
+        child->moveTowardScene(newOwner);
 }
 
 void GameObject::updateSelfAndChildren() noexcept
