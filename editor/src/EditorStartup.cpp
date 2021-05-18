@@ -184,7 +184,8 @@ void EditorStartup::pauseGame()
 {
     // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
-    m_update      = [&](double unscaledDeltaTime, double deltaTime) {
+    m_update      = [&](double unscaledDeltaTime, double deltaTime)
+    {
         m_engine->inputManager.processInput();
         m_editor.update(*this);
 
