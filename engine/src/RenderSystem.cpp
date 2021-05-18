@@ -166,6 +166,8 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
 
         shader.setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
 
+        shader.setBool("numberShadowUse", m_shadowMaps.size());
+
         if (!m_shadowMaps.empty())
         {
             glActiveTexture(GL_TEXTURE1);

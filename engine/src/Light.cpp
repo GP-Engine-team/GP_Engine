@@ -55,7 +55,7 @@ void Light::setShadowActive(bool newState) noexcept
         return;
 
     m_shadowProterties.isEnable = newState;
-    if (m_isActivated)
+    if (m_shadowProterties.isEnable)
         getOwner().pOwnerScene->sceneRenderer.addShadowMap(*this);
     else
         getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);
@@ -63,7 +63,13 @@ void Light::setShadowActive(bool newState) noexcept
 
 void Light::onPostLoad()
 {
-    getOwner().pOwnerScene->sceneRenderer.addLight(*this);
+    if (m_isActivated)
+    {
+        if (m_shadowProterties.isEnable)
+            getOwner().pOwnerScene->sceneRenderer.addShadowMap(*this);
+
+        getOwner().pOwnerScene->sceneRenderer.addLight(*this);
+    }
 }
 
 void Light::setActive(bool newState) noexcept
@@ -73,9 +79,19 @@ void Light::setActive(bool newState) noexcept
 
     m_isActivated = newState;
     if (m_isActivated)
+    {
+        if (m_shadowProterties.isEnable)
+            getOwner().pOwnerScene->sceneRenderer.addShadowMap(*this);
+
         getOwner().pOwnerScene->sceneRenderer.addLight(*this);
+    }
     else
+    {
+        if (m_shadowProterties.isEnable)
+            getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);
+
         getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
+    }
 }
 
 File_GENERATED
