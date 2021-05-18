@@ -33,7 +33,7 @@ using namespace GPM::Random;
 void Game::update(double unscaledDeltaTime, double deltaTime)
 {
 	++unFixedUpdateFrameCount;
-	GPE::Engine::getInstance()->physXSystem.drawDebugScene();
+	//GPE::Engine::getInstance()->physXSystem.drawDebugScene();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
@@ -235,7 +235,7 @@ Game::Game()
 		const GameObject::CreateArg sunArg{ "Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}} };
 		const GameObject::CreateArg playerArg{ "Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}} };
 		const GameObject::CreateArg testPhysXArg{ "TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}} };
-		const GameObject::CreateArg groundArg{ "GroundArg", TransformComponent::CreateArg{{0.f}} };
+		const GameObject::CreateArg groundArg{ "GroundArg", TransformComponent::CreateArg{{0.f,-30.f,0.f}} };
 
 		// A ground, player, PhysX test
 		cube = &world.addChild(cubeArg);
@@ -303,9 +303,9 @@ Game::Game()
 	}
 
 	{ // testPhysX
-		RigidbodyDynamic& rb = ground->addComponent<RigidbodyDynamic>(EShapeType::E_SPHERE);
+		/*RigidbodyDynamic& rb = ground->addComponent<RigidbodyDynamic>(EShapeType::E_SPHERE);
 		rb.collider->isVisible = true;
-		static_cast<SphereCollider*>(rb.collider.get())->setRadius(10.f);
+		static_cast<SphereCollider*>(rb.collider.get())->setRadius(10.f);*/
 	}
 
 	/*

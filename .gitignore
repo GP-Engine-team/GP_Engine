@@ -500,3 +500,4 @@ x64/
 # Resource dir
 resources/*
 !engine/include/Engine/Resources
+*.GPScene
