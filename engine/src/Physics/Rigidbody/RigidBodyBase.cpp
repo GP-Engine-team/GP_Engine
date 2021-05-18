@@ -1,4 +1,4 @@
-#include <Engine/Core/Physics/Collisions/BoxCollider.hpp>
+﻿#include <Engine/Core/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/Core/Physics/Collisions/SphereCollider.hpp>
 #include <Engine/Core/Physics/RigidBodyBase.hpp>
 
@@ -9,17 +9,21 @@ File_GENERATED
 
 using namespace GPE;
 
-RigidBodyBase::RigidBodyBase(EShapeType _type) noexcept : type(_type)
+RigidBodyBase::RigidBodyBase(GameObject& owner, EShapeType _type) noexcept : type(_type)
 {
-    if (_type == EShapeType::E_BOX)
-    {
-        std::unique_ptr<Collider> p1(new BoxCollider);
-        collider = std::move(p1);
-    }
+	switch (_type)
+	{
+	case EShapeType::E_SPHERE:
+		collider = std::make_unique<SphereCollider>();
+		//owner.getTransform().OnUpdate += Function::make(static_cast<SphereCollider*>(collider.get()), "updateView");
+		break;
+	case EShapeType::E_BOX:
+		collider = std::make_unique<BoxCollider>();
+		owner.getTransform().OnUpdate += Function::make(static_cast<BoxCollider*>(collider.get()), "setScale");
+		break;
+	default:
+		break;
+	}
 
-    else if (_type == EShapeType::E_SPHERE)
-    {
-        std::unique_ptr<Collider> p1(new SphereCollider);
-        collider = std::move(p1);
-    }
+	collider->owner = &owner;
 }

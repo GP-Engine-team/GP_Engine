@@ -294,7 +294,7 @@ Game::Game()
 
 		RigidbodyStatic& rb = ground->addComponent<RigidbodyStatic>(EShapeType::E_BOX);
 		rb.collider->isVisible = true;
-		static_cast<BoxCollider*>(rb.collider.get())->setDimensions({ 1000.f, 1.f, 1000.f });
+		static_cast<BoxCollider*>(rb.collider.get())->setOffset({ 1000.f, 1.f, 1000.f });
 
 		Model& mod = ground->addComponent<Model>();
 		mod.addSubModel(SubModel::CreateArg{ Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),

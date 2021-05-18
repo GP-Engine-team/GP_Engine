@@ -10,40 +10,40 @@
 #include "Generated/RigidbodyStatic.rfk.h"
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace physx;
 
-RigidbodyStatic::RigidbodyStatic(GameObject& owner, EShapeType _type) noexcept : Component(owner), RigidBodyBase(_type)
+RigidbodyStatic::RigidbodyStatic(GameObject& owner, EShapeType _type) noexcept : Component(owner), RigidBodyBase(owner, _type)
 {
-    rigidbody = PxGetPhysics().createRigidStatic(
-        PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
-                    PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
+	rigidbody = PxGetPhysics().createRigidStatic(
+		PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
+			PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
 
-    rigidbody->userData = &getOwner();
+	rigidbody->userData = &getOwner();
 
-    rigidbody->attachShape(*collider->shape);
-    collider->shape->release();
+	rigidbody->attachShape(*collider->shape);
+	collider->shape->release();
 
-    Engine::getInstance()->physXSystem.addComponent(this);
+	Engine::getInstance()->physXSystem.addComponent(this);
 }
 
 void RigidbodyStatic::setActive(bool newState) noexcept
 {
-    if (m_isActivated == newState)
-        return;
+	if (m_isActivated == newState)
+		return;
 
-    m_isActivated = newState;
-    if (m_isActivated)
-        GPE::Engine::getInstance()->physXSystem.addComponent(this);
-    else
-        GPE::Engine::getInstance()->physXSystem.removeComponent(this);
+	m_isActivated = newState;
+	if (m_isActivated)
+		GPE::Engine::getInstance()->physXSystem.addComponent(this);
+	else
+		GPE::Engine::getInstance()->physXSystem.removeComponent(this);
 }
 
 RigidbodyStatic::~RigidbodyStatic() noexcept
 {
-    if (rigidbody != nullptr && rigidbody->isReleasable())
-    {
-        rigidbody->release();
-    }
-    Engine::getInstance()->physXSystem.removeComponent(this);
+	if (rigidbody != nullptr && rigidbody->isReleasable())
+	{
+		rigidbody->release();
+	}
+	Engine::getInstance()->physXSystem.removeComponent(this);
 }

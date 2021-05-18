@@ -16,29 +16,33 @@
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/Serialize.hpp>
 
-// Generated
+ // Generated
 #include <Generated/Collider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(false), Serialize(false)) Collider : rfk::Object
-    {
-    public:
-        Collider() noexcept                      = default;
-        Collider(const Collider& other) noexcept = delete;
-        Collider(Collider && other) noexcept     = default;
-        Collider& operator=(Collider const& other) noexcept = delete;
-        Collider& operator=(Collider&& other) noexcept = delete;
+	class GameObject;
 
-        virtual ~Collider() noexcept = default;
+	class RFKClass(Inspect(false), Serialize(false)) Collider : rfk::Object
+	{
+	public:
+		Collider() noexcept = default;
+		Collider(const Collider & other) noexcept = delete;
+		Collider(Collider && other) noexcept = default;
+		Collider& operator=(Collider const& other) noexcept = delete;
+		Collider& operator=(Collider && other) noexcept = delete;
 
-    public:
-        physx::PxShape*    shape     = nullptr;
-        physx::PxMaterial* material  = nullptr;
-        bool               isTrigger = false;
-        bool               isVisible = false;
-        GPM::Vector3       center    = {0.f, 0.f, 0.f};
+		virtual ~Collider() noexcept;
 
-        Collider_GENERATED
-    };
+	public:
+		physx::PxShape* shape = nullptr;
+		physx::PxMaterial* material = nullptr;
+		bool               isTrigger = false;
+		bool               isVisible = false;
+		GPM::Vector3       center = { 0.f, 0.f, 0.f };
+		GameObject* owner = nullptr;
+
+
+		Collider_GENERATED
+	};
 } // namespace )
