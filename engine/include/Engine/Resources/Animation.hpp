@@ -14,6 +14,7 @@ class Animation
 {
 public:
     std::string name;
+    std::vector<KeyFrame> keyFrames;
     float       duration = 5.f;
 
 public:
@@ -23,6 +24,21 @@ public:
     ~Animation()                     = default;
     Animation& operator=(Animation const& other) = default;
     Animation& operator=(Animation&& other) = default;
+
+    KeyFrame& getPreviousKeyFrame();
+    KeyFrame& getNextKeyFrame();
+};
+
+class KeyFrame
+{
+    std::vector<GPM::SplitTransform> bones;
+
+    KeyFrame() = default;
+    KeyFrame(const std::string& animName, int keyFrameIndex);
+
+    void LoadAnim(const std::string& animName, int keyFrameIndex);
+
+    static KeyFrame Blend(const KeyFrame& key1, const KeyFrame& key2, float alpha);
 };
 
 } /*namespace GPE*/

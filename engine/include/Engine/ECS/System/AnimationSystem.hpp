@@ -24,9 +24,9 @@ public:
 
     void update(double deltaTime) const noexcept;
 
-    void addBehaviour(AnimationComponent& behaviour) noexcept;
+    void addComponent(AnimationComponent& behaviour) noexcept;
 
-    void removeBehaviour(AnimationComponent& behaviour) noexcept;
+    void removeComponent(AnimationComponent& behaviour) noexcept;
 };
 
 } /*namespace GPE*/

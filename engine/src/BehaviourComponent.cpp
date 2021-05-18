@@ -39,24 +39,6 @@ BehaviourComponent::~BehaviourComponent() noexcept
         getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
 }
 
-BehaviourComponent::BehaviourComponent(BehaviourComponent&& other) noexcept
-    : Component(*other.m_gameObject), m_useUpdate(std::move(other.m_useUpdate)),
-      m_useFixedUpdate(std::move(other.m_useFixedUpdate)), m_useOnGUI(std::move(other.m_useOnGUI))
-{
-    getOwner().pOwnerScene->behaviourSystem.updateBehaviourPointer(this, &other);
-}
-
-BehaviourComponent& BehaviourComponent::operator=(BehaviourComponent&& other) noexcept
-{
-    m_useUpdate      = std::move(other.m_useUpdate);
-    m_useFixedUpdate = std::move(other.m_useFixedUpdate);
-    m_useOnGUI       = std::move(other.m_useOnGUI);
-
-    getOwner().pOwnerScene->behaviourSystem.updateBehaviourPointer(this, &other);
-
-    return static_cast<BehaviourComponent&>(Component::operator=(std::move(other)));
-}
-
 void BehaviourComponent::enableUpdate(bool flag) noexcept
 {
     if (m_useUpdate == flag)

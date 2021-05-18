@@ -402,6 +402,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 rs.tryToBindMaterial(*pSubModel->pShader, *pSubModel->pMaterial);
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());
+                rs.tryToBindAnimation(pSubModel->pModel->animBufferData);
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
                 // TODO: To optimize ! Use Draw instanced Array

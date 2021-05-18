@@ -26,10 +26,10 @@ namespace GPE RFKNamespace()
 
         BehaviourComponent() noexcept                                = default;
         BehaviourComponent(const BehaviourComponent& other) noexcept = delete;
-        BehaviourComponent(BehaviourComponent && other) noexcept;
+        BehaviourComponent(BehaviourComponent && other) noexcept     = delete;
         virtual ~BehaviourComponent() noexcept;
         BehaviourComponent& operator=(BehaviourComponent const& other) noexcept = delete;
-        BehaviourComponent& operator                                            =(BehaviourComponent&& other) noexcept;
+        BehaviourComponent& operator=(BehaviourComponent&& other) noexcept = delete;
 
         virtual void onPostLoad();
 

@@ -79,6 +79,7 @@ namespace GPE RFKNamespace()
 
     protected:
         RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
+        std::unique_ptr<KeyFrame[]>                          m_animBufferData;
 
     public:
         Model(GameObject & owner);

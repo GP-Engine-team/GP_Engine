@@ -20,34 +20,40 @@ namespace GPE RFKNamespace()
     class RFKClass(ComponentGen(), Serialize(), Inspect()) AnimationComponent : public Component
     {
     private:
+        using KeyFrame = float;
+
         struct AnimationBlend
         {
             Animation* anim = nullptr;
+            float      timeScale;
+
         };
 
-        Skeleton*  skeleton  = nullptr;
-        std::vector<AnimationBlend> animations;
-        
+        Skeleton*  skeleton    = nullptr;
+
+        AnimationBlend currentAnim;
+        AnimationBlend nextAnim;
+
         float currentTime  = 0.f;
-        float animDuration = 5.f;
         float timeScale    = 1.f;
+        float alphaBlend   = 0.f;
+
+    private:
+        void updateToSystem();
 
     public:
-        //AnimationComponent();
-        //AnimationComponent(const AnimationComponent& other) = delete;
-        //AnimationComponent& operator=(AnimationComponent const& other) = delete;
-        //virtual ~AnimationComponent();
-        //AnimationComponent(AnimationComponent && other);
-        //AnimationComponent& operator=(AnimationComponent&& other);
+         AnimationComponent();
+         AnimationComponent(const AnimationComponent& other) = delete;
+         AnimationComponent& operator=(AnimationComponent const& other) = delete;
+         virtual ~AnimationComponent();
+         AnimationComponent(AnimationComponent&& other) = delete;
+         AnimationComponent& operator=(AnimationComponent&& other) = delete;
 
-        ///**
-        // * @brief Add or remove current component from it's system which have for effect to enable or disable it
-        // * @param newState
-        // * @return
-        // */
-        //void setActive(bool newState) noexcept override;
+        virtual void onPostLoad() override;
+        virtual void setActive(bool newState) override;
 
-        //virtual void awake() override;
+        static void compute(KeyFrame* output);
+        static void blendKeyFrames(const KeyFrame& a, const KeyFrame& b, KeyFrame& output);
 
         AnimationComponent_GENERATED
     };
