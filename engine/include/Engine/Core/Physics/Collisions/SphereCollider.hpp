@@ -31,7 +31,6 @@ namespace GPE RFKNamespace()
 	public:
 		GETTER_BY_VALUE(Radius, m_radius);
 		void setRadius(float newRadius) noexcept;
-		void onPostLoad() noexcept;
 
 		SphereCollider_GENERATED
 	};

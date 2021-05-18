@@ -44,7 +44,7 @@ namespace GPE RFKNamespace()
     public:
         TransformComponent(GameObject & refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
 
-        TransformComponent() noexcept                                = default;
+        TransformComponent() noexcept;
         TransformComponent(const TransformComponent& other) noexcept = delete;
         TransformComponent(TransformComponent && other) noexcept     = default;
         virtual ~TransformComponent() noexcept                       = default;

@@ -25,8 +25,3 @@ void BoxCollider::setDimensions(const Vec3& newDimensions) noexcept
 	m_dimensions = newDimensions;
 	shape->setGeometry(PxBoxGeometry(m_dimensions.x * .5f, m_dimensions.y * .5f, m_dimensions.z * .5f));
 }
-
-void BoxCollider::onPostLoad() noexcept
-{
-
-}

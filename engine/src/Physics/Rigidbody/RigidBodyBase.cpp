@@ -9,15 +9,20 @@ File_GENERATED
 
 using namespace GPE;
 
-RigidBodyBase::RigidBodyBase(EShapeType _type) noexcept : type(_type)
+RigidBodyBase::RigidBodyBase(EShapeType _type) noexcept
 {
-    if (_type == EShapeType::E_BOX)
+    setType(type);
+}
+
+void RigidBodyBase::setType(EShapeType newType)
+{
+    if (newType == EShapeType::E_BOX)
     {
         std::unique_ptr<Collider> p1(new BoxCollider);
         collider = std::move(p1);
     }
 
-    else if (_type == EShapeType::E_SPHERE)
+    else if (newType == EShapeType::E_SPHERE)
     {
         std::unique_ptr<Collider> p1(new SphereCollider);
         collider = std::move(p1);

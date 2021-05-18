@@ -33,17 +33,45 @@ void RigidbodyStatic::setActive(bool newState) noexcept
         return;
 
     m_isActivated = newState;
+    updateToSystem();
+}
+
+void RigidbodyStatic::onPostLoad()
+{
+    setType(EShapeType::E_BOX);
+
+    GPE::TransformComponent& transform = getOwner().getTransform();
+    transform.update();
+
+    rigidbody = PxGetPhysics().createRigidStatic(
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(transform.getGlobalPosition()),
+                    PhysXSystem::GPMQuatToPxQuat(transform.getGlobalRotation())));
+
+    rigidbody->userData = &getOwner();
+
+    rigidbody->attachShape(*collider->shape);
+    collider->shape->release();
+    updateToSystem();
+}
+
+void RigidbodyStatic::updateToSystem()
+{
     if (m_isActivated)
-        GPE::Engine::getInstance()->physXSystem.addComponent(this);
+    {
+        Engine::getInstance()->physXSystem.addComponent(this);
+    }
     else
-        GPE::Engine::getInstance()->physXSystem.removeComponent(this);
+    {
+        Engine::getInstance()->physXSystem.removeComponent(this);
+    }
 }
 
 RigidbodyStatic::~RigidbodyStatic() noexcept
 {
-    if (rigidbody != nullptr && rigidbody->isReleasable())
-    {
-        rigidbody->release();
-    }
-    Engine::getInstance()->physXSystem.removeComponent(this);
+    //if (rigidbody != nullptr && rigidbody->isReleasable())
+    //{
+    //    rigidbody->release();
+    //}
+
+    //setActive(false);
 }

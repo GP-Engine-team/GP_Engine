@@ -17,7 +17,7 @@
 namespace GPE RFKNamespace()
 {
 
-	class RFKClass(ComponentGen(), Inspect()) RigidbodyDynamic : public Component, public RigidBodyBase
+	class RFKClass(ComponentGen(), Inspect(), Serialize()) RigidbodyDynamic : public Component, public RigidBodyBase
 	{
 	public:
 		RigidbodyDynamic(GameObject & owner, EShapeType _type) noexcept;
@@ -38,7 +38,11 @@ namespace GPE RFKNamespace()
 		physx::PxRigidDynamic* rigidbody;
 
 	private:
+        RFKField(Serialize())
 		bool m_isKinematic = false;
+
+	protected:
+        void updateToSystem();
 
 	public:
 		void setKinematic(bool state) noexcept;
@@ -50,6 +54,8 @@ namespace GPE RFKNamespace()
 		 * @return
 		 */
 		void setActive(bool newState) noexcept override;
+
+		virtual void onPostLoad() override;
 
 		RigidbodyDynamic_GENERATED
 	};

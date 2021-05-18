@@ -32,7 +32,6 @@ namespace GPE RFKNamespace()
 	public:
 		GETTER_BY_VALUE(Dimensions, m_dimensions);
 		void setDimensions(const GPM::Vec3 & newDimensions) noexcept;
-		void onPostLoad() noexcept;
 
 		BoxCollider_GENERATED
 	};

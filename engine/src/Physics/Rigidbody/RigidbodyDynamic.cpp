@@ -28,7 +28,7 @@ RigidbodyDynamic::RigidbodyDynamic(GameObject& owner, EShapeType _type) noexcept
     rigidbody->attachShape(*collider->shape);
     collider->shape->release();
 
-    Engine::getInstance()->physXSystem.addComponent(this);
+    updateToSystem();
 }
 
 void RigidbodyDynamic::update() noexcept
@@ -57,6 +57,16 @@ void RigidbodyDynamic::setActive(bool newState) noexcept
         return;
 
     m_isActivated = newState;
+    updateToSystem();
+}
+
+void RigidbodyDynamic::onPostLoad()
+{
+    updateToSystem();
+}
+
+void RigidbodyDynamic::updateToSystem()
+{
     if (m_isActivated)
         GPE::Engine::getInstance()->physXSystem.addComponent(this);
     else
@@ -69,5 +79,5 @@ RigidbodyDynamic::~RigidbodyDynamic() noexcept
     {
         rigidbody->release();
     }
-    Engine::getInstance()->physXSystem.removeComponent(this);
+    setActive(false);
 }

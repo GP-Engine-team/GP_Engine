@@ -32,12 +32,19 @@ namespace GPE RFKNamespace()
 	public:
 		physx::PxRigidStatic* rigidbody;
 
+	protected:
+        void updateToSystem();
+
+	public:
+
 		/**
 		 * @brief Add or remove current component from it's system which have for effect to enable or disable it
 		 * @param newState
 		 * @return
 		 */
 		void setActive(bool newState) noexcept override;
+
+        virtual void onPostLoad() override;
 
 		RigidbodyStatic_GENERATED
 	};

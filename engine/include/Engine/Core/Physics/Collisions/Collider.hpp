@@ -35,8 +35,11 @@ namespace GPE RFKNamespace()
     public:
         physx::PxShape*    shape     = nullptr;
         physx::PxMaterial* material  = nullptr;
+        RFKField(Serialize())
         bool               isTrigger = false;
+        RFKField(Serialize())
         bool               isVisible = false;
+        RFKField(Serialize())
         GPM::Vector3       center    = {0.f, 0.f, 0.f};
 
         Collider_GENERATED

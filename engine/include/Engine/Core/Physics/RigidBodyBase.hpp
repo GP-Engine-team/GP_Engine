@@ -31,8 +31,12 @@ namespace GPE RFKNamespace()
         virtual ~RigidBodyBase() noexcept = default;
 
     public:
+        RFKField(Serialize())
         EShapeType                type;
         std::unique_ptr<Collider> collider;
+
+    protected:
+        void setType(EShapeType newType);
 
         RigidBodyBase_GENERATED
     };

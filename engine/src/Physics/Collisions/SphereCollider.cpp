@@ -23,7 +23,3 @@ void SphereCollider::setRadius(float newRadius) noexcept
 	shape->setGeometry(PxSphereGeometry(m_radius));
 }
 
-void SphereCollider::onPostLoad() noexcept
-{
-
-}
