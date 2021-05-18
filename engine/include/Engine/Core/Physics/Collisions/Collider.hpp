@@ -5,22 +5,23 @@
  */
 
 #pragma once
+#include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/InspectContext.hpp>
+#include <Engine/Serialization/Serialize.hpp>
 #include <Engine/Serialization/xml/xmlLoader.hpp>
 #include <Engine/Serialization/xml/xmlSaver.hpp>
-#include <Engine/Serialization/Inspect.hpp>
 #include <GPM/Vector3.hpp>
 #include <PxMaterial.h>
 #include <PxShape.h>
 #include <Refureku/Refureku.h>
-#include <Engine/Serialization/Inspect.hpp>
-#include <Engine/Serialization/Serialize.hpp>
 
 // Generated
 #include <Generated/Collider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
+    class GameObject;
+
     class RFKClass(Inspect(false), Serialize(false)) Collider : rfk::Object
     {
     public:
@@ -30,17 +31,15 @@ namespace GPE RFKNamespace()
         Collider& operator=(Collider const& other) noexcept = delete;
         Collider& operator=(Collider&& other) noexcept = delete;
 
-        virtual ~Collider() noexcept = default;
+        virtual ~Collider() noexcept;
 
     public:
-        physx::PxShape*    shape     = nullptr;
-        physx::PxMaterial* material  = nullptr;
-        RFKField(Serialize())
-        bool               isTrigger = false;
-        RFKField(Serialize())
-        bool               isVisible = false;
-        RFKField(Serialize())
-        GPM::Vector3       center    = {0.f, 0.f, 0.f};
+        physx::PxShape*                    shape     = nullptr;
+        physx::PxMaterial*                 material  = nullptr;
+        RFKField(Serialize()) bool         isTrigger = false;
+        RFKField(Serialize()) bool         isVisible = false;
+        RFKField(Serialize()) GPM::Vector3 center    = {0.f, 0.f, 0.f};
+        GameObject*                        owner     = nullptr;
 
         Collider_GENERATED
     };

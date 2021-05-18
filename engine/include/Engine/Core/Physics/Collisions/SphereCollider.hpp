@@ -15,7 +15,7 @@
 
 namespace GPE RFKNamespace()
 {
-	class RFKClass(Inspect()) SphereCollider : public Collider
+    class RFKClass(Inspect(), Serialize()) SphereCollider : public Collider
 	{
 	public:
 		SphereCollider() noexcept;

@@ -2,6 +2,7 @@
 
 #include <Engine/Engine.hpp>
 #include <PhysX/PxPhysics.h>
+#include <Engine/Intermediate/GameObject.hpp>
 
 #include <Generated/BoxCollider.rfk.h>
 
@@ -11,17 +12,29 @@ using namespace GPE;
 using namespace GPM;
 using namespace physx;
 
-BoxCollider::BoxCollider() noexcept : Collider(), m_dimensions(10.f)
+BoxCollider::BoxCollider() noexcept : Collider(), m_offset(10.f)
 {
 	material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, 0.f);
 	shape = Engine::getInstance()->physXSystem.physics->createShape(
-		PxBoxGeometry(m_dimensions.x * .5f, m_dimensions.y * .5f, m_dimensions.z * .5f), *material, true);
+		PxBoxGeometry(m_offset.x * .5f, m_offset.y * .5f, m_offset.z * .5f), *material, true);
 
 	material->release();
 }
 
-void BoxCollider::setDimensions(const Vec3& newDimensions) noexcept
+void BoxCollider::setScale() noexcept
 {
-	m_dimensions = newDimensions;
-	shape->setGeometry(PxBoxGeometry(m_dimensions.x * .5f, m_dimensions.y * .5f, m_dimensions.z * .5f));
+	m_scale = owner->getTransform().getGlobalScale();
+	updateShape();
+}
+
+void BoxCollider::setOffset(const Vec3& newOffset) noexcept
+{
+	m_offset = newOffset;
+	updateShape();
+}
+
+void BoxCollider::updateShape() noexcept
+{
+	//shape->setGeometry(PxBoxGeometry(m_offset.x * .5f, m_offset.y * .5f, m_offset.z * .5f));
+	shape->setGeometry(PxBoxGeometry(PhysXSystem::GPMVec3ToPxVec3((m_offset + m_scale) * 0.5f)));
 }

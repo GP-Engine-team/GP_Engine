@@ -16,7 +16,7 @@
 namespace GPE RFKNamespace()
 {
 
-	class RFKClass(Serialize(), ComponentGen) RigidbodyStatic : public Component, public RigidBodyBase
+	class RFKClass(Inspect(), Serialize(), ComponentGen()) RigidbodyStatic : public Component, public RigidBodyBase
 	{
 	public:
 		RigidbodyStatic(GameObject & owner, EShapeType _type) noexcept;
