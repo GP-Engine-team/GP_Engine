@@ -13,8 +13,8 @@
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/Type.hpp>
 #include <Engine/Serialization/DataInspector.hpp>
-#include <GPM/Vector3.hpp>
 #include <GPM/Shape3D/Volume.hpp>
+#include <GPM/Vector3.hpp>
 
 namespace GPE
 {
@@ -31,9 +31,10 @@ public:
 
     struct Vertex
     {
-        GPM::Vec3 v;
-        GPM::Vec3 vn;
-        GPM::Vec2 vt;
+        GPM::Vec3 v;   // position
+        GPM::Vec3 vn;  // normal
+        GPM::Vec2 vt;  // UV
+        GPM::Vec3 vtg; // tangeante
     };
 
     struct Indice
@@ -72,19 +73,14 @@ public:
     };
 
 protected:
-    unsigned int m_VAO           = 0;
     unsigned int m_verticesCount = 0;
-
-    // TODO: To remove for EBO only buffer
-    unsigned int m_vertexbuffer = 0;
-    unsigned int m_uvbuffer     = 0;
-    unsigned int m_normalbuffer = 0;
 
     struct
     {
+        unsigned int vao = 0;
         unsigned int vbo = 0;
         unsigned int ebo = 0;
-    } m_EBOBuffers;
+    } m_buffers;
 
     EBoundingVolume              m_boundingVolumeType = EBoundingVolume::NONE;
     std::unique_ptr<GPM::Volume> m_boundingVolume     = nullptr;
@@ -104,7 +100,7 @@ public:
 
     inline const GPM::Volume* getBoundingVolume() const noexcept;
 
-    GETTER_BY_VALUE(ID, m_VAO);
+    GETTER_BY_VALUE(ID, m_buffers.vao);
     GETTER_BY_VALUE(VerticesCount, m_verticesCount);
     DEFAULT_GETTER_SETTER_BY_REF(BoundingVolumeType, m_boundingVolumeType);
 

@@ -1,4 +1,5 @@
-﻿#include "Engine/ECS/System/RenderSystem.hpp"
+﻿
+#include "Engine/ECS/System/RenderSystem.hpp"
 
 #include <algorithm> //std::sort
 #include <cstdio>
@@ -267,6 +268,12 @@ void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
     if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         shader.setMaterialBlock(material.getComponent());
+
+        if (material.getNormalMapTexture())
+        {
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, material.getNormalMapTexture()->getID());
+        }
     }
 
     if ((shader.getFeature() & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
