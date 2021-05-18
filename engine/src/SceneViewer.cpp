@@ -103,27 +103,37 @@ void SceneViewer::initializePickingFBO()
 
 void SceneViewer::initializeInputs()
 {
-    inputs.bindAction("up", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "up");
-    inputs.bindAction("down", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "down");
-    inputs.bindAction("right", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "right");
-    inputs.bindAction("left", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "left");
-    inputs.bindAction("forward", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "forward");
-    inputs.bindAction("backward", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "backward");
-    inputs.bindAction("sprint", EKeyMode::KEY_PRESSED, "Level editor", &freeFly, "sprint");
-    inputs.bindAction("walk", EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
+    inputs.bindAction("up",       EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "up");
+    inputs.bindAction("down",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "down");
+    inputs.bindAction("right",    EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "right");
+    inputs.bindAction("left",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "left");
+    inputs.bindAction("forward",  EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "forward");
+    inputs.bindAction("backward", EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "backward");
+    inputs.bindAction("sprint",   EKeyMode::KEY_PRESSED,  "Level editor", &freeFly, "sprint");
+    inputs.bindAction("walk",     EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
 }
+
+
+
 
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : cameraOwner{new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
-      freeFly{cameraOwner->addComponent<FreeFly>()},
-      camera{cameraOwner->addComponent<Camera>(
-          Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
-      inputs{cameraOwner->addComponent<GPE::InputComponent>()}, pScene{&viewed}, textureID{0u}, depthStencilID{0u},
-      framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u}, FBOIDframebufferID{0u},
-      FBOIDwidth{static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight{static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_},
-      m_capturingInputs{false}
+    : cameraOwner       {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
+      freeFly           {cameraOwner->addComponent<FreeFly>()},
+      camera            {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
+      inputs            {cameraOwner->addComponent<GPE::InputComponent>()},
+      pScene            {&viewed},
+      textureID         {0u},
+      depthStencilID    {0u},
+      framebufferID     {0u},
+      FBOIDtextureID    {0u},
+      FBOIDdepthID      {0u},
+      FBOIDframebufferID{0u},
+      FBOIDwidth        {static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight       {static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
+      width             {width_},
+      height            {height_},
+      m_capturingInputs {false}
 {
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
@@ -136,7 +146,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     camera.setActive(true);
     pScene->sceneRenderer.setMainCamera(&camera);
 
-    freeFly.setActive(m_capturingInputs);
+    freeFly.setActive(false);
     inputs.setActive(m_capturingInputs);
 }
 
@@ -252,8 +262,8 @@ void SceneViewer::unbindScene()
 
 void SceneViewer::update()
 {
-    // Camera is not set as child of wolrd. So we need to update it.
-    cameraOwner->updateSelfAndChildren();
+    // Camera is not set as child of world. So we need to update it.
+    cameraOwner->getTransform().update();
 
     // When the game is not launched, behaviours are not updated
     // Update FreeFly manually
@@ -310,6 +320,7 @@ void SceneViewer::lookAtObject(const GameObject& GOToLook)
     const TransformComponent& cam   {cameraOwner->getTransform()},
                             & target{GOToLook.getTransform()};
 
+    // Set defaults
     startPos      = finalPos      = cameraOwner->getTransform().getGlobalPosition();
     startRotation = finalRotation = cameraOwner->getTransform().getGlobalRotation();
 
@@ -330,7 +341,6 @@ void SceneViewer::lookAtObject(const GameObject& GOToLook)
             startPos = pos0;
             finalPos = pos1;
 
-            // Start the transition
             lerpT              = 0.f;
             isTransitionActive = true;
         }
