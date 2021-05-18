@@ -38,7 +38,7 @@ struct TextureImportConfig
         COUNT
     } format = EFormatType::PNG;
 
-    bool verticalFlip = true;
+    bool verticalFlip = false;
 
     std::string formatToString()
     {

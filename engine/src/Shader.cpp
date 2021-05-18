@@ -340,7 +340,7 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
             }
             else if (type == EType::FRAGMENT)
             {
-                Log::getInstance()->logError(std::string("Framgnet shader compilation error\n") + infoLog);
+                Log::getInstance()->logError(std::string("Fragment shader compilation error\n") + infoLog);
             }
         }
     }
@@ -357,7 +357,7 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
             }
             else if (type == EType::FRAGMENT)
             {
-                Log::getInstance()->logError((std::string("Fragmnet shader linking error\n") + infoLog).c_str());
+                Log::getInstance()->logError((std::string("Fragment shader linking error\n") + infoLog).c_str());
             }
         }
     }

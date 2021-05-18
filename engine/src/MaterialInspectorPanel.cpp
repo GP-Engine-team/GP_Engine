@@ -49,13 +49,13 @@ File_GENERATED
             m_isDirty = true;
         }
 
-        ImGui::TextUnformatted("Base color texture");
+        ImGui::TextUnformatted("Normal map texture");
         ImGui::SameLine();
         if (ImGui::Button(
-                (m_config.baseColorTexturePath.empty() ? "None##BaseColor" : m_config.baseColorTexturePath.c_str())))
+                (m_config.normalMapTexturePath.empty() ? "None##NormalMap" : m_config.normalMapTexturePath.c_str())))
         {
-            m_config.baseColorTexturePath =
-                openFileExplorerAndGetRelativePath(L"Base color texture", {{L"Image", L"*.GPTexture"}})
+            m_config.normalMapTexturePath =
+                openFileExplorerAndGetRelativePath(L"Normal map texture", {{L"Image", L"*.GPTexture"}})
                     .string()
                     .c_str();
 
@@ -90,12 +90,12 @@ File_GENERATED
                 else
                     pMaterial->setDiffuseTexture(loadTextureFile(m_config.diffuseTexturePath.c_str()));
 
-                fsPath = m_config.baseColorTexturePath;
+                fsPath = m_config.normalMapTexturePath;
 
                 if (Texture* pTexture = Engine::getInstance()->resourceManager.get<Texture>(fsPath.filename().string()))
-                    pMaterial->setBaseColorTexture(pTexture);
+                    pMaterial->setNormalMapTexture(pTexture);
                 else
-                    pMaterial->setBaseColorTexture(loadTextureFile(m_config.baseColorTexturePath.c_str()));
+                    pMaterial->setNormalMapTexture(loadTextureFile(m_config.normalMapTexturePath.c_str()));
             }
 
             m_isDirty = false;
