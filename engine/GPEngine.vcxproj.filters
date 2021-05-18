@@ -37,6 +37,12 @@
     <ClCompile Include="src\GameObject.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\GPELoad.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GPESave.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
     <ClCompile Include="src\Importer.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -119,6 +125,9 @@
       <Filter>src\Physics\Rigidbody</Filter>
     </ClCompile>
     <ClCompile Include="src\PointLight.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Prefab.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Raycast.cpp">
@@ -205,6 +214,9 @@
     <ClCompile Include="src\ShaderParser.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ShadowMap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\SoundSystem.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -288,7 +300,13 @@
     <ClInclude Include="include\Engine\Core\Game\ContextStartup.hpp">
       <Filter>include\Core\Game</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\HotReload\EngineApiMacros.hpp">
+      <Filter>include\Core\HotReload</Filter>
+    </ClInclude>
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
+      <Filter>include\Core\HotReload</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\HotReload\SingletonsSync.hpp">
       <Filter>include\Core\HotReload</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
@@ -301,19 +319,19 @@
       <Filter>include\Core\Parsers</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\Collisions\BoxCollider.hpp">
-      <Filter>include\Core\Physics</Filter>
+      <Filter>include\Core\Physics\Collisions</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\Collisions\CapsuleCollider.hpp">
-      <Filter>include\Core\Physics</Filter>
+      <Filter>include\Core\Physics\Collisions</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\Collisions\Collider.hpp">
-      <Filter>include\Core\Physics</Filter>
+      <Filter>include\Core\Physics\Collisions</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\Collisions\MeshCollider.hpp">
-      <Filter>include\Core\Physics</Filter>
+      <Filter>include\Core\Physics\Collisions</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\Collisions\SphereCollider.hpp">
-      <Filter>include\Core\Physics</Filter>
+      <Filter>include\Core\Physics\Collisions</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\RigidBodyBase.hpp">
       <Filter>include\Core\Physics</Filter>
@@ -364,6 +382,9 @@
       <Filter>include\ECS\Component</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\Component.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\ComponentInclude.hpp">
       <Filter>include\ECS\Component</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\InputComponent.hpp">
@@ -459,6 +480,9 @@
     <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleUpdater.hpp">
       <Filter>include\Resources\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Prefab.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="include\Engine\Resources\RenderBuffer.hpp">
       <Filter>include\Resources</Filter>
     </ClInclude>
@@ -486,6 +510,9 @@
     <ClInclude Include="include\Engine\Resources\ShaderType.hpp">
       <Filter>include\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ShadowMap.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="include\Engine\Resources\Sound.hpp">
       <Filter>include\Resources</Filter>
     </ClInclude>
@@ -511,6 +538,12 @@
       <Filter>include\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\GPEDataInspector.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\GPELoad.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\GPESave.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\GPMDataInspector.hpp">
@@ -867,7 +900,10 @@
       <UniqueIdentifier>{e028e6cc-ce9d-4aea-b0c0-b0861b0d33f0}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\Core\Physics">
-      <UniqueIdentifier>{a89435ed-8365-4a7c-8f28-1d88c6e46316}</UniqueIdentifier>
+      <UniqueIdentifier>{b8393e6d-0a89-447c-8be7-1dcba85244f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Core\Physics\Collisions">
+      <UniqueIdentifier>{82eb9a89-c830-4288-a4cc-7c9fd87fa45e}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\Core\Rendering">
       <UniqueIdentifier>{276d9617-8663-4173-9f8d-67cb222b99cb}</UniqueIdentifier>
@@ -895,6 +931,9 @@
     </Filter>
     <Filter Include="include\ECS\Component\Physics\CharacterController">
       <UniqueIdentifier>{858fd582-7868-4b02-8a0a-a81b09087f38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\Component\Physics\Collisions">
+      <UniqueIdentifier>{c9757943-57ff-42de-8a53-3b01c0312aaf}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\ECS\Component\Physics\Rigidbody">
       <UniqueIdentifier>{c944e1a1-4a35-4615-8465-f56569a8c40e}</UniqueIdentifier>

@@ -10,29 +10,30 @@
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <GPM/Vector3.hpp>
 
-// Generated
+ // Generated
 #include <Generated/BoxCollider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect()) BoxCollider : public Collider
-    {
-    public:
-        BoxCollider() noexcept;
-        BoxCollider(const BoxCollider& other) noexcept = delete;
-        BoxCollider(BoxCollider && other) noexcept     = default;
-        virtual ~BoxCollider() noexcept                = default;
+	class RFKClass(Inspect()) BoxCollider : public Collider
+	{
+	public:
+		BoxCollider() noexcept;
+		BoxCollider(const BoxCollider & other) noexcept = delete;
+		BoxCollider(BoxCollider && other) noexcept = default;
+		virtual ~BoxCollider() noexcept = default;
 
-        BoxCollider& operator=(BoxCollider const& other) noexcept = delete;
-        BoxCollider& operator=(BoxCollider&& other) noexcept = delete;
+		BoxCollider& operator=(BoxCollider const& other) noexcept = delete;
+		BoxCollider& operator=(BoxCollider && other) noexcept = delete;
 
-    private:
-        GPM::Vector3 m_dimensions;
+	private:
+		GPM::Vector3 m_dimensions;
 
-    public:
-        GETTER_BY_VALUE(Dimensions, m_dimensions);
-        void setDimensions(const GPM::Vec3& newDimensions) noexcept;
+	public:
+		GETTER_BY_VALUE(Dimensions, m_dimensions);
+		void setDimensions(const GPM::Vec3 & newDimensions) noexcept;
+		void onPostLoad() noexcept;
 
-        BoxCollider_GENERATED
-    };
+		BoxCollider_GENERATED
+	};
 } // namespace )

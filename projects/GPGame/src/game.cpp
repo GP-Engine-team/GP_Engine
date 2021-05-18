@@ -4,17 +4,12 @@
 #include <Game.hpp>
 #include <myFpsScript.hpp>
 
-#include <Engine/ECS/Component/Camera.hpp>
-#include <Engine/ECS/Component/Light/DirectionalLight.hpp>
-#include <Engine/ECS/Component/Light/PointLight.hpp>
-#include <Engine/Core/Physics/Collisions/BoxCollider.hpp>
-#include <Engine/Core/Physics/Collisions/SphereCollider.hpp>
-#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
-#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
+
+#include <WorldGenerator.hpp>
 
 #include <GPM/Random.hpp>
 
@@ -25,6 +20,11 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
+
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
+
+#include <Engine/Core/Physics/Collisions/BoxCollider.hpp>
+#include <Engine/Core/Physics/Collisions/SphereCollider.hpp>
 
 using namespace GPE;
 using namespace GPM;
@@ -61,11 +61,13 @@ void Game::render()
 		ImGuiWindowFlags_NoScrollWithMouse);
 
 	// Draw GUI
-	GPE::Engine::getInstance()->behaviourSystem.onGUI();
+	Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.onGUI();
 	ImGui::End();
 	ImGui::Render();
 
 	RenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
+
+	sceneRS.tryToResize(m_w, m_h);
 	sceneRS.render(sceneRS.defaultRenderPipeline());
 
 	// draw UI
@@ -97,8 +99,12 @@ void loadTreeResource()
 	Model::CreateArg     arg;
 
 	SubModel subModel;
-	subModel.pShader = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLight.vs",
-		"./resources/shaders/fTextureWithLight.fs", LIGHT_BLIN_PHONG);
+	subModel.pShader = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLightAndShadow.vs",
+		"./resources/shaders/fTextureWithLightAndShadow.fs", LIGHT_BLIN_PHONG);
+	subModel.pShader->use();
+	subModel.pShader->setInt("ourTexture", 0);
+	subModel.pShader->setInt("shadowMap", 1);
+
 	subModel.pMaterial = loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial");
 	subModel.pMesh = loadMeshFile("./resources/meshs/g1.GPMesh");
 
@@ -180,7 +186,6 @@ void Game::setViewport(float x, float y, float w, float h)
 // TODO: Put in-game UI in a module
 Game::~Game()
 {
-
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -223,18 +228,24 @@ Game::Game()
 	// world is already initialized
 
 	// Place content in the scene
-	GPE::GameObject& world = Engine::getInstance()->sceneManager.loadScene("main").getWorld();
-	GameObject* ground, * player, * testPhysX;
+	GPE::GameObject& world = Engine::getInstance()->sceneManager.setCurrentScene("main").getWorld();
+	GameObject* ground, * player, * testPhysX, * sun, * cube;
 	{
+		const GameObject::CreateArg cubeArg{ "Cube", TransformComponent::CreateArg{{0.f, 10, 0.f}} };
+		const GameObject::CreateArg sunArg{ "Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}} };
 		const GameObject::CreateArg playerArg{ "Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}} };
 		const GameObject::CreateArg testPhysXArg{ "TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}} };
 		const GameObject::CreateArg groundArg{ "GroundArg", TransformComponent::CreateArg{{0.f}} };
 
 		// A ground, player, PhysX test
+		cube = &world.addChild(cubeArg);
+		sun = &world.addChild(sunArg);
 		ground = &world.addChild(groundArg);
 		player = &world.addChild(playerArg);
 		testPhysX = &world.addChild(testPhysXArg);
 	}
+
+	world.addComponent<GPG::WorldGenerator>();
 
 	// Skybox
 	loadSkyboxResource();
@@ -242,7 +253,7 @@ Game::Game()
 
 	// Forest
 	loadTreeResource();
-	loadTree(world, 100u);
+	loadTree(world, 10u);
 
 	{ // Camera
 		Camera::PerspectiveCreateArg camCreateArg{ "Player camera" };
@@ -251,34 +262,50 @@ Game::Game()
 	}
 
 	{ // Light
-		const PointLight::CreateArg lightArg{
-			{1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, .0014f, 7e-6f };
-		player->addComponent<PointLight>(lightArg);
+		sun->getTransform().setTranslation({ 0, 500, 0 });
+		const DirectionalLight::CreateArg lightArg{
+			{0.f, -0.5f, 0.5f}, {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f} };
+		sun->addComponent<DirectionalLight>(lightArg).setShadowActive(true);
 	}
+
+	//{ // Light
+	//    const PointLight::CreateArg lightArg{
+	//        {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, .0014f, 7e-6f};
+	//    player->addComponent<PointLight>(lightArg);
+	//}
 
 	// Scripts
 	player->addComponent<GPG::MyFpsScript>();
 
+	{ // cube
+		cube->getTransform().setScale(Vec3{ 10, 10, 10 });
+		Model& mod = cube->addComponent<Model>();
+		mod.addSubModel(SubModel::CreateArg{ Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
+											loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial"),
+											Engine::getInstance()->resourceManager.get<Mesh>("Sphere"), true });
+	}
+
 	// Physics
 	{ // ground
-		//BoxCollider&     box = ground->addComponent<BoxCollider>();// OLD
-		//rb.collider = &box;										 // OLD
-		//box.isVisible = true;										 // OLD
-		//box.setDimensions({ 1000.f, 10.f, 1000.f });               // OLD
+		Mesh* planeMesh = &Engine::getInstance()->resourceManager.add<Mesh>(
+			"PlaneFround", Mesh::createQuad(1.f, 1.f, 100.f, 0, 0, Mesh::Axis::Y));
+
+		ground->getTransform().setScale(Vec3{ 1000, 1, 1000 });
+
 		RigidbodyStatic& rb = ground->addComponent<RigidbodyStatic>(EShapeType::E_BOX);
 		rb.collider->isVisible = true;
-		static_cast<BoxCollider*>(rb.collider.get())->setDimensions({ 1000.f, 10.f, 1000.f });
+		static_cast<BoxCollider*>(rb.collider.get())->setDimensions({ 1000.f, 1.f, 1000.f });
+
+		Model& mod = ground->addComponent<Model>();
+		mod.addSubModel(SubModel::CreateArg{ Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
+											loadMaterialFile("./resources/Materials/GroundMat.GPMaterial"), planeMesh,
+											true });
 	}
 
 	{ // testPhysX
-		//SphereCollider& sphere = testPhysX->addComponent<SphereCollider>();
-		//sphere.isVisible = true;
-		//sphere.setRadius(10.f);
-		//testPhysX->addComponent<RigidbodyDynamic>().collider = &sphere;
 		RigidbodyDynamic& rb = ground->addComponent<RigidbodyDynamic>(EShapeType::E_SPHERE);
 		rb.collider->isVisible = true;
 		static_cast<SphereCollider*>(rb.collider.get())->setRadius(10.f);
-
 	}
 
 	/*
@@ -308,8 +335,7 @@ Game::Game()
 
 	// =========== Timer ===========
 	Log& logger = *Log::getInstance();
-	const std::function<void()> timer = [&]()
-	{
+	const std::function<void()> timer = [&]() {
 		logger.log(stringFormat("FPS (fixedUpdate): %f\n", fixedUpdateFrameCount / FPLogDelay));
 		logger.log(stringFormat("FPS (unFixedUpdate): %f\n\n", unFixedUpdateFrameCount / FPLogDelay));
 		fixedUpdateFrameCount = 0;

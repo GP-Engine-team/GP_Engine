@@ -24,14 +24,14 @@ namespace GPE RFKNamespace()
     public:
         BehaviourComponent(GameObject & owner) noexcept;
 
-        BehaviourComponent() noexcept;
+        BehaviourComponent() noexcept                                = default;
         BehaviourComponent(const BehaviourComponent& other) noexcept = delete;
         BehaviourComponent(BehaviourComponent && other) noexcept;
         virtual ~BehaviourComponent() noexcept;
         BehaviourComponent& operator=(BehaviourComponent const& other) noexcept = delete;
         BehaviourComponent& operator                                            =(BehaviourComponent&& other) noexcept;
 
-        virtual void awake();
+        virtual void onPostLoad();
 
         virtual void start()
         {

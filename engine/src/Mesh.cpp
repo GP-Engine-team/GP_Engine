@@ -22,8 +22,8 @@ Mesh::CreateIndiceBufferArg Mesh::convert(Mesh::CreateContiguousVerticesArg& arg
 
     for (size_t i = 0u; i < arg.iBuffer.size(); ++i)
     {
-        newArg.vertices.push_back({arg.vBuffer[arg.iBuffer[i].iv], arg.vnBuffer[arg.iBuffer[i].ivn],
-                                  arg.vtBuffer[arg.iBuffer[i].ivt]});
+        newArg.vertices.push_back(
+            {arg.vBuffer[arg.iBuffer[i].iv], arg.vnBuffer[arg.iBuffer[i].ivn], arg.vtBuffer[arg.iBuffer[i].ivt]});
         newArg.indices.push_back((unsigned int)i);
     }
     return newArg;
@@ -121,6 +121,7 @@ Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, 
         mesh.vBuffer.push_back({0.f, halfHeight, -halfWidth});
         mesh.vBuffer.push_back({0.f, halfHeight, halfWidth});
         mesh.vBuffer.push_back({0.f, -halfHeight, halfWidth});
+        mesh.vnBuffer.push_back({1.f, 0.f, 0.f});
         break;
 
     case Axis::NEG_X:
@@ -128,20 +129,23 @@ Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, 
         mesh.vBuffer.push_back({0.f, -halfHeight, halfWidth});
         mesh.vBuffer.push_back({0.f, -halfHeight, -halfWidth});
         mesh.vBuffer.push_back({0.f, halfHeight, -halfWidth});
+        mesh.vnBuffer.push_back({-1.f, 0.f, 0.f});
         break;
 
     case Axis::Y:
-        mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth});
-        mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});
-        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
-        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
+        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});   // 0
+        mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});  // 1
+        mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth}); // 2
+        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});  // 3
+        mesh.vnBuffer.push_back({0.f, 1.f, 0.f});
         break;
 
     case Axis::NEG_Y:
-        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
-        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
         mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth});
         mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});
+        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
+        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
+        mesh.vnBuffer.push_back({0.f, -1.f, 0.f});
         break;
 
     case Axis::Z:
@@ -149,6 +153,7 @@ Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, 
         mesh.vBuffer.push_back({halfHeight, -halfWidth, 0.f});
         mesh.vBuffer.push_back({halfHeight, halfWidth, 0.f});
         mesh.vBuffer.push_back({-halfHeight, halfWidth, 0.f});
+        mesh.vnBuffer.push_back({0.f, 0.f, 1.f});
         break;
 
     case Axis::NEG_Z:
@@ -156,6 +161,8 @@ Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, 
         mesh.vBuffer.push_back({halfHeight, -halfWidth, 0.f});
         mesh.vBuffer.push_back({halfHeight, halfWidth, 0.f});
         mesh.vBuffer.push_back({-halfHeight, halfWidth, 0.f});
+
+        mesh.vnBuffer.push_back({0.f, 0.f, -1.f});
         break;
 
     default:
@@ -170,9 +177,6 @@ Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, 
     mesh.vtBuffer.push_back({shiftX + textureRepetition, shiftY});
     mesh.vtBuffer.push_back({shiftX, shiftY + textureRepetition});
     mesh.vtBuffer.push_back({shiftX + textureRepetition, shiftY + textureRepetition});
-
-    // initialize normal :
-    mesh.vnBuffer.push_back({0.f, -1.f, 0.f});
 
     if (isRectoVerso)
     {

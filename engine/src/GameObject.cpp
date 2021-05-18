@@ -12,7 +12,7 @@
 #include "Generated/GameObject.rfk.h"
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 unsigned int GameObject::m_currentID = 0;
@@ -44,7 +44,7 @@ void GameObject::moveTowardScene(Scene& newOwner) noexcept
 
 void GameObject::updateSelfAndChildren() noexcept
 {
-    const Children::const_iterator end{children.end()};
+    const Children::const_iterator end{children.cend()};
 
     if (m_pTransform->isDirty())
     {
@@ -58,6 +58,11 @@ void GameObject::updateSelfAndChildren() noexcept
                 // NOTE (Sami): what happens to the children?
                 m_parent->destroyChild(this);
                 return;
+            }
+            else
+            {
+                for (auto&& child : children)
+                    child->getTransform().setDirty();
             }
         }
         else
@@ -100,10 +105,15 @@ void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
 {
     // Update self
     if (m_pTransform->isDirty())
+    {
         getTransform().update(m_parent->getTransform().getModelMatrix());
 
+        for (auto&& child : children)
+            child->getTransform().setDirty();
+    }
+
     // Update children
-    const Children::const_iterator end{children.end()};
+    const Children::const_iterator end{children.cend()};
     for (Children::iterator i = children.begin(); i != end;)
     {
         if ((*i)->m_isDead)
@@ -138,7 +148,7 @@ void GameObject::forceUpdate() noexcept
     }
 
     // Force update children
-    const Children::const_iterator end{children.end()};
+    const Children::const_iterator end{children.cend()};
     for (auto&& i = children.begin(); i != end; i++)
     {
         if ((*i)->m_isDead)
@@ -158,11 +168,47 @@ void GameObject::forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept
     getTransform().update(m_parent->getTransform().getModelMatrix());
 
     // Force update children
-    const Children::const_iterator end{children.end()};
+    const Children::const_iterator end{children.cend()};
     for (auto&& i = children.begin(); i != end; i++)
     {
         (*i)->forceUpdate(m_pTransform->getModelMatrix());
     }
+}
+
+void GameObject::setParent(GameObject* pNewParent) noexcept
+{
+    if (m_parent != nullptr)
+    {
+        for (std::list<GameObject*>::iterator it = m_parent->children.begin(); it != m_parent->children.end(); it++)
+        {
+            if (*it == this)
+            {
+                m_parent->children.erase(it);
+                break;
+            }
+        }
+    }
+
+    if (pNewParent)
+    {
+        GPE_ASSERT(pNewParent->getParent() != this,
+                   "You cannot associate new parent if it's the child of the current entity (leak)");
+
+        if (pNewParent->pOwnerScene)
+        {
+            moveTowardScene(*pNewParent->pOwnerScene);
+        }
+        pNewParent->children.emplace_back(this);
+    }
+    else
+    {
+        Log::getInstance()->log(stringFormat("Remove parent of %s", m_name.c_str()));
+        return;
+    }
+
+    m_parent = pNewParent;
+    Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
+                                         pNewParent->getName().c_str()));
 }
 
 GameObject* GameObject::getChild(const std::string& path) noexcept
@@ -256,11 +302,12 @@ GameObject::Children::iterator GameObject::destroyChild(GameObject* pGameObject)
 
 std::list<Component*>::iterator GameObject::destroyComponent(Component* pComponent) noexcept
 {
-    const std::list<Component*>::const_iterator end{m_pComponents.end()};
+    const std::list<Component*>::const_iterator end{m_pComponents.cend()};
     for (std::list<Component*>::iterator it = m_pComponents.begin(); it != end; it++)
     {
         if (*it == pComponent)
         {
+            delete *it;
             return m_pComponents.erase(it);
         }
     }
@@ -282,24 +329,14 @@ std::string GameObject::getAbsolutePath() const noexcept
     return path;
 }
 
-void GameObject::detach(const GameObject::Children::iterator& itToParentPtr) noexcept
-{
-    for (auto&& it = m_parent->children.begin(); it != m_parent->children.end(); ++it)
-    {
-        if (this == *it)
-        {
-            m_parent->children.erase(it);
-            break;
-        }
-    }
-    m_parent    = nullptr;
-    pOwnerScene = nullptr;
-}
-
 void GameObject::inspect(GPE::InspectContext& context)
 {
     GPE::DataInspector::inspect(context, m_name, "name");
     GPE::DataInspector::inspect(context, m_tag, "tag");
+    if (GPE::DataInspector::inspect(context, m_isActive, "isActive"))
+    {
+        setActive(m_isActive);
+    }
 
     getTransform().inspect(context);
 
