@@ -385,8 +385,6 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
         Frustum camFrustum = mainCamera.getFrustum();
 
-        rs.resetCurrentRenderPassKey();
-
         /*Display opaque element*/
         {
             glDisable(GL_BLEND);
@@ -543,6 +541,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         }
+        rs.resetCurrentRenderPassKey();
     };
 }
 
