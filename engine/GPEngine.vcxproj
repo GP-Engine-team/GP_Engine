@@ -159,7 +159,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>false</ExceptionHandling>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem, map, vector, list, unordered_map, functional</PrecompiledHeaderFile>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <Link>
@@ -190,7 +190,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>false</ExceptionHandling>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem, map, vector, list, unordered_map, functional</PrecompiledHeaderFile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>

@@ -39,7 +39,6 @@ File_GENERATED
         sourceSettings.loop  = AL_TRUE;
 
         source->setSound("Western", "Western", sourceSettings);
-        source->playSound("Western", true);
 
         // Keys
         input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
@@ -66,6 +65,11 @@ File_GENERATED
         controller->setSpeed(1.f);
         controller->setMouseSpeed(.0025f);
         controller->setGravity(.1f);
+    }
+
+    void MyFpsScript::start()
+    {
+        source->playSound("Western", true);
     }
 
     void MyFpsScript::onPostLoad()
