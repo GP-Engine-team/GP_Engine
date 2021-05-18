@@ -5,44 +5,47 @@
  */
 
 #pragma once
+#include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/InspectContext.hpp>
+#include <Engine/Serialization/Serialize.hpp>
 #include <Engine/Serialization/xml/xmlLoader.hpp>
 #include <Engine/Serialization/xml/xmlSaver.hpp>
-#include <Engine/Serialization/Inspect.hpp>
 #include <GPM/Vector3.hpp>
 #include <PxMaterial.h>
 #include <PxShape.h>
 #include <Refureku/Refureku.h>
-#include <Engine/Serialization/Inspect.hpp>
-#include <Engine/Serialization/Serialize.hpp>
 
- // Generated
+// Generated
 #include <Generated/Collider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
-	class GameObject;
+    class GameObject;
 
-	class RFKClass(Inspect(false), Serialize(false)) Collider : rfk::Object
-	{
-	public:
-		Collider() noexcept = default;
-		Collider(const Collider & other) noexcept = delete;
-		Collider(Collider && other) noexcept = default;
-		Collider& operator=(Collider const& other) noexcept = delete;
-		Collider& operator=(Collider && other) noexcept = delete;
+    class RFKClass(Inspect(false), Serialize(false)) Collider : rfk::Object
+    {
+    public:
+        Collider() noexcept                      = default;
+        Collider(const Collider& other) noexcept = delete;
+        Collider(Collider && other) noexcept     = default;
+        Collider& operator=(Collider const& other) noexcept = delete;
+        Collider& operator=(Collider&& other) noexcept = delete;
 
-		virtual ~Collider() noexcept;
+        virtual ~Collider() noexcept;
 
-	public:
-		physx::PxShape* shape = nullptr;
-		physx::PxMaterial* material = nullptr;
-		bool               isTrigger = false;
-		bool               isVisible = false;
-		GPM::Vector3       center = { 0.f, 0.f, 0.f };
-		GameObject* owner = nullptr;
+    public:
+        physx::PxShape*                                                     shape         = nullptr;
+        physx::PxMaterial*                                                  material      = nullptr;
+        /*RFKField(Inspect(), Serialize())*/ bool                           isTrigger     = false;
+        /*RFKField(Inspect(), Serialize())*/ bool                           isVisible     = false;
+        /* RFKField(Inspect("setCenter"), Serialize())*/ GPM::Vector3       center        = {0.f, 0.f, 0.f};
+        /*RFKField(Inspect("setLocalRotation"), Serialize())*/ GPM::Vector3 localRotation = {0.f, 0.f, 0.f};
 
+        void        setCenter(const GPM::Vec3& newCenter) noexcept;
+        void        setLocalRotation(const GPM::Vec3& newLocalRotation) noexcept;
+        void        updateTransform() noexcept;
+        GameObject* owner = nullptr;
 
-		Collider_GENERATED
-	};
+        Collider_GENERATED
+    };
 } // namespace )

@@ -38,7 +38,7 @@ namespace GPE RFKNamespace()
 		physx::PxRigidDynamic* rigidbody;
 
 	private:
-		bool m_isKinematic = false;
+		RFKField(Inspect("setKinematic"), Serialize()) bool m_isKinematic = false;
 
 	public:
 		void setKinematic(bool state) noexcept;

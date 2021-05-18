@@ -932,9 +932,6 @@
     <Filter Include="include\ECS\Component\Physics\CharacterController">
       <UniqueIdentifier>{858fd582-7868-4b02-8a0a-a81b09087f38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\ECS\Component\Physics\Collisions">
-      <UniqueIdentifier>{c9757943-57ff-42de-8a53-3b01c0312aaf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\ECS\Component\Physics\Rigidbody">
       <UniqueIdentifier>{c944e1a1-4a35-4615-8465-f56569a8c40e}</UniqueIdentifier>
     </Filter>
