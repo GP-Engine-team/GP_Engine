@@ -4,6 +4,7 @@
 #include <Engine/Engine.hpp>
 #include <imgui/imgui.h>
 
+
 namespace Editor
 {
 
@@ -68,17 +69,27 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
         }
 
         if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && inspectedObject)
+        {
             view.lookAtObject(*reinterpret_cast<GameObject*>(inspectedObject));
+        }
     }
 }
 
 // ========================== Public methods ==========================
-SceneEditor::SceneEditor(GPE::Scene& scene) : view{scene}
+SceneEditor::SceneEditor(GPE::Scene& scene)
+    : view    {scene},
+      m_active{ImGuizmo::OPERATION::TRANSLATE},
+      m_mode  {ImGuizmo::MODE::WORLD}
 {
 }
 
 void SceneEditor::render(GPE::IInspectable*& inspectedObject)
 {
+    if (inspectedObject)
+    {
+        ImGuizmo::BeginFrame();
+    }
+
     // Use the whole window content
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
@@ -87,6 +98,7 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
     if (ImGui::Begin(windowName.c_str()))
     {
         const ImVec2 size{ImGui::GetContentRegionAvail()};
+        ImGui::GetWindowContentRegionMin();
 
         checkCursor(inspectedObject);
 

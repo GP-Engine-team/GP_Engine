@@ -1,7 +1,7 @@
 ﻿#include <Editor/EditorStartup.hpp>
 
 // Engine
-#include "Engine/Core/HotReload/SingletonsSync.hpp"
+#include <Engine/Core/HotReload/SingletonsSync.hpp>
 #include <Engine/Core/Game/AbstractGame.hpp>
 #include <Engine/Core/HotReload/ReloadableCpp.hpp>
 #include <Engine/ECS/Component/Camera.hpp>

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <Engine/Intermediate/Viewers/SceneViewer.hpp>
+#include <imgui/imguizmo.h>
 
 namespace GPE
 {
@@ -11,10 +12,16 @@ namespace Editor
 {
 class Editor;
 
+// TODO: Add a thin top-bar with translation/rotation/scale options
+// TODO: Add a thin top-bar with camera orthographic/perspectives options
 class SceneEditor
 {
 public:
     GPE::SceneViewer view;
+
+private:
+    ImGuizmo::OPERATION m_active;
+    ImGuizmo::MODE      m_mode;
 
 private:
     void captureInputs(bool toggle);
