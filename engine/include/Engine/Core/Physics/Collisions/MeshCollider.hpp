@@ -8,34 +8,32 @@
 
 #include <Engine/Core/Physics/Collisions/Collider.hpp>
 
-// Generated
+ // Generated
 #include <Generated/MeshCollider.rfk.h>
 
 namespace physx
 {
-class PxConvexMesh;
+	class PxConvexMesh;
 }
 
 namespace GPE RFKNamespace()
 {
-    class GameObject;
+	class GameObject;
 
-    class RFKClass(ComponentGen(), Inspect()) MeshCollider : public Collider
-    {
-    public:
-        MeshCollider(GameObject & owner) noexcept;
+	class RFKClass(Inspect()) MeshCollider : public Collider
+	{
+	public:
+		MeshCollider() noexcept;
 
-        virtual ~MeshCollider() noexcept = default;
+		virtual ~MeshCollider() noexcept = default;
+		MeshCollider(const MeshCollider & other) noexcept = delete;
+		MeshCollider(MeshCollider && other) noexcept = default;
+		MeshCollider& operator=(MeshCollider const& other) noexcept = delete;
+		MeshCollider& operator=(MeshCollider && other) noexcept = delete;
 
-        MeshCollider() noexcept                          = default;
-        MeshCollider(const MeshCollider& other) noexcept = delete;
-        MeshCollider(MeshCollider && other) noexcept     = default;
-        MeshCollider& operator=(MeshCollider const& other) noexcept = delete;
-        MeshCollider& operator=(MeshCollider&& other) noexcept = delete;
+	public:
+		physx::PxConvexMesh* convexMesh = nullptr;
 
-    public:
-        physx::PxConvexMesh* convexMesh = nullptr;
-
-        MeshCollider_GENERATED
-    };
+		MeshCollider_GENERATED
+	};
 } // namespace )
