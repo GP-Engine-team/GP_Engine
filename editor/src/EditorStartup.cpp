@@ -50,7 +50,7 @@ EditorStartup::EditorStartup()
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
           m_engine->inputManager.processInput();
           m_editor.update(*this);
-
+          m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
       }},
       m_render{[&]() {
@@ -201,7 +201,15 @@ void EditorStartup::stopGame()
 {
     Engine::getInstance()->sceneManager.OnSceneChange = nullptr;
 
-    pauseGame();
+    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
+    m_update      = [&](double unscaledDeltaTime, double deltaTime) {
+        m_engine->inputManager.processInput();
+        m_editor.update(*this);
+        m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+
+        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+    };
+
     m_editor.reloadCurrentScene();
     // TODO: reload scene
     m_game->state = EGameState::STOPPED;

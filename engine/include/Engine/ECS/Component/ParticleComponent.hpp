@@ -78,7 +78,7 @@ namespace GPE RFKNamespace()
         ParticleComponent(ParticleComponent && other) noexcept     = default;
         virtual ~ParticleComponent();
 
-        ParticleComponent()        = default;
+        ParticleComponent();
         ParticleComponent& operator=(ParticleComponent const& other) = delete;
         ParticleComponent& operator=(ParticleComponent&& other) noexcept = default;
 
@@ -190,6 +190,8 @@ namespace GPE RFKNamespace()
          * @brief Update GPU data with CPU buffer
          */
         void sendDataToShader();
+
+        void onPostLoad() final;
 
         /**
          * @brief Add or remove current component from it's system which have for effect to enable or disable it

@@ -13,12 +13,17 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 ParticleComponent::ParticleComponent(GameObject& owner) : Component(owner)
 {
     owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    initializeDefaultSetting();
+}
+
+ParticleComponent::ParticleComponent() : Component()
+{
     initializeDefaultSetting();
 }
 
@@ -382,6 +387,14 @@ void ParticleComponent::emit(double dt)
 
     for (size_t i = startId; i < endId; ++i) // << wake loop
         m_particles.wake(i);
+}
+
+void ParticleComponent::onPostLoad()
+{
+    if (m_isActivated)
+    {
+        getOwner().pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    }
 }
 
 void ParticleComponent::setActive(bool newState) noexcept
