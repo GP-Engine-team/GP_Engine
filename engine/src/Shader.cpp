@@ -88,7 +88,7 @@ vec3 computAmbiante(vec4 ambientComponent, vec4 ambientMaterial)
 
 vec3 computDiffuse(vec4 diffuseComponent, vec4 diffuseMaterial, vec3 lightDir)
 {
-    float diff = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(lightDir, normal), 0.0);
     return diffuseComponent.w * diff * diffuseComponent.xyz * diffuseMaterial.xyz * diffuseMaterial.w;
 }
 
@@ -377,11 +377,11 @@ void Shader::loadAndCompile(const char* vertexPath, const char* fragmentPath, ui
     ShaderParser::parse(vertexCode);
     ShaderParser::parse(fragmentCode);
 
-    if ((m_featureMask & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
-    {
-        vertexCode.insert(0, lightBlinPhongVertexShaderStr);
-        fragmentCode.insert(0, lightBlinPhongFragmentShaderStr);
-    }
+    // if ((m_featureMask & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    //{
+    //    vertexCode.insert(0, lightBlinPhongVertexShaderStr);
+    //    fragmentCode.insert(0, lightBlinPhongFragmentShaderStr);
+    //}
 
     if ((m_featureMask & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
     {

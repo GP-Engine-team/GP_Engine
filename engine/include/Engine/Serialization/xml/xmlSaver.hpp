@@ -1,4 +1,10 @@
-﻿#pragma once
+﻿/*
+ * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
+ * This file is subject to the LGNU license terms in the LICENSE file
+ * found in the top-level directory of this distribution.
+ */
+
+#pragma once
 
 #include "Engine/Serialization/xml/xmlUtilities.hpp"
 #include "RapidXML/rapidxml.hpp"
@@ -120,23 +126,6 @@ namespace GPE
 {
 
 template <typename T>
-void save(XmlSaver& context, const T& inspected, const rfk::Field& info)
-{
-    if constexpr (std::is_enum_v<T>)
-    {
-        GPE::save(context, *reinterpret_cast<const std::underlying_type_t<T>*>(&inspected), info);
-    }
-    else
-    {
-        context.push(info);
-
-        inspected.save(context);
-
-        context.pop();
-    }
-}
-
-template <typename T>
 void save(XmlSaver& context, const T& inspected, const XmlSaver::SaveInfo& info)
 {
     if constexpr (std::is_enum_v<T>)
@@ -154,15 +143,20 @@ void save(XmlSaver& context, const T& inspected, const XmlSaver::SaveInfo& info)
 }
 
 template <typename T>
+void save(XmlSaver& context, const T& inspected, const rfk::Field& info)
+{
+    GPE::save(context, inspected, fieldToSaveInfo(info));
+}
+
+template <typename T>
 void save(XmlSaver& context, T* const& inspected, const rfk::Field& info)
 {
-    if (inspected == nullptr)
-        return;
-
     context.push(info);
 
     context.saveAsString(std::to_string(size_t(inspected)), info);
-    context.savePtrData(inspected, fieldToSaveInfo(info));
+
+    if (inspected != nullptr)
+        context.savePtrData(inspected, fieldToSaveInfo(info));
 
     context.pop();
 }
@@ -260,3 +254,4 @@ bool XmlSaver::savePtrData(T* data, const SaveInfo& info)
 
 #include "Engine/Serialization/STDSave.hpp"
 #include "Engine/Serialization/GPMSave.hpp"
+#include "Engine/Serialization/GPESave.hpp"

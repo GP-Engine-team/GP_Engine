@@ -29,6 +29,12 @@ template <>
 void save(XmlSaver& context, const GPM::Vector3& data, const rfk::Field& info);
 
 /**
+ * @brief Specialization for Vec4 data. See the original function for more comments.
+ */
+template <>
+void save(XmlSaver& context, const GPM::Vector4& data, const XmlSaver::SaveInfo& info);
+
+/**
  * @brief Specialization for Quaternion data. See the original function for more comments.
  */
 template <>

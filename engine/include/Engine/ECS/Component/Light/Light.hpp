@@ -26,7 +26,7 @@
 namespace GPE RFKNamespace()
 {
     // TODO: Can be more optimize change information only when light is update
-    class RFKClass(Serialize(), Inspect(), ComponentGen) Light : public Component
+    class RFKClass(Serialize(), ComponentGen) Light : public Component
     {
     public:
         struct CreateArg
@@ -36,11 +36,24 @@ namespace GPE RFKNamespace()
             SpecularComponent specular = SpecularComponent{0.5f, 0.5f, 0.5f, 1.f};
         };
 
-    protected:
-        RFKField(Inspect()) AmbiantComponent  m_ambientComp;
-        RFKField(Inspect()) DiffuseComponent  m_diffuseComp;
-        RFKField(Inspect()) SpecularComponent m_specularComp;
+        struct RFKStruct(Serialize()) ShadowProperties
+        {
+            RFKField(Serialize()) bool         isEnable             = false;
+            RFKField(Serialize()) float        shadowMapSampleScale = 4.f;
+            RFKField(Serialize()) unsigned int PCF                  = 3;
+            RFKField(Serialize()) float        bias                 = 0.05f;
+            RFKField(Serialize()) float        size                 = 1000.f;
 
+            ShadowProperties_GENERATED
+        };
+
+    protected:
+        RFKField(Serialize()) AmbiantComponent  m_ambientComp;
+        RFKField(Serialize()) DiffuseComponent  m_diffuseComp;
+        RFKField(Serialize()) SpecularComponent m_specularComp;
+
+        RFKField(Serialize()) ShadowProperties m_shadowProterties;
+        
     public:
         inline Light(GameObject & owner, const CreateArg& arg);
 
@@ -55,6 +68,8 @@ namespace GPE RFKNamespace()
         Light& operator=(const Light& other) = delete;
 
         inline Light& operator=(Light&& other) noexcept;
+
+        virtual void onPostLoad();
 
         void moveTowardScene(Scene & newOwner) final
         {
@@ -80,6 +95,7 @@ namespace GPE RFKNamespace()
         inline const AmbiantComponent&  getAmbient() const noexcept;
         inline const DiffuseComponent&  getDiffuse() const noexcept;
         inline const SpecularComponent& getSpecular() const noexcept;
+        inline const ShadowProperties&  getShadowProperties() const noexcept;
 
         inline void setGlobalComponent(const ColorRGBA& newComponent) noexcept;
         inline void setGlobalComponent(const GPM::Vec4& newComponent) noexcept;
@@ -91,6 +107,12 @@ namespace GPE RFKNamespace()
         inline void setAmbient(const GPM::Vec4& newAmbient) noexcept;
         inline void setDiffuse(const GPM::Vec4& newDiffuse) noexcept;
         inline void setSpecular(const GPM::Vec4& newSpecular) noexcept;
+
+        virtual GPM::Mat4 getLightSpaceMatrix() noexcept;
+
+        virtual void inspect(InspectContext & context);
+
+        void setShadowActive(bool newState) noexcept;
 
         /**
          * @brief Add or remove current component from it's system which have for effect to enable or disable it

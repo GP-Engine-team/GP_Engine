@@ -16,7 +16,7 @@ namespace GPE
 {
 class GameObject;
 class IInspectable;
-}
+} // namespace GPE
 
 #define RESOURCES_DIR "resources"
 
@@ -27,7 +27,8 @@ struct FileInfo
     std::filesystem::path path;
     std::filesystem::path filename;
     std::filesystem::path extention;
-    size_t                size = 0u;
+    size_t                size           = 0u;
+    bool                  isInRenameMode = false;
 };
 
 struct DirectoryInfo
@@ -76,6 +77,9 @@ public:
     void refreshResourcesList();
 
     void renderAndGetSelected(GPE::IInspectable*& selectedGameObject);
+
+    void createNewScene();
+    void removeFile(const std::filesystem::path& path);
 };
 
 } // End of namespace Editor

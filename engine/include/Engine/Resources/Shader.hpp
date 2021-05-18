@@ -42,9 +42,7 @@ protected:
     uint16_t     m_featureMask         = 0; // feature is shader interger into shader like light, blure etc....
     unsigned int m_lightsUniformBuffer = 0; // TODO: no sens to have id of uniform light in any shaders
 
-    unsigned int m_id         = 0;
-    unsigned int m_idVertex   = 0; // TODO: move in fragmentShader class to optimize recycling
-    unsigned int m_idFragment = 0; // TODO: move in vertexShader class to optimize recycling
+    unsigned int m_id = 0;
 
 public:
     /**

@@ -13,7 +13,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, Component& inspec
     inspected.inspect(context);
 }
 
-void GPE::Component::awake()
+void GPE::Component::onPostLoad()
 {
 
 }

@@ -18,16 +18,16 @@ Texture::Texture(const ImportArg& arg) noexcept
 {
     setFormat(arg.comp);
 
-    loadInGPU(arg.w, arg.h, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS, arg.textureWrapT,
-              arg.pixels.get(), arg.generateMipmaps);
+    loadInGPU(arg.w, arg.h, arg.anisotropy, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS,
+              arg.textureWrapT, arg.pixels.get(), arg.generateMipmaps);
 
     Log::getInstance()->log("Texture loaded to VRAM");
 }
 
 Texture::Texture(const CreateArg& arg) noexcept : format{arg.format}
 {
-    Texture::loadInGPU(arg.width, arg.height, arg.textureMinFilter, arg.textureMagFilter, arg.textureWrapS,
-                       arg.textureWrapT, nullptr);
+    Texture::loadInGPU(arg.width, arg.height, arg.anisotropy, arg.textureMinFilter, arg.textureMagFilter,
+                       arg.textureWrapS, arg.textureWrapT, nullptr);
 
     Log::getInstance()->log(
         (std::to_string(arg.width) + 'x' + std::to_string(arg.height) + " texture loaded in VRAM").c_str());
@@ -80,9 +80,9 @@ bool Texture::checkFormatValidity() const
     return false;
 }
 
-bool Texture::loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
-                        ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels,
-                        bool generateMipmaps) noexcept
+bool Texture::loadInGPU(int w, int h, unsigned int anisotropy, ETextureMinFilter textureMinFilter,
+                        ETextureMagFilter textureMagFilter, ETextureWrapS textureWrapS, ETextureWrapT textureWrapT,
+                        unsigned char* pixels, bool generateMipmaps) noexcept
 {
     if (!checkFormatValidity())
     {
@@ -96,6 +96,12 @@ bool Texture::loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextu
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(textureMagFilter));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(textureWrapS));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(textureWrapT));
+
+    GLfloat max_anisotropy; /* don't exceed this value...*/
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &max_anisotropy);
+
+    anisotropy = (anisotropy > max_anisotropy) ? max_anisotropy : anisotropy;
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
 
     glTexImage2D(GL_TEXTURE_2D, 0, (GLenum)format, w, h, 0, (GLenum)format, GL_UNSIGNED_BYTE, pixels);
 

@@ -67,7 +67,7 @@ void GameViewer::render(EditorStartup& startup)
 
         { // Set active camera
             RenderSystem& sceneRenderer = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
-            Camera* mainCam             = sceneRenderer.getMainCamera();
+            Camera*       mainCam       = sceneRenderer.getMainCamera();
 
             sceneRenderer.setActiveCamera(mainCam);
             mainCam = sceneRenderer.getMainCamera();
@@ -76,10 +76,9 @@ void GameViewer::render(EditorStartup& startup)
 
          // Update game viewport
             const ImVec2       winPos{ImGui::GetWindowPos()};
-            const ImGuiWindow* win   {ImGui::GetCurrentWindow()};
+            const ImGuiWindow* win{ImGui::GetCurrentWindow()};
             startup.game().setViewport(winPos.x + win->Viewport->CurrWorkOffsetMin.x,
-                                       winPos.y + win->Viewport->CurrWorkOffsetMin.y,
-                                       size.x, size.y);
+                                       winPos.y + win->Viewport->CurrWorkOffsetMin.y, size.x, size.y);
         }
 
         // Update camera's aspect and resizing FBO
