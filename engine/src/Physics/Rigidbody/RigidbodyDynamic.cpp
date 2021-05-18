@@ -1,11 +1,17 @@
-﻿#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
-#include <Engine/ECS/System/PhysXSystem.hpp>
+﻿#include <Engine/ECS/System/PhysXSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <GPM/Vector3.hpp>
 #include <PxPhysics.h>
 
-using namespace GPE;
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
+
+// Generated
+#include "Generated/RigidbodyDynamic.rfk.h"
+
+File_GENERATED
+
+    using namespace GPE;
 using namespace physx;
 
 RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner)
@@ -18,7 +24,7 @@ RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner
 
     rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
     rigidbody->setMass(1);
-    rigidbody->userData = this;
+    rigidbody->userData = &getOwner();
 
     if (!collider)
     {
@@ -37,12 +43,31 @@ RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner
 void RigidbodyDynamic::update() noexcept
 {
     getOwner().getTransform().setTranslation(PhysXSystem::PxVec3ToGPMVec3(rigidbody->getGlobalPose().p));
-    // rigidbody->setLinearVelocity(PxVec3{0, 0, 0});
-    // rigidbody->setAngularVelocity(PxVec3{0, 0, 0});
+}
+
+void RigidbodyDynamic::updatePosition() noexcept
+{
+    // getOwner().getTransform().
+    // getOwner().getTransform().setTranslation(PhysXSystem::PxVec3ToGPMVec3(rigidbody->getGlobalPose().p));
+    rigidbody->setGlobalPose(PhysXSystem::GPETransformComponentToPxTransform(getOwner().getTransform()));
+    // rigidbody->setKinematicTarget(physx::PxTransform::transform(physx::PxPlane::));
+    // collider->shape
 }
 
 void RigidbodyDynamic::setKinematic(bool state) noexcept
 {
     m_isKinematic = state;
     rigidbody->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, state);
+}
+
+void RigidbodyDynamic::setActive(bool newState) noexcept
+{
+    if (m_isActivated == newState)
+        return;
+
+    m_isActivated = newState;
+    if (m_isActivated)
+        GPE::Engine::getInstance()->physXSystem.addComponent(this);
+    else
+        GPE::Engine::getInstance()->physXSystem.removeComponent(this);
 }

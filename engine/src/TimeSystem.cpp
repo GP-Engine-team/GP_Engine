@@ -1,7 +1,7 @@
 ﻿#include "Engine/ECS/System/TimeSystem.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+
 #include <string>
-#include <thread> // std::this_thread::sleep_for
 
 using namespace GPE;
 
@@ -9,15 +9,21 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
                         std::function<void(double unscaledDeltaTime, double deltaTime)>           updateFunction,
                         std::function<void()> renderFunction) noexcept
 {
-    /*First render the current frame*/
+    /*unfixed update*/
+    updateFunction(m_unscaledDeltaTime, m_deltaTime);
+
+    /*render the current frame*/
     renderFunction();
 
-    /*Second, prepar the next frame*/
+    /*Prepar the next frame*/
     m_tempTime          = std::chrono::steady_clock::now();
     m_unscaledDeltaTime = std::chrono::duration<double>(m_tempTime - m_time).count();
     m_time              = m_tempTime;
 
     // This is temporary
+    if (m_unscaledDeltaTime > 0.25)
+        m_unscaledDeltaTime = 0.25;
+
     if (m_unscaledDeltaTime > 0.25)
         m_unscaledDeltaTime = 0.25;
 
@@ -48,7 +54,7 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
 
         if (timerTask.isLooping)
         {
-            addUnscaledTimer(timerTask.localTimer, timerTask.task, timerTask.isLooping);
+            emplaceUnscaledTimer(timerTask.task, timerTask.localTimer, timerTask.isLooping);
         }
         m_unscaledTimerQueue.pop();
     }
@@ -60,11 +66,8 @@ void TimeSystem::update(std::function<void(double fixedUnscaledDeltaTime, double
 
         if (timerTask.isLooping)
         {
-            addScaledTimer(timerTask.localTimer, timerTask.task, timerTask.isLooping);
+            emplaceScaledTimer(timerTask.task, timerTask.localTimer, timerTask.isLooping);
         }
         m_scaledTimerQueue.pop();
     }
-
-    /*unfixed update*/
-    updateFunction(m_unscaledDeltaTime, m_deltaTime);
 }

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Engine/Resources/Type.hpp"
+#include <memory>
 #include <string>
 
 // in inl
@@ -78,8 +79,22 @@ public:
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
         ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
+        unsigned int      anisotropy       = 8;
         bool              flipTexture      = true;
         bool              generateMipmaps  = true;
+    };
+
+    struct ImportArg
+    {
+        int                            w = 0, h = 0, comp = 0, len = 0;
+        std::unique_ptr<unsigned char> pixels           = nullptr;
+        ETextureMinFilter              textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
+        ETextureMagFilter              textureMagFilter = ETextureMagFilter::LINEAR;
+        ETextureWrapS                  textureWrapS     = ETextureWrapS::REPEAT;
+        ETextureWrapT                  textureWrapT     = ETextureWrapT::REPEAT;
+        unsigned int                   anisotropy       = 8;
+        bool                           flipTexture      = true;
+        bool                           generateMipmaps  = true;
     };
 
     struct CreateArg
@@ -91,6 +106,7 @@ public:
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
         ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
+        unsigned int      anisotropy       = 8;
     };
 
 protected:
@@ -100,8 +116,9 @@ protected:
     void setFormat(int channels);
     bool checkFormatValidity() const;
 
-    bool loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
-                   ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels, bool generateMipmaps = true) noexcept;
+    bool loadInGPU(int w, int h, unsigned int anisotropy, ETextureMinFilter textureMinFilter,
+                   ETextureMagFilter textureMagFilter, ETextureWrapS textureWrapS, ETextureWrapT textureWrapT,
+                   unsigned char* pixels, bool generateMipmaps = true) noexcept;
 
 public:
     Texture()                     = default;
@@ -109,6 +126,7 @@ public:
     Texture(Texture&& other)      = default;
 
     Texture(const LoadArg& arg) noexcept;
+    Texture(const ImportArg& arg) noexcept;
     Texture(const CreateArg& arg) noexcept;
     ~Texture() noexcept;
 

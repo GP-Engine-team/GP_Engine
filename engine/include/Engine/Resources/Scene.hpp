@@ -1,30 +1,41 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
 
-#include "Engine/ECS/System/SceneRenderSystem.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-
+#include <Engine/Core/Tools/ClassUtility.hpp>
+#include <Engine/ECS/System/BehaviourSystem.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
+#include <Engine/Serialization/xml/xmlLoader.hpp>
+#include <map>
+#include <memory>
 #include <string> // std::string
 
 namespace GPE
 {
+class GameObject;
+class Scene;
+
+template <>
+void load(XmlLoader& context, GPE::Scene*& inspected, const XmlLoader::LoadInfo& info);
+
 class Scene
 {
     friend class SceneManager;
 
 protected:
-    GameObject* m_pWorld = nullptr;
+    std::string                 m_name   = "Scene";
+    std::unique_ptr<GameObject> m_pWorld = nullptr;
 
     std::unordered_map<std::string, unsigned int>
         m_loadedResourcesPath; // Indicate witch resource is loaded with counter
 
 public:
-    SceneRenderSystem sceneRenderer;
+    RenderSystem    sceneRenderer;
+    BehaviourSystem behaviourSystem;
 
 public:
     Scene() noexcept;
@@ -54,5 +65,10 @@ public:
 
     void addLoadedResourcePath(const char* path) noexcept;
     void removeLoadedResourcePath(const char* path) noexcept;
+
+    void save(XmlSaver&) const;
+    void load(XmlLoader&);
+
+    GETTER_BY_CONST_REF(Name, m_name);
 };
 } /*namespace GPE*/

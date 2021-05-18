@@ -9,9 +9,13 @@ struct RFKStruct(PropertySettings(rfk::EEntityKind::Struct | rfk::EEntityKind::C
                                   rfk::EEntityKind::Variable)) Inspect : public rfk::Property
 {
     Inspect() noexcept = default;
-    Inspect(bool callParents) noexcept {};
+
+    // Used on fields
+    Inspect(const char* setterFunction) {}
+
+    // Used on classes / structs
+    Inspect(bool callParents) noexcept {}; 
 
     Inspect_GENERATED
 };
 
-File_GENERATED

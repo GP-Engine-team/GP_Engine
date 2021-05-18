@@ -1,16 +1,26 @@
-﻿#include "Engine/ECS/Component/Camera.hpp"
+#include <Engine/Core/Debug/Assert.hpp>
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Scene.hpp>
+#include <Engine/Serialization/xml/xmlLoader.hpp>
+#include <Engine/Serialization/xml/xmlSaver.hpp>
+#include <GPM/Transform.hpp>
+#include <GPM/Vector3.hpp>
 
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/ECS/System/SceneRenderSystem.hpp"
-#include "Engine/Resources/Scene.hpp"
-#include "GPM/Transform.hpp"
-#include "GPM/Vector3.hpp"
+#include <Engine/ECS/Component/Camera.hpp>
+File_GENERATED
 
-using namespace GPM;
-
+    using namespace GPM;
 namespace GPE
 {
+
+// Static method
+float Camera::computeAspect(int width, int height) noexcept
+{
+    return width / float(height);
+}
 
 void Camera::updateView()
 {
@@ -23,8 +33,8 @@ void Camera::updateProjection()
     switch (m_projInfo.type)
     {
     case EProjectionType::ORTHOGRAPHIC:
-        m_projection =
-            Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
+        m_projection = Transform::orthographic(m_projInfo.hSide * .5f, -m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
+                                               -m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
         break;
 
     case EProjectionType::PERSPECTIVE:
@@ -37,10 +47,11 @@ void Camera::updateProjection()
     }
 }
 
-void Camera::moveTowardScene(class Scene& newOwner)
+void Camera::moveTowardScene(Scene& newOwner)
 {
-    getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
-    newOwner.sceneRenderer.addCamera(this);
+    if (getOwner().pOwnerScene)
+        getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
+    newOwner.sceneRenderer.addCamera(*this);
 }
 
 Camera::Camera(GameObject& owner) noexcept : Camera(owner, PerspectiveCreateArg{})
@@ -63,8 +74,8 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
 
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.znear, m_projInfo.zfar);
 
-    getOwner().pOwnerScene->sceneRenderer.addCamera(this);
-    getOwner().getTransform().OnUpdate += std::bind(&Camera::updateView, this);
+    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
+    getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     updateView();
 
     Log::getInstance()->log((std::string("Perspective projection added with name \"") + arg.name + "\"").c_str());
@@ -84,19 +95,30 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
     m_projInfo.hSide  = arg.hSide;
     m_projInfo.vSide  = arg.vSide;
 
-    m_projection =
-        Transform::orthographic(m_projInfo.hSide * .5f, m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
+    m_projection = Transform::orthographic(m_projInfo.hSide * .5f, -m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
+                                           -m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
 
-    getOwner().pOwnerScene->sceneRenderer.addCamera(this);
-    getOwner().getTransform().OnUpdate += std::bind(&Camera::updateView, this);
+    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
+    getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     updateView();
 
     Log::getInstance()->log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
 }
 
+void Camera::onPostLoad()
+{
+    m_projection = Transform::orthographic(m_projInfo.hSide * .5f, -m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
+                                           -m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
+    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
+    updateView();
+}
+
 Camera::~Camera() noexcept
 {
-    getOwner().pOwnerScene->sceneRenderer.removeCamera(this);
+    getOwner().getTransform().OnUpdate -= GPE::Function::make(this, "updateView");
+
+    if (m_isActivated && getOwner().pOwnerScene)
+        getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
 }
 
 Camera& Camera::operator=(Camera&& other) noexcept
@@ -119,22 +141,28 @@ void Camera::setFovY(const float fovY) noexcept
     m_projInfo.vSide = m_projInfo.zfar * tanf(m_projInfo.fovY * .5f) * 2.f;
 
     updateProjection();
+    updateView();
 }
 
 void Camera::setAspect(const float newAspect) noexcept
 {
     m_projInfo.aspect = newAspect;
-    m_projInfo.fovX   = m_projInfo.aspect * m_projInfo.fovY;
-    m_projInfo.hSide  = m_projInfo.zfar * tanf(m_projInfo.fovX * .5f) * 2.f;
+
+    if (m_projInfo.type != EProjectionType::ORTHOGRAPHIC)
+    {
+        m_projInfo.fovX  = m_projInfo.aspect * m_projInfo.fovY;
+        m_projInfo.hSide = m_projInfo.zfar * tanf(m_projInfo.fovX * .5f) * 2.f;
+    }
 
     updateProjection();
+    updateView();
 }
 
 Frustum Camera::getFrustum() const noexcept
 {
     // TODO: Optimization with furstum matrix ??
     Frustum     frustum;
-    const Vec3& forward        = -getOwner().getTransform().getVectorForward();
+    const Vec3& forward        = getOwner().getTransform().getVectorForward();
     const Vec3& right          = getOwner().getTransform().getVectorRight();
     const Vec3& up             = getOwner().getTransform().getVectorUp();
     const Vec3& globalPosition = -getOwner().getTransform().getGlobalPosition();
@@ -150,6 +178,19 @@ Frustum Camera::getFrustum() const noexcept
 
     return frustum;
 }
+
+void Camera::setActive(bool newState) noexcept
+{
+    if (m_isActivated == newState)
+        return;
+
+    m_isActivated = newState;
+    if (m_isActivated)
+        getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
+    else
+        getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
+}
+
 /*
 Frustum Camera::getFrustum() const noexcept
 {

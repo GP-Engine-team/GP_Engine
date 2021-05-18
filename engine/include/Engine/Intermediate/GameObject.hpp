@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -14,7 +14,9 @@
 #include "Engine/ECS/Component/TransformComponent.hpp" //TransformComponent
 
 #include "Engine/Serialization/DataInspector.hpp"
+#include "Engine/Serialization/IInspectable.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
+#include "Engine/Serialization/STDReflect.hpp"
 
 // in Inl
 #include "Engine/Core/Debug/Log.hpp"
@@ -28,11 +30,16 @@ namespace GPE RFKNamespace()
     template <>
     void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
 
+    void save(XmlSaver & context, class GameObject & inspected);
+    void load(XmlLoader & context, class GameObject & sinspected);
+
     class Scene;
 
-    class RFKClass(Inspect()) GameObject
+    class RFKClass(Serialize(false)) GameObject : public IInspectable
     {
     public:
+        using Children = std::list<GameObject*>;
+
         struct CreateArg
         {
             std::string                   name = "World";
@@ -40,24 +47,29 @@ namespace GPE RFKNamespace()
             GameObject*                   parent = nullptr;
         };
 
-    protected:
-        RFKField(Inspect()) std::string m_name;
-        TransformComponent*             m_pTransform;
+        // TODO: remove this variable for dataChunk localtion when data chunk will be rework
+        static unsigned int m_currentID;
 
-        std::list<Component*> m_pComponents;
-        std::string           m_tag{"GameObject"};
-        GameObject*           m_parent = nullptr;
-        bool m_isDead{false}; // Flag that inform it parent that this transform must be destroy on update loop
+    protected:
+        RFKField(Inspect(), Serialize()) std::string m_name;
+        RFKField(Serialize()) TransformComponent*    m_pTransform;
+        RFKField(Serialize()) std::list<Component*>  m_pComponents;
+        RFKField(Inspect(), Serialize()) std::string m_tag{"GameObject"};
+        RFKField(Serialize()) GameObject*            m_parent = nullptr;
+        RFKField(Serialize()) unsigned int           m_id;
+        RFKField(Serialize()) bool                   m_isDead{
+            false}; // Flag that inform it parent that this transform must be destroy on update loop
+        RFKField(Serialize()) bool m_isActive = true;
 
     public:
-        Scene*                 pOwnerScene;
-        std::list<GameObject*> children = {};
+        RFKField(Serialize()) Scene*                 pOwnerScene = nullptr;
+        RFKField(Serialize()) std::list<GameObject*> children    = {};
 
     public:
         inline GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
         ~GameObject() noexcept;
 
-        GameObject()                        = delete;
+        GameObject()                        = default;
         GameObject(const GameObject& other) = delete;            // TODO: when transform is available
         GameObject& operator=(GameObject const& other) = delete; // TODO
 
@@ -90,10 +102,18 @@ namespace GPE RFKNamespace()
         [[nodiscard]] inline GameObject*       getParent() noexcept;
 
         /**
-         * @brief Set the parent and remove to parent the child
+         * @brief Set the parent and remove to parent the child. Warning if pNewParent == nullptr, the gameObject must
+         * be remove manually or must be instancied somewhere. Normally parent is repsonsable to destroy it's child
          * @param newName
          */
-        inline void setParent(GameObject & newParent) noexcept;
+        void setParent(GameObject * pNewParent) noexcept;
+
+        /**
+         * @brief Warning ! This function only set the parent ptr and do not remove the children ptr of this parent
+         * @param newParent
+         * @return
+         */
+        inline void forceSetParent(GameObject & newParent) noexcept;
 
         /**
          * @brief Set the Name object
@@ -122,6 +142,8 @@ namespace GPE RFKNamespace()
          */
         template <typename T, typename... Args>
         T& addComponent(Args && ... args) noexcept;
+
+        inline Component* addExistingComponent(Component * pExistingComponent) noexcept;
 
         /**
          * @brief Get the first Component type object
@@ -199,6 +221,14 @@ namespace GPE RFKNamespace()
         template <typename... Args>
         GameObject& addChild(Args && ... args) noexcept;
 
+        // TODO: Remove this function when dataChunk will be rework
+        /**
+         * @brief Recursive function that allow user to find gameObject corresponding to Id
+         * @param ID
+         * @return
+         */
+        GameObject* getGameObjectCorrespondingToID(unsigned int ID) noexcept;
+
         [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;
 
         template <typename T>
@@ -210,17 +240,22 @@ namespace GPE RFKNamespace()
 
         [[nodiscard]] std::string getAbsolutePath() const noexcept;
 
+        [[nodiscard]] inline unsigned int getID() const noexcept;
+
         inline void setTag(const std::string& newTag) noexcept;
 
         [[nodiscard]] inline constexpr const std::string& getTag() const noexcept;
 
         [[nodiscard]] inline bool compareTag(const std::string& toCompare) const noexcept;
 
+        void inspect(GPE::InspectContext & context) override;
+
+        static void* operator new(std::size_t size);
+
+        static void operator delete(void* ptr);
+
         GameObject_GENERATED
     };
-
-#include "GameObject.inl"
-
 } // namespace )
 
-File_GENERATED
+#include "GameObject.inl"

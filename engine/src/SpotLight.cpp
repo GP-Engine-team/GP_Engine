@@ -1,13 +1,15 @@
-﻿#include "Engine/ECS/Component/Light/SpotLight.hpp"
-#include "Engine/Intermediate/DataChunk.hpp"
+﻿#include "Engine/Intermediate/DataChunk.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "GPM/Constants.hpp"
 
-using namespace GPE;
+#include "Engine/ECS/Component/Light/SpotLight.hpp"
+
+File_GENERATED
+
+    using namespace GPE;
 
 SpotLight::~SpotLight()
 {
-    DataChunk<SpotLight>::getInstance()->destroy(this);
 }
 
 SpotLight::SpotLight(GameObject& owner) noexcept : SpotLight(owner, CreateArg{})

@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2021, assimp team
 
 All rights reserved.
 
@@ -50,6 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace Assimp {
 
+/// @brief  Will find a node by its name.
 struct find_node_by_name_predicate {
     std::string mName;
     find_node_by_name_predicate(const std::string &name) :
@@ -88,7 +89,11 @@ public:
     }
 
     void clear() {
-        mData.resize(0);
+        if(mData.empty()) {
+            mDoc = nullptr;
+            return;
+        }
+        mData.clear();
         delete mDoc;
         mDoc = nullptr;
     }
@@ -175,6 +180,19 @@ public:
         }
 
         val = attr.as_int();
+        return true;
+    }
+
+    static inline bool getRealAttribute( XmlNode &xmlNode, const char *name, ai_real &val ) {
+        pugi::xml_attribute attr = xmlNode.attribute(name);
+        if (attr.empty()) {
+            return false;
+        }
+#ifdef ASSIMP_DOUBLE_PRECISION
+        val = attr.as_double();
+#else
+        val = attr.as_float();
+#endif
         return true;
     }
 

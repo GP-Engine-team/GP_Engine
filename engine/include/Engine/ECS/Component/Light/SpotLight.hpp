@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen) SpotLight : public PointLight
+    class RFKClass(Serialize(), Inspect(), ComponentGen) SpotLight : public PointLight
     {
     public:
         struct CreateArg
@@ -34,15 +34,15 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        float m_cutOff; // specifies the spotlight's radius.
-        float m_cutOffExponent;
+        RFKField(Inspect(), Serialize()) float m_cutOff; // specifies the spotlight's radius.
+        RFKField(Inspect(), Serialize()) float m_cutOffExponent;
 
     public:
         SpotLight(const SpotLight& other) = delete;
         SpotLight(SpotLight && other)     = default;
         virtual ~SpotLight();
 
-        SpotLight()        = delete;
+        SpotLight()        = default;
         SpotLight& operator=(SpotLight const& other) = delete;
         SpotLight& operator=(SpotLight&& other) = default;
 
@@ -78,5 +78,3 @@ namespace GPE RFKNamespace()
     };
 
 } // namespace )
-
-File_GENERATED

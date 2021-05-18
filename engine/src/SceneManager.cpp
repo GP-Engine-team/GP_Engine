@@ -1,67 +1,77 @@
 #include "Engine/Resources/SceneManager.hpp"
 
+#include <Engine/Core/Debug/Log.hpp>
+
 using namespace GPE;
 
-Scene& SceneManager::addEmpty(const std::string& sceneName)
+Scene& SceneManager::setCurrentScene(const std::string& sceneName)
 {
     Log::getInstance()->log("New empty scene " + sceneName + " created");
 
-    return m_scenes[sceneName]; // emplace with default constructor of Scene
+    if (m_pCurrentScene)
+        m_scenes.erase(m_pCurrentScene->getName());
+
+    Scene& scene = m_scenes[sceneName];
+    scene.m_name = sceneName;
+
+    m_pCurrentScene = &scene;
+    return scene; // emplace with default constructor of Scene
 }
 
-Scene& SceneManager::loadScene(const std::string& sceneName, ESceneGraphManagement sceneGraphloadType,
-                               EResourceManagement resourcesloadType)
-{
-    if (!m_pCurrentScene)
-    {
-        m_pCurrentScene = &m_scenes[sceneName];
-        Log::getInstance()->log("New empty scene " + sceneName + " created and loaded");
-        return *m_pCurrentScene;
-    }
-
-    // TODO: To remove
-    m_pCurrentScene = &m_scenes[sceneName];
-    Log::getInstance()->log("Scene \"" + sceneName + "\" loaded");
-
-    return *m_pCurrentScene;
-
-    /*
-    switch (sceneGraphloadType)
-    {
-    case ESceneGraphManagement::REPLACE:
-    {
-        std::unique_ptr<Scene> newScene = std::make_unique<Scene>();
-
-        switch (resourcesloadType)
-        {
-        case EResourceManagement::RECYCLING:
-
-            break;
-
-        case EResourceManagement::KEEP_IN_MEMORY:
-
-            break;
-
-        case EResourceManagement::BYPASS_RECYLCING:
-
-            break;
-
-        default:
-            break;
-        }
-        break;
-    }
-
-    case ESceneGraphManagement::MERGE:
-
-        break;
-
-    default:
-        break;
-    }
-    */
-}
-
+//
+// Scene& SceneManager::loadScene(const std::string& sceneName, ESceneGraphManagement sceneGraphloadType,
+//                               EResourceManagement resourcesloadType)
+//{
+//    if (!m_pCurrentScene)
+//    {
+//        m_pCurrentScene = &m_scenes[sceneName];
+//        Log::getInstance()->log("New empty scene " + sceneName + " created and loaded");
+//        return *m_pCurrentScene;
+//    }
+//
+//    // TODO: To remove
+//    m_scenes.erase(m_pCurrentScene->getName());
+//    m_pCurrentScene = &m_scenes[sceneName];
+//    Log::getInstance()->log("Scene \"" + sceneName + "\" loaded");
+//
+//    return *m_pCurrentScene;
+//
+//    /*
+//    switch (sceneGraphloadType)
+//    {
+//    case ESceneGraphManagement::REPLACE:
+//    {
+//        std::unique_ptr<Scene> newScene = std::make_unique<Scene>();
+//
+//        switch (resourcesloadType)
+//        {
+//        case EResourceManagement::RECYCLING:
+//
+//            break;
+//
+//        case EResourceManagement::KEEP_IN_MEMORY:
+//
+//            break;
+//
+//        case EResourceManagement::BYPASS_RECYLCING:
+//
+//            break;
+//
+//        default:
+//            break;
+//        }
+//        break;
+//    }
+//
+//    case ESceneGraphManagement::MERGE:
+//
+//        break;
+//
+//    default:
+//        break;
+//    }
+//    */
+//}
 
 void SceneManager::removeScene(const std::string& sceneName)
 {
@@ -79,4 +89,14 @@ void SceneManager::removeScene(const std::string& sceneName)
         if (currentSceneSetNull && m_scenes.size() != 0u)
             m_pCurrentScene = &m_scenes.begin()->second;
     }
+}
+
+void SceneManager::removeScene(Scene& scene)
+{
+    removeScene(scene.m_name);
+}
+
+void SceneManager::removeScenes()
+{
+    m_scenes.clear();
 }

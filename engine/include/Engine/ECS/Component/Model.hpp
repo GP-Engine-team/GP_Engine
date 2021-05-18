@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -11,6 +11,7 @@
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
+#include "Engine/Serialization/xml/xmlSaver.hpp"
 #include "GPM/Shape3D/Volume.hpp"
 
 // Generated
@@ -24,8 +25,32 @@ namespace GPE RFKNamespace()
     class Material;
     class Model;
 
+    struct SubModel;
+
     struct SubModel
     {
+        struct CreateArg
+        {
+            Shader*   pShader;
+            Material* pMaterial;
+            Mesh*     pMesh;
+
+            bool enableBackFaceCulling = true;
+        };
+
+        SubModel(Model& model, const CreateArg& arg)
+            : pModel{&model}, pShader{arg.pShader}, pMaterial{arg.pMaterial}, pMesh{arg.pMesh},
+              enableBackFaceCulling{arg.enableBackFaceCulling}
+        {
+        }
+
+        SubModel() = default;
+
+        bool isValide()
+        {
+            return pModel && pMesh && pShader && pMaterial;
+        }
+
         Model*    pModel    = nullptr;
         Shader*   pShader   = nullptr;
         Material* pMaterial = nullptr;
@@ -35,11 +60,16 @@ namespace GPE RFKNamespace()
     };
 
     template <>
+    void save(XmlSaver & context, const SubModel& inspected, const XmlSaver::SaveInfo& info);
+    template <>
+    void load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadInfo& info);
+
+    template <>
     void DataInspector::inspect(GPE::InspectContext & context, SubModel & inspected);
 
     bool isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept;
 
-    class RFKClass(ComponentGen) Model : public Component
+    class RFKClass(ComponentGen, Serialize()) Model : public Component
     {
     public:
         struct CreateArg
@@ -48,7 +78,7 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect()) std::list<SubModel> m_subModels;
+        RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
 
     public:
         Model(GameObject & owner);
@@ -59,16 +89,24 @@ namespace GPE RFKNamespace()
         Model(Model && other) noexcept;
         virtual ~Model();
 
-        Model()        = delete;
+        Model()        = default;
         Model& operator=(Model const& other) = delete;
-        Model& operator                      =(Model&& other);
+        Model& operator                      =(Model&& other) noexcept;
 
         void moveTowardScene(class Scene & newOwner) override;
 
+        virtual void onPostLoad();
         virtual void inspect(InspectContext & context);
+
+        void addSubModel(const SubModel::CreateArg& arg);
+
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
 
         Model_GENERATED
     };
 } // namespace )
-
-File_GENERATED

@@ -6,31 +6,37 @@
 
 #pragma once
 #include <Engine/Core/Tools/ClassUtility.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/collider.hpp>
+#include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <GPM/Vector3.hpp>
 
-namespace GPE
+// Generated
+#include <Generated/BoxCollider.rfk.h>
+
+namespace GPE RFKNamespace()
 {
-class BoxCollider : public Collider
-{
-public:
-    BoxCollider(GameObject& owner) noexcept;
+    class RFKClass(ComponentGen(), Inspect(), Serialize()) BoxCollider : public Collider
+    {
+    public:
+        BoxCollider(GameObject& owner)                   noexcept;
+        BoxCollider()                                    noexcept = default;
+        BoxCollider(const BoxCollider& other)            noexcept = delete;
+        BoxCollider(BoxCollider&& other)                 noexcept = default;
+        virtual ~BoxCollider()                           noexcept = default;
 
-    virtual ~BoxCollider() noexcept = default;
+        BoxCollider& operator=(BoxCollider const& other) noexcept = delete;
+        BoxCollider& operator=(BoxCollider&& other)      noexcept = delete;
 
-    BoxCollider() noexcept                         = delete;
-    BoxCollider(const BoxCollider& other) noexcept = delete;
-    BoxCollider(BoxCollider&& other) noexcept      = default;
-    BoxCollider& operator=(BoxCollider const& other) noexcept = delete;
-    BoxCollider& operator=(BoxCollider&& other) noexcept = delete;
+    private:
+        RFKField(Inspect(), Serialize()) GPM::Vector3 m_center = {0,0,0};
+        RFKField(Inspect(), Serialize()) GPM::Vector3 m_dimensions = {10,10,10};
 
-private:
-    GPM::Vector3 m_center;
-    GPM::Vector3 m_dimensions;
+        virtual void onPostLoad() override;
 
-public:
-    DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);
-    GETTER_BY_VALUE(Dimensions, m_dimensions);
-    void setDimensions(GPM::Vec3 newDimensions) noexcept;
-};
-} // namespace GPE
+    public:
+        DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);
+        GETTER_BY_VALUE(Dimensions, m_dimensions);
+        void setDimensions(const GPM::Vec3& newDimensions) noexcept;
+
+        BoxCollider_GENERATED
+    };
+} // namespace )

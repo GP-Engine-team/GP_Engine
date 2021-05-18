@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 #pragma once
 
@@ -45,6 +45,8 @@ public:
      */
     [[nodiscard]] constexpr inline const GLFWwindow* getGLFWWindow() const noexcept;
     [[nodiscard]] constexpr inline GLFWwindow*       getGLFWWindow() noexcept;
+    
+    void close();
 
     /**
      * @brief return the size of the window
@@ -53,6 +55,7 @@ public:
      * @return
      */
     void getSize(int& width, int& height) const noexcept;
+
 };
 
 #include "WindowGLFW.inl"

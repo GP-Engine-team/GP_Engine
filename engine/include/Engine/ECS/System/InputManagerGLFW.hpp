@@ -1,12 +1,13 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
-#include "Engine/ECS/Component/InputComponent.hpp"
-#include "Engine/Resources/Cursor.hpp"
+
+#include <Engine/ECS/Component/InputComponent.hpp>
+#include <Engine/Resources/Cursor.hpp>
 #include <string>
 #include <unordered_map>
 
@@ -22,6 +23,8 @@ private:
     std::unordered_map<int, bool>             m_stateMap;
     std::unordered_map<int, bool>             m_lastStateMap;
     std::unordered_map<int, InputComponent*>  m_inputComponents;
+    std::string                               m_currentInputMode  = "";
+    std::string                               m_previousInputMode = "";
     Cursor                                    m_cursor;
 
 public:
@@ -39,6 +42,16 @@ public:
     void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept;
 
     /**
+     * @brief Callback to get the state of any mouse button keys
+     * @param window
+     * @param button
+     * @param action
+     * @param mods
+     * @return
+     */
+    void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) noexcept;
+
+    /**
      * @brief Callback to get the new position of the mouse cursor
      * @param window
      * @param xpos
@@ -46,7 +59,6 @@ public:
      * @return
      */
     void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
-    void cursorLockedPositionCallback(GLFWwindow* window, double xpos, double ypos) noexcept;
 
     /**
      * @brief Throw events to input components
@@ -60,12 +72,47 @@ public:
      * @param window
      * @return
      */
-    void setupCallbacks(GLFWwindow* window, bool lockMousInCenter = false) noexcept;
+    void setupCallbacks(GLFWwindow* window) noexcept;
 
     /**
      * @brief Set cursor mode using GLFW Enum
      */
-    void setCursorMode(GLFWwindow* window, int mode) noexcept;
+    void setCursorMode(int mode) noexcept;
+
+    /**
+     * @brief Set the current input mode
+     * @param inputMode
+     * @return
+     */
+    inline void setInputMode(const std::string& inputMode) noexcept;
+
+    /**
+     * @brief Restore the input mode previously set before the one currently active
+     *
+     * Internally, swaps m_previousInputMode and m_currentInputMode
+     */
+    inline void restorePreviousInputMode() noexcept;
+
+    /**
+     * @brief Set the current input mode
+     * @param
+     * @return const std::string& inputMode
+     */
+    [[nodiscard]] inline const std::string& getInputMode() noexcept;
+
+    /**
+     * @brief Set the cursor tracking state
+     * @param trackState
+     * @return
+     */
+    inline void setCursorTrackingState(bool trackState) noexcept;
+
+    /**
+     * @brief Set the cursor lock state
+     * @param lockState
+     * @return
+     */
+    void setCursorLockState(bool lockState) noexcept;
 
     /**
      * @brief bind a key to an action
@@ -80,7 +127,7 @@ public:
      * @param input
      * @return
      */
-    inline int addComponent(InputComponent* input) noexcept;
+    inline int addComponent(InputComponent& input) noexcept;
 
     inline void updateComponent(InputComponent* newPointerInputComponent, int key) noexcept;
 
@@ -103,6 +150,6 @@ public:
      */
     [[nodiscard]] inline const Cursor& getCursor() const noexcept;
 };
+} // namespace GPE
 
 #include "Engine/ECS/System/InputManagerGLFW.inl"
-} // namespace GPE

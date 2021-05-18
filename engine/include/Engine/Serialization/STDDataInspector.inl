@@ -1,12 +1,18 @@
-#include "Engine/Serialization/STDDataInspector.hpp"
+#include <Engine/Serialization/STDDataInspector.hpp>
 
 template <typename T>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const rfk::Field& info)
 {
-    ImGuiTreeNodeFlags nodeFlag =
+    return inspect(context, inspected, info.name.c_str());
+}
+
+template <typename T>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const char* name)
+{
+    const ImGuiTreeNodeFlags nodeFlag =
         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-    const bool arrayIsOpen = ImGui::TreeNodeEx((void*)info.name.c_str(), nodeFlag, info.name.c_str());
+    const bool arrayIsOpen = ImGui::TreeNodeEx((void*)name, nodeFlag, name);
 
     if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
     {
@@ -35,6 +41,7 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
         size_t i = 0;
         for (auto&& it = inspected.begin(); it != inspected.end(); ++i)
         {
+            ImGui::PushID(&*it);
             const bool treeIsOpen =
                 ImGui::TreeNodeEx((void*)(intptr_t)i, nodeFlag, std::string("Element " + std::to_string(i)).c_str());
 
@@ -62,13 +69,68 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
                 // Check if user inspect the current element
                 if (treeIsOpen)
                 {
-                    inspect(*it);
-                    ImGui::TreePop();
+                    inspect(context, *it);
                 }
-
                 ++it;
             }
+
+            if (treeIsOpen)
+                ImGui::TreePop();
+
+            ImGui::PopID();
         }
         ImGui::TreePop();
+    }
+
+    return false;
+}
+
+template <typename T>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const rfk::Field& info)
+{
+    return inspect(context, inspected, info.name.c_str());
+}
+
+template <typename T>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const char* name)
+{
+    if (inspected.get())
+    {
+        return inspect(context, *inspected.get(), name);
+    }
+    return false;
+}
+
+template <typename T>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected)
+{
+    if (inspected.get())
+    {
+        inspect(context, *inspected.get());
+    }
+}
+
+template <typename T>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected, const rfk::Field& info)
+{
+    return inspect(context, inspected, info.name.c_str());
+}
+
+template <typename T>
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected, const char* name)
+{
+    if (inspected.get())
+    {
+        return inspect(context, *inspected.get(), name);
+    }
+    return false;
+}
+
+template <typename T>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected)
+{
+    if (inspected.get())
+    {
+        inspect(context, *inspected.get());
     }
 }

@@ -1,24 +1,30 @@
 #pragma once
 
-#include "Engine/Core/Game/ContextStartup.hpp"
+#include <Engine/Core/Game/ContextStartup.hpp>
 #include <functional>
+
+struct GLFWwindow;
+
+namespace GPE
+{
+class AbstractGame;
+class Engine;
+}
 
 class GameStartup final : public ContextStartup
 {
 private:
-	class AbstractGame* m_game = nullptr;
+    GPE::Engine*       m_engine;
+    GPE::AbstractGame* m_game;
 
-	struct
-	{
-		std::function<void(double, double)> update;
-		std::function<void(double, double)> fixedUpdate;
-		std::function<void()> render;
-	} gameFunctionsPtr;
+    const std::function<void(double, double)> m_update;
+    const std::function<void(double, double)> m_fixedUpdate;
+    const std::function<void()>               m_render;
 
 public:
-	GameStartup();
+    GameStartup();
 
-	virtual void update() override final;
+    void update() final;
 
-	virtual ~GameStartup() final;
+    virtual ~GameStartup() final;
 };

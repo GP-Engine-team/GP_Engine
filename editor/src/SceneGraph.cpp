@@ -1,19 +1,22 @@
-﻿#include "Editor/SceneGraph.hpp"
+﻿#include <Editor/SceneGraph.hpp>
 
-// Components
-// TODO: Generat this automatically
-#include "Engine/ECS/Component/Camera.hpp"
-#include "Engine/ECS/Component/Model.hpp"
+#include <filesystem>
 
-#include "Engine/ECS/Component/AudioComponent.hpp"
-#include "Engine/ECS/Component/InputComponent.hpp"
+#include <Editor/Editor.hpp>
+#include <Engine/Core/Tools/Hash.hpp>
+#include <Engine/Engine.hpp>
 
-#include "Engine/ECS/Component/Light/DirectionalLight.hpp"
-#include "Engine/ECS/Component/Light/PointLight.hpp"
-#include "Engine/ECS/Component/Light/SpotLight.hpp"
+#include <Engine/Resources/Importer/Importer.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
+#include <Engine/Serialization/IInspectable.hpp>
 
-#include "Engine/Resources/Scene.hpp"
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+
+#include <Engine/Resources/Scene.hpp>
 #include <imgui/imgui.h>
+
+#include <map>
 
 using namespace Editor;
 using namespace GPE;
@@ -29,13 +32,17 @@ void DeferedSetParent::tryExecute()
     if (m_movedGO == nullptr)
         return;
 
-    m_movedGO->setParent(*m_newParentGO);
+    m_movedGO->setParent(m_newParentGO);
 
     m_movedGO     = nullptr;
     m_newParentGO = nullptr;
 }
 
-void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
+SceneGraph::SceneGraph(Editor& context) : m_pEditorContext{&context}
+{
+}
+
+void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject, int idElem)
 {
     // Drag
     if (ImGui::BeginDragDropSource())
@@ -46,7 +53,7 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
         ImGui::EndDragDropSource();
     }
 
-    // Drop
+    // Drop gameObject to set as child
     if (ImGui::BeginDragDropTarget())
     {
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
@@ -57,12 +64,33 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
         ImGui::EndDragDropTarget();
     }
 
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+    // Drop prefab to instanciate and set as child
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_PREFAB_EXTENSION))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            Scene empty;
+            auto  loadFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), loadSceneFromPath);
+            loadFunc(&empty, path.string().c_str());
+            if (!empty.getWorld().children.empty())
+            {
+                GameObject* const go = empty.getWorld().children.front();
+                go->setParent(&gameObject);
+                go->getTransform().setDirty();
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+
+    if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
     {
         selectedGameObject = &gameObject;
     }
 
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
     {
         ImGui::OpenPopup((std::string("SceneGraphContext") + std::to_string(idElem)).c_str());
     }
@@ -77,33 +105,98 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
 
         if (ImGui::BeginMenu("Add component"))
         {
-            if (ImGui::MenuItem("Camera"))
-                gameObject.addComponent<Camera>();
+            auto getComponentClassFunct   = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), getComponentClass);
+            auto createComponentByIDFunct = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), createComponentByID);
 
-            if (ImGui::MenuItem("Model"))
-                gameObject.addComponent<Model>();
-
-            // if (ImGui::MenuItem("Audio component"))
-            // gameObject.addComponent<AudioComponent>();
-
-            if (ImGui::MenuItem("Input component"))
-                gameObject.addComponent<InputComponent>();
-
-            if (ImGui::BeginMenu("Lights"))
+            for (auto&& child : getComponentClassFunct().children)
             {
-                if (ImGui::MenuItem("Dircetional light"))
-                    gameObject.addComponent<DirectionalLight>();
-
-                if (ImGui::MenuItem("PointLight"))
-                    gameObject.addComponent<PointLight>();
-
-                if (ImGui::MenuItem("Spot light"))
-                    gameObject.addComponent<SpotLight>();
-
-                ImGui::EndMenu();
+                if (ImGui::MenuItem(child->name.c_str()))
+                    createComponentByIDFunct(gameObject, child->id);
             }
 
+            // Sorting mus be apply when RFK will be update with directChildren function
+            // std::vector<std::map<std::string, std::vector<rfk::Archetype const*>>> archetypeSortedByDepth;
+            // for (auto& parent : classArchetype->directParents)
+            //{
+            //    if (!parent.type->directParents.empty())
+            //    {
+            //        archetypeSorted[parent.type->name].emplace_back(compArchetype);
+            //    }
+            //    else
+            //    {
+            //        archetypeSorted[compArchetype->name].emplace_back(compArchetype);
+            //    }
+            //}
+
+            // std::vector < std::map<std::string, std::vector<rfk::Archetype const*>> archetypeSortedByDepth;
+
+            // for (auto&& compArchetype : componnentList)
+            //{
+            //    if (ImGui::MenuItem(key.c_str()))
+            //        createComponentByIDFunct(gameObject, value.front()->id);
+            //}
+
+            // std::map<std::string, std::vector<rfk::Archetype const*>> archetypeSorted;
+
+            // for (auto&& compArchetype : componnentList)
+            //{
+            //    const rfk::Class* classArchetype = static_cast<const rfk::Class*>(compArchetype);
+            //    for (auto& parent : classArchetype->directParents)
+            //    {
+            //        if (!parent.type->directParents.empty())
+            //        {
+            //            archetypeSorted[parent.type->name].emplace_back(compArchetype);
+            //        }
+            //        else
+            //        {
+            //            archetypeSorted[compArchetype->name].emplace_back(compArchetype);
+            //        }
+            //    }
+            //}
+
+            // for (const auto& [key, value] : archetypeSorted)
+            //{
+            //    if (value.size() > 1)
+            //    {
+            //        if (ImGui::BeginMenu(key.c_str()))
+            //        {
+            //            for (auto&& archetype : value)
+            //            {
+            //                if (ImGui::MenuItem(archetype->name.c_str()))
+            //                    createComponentByIDFunct(gameObject, archetype->id);
+            //            }
+            //            ImGui::EndMenu();
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (ImGui::MenuItem(key.c_str()))
+            //            createComponentByIDFunct(gameObject, value.front()->id);
+            //    }
+            //}
+
             ImGui::EndMenu();
+        }
+
+        if (ImGui::MenuItem("Save as prefab", NULL, false))
+        {
+            const std::filesystem::path path = openFolderExplorerAndGetRelativePath(L"Select folder") /
+                                               (gameObject.getName() + ENGINE_PREFAB_EXTENSION);
+
+            Scene             tempScene;
+            GameObject* const pPreviousParent     = gameObject.getParent();
+            Scene* const      pPreviousOwnedScene = gameObject.pOwnerScene;
+
+            tempScene.getWorld().children.emplace_back(&gameObject);
+            gameObject.forceSetParent(tempScene.getWorld());
+            gameObject.pOwnerScene = nullptr;
+
+            auto saveFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), saveSceneToPath);
+            saveFunc(&tempScene, path.string().c_str(), GPE::SavedScene::EType::XML);
+
+            gameObject.pOwnerScene = pPreviousOwnedScene;
+            gameObject.forceSetParent(*pPreviousParent);
+            tempScene.getWorld().children.clear();
         }
 
         if (ImGui::MenuItem("Remove", NULL, false))
@@ -116,7 +209,8 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GameObject*& s
     }
 }
 
-void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GameObject*& selectedGameObject, int idElem)
+void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject,
+                                         int idElem)
 {
     ImGuiTreeNodeFlags nodeFlag = ImGuiTreeNodeFlags_Selected * (selectedGameObject == &gameObject) |
                                   ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick |
@@ -144,9 +238,12 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GameObject
             ImGui::TreePop();
         }
     }
+
+    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && selectedGameObject)
+        m_pEditorContext->m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(selectedGameObject));
 }
 
-void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GameObject*& selectedGameObject)
+void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject)
 {
     recursiveSceneGraphNode(gameObject, selectedGameObject);
     deferedSetParent.tryExecute();

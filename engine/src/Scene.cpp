@@ -1,19 +1,30 @@
 #include "Engine/Resources/Scene.hpp"
 
-#include "Engine/Core/Debug/Assert.hpp"
-#include "Engine/Intermediate/DataChunk.hpp"
+#include <Engine/Core/Debug/Assert.hpp>
+#include <Engine/ECS/System/RenderSystem.hpp>
+#include <Engine/Intermediate/DataChunk.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 
-#include <sstream> //std::sstream, std::getline
+#include <filesystem> //std::path
+#include <sstream>    //std::sstream, std::getline
+
+#include "Engine/Serialization/xml/xmlLoader.hpp"
+#include "Engine/Serialization/xml/xmlSaver.hpp"
 
 using namespace GPE;
 
-Scene::Scene() noexcept : m_pWorld(&DataChunk<GameObject>::getInstance()->add(*this))
+Scene::Scene() noexcept : m_pWorld(new GameObject(*this))
 {
+    for (auto&& elem : m_loadedResourcesPath)
+    {
+        // importeResource(elem.first.c_str());
+    }
 }
 
 Scene::~Scene() noexcept
 {
-    // DataChunk<GameObject>::getInstance()->destroy(m_pWorld);
+    if (m_pWorld->getParent())
+        m_pWorld.release(); // The parent will manage the memory
 }
 
 GameObject* Scene::getGameObject(const std::string& path) noexcept
@@ -22,7 +33,7 @@ GameObject* Scene::getGameObject(const std::string& path) noexcept
 
     std::stringstream sPath(path);
     std::string       word;
-    GameObject*       currentEntity = m_pWorld;
+    GameObject*       currentEntity = m_pWorld.get();
 
     while (std::getline(sPath, word, '/'))
     {
@@ -59,7 +70,12 @@ void Scene::addLoadedResourcePath(const char* path) noexcept
     // Unordered pair of iterator and result
     auto itRst = m_loadedResourcesPath.try_emplace(path, 1);
 
-    if (!itRst.second)
+    if (itRst.second)
+    {
+        // importeResource(path);
+        Log::getInstance()->log(stringFormat("Resource add to scene \"%s\" with path : %s", m_name.c_str(), path));
+    }
+    else
     {
         itRst.first->second++;
     }
@@ -70,5 +86,23 @@ void Scene::removeLoadedResourcePath(const char* path) noexcept
     if (--m_loadedResourcesPath[path] == 0)
     {
         m_loadedResourcesPath.erase(path);
+        Log::getInstance()->log(stringFormat("Resource remove from scene \"%s\" with path : %s", m_name.c_str(), path));
     }
+}
+
+void Scene::save(XmlSaver& context) const
+{
+    GPE::save(context, m_pWorld, XmlSaver::SaveInfo{"m_pWorld", "GameObject", GameObject::staticGetArchetype().id});
+}
+
+void Scene::load(XmlLoader& context)
+{
+    m_pWorld.reset();
+    GPE::load(context, m_pWorld, XmlLoader::LoadInfo{"m_pWorld", "GameObject", GameObject::staticGetArchetype().id});
+}
+
+template <>
+void GPE::load(XmlLoader& context, GPE::Scene*& inspected, const XmlLoader::LoadInfo& info)
+{
+    context.addLazy((void**)&inspected);
 }

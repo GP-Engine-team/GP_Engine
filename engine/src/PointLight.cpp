@@ -3,12 +3,11 @@
 #include "Engine/Intermediate/DataChunk.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 
-using namespace GPE;
+// Generated
+#include "Generated/PointLight.rfk.h"
+File_GENERATED
 
-PointLight::~PointLight()
-{
-    DataChunk<PointLight>::getInstance()->destroy(this);
-}
+    using namespace GPE;
 
 PointLight::PointLight(GameObject& owner) noexcept : PointLight(owner, CreateArg{})
 {

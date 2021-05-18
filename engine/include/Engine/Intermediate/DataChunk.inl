@@ -1,36 +1,29 @@
 #include "Engine/Intermediate/DataChunk.hpp"
 
-template <typename TStoredData, int TSize>
+template <typename TStoredData, size_t TSize>
 constexpr inline DataChunk<TStoredData, TSize>::DataChunk() noexcept
 {
-    m_datas.reserve(TSize / sizeof(TStoredData));
+    //m_datas.reserve(TSize / sizeof(TStoredData));
 }
 
-template <typename TStoredData, int TSize>
+template <typename TStoredData, size_t TSize>
 template <typename... Args>
-TStoredData& DataChunk<TStoredData, TSize>::add(Args&&... args) noexcept
+TStoredData* DataChunk<TStoredData, TSize>::add(Args&&... args) noexcept
 {
-    return m_datas.emplace_back(std::forward<Args>(args)...);
+    TStoredData* instance = allocator.allocate(1); // not constructed yet
+    //return new (instance) TStoredData(std::forward<Args>(args)...);
+    return instance;
 }
 
-template <typename TStoredData, int TSize>
-void DataChunk<TStoredData, TSize>::destroy(const TStoredData* dataToDestroy) noexcept
+template <typename TStoredData, size_t TSize>
+void DataChunk<TStoredData, TSize>::destroy(TStoredData* const dataToDestroy) noexcept
 {
-    for (size_t i = 0; i < m_datas.size(); ++i)
-    {
-        if (unlikely(&m_datas[i] == dataToDestroy))
-        {
-            TStoredData tmp = std::move(m_datas[i]);
-            m_datas[i]      = std::move(m_datas.back());
-            m_datas.back()  = std::move(tmp);
-
-            m_datas.pop_back();
-            return;
-        }
-    }
+    //dataToDestroy->~TStoredData();
+    allocator.deallocate(dataToDestroy);
+    //delete dataToDestroy;
 }
 
-template <typename TStoredData, int TSize>
+template <typename TStoredData, size_t TSize>
 DataChunk<TStoredData, TSize>* DataChunk<TStoredData, TSize>::getInstance() noexcept
 {
     if (unlikely(m_pInstance == nullptr))
@@ -41,7 +34,7 @@ DataChunk<TStoredData, TSize>* DataChunk<TStoredData, TSize>::getInstance() noex
     return m_pInstance;
 }
 
-template <typename TStoredData, int TSize>
+template <typename TStoredData, size_t TSize>
 void DataChunk<TStoredData, TSize>::setInstance(DataChunk& ptr) noexcept
 {
     m_pInstance = &ptr;

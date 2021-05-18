@@ -1,8 +1,8 @@
 ﻿#include "Engine/Serialization/xml/xmlUtilities.hpp"
+#include <sstream>
 
 #include "RapidXML/rapidxml.hpp"
 #include "RapidXML/rapidxml_print.hpp"
-#include <iostream>
 
 using namespace rapidxml;
 
@@ -18,4 +18,11 @@ std::string findAttribValue(xml_node<>* parentNode, const std::string& key)
     }
 
     return "";
+}
+
+std::string docToString(const xml_document<>& doc)
+{
+    std::stringstream ss;
+    ss << doc;
+    return ss.str();
 }

@@ -1,17 +1,18 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
 
+#include <cstdint>
 #include <glad/glad.h>
 #include <string>
 #include <vector>
 
-#include "Engine/Resources/ShaderType.hpp"
-#include "GPM/Vector3.hpp" //Vec3
+#include <Engine/Resources/ShaderType.hpp>
+#include <GPM/Vector3.hpp> //Vec3
 
 namespace GPE
 {
@@ -21,6 +22,10 @@ namespace GPE
 #define AMBIANTE_COLOR_ONLY (1 << 2)
 #define SCALE_TIME_ACC (1 << 3)
 #define UNSCALED_TIME_ACC (1 << 4)
+
+#define PROJECTION_VIEW_MODEL_MATRIX (1 << 6)
+#define PROJECTION_MATRIX (1 << 7)
+#define VIEW_MATRIX (1 << 8)
 
 // Inspiread about code exemple on learn openGl : https://learnopengl.com/Getting-started/Shaders
 class Shader
@@ -34,15 +39,10 @@ public:
     };
 
 protected:
-    unsigned char m_featureMask         = 0; // feature is shader interger into shader like light, blure etc....
-    unsigned int  m_lightsUniformBuffer = 0; // TODO: no sens to have id of uniform light in any shaders
+    uint16_t     m_featureMask         = 0; // feature is shader interger into shader like light, blure etc....
+    unsigned int m_lightsUniformBuffer = 0; // TODO: no sens to have id of uniform light in any shaders
 
-    std::string m_nameFragment;
-    std::string m_nameVertex;
-
-    unsigned int m_id         = 0;
-    unsigned int m_idVertex   = 0; // TODO: move in fragmentShader class to optimize recycling
-    unsigned int m_idFragment = 0; // TODO: move in vertexShader class to optimize recycling
+    unsigned int m_id = 0;
 
 public:
     /**
@@ -53,14 +53,15 @@ public:
      * @param fragmentPath
      * @param featureMask           : LIGHT_BLIN_PHONG | FEATURE_2 | [...]
      */
-    Shader(const char* vertexPath, const char* fragmentPath, unsigned char featureMask = 0);
-
-    // TODO:
-    Shader(const char* shaderPath);
+    Shader(const char* vertexPath, const char* fragmentPath, uint16_t featureMask = 0);
 
     Shader(const Shader& other) = delete;
-    Shader(Shader&& other)      = default;
+    void operator=(const Shader&) = delete;
+    Shader(Shader&& other)        = delete;
+    void operator=(Shader&&) = delete;
     ~Shader() noexcept;
+
+    void reload(const char* vertexPath, const char* fragmentPath, uint16_t featureMask = 0);
 
     /**
      * @brief activate the shader
@@ -86,8 +87,8 @@ public:
     void        setLightBlock(const std::vector<LightData>& lightBuffer, const GPM::Vec3& viewPos) noexcept;
     void        setMaterialBlock(const MaterialComponent& material) const noexcept;
 
-    inline unsigned int  getID() const noexcept;
-    inline unsigned char getFeature() const noexcept;
+    inline unsigned int getID() const noexcept;
+    inline uint16_t     getFeature() const noexcept;
 
 private:
     /**
@@ -119,13 +120,8 @@ private:
      */
     void checkCompileErrors(unsigned int shader, EType type);
 
-    /**
-     * @brief parse the name of image integer in path
-     *
-     * @param path
-     * @param shaderName
-     */
-    void removeUntilFirstSpace(const char* path, std::string& shaderName);
+    void loadAndCompile(const char* vertexPath, const char* fragmentPath, uint16_t featureMask = 0);
+    void release();
 };
 
 #include "Shader.inl"

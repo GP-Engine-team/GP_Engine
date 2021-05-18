@@ -2,18 +2,34 @@
 
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Debug/Log.hpp"
+#include "Engine/Serialization/GPMDataInspector.hpp"
 #include "GPM/Constants.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
 
 #include <glad/glad.h>
 
-#include <iostream>
 #include <limits>
 
 using namespace GPE;
 using namespace GPM;
 
-Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
+Mesh::CreateIndiceBufferArg Mesh::convert(Mesh::CreateContiguousVerticesArg& arg)
+{
+    CreateIndiceBufferArg newArg;
+    newArg.boundingVolume.reset(arg.boundingVolume.get());
+    arg.boundingVolume.release();
+    newArg.boundingVolumeType = arg.boundingVolumeType;
+
+    for (size_t i = 0u; i < arg.iBuffer.size(); ++i)
+    {
+        newArg.vertices.push_back(
+            {arg.vBuffer[arg.iBuffer[i].iv], arg.vnBuffer[arg.iBuffer[i].ivn], arg.vtBuffer[arg.iBuffer[i].ivt]});
+        newArg.indices.push_back((unsigned int)i);
+    }
+    return newArg;
+}
+
+Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 {
     // m_boundingVolumeType = arg.boundingVolumeType;
 
@@ -49,82 +65,7 @@ Mesh::Mesh(CreateIndiceBufferArg& arg) noexcept
 
     glBindVertexArray(0);
 
-    Log::getInstance()->log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with EBO").c_str());
-}
-
-static void initializeVertexBuffer(GLuint& buffer, GLenum target, GLenum usage, const void* data, int size) noexcept
-{
-    glGenBuffers(1, &buffer);
-    glBindBuffer(target, buffer);
-    glBufferData(target, size, data, usage);
-    glBindBuffer(target, 0);
-}
-
-Mesh::Mesh(CreateContiguousVerticesArg& arg) noexcept
-{
-    // m_boundingVolumeType = arg.boundingVolumeType;
-
-    //  if (arg.boundingVolume != nullptr)
-    //      m_boundingVolume = std::move(arg.boundingVolume);
-
-    if (arg.iBuffer.empty())
-    {
-        m_verticesCount = static_cast<unsigned int>(arg.vBuffer.size());
-
-        initializeVertexBuffer(m_vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vBuffer.data(),
-                               static_cast<int>(arg.vBuffer.size() * sizeof(arg.vBuffer[0])));
-        initializeVertexBuffer(m_uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vtBuffer.data(),
-                               static_cast<int>(arg.vtBuffer.size() * sizeof(arg.vtBuffer[0])));
-        initializeVertexBuffer(m_normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, arg.vnBuffer.data(),
-                               static_cast<int>(arg.vnBuffer.size() * sizeof(arg.vnBuffer[0])));
-    }
-    else
-    {
-        std::vector<Vec3> vVBO;
-        std::vector<Vec2> vtVBO;
-        std::vector<Vec3> vnVBO;
-
-        m_verticesCount = static_cast<unsigned int>(arg.iBuffer.size());
-
-        vVBO.reserve(arg.iBuffer.size());
-        vtVBO.reserve(arg.iBuffer.size());
-        vnVBO.reserve(arg.iBuffer.size());
-
-        for (size_t i = 0; i < arg.iBuffer.size(); ++i)
-        {
-            vVBO.emplace_back(arg.vBuffer[arg.iBuffer[i].iv]);
-            vtVBO.emplace_back(arg.vtBuffer[arg.iBuffer[i].ivt]);
-            vnVBO.emplace_back(arg.vnBuffer[arg.iBuffer[i].ivn]);
-        }
-
-        initializeVertexBuffer(m_vertexbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vVBO.data(),
-                               static_cast<int>(vVBO.size() * sizeof(vVBO[0])));
-        initializeVertexBuffer(m_uvbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vtVBO.data(),
-                               static_cast<int>(vtVBO.size() * sizeof(vtVBO[0])));
-        initializeVertexBuffer(m_normalbuffer, GL_ARRAY_BUFFER, GL_STATIC_DRAW, vnVBO.data(),
-                               static_cast<int>(vnVBO.size() * sizeof(vnVBO[0])));
-    }
-
-    // Generate VAO
-    glGenVertexArrays(1, &m_VAO);
-    glBindVertexArray(m_VAO);
-
-    // 1rst attribute buffer : vertices
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexbuffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    // 2nd attribute buffer : normals
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, m_normalbuffer);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    // 3nd attribute buffer : UVs
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, m_uvbuffer);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-    Log::getInstance()->log((std::string("Mesh ") + arg.objName.c_str() + " load in GPU with VBOs").c_str());
+    Log::getInstance()->log("Mesh load in GPU with EBO");
 }
 
 Mesh::~Mesh() noexcept
@@ -151,12 +92,11 @@ void Mesh::draw() const noexcept
     glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_verticesCount));
 }
 
-Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition,
-                                                   unsigned int indexTextureX, unsigned int indexTextureY,
-                                                   Axis towardAxis, bool isRectoVerso) noexcept
+Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition,
+                                             unsigned int indexTextureX, unsigned int indexTextureY, Axis towardAxis,
+                                             bool isRectoVerso) noexcept
 {
     Mesh::CreateContiguousVerticesArg mesh;
-    mesh.objName = "Plane";
 
     // plane contain 4 triangle, 4 vertex 4 texture coordonate and 2 normal
     mesh.vBuffer.reserve(4);
@@ -181,6 +121,7 @@ Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHe
         mesh.vBuffer.push_back({0.f, halfHeight, -halfWidth});
         mesh.vBuffer.push_back({0.f, halfHeight, halfWidth});
         mesh.vBuffer.push_back({0.f, -halfHeight, halfWidth});
+        mesh.vnBuffer.push_back({1.f, 0.f, 0.f});
         break;
 
     case Axis::NEG_X:
@@ -188,20 +129,23 @@ Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHe
         mesh.vBuffer.push_back({0.f, -halfHeight, halfWidth});
         mesh.vBuffer.push_back({0.f, -halfHeight, -halfWidth});
         mesh.vBuffer.push_back({0.f, halfHeight, -halfWidth});
+        mesh.vnBuffer.push_back({-1.f, 0.f, 0.f});
         break;
 
     case Axis::Y:
-        mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth});
-        mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});
-        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
-        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
+        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});   // 0
+        mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});  // 1
+        mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth}); // 2
+        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});  // 3
+        mesh.vnBuffer.push_back({0.f, 1.f, 0.f});
         break;
 
     case Axis::NEG_Y:
-        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
-        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
         mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth});
         mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});
+        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
+        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
+        mesh.vnBuffer.push_back({0.f, -1.f, 0.f});
         break;
 
     case Axis::Z:
@@ -209,6 +153,7 @@ Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHe
         mesh.vBuffer.push_back({halfHeight, -halfWidth, 0.f});
         mesh.vBuffer.push_back({halfHeight, halfWidth, 0.f});
         mesh.vBuffer.push_back({-halfHeight, halfWidth, 0.f});
+        mesh.vnBuffer.push_back({0.f, 0.f, 1.f});
         break;
 
     case Axis::NEG_Z:
@@ -216,6 +161,8 @@ Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHe
         mesh.vBuffer.push_back({halfHeight, -halfWidth, 0.f});
         mesh.vBuffer.push_back({halfHeight, halfWidth, 0.f});
         mesh.vBuffer.push_back({-halfHeight, halfWidth, 0.f});
+
+        mesh.vnBuffer.push_back({0.f, 0.f, -1.f});
         break;
 
     default:
@@ -231,9 +178,6 @@ Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHe
     mesh.vtBuffer.push_back({shiftX, shiftY + textureRepetition});
     mesh.vtBuffer.push_back({shiftX + textureRepetition, shiftY + textureRepetition});
 
-    // initialize normal :
-    mesh.vnBuffer.push_back({0.f, -1.f, 0.f});
-
     if (isRectoVerso)
     {
         // Face 2
@@ -248,13 +192,12 @@ Mesh::CreateContiguousVerticesArg Mesh::createQuad(float halfWidth, float halfHe
         mesh.vnBuffer.push_back({0.f, 1.f, 0.f});
     }
 
-    return mesh;
+    return convert(mesh);
 }
 
-Mesh::CreateContiguousVerticesArg Mesh::createCube(float textureRepetition) noexcept
+Mesh::CreateIndiceBufferArg Mesh::createCube(float textureRepetition) noexcept
 {
     Mesh::CreateContiguousVerticesArg mesh;
-    mesh.objName = "Cube";
 
     // cube contain 12 triangle, 8 vertex 4 texture coordonate and 6 normal
     mesh.vBuffer.reserve(8);
@@ -335,15 +278,14 @@ Mesh::CreateContiguousVerticesArg Mesh::createCube(float textureRepetition) noex
     mesh.vnBuffer.push_back({1.f, 0.f, 0.f});
     mesh.vnBuffer.push_back({-1.f, 0.f, 0.f});
 
-    return mesh;
+    return convert(mesh);
 }
 
-Mesh::CreateContiguousVerticesArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexcept
+Mesh::CreateIndiceBufferArg Mesh::createSphere(int latitudeCount, int longitudeCount) noexcept
 {
     GPE_ASSERT(latitudeCount > 2 && longitudeCount > 2, "Latitude and Longitude must be greater than 2");
 
     Mesh::CreateContiguousVerticesArg mesh;
-    mesh.objName = "Sphere";
 
     latitudeCount *= 2;
 
@@ -422,15 +364,14 @@ Mesh::CreateContiguousVerticesArg Mesh::createSphere(int latitudeCount, int long
         }
     }
 
-    return mesh;
+    return convert(mesh);
 }
 
-Mesh::CreateContiguousVerticesArg Mesh::createCylindre(unsigned int prescision) noexcept
+Mesh::CreateIndiceBufferArg Mesh::createCylindre(unsigned int prescision) noexcept
 {
     GPE_ASSERT(prescision > 2, "Prescision must be greater than 2");
 
     Mesh::CreateContiguousVerticesArg mesh;
-    mesh.objName = "Cylindre";
 
     // Cylindre contain prescision * 2 + 2
     mesh.vBuffer.reserve(static_cast<size_t>(prescision) * 2 + 2);
@@ -522,5 +463,21 @@ Mesh::CreateContiguousVerticesArg Mesh::createCylindre(unsigned int prescision) 
     mesh.iBuffer.push_back(Indice{prescision + prescision, prescision + prescision, prescision + prescision});
     mesh.iBuffer.push_back(Indice{prescision + 1, prescision + 1, prescision + 1});
 
-    return mesh;
+    return convert(mesh);
+}
+
+template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, Mesh::Vertex& inspected)
+{
+    inspect(context, inspected.v, "v");
+    inspect(context, inspected.vn, "vn");
+    inspect(context, inspected.vt, "uv");
+}
+
+template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, Mesh::Indice& inspected)
+{
+    inspect(context, inspected.iv, "iv");
+    inspect(context, inspected.ivn, "ivn");
+    inspect(context, inspected.ivt, "iuv");
 }

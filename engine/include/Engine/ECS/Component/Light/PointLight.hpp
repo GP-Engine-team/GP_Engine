@@ -1,7 +1,7 @@
-﻿/*
+/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen) PointLight : public Light
+    class RFKClass(Serialize(), Inspect(), ComponentGen) PointLight : public Light
     {
     public:
         struct CreateArg
@@ -32,14 +32,16 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        float m_constant, m_linear, m_quadratic;
+        RFKField(Inspect(), Serialize()) float m_constant;
+        RFKField(Inspect(), Serialize()) float m_linear;
+        RFKField(Inspect(), Serialize()) float m_quadratic;
 
     public:
         PointLight(const PointLight& other) = delete;
         PointLight(PointLight && other)     = default;
-        virtual ~PointLight();
+        virtual ~PointLight()               = default;
 
-        PointLight()        = delete;
+        PointLight()        = default;
         PointLight& operator=(PointLight const& other) = delete;
         PointLight& operator=(PointLight&& other) = default;
 
@@ -60,5 +62,3 @@ namespace GPE RFKNamespace()
     };
 
 } // namespace )
-
-File_GENERATED

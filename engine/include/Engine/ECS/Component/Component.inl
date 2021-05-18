@@ -1,5 +1,5 @@
-#include "Engine/ECS/Component/Component.hpp"
-
+namespace GPE
+{
 inline Component::Component(GameObject& owner) noexcept : m_gameObject{&owner}
 {
 }
@@ -7,6 +7,11 @@ inline Component::Component(GameObject& owner) noexcept : m_gameObject{&owner}
 constexpr inline GameObject& Component::getOwner() noexcept
 {
     return *m_gameObject;
+}
+
+inline void Component::setOwner(GameObject& owner) noexcept
+{
+    m_gameObject = &owner;
 }
 
 constexpr inline const GameObject& Component::getOwner() const noexcept
@@ -19,7 +24,8 @@ constexpr inline bool Component::isActivated() const noexcept
     return m_isActivated;
 }
 
-constexpr inline void Component::setActive(bool newState) noexcept
+inline void Component::setActive(bool newState) noexcept
 {
     m_isActivated = newState;
 }
+} // namespace GPE

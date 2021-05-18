@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -22,7 +22,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen) DirectionalLight : public Light
+    class RFKClass(Serialize(), Inspect(), ComponentGen) DirectionalLight : public Light
     {
     public:
         struct CreateArg
@@ -34,14 +34,14 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        GPM::Vec3 m_direction;
+        RFKField(Inspect(), Serialize()) GPM::Vec3 m_direction;
 
     public:
         DirectionalLight(const DirectionalLight& other) = delete;
         DirectionalLight(DirectionalLight && other)     = default;
         virtual ~DirectionalLight();
 
-        DirectionalLight()        = delete;
+        DirectionalLight()        = default;
         DirectionalLight& operator=(DirectionalLight const& other) = delete;
         DirectionalLight& operator=(DirectionalLight&& other) = default;
 
@@ -49,7 +49,8 @@ namespace GPE RFKNamespace()
 
         DirectionalLight(GameObject & owner, const CreateArg& arg) noexcept;
 
-        void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept final;
+        void      addToLightToUseBuffer(std::vector<LightData> & lb) noexcept final;
+        GPM::Mat4 getLightSpaceMatrix() noexcept final;
 
         DEFAULT_GETTER_SETTER_BY_REF(Direction, m_direction);
 
@@ -57,5 +58,3 @@ namespace GPE RFKNamespace()
     };
 
 } // namespace )
-
-File_GENERATED

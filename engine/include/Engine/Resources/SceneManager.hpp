@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
- *	found in the top-level directory of this distribution.
+ * found in the top-level directory of this distribution.
  */
 
 #pragma once
@@ -52,13 +52,15 @@ public:
         return m_pCurrentScene;
     }
 
-    Scene& addEmpty(const std::string& sceneName);
+    Scene& setCurrentScene(const std::string& sceneName);
 
-    Scene& loadScene(const std::string&    sceneName,
-                     ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
-                     EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING);
+    // Scene& loadScene(const std::string&    sceneName,
+    //                 ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
+    //                 EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING);
 
     void removeScene(const std::string& sceneName);
+    void removeScene(Scene& scene);
+    void removeScenes();
 };
 
 } /*namespace GPE*/

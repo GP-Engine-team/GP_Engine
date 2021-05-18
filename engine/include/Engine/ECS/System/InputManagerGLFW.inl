@@ -1,14 +1,20 @@
-﻿#include "Engine/ECS/System/InputManagerGLFW.hpp"
-
+﻿namespace GPE
+{
 void InputManager::bindInput(int key, const std::string& action) noexcept
 {
+    using const_iterator = std::unordered_multimap<int, std::string>::const_iterator;
+    const const_iterator it = m_actionMap.find(key);
+
+    if (it != m_actionMap.end() && it->second == action)
+        return;
+
     m_actionMap.emplace(key, action);
 }
 
-int InputManager::addComponent(InputComponent* input) noexcept
+int InputManager::addComponent(InputComponent& input) noexcept
 {
     int key = static_cast<int>(m_inputComponents.size());
-    m_inputComponents.emplace(key, input);
+    m_inputComponents.emplace(key, &input);
 
     return key;
 }
@@ -23,7 +29,30 @@ void InputManager::removeComponent(int key) noexcept
     m_inputComponents.erase(key);
 }
 
-[[nodiscard]] inline const Cursor& InputManager::getCursor() const noexcept
+inline const Cursor& InputManager::getCursor() const noexcept
 {
     return m_cursor;
 }
+
+void InputManager::setInputMode(const std::string& inputMode) noexcept
+{
+    m_previousInputMode = std::move(m_currentInputMode);
+    m_currentInputMode  = inputMode;
+}
+
+void InputManager::restorePreviousInputMode() noexcept
+{
+    std::swap(m_previousInputMode, m_currentInputMode);
+}
+
+
+void InputManager::setCursorTrackingState(bool trackState) noexcept
+{
+    m_cursor.tracked = trackState;
+}
+
+inline const std::string& InputManager::getInputMode() noexcept
+{
+    return m_currentInputMode;
+}
+} // namespace GPE
