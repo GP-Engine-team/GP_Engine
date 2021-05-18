@@ -64,7 +64,7 @@ void Game::render()
 
     RenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
 
-    sceneRS.tryToResize(m_w, m_h);
+    sceneRS.tryToResize(unsigned(m_w), unsigned(m_h));
     sceneRS.render(sceneRS.defaultRenderPipeline());
 
     // draw UI
@@ -201,19 +201,19 @@ Game::Game()
     { // Keys
         InputManager& io = Engine::getInstance()->inputManager;
 
-        io.bindInput(GLFW_KEY_W, "forward");
-        io.bindInput(GLFW_KEY_S, "backward");
-        io.bindInput(GLFW_KEY_A, "left");
-        io.bindInput(GLFW_KEY_D, "right");
-        io.bindInput(GLFW_KEY_SPACE, "jump");
-        io.bindInput(GLFW_KEY_ESCAPE, "exit");
+        io.bindInput(GLFW_KEY_W,          "forward");
+        io.bindInput(GLFW_KEY_S,          "backward");
+        io.bindInput(GLFW_KEY_A,          "left");
+        io.bindInput(GLFW_KEY_D,          "right");
+        io.bindInput(GLFW_KEY_SPACE,      "jump");
+        io.bindInput(GLFW_KEY_ESCAPE,     "exit");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
         io.bindInput(GLFW_MOUSE_BUTTON_1, "RaycastExample");
         io.bindInput(GLFW_MOUSE_BUTTON_1, "shoot");
-        io.bindInput(GLFW_KEY_KP_1, "playAmbiantMusic");
-        io.bindInput(GLFW_KEY_KP_2, "playAmbiantMusicForce");
-        io.bindInput(GLFW_KEY_KP_0, "stopAllMusic");
+        io.bindInput(GLFW_KEY_KP_1,       "playAmbiantMusic");
+        io.bindInput(GLFW_KEY_KP_2,       "playAmbiantMusicForce");
+        io.bindInput(GLFW_KEY_KP_0,       "stopAllMusic");
         // io.bindInput(GLFW_KEY_KP_ADD,       "growUpCollider");
         // io.bindInput(GLFW_KEY_KP_SUBTRACT,  "growDownCollider");
 
@@ -228,11 +228,11 @@ Game::Game()
     GPE::GameObject& world = Engine::getInstance()->sceneManager.setCurrentScene("main").getWorld();
     GameObject *     ground, *player, *testPhysX, *sun, *cube;
     {
-        const GameObject::CreateArg cubeArg{"Cube", TransformComponent::CreateArg{{0.f, 10, 0.f}}};
-        const GameObject::CreateArg sunArg{"Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}}};
-        const GameObject::CreateArg playerArg{"Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}}};
-        const GameObject::CreateArg testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}};
-        const GameObject::CreateArg groundArg{"GroundArg", TransformComponent::CreateArg{{0.f}}};
+        const GameObject::CreateArg cubeArg     {"Cube",      TransformComponent::CreateArg{{0.f, 10, 0.f}}},
+                                    sunArg      {"Sun",       TransformComponent::CreateArg{{0.f, 200.f, 0.f}}},
+                                    playerArg   {"Player",    TransformComponent::CreateArg{{0.f, 50.f, 0.f}}},
+                                    testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}},
+                                    groundArg   {"GroundArg", TransformComponent::CreateArg{{0.f}}};
 
         // A ground, player, PhysX test
         cube      = &world.addChild(cubeArg);
