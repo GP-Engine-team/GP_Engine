@@ -298,7 +298,7 @@ Game::Game()
         box.isVisible        = true;
         box.setDimensions({1000.f, 1.f, 1000.f});
         mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
-                                            loadMaterialFile("./resources/Materials/GroundMat.GPMaterial"), planeMesh,
+                                            loadMaterialFile("resources\\Materials\\GroundMat.GPMaterial"), planeMesh,
                                             true});
     }
 

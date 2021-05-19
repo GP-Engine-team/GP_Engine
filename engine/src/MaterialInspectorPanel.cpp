@@ -68,21 +68,16 @@ File_GENERATED
         {
             writeMaterialFile(m_path.c_str(), m_config);
 
-            std::filesystem::path fsPath = m_path;
-
             // Update loaded resource
-            if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(fsPath.filename().string()))
+            if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(m_path))
             {
                 pMaterial->setComponent(m_config.comp);
 
-                fsPath = m_config.ambianteTexturePath;
-
-                if (Texture* pTexture = Engine::getInstance()->resourceManager.get<Texture>(fsPath.filename().string()))
+                if (Texture* pTexture =
+                        Engine::getInstance()->resourceManager.get<Texture>(m_config.ambianteTexturePath))
                     pMaterial->setAmbianteTexture(pTexture);
                 else
                     pMaterial->setAmbianteTexture(loadTextureFile(m_config.ambianteTexturePath.c_str()));
-
-                fsPath = m_config.diffuseTexturePath;
 
                 if (Texture* pTexture =
                         Engine::getInstance()->resourceManager.get<Texture>(m_config.diffuseTexturePath.c_str()))
@@ -90,9 +85,8 @@ File_GENERATED
                 else
                     pMaterial->setDiffuseTexture(loadTextureFile(m_config.diffuseTexturePath.c_str()));
 
-                fsPath = m_config.normalMapTexturePath;
-
-                if (Texture* pTexture = Engine::getInstance()->resourceManager.get<Texture>(fsPath.filename().string()))
+                if (Texture* pTexture =
+                        Engine::getInstance()->resourceManager.get<Texture>(m_config.normalMapTexturePath))
                     pMaterial->setNormalMapTexture(pTexture);
                 else
                     pMaterial->setNormalMapTexture(loadTextureFile(m_config.normalMapTexturePath.c_str()));
