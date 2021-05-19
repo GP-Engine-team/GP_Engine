@@ -6,39 +6,75 @@
 
 #pragma once
 
+#include <GPM/Transform.hpp>
 #include <string>
+#include <vector>
 
 namespace GPE
 {
+struct KeyFrame
+{
+public:
+    std::vector<GPM::SplitTransform> bones;
+
+public:
+    KeyFrame() = default;
+
+    static void blend(const KeyFrame& key1, const KeyFrame& key2, float alpha, KeyFrame& buffer);
+
+    size_t getNbBones() const noexcept
+    {
+        return bones.size();
+    }
+};
+
 class Animation
 {
 public:
-    std::string name;
-    std::vector<KeyFrame> keyFrames;
-    float       duration = 5.f;
+    struct AssimpAnimationData
+    {
+        size_t nbFrames = 0;
+        size_t nbBones  = 0;
+    };
 
 public:
-    Animation()                      = default;
+    std::string           name;
+    std::vector<KeyFrame> keyFrames;
+    float                 duration = 5.f;
+
+public:
+    Animation()                       = default;
     Animation(const Animation& other) = default;
     Animation(Animation&& other)      = default;
-    ~Animation()                     = default;
+    ~Animation()                      = default;
     Animation& operator=(Animation const& other) = default;
     Animation& operator=(Animation&& other) = default;
 
-    KeyFrame& getPreviousKeyFrame();
-    KeyFrame& getNextKeyFrame();
-};
+    /**
+     * @brief 
+     * @param playTimeRatio If 0, the animation is starting. If 1, the animation is ending.
+     * @return 
+    */
+    const KeyFrame& getPreviousKeyFrame(float playTimeRatio) const;
+    const KeyFrame& getNextKeyFrame(float playTimeRatio) const;
+    void getKeyFrame(float playTimeRatio, KeyFrame& buffer) const;
 
-class KeyFrame
-{
-    std::vector<GPM::SplitTransform> bones;
+    void loadAnimFromAssimp(const AssimpAnimationData& animData);
 
-    KeyFrame() = default;
-    KeyFrame(const std::string& animName, int keyFrameIndex);
+    float getPlayTimeRatio(float currentTime) const
+    {
+        return currentTime / duration;
+    }
 
-    void LoadAnim(const std::string& animName, int keyFrameIndex);
+    size_t getNbBones() const noexcept
+    {
+        if (keyFrames.empty())
+            return 0;
+        else
+            return keyFrames.front().getNbBones();
+    }
 
-    static KeyFrame Blend(const KeyFrame& key1, const KeyFrame& key2, float alpha);
+    void draw();
 };
 
 } /*namespace GPE*/

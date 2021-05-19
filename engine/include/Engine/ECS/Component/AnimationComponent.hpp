@@ -8,6 +8,7 @@
 
 #include <Engine/ECS/Component/Component.hpp>
 #include <Engine/Serialization/ComponentGen.h>
+#include <Engine/Resources/Animation.hpp>
 
 // Generated
 #include <Generated/AnimationComponent.rfk.h>
@@ -20,8 +21,6 @@ namespace GPE RFKNamespace()
     class RFKClass(ComponentGen(), Serialize(), Inspect()) AnimationComponent : public Component
     {
     private:
-        using KeyFrame = float;
-
         struct AnimationBlend
         {
             Animation* anim = nullptr;
@@ -52,8 +51,7 @@ namespace GPE RFKNamespace()
         virtual void onPostLoad() override;
         virtual void setActive(bool newState) override;
 
-        static void compute(KeyFrame* output);
-        static void blendKeyFrames(const KeyFrame& a, const KeyFrame& b, KeyFrame& output);
+        void drawBlend(float currentTime, KeyFrame& buffer);
 
         AnimationComponent_GENERATED
     };

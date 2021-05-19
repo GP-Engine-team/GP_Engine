@@ -24,6 +24,7 @@ namespace GPE RFKNamespace()
     class Shader;
     class Material;
     class Model;
+    class KeyFrame;
 
     struct SubModel;
 

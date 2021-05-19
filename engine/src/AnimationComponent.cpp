@@ -51,11 +51,11 @@ void AnimationComponent::setActive(bool newState) noexcept
     updateToSystem();
 }
 
-void AnimationComponent::DrawBlend()
+void AnimationComponent::drawBlend(float currentTime, KeyFrame& buffer)
 {
     if (nextAnim.anim == nullptr)
     {
-    
+        return currentAnim.anim->getKeyFrame(currentAnim.anim->getPlayTimeRatio(currentTime), buffer);
     }
 
     // The animations have different speeds.
