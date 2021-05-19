@@ -147,6 +147,7 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
                 AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.bottomFace) &&
                 AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.farFace) &&
                 AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.nearFace));
+        break;
     }
     default:
         return true;
@@ -400,10 +401,10 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 if (!rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
+                    rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
                     continue;
                 }
-                // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
+                rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMaterial(*pSubModel->pShader, *pSubModel->pMaterial);

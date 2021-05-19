@@ -6,6 +6,7 @@
 #include "GPM/Constants.hpp"
 #include "GPM/Shape3D/AABB.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
+#include <Engine/Engine.hpp>
 
 #include <glad/glad.h>
 
@@ -53,13 +54,11 @@ Mesh::CreateIndiceBufferArg Mesh::convert(Mesh::CreateContiguousVerticesArg& arg
 
 Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 {
-    m_boundingVolumeType = arg.boundingVolumeType;
-
-    if (m_boundingVolumeType != Mesh::EBoundingVolume::NONE)
+    if (arg.boundingVolumeType != Mesh::EBoundingVolume::NONE)
     {
-        Vec3         minAABB, maxAABB;
+        Vec3 minAABB, maxAABB;
         generateAABB(arg.vertices, minAABB, maxAABB);
-        m_boundingVolume = std::move(generateBoundingVolume(m_boundingVolumeType, minAABB, maxAABB));
+        generateBoundingVolume(arg.boundingVolumeType, minAABB, maxAABB);
     }
 
     m_verticesCount = static_cast<unsigned int>(arg.indices.size());
@@ -100,6 +99,8 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 
 Mesh::~Mesh() noexcept
 {
+    removeBoundingVolume();
+
     glDeleteBuffers(3, &m_buffers.vao);
 }
 
@@ -118,9 +119,7 @@ void Mesh::setBoundingVolume(EBoundingVolume boundingVolumeType) noexcept
 
     getData(posBuffer);
     generateAABB(posBuffer, minAABB, maxAABB);
-    m_boundingVolume = std::move(generateBoundingVolume(boundingVolumeType, minAABB, maxAABB));
-
-    m_boundingVolumeType = boundingVolumeType;
+    generateBoundingVolume(boundingVolumeType, minAABB, maxAABB);
 }
 
 void Mesh::getData(std::vector<Vertex>& buffer)
@@ -150,22 +149,45 @@ void Mesh::generateAABB(const std::vector<Vertex>& vertices, Vector3& minAABB, V
     }
 }
 
-std::unique_ptr<Volume> Mesh::generateBoundingVolume(EBoundingVolume boundingVolumeType, const Vector3& minAABB,
-                                                     const Vector3& maxAABB) noexcept
+void Mesh::removeBoundingVolume()
 {
-    switch (boundingVolumeType)
+    switch (m_boundingVolumeType)
     {
     case Mesh::EBoundingVolume::SPHERE: {
-        return std::make_unique<Sphere>(std::max(minAABB.length(), maxAABB.length()), (maxAABB + minAABB) * 0.5);
+        Engine::getInstance()->resourceManager.remove<Sphere>(std::to_string((size_t)this));
         break;
     }
 
     case Mesh::EBoundingVolume::AABB: {
-        return std::make_unique<AABB>(minAABB, maxAABB);
+        Engine::getInstance()->resourceManager.remove<AABB>(std::to_string((size_t)this));
         break;
     }
     default:
-        return nullptr;
+        break;
+    }
+    m_boundingVolume     = nullptr;
+    m_boundingVolumeType = EBoundingVolume::NONE;
+}
+
+void Mesh::generateBoundingVolume(EBoundingVolume boundingVolumeType, const Vector3& minAABB,
+                                  const Vector3& maxAABB) noexcept
+{
+    removeBoundingVolume();
+    m_boundingVolumeType = boundingVolumeType;
+    switch (boundingVolumeType)
+    {
+    case Mesh::EBoundingVolume::SPHERE: {
+        m_boundingVolume = &Engine::getInstance()->resourceManager.add<Sphere>(
+            std::to_string((size_t)this), std::max(minAABB.length(), maxAABB.length()), (maxAABB + minAABB) * 0.5);
+        break;
+    }
+
+    case Mesh::EBoundingVolume::AABB: {
+        m_boundingVolume =
+            &Engine::getInstance()->resourceManager.add<AABB>(std::to_string((size_t)this), minAABB, maxAABB);
+        break;
+    }
+    default:
         break;
     }
 }

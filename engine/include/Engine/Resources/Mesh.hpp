@@ -13,6 +13,8 @@
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/Type.hpp>
 #include <Engine/Serialization/DataInspector.hpp>
+#include <GPM/Shape3D/AABB.hpp>
+#include <GPM/Shape3D/Sphere.hpp>
 #include <GPM/Shape3D/Volume.hpp>
 #include <GPM/Vector3.hpp>
 
@@ -46,19 +48,19 @@ public:
     // Allow user to construct mesh thank's to EBO
     struct CreateIndiceBufferArg
     {
-        std::vector<Vertex>          vertices;
-        std::vector<unsigned int>    indices;
-        EBoundingVolume              boundingVolumeType{EBoundingVolume::NONE};
+        std::vector<Vertex>       vertices;
+        std::vector<unsigned int> indices;
+        EBoundingVolume           boundingVolumeType{EBoundingVolume::NONE};
     };
 
     // Allow user to construct mesh thank's to multiple VBO
     struct CreateContiguousVerticesArg
     {
-        std::vector<GPM::Vec3>       vBuffer;
-        std::vector<GPM::Vec2>       vtBuffer;
-        std::vector<GPM::Vec3>       vnBuffer;
-        std::vector<Indice>          iBuffer; // optional
-        EBoundingVolume              boundingVolumeType{EBoundingVolume::NONE};
+        std::vector<GPM::Vec3> vBuffer;
+        std::vector<GPM::Vec2> vtBuffer;
+        std::vector<GPM::Vec3> vnBuffer;
+        std::vector<Indice>    iBuffer; // optional
+        EBoundingVolume        boundingVolumeType{EBoundingVolume::NONE};
     };
 
     enum class Axis
@@ -81,8 +83,11 @@ protected:
         unsigned int ebo = 0;
     } m_buffers;
 
-    EBoundingVolume              m_boundingVolumeType = EBoundingVolume::NONE;
-    std::unique_ptr<GPM::Volume> m_boundingVolume     = nullptr;
+    EBoundingVolume m_boundingVolumeType = EBoundingVolume::NONE;
+    GPM::Volume*    m_boundingVolume     = nullptr;
+
+protected:
+    void removeBoundingVolume();
 
 public:
     Mesh(CreateIndiceBufferArg& arg) noexcept;
@@ -173,9 +178,8 @@ public:
      * @param maxAABB
      * @return
      */
-    static std::unique_ptr<GPM::Volume> generateBoundingVolume(EBoundingVolume  boundingVolumeType,
-                                                               const GPM::Vec3& minAABB,
-                                                               const GPM::Vec3& maxAABB) noexcept;
+    void generateBoundingVolume(EBoundingVolume boundingVolumeType, const GPM::Vec3& minAABB,
+                                const GPM::Vec3& maxAABB) noexcept;
 };
 
 template <>
