@@ -11,12 +11,12 @@ void AnimationSystem::update(double deltaTime) const noexcept
 
 }
 
-void AnimationSystem::addBehaviour(AnimationComponent& behaviour) noexcept
+void AnimationSystem::addComponent(AnimationComponent& behaviour) noexcept
 {
     m_pAnimComponents.emplace_back(&behaviour);
 }
 
-void AnimationSystem::removeBehaviour(AnimationComponent& behaviour) noexcept
+void AnimationSystem::removeComponent(AnimationComponent& behaviour) noexcept
 {
     m_pAnimComponents.erase(std::remove(m_pAnimComponents.begin(), m_pAnimComponents.end(), &behaviour), m_pAnimComponents.end());
 }

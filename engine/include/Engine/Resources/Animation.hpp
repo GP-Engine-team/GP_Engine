@@ -12,6 +12,9 @@
 
 namespace GPE
 {
+/**
+ * @brief Relative to parent bones
+*/
 struct KeyFrame
 {
 public:
@@ -26,6 +29,14 @@ public:
     {
         return bones.size();
     }
+};
+
+/**
+ * @brief Contains world transformations of the bones
+*/
+struct AnimRenderFrame
+{
+    std::vector<GPM::Mat4> worldBonesOffsetsTransform;
 };
 
 class Animation
@@ -73,8 +84,6 @@ public:
         else
             return keyFrames.front().getNbBones();
     }
-
-    void draw();
 };
 
 } /*namespace GPE*/

@@ -99,6 +99,7 @@ public:
     void tryToBindMaterial(Shader& shader, Material& material);
     void tryToBindTexture(unsigned int textureID);
     void tryToBindMesh(unsigned int meshID);
+    void tryToBindAnimation(struct AnimRenderFrame*);
     void tryToSetBackFaceCulling(bool useBackFaceCulling);
 
     /**

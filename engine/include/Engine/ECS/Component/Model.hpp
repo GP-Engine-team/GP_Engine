@@ -24,7 +24,7 @@ namespace GPE RFKNamespace()
     class Shader;
     class Material;
     class Model;
-    class KeyFrame;
+    struct KeyFrame;
 
     struct SubModel;
 
@@ -80,7 +80,9 @@ namespace GPE RFKNamespace()
 
     protected:
         RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
-        std::unique_ptr<KeyFrame[]>                          m_animBufferData;
+
+    public:
+        struct AnimRenderFrame* m_animBufferData = nullptr;
 
     public:
         Model(GameObject & owner);

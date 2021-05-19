@@ -1,6 +1,8 @@
 #include "Engine/Resources/Skeleton.hpp"
 
-void GPE::Skeleton::PrintHierarchy() const
+#include <iostream>
+
+void GPE::Skeleton::printHierarchy() const
 {
     for (int boneIndex = 0; boneIndex < getNbBones(); boneIndex++)
     {
@@ -12,6 +14,7 @@ void GPE::Skeleton::PrintHierarchy() const
         {
             parentIndex = m_parentBoneIndices[parentIndex];
             std::string fullName    = m_boneNames[parentIndex] + separator + parentBoneName;
+            std::cout << fullName << std::endl;
         }
     }
 }

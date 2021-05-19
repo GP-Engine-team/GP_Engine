@@ -4,6 +4,7 @@
 #include "Engine/Resources/Animation.hpp"
 #include "Engine/Resources/Skeleton.hpp"
 #include <GPM/Calc.hpp>
+#include <GPM/conversion.hpp>
 
 // Generated
 #include <Generated/AnimationComponent.rfk.h>
@@ -51,7 +52,57 @@ void AnimationComponent::setActive(bool newState) noexcept
     updateToSystem();
 }
 
-void AnimationComponent::drawBlend(float currentTime, KeyFrame& buffer)
+size_t AnimationComponent::getNbBones() const
+{
+    if (skeleton == nullptr)
+        return 0;
+    else
+        return skeleton->getNbBones();
+}
+
+void AnimationComponent::updateRenderFrameBoneFromParent(size_t boneIndex)
+{
+    if (!hasBeenUpdated[boneIndex])
+    {
+        GPM::Mat4 localAnim = GPM::toTransform(blendedKeyFrame.bones[boneIndex]).model;
+
+        int parentIndex = skeleton->getParentBoneIndex(boneIndex);
+        if (parentIndex == -1)
+        {
+            // if there is no parent,  TRS = localAnimation *  localBindPose
+            worldBonesTransform[boneIndex] = localAnim * skeleton->getRelativeBoneTransform(boneIndex);
+        }
+        else
+        {
+            // call update parent, so even if bones not in order, parent will always be calculated first
+            updateRenderFrameBoneFromParent(parentIndex);
+            // if there is no parent,  TRS = localAnimation *  localBindPose * parentTRS
+            worldBonesTransform[boneIndex] = 
+                localAnim * skeleton->getRelativeBoneTransform(boneIndex) * worldBonesTransform[parentIndex];
+        }
+        renderFrame.worldBonesOffsetsTransform[boneIndex] =
+            skeleton->getInversedWorldBoneTransform(boneIndex) * worldBonesTransform[boneIndex];
+
+        hasBeenUpdated[boneIndex] = true;
+    }
+}
+
+void AnimationComponent::updateRenderFrame()
+{
+    size_t nbBones = getNbBones();
+
+    worldBonesTransform.resize(nbBones);
+    renderFrame.worldBonesOffsetsTransform.resize(nbBones);
+    hasBeenUpdated.resize(nbBones);
+
+    for (int boneIndex = 0; boneIndex < nbBones; boneIndex++)
+        hasBeenUpdated[boneIndex] = false;
+
+    for (size_t boneIndex = 0; boneIndex < nbBones; boneIndex++)
+        updateRenderFrameBoneFromParent(boneIndex);
+}
+
+void AnimationComponent::drawBlend(float currentTime, KeyFrame& buffer, float alphaBlend)
 {
     if (nextAnim.anim == nullptr)
     {
@@ -66,12 +117,27 @@ void AnimationComponent::drawBlend(float currentTime, KeyFrame& buffer)
     currentAnim.timeScale     = GPM::lerp(1.f, 1.f / normalizedTimeScale, alphaBlend);
 
     // Calculate the RenderFrame to Draw
-    KeyFrame blendedKeyFrame = KeyFrame::Blend(currentAnim.GetKeyFrame(), nextAnim.GetKeyFrame(), alphaBlend);
-    RenderFrameConstructor renderFrameConstructor = RenderFrameConstructor{currentAnim.skeleton, blendedKeyFrame};
-    RenderFrame            renderFrame{std::move(renderFrameConstructor)};
+    currentAnim.anim->getKeyFrame(currentTime, currentAnim.lastBlendedKeyFrame);
+    nextAnim.anim->getKeyFrame(currentTime, nextAnim.lastBlendedKeyFrame);
+    KeyFrame::blend(currentAnim.lastBlendedKeyFrame, nextAnim.lastBlendedKeyFrame, alphaBlend, blendedKeyFrame);
+}
 
-    renderFrame.DrawSkeleton();
-    renderFrame.DrawMesh();
+void AnimationComponent::drawDebugSkeleton(const GPM::Vec4& offset) const
+{
+    // for (int boneIndex = skeleton->firstDrawnBoneIndex; boneIndex <= skeleton->lastDrawnBoneIndex; boneIndex++)
+    for (size_t boneIndex = 0; boneIndex <= getNbBones(); boneIndex++)
+    {
+        int parentIndex = skeleton->getParentBoneIndex(boneIndex);
+        if (parentIndex != -1)
+        {
+            GPM::Mat4 transform       = worldBonesTransform[boneIndex];
+            GPM::Mat4 parentTransform = worldBonesTransform[parentIndex];
+
+            GPM::Vec4 p1 = transform * GPM::Vec4{0, 0, 0, 1} + offset;
+            GPM::Vec4 p2 = parentTransform * GPM::Vec4{0, 0, 0, 1} + offset;
+            GPE::Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.drawDebugLine(p1.xyz, p2.xyz);
+        }
+    }
 }
 
 }

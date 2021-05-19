@@ -7,8 +7,8 @@
 #pragma once
 
 #include <Engine/ECS/Component/Component.hpp>
-#include <Engine/Serialization/ComponentGen.h>
 #include <Engine/Resources/Animation.hpp>
+#include <Engine/Serialization/ComponentGen.h>
 
 // Generated
 #include <Generated/AnimationComponent.rfk.h>
@@ -24,34 +24,47 @@ namespace GPE RFKNamespace()
         struct AnimationBlend
         {
             Animation* anim = nullptr;
+            KeyFrame   lastBlendedKeyFrame; // Blended between 2 key frames from Animation. Cached.
             float      timeScale;
-
         };
 
-        Skeleton*  skeleton    = nullptr;
+        Skeleton* skeleton = nullptr;
 
+        KeyFrame       blendedKeyFrame; // Blended between 2 animations. Cached.
         AnimationBlend currentAnim;
         AnimationBlend nextAnim;
 
-        float currentTime  = 0.f;
-        float timeScale    = 1.f;
-        float alphaBlend   = 0.f;
+        AnimRenderFrame renderFrame;
+
+        std::vector<GPM::Mat4> worldBonesTransform;
+        std::vector<bool>      hasBeenUpdated;
+
+        float currentTime = 0.f;
+        float timeScale   = 1.f;
+        float alphaBlend  = 0.f;
 
     private:
         void updateToSystem();
 
+        void updateRenderFrame();
+        void updateRenderFrameBoneFromParent(size_t boneIndex);
+
     public:
-         AnimationComponent();
-         AnimationComponent(const AnimationComponent& other) = delete;
-         AnimationComponent& operator=(AnimationComponent const& other) = delete;
-         virtual ~AnimationComponent();
-         AnimationComponent(AnimationComponent&& other) = delete;
-         AnimationComponent& operator=(AnimationComponent&& other) = delete;
+        AnimationComponent();
+        AnimationComponent(const AnimationComponent& other) = delete;
+        AnimationComponent& operator=(AnimationComponent const& other) = delete;
+        virtual ~AnimationComponent();
+        AnimationComponent(AnimationComponent && other) = delete;
+        AnimationComponent& operator=(AnimationComponent&& other) = delete;
 
         virtual void onPostLoad() override;
-        virtual void setActive(bool newState) override;
+        virtual void setActive(bool newState) noexcept override;
 
-        void drawBlend(float currentTime, KeyFrame& buffer);
+        void drawBlend(float currentTime, KeyFrame& buffer, float alphaBlend);
+
+        size_t getNbBones() const;
+
+        void drawDebugSkeleton(const GPM::Vec4& offset = GPM::Vec4{0, -100, 0}) const;
 
         AnimationComponent_GENERATED
     };

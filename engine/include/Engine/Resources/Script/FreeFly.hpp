@@ -61,7 +61,7 @@ public:
 
     void update(double deltaTime) final;
 
-    FreeFly& operator=(FreeFly&& other) noexcept;
+    FreeFly& operator=(FreeFly&& other) noexcept = delete;
 
     FreeFly_GENERATED
 };

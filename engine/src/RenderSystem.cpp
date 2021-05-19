@@ -297,6 +297,14 @@ void RenderSystem::tryToBindMesh(unsigned int meshID)
     m_currentMeshID = meshID;
 }
 
+void RenderSystem::tryToBindAnimation(AnimRenderFrame* renderFrame)
+{
+    if (renderFrame == nullptr)
+        return;
+
+
+}
+
 void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
 {
     if (m_currentBackFaceCullingModeEnable == useBackFaceCulling)
@@ -402,7 +410,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 rs.tryToBindMaterial(*pSubModel->pShader, *pSubModel->pMaterial);
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());
-                rs.tryToBindAnimation(pSubModel->pModel->animBufferData);
+                rs.tryToBindAnimation(pSubModel->pModel->m_animBufferData);
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
                 // TODO: To optimize ! Use Draw instanced Array
