@@ -101,13 +101,24 @@ void save(XmlSaver& context, const std::unordered_map<KEY, VALUE>& inspected, co
 template <typename KEY, typename VALUE>
 void save(XmlSaver& context, const std::unordered_map<KEY, VALUE>& inspected, const rfk::Field& info)
 {
-    GPE::save(context, inspected, XmlSaver::SaveInfo{info.name, "unknown", 0});
+    GPE::save(context, inspected, fieldToSaveInfo(info));
 }
 
 template <typename T>
 void save(XmlSaver& context, const std::unique_ptr<T>& saved, const XmlSaver::SaveInfo& info)
 {
-    GPE::save(context, saved.get(), info);
+    XmlSaver::SaveInfo newInfo = info;
+
+    if constexpr (std::is_base_of<rfk::Object, T>::value)
+    {
+        if (newInfo.typeId == 0)
+        {
+            newInfo.typeName = saved->getArchetype().name;
+            newInfo.typeId   = saved->getArchetype().id;
+        }
+    }
+
+    GPE::save(context, saved.get(), newInfo);
 }
 
 } // namespace GPE

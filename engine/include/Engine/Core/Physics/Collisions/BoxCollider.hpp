@@ -27,7 +27,9 @@ namespace GPE RFKNamespace()
 		BoxCollider& operator=(BoxCollider && other) noexcept = delete;
 
 	private:
+        RFKField(Serialize())
 		GPM::Vector3 m_scale;
+        RFKField(Serialize())
 		GPM::Vector3 m_offset;
 
 	public:

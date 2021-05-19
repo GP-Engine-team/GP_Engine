@@ -14,14 +14,13 @@
 #include <PxMaterial.h>
 #include <PxShape.h>
 #include <Refureku/Refureku.h>
+#include <Engine/Intermediate/GameObject.hpp>
 
 // Generated
 #include <Generated/Collider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
-    class GameObject;
-
     class RFKClass(Inspect(false), Serialize(false)) Collider : rfk::Object
     {
     public:
@@ -39,7 +38,7 @@ namespace GPE RFKNamespace()
         RFKField(Serialize()) bool         isTrigger = false;
         RFKField(Serialize()) bool         isVisible = false;
         RFKField(Serialize()) GPM::Vector3 center    = {0.f, 0.f, 0.f};
-        GameObject*                        owner     = nullptr;
+        RFKField(Serialize()) GameObject*  owner     = nullptr;
 
         Collider_GENERATED
     };
