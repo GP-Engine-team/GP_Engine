@@ -6,6 +6,8 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ShaderParser.hpp"
 #include "Engine/Resources/Color.hpp"
+#include <Engine/Engine.hpp>
+#include <Engine/Resources/Importer/Importer.hpp>
 
 using namespace GPM;
 using namespace GPE;
@@ -414,3 +416,35 @@ void Shader::release()
 
     Log::getInstance()->log("Release vs and fs");
 }
+
+// template <>
+// void GPE::load(XmlLoader& context, Shader*& data, const rfk::Field& info)
+//{
+//    GPE::load(context, data, fieldToLoadInfo(info));
+//}
+//
+// template <>
+// void GPE::load(XmlLoader& context, Shader*& data, const XmlLoader::LoadInfo& info)
+//{
+//    std::string shaderName;
+//    GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
+//    if (!(data = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
+//    {
+//        data = loadShaderFile(shaderName.c_str());
+//    }
+//}
+//
+// template <>
+// void GPE::save(XmlSaver& context, Shader* const& data, const rfk::Field& info)
+//{
+//    GPE::save(context, data, fieldToSaveInfo(info));
+//}
+//
+// template <>
+// void GPE::save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info)
+//{
+//    if (const std::string* shaderName = GPE::Engine::getInstance()->resourceManager.getKey(data))
+//    {
+//        GPE::save(context, *shaderName, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
+//    }
+//}
