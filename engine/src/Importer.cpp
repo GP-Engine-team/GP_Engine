@@ -16,6 +16,7 @@
 #include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/ResourcesManagerType.hpp>
 #include <Engine/Resources/Texture.hpp>
 #include <GPM/Shape3D/AABB.hpp>
@@ -25,6 +26,23 @@
 
 using namespace GPE;
 using namespace GPM;
+
+static void saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
+{
+    if (saveMode == GPE::SavedScene::EType::XML)
+    {
+        rapidxml::xml_document<> doc;
+        XmlSaver                 context(doc);
+        context.addWeakPtr(scene);
+        scene->save(context);
+
+        GPE::SavedScene::CreateArg args;
+        args.data = docToString(doc);
+        args.type = GPE::SavedScene::EType::XML;
+
+        GPE::writeSceneFile(path, args);
+    }
+}
 
 void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBoundingVolume boundingVolumeType) noexcept
 {
@@ -45,9 +63,17 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
     }
 
     std::filesystem::path srcDirPath(srcPath);
-    srcDirPath = srcDirPath.parent_path();
+    std::filesystem::path fileName = srcDirPath.stem();
+    srcDirPath                     = srcDirPath.parent_path();
 
     std::filesystem::path dstDirPath(dstPath);
+    dstDirPath = std::filesystem::relative(dstDirPath);
+
+    Scene       prefab;
+    GameObject& prefGO    = prefab.getWorld().addChild();
+    Model&      prefModel = prefGO.addComponent<Model>();
+
+    std::vector<Material*> matList;
 
     for (size_t i = 0; i < scene->mNumMaterials; ++i)
     {
@@ -196,7 +222,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         std::filesystem::path dstMaterialPath = dstDirPath / scene->mMaterials[i]->GetName().C_Str();
         dstMaterialPath += ENGINE_MATERIAL_EXTENSION;
 
-        writeMaterialFile(dstMaterialPath.string().c_str(), materialArg);
+        writeMaterialFile(std::filesystem::relative(dstMaterialPath).string().c_str(), materialArg);
+
+        // TODO: Not efficient to pass from HD -> RAM -> HD -> RAM
+        matList.emplace_back(loadMaterialFile(dstMaterialPath.string().c_str()));
     }
 
     // Mesh
@@ -264,7 +293,16 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         dstMeshPath += ENGINE_MESH_EXTENSION;
 
         writeMeshFile(dstMeshPath.string().c_str(), arg);
+
+        prefModel.addSubModel(SubModel::CreateArg{
+            Engine::getInstance()->resourceManager.get<Shader>("Default"), matList[pMesh->mMaterialIndex],
+            &Engine::getInstance()->resourceManager.add<Mesh>(dstMeshPath.string().c_str(), arg)});
     }
+
+    std::filesystem::path dstPrefPath = dstDirPath / fileName;
+    dstPrefPath += ENGINE_PREFAB_EXTENSION;
+    saveSceneToPath(&prefab, dstPrefPath.string().c_str(), GPE::SavedScene::EType::XML);
+    prefab.getWorld().children.clear();
 
     Log::getInstance()->logInitializationEnd("Model importion");
 }
@@ -483,10 +521,10 @@ Material* GPE::loadMaterialFile(const char* src)
 
 struct MeshHeader
 {
-    char assetID       = (char)EFileType::MESH;
-    int  verticeLenght = 0;
-    int  indiceLenght  = 0;
-    unsigned char  boundingVolumeType = (unsigned char)Mesh::EBoundingVolume::NONE;
+    char          assetID            = (char)EFileType::MESH;
+    int           verticeLenght      = 0;
+    int           indiceLenght       = 0;
+    unsigned char boundingVolumeType = (unsigned char)Mesh::EBoundingVolume::NONE;
 };
 
 void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)

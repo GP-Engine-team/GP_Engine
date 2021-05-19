@@ -83,6 +83,10 @@ void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float 
 
 RenderSystem::RenderSystem() noexcept
 {
+    Engine::getInstance()->resourceManager.add<Shader>(
+        "Default", "./resources/shaders/vTextureWithLightAndShadowAndNM.vs",
+        "./resources/shaders/fTextureWithLightAndShadowAndNM.fs", LIGHT_BLIN_PHONG);
+
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
 

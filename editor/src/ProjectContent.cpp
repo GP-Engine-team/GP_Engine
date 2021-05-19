@@ -534,6 +534,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
                 dir /= name;
                 std::filesystem::create_directory(dir);
+                refreshResourcesList();
             }
 
             if (ImGui::MenuItem("Shader"))
