@@ -113,6 +113,8 @@ public:
 
     /**
      * @brief This function will obtain the vertices data from the GPU. This operation can be slow.
+     * Warning : data retuned is only the buffer data and not the vertice buffer. Indice is not used to sorte the
+     * returned buffer
      * @return
      */
     void getData(std::vector<Vertex>& buffer);

@@ -24,8 +24,6 @@ File_GENERATED
         ImGui::Text("Triangle count : %i", m_config.indices.size() / 3);
         ImGui::Text("Vertices count : %i", m_config.indices.size());
 
-        m_config.boundingVolumeType;
-
         int         elem                                           = (int)m_config.boundingVolumeType;
         const char* elems_names[(int)Mesh::EBoundingVolume::COUNT] = {"NONE", "SPHERE", "AABB"};
         const char* elem_name = (elem >= 0 && elem < (int)Mesh::EBoundingVolume::COUNT) ? elems_names[elem] : "Unknown";

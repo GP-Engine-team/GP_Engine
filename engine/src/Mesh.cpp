@@ -125,12 +125,17 @@ void Mesh::setBoundingVolume(EBoundingVolume boundingVolumeType) noexcept
 void Mesh::getData(std::vector<Vertex>& buffer)
 {
     buffer.clear();
-    buffer.reserve(m_verticesCount);
 
-    for (size_t i = 0; i < m_verticesCount; ++i)
+    GLint64 bufSize;
+    glGetNamedBufferParameteri64v(m_buffers.vbo, GL_BUFFER_SIZE, &bufSize);
+
+    size_t elemCount = bufSize / sizeof(Vertex);
+
+    buffer.reserve(elemCount);
+    for (size_t i = 0; i < elemCount; ++i)
         buffer.emplace_back();
 
-    glGetNamedBufferSubData(m_buffers.vbo, 0, m_verticesCount, buffer.data());
+    glGetNamedBufferSubData(m_buffers.vbo, 0, bufSize, buffer.data());
 }
 
 void Mesh::generateAABB(const std::vector<Vertex>& vertices, Vector3& minAABB, Vector3& maxAABB) noexcept
