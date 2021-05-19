@@ -69,6 +69,9 @@ struct ShaderCreateConfig
     uint16_t    featureMask        = 0u;
 };
 
+void saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode);
+void loadSceneFromPathImp(GPE::Scene* scene, const char* path);
+
 void importeModel(const char* srcPath, const char* dstPath,
                   Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE) noexcept;
 

@@ -27,7 +27,7 @@
 using namespace GPE;
 using namespace GPM;
 
-static void saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
+void GPE::saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
 {
     if (saveMode == GPE::SavedScene::EType::XML)
     {
@@ -41,6 +41,49 @@ static void saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedScene
         args.type = GPE::SavedScene::EType::XML;
 
         GPE::writeSceneFile(path, args);
+    }
+}
+
+void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
+{
+    GPE::SavedScene::CreateArg savedScene = GPE::readSceneFile(path);
+
+    if (savedScene.type == GPE::SavedScene::EType::XML)
+    {
+        // Load xml doc
+        rapidxml::xml_document<> doc;
+        std::unique_ptr<char[]>  buffer;
+        GPE::SavedScene::toDoc(doc, buffer, savedScene.data.c_str(), savedScene.data.size());
+
+        XmlLoader context(doc);
+        // Load each element
+        scene->load(context);
+
+        // Tell that pointers to the old scene should be replaced by pointers to the new scene
+        context.addConvertedPtr(scene->getWorld().pOwnerScene, scene);
+
+        // Update old pointers into new ones
+        context.updateLazyPtrs();
+
+        // Call onPostLoad on GameObjects
+        struct Rec
+        {
+            static void rec(GPE::GameObject* g)
+            {
+                for (GPE::Component* comp : g->getComponents())
+                {
+                    comp->onPostLoad();
+                }
+
+                g->getTransform().onPostLoad();
+
+                for (GPE::GameObject* g2 : g->children)
+                {
+                    rec(g2);
+                }
+            };
+        };
+        Rec::rec(&scene->getWorld()); // can't do recursives with lambdas, and std::function would be overkill
     }
 }
 
@@ -301,7 +344,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
 
     std::filesystem::path dstPrefPath = dstDirPath / fileName;
     dstPrefPath += ENGINE_PREFAB_EXTENSION;
-    saveSceneToPath(&prefab, dstPrefPath.string().c_str(), GPE::SavedScene::EType::XML);
+    saveSceneToPathImp(&prefab, dstPrefPath.string().c_str(), GPE::SavedScene::EType::XML);
     prefab.getWorld().children.clear();
 
     Log::getInstance()->logInitializationEnd("Model importion");
