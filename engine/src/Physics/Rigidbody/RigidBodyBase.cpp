@@ -19,7 +19,7 @@ void RigidBodyBase::setType(GameObject& owner, EShapeType newType)
         break;
     case EShapeType::E_BOX:
         collider = std::make_unique<BoxCollider>();
-        owner.getTransform().OnUpdate += Function::make(static_cast<BoxCollider*>(collider.get()), "setScale");
+        owner.getTransform().OnUpdate += Function::make(static_cast<BoxCollider*>(collider.get()), "updateShape");
         break;
     default:
         break;

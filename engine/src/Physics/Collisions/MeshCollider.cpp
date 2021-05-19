@@ -6,6 +6,9 @@
 #include <PhysX/cooking/PxCooking.h>
 #include <PhysX/extensions/PxRigidActorExt.h>
 #include <PhysX/geometry/PxConvexMesh.h>
+
+ // Generated
+#include <Generated/MeshCollider.rfk.h>
 File_GENERATED
 
 using namespace GPE;

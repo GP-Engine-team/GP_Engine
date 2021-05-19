@@ -33,12 +33,18 @@ namespace GPE RFKNamespace()
         virtual ~Collider() noexcept;
 
     public:
+
         physx::PxShape*                    shape     = nullptr;
         physx::PxMaterial*                 material  = nullptr;
         RFKField(Serialize()) bool         isTrigger = false;
         RFKField(Serialize()) bool         isVisible = false;
         RFKField(Serialize()) GPM::Vector3 center    = {0.f, 0.f, 0.f};
         RFKField(Serialize()) GameObject*  owner     = nullptr;
+        RFKField(Serialize()) GPM::Vector3 localRotation = {0.f, 0.f, 0.f};
+
+        void        setCenter(const GPM::Vec3& newCenter) noexcept;
+        void        setLocalRotation(const GPM::Vec3& newLocalRotation) noexcept;
+        void        updateTransform() noexcept;
 
         Collider_GENERATED
     };

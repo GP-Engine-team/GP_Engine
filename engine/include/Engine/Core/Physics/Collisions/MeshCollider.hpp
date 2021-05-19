@@ -18,8 +18,6 @@ namespace physx
 
 namespace GPE RFKNamespace()
 {
-	class GameObject;
-
 	class RFKClass(Inspect()) MeshCollider : public Collider
 	{
 	public:

@@ -10,36 +10,31 @@
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <GPM/Vector3.hpp>
 
- // Generated
+// Generated
 #include <Generated/BoxCollider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
-	class RFKClass(Inspect(), Serialize()) BoxCollider : public Collider
-	{
-	public:
-		BoxCollider() noexcept;
-		BoxCollider(const BoxCollider & other) noexcept = delete;
-		BoxCollider(BoxCollider && other) noexcept = default;
-		virtual ~BoxCollider() noexcept = default;
+    class RFKClass(Inspect(), Serialize()) BoxCollider : public Collider
+    {
+    public:
+        BoxCollider() noexcept;
+        BoxCollider(const BoxCollider& other) noexcept = delete;
+        BoxCollider(BoxCollider && other) noexcept     = default;
+        virtual ~BoxCollider() noexcept                = default;
 
-		BoxCollider& operator=(BoxCollider const& other) noexcept = delete;
-		BoxCollider& operator=(BoxCollider && other) noexcept = delete;
+        BoxCollider& operator=(BoxCollider const& other) noexcept = delete;
+        BoxCollider& operator=(BoxCollider&& other) noexcept = delete;
 
-	private:
-        RFKField(Serialize())
-		GPM::Vector3 m_scale;
-        RFKField(Serialize())
-		GPM::Vector3 m_offset;
+    private:
+        RFKField(Serialize()) GPM::Vector3 m_sizeOffset;
 
-	public:
-		GETTER_BY_VALUE(Scale, m_scale);
-		RFKMethod()void setScale() noexcept;
-		GETTER_BY_VALUE(Offset, m_offset);
-		void setOffset(const GPM::Vec3 & newOffset) noexcept;
-		void onPostLoad() noexcept;
-		void updateShape() noexcept;
+    public:
+        GETTER_BY_VALUE(Offset, m_sizeOffset);
+        void             setSizeOffset(const GPM::Vec3& newSizeOffset) noexcept;
+        void             onPostLoad() noexcept;
+        RFKMethod() void updateShape() noexcept;
 
-		BoxCollider_GENERATED
-	};
+        BoxCollider_GENERATED
+    };
 } // namespace )
