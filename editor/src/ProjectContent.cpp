@@ -95,15 +95,39 @@ static void explore(DirectoryInfo dir, int tab = 0)
     }
 }
 
+void ProjectContent::tryToSetCurrentCirToPreviousLocation(const std::filesystem::path& previousRelatifPath)
+{
+    DirectoryInfo* pNode = &resourcesTree;
+
+    for (auto&& str : previousRelatifPath)
+    {
+        bool isFound = false;
+        for (auto&& folder : pNode->directories)
+        {
+            if (folder.name == str)
+            {
+                pNode   = &folder;
+                isFound = true;
+                break;
+            }
+        }
+
+        if (!isFound)
+            break;
+    }
+    pCurrentDirectory = pNode;
+}
+
 void ProjectContent::refreshResourcesList()
 {
+    std::filesystem::path path = std::filesystem::current_path() / RESOURCES_DIR;
+    std::filesystem::path previousRelatifPath =
+        std::filesystem::relative(pCurrentDirectory ? pCurrentDirectory->path : path, path).relative_path();
+
     resourcesTree.files.clear();
     resourcesTree.directories.clear();
 
-    std::filesystem::path path = std::filesystem::current_path() / RESOURCES_DIR;
-
     DirectoryInfo* pCurrentNode = &resourcesTree;
-    pCurrentDirectory           = pCurrentNode;
 
     for (std::filesystem::recursive_directory_iterator next(path), end; next != end; ++next)
     {
@@ -135,6 +159,7 @@ void ProjectContent::refreshResourcesList()
     }
 
     explore(resourcesTree);
+    tryToSetCurrentCirToPreviousLocation(previousRelatifPath);
 }
 
 void ProjectContent::createNewScene()

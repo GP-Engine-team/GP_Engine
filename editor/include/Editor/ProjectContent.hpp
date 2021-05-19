@@ -79,9 +79,12 @@ protected:
     DirectoryInfo  resourcesTree;
     DirectoryInfo* pCurrentDirectory = nullptr;
 
-    std::unique_ptr<GPE::IInspectable> importationSetting;
+    std::unique_ptr<GPE::IInspectable> importationSetting = nullptr;
 
     class Editor* m_editorContext = nullptr;
+
+protected:
+    void tryToSetCurrentCirToPreviousLocation(const std::filesystem::path& previousPath);
 
 public:
     ProjectContent(Editor& editorContext);
