@@ -231,14 +231,14 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
         if (!m_shadowMaps.empty())
         {
             shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
-            shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
+            // shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
             shader.setMat4("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix().e);
         }
         else
         {
             shader.setMat4("lightSpaceMatrix", Mat4::identity().e);
             shader.setInt("PCF", 1);
-            shader.setFloat("bias", 0.0f);
+            // shader.setFloat("bias", 0.0f);
         }
     }
 }

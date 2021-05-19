@@ -43,7 +43,7 @@ void Light::inspect(InspectContext& context)
             getOwner().pOwnerScene->sceneRenderer.addShadowMap(*this);
         }
         DataInspector::inspect(context, m_shadowProterties.PCF, "PCF");
-        DataInspector::inspect(context, m_shadowProterties.bias, "Bias");
+        // DataInspector::inspect(context, m_shadowProterties.bias, "Bias");
         DataInspector::inspect(context, m_shadowProterties.size, "Size");
     }
     ImGui::PopEnabled();

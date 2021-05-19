@@ -134,6 +134,7 @@ void ResourcesManager<LType, RType...>::clearAll() noexcept
 {
     ResourcesManager<LType>::clear();
 
+    // Recursivity except for the last temaplte element
     if constexpr (sizeof...(RType) > 1)
     {
         ResourcesManager<RType...>::clearAll();
