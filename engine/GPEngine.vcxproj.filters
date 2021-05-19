@@ -283,6 +283,9 @@
     <ClCompile Include="src\ShadowMap.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="third_party\imgui\imguizmo.cpp">
+      <Filter>third_party\imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -752,6 +755,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\ComponentInclude.hpp">
       <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\imguizmo.h">
+      <Filter>third_party\imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
