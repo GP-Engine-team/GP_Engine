@@ -163,6 +163,9 @@ void Editor::renderMenuBar()
             ImGui::MenuItem("Useful links");
             ImGui::EndMenu();
         }
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize("FPS : 144").x -
+                             ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
+        ImGui::Text("FPS : %0.0f", ImGui::GetIO().Framerate);
 
         ImGui::EndMainMenuBar();
     }

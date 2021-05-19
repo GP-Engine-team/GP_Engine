@@ -333,17 +333,4 @@ Game::Game()
 
     ground.addComponent<Model>(modelArg2);
     */
-
-    // =========== Timer ===========
-    Log&                        logger = *Log::getInstance();
-    const std::function<void()> timer  = [&]() {
-        logger.log(stringFormat("FPS (fixedUpdate): %f\n", fixedUpdateFrameCount / FPLogDelay));
-        logger.log(stringFormat("FPS (unFixedUpdate): %f\n\n", unFixedUpdateFrameCount / FPLogDelay));
-        fixedUpdateFrameCount   = 0;
-        unFixedUpdateFrameCount = 0;
-    };
-
-    Engine::getInstance()->timeSystem.emplaceScaledTimer(timer, FPLogDelay, true);
-
-    logger.logInitializationEnd("Game");
 }
