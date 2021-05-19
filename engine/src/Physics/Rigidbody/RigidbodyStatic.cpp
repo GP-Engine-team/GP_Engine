@@ -38,8 +38,6 @@ void RigidbodyStatic::setActive(bool newState) noexcept
 
 void RigidbodyStatic::onPostLoad()
 {
-    setType(*m_gameObject, EShapeType::E_BOX);
-
     GPE::TransformComponent& transform = getOwner().getTransform();
     transform.setDirty();
     transform.update();
