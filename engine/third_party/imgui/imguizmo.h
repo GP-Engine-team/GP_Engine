@@ -176,9 +176,9 @@ namespace ImGuizmo
       SCALE_Y          = (1u << 8),
       SCALE_Z          = (1u << 9),
       BOUNDS           = (1u << 10),
-      TRANSLATE = TRANSLATE_X | TRANSLATE_Y | TRANSLATE_Z,
-      ROTATE = ROTATE_X | ROTATE_Y | ROTATE_Z | ROTATE_SCREEN,
-      SCALE = SCALE_X | SCALE_Y | SCALE_Z
+      TRANSLATE        = TRANSLATE_X | TRANSLATE_Y | TRANSLATE_Z,
+      ROTATE           = ROTATE_X | ROTATE_Y | ROTATE_Z | ROTATE_SCREEN,
+      SCALE            = SCALE_X | SCALE_Y | SCALE_Z
    };
 
    inline OPERATION operator|(OPERATION lhs, OPERATION rhs)
@@ -188,8 +188,8 @@ namespace ImGuizmo
 
    enum MODE
    {
-      LOCAL,
-      WORLD
+      LOCAL = (1u << 0),
+      WORLD = (1u << 1)
    };
 
    IMGUI_API bool Manipulate(const float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float* deltaMatrix = NULL, const float* snap = NULL, const float* localBounds = NULL, const float* boundsSnap = NULL);
