@@ -233,8 +233,9 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
     ImGui::TextUnformatted(pCurrentDirectory->path.string().c_str());
 
-    ImVec2      size  = ImVec2(32.0f, 32.0f); // Size of the image we want to make visible
-    ImGuiStyle& style = ImGui::GetStyle();
+    ImVec2                size  = ImVec2(32.0f, 32.0f); // Size of the image we want to make visible
+    ImGuiStyle&           style = ImGui::GetStyle();
+    std::filesystem::path pathToRemovePath;
 
     for (auto&& it = pCurrentDirectory->directories.begin(); it != pCurrentDirectory->directories.end(); ++it)
     {
@@ -251,6 +252,29 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 pSelectedDirectory = &*it;
             }
 
+            // On double left clic
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
+            {
+                ImGui::OpenPopup("FileContext");
+            }
+
+            if (ImGui::BeginPopup("FileContext"))
+            {
+                ImGui::Text(it->path.stem().string().c_str());
+
+                if (ImGui::MenuItem("Delete"))
+                {
+                    pathToRemovePath = it->path;
+                }
+
+                if (ImGui::MenuItem("Rename"))
+                {
+                    it->isInRenameMode = true;
+                }
+
+                ImGui::EndPopup();
+            }
+
             if (ImGui::IsItemHovered())
             {
                 ImGui::BeginTooltip();
@@ -265,7 +289,25 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::EndTooltip();
             }
 
-            ImGui::TextUnformatted(it->name.string().c_str());
+            if (it->isInRenameMode)
+            {
+                ImGui::SetNextItemWidth(size.x * 2);
+                constexpr size_t bufferSize = 256;
+                char             buffer[bufferSize];
+                strcpy_s(buffer, it->name.stem().string().c_str());
+                if (ImGui::InputText("", buffer, bufferSize, ImGuiInputTextFlags_EnterReturnsTrue))
+                {
+                    std::filesystem::path oldPath = it->path;
+                    it->name.replace_filename(buffer);
+                    it->path.replace_filename(buffer);
+                    std::filesystem::rename(oldPath, it->path);
+                    it->isInRenameMode = false;
+                }
+            }
+            else
+            {
+                ImGui::TextUnformatted(it->name.string().c_str());
+            }
         }
         ImGui::EndGroup();
 
@@ -282,7 +324,6 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
         ImGui::PopID();
     }
 
-    std::filesystem::path fileToRemovePath;
     for (auto&& it = pCurrentDirectory->files.begin(); it != pCurrentDirectory->files.end(); ++it)
     {
         ImGui::PushID(&*it);
@@ -360,7 +401,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
                 if (ImGui::MenuItem("Delete"))
                 {
-                    fileToRemovePath = it->path;
+                    pathToRemovePath = it->path;
                 }
 
                 if (ImGui::MenuItem("Rename"))
@@ -480,6 +521,21 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
     {
         if (ImGui::BeginMenu("Create"))
         {
+            if (ImGui::MenuItem("Directory"))
+            {
+                std::filesystem::path dir  = pCurrentDirectory->path;
+                std::filesystem::path name = "NewDirectory";
+
+                int id = 0;
+                while (pCurrentDirectory->containDirectory(name))
+                {
+                    name = stringFormat("NewDirectory(%i)" ENGINE_SHADER_EXTENSION, ++id);
+                }
+
+                dir /= name;
+                std::filesystem::create_directory(dir);
+            }
+
             if (ImGui::MenuItem("Shader"))
             {
                 std::filesystem::path shaderDir  = pCurrentDirectory->path;
@@ -544,8 +600,8 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
         ImGui::EndPopup();
     }
 
-    if (!fileToRemovePath.empty())
+    if (!pathToRemovePath.empty())
     {
-        removeFile(fileToRemovePath);
+        removeFile(pathToRemovePath);
     }
 }

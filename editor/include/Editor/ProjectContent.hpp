@@ -36,8 +36,20 @@ struct DirectoryInfo
     std::filesystem::path    name;
     DirectoryInfo*           pParent = nullptr;
     std::filesystem::path    path;
-    std::list<DirectoryInfo> directories = {};
-    std::list<FileInfo>      files       = {};
+    std::list<DirectoryInfo> directories    = {};
+    std::list<FileInfo>      files          = {};
+    bool                     isInRenameMode = false;
+
+    bool containDirectory(std::filesystem::path name)
+    {
+        bool rst = false;
+
+        for (auto&& it = directories.cbegin(); it != directories.cend() && !rst; ++it)
+        {
+            rst |= it->name.filename() == name;
+        }
+        return rst;
+    }
 
     bool containFile(std::filesystem::path name)
     {
