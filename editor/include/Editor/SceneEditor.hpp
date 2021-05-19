@@ -12,20 +12,30 @@ namespace Editor
 {
 class Editor;
 
-// TODO: Add a thin top-bar with translation/rotation/scale options
-// TODO: Add a thin top-bar with camera orthographic/perspectives options
 class SceneEditor
 {
+    // Internal helper
+    struct string_enum
+    {
+        const char*    string;
+        unsigned short id;
+    };
+
 public:
     GPE::SceneViewer view;
 
 private:
-    ImGuizmo::OPERATION m_active;
-    ImGuizmo::MODE      m_mode;
+    string_enum         m_operations[3];
+    string_enum         m_modes[2];
+
+public:
+    ImGuizmo::OPERATION activeOperation;
+    ImGuizmo::MODE      activeMode;
 
 private:
-    void captureInputs(bool toggle);
-    void checkCursor(GPE::IInspectable*& inspectedObject);
+    void         captureInputs      (bool toggle);
+    void         renderGizmoControls();
+    void         checkCursor        (GPE::IInspectable*& inspectedObject);
 
 public:
     SceneEditor(GPE::Scene& scene);
