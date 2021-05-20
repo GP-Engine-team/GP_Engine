@@ -149,6 +149,9 @@ void loadSkyboxResource()
     subModel.pMesh                 = loadMeshFile("./resources/meshs/Cube.GPMesh");
     subModel.enableBackFaceCulling = false;
 
+    subModel.pShader->use();
+    subModel.pShader->setInt("ourTexture", 0);
+
     arg.subModels.push_back(subModel);
 
     rm.add<Model::CreateArg>("SkyboxModel", arg);

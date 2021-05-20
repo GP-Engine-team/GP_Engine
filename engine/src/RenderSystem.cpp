@@ -212,11 +212,9 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
 
-        shader.setMat4("projectViewModelMatrix", (camToUse.getProjection() * view * modelMatrix).e);
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
         shader.setMat4("projection", camToUse.getProjection().e);
         shader.setMat4("view", view.e);
-
-        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
 
     if ((shader.getFeature() & PROJECTION_VIEW_MODEL_MATRIX) == PROJECTION_VIEW_MODEL_MATRIX)
@@ -377,6 +375,90 @@ void RenderSystem::resetCurrentRenderPassKey()
     glBindVertexArray(0);
 }
 
+RenderSystem::RenderPipeline RenderSystem::debugRenderPipeline() const noexcept
+{
+    return
+        [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
+           std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
+           std::vector<ParticleComponent*>& pParticleComponents, std::vector<DebugShape>& debugShape,
+           std::vector<DebugLine>& debugLines, std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
+            // Draw debug shape
+            {
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                if (!debugShape.empty())
+                {
+                    const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
+                    glUseProgram(shaderToUse->getID());
+
+                    for (auto&& shape : debugShape)
+                    {
+                        glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
+                        rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
+
+                        shaderToUse->setMat4("projectViewModelMatrix",
+                                             (mainCamera.getProjectionView() * shape.transform.model).e);
+
+                        shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
+
+                        rs.tryToBindMesh(shape.shape->getID());
+
+                        glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
+                    }
+                }
+
+                // Draw debug line
+                if (!debugLines.empty())
+                {
+                    const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
+                    glUseProgram(shaderToUse->getID());
+                    shaderToUse->setMat4("projectViewModelMatrix", mainCamera.getProjectionView().e);
+                    rs.tryToSetBackFaceCulling(false);
+
+                    for (auto&& line : debugLines)
+                    {
+                        GLfloat lineSeg[] = {
+                            line.pt1.x, line.pt1.y, line.pt1.z, // first vertex
+                            line.pt2.x, line.pt2.y, line.pt2.z  // second vertex
+                        };
+
+                        GLuint lineVAO, lineVBO;
+                        glGenVertexArrays(1, &lineVAO);
+                        glGenBuffers(1, &lineVBO);
+                        glBindVertexArray(lineVAO);
+                        glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
+                        glBufferData(GL_ARRAY_BUFFER, sizeof(lineSeg), &lineSeg, GL_STATIC_DRAW);
+                        glEnableVertexAttribArray(0);
+                        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+
+                        shaderToUse->setVec4("Color", line.color.r, line.color.g, line.color.b, line.color.a);
+
+                        if (line.smooth)
+                            glEnable(GL_LINE_SMOOTH);
+                        else
+                            glDisable(GL_LINE_SMOOTH);
+
+                        glBindVertexArray(lineVAO);
+                        glLineWidth(line.width);
+                        glDrawArrays(GL_LINES, 0, 2);
+
+                        glLineWidth(1.0f);
+                        glDisable(GL_LINE_SMOOTH);
+
+                        glDeleteVertexArrays(1, &lineVAO);
+                        glDeleteBuffers(1, &lineVBO);
+                    }
+
+                    debugLines.clear();
+                }
+
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            }
+            rs.resetCurrentRenderPassKey();
+        };
+}
+
 RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
@@ -483,81 +565,11 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             }
         }
 
-        // Draw debug shape
-        {
-            if (!debugShape.empty())
-            {
-                const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
-                glUseProgram(shaderToUse->getID());
-
-                for (auto&& shape : debugShape)
-                {
-                    glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
-                    rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
-
-                    shaderToUse->setMat4("projectViewModelMatrix",
-                                         (mainCamera.getProjectionView() * shape.transform.model).e);
-
-                    shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
-
-                    rs.tryToBindMesh(shape.shape->getID());
-
-                    glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
-                }
-            }
-
-            // Draw debug line
-            if (!debugLines.empty())
-            {
-                const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
-                glUseProgram(shaderToUse->getID());
-                shaderToUse->setMat4("projectViewModelMatrix", mainCamera.getProjectionView().e);
-                rs.tryToSetBackFaceCulling(false);
-
-                for (auto&& line : debugLines)
-                {
-                    GLfloat lineSeg[] = {
-                        line.pt1.x, line.pt1.y, line.pt1.z, // first vertex
-                        line.pt2.x, line.pt2.y, line.pt2.z  // second vertex
-                    };
-
-                    GLuint lineVAO, lineVBO;
-                    glGenVertexArrays(1, &lineVAO);
-                    glGenBuffers(1, &lineVBO);
-                    glBindVertexArray(lineVAO);
-                    glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
-                    glBufferData(GL_ARRAY_BUFFER, sizeof(lineSeg), &lineSeg, GL_STATIC_DRAW);
-                    glEnableVertexAttribArray(0);
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-
-                    shaderToUse->setVec4("Color", line.color.r, line.color.g, line.color.b, line.color.a);
-
-                    if (line.smooth)
-                        glEnable(GL_LINE_SMOOTH);
-                    else
-                        glDisable(GL_LINE_SMOOTH);
-
-                    glBindVertexArray(lineVAO);
-                    glLineWidth(line.width);
-                    glDrawArrays(GL_LINES, 0, 2);
-
-                    glLineWidth(1.0f);
-                    glDisable(GL_LINE_SMOOTH);
-
-                    glDeleteVertexArrays(1, &lineVAO);
-                    glDeleteBuffers(1, &lineVBO);
-                }
-
-                debugLines.clear();
-            }
-
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
         rs.resetCurrentRenderPassKey();
     };
 }
 
-RenderSystem::RenderPipeline RenderSystem::mousPickingPipeline() const noexcept
+RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
 {
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,

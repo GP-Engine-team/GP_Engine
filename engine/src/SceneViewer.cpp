@@ -170,7 +170,7 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
 
     { // Render in the picking framebuffer
         RenderSystem& renderSys = pScene->sceneRenderer;
-        renderSys.render(renderSys.mousPickingPipeline());
+        renderSys.render(renderSys.mousePickingPipeline());
     }
 
     // Find the hovered object, if any
@@ -290,6 +290,7 @@ void SceneViewer::render() const
 
     pScene->sceneRenderer.tryToResize(width, height);
     pScene->sceneRenderer.render(pScene->sceneRenderer.defaultRenderPipeline());
+    pScene->sceneRenderer.render(pScene->sceneRenderer.debugRenderPipeline());
 }
 
 void SceneViewer::captureInputs(bool shouldCapture)

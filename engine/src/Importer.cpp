@@ -360,7 +360,11 @@ struct TextureHeader
 void GPE::importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config)
 {
     Texture::ImportArg arg;
+
+    stbi_set_flip_vertically_on_load(config.verticalFlip);
     arg.pixels.reset(stbi_load(srcPath, &arg.w, &arg.h, &arg.comp, 0));
+    stbi_set_flip_vertically_on_load(false);
+
     writeTextureFile(dstPath, arg, config);
 }
 
@@ -376,7 +380,6 @@ void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data, cons
 
     int                      newLen;
     std::unique_ptr<stbi_uc> imgData;
-    stbi_set_flip_vertically_on_load(config.verticalFlip);
 
     switch (config.format)
     {
@@ -393,8 +396,6 @@ void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data, cons
         break;
     }
     }
-
-    stbi_set_flip_vertically_on_load(false);
 
     TextureHeader header{(char)EFileType::TEXTURE, data.properties, newLen};
     fwrite(&header, sizeof(header), 1, pFile); // header
