@@ -44,7 +44,8 @@ public:
     GameControlBar      m_gameControlBar;
     std::string         m_saveFolder;
     GPE::IInspectable*  m_inspectedObject;
-    GPE::ReloadableCpp* m_reloadableCpp = nullptr;
+    GPE::ReloadableCpp* m_reloadableCpp;
+
     bool                m_showAppStyleEditor;
     bool                m_showImGuiDemoWindows;
 

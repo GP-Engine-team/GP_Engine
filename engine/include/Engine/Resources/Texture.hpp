@@ -79,6 +79,7 @@ public:
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
         ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
+        unsigned int      anisotropy       = 8;
         bool              flipTexture      = true;
         bool              generateMipmaps  = true;
     };
@@ -91,6 +92,7 @@ public:
         ETextureMagFilter              textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrapS                  textureWrapS     = ETextureWrapS::REPEAT;
         ETextureWrapT                  textureWrapT     = ETextureWrapT::REPEAT;
+        unsigned int                   anisotropy       = 8;
         bool                           flipTexture      = true;
         bool                           generateMipmaps  = true;
     };
@@ -104,6 +106,7 @@ public:
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
         ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
+        unsigned int      anisotropy       = 8;
     };
 
 protected:
@@ -113,9 +116,9 @@ protected:
     void setFormat(int channels);
     bool checkFormatValidity() const;
 
-    bool loadInGPU(int w, int h, ETextureMinFilter textureMinFilter, ETextureMagFilter textureMagFilter,
-                   ETextureWrapS textureWrapS, ETextureWrapT textureWrapT, unsigned char* pixels,
-                   bool generateMipmaps = true) noexcept;
+    bool loadInGPU(int w, int h, unsigned int anisotropy, ETextureMinFilter textureMinFilter,
+                   ETextureMagFilter textureMagFilter, ETextureWrapS textureWrapS, ETextureWrapT textureWrapT,
+                   unsigned char* pixels, bool generateMipmaps = true) noexcept;
 
 public:
     Texture()                     = default;

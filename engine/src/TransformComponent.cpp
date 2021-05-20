@@ -1,17 +1,19 @@
-#include "Engine/ECS/Component/TransformComponent.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Serialization/Inspect.hpp"
+#include <Engine/ECS/Component/TransformComponent.hpp>
 
-#include "Generated/TransformComponent.rfk.h"
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Serialization/Inspect.hpp>
+
+#include <Generated/TransformComponent.rfk.h>
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
-TransformComponent::TransformComponent(GameObject& refGameObject, const TransformComponent::CreateArg& arg) noexcept
-    : Component(refGameObject), m_spaceAttribut{GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)),
-                                                arg.position, arg.scale},
+TransformComponent::TransformComponent(GameObject& refGameObject,
+                                       const TransformComponent::CreateArg& arg) noexcept
+    : Component(refGameObject),
+      m_spaceAttribut{GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)), arg.position, arg.scale},
       m_transform{GPM::toTransform(m_spaceAttribut)}
 {
 }
