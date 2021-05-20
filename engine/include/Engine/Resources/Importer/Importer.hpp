@@ -75,8 +75,8 @@ void loadSceneFromPathImp(GPE::Scene* scene, const char* path);
 void importeModel(const char* srcPath, const char* dstPath,
                   Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE) noexcept;
 
-void               importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config = {});
-void               writeTextureFile(const char* dst, const Texture::ImportArg& arg);
+void importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config = {});
+void writeTextureFile(const char* dst, const Texture::ImportArg& arg, const TextureImportConfig& config = {});
 Texture::ImportArg readTextureFile(const char* src);
 Texture*           loadTextureFile(const char* src);
 

@@ -18,6 +18,7 @@ File_GENERATED
     void MeshInspectorPanel::inspect(InspectContext & context)
     {
         ImGui::TextUnformatted("Mesh importer");
+        ImGui::Text("Path : %s", m_path.c_str());
 
         // TODO: dirty flag must change when inspect will returned bool
 

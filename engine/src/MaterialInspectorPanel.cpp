@@ -18,6 +18,7 @@ File_GENERATED
     void MaterialInspectorPanel::inspect(InspectContext & context)
     {
         ImGui::TextUnformatted("Material importer");
+        ImGui::Text("Path : %s", m_path.c_str());
 
         m_isDirty = true;
         // TODO: dirty flag must change when inspect will returned bool
@@ -27,6 +28,7 @@ File_GENERATED
         GPE::DataInspector::inspect(context, m_config.comp.shininess, "shininess");
         GPE::DataInspector::inspect(context, m_config.comp.opacity, "opacity");
 
+        ImGui::PushID("Ambiante");
         ImGui::TextUnformatted("Ambiante texture");
         ImGui::SameLine();
         if (ImGui::Button(
@@ -37,7 +39,9 @@ File_GENERATED
 
             m_isDirty = true;
         }
+        ImGui::PopID();
 
+        ImGui::PushID("Diffuse");
         ImGui::TextUnformatted("Diffuse texture");
         ImGui::SameLine();
         if (ImGui::Button(
@@ -48,7 +52,9 @@ File_GENERATED
 
             m_isDirty = true;
         }
+        ImGui::PopID();
 
+        ImGui::PushID("Normal");
         ImGui::TextUnformatted("Normal map texture");
         ImGui::SameLine();
         if (ImGui::Button(
@@ -61,6 +67,7 @@ File_GENERATED
 
             m_isDirty = true;
         }
+        ImGui::PopID();
 
         ImGui::PushEnabled(m_isDirty);
 

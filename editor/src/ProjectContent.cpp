@@ -13,6 +13,7 @@
 #include <Engine/Serialization/MeshInspectorPanel.hpp>
 #include <Engine/Serialization/ShaderInspectorPanel.hpp>
 #include <Engine/Serialization/TextureImporterSetting.hpp>
+#include <Engine/Serialization/TextureInspectorPanel.hpp>
 
 // Don't move up
 #include "Engine/Core/HotReload/SingletonsSync.hpp"
@@ -25,32 +26,32 @@ using namespace GPE;
 
 ProjectContent::ProjectContent(Editor& editorContext)
     : m_folderIcone{{"..\\..\\editor\\resources\\icone\\folder.png", Texture::ETextureMinFilter::LINEAR,
-                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                     Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_textureIcone{{"..\\..\\editor\\resources\\icone\\texture.png", Texture::ETextureMinFilter::LINEAR,
-                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                      Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                      Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_materialIcone{{"..\\..\\editor\\resources\\icone\\material.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                       Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_sceneIcone{{"..\\..\\editor\\resources\\icone\\scene.png", Texture::ETextureMinFilter::LINEAR,
-                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                    Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                    Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_meshIcone{{"..\\..\\editor\\resources\\icone\\mesh.png", Texture::ETextureMinFilter::LINEAR,
-                   Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                   Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                   Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                   Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_shaderIcone{{"..\\..\\editor\\resources\\icone\\shader.jpg", Texture::ETextureMinFilter::LINEAR,
-                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                     Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_soundIcone{{"..\\..\\editor\\resources\\icone\\sound.jpg", Texture::ETextureMinFilter::LINEAR,
-                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                    Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                    Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_prefabIcone{{"..\\..\\editor\\resources\\icone\\prefab.png", Texture::ETextureMinFilter::LINEAR,
-                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                     Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_unknowIcone{{"..\\..\\editor\\resources\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
-                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                     Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_editorContext{&editorContext}
 {
     resourcesTree.name = RESOURCES_DIR;
@@ -472,17 +473,14 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     selectedGameObject = importationSetting.get();
                     break;
 
-                case GPE::hash(".wav"): // compile time
-                case GPE::hash(".mp3"): // compile time
-
-                    break;
-
                 case GPE::hash(ENGINE_SHADER_EXTENSION): // compile time
                     importationSetting = std::make_unique<GPE::ShaderInspectorPanel>(it->path.string());
                     selectedGameObject = importationSetting.get();
                     break;
 
                 case GPE::hash(ENGINE_TEXTURE_EXTENSION): // compile time
+                    importationSetting = std::make_unique<GPE::TextureInspectorPanel>(it->path.string());
+                    selectedGameObject = importationSetting.get();
                     break;
 
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time

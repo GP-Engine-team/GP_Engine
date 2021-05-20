@@ -280,6 +280,9 @@
     <ClCompile Include="src\ShadowMap.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\TextureInspectorPanel.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -746,6 +749,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\ComponentInclude.hpp">
       <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\TextureInspectorPanel.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

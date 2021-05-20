@@ -315,6 +315,7 @@
     <ClInclude Include="include\Engine\Serialization\STDReflect.hpp" />
     <ClInclude Include="include\Engine\Serialization\STDSave.hpp" />
     <ClInclude Include="include\Engine\Serialization\TextureImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\TextureInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlLoader.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlManager.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlSaver.hpp" />
@@ -442,6 +443,7 @@
     <ClCompile Include="src\SpotLight.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TextureImporterSetting.cpp" />
+    <ClCompile Include="src\TextureInspectorPanel.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\TransformComponent.cpp" />
     <ClCompile Include="src\Wave.cpp" />

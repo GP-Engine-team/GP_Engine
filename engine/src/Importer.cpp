@@ -352,46 +352,19 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
 
 struct TextureHeader
 {
-    char assetID            = (char)EFileType::TEXTURE;
-    int  textureLenght      = 0;
-    bool vflipTextureOnLoad = false;
+    char                      assetID = (char)EFileType::TEXTURE;
+    Texture::RenderProperties props;
+    int                       textureLenght = 0;
 };
 
 void GPE::importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config)
 {
-    stbi_set_flip_vertically_on_load(config.verticalFlip);
-
     Texture::ImportArg arg;
     arg.pixels.reset(stbi_load(srcPath, &arg.w, &arg.h, &arg.comp, 0));
-
-    if (arg.pixels == nullptr)
-    {
-        FUNCT_ERROR((std::string("STBI cannot load image: ") + srcPath).c_str());
-        FUNCT_ERROR(std::string("Reason: ") + stbi_failure_reason());
-        return;
-    }
-
-    switch (config.format)
-    {
-    case TextureImportConfig::EFormatType::PNG:
-    default: {
-        arg.pixels.reset(stbi_write_png_to_mem((const unsigned char*)arg.pixels.get(), arg.w * arg.comp, arg.w, arg.h,
-                                               arg.comp, &arg.len));
-
-        if (arg.pixels == NULL)
-        {
-            FUNCT_ERROR((std::string("STBI cannot write image with png format with this path : ") + srcPath).c_str());
-        }
-
-        break;
-    }
-    }
-
-    writeTextureFile(dstPath, arg);
-    stbi_set_flip_vertically_on_load(false);
+    writeTextureFile(dstPath, arg, config);
 }
 
-void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data)
+void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data, const TextureImportConfig& config)
 {
     FILE* pFile = nullptr;
 
@@ -401,10 +374,32 @@ void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data)
         return;
     }
 
-    TextureHeader header{(char)EFileType::TEXTURE, data.len, data.flipTexture};
+    int                      newLen;
+    std::unique_ptr<stbi_uc> imgData;
+    stbi_set_flip_vertically_on_load(config.verticalFlip);
+
+    switch (config.format)
+    {
+    case TextureImportConfig::EFormatType::PNG:
+    default: {
+        imgData.reset(stbi_write_png_to_mem((const unsigned char*)data.pixels.get(), data.w * data.comp, data.w, data.h,
+                                            data.comp, &newLen));
+
+        if (imgData == NULL)
+        {
+            FUNCT_ERROR((std::string("STBI cannot convert pixels to PNG to this dst : ") + dst).c_str());
+        }
+
+        break;
+    }
+    }
+
+    stbi_set_flip_vertically_on_load(false);
+
+    TextureHeader header{(char)EFileType::TEXTURE, data.properties, newLen};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
-    fwrite(data.pixels.get(), data.len, 1, pFile);
+    fwrite(imgData.get(), newLen, 1, pFile);
     fclose(pFile);
 
     Log::getInstance()->log(stringFormat("Texture write to \"%s\"", dst));
@@ -429,7 +424,8 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
         // copy the file into the buffer:
         fread(&header, sizeof(header), 1, pFile);
 
-        stbi_set_flip_vertically_on_load(header.vflipTextureOnLoad);
+        arg.properties = header.props;
+        arg.len        = header.textureLenght;
 
         std::vector<stbi_uc> texBuffer;
         texBuffer.assign(header.textureLenght, 0);
@@ -437,8 +433,6 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
         fread(&texBuffer[0], sizeof(stbi_uc), header.textureLenght, pFile); // Texture buffer
 
         arg.pixels.reset(stbi_load_from_memory(texBuffer.data(), header.textureLenght, &arg.w, &arg.h, &arg.comp, 0));
-
-        stbi_set_flip_vertically_on_load(false);
     }
     else
     {
