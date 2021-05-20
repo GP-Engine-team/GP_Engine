@@ -39,8 +39,8 @@ namespace GPE RFKNamespace()
         AudioComponent& operator=(AudioComponent const& other) = delete;
 
         // AudioComponent(AudioComponent&& other) noexcept = default;
-        AudioComponent& operator                         =(AudioComponent&& other);
-        AudioComponent(AudioComponent && other) noexcept = default;
+        AudioComponent& operator=(AudioComponent&& other) = delete;
+        AudioComponent(AudioComponent && other) noexcept = delete;
 
     private:
         int m_key = -1;
@@ -53,8 +53,11 @@ namespace GPE RFKNamespace()
             RFKField(Serialize())
             ALint  state = AL_INITIAL;
 
+            Sound::Buffer* buffer = nullptr;
+
             SourceData_GENERATED
         };
+        RFKField(Serialize())
         std::unordered_map<std::string, SourceData> sources;
 
         /**
