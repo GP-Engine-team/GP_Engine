@@ -21,27 +21,27 @@ namespace GPE RFKNamespace()
     class RFKClass(ComponentGen(), Serialize(), Inspect()) AnimationComponent : public Component
     {
     private:
-        struct AnimationBlend
-        {
-            Animation* anim = nullptr;
-            KeyFrame   lastBlendedKeyFrame; // Blended between 2 key frames from Animation. Cached.
-            float      timeScale;
-        };
+        //struct AnimationBlend
+        //{
+        //    Animation* anim = nullptr;
+        //    KeyFrame   lastBlendedKeyFrame; // Blended between 2 key frames from Animation. Cached.
+        //    float      timeScale;
+        //};
 
-        Skeleton* skeleton = nullptr;
+        //Skeleton* skeleton = nullptr;
 
-        KeyFrame       blendedKeyFrame; // Blended between 2 animations. Cached.
-        AnimationBlend currentAnim;
-        AnimationBlend nextAnim;
+        //KeyFrame       blendedKeyFrame; // Blended between 2 animations. Cached.
+        //AnimationBlend currentAnim;
+        //AnimationBlend nextAnim;
 
-        AnimRenderFrame renderFrame;
+        //AnimRenderFrame renderFrame;
 
-        std::vector<GPM::Mat4> worldBonesTransform;
-        std::vector<bool>      hasBeenUpdated;
+        //std::vector<GPM::Mat4> worldBonesTransform;
+        //std::vector<bool>      hasBeenUpdated;
 
-        float currentTime = 0.f;
-        float timeScale   = 1.f;
-        float alphaBlend  = 0.f;
+        //float currentTime = 0.f;
+        //float timeScale   = 1.f;
+        //float alphaBlend  = 0.f;
 
     private:
         void updateToSystem();
@@ -51,6 +51,10 @@ namespace GPE RFKNamespace()
 
     public:
         AnimationComponent();
+        AnimationComponent(GPE::GameObject& go)
+        {
+            m_gameObject = &go;
+        }
         AnimationComponent(const AnimationComponent& other) = delete;
         AnimationComponent& operator=(AnimationComponent const& other) = delete;
         virtual ~AnimationComponent();
@@ -60,7 +64,7 @@ namespace GPE RFKNamespace()
         virtual void onPostLoad() override;
         virtual void setActive(bool newState) noexcept override;
 
-        void drawBlend(float currentTime, KeyFrame& buffer, float alphaBlend);
+        //void drawBlend(float currentTime, KeyFrame& buffer, float alphaBlend);
 
         size_t getNbBones() const;
 

@@ -13,6 +13,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 
+#include <ENgine/Resources/Skeleton.hpp>
 #include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Engine.hpp>
@@ -266,7 +267,129 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         writeMeshFile(dstMeshPath.string().c_str(), arg);
     }
 
-    Log::getInstance()->logInitializationEnd("Model importion");
+    //// Skeleton
+    // for (size_t i = 0; i < scene->mNumMeshes; ++i)
+    //{
+    //    aiMesh* pMesh = scene->mMeshes[i];
+
+    //    Skeleton::CreateArgs arg;
+
+    //    // Save names
+    //    arg.boneNames.reserve(pMesh->mNumBones);
+    //    for (size_t boneIndex = 0; boneIndex < pMesh->mNumBones; boneIndex++)
+    //    {
+    //        aiBone* bone = pMesh->mBones[boneIndex];
+    //        arg.boneNames.push_back(bone->mName.C_Str());
+    //    }
+
+    //    // Save offset matrices
+    //    arg.offsetMatrices.reserve(pMesh->mNumBones);
+    //    for (size_t boneIndex = 0; boneIndex < pMesh->mNumBones; boneIndex++)
+    //    {
+    //        aiBone* bone = pMesh->mBones[boneIndex];
+    //        auto    aiMatrix4ToMat4 = [](const aiMatrix4x4& mat) -> GPM::Mat4
+    //        {
+    //            GPM::mat4 m;
+    //            for (int matY = 0; matY < 4; matY++)
+    //            {
+    //                for (int matX = 0; matX < 4; matX++)
+    //                {
+    //                    m.e[matY*4+matX] = mat[matY][matX];
+    //                }
+    //            }
+    //            return m;
+    //        };
+    //        arg.offsetMatrices.push_back(aiMatrix4ToMat4(bone->mOffsetMatrix));
+    //    }
+
+    //    for (size_t boneIndex = 0; boneIndex < pMesh->mNumBones; boneIndex++)
+    //    {
+    //        aiBone* bone = pMesh->mBones[boneIndex];
+    //        std::vector<Skeleton::VertexWeight> weights;
+    //        weights.reserve(bone->mNumWeights);
+    //        for (size_t weightIndex = 0; weightIndex < bone->mNumWeights; weightIndex++)
+    //        {
+    //            Skeleton::VertexWeight weightData;
+    //            weightData.vertexID = bone->mWeights[weightIndex].mVertexId;
+    //            weightData.weight = bone->mWeights[weightIndex].mWeight;
+    //            weights.emplace_back(std::move(weightData));
+    //        }
+    //        arg.weights.emplace_back(std::move(weights));
+    //    }
+
+    //    std::filesystem::path dstSkeletonPath = dstDirPath / pMesh->mName.C_Str();
+    //    if (i != 0 &&
+    //        pMesh->mName == scene->mMeshes[i - 1]->mName) // Add differente name if the FBX containe mesh with same
+    //        name dstSkeletonPath += "0";
+
+    //    dstSkeletonPath += ENGINE_SKELETON_EXTENSION;
+
+    //    writeSkeletonFile(dstSkeletonPath.string().c_str(), arg);
+    //}
+
+    // Animations
+    for (size_t i = 0; i < scene->mNumAnimations; ++i)
+    {
+        aiAnimation* pAnim = scene->mAnimations[i];
+
+        Animation::CreateArgs arg;
+
+        // Save name
+        arg.animName = pAnim->mName.data;
+
+        // Save duration
+        arg.duration = pAnim->mDuration;
+
+        // Save names and delta
+        arg.boneNames.reserve(pAnim->mNumChannels);
+        arg.boneDeltas.reserve(pAnim->mNumChannels);
+        for (size_t boneIndex = 0; boneIndex < pAnim->mNumChannels; boneIndex++)
+        {
+            aiNodeAnim* bone = pAnim->mChannels[boneIndex];
+
+            // Save Name
+            arg.boneNames.push_back(bone->mNodeName.data);
+
+            DeltaBone deltaBone;
+            // Save Pos
+            for (size_t deltaPosIndex = 0; deltaPosIndex < bone->mNumPositionKeys; deltaPosIndex++)
+            {
+                const aiVector3D& p                        = bone->mPositionKeys[deltaPosIndex].mValue;
+                deltaBone.deltaPositions[deltaPosIndex]    = {p.x, p.y, p.z};
+                deltaBone.positionsTimeKeys[deltaPosIndex] = bone->mPositionKeys[deltaPosIndex].mTime;
+            }
+            // Save Rot
+            for (size_t deltaRotIndex = 0; deltaRotIndex < bone->mNumRotationKeys; deltaRotIndex++)
+            {
+                const aiQuaternion& r                      = bone->mRotationKeys[deltaRotIndex].mValue;
+                Quat&               q                      = deltaBone.deltaRotations[deltaRotIndex];
+                q.x                                        = r.x;
+                q.y                                        = r.y;
+                q.z                                        = r.z;
+                q.w                                        = r.w;
+                deltaBone.rotationsTimeKeys[deltaRotIndex] = bone->mRotationKeys[deltaRotIndex].mTime;
+            }
+            // Save Scale
+            for (size_t deltaScaleIndex = 0; deltaScaleIndex < bone->mNumScalingKeys; deltaScaleIndex++)
+            {
+                const aiVector3D& s                          = bone->mScalingKeys[deltaScaleIndex].mValue;
+                deltaBone.deltaScales[deltaScaleIndex]    = {s.x, s.y, s.z};
+                deltaBone.scalesTimeKeys[deltaScaleIndex] = bone->mScalingKeys[deltaScaleIndex].mTime;
+            }
+            arg.boneDeltas.push_back(deltaBone);
+        }
+
+        std::filesystem::path dstAnimationPath = dstDirPath / pAnim->mName.C_Str();
+        if (i != 0 &&
+            pAnim->mName == scene->mMeshes[i - 1]->mName) // Add differente name if the FBX containe mesh with same name
+            dstAnimationPath += "0";
+
+        dstAnimationPath += ENGINE_ANIMATION_EXTENSION;
+
+        writeAnimationFile(dstAnimationPath.string().c_str(), arg);
+    }
+
+    Log::getInstance()->logInitializationEnd("Model importation");
 }
 
 struct TextureHeader
@@ -484,8 +607,8 @@ Material* GPE::loadMaterialFile(const char* src)
 struct MeshHeader
 {
     char assetID       = (char)EFileType::MESH;
-    int  verticeLenght = 0;
-    int  indiceLenght  = 0;
+    int  verticeLength = 0;
+    int  indiceLength  = 0;
 };
 
 void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
@@ -501,8 +624,8 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
     MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
                       static_cast<int>(arg.indices.size())};
     fwrite(&header, sizeof(header), 1, pFile);                                         // header
-    fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
-    fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
+    fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLength, pFile); // vertice buffer
+    fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLength, pFile);    // indice buffer
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
@@ -524,16 +647,16 @@ Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
-    if (header.verticeLenght)
+    if (header.verticeLength)
     {
-        arg.vertices.assign(header.verticeLenght, Mesh::Vertex{});
-        fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
+        arg.vertices.assign(header.verticeLength, Mesh::Vertex{});
+        fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLength, pFile); // vertice buffer
     }
 
-    if (header.indiceLenght)
+    if (header.indiceLength)
     {
-        arg.indices.assign(header.indiceLenght, 0);
-        fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile); // indice buffer
+        arg.indices.assign(header.indiceLength, 0);
+        fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLength, pFile); // indice buffer
     }
 
     fclose(pFile);
@@ -751,11 +874,11 @@ SavedScene::CreateArg GPE::loadSceneFile(const char* src)
 struct SkeletonHeader
 {
     char assetID       = (char)EFileType::SKELETON;
-    int  verticeLenght = 0;
-    int  indiceLenght  = 0;
+    int  verticeLength = 0;
+    int  indiceLength  = 0;
 };
 
-void GPE::writeSkeletonFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
+void writeSkeletonFile(const char* dst, const Skeleton::CreateArgs& arg)
 {
     FILE* pFile = nullptr;
 
@@ -765,11 +888,12 @@ void GPE::writeSkeletonFile(const char* dst, const Mesh::CreateIndiceBufferArg& 
         return;
     }
 
-    MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
-                      static_cast<int>(arg.indices.size())};
-    fwrite(&header, sizeof(header), 1, pFile);                                         // header
-    fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
-    fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
+    //SkeletonHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
+    //                      static_cast<int>(arg.indices.size())};
+
+    //fwrite(&header, sizeof(header), 1, pFile);                                         // header
+    //fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLength, pFile); // vertice buffer
+    //fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLength, pFile);    // indice buffer
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
@@ -791,17 +915,17 @@ Mesh::CreateIndiceBufferArg GPE::readSkeletonFile(const char* src)
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
-    if (header.verticeLenght)
-    {
-        arg.vertices.assign(header.verticeLenght, Mesh::Vertex{});
-        fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
-    }
+    //if (header.verticeLength)
+    //{
+    //    arg.vertices.assign(header.verticeLength, Mesh::Vertex{});
+    //    fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLength, pFile); // vertice buffer
+    //}
 
-    if (header.indiceLenght)
-    {
-        arg.indices.assign(header.indiceLenght, 0);
-        fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile); // indice buffer
-    }
+    //if (header.indiceLength)
+    //{
+    //    arg.indices.assign(header.indiceLength, 0);
+    //    fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLength, pFile); // indice buffer
+    //}
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
@@ -809,23 +933,24 @@ Mesh::CreateIndiceBufferArg GPE::readSkeletonFile(const char* src)
     return arg;
 }
 
-Mesh* GPE::loadSkeletonFile(const char* src)
+Skeleton* GPE::loadSkeletonFile(const char* src)
 {
     std::filesystem::path srcPath(src);
 
-    if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(srcPath.filename().string()))
-        return pMesh;
-    return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), readMeshFile(src));
+    //if (Skeleton* const pSkeleton = Engine::getInstance()->resourceManager.get<Skeleton>(srcPath.filename().string()))
+    //    return pSkeleton;
+    //return &Engine::getInstance()->resourceManager.add<Skeleton>(srcPath.filename().string(), readMeshFile(src));
+    return nullptr;
 }
 
 struct AnimationHeader
 {
     char assetID       = (char)EFileType::ANIMATION;
-    int  verticeLenght = 0;
-    int  indiceLenght  = 0;
+    int  verticeLength = 0;
+    int  indiceLength  = 0;
 };
 
-void GPE::writeAnimationFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
+void GPE::writeAnimationFile(const char* dst, const Animation::CreateArgs& arg)
 {
     FILE* pFile = nullptr;
 
@@ -835,17 +960,17 @@ void GPE::writeAnimationFile(const char* dst, const Mesh::CreateIndiceBufferArg&
         return;
     }
 
-    MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
-                      static_cast<int>(arg.indices.size())};
-    fwrite(&header, sizeof(header), 1, pFile);                                         // header
-    fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
-    fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
+    //MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
+    //                  static_cast<int>(arg.indices.size())};
+    //fwrite(&header, sizeof(header), 1, pFile);                                         // header
+    //fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLength, pFile); // vertice buffer
+    //fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLength, pFile);    // indice buffer
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
 }
 
-Mesh::CreateIndiceBufferArg GPE::readAnimatoinFile(const char* src)
+Mesh::CreateIndiceBufferArg GPE::readAnimationFile(const char* src)
 {
     FILE*                       pFile = nullptr;
     std::filesystem::path       srcPath(src);
@@ -857,21 +982,21 @@ Mesh::CreateIndiceBufferArg GPE::readAnimatoinFile(const char* src)
         return arg;
     }
 
-    MeshHeader header;
-    // copy the file into the buffer:
-    fread(&header, sizeof(header), 1, pFile);
+    //MeshHeader header;
+    //// copy the file into the buffer:
+    //fread(&header, sizeof(header), 1, pFile);
 
-    if (header.verticeLenght)
-    {
-        arg.vertices.assign(header.verticeLenght, Mesh::Vertex{});
-        fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
-    }
+    //if (header.verticeLength)
+    //{
+    //    arg.vertices.assign(header.verticeLength, Mesh::Vertex{});
+    //    fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLength, pFile); // vertice buffer
+    //}
 
-    if (header.indiceLenght)
-    {
-        arg.indices.assign(header.indiceLenght, 0);
-        fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile); // indice buffer
-    }
+    //if (header.indiceLength)
+    //{
+    //    arg.indices.assign(header.indiceLength, 0);
+    //    fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLength, pFile); // indice buffer
+    //}
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
@@ -879,11 +1004,12 @@ Mesh::CreateIndiceBufferArg GPE::readAnimatoinFile(const char* src)
     return arg;
 }
 
-Mesh* GPE::loadAnimatoinFile(const char* src)
+Animation* GPE::loadAnimationFile(const char* src)
 {
     std::filesystem::path srcPath(src);
 
-    if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(srcPath.filename().string()))
-        return pMesh;
-    return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), readMeshFile(src));
+    //if (Animation* const pAnim = Engine::getInstance()->resourceManager.get<Animation>(srcPath.filename().string()))
+    //    return pAnim;
+    //return &Engine::getInstance()->resourceManager.add<Animation>(srcPath.filename().string(), readMeshFile(src));
+    return nullptr;
 }

@@ -10,19 +10,35 @@
 #include <GPM/Matrix4.hpp>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace GPE
 {
 class Skeleton
 {
+public:
+    struct VertexWeight
+    {
+        unsigned int vertexID;
+        float        weight;
+    };
+
+    struct CreateArgs
+    {
+        std::vector<GPM::Vec3> vertices;
+
+        std::vector<std::string>               boneNames;
+        std::vector<GPM::Mat4>                 offsetMatrices; // inverse-bind pose matrix
+        std::vector<std::vector<VertexWeight>> weights;
+    };
+
 private:
     std::string m_name;
 
-    size_t                         m_nbBones = 0;
-    std::unique_ptr<GPM::Mat4[]>   m_relativeBones;
-    std::unique_ptr<GPM::Mat4[]>   m_inversedWorldBones;
-    std::unique_ptr<int[]>         m_parentBoneIndices;
-    std::unique_ptr<std::string[]> m_boneNames;
+    std::vector<std::string> m_boneNames;
+    std::vector<GPM::Mat4>   m_relativeBones;
+    std::vector<size_t>      m_parentBoneIndices;
+    std::vector<size_t>      m_childrenBoneIndices;
 
 public:
     Skeleton()                      = default;
@@ -32,24 +48,23 @@ public:
     Skeleton& operator=(Skeleton const& other) = default;
     Skeleton& operator=(Skeleton&& other) = default;
 
-    void printHierarchy() const;
+    // void printHierarchy() const;
 
-    int getParentBoneIndex(int currentBone)
-    {
-        return m_parentBoneIndices[currentBone];
-    }
+    // int getParentBoneIndex(int currentBone)
+    //{
+    //    return m_parentBoneIndices[currentBone];
+    //}
 
-    GPM::Mat4& getRelativeBoneTransform(int boneIndex)
-    {
-        return m_relativeBones[boneIndex];
-    }
+    // GPM::Mat4& getRelativeBoneTransform(int boneIndex)
+    //{
+    //    return m_relativeBones[boneIndex];
+    //}
 
-    GPM::Mat4& getInversedWorldBoneTransform(int boneIndex)
-    {
-        return m_inversedWorldBones[boneIndex];
-    }
+    //GPM::Mat4& getInversedWorldBoneTransform(int boneIndex)
+    //{
+    //    return m_inversedWorldBones[boneIndex];
+    //}
 
-    GETTER_BY_VALUE(NbBones, m_nbBones);
     GETTER_BY_REF(Name, m_name);
 };
 

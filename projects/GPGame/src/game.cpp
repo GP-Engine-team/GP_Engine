@@ -8,6 +8,7 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 
 #include <WorldGenerator.hpp>
 
@@ -274,6 +275,8 @@ Game::Game()
 
     // Scripts
     player->addComponent<GPG::MyFpsScript>();
+
+    player->addComponent<GPE::AnimationComponent>();
 
     { // cube
         cube->getTransform().setScale(Vec3{10, 10, 10});

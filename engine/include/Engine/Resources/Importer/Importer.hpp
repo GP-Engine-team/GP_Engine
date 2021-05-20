@@ -7,6 +7,8 @@
 #pragma once
 
 #include "Engine/ECS/Component/Model.hpp"
+#include "Engine/Resources/Animation.hpp"
+#include "Engine/Resources/Skeleton.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Serialization/SavedScene.hpp"
@@ -100,12 +102,12 @@ void                  writeSceneFile(const char* dst, const SavedScene::CreateAr
 SavedScene::CreateArg readSceneFile(const char* src);
 SavedScene::CreateArg loadSceneFile(const char* src);
 
-void                        writeSkeletonFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
+void                        writeSkeletonFile(const char* dst, const Skeleton::CreateArgs& arg);
 Mesh::CreateIndiceBufferArg readSkeletonFile(const char* src);
-Mesh*                       loadSkeletonFile(const char* src);
+Skeleton*                   loadSkeletonFile(const char* src);
 
-void                        writeAnimationFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
-Mesh::CreateIndiceBufferArg readAnimatoinFile(const char* src);
-Mesh*                       loadAnimatoinFile(const char* src);
+void                        writeAnimationFile(const char* dst, const Animation::CreateArgs& arg);
+Mesh::CreateIndiceBufferArg readAnimationFile(const char* src);
+Animation*                  loadAnimationFile(const char* src);
 
 } // namespace GPE
