@@ -142,6 +142,8 @@ public:
      */
     template <class T>
     inline void clear() noexcept(std::is_nothrow_destructible_v<T>);
+
+    inline void clearAll() noexcept;
 };
 
 #include "ResourcesManager.inl"

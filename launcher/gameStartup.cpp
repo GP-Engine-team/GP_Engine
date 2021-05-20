@@ -1,9 +1,9 @@
 #include "GameStartup.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 #include "Engine/Engine.hpp"
 #include "Game.hpp"
-#include "Engine/Core/HotReload/SingletonsSync.hpp"
 #include <Engine/Intermediate/GameObject.hpp>
 
 #include <GLFW/glfw3.h>
@@ -70,6 +70,9 @@ GameStartup::GameStartup()
     // ============= Inputs =============
     m_engine->inputManager.setupCallbacks(m_engine->window.getGLFWWindow());
     m_engine->inputManager.setInputMode("Game");
+
+    Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&GameStartup::startScene, this);
+    startScene();
 }
 
 void GameStartup::update()
@@ -85,4 +88,9 @@ GameStartup::~GameStartup()
     m_engine->timeSystem.clearUnscaledTimer();
 
     destroyGameInstance(m_game);
+}
+
+void GameStartup::startScene()
+{
+    GPE::Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.start();
 }

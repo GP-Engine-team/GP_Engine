@@ -50,7 +50,7 @@ EditorStartup::EditorStartup()
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
           m_engine->inputManager.processInput();
           m_editor.update(*this);
-
+          m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
       }},
       m_render{[&]() {
@@ -155,6 +155,9 @@ void EditorStartup::closeGame()
 
 void EditorStartup::playGame()
 {
+    Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&EditorStartup::startScene, this);
+    startScene();
+
     if (m_game->state == EGameState::STOPPED)
         m_editor.saveCurrentScene();
 
@@ -196,7 +199,17 @@ void EditorStartup::pauseGame()
 
 void EditorStartup::stopGame()
 {
-    pauseGame();
+    Engine::getInstance()->sceneManager.OnSceneChange = nullptr;
+
+    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
+    m_update      = [&](double unscaledDeltaTime, double deltaTime) {
+        m_engine->inputManager.processInput();
+        m_editor.update(*this);
+        m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+
+        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+    };
+
     m_editor.reloadCurrentScene();
     // TODO: reload scene
     m_game->state = EGameState::STOPPED;
@@ -218,4 +231,10 @@ void EditorStartup::update()
     m_engine->timeSystem.update(m_fixedUpdate, m_update, m_render);
     isRunning = m_editor.isRunning();
 }
+
+void EditorStartup::startScene()
+{
+    GPE::Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.start();
+}
+
 } // End of namespace Editor

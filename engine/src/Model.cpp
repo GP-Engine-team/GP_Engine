@@ -171,6 +171,7 @@ void GPE::save(XmlSaver& context, const SubModel& inspected, const XmlSaver::Sav
     }
 
     GPE::save(context, inspected.enableBackFaceCulling, XmlSaver::SaveInfo{"enableBackFaceCulling", "bool", 0});
+    GPE::save(context, inspected.castShadow, XmlSaver::SaveInfo{"castShadow", "bool", 0});
 
     context.pop();
 }
@@ -210,6 +211,7 @@ void GPE::load(XmlLoader& context, SubModel& inspected, const XmlLoader::LoadInf
         }
 
         GPE::load(context, inspected.enableBackFaceCulling, XmlLoader::LoadInfo{"enableBackFaceCulling", "bool", 0});
+        GPE::load(context, inspected.castShadow, XmlLoader::LoadInfo{"castShadow", "bool", 0});
 
         context.pop();
     }
@@ -295,6 +297,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
     }
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
+    ImGui::Checkbox("Cast shadow", &inspected.castShadow);
 
     // This operation check if element must be added or remove from the the scene render system
     if (isPreviousElementVoid != !inspected.isValide())

@@ -20,8 +20,11 @@ private:
     void captureInputs(bool toggle);
     void checkCursor(GPE::IInspectable*& inspectedObject);
 
+private:
+    class Editor* m_editorContext = nullptr;
+
 public:
-    SceneEditor(GPE::Scene& scene);
+    SceneEditor(Editor& editorContext, GPE::Scene& scene);
 
     void render(GPE::IInspectable*& inspectedObject);
 };

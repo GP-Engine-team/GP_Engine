@@ -32,28 +32,27 @@ MyFpsScript::MyFpsScript(GPE::GameObject & owner) noexcept
     enableUpdate(true);
     enableOnGUI(true);
 
-    GPE::Wave westernSound("./resources/sounds/E_Western.wav", "Western");
+    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
     GPE::SourceSettings sourceSettings;
     sourceSettings.pitch = 1.f;
     sourceSettings.loop  = AL_TRUE;
 
     source->setSound("Western", "Western", sourceSettings);
-    source->playSound("Western", true);
 
     // Keys
-    input->bindAction("forward",               EKeyMode::KEY_DOWN,     "Game", this, "forward");
-    input->bindAction("backward",              EKeyMode::KEY_DOWN,     "Game", this, "backward");
-    input->bindAction("left",                  EKeyMode::KEY_DOWN,     "Game", this, "left");
-    input->bindAction("right",                 EKeyMode::KEY_DOWN,     "Game", this, "right");
-    input->bindAction("jump",                  EKeyMode::KEY_DOWN,     "Game", this, "jump");
-    input->bindAction("exit",                  EKeyMode::KEY_PRESSED,  "Game", this, "leave");
-    input->bindAction("sprintStart",           EKeyMode::KEY_PRESSED,  "Game", this, "sprintStart");
-    input->bindAction("sprintEnd",             EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-    input->bindAction("shoot",                 EKeyMode::KEY_DOWN,     "Game", this, "shoot");
-    input->bindAction("playAmbiantMusic",      EKeyMode::KEY_PRESSED,  "Game", this, "playAmbiantMusic");
-    input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED,  "Game", this, "playAmbiantMusicForce");
-    input->bindAction("stopAllMusic",          EKeyMode::KEY_PRESSED,  "Game", this, "stopAllMusic");
+    input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
+    input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
+    input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
+    input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
+    input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
+    input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
+    input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
+    input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+    input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+    input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
+    input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
+    input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
 
     { // Cursor
         GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
@@ -68,22 +67,14 @@ MyFpsScript::MyFpsScript(GPE::GameObject & owner) noexcept
     controller->setGravity(.1f);
 }
 
+void MyFpsScript::start()
+{
+    source->playSound("Western", true);
+}
+
 void MyFpsScript::onPostLoad()
 {
     BehaviourComponent::onPostLoad();
-
-    GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch = 1.f;
-    sourceSettings.loop  = AL_TRUE;
-
-    source->setSound("Western", "Western", sourceSettings);
-    source->playSound("Western", true);
-
-    // Setup controller
-    controller->setHasGravity(true);
-    controller->setSpeed(1.f);
-    controller->setMouseSpeed(.0025f);
-    controller->setGravity(.1f);
 }
 
 void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)

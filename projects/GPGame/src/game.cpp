@@ -88,6 +88,7 @@ extern "C" void destroyGameInstance(GPE::AbstractGame* game)
     GPE_ASSERT(game != nullptr, "m_editor should be valid since we've just ran the editor.");
     delete game;
     GPE::Engine::getInstance()->sceneManager.removeScenes();
+    GPE::Engine::getInstance()->resourceManager.clearAll();
 }
 
 void loadTreeResource()
@@ -103,13 +104,13 @@ void loadTreeResource()
     subModel.pShader->setInt("shadowMap", 1);
     subModel.pShader->setInt("normalMap", 2);
 
-    subModel.pMaterial = loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial");
-    subModel.pMesh     = loadMeshFile("./resources/meshs/g1.GPMesh");
+    subModel.pMaterial = loadMaterialFile("resources\\meshs\\Trank_bark.GPMaterial");
+    subModel.pMesh     = loadMeshFile("resources\\meshs\\g1.GPMesh");
 
     arg.subModels.push_back(subModel);
 
-    subModel.pMaterial = loadMaterialFile("./resources/meshs/DB2X2_L01.GPMaterial");
-    subModel.pMesh     = loadMeshFile("./resources/meshs/g2.GPMesh");
+    subModel.pMaterial = loadMaterialFile("resources\\meshs\\DB2X2_L01.GPMaterial");
+    subModel.pMesh     = loadMeshFile("resources\\meshs\\g2.GPMesh");
 
     arg.subModels.push_back(subModel);
 
@@ -147,6 +148,9 @@ void loadSkyboxResource()
     subModel.pMaterial             = loadMaterialFile("./resources/Skybox.GPMaterial");
     subModel.pMesh                 = loadMeshFile("./resources/meshs/Cube.GPMesh");
     subModel.enableBackFaceCulling = false;
+
+    subModel.pShader->use();
+    subModel.pShader->setInt("ourTexture", 0);
 
     arg.subModels.push_back(subModel);
 
@@ -202,19 +206,19 @@ Game::Game()
     { // Keys
         InputManager& io = Engine::getInstance()->inputManager;
 
-        io.bindInput(GLFW_KEY_W,          "forward");
-        io.bindInput(GLFW_KEY_S,          "backward");
-        io.bindInput(GLFW_KEY_A,          "left");
-        io.bindInput(GLFW_KEY_D,          "right");
-        io.bindInput(GLFW_KEY_SPACE,      "jump");
-        io.bindInput(GLFW_KEY_ESCAPE,     "exit");
+        io.bindInput(GLFW_KEY_W, "forward");
+        io.bindInput(GLFW_KEY_S, "backward");
+        io.bindInput(GLFW_KEY_A, "left");
+        io.bindInput(GLFW_KEY_D, "right");
+        io.bindInput(GLFW_KEY_SPACE, "jump");
+        io.bindInput(GLFW_KEY_ESCAPE, "exit");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
         io.bindInput(GLFW_MOUSE_BUTTON_1, "RaycastExample");
         io.bindInput(GLFW_MOUSE_BUTTON_1, "shoot");
-        io.bindInput(GLFW_KEY_KP_1,       "playAmbiantMusic");
-        io.bindInput(GLFW_KEY_KP_2,       "playAmbiantMusicForce");
-        io.bindInput(GLFW_KEY_KP_0,       "stopAllMusic");
+        io.bindInput(GLFW_KEY_KP_1, "playAmbiantMusic");
+        io.bindInput(GLFW_KEY_KP_2, "playAmbiantMusicForce");
+        io.bindInput(GLFW_KEY_KP_0, "stopAllMusic");
         // io.bindInput(GLFW_KEY_KP_ADD,       "growUpCollider");
         // io.bindInput(GLFW_KEY_KP_SUBTRACT,  "growDownCollider");
 
@@ -229,11 +233,11 @@ Game::Game()
     GPE::GameObject& world = Engine::getInstance()->sceneManager.setCurrentScene("main").getWorld();
     GameObject *     ground, *player, *testPhysX, *sun, *cube;
     {
-        const GameObject::CreateArg cubeArg     {"Cube",      TransformComponent::CreateArg{{0.f, 10, 0.f}}},
-                                    sunArg      {"Sun",       TransformComponent::CreateArg{{0.f, 200.f, 0.f}}},
-                                    playerArg   {"Player",    TransformComponent::CreateArg{{0.f, 50.f, 0.f}}},
-                                    testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}},
-                                    groundArg   {"GroundArg", TransformComponent::CreateArg{{0.f}}};
+        const GameObject::CreateArg cubeArg{"Cube", TransformComponent::CreateArg{{0.f, 10, 0.f}}},
+            sunArg{"Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}}},
+            playerArg{"Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}}},
+            testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}},
+            groundArg{"GroundArg", TransformComponent::CreateArg{{0.f}}};
 
         // A ground, player, PhysX test
         cube      = &world.addChild(cubeArg);
@@ -297,7 +301,7 @@ Game::Game()
         box.isVisible        = true;
         box.setDimensions({1000.f, 1.f, 1000.f});
         mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
-                                            loadMaterialFile("./resources/Materials/GroundMat.GPMaterial"), planeMesh,
+                                            loadMaterialFile("resources\\Materials\\GroundMat.GPMaterial"), planeMesh,
                                             true});
     }
 
@@ -332,17 +336,4 @@ Game::Game()
 
     ground.addComponent<Model>(modelArg2);
     */
-
-    // =========== Timer ===========
-    Log&                        logger = *Log::getInstance();
-    const std::function<void()> timer  = [&]() {
-        logger.log(stringFormat("FPS (fixedUpdate): %f\n", fixedUpdateFrameCount / FPLogDelay));
-        logger.log(stringFormat("FPS (unFixedUpdate): %f\n\n", unFixedUpdateFrameCount / FPLogDelay));
-        fixedUpdateFrameCount   = 0;
-        unFixedUpdateFrameCount = 0;
-    };
-
-    Engine::getInstance()->timeSystem.emplaceScaledTimer(timer, FPLogDelay, true);
-
-    logger.logInitializationEnd("Game");
 }

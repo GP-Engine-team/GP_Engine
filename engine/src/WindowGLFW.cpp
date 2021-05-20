@@ -31,6 +31,7 @@ Window::Window(const CreateArg& arg) noexcept
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     m_window = glfwCreateWindow(arg.width, arg.height, arg.name.c_str(), nullptr, nullptr);
 
@@ -53,12 +54,10 @@ Window::~Window() noexcept
     Log::getInstance()->log("GLFW window release");
 }
 
-
 void Window::close()
 {
     glfwSetWindowShouldClose(m_window, GLFW_TRUE);
 }
-
 
 void Window::getSize(int& width, int& height) const noexcept
 {
