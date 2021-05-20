@@ -471,6 +471,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
         rs.shadowMapPipeline();
 
+        glEnable(GL_MULTISAMPLE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -579,6 +580,7 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
+        glDisable(GL_MULTISAMPLE);
         glClearColor(0.f, 0.f, 0.f, 0.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
