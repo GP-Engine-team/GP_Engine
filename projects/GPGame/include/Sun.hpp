@@ -7,13 +7,12 @@
 #pragma once
 
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
-
-// Generated
-#include <Generated/Sun.rfk.h>
-
 #include <Engine/ECS/Component/Light/DirectionalLight.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Type.hpp>
+
+// Generated
+#include <Generated/Sun.rfk.h>
 
 namespace GPG RFKNamespace()
 {
@@ -21,19 +20,18 @@ namespace GPG RFKNamespace()
     {
 
     private:
-        RFKField(Serialize()) float m_dayStart{60};
-        RFKField(Serialize()) float m_dayDuration{120.f}; // in second
-        RFKField(Serialize()) float m_sunRiseDuration{m_dayDuration / 4.f};
+        RFKField(Inspect(), Serialize()) float m_dayStart{60};
+        RFKField(Inspect(), Serialize()) float m_dayDuration{120.f}; // in second
+        RFKField(Inspect(), Serialize()) float m_sunRiseDuration{m_dayDuration / 4.f};
+        RFKField(Inspect(), Serialize()) float m_nightStart{m_dayDuration + m_dayStart};
+        RFKField(Inspect(), Serialize()) float m_nightDuration{60.f}; // in second
+        RFKField(Inspect(), Serialize()) float m_sunSetDuration{m_nightDuration / 4.f};
 
-        RFKField(Serialize()) float m_nightStart{m_dayDuration + m_dayStart};
-        RFKField(Serialize()) float m_nightDuration{60.f}; // in second
-        RFKField(Serialize()) float m_sunSetDuration{m_nightDuration / 4.f};
+        RFKField(Inspect(), Serialize()) float m_currentTime{120.f};
 
-        RFKField(Serialize()) float m_currentTime{120.f};
-
-        RFKField(Serialize()) float m_midDay{m_dayStart + m_dayDuration / 2.f};
-        RFKField(Serialize()) float m_midNight{m_dayStart + m_nightDuration / 2.f};
-        RFKField(Serialize()) float m_sunDistance{500.f};
+        RFKField(Inspect(), Serialize()) float m_midDay{m_dayStart + m_dayDuration / 2.f};
+        RFKField(Inspect(), Serialize()) float m_midNight{m_dayStart + m_nightDuration / 2.f};
+        RFKField(Inspect(), Serialize()) float m_sunDistance{500.f};
 
         /*  Day recap :
             3h -> 5h59 : sunrise		        (40,40,70)		->	(100,100,100)
