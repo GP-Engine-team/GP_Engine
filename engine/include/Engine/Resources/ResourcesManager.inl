@@ -128,3 +128,15 @@ void ResourcesManager<LType, RType...>::clear() noexcept(std::is_nothrow_destruc
 {
     ResourcesManager<T>::clear();
 }
+
+template <class LType, class... RType>
+void ResourcesManager<LType, RType...>::clearAll() noexcept
+{
+    ResourcesManager<LType>::clear();
+
+    // Recursivity except for the last temaplte element
+    if constexpr (sizeof...(RType) > 1)
+    {
+        ResourcesManager<RType...>::clearAll();
+    }
+}

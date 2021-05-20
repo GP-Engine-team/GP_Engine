@@ -15,6 +15,10 @@ Scene& SceneManager::setCurrentScene(const std::string& sceneName)
     scene.m_name = sceneName;
 
     m_pCurrentScene = &scene;
+
+    if (OnSceneChange)
+        OnSceneChange();
+
     return scene; // emplace with default constructor of Scene
 }
 

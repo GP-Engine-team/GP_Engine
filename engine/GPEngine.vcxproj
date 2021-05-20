@@ -159,7 +159,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>false</ExceptionHandling>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem, map, vector, list, unordered_map, functional</PrecompiledHeaderFile>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <Link>
@@ -190,7 +190,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>false</ExceptionHandling>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem, map, vector, list, unordered_map, functional</PrecompiledHeaderFile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
@@ -219,7 +219,6 @@
     <ClInclude Include="include\Engine\Core\HotReload\EngineApiMacros.hpp" />
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp" />
     <ClInclude Include="include\Engine\Core\HotReload\SingletonsSync.hpp" />
-    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
@@ -320,6 +319,7 @@
     <ClInclude Include="include\Engine\Serialization\STDReflect.hpp" />
     <ClInclude Include="include\Engine\Serialization\STDSave.hpp" />
     <ClInclude Include="include\Engine\Serialization\TextureImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\TextureInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlLoader.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlManager.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlSaver.hpp" />
@@ -401,7 +401,6 @@
     <ClCompile Include="src\MeshInspectorPanel.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\ModelImporterSetting.cpp" />
-    <ClCompile Include="src\ObjParser.cpp" />
     <ClCompile Include="src\ParticleComponent.cpp" />
     <ClCompile Include="src\ParticleSystem\ParticleRenderer.cpp" />
     <ClCompile Include="src\ParticleSystem\ParticleData.cpp" />
@@ -451,6 +450,7 @@
     <ClCompile Include="src\SpotLight.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TextureImporterSetting.cpp" />
+    <ClCompile Include="src\TextureInspectorPanel.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\TransformComponent.cpp" />
     <ClCompile Include="src\Wave.cpp" />

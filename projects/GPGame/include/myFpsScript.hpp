@@ -60,10 +60,11 @@ namespace GPG RFKNamespace()
         // RFKMethod() void growUpSphereCollider  ();
         // RFKMethod() void growDownSphereCollider();
 
-        void rotate     (const GPM::Vec2& deltaDisplacement);
-        void onGUI      () final;
+        void rotate(const GPM::Vec2& deltaDisplacement);
+        void start() final;
+        void onGUI() final;
         void fixedUpdate(double deltaTime) final;
-        void update     (double deltaTime) final;
+        void update(double deltaTime) final;
         void onPostLoad() final;
 
         MyFpsScript_GENERATED

@@ -37,11 +37,12 @@ namespace GPE RFKNamespace()
             Mesh*     pMesh;
 
             bool enableBackFaceCulling = true;
+            bool castShadow            = true;
         };
 
         SubModel(Model& model, const CreateArg& arg)
             : pModel{&model}, pShader{arg.pShader}, pMaterial{arg.pMaterial}, pMesh{arg.pMesh},
-              enableBackFaceCulling{arg.enableBackFaceCulling}
+              enableBackFaceCulling{arg.enableBackFaceCulling}, castShadow{arg.castShadow}
         {
         }
 
@@ -58,6 +59,7 @@ namespace GPE RFKNamespace()
         Mesh*     pMesh     = nullptr;
 
         bool enableBackFaceCulling = true;
+        bool castShadow            = true;
     };
 
     template <>

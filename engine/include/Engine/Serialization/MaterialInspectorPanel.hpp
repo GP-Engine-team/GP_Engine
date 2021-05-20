@@ -20,7 +20,8 @@ namespace GPE RFKNamespace()
     protected:
         Material::ImporteArg m_config;
         std::string          m_path;
-        bool                 m_isDirty;
+        bool                 m_isDirty           = false;
+        bool                 m_canSaveInHardDisk = false;
 
     public:
         MaterialInspectorPanel() = delete;

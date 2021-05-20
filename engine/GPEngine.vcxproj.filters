@@ -148,9 +148,6 @@
     <ClCompile Include="src\ModelImporterSetting.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ObjParser.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\PointLight.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -290,6 +287,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\ShadowMap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextureInspectorPanel.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -651,9 +651,6 @@
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
       <Filter>include\Core\HotReload</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
-      <Filter>include\Core\Parsers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
       <Filter>include\Core\Parsers</Filter>
     </ClInclude>
@@ -773,6 +770,9 @@
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\ComponentInclude.hpp">
       <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\TextureInspectorPanel.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

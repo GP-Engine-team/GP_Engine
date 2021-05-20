@@ -9,25 +9,26 @@
 #include "Engine/Resources/Importer/Importer.hpp"
 #include "Engine/Serialization/IInspectable.hpp"
 
-#include "Generated/MeshInspectorPanel.rfk.h"
+#include "Generated/TextureInspectorPanel.rfk.h"
 
 namespace GPE RFKNamespace()
 {
     // Allow user to modify shader importation setting
-    class RFKClass() MeshInspectorPanel : public IInspectable
+    class RFKClass() TextureInspectorPanel : public IInspectable
     {
     protected:
-        Mesh::CreateIndiceBufferArg m_config;
-        std::string                 m_path;
-        bool                        m_isDirty           = false;
-        bool                        m_canSaveInHardDisk = false;
+        Texture::ImportArg m_config;
+        Texture            m_texture;
+        std::string        m_path;
+        bool               m_isDirty           = false;
+        bool               m_canSaveInHardDisk = false;
 
     public:
-        MeshInspectorPanel() = delete;
+        TextureInspectorPanel() = delete;
 
-        MeshInspectorPanel(const std::string& inPath);
+        TextureInspectorPanel(const std::string& inPath);
 
         void inspect(InspectContext & context) override;
-        MeshInspectorPanel_GENERATED
+        TextureInspectorPanel_GENERATED
     };
 } // namespace )
