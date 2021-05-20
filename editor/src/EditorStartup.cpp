@@ -159,20 +159,10 @@ void EditorStartup::playGame()
         Log::getInstance()->logError(msg);
         stopGame();
     };
-
     Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&EditorStartup::startScene, this);
 
     if (m_game->state == EGameState::STOPPED)
         m_editor.saveCurrentScene();
-
-    startScene();
-
-    // On script return gameAssert on start function
-    if (m_game->state == EGameState::STOPPED)
-    {
-        m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = nullptr;
-        return;
-    }
 
     // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
@@ -194,6 +184,7 @@ void EditorStartup::playGame()
     };
 
     m_game->state = EGameState::PLAYING;
+    startScene();
 }
 
 void EditorStartup::pauseGame()
@@ -212,7 +203,8 @@ void EditorStartup::pauseGame()
 
 void EditorStartup::stopGame()
 {
-    Engine::getInstance()->sceneManager.OnSceneChange = nullptr;
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = nullptr;
+    Engine::getInstance()->sceneManager.OnSceneChange                      = nullptr;
 
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
     m_update      = [&](double unscaledDeltaTime, double deltaTime) {
