@@ -645,6 +645,9 @@ void RenderSystem::shadowMapPipeline() noexcept
         {
             for (auto&& pSubModel : m_pOpaqueSubModels)
             {
+                if (!pSubModel->castShadow)
+                    continue;
+
                 tryToBindMesh(pSubModel->pMesh->getID());
                 tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
@@ -655,6 +658,9 @@ void RenderSystem::shadowMapPipeline() noexcept
 
             for (auto&& pSubModel : m_pTransparenteSubModels)
             {
+                if (!pSubModel->castShadow)
+                    continue;
+
                 tryToBindMesh(pSubModel->pMesh->getID());
                 tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
