@@ -270,7 +270,7 @@ Game::Game()
         const DirectionalLight::CreateArg lightArg{
             {0.f, -0.5f, 0.5f}, {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}};
         sun->addComponent<DirectionalLight>(lightArg).setShadowActive(true);
-        sun->addComponent<Sun>();
+        // sun->addComponent<Sun>();
     }
 
     //{ // Light

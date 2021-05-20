@@ -18,6 +18,7 @@ Sun::Sun(GameObject& owner) : BehaviourComponent(owner)
 
 void Sun::onPostLoad()
 {
+    enableUpdate(true);
     BehaviourComponent::onPostLoad();
 }
 

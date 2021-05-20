@@ -174,13 +174,16 @@ void EditorStartup::playGame()
 
     m_update = [&](double unscaledDeltaTime, double deltaTime) {
         m_engine->inputManager.processInput();
-        m_editor.update(*this);
 
         m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
         m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
         m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
 
         m_game->update(unscaledDeltaTime, deltaTime);
+
+        // Editor MUST be the last element update because user can stop the game. If the game stops it should not be
+        // updated
+        m_editor.update(*this);
     };
 
     m_game->state = EGameState::PLAYING;
@@ -193,9 +196,10 @@ void EditorStartup::pauseGame()
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
     m_update      = [&](double unscaledDeltaTime, double deltaTime) {
         m_engine->inputManager.processInput();
-        m_editor.update(*this);
 
         m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+
+        m_editor.update(*this);
     };
 
     m_game->state = EGameState::PAUSED;
