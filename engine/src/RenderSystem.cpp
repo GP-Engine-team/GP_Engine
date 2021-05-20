@@ -557,7 +557,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
     };
 }
 
-RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const noexcept
+RenderSystem::RenderPipeline RenderSystem::mousPickingPipeline() const noexcept
 {
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
@@ -582,7 +582,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
 
             for (auto&& pSubModel : pOpaqueSubModels)
             {
-                if (!rs.isOnFrustum(camFrustum, pSubModel))
+                if ((pSubModel->pShader->getFeature() & SKYBOX) == SKYBOX || !rs.isOnFrustum(camFrustum, pSubModel))
                     continue;
 
                 glUniform1ui(idLocation, pSubModel->pModel->getOwner().getID());
@@ -598,7 +598,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
 
             for (auto&& pSubModel : pTransparenteSubModels)
             {
-                if (!rs.isOnFrustum(camFrustum, pSubModel))
+                if ((pSubModel->pShader->getFeature() & SKYBOX) == SKYBOX || !rs.isOnFrustum(camFrustum, pSubModel))
                     continue;
 
                 glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"),

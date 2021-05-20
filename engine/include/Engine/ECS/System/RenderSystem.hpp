@@ -120,7 +120,7 @@ public:
     void sendDataToInitShader(Camera& camToUse, Shader& shader);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
-    RenderPipeline gameObjectIdentifierPipeline() const noexcept;
+    RenderPipeline mousPickingPipeline() const noexcept;
     void           shadowMapPipeline() noexcept;
 
     /**
