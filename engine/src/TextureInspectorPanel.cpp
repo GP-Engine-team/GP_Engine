@@ -91,18 +91,22 @@ File_GENERATED
         m_isDirty |= GPE::DataInspector::inspect(context, m_config.properties.anisotropy, "Anisotropy");
         m_isDirty |= GPE::DataInspector::inspect(context, m_config.properties.generateMipmaps, "Mipmap");
 
-        ImGui::PushEnabled(m_isDirty);
-
-        if (ImGui::Button("Apply"))
+        if (m_isDirty)
         {
-            writeTextureFile(m_path.c_str(), m_config);
-
             if (Texture* pTexture = Engine::getInstance()->resourceManager.get<Texture>(m_path))
             {
                 pTexture->reload(m_config);
             }
+            m_isDirty           = false;
+            m_canSaveInHardDisk = true;
+        }
 
-            m_isDirty = false;
+        ImGui::PushEnabled(m_canSaveInHardDisk);
+
+        if (ImGui::Button("Apply"))
+        {
+            writeTextureFile(m_path.c_str(), m_config);
+            m_canSaveInHardDisk = false;
         }
 
         ImGui::PopEnabled();

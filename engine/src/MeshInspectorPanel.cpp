@@ -36,13 +36,8 @@ File_GENERATED
         }
         m_config.boundingVolumeType = (Mesh::EBoundingVolume)elem;
 
-        ImGui::PushEnabled(m_isDirty);
-
-        if (ImGui::Button("Apply"))
+        if (m_isDirty)
         {
-            writeMeshFile(m_path.c_str(), m_config);
-
-            // Update loaded resource
             if (Mesh* pMesh = Engine::getInstance()->resourceManager.get<Mesh>(m_path))
             {
                 // Check if user want to get bounding volume
@@ -51,8 +46,15 @@ File_GENERATED
                     pMesh->setBoundingVolume(m_config.boundingVolumeType);
                 }
             }
+            m_isDirty           = false;
+            m_canSaveInHardDisk = true;
+        }
 
-            m_isDirty = false;
+        ImGui::PushEnabled(m_canSaveInHardDisk);
+        if (ImGui::Button("Apply"))
+        {
+            writeMeshFile(m_path.c_str(), m_config);
+            m_canSaveInHardDisk = false;
         }
 
         ImGui::PopEnabled();

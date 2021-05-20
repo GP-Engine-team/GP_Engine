@@ -69,13 +69,8 @@ File_GENERATED
         }
         ImGui::PopID();
 
-        ImGui::PushEnabled(m_isDirty);
-
-        if (ImGui::Button("Apply"))
+        if (m_isDirty)
         {
-            writeMaterialFile(m_path.c_str(), m_config);
-
-            // Update loaded resource
             if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(m_path))
             {
                 pMaterial->setComponent(m_config.comp);
@@ -98,8 +93,15 @@ File_GENERATED
                 else
                     pMaterial->setNormalMapTexture(loadTextureFile(m_config.normalMapTexturePath.c_str()));
             }
+            m_isDirty           = false;
+            m_canSaveInHardDisk = true;
+        }
 
-            m_isDirty = false;
+        ImGui::PushEnabled(m_canSaveInHardDisk);
+        if (ImGui::Button("Apply"))
+        {
+            writeMaterialFile(m_path.c_str(), m_config);
+            m_canSaveInHardDisk = false;
         }
         ImGui::PopEnabled();
     }

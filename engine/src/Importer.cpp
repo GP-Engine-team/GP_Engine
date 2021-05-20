@@ -540,16 +540,13 @@ Material* GPE::loadMaterialFile(const char* src)
     arg.comp = importeArg.comp;
 
     if (!importeArg.ambianteTexturePath.empty())
-        arg.pAmbianteTexture =
-            loadTextureFile((std::filesystem::current_path() / importeArg.ambianteTexturePath).string().c_str());
+        arg.pAmbianteTexture = loadTextureFile(importeArg.ambianteTexturePath.c_str());
 
     if (!importeArg.diffuseTexturePath.empty())
-        arg.pDiffuseTexture =
-            loadTextureFile((std::filesystem::current_path() / importeArg.diffuseTexturePath).string().c_str());
+        arg.pDiffuseTexture = loadTextureFile(importeArg.diffuseTexturePath.c_str());
 
     if (!importeArg.normalMapTexturePath.empty())
-        arg.pNormalMapTexture =
-            loadTextureFile((std::filesystem::current_path() / importeArg.normalMapTexturePath).string().c_str());
+        arg.pNormalMapTexture = loadTextureFile(importeArg.normalMapTexturePath.c_str());
 
     if (Material* const pMat = Engine::getInstance()->resourceManager.get<Material>(src))
         return pMat;
