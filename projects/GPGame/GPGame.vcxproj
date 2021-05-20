@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Sun.hpp" />
     <ClInclude Include="ShadowMap.hpp" />
     <ClInclude Include="include\Firearm\Bullet.hpp" />
     <ClInclude Include="include\Firearm\Firearm.hpp" />
@@ -33,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Bullet.cpp" />
+    <ClCompile Include="src\Sun.cpp" />
     <ClCompile Include="src\Firearm.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\GunMagazine.cpp" />

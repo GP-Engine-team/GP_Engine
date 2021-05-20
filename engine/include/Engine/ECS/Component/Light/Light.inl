@@ -15,8 +15,13 @@ Light::Light(GameObject& owner, const CreateArg& arg)
 
 Light::~Light()
 {
-    if (getOwner().pOwnerScene)
+    if (getOwner().pOwnerScene && m_isActivated)
+    {
+        if (m_shadowProterties.isEnable)
+            getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);
+
         getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
+    }
 }
 
 Light& Light::operator=(Light&& other) noexcept

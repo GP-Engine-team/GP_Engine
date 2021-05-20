@@ -155,11 +155,24 @@ void EditorStartup::closeGame()
 
 void EditorStartup::playGame()
 {
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = [&](const char* msg) {
+        Log::getInstance()->logError(msg);
+        stopGame();
+    };
+
     Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&EditorStartup::startScene, this);
-    startScene();
 
     if (m_game->state == EGameState::STOPPED)
         m_editor.saveCurrentScene();
+
+    startScene();
+
+    // On script return gameAssert on start function
+    if (m_game->state == EGameState::STOPPED)
+    {
+        m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = nullptr;
+        return;
+    }
 
     // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {

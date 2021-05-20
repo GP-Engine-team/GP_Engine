@@ -4,6 +4,7 @@ File_GENERATED
 
 #include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "imgui.h"
+#include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
 
@@ -115,4 +116,51 @@ void BehaviourComponent::setActive(bool newState) noexcept
         getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
     else
         getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);
+}
+
+void BehaviourComponent::gameAssert(bool condition, const char* msg)
+{
+    getOwner().pOwnerScene->behaviourSystem.gameAssert(condition, msg);
+}
+
+void BehaviourComponent::drawDebugSphere(const GPM::Vec3& position, float radius, const ColorRGBA& color,
+                                         float duration, bool enableBackFaceCullling) noexcept
+{
+    getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(position, radius, color, duration,
+                                                          RenderSystem::EDebugShapeMode::FILL, enableBackFaceCullling);
+}
+
+void BehaviourComponent::drawDebugCube(const GPM::Vec3& position, const GPM::Quat& rotation, const GPM::Vec3& scale,
+                                       const ColorRGBA& color, float duration, bool enableBackFaceCullling) noexcept
+{
+    getOwner().pOwnerScene->sceneRenderer.drawDebugCube(position, rotation, scale, color, duration,
+                                                        RenderSystem::EDebugShapeMode::FILL, enableBackFaceCullling);
+}
+
+void BehaviourComponent::drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
+                                       const ColorRGBA& color, float duration, bool enableBackFaceCullling) noexcept
+{
+    getOwner().pOwnerScene->sceneRenderer.drawDebugQuad(position, dir, scale, color, duration,
+                                                        RenderSystem::EDebugShapeMode::FILL, enableBackFaceCullling);
+}
+
+void BehaviourComponent::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width, const ColorRGBA& color,
+                                       bool smooth) noexcept
+{
+    getOwner().pOwnerScene->sceneRenderer.drawDebugLine(pt1, pt2, width, color, smooth);
+}
+
+void BehaviourComponent::log(const std::string& msg)
+{
+    Log::getInstance()->log(msg);
+}
+
+void BehaviourComponent::logWarning(const std::string& msg)
+{
+    Log::getInstance()->logWarning(msg);
+}
+
+void BehaviourComponent::logError(const std::string& msg)
+{
+    Log::getInstance()->logError(msg);
 }

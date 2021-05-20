@@ -211,10 +211,7 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
 
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
-
-        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
-        shader.setMat4("projection", camToUse.getProjection().e);
-        shader.setMat4("view", view.e);
+        shader.setMat4("projectionView", (camToUse.getProjection() * view).e);
     }
 
     if ((shader.getFeature() & PROJECTION_VIEW_MODEL_MATRIX) == PROJECTION_VIEW_MODEL_MATRIX)
@@ -222,7 +219,7 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
         shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
 
-    if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
+    if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG && (shader.getFeature() & SKYBOX) != SKYBOX)
     {
         Mat3 inverseModelMatrix3(toMatrix3(modelMatrix.inversed()).transposed());
 

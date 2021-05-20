@@ -140,3 +140,11 @@ void BehaviourSystem::update(double deltaTime) const noexcept
         behaviour->update(deltaTime);
     }
 }
+
+void BehaviourSystem::gameAssert(bool condition, const char* msg)
+{
+#ifdef _DEBUG
+    if (!condition && onGameAssert)
+        onGameAssert(msg);
+#endif // DEBUG
+}

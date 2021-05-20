@@ -9,6 +9,7 @@
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
 
+#include <Sun.hpp>
 #include <WorldGenerator.hpp>
 
 #include <GPM/Random.hpp>
@@ -23,6 +24,7 @@
 
 #include "Engine/Core/HotReload/SingletonsSync.hpp"
 
+using namespace GPG;
 using namespace GPE;
 using namespace GPM;
 using namespace GPM::Random;
@@ -268,6 +270,7 @@ Game::Game()
         const DirectionalLight::CreateArg lightArg{
             {0.f, -0.5f, 0.5f}, {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}};
         sun->addComponent<DirectionalLight>(lightArg).setShadowActive(true);
+        sun->addComponent<Sun>();
     }
 
     //{ // Light

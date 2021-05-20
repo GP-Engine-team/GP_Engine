@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Engine/Core/Tools/BranchPrediction.hpp"
+#include <functional>
 #include <vector>
 
 namespace GPE
@@ -20,6 +21,9 @@ protected:
     std::vector<BehaviourComponent*> m_updateFunctions;
     std::vector<BehaviourComponent*> m_fixedUpdateFunctions;
     std::vector<BehaviourComponent*> m_onGUIFunctions;
+
+public:
+    std::function<void(const char*)> onGameAssert;
 
 public:
     void addUpdate(BehaviourComponent& updateFunction) noexcept;
@@ -44,6 +48,13 @@ public:
     void fixedUpdate(double deltaTime) noexcept;
 
     void update(double deltaTime) const noexcept;
+
+    /**
+     * @brief Call game assert event if condition == null
+     * @param condition
+     * @param msg
+     */
+    void gameAssert(bool condition, const char* msg = "");
 };
 
 } /*namespace GPE*/
