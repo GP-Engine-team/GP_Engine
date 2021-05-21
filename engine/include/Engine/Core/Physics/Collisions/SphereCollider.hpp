@@ -10,28 +10,29 @@
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <GPM/Vector3.hpp>
 
- // Generated
+// Generated
 #include <Generated/SphereCollider.rfk.h>
 
 namespace GPE RFKNamespace()
 {
     class RFKClass(Inspect(), Serialize()) SphereCollider : public Collider
-	{
-	public:
-		SphereCollider() noexcept;
-		SphereCollider(const SphereCollider & other) noexcept = delete;
-		SphereCollider(SphereCollider && other) noexcept = default;
-		virtual ~SphereCollider() noexcept = default;
-		SphereCollider& operator=(SphereCollider const& other) noexcept = delete;
-		SphereCollider& operator=(SphereCollider && other) noexcept = delete;
+    {
+    public:
+        SphereCollider(GameObject & owner) noexcept;
+        SphereCollider(const SphereCollider& other) noexcept = delete;
+        SphereCollider(SphereCollider && other) noexcept     = default;
+        virtual ~SphereCollider() noexcept;
+        SphereCollider& operator=(SphereCollider const& other) noexcept = delete;
+        SphereCollider& operator=(SphereCollider&& other) noexcept = delete;
 
-	private:
-		float m_radius;
+    private:
+        RFKField(Serialize(), Inspect("setRadius")) float m_radius;
 
-	public:
-		GETTER_BY_VALUE(Radius, m_radius);
-		void setRadius(float newRadius) noexcept;
+    public:
+        GETTER_BY_VALUE(Radius, m_radius);
+        void             setRadius(float newRadius) noexcept;
+        RFKMethod() void updateShape() noexcept;
 
-		SphereCollider_GENERATED
-	};
+        SphereCollider_GENERATED
+    };
 } // namespace )

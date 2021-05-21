@@ -10,21 +10,22 @@
 #include "Generated/RigidbodyStatic.rfk.h"
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace physx;
 
-RigidbodyStatic::RigidbodyStatic(GameObject& owner, EShapeType _type) noexcept : Component(owner), RigidBodyBase(owner, _type)
+RigidbodyStatic::RigidbodyStatic(GameObject& owner, EShapeType _type) noexcept
+    : Component(owner), RigidBodyBase(owner, _type)
 {
-	rigidbody = PxGetPhysics().createRigidStatic(
-		PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
-			PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
+    rigidbody = PxGetPhysics().createRigidStatic(
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
+                    PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
 
-	rigidbody->userData = &getOwner();
+    rigidbody->userData = &getOwner();
 
-	rigidbody->attachShape(*collider->shape);
-	collider->shape->release();
+    setType(_type);
+    // updateShape();
 
-	Engine::getInstance()->physXSystem.addComponent(this);
+    Engine::getInstance()->physXSystem.addComponent(this);
 }
 
 void RigidbodyStatic::setActive(bool newState) noexcept
@@ -42,14 +43,14 @@ void RigidbodyStatic::onPostLoad()
     transform.setDirty();
     transform.update();
 
-    rigidbody = PxGetPhysics().createRigidStatic(
-        PxTransform(PhysXSystem::GPMVec3ToPxVec3(transform.getGlobalPosition()),
-                    PhysXSystem::GPMQuatToPxQuat(transform.getGlobalRotation())));
+    rigidbody =
+        PxGetPhysics().createRigidStatic(PxTransform(PhysXSystem::GPMVec3ToPxVec3(transform.getGlobalPosition()),
+                                                     PhysXSystem::GPMQuatToPxQuat(transform.getGlobalRotation())));
 
     rigidbody->userData = &getOwner();
 
     rigidbody->attachShape(*collider->shape);
-    collider->shape->release();
+    // updateShape();
     updateToSystem();
 }
 
@@ -65,11 +66,27 @@ void RigidbodyStatic::updateToSystem()
     }
 }
 
+void RigidbodyStatic::updateShape(physx::PxShape& oldShape)
+{
+    if (&oldShape)
+    {
+        rigidbody->detachShape(oldShape);
+    }
+
+    rigidbody->attachShape(*collider->shape);
+}
+
 RigidbodyStatic::~RigidbodyStatic() noexcept
 {
-	if (rigidbody != nullptr && rigidbody->isReleasable())
-	{
-		rigidbody->release();
-	}
-	Engine::getInstance()->physXSystem.removeComponent(this);
+    if (collider && collider->shape)
+    {
+        rigidbody->detachShape(*collider->shape);
+    }
+
+    setActive(false);
+
+    if (rigidbody != nullptr && rigidbody->isReleasable())
+    {
+        rigidbody->release();
+    }
 }

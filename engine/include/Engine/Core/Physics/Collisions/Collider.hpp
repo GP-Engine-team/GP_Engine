@@ -5,6 +5,7 @@
  */
 
 #pragma once
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/InspectContext.hpp>
 #include <Engine/Serialization/Serialize.hpp>
@@ -14,7 +15,6 @@
 #include <PxMaterial.h>
 #include <PxShape.h>
 #include <Refureku/Refureku.h>
-#include <Engine/Intermediate/GameObject.hpp>
 
 // Generated
 #include <Generated/Collider.rfk.h>
@@ -33,18 +33,17 @@ namespace GPE RFKNamespace()
         virtual ~Collider() noexcept;
 
     public:
+        physx::PxShape*                       shape         = nullptr;
+        physx::PxMaterial*                    material      = nullptr;
+        RFKField(Serialize(), Inspect()) bool isTrigger     = false;
+        RFKField(Serialize()) bool            isVisible     = false;
+        RFKField(Serialize()) GPM::Vector3    center        = {0.f, 0.f, 0.f};
+        RFKField(Serialize()) GameObject*     owner         = nullptr;
+        RFKField(Serialize()) GPM::Vector3    localRotation = {0.f, 0.f, 0.f};
 
-        physx::PxShape*                    shape     = nullptr;
-        physx::PxMaterial*                 material  = nullptr;
-        RFKField(Serialize()) bool         isTrigger = false;
-        RFKField(Serialize()) bool         isVisible = false;
-        RFKField(Serialize()) GPM::Vector3 center    = {0.f, 0.f, 0.f};
-        RFKField(Serialize()) GameObject*  owner     = nullptr;
-        RFKField(Serialize()) GPM::Vector3 localRotation = {0.f, 0.f, 0.f};
-
-        void        setCenter(const GPM::Vec3& newCenter) noexcept;
-        void        setLocalRotation(const GPM::Vec3& newLocalRotation) noexcept;
-        void        updateTransform() noexcept;
+        void setCenter(const GPM::Vec3& newCenter) noexcept;
+        void setLocalRotation(const GPM::Vec3& newLocalRotation) noexcept;
+        void updateTransform() noexcept;
 
         Collider_GENERATED
     };

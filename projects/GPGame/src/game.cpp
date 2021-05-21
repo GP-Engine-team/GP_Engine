@@ -288,13 +288,13 @@ Game::Game()
     // Physics
     { // ground
         Mesh* planeMesh = &Engine::getInstance()->resourceManager.add<Mesh>(
-            "PlaneFround", Mesh::createQuad(1.f, 1.f, 100.f, 0, 0, Mesh::Axis::Y));
+            "PlaneFround", Mesh::createQuad(0.5f, 0.5f, 100.f, 0, 0, Mesh::Axis::Y));
 
         ground->getTransform().setScale(Vec3{1000, 1, 1000});
 
         RigidbodyStatic& rb    = ground->addComponent<RigidbodyStatic>(EShapeType::E_BOX);
         rb.collider->isVisible = true;
-        static_cast<BoxCollider*>(rb.collider.get())->setSizeOffset({1000.f, 1.f, 1000.f});
+        // static_cast<BoxCollider*>(rb.collider.get())->setSizeOffset({1000.f, 1.f, 1000.f});
 
         Model& mod = ground->addComponent<Model>();
         mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
@@ -302,7 +302,7 @@ Game::Game()
                                             true});
     }
 
-    {   // testPhysX
+    { // testPhysX
         /*RigidbodyDynamic& rb = ground->addComponent<RigidbodyDynamic>(EShapeType::E_SPHERE);
         rb.collider->isVisible = true;
         static_cast<SphereCollider*>(rb.collider.get())->setRadius(10.f);*/
