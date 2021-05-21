@@ -59,6 +59,11 @@ public:
     constexpr GPE::AbstractGame& game() const;
 
     virtual void update() override final;
+
+    /**
+     * @brief Start behaviour of behaviourComponent in currentScene
+     */
+    void startScene();
 };
 
 #include "EditorStartup.inl"

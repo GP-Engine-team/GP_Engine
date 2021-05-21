@@ -1,4 +1,5 @@
-﻿#include "Engine/ECS/System/RenderSystem.hpp"
+﻿
+#include "Engine/ECS/System/RenderSystem.hpp"
 
 #include <algorithm> //std::sort
 #include <cstdio>
@@ -82,6 +83,10 @@ void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float 
 
 RenderSystem::RenderSystem() noexcept
 {
+    Engine::getInstance()->resourceManager.add<Shader>(
+        "Default", "./resources/shaders/vTextureWithLightAndShadowAndNM.vs",
+        "./resources/shaders/fTextureWithLightAndShadowAndNM.fs", LIGHT_BLIN_PHONG);
+
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
 
@@ -146,6 +151,7 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
                 AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.bottomFace) &&
                 AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.farFace) &&
                 AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.nearFace));
+        break;
     }
     default:
         return true;
@@ -165,6 +171,8 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
         }
 
         shader.setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
+
+        shader.setBool("numberShadowUse", m_shadowMaps.size());
 
         if (!m_shadowMaps.empty())
         {
@@ -204,11 +212,9 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
 
-        shader.setMat4("projectViewModelMatrix", (camToUse.getProjection() * view * modelMatrix).e);
+        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
         shader.setMat4("projection", camToUse.getProjection().e);
         shader.setMat4("view", view.e);
-
-        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
     }
 
     if ((shader.getFeature() & PROJECTION_VIEW_MODEL_MATRIX) == PROJECTION_VIEW_MODEL_MATRIX)
@@ -227,14 +233,14 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
         if (!m_shadowMaps.empty())
         {
             shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
-            shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
+            // shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
             shader.setMat4("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix().e);
         }
         else
         {
             shader.setMat4("lightSpaceMatrix", Mat4::identity().e);
             shader.setInt("PCF", 1);
-            shader.setFloat("bias", 0.0f);
+            // shader.setFloat("bias", 0.0f);
         }
     }
 }
@@ -265,6 +271,12 @@ void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
     if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
         shader.setMaterialBlock(material.getComponent());
+
+        if (material.getNormalMapTexture())
+        {
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, material.getNormalMapTexture()->getID());
+        }
     }
 
     if ((shader.getFeature() & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
@@ -363,6 +375,90 @@ void RenderSystem::resetCurrentRenderPassKey()
     glBindVertexArray(0);
 }
 
+RenderSystem::RenderPipeline RenderSystem::debugRenderPipeline() const noexcept
+{
+    return
+        [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
+           std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras, std::vector<Light*>& pLights,
+           std::vector<ParticleComponent*>& pParticleComponents, std::vector<DebugShape>& debugShape,
+           std::vector<DebugLine>& debugLines, std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
+            // Draw debug shape
+            {
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                if (!debugShape.empty())
+                {
+                    const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
+                    glUseProgram(shaderToUse->getID());
+
+                    for (auto&& shape : debugShape)
+                    {
+                        glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
+                        rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
+
+                        shaderToUse->setMat4("projectViewModelMatrix",
+                                             (mainCamera.getProjectionView() * shape.transform.model).e);
+
+                        shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
+
+                        rs.tryToBindMesh(shape.shape->getID());
+
+                        glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
+                    }
+                }
+
+                // Draw debug line
+                if (!debugLines.empty())
+                {
+                    const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
+                    glUseProgram(shaderToUse->getID());
+                    shaderToUse->setMat4("projectViewModelMatrix", mainCamera.getProjectionView().e);
+                    rs.tryToSetBackFaceCulling(false);
+
+                    for (auto&& line : debugLines)
+                    {
+                        GLfloat lineSeg[] = {
+                            line.pt1.x, line.pt1.y, line.pt1.z, // first vertex
+                            line.pt2.x, line.pt2.y, line.pt2.z  // second vertex
+                        };
+
+                        GLuint lineVAO, lineVBO;
+                        glGenVertexArrays(1, &lineVAO);
+                        glGenBuffers(1, &lineVBO);
+                        glBindVertexArray(lineVAO);
+                        glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
+                        glBufferData(GL_ARRAY_BUFFER, sizeof(lineSeg), &lineSeg, GL_STATIC_DRAW);
+                        glEnableVertexAttribArray(0);
+                        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+
+                        shaderToUse->setVec4("Color", line.color.r, line.color.g, line.color.b, line.color.a);
+
+                        if (line.smooth)
+                            glEnable(GL_LINE_SMOOTH);
+                        else
+                            glDisable(GL_LINE_SMOOTH);
+
+                        glBindVertexArray(lineVAO);
+                        glLineWidth(line.width);
+                        glDrawArrays(GL_LINES, 0, 2);
+
+                        glLineWidth(1.0f);
+                        glDisable(GL_LINE_SMOOTH);
+
+                        glDeleteVertexArrays(1, &lineVAO);
+                        glDeleteBuffers(1, &lineVBO);
+                    }
+
+                    debugLines.clear();
+                }
+
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            }
+            rs.resetCurrentRenderPassKey();
+        };
+}
+
 RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
@@ -375,6 +471,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
         rs.shadowMapPipeline();
 
+        glEnable(GL_MULTISAMPLE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -382,8 +479,6 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         Frustum camFrustum = mainCamera.getFrustum();
-
-        rs.resetCurrentRenderPassKey();
 
         /*Display opaque element*/
         {
@@ -393,10 +488,10 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 if (!rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
+                    rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
                     continue;
                 }
-                // rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
+                rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMaterial(*pSubModel->pShader, *pSubModel->pMaterial);
@@ -471,80 +566,11 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             }
         }
 
-        // Draw debug shape
-        {
-            if (!debugShape.empty())
-            {
-                const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
-                glUseProgram(shaderToUse->getID());
-
-                for (auto&& shape : debugShape)
-                {
-                    glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
-                    rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
-
-                    shaderToUse->setMat4("projectViewModelMatrix",
-                                         (mainCamera.getProjectionView() * shape.transform.model).e);
-
-                    shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
-
-                    rs.tryToBindMesh(shape.shape->getID());
-
-                    glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
-                }
-            }
-
-            // Draw debug line
-            if (!debugLines.empty())
-            {
-                const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
-                glUseProgram(shaderToUse->getID());
-                shaderToUse->setMat4("projectViewModelMatrix", mainCamera.getProjectionView().e);
-                rs.tryToSetBackFaceCulling(false);
-
-                for (auto&& line : debugLines)
-                {
-                    GLfloat lineSeg[] = {
-                        line.pt1.x, line.pt1.y, line.pt1.z, // first vertex
-                        line.pt2.x, line.pt2.y, line.pt2.z  // second vertex
-                    };
-
-                    GLuint lineVAO, lineVBO;
-                    glGenVertexArrays(1, &lineVAO);
-                    glGenBuffers(1, &lineVBO);
-                    glBindVertexArray(lineVAO);
-                    glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
-                    glBufferData(GL_ARRAY_BUFFER, sizeof(lineSeg), &lineSeg, GL_STATIC_DRAW);
-                    glEnableVertexAttribArray(0);
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-
-                    shaderToUse->setVec4("Color", line.color.r, line.color.g, line.color.b, line.color.a);
-
-                    if (line.smooth)
-                        glEnable(GL_LINE_SMOOTH);
-                    else
-                        glDisable(GL_LINE_SMOOTH);
-
-                    glBindVertexArray(lineVAO);
-                    glLineWidth(line.width);
-                    glDrawArrays(GL_LINES, 0, 2);
-
-                    glLineWidth(1.0f);
-                    glDisable(GL_LINE_SMOOTH);
-
-                    glDeleteVertexArrays(1, &lineVAO);
-                    glDeleteBuffers(1, &lineVBO);
-                }
-
-                debugLines.clear();
-            }
-
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
+        rs.resetCurrentRenderPassKey();
     };
 }
 
-RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const noexcept
+RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
 {
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
@@ -554,6 +580,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
+        glDisable(GL_MULTISAMPLE);
         glClearColor(0.f, 0.f, 0.f, 0.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -569,7 +596,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
 
             for (auto&& pSubModel : pOpaqueSubModels)
             {
-                if (!rs.isOnFrustum(camFrustum, pSubModel))
+                if ((pSubModel->pShader->getFeature() & SKYBOX) == SKYBOX || !rs.isOnFrustum(camFrustum, pSubModel))
                     continue;
 
                 glUniform1ui(idLocation, pSubModel->pModel->getOwner().getID());
@@ -585,7 +612,7 @@ RenderSystem::RenderPipeline RenderSystem::gameObjectIdentifierPipeline() const 
 
             for (auto&& pSubModel : pTransparenteSubModels)
             {
-                if (!rs.isOnFrustum(camFrustum, pSubModel))
+                if ((pSubModel->pShader->getFeature() & SKYBOX) == SKYBOX || !rs.isOnFrustum(camFrustum, pSubModel))
                     continue;
 
                 glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"),
@@ -632,6 +659,9 @@ void RenderSystem::shadowMapPipeline() noexcept
         {
             for (auto&& pSubModel : m_pOpaqueSubModels)
             {
+                if (!pSubModel->castShadow)
+                    continue;
+
                 tryToBindMesh(pSubModel->pMesh->getID());
                 tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
@@ -642,6 +672,9 @@ void RenderSystem::shadowMapPipeline() noexcept
 
             for (auto&& pSubModel : m_pTransparenteSubModels)
             {
+                if (!pSubModel->castShadow)
+                    continue;
+
                 tryToBindMesh(pSubModel->pMesh->getID());
                 tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
@@ -845,6 +878,7 @@ void RenderSystem::removeSubModel(SubModel& subModel) noexcept
             m_pTransparenteSubModels.erase(it);
     }
 }
+
 void RenderSystem::addCamera(Camera& camera) noexcept
 {
     m_pCameras.push_back(&camera);

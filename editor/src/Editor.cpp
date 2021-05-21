@@ -36,348 +36,351 @@ extern "C"
 namespace Editor
 {
 
-	using namespace GPE;
+using namespace GPE;
 
-	/* ========================== Private methods ========================== */
-	void Editor::setupDearImGui()
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
-		// io.ConfigViewportsNoAutoMerge   = true;
-		// io.ConfigViewportsNoTaskBarIcon = true;
+/* ========================== Private methods ========================== */
+void Editor::setupDearImGui()
+{
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
+    // io.ConfigViewportsNoAutoMerge   = true;
+    // io.ConfigViewportsNoTaskBarIcon = true;
 
-		// Setup Dear ImGui style
-		ImGui::StyleColorsDark();
-		ImGuiLoadStyle(PATH_UI_STYLE, ImGui::GetStyle());
-	}
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    ImGuiLoadStyle(PATH_UI_STYLE, ImGui::GetStyle());
+}
 
-	void Editor::renderStyleEditor()
-	{
-		if (m_showAppStyleEditor)
-		{
-			ImGui::Begin("Style Editor", &m_showAppStyleEditor);
-			ShowStyleEditor();
-			ImGui::End();
-		}
-	}
+void Editor::renderStyleEditor()
+{
+    if (m_showAppStyleEditor)
+    {
+        ImGui::Begin("Style Editor", &m_showAppStyleEditor);
+        ShowStyleEditor();
+        ImGui::End();
+    }
+}
 
-	void Editor::renderMenuBar()
-	{
-		if (ImGui::BeginMainMenuBar())
-		{
-			// File
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("New"))
-				{
-					m_projectContent.createNewScene();
-				}
+void Editor::renderMenuBar()
+{
+    if (ImGui::BeginMainMenuBar())
+    {
+        // File
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("New"))
+            {
+                m_projectContent.createNewScene();
+            }
 
-				// if (ImGui::MenuItem("Open"))
-				//{
-				//    m_sceneEditor.view.unbindScene();
-				//    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(fileName);
-				//    loadScene(&scene, path.c_str());
-				//}
+            // if (ImGui::MenuItem("Open"))
+            //{
+            //    m_sceneEditor.view.unbindScene();
+            //    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(fileName);
+            //    loadScene(&scene, path.c_str());
+            //}
 
-				if (ImGui::MenuItem("Save to"))
-				{
-					m_saveFolder = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
-					std::filesystem::path path = m_saveFolder;
-					path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
+            if (ImGui::MenuItem("Save to"))
+            {
+                m_saveFolder               = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
+                std::filesystem::path path = m_saveFolder;
+                path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
 
-					saveScene(m_sceneEditor.view.pScene, path.string().c_str());
-				}
+                saveScene(m_sceneEditor.view.pScene, path.string().c_str());
+            }
 
-				if (ImGui::MenuItem("Save"))
-				{
-					if (m_saveFolder.empty())
-						m_saveFolder = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
+            if (ImGui::MenuItem("Save"))
+            {
+                if (m_saveFolder.empty())
+                    m_saveFolder = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
 
-					std::filesystem::path path = m_saveFolder;
-					path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
+                std::filesystem::path path = m_saveFolder;
+                path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
 
-					saveScene(m_sceneEditor.view.pScene, path.string().c_str());
-				}
+                saveScene(m_sceneEditor.view.pScene, path.string().c_str());
+            }
 
-				ImGui::EndMenu();
-			}
+            ImGui::EndMenu();
+        }
 
-			// Edit
-			if (ImGui::BeginMenu("Edit"))
-			{
-				ImGui::MenuItem("Edit something");
-				ImGui::EndMenu();
-			}
+        // Edit
+        if (ImGui::BeginMenu("Edit"))
+        {
+            ImGui::MenuItem("Edit something");
+            ImGui::EndMenu();
+        }
 
-			// View
-			if (ImGui::BeginMenu("View"))
-			{
-				if (ImGui::BeginMenu("Windows"))
-				{
-					ImGui::MenuItem("Viewport");
-					ImGui::MenuItem("Scene graph");
-					ImGui::MenuItem("Project browser");
-					ImGui::MenuItem("Inspector");
+        // View
+        if (ImGui::BeginMenu("View"))
+        {
+            if (ImGui::BeginMenu("Windows"))
+            {
+                ImGui::MenuItem("Viewport");
+                ImGui::MenuItem("Scene graph");
+                ImGui::MenuItem("Project browser");
+                ImGui::MenuItem("Inspector");
 
-					ImGui::EndMenu();
-				}
+                ImGui::EndMenu();
+            }
 
-				if (ImGui::BeginMenu("Layout"))
-				{
-					if (ImGui::MenuItem("Default"))
-					{
-						ImGui::LoadIniSettingsFromDisk("Layout/defaultGUILayout.ini");
-					}
-					if (ImGui::MenuItem("Quick save"))
-					{
-						ImGui::SaveIniSettingsToDisk("Layout/userGUILayout.ini");
-					}
-					if (ImGui::MenuItem("Quick laod"))
-					{
-						ImGui::LoadIniSettingsFromDisk("Layout/userGUILayout.ini");
-					}
-					ImGui::EndMenu();
-				}
-				ImGui::EndMenu();
-			}
+            if (ImGui::BeginMenu("Layout"))
+            {
+                if (ImGui::MenuItem("Default"))
+                {
+                    ImGui::LoadIniSettingsFromDisk("Layout/defaultGUILayout.ini");
+                }
+                if (ImGui::MenuItem("Quick save"))
+                {
+                    ImGui::SaveIniSettingsToDisk("Layout/userGUILayout.ini");
+                }
+                if (ImGui::MenuItem("Quick laod"))
+                {
+                    ImGui::LoadIniSettingsFromDisk("Layout/userGUILayout.ini");
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
 
-			// Options
-			if (ImGui::BeginMenu("Options"))
-			{
-				// Style editor
-				ImGui::MenuItem("Style Editor", NULL, &m_showAppStyleEditor);
+        // Options
+        if (ImGui::BeginMenu("Options"))
+        {
+            // Style editor
+            ImGui::MenuItem("Style Editor", NULL, &m_showAppStyleEditor);
 
-				// Menu content
-				ImGui::MenuItem("Preferences");
-				ImGui::EndMenu();
-			}
+            // Menu content
+            ImGui::MenuItem("Preferences");
+            ImGui::EndMenu();
+        }
 
-			// Help
-			if (ImGui::BeginMenu("Help"))
-			{
-				ImGui::MenuItem("Demo ImGui", NULL, &m_showImGuiDemoWindows);
+        // Help
+        if (ImGui::BeginMenu("Help"))
+        {
+            ImGui::MenuItem("Demo ImGui", NULL, &m_showImGuiDemoWindows);
 
-				// Menu content
-				ImGui::MenuItem("Useful links");
-				ImGui::EndMenu();
-			}
+            // Menu content
+            ImGui::MenuItem("Useful links");
+            ImGui::EndMenu();
+        }
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize("FPS : 144").x -
+                             ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
+        ImGui::Text("FPS : %0.0f", ImGui::GetIO().Framerate);
 
-			ImGui::EndMainMenuBar();
-		}
-	}
+        ImGui::EndMainMenuBar();
+    }
+}
 
-	void Editor::renderGameControlBar(EditorStartup& startup)
-	{
-		m_gameControlBar.render(startup);
-	}
+void Editor::renderGameControlBar(EditorStartup& startup)
+{
+    m_gameControlBar.render(startup);
+}
 
-	void Editor::renderLevelEditor()
-	{
-		m_sceneEditor.view.update();
-		m_sceneEditor.render(m_inspectedObject);
-	}
+void Editor::renderLevelEditor()
+{
+    m_sceneEditor.view.update();
+    m_sceneEditor.render(m_inspectedObject);
+}
 
-	void Editor::renderGameView(EditorStartup& startup)
-	{
-		m_gameViewer.render(startup);
-	}
+void Editor::renderGameView(EditorStartup& startup)
+{
+    m_gameViewer.render(startup);
+}
 
-	void Editor::renderInspector()
-	{
-		if (ImGui::Begin("Inspector"))
-		{
-			if (m_inspectedObject != nullptr)
-			{
-				GPE::InspectContext context;
-				GPE::DataInspector::inspect(context, *m_inspectedObject);
-			}
-			else
-			{
-				ImGui::Text("Select an object to edit its attributes");
-			}
-		}
-		ImGui::End();
-	}
+void Editor::renderInspector()
+{
+    if (ImGui::Begin("Inspector"))
+    {
+        if (m_inspectedObject != nullptr)
+        {
+            GPE::InspectContext context;
+            GPE::DataInspector::inspect(context, *m_inspectedObject);
+        }
+        else
+        {
+            ImGui::Text("Select an object to edit its attributes");
+        }
+    }
+    ImGui::End();
+}
 
-	void Editor::renderSceneGraph()
-	{
-		if (ImGui::Begin("Scene Graph"))
-		{
-			GPE::GameObject& root{ Engine::getInstance()->sceneManager.getCurrentScene()->getWorld() };
+void Editor::renderSceneGraph()
+{
+    if (ImGui::Begin("Scene Graph"))
+    {
+        GPE::GameObject& root{Engine::getInstance()->sceneManager.getCurrentScene()->getWorld()};
 
-			m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
-		}
+        m_sceneGraph.renderAndGetSelected(root, m_inspectedObject);
+    }
 
-		ImGui::End();
-	}
+    ImGui::End();
+}
 
-	void Editor::renderLog()
-	{
-		if (ImGui::BeginChild("Scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar))
-		{
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+void Editor::renderLog()
+{
+    if (ImGui::BeginChild("Scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar))
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-			m_logInspector.draw("Example: Log");
+        m_logInspector.draw("Example: Log");
 
-			ImGui::PopStyleVar();
-		}
-		ImGui::EndChild();
-	}
+        ImGui::PopStyleVar();
+    }
+    ImGui::EndChild();
+}
 
-	void Editor::renderExplorer()
-	{
-		if (ImGui::Begin("Explorer"))
-		{
-			if (ImGui::BeginTabBar("Explorer"))
-			{
-				if (ImGui::BeginTabItem("Project"))
-				{
-					m_projectContent.renderAndGetSelected(m_inspectedObject);
-					ImGui::EndTabItem();
-				}
+void Editor::renderExplorer()
+{
+    if (ImGui::Begin("Explorer"))
+    {
+        if (ImGui::BeginTabBar("Explorer"))
+        {
+            if (ImGui::BeginTabItem("Project"))
+            {
+                m_projectContent.renderAndGetSelected(m_inspectedObject);
+                ImGui::EndTabItem();
+            }
 
-				if (ImGui::BeginTabItem("Logs"))
-				{
-					renderLog();
-					ImGui::EndTabItem();
-				}
+            if (ImGui::BeginTabItem("Logs"))
+            {
+                renderLog();
+                ImGui::EndTabItem();
+            }
 
-				if (ImGui::BeginTabItem("Profiler"))
-				{
-					ImGui::Text("Plots, and graphs, and numbers...");
-					ImGui::EndTabItem();
-				}
+            if (ImGui::BeginTabItem("Profiler"))
+            {
+                ImGui::Text("Plots, and graphs, and numbers...");
+                ImGui::EndTabItem();
+            }
 
-				ImGui::EndTabBar();
-			}
-		}
-		ImGui::End();
-	}
+            ImGui::EndTabBar();
+        }
+    }
+    ImGui::End();
+}
 
-	void Editor::saveScene(GPE::Scene* scene, const char* path)
-	{
-		auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
-		saveFunc(scene, path, GPE::SavedScene::EType::XML);
-	}
+void Editor::saveScene(GPE::Scene* scene, const char* path)
+{
+    auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
+    saveFunc(scene, path, GPE::SavedScene::EType::XML);
+}
 
-	void Editor::loadScene(GPE::Scene* scene, const char* path)
-	{
-		m_inspectedObject = nullptr;
+void Editor::loadScene(GPE::Scene* scene, const char* path)
+{
+    m_inspectedObject = nullptr;
 
-		auto loadFunc = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
-		loadFunc(scene, path);
+    auto loadFunc = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
+    loadFunc(scene, path);
 
-		m_sceneEditor.view.bindScene(*scene);
-		scene->getWorld().pOwnerScene->sceneRenderer.setDefaultMainCamera();
-	}
+    m_sceneEditor.view.bindScene(*scene);
+    scene->getWorld().pOwnerScene->sceneRenderer.setDefaultMainCamera();
+}
 
-	void Editor::saveCurrentScene()
-	{
-		GPE::Scene* currentScene = m_sceneEditor.view.pScene;
-		const std::string path = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
-		m_sceneEditor.view.unbindScene();
+void Editor::saveCurrentScene()
+{
+    GPE::Scene*       currentScene = m_sceneEditor.view.pScene;
+    const std::string path         = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
+    m_sceneEditor.view.unbindScene();
 
-		auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
-		saveFunc(currentScene, path.c_str(), GPE::SavedScene::EType::XML);
+    auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
+    saveFunc(currentScene, path.c_str(), GPE::SavedScene::EType::XML);
 
-		m_sceneEditor.view.bindScene(*currentScene);
-	}
+    m_sceneEditor.view.bindScene(*currentScene);
+}
 
-	void Editor::reloadCurrentScene()
-	{
-		GPE::Scene* currentScene = m_sceneEditor.view.pScene;
-		const std::string path = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
+void Editor::reloadCurrentScene()
+{
+    GPE::Scene*       currentScene = m_sceneEditor.view.pScene;
+    const std::string path         = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
 
-		m_sceneEditor.view.unbindScene();
-		m_inspectedObject = nullptr;
+    m_sceneEditor.view.unbindScene();
+    m_inspectedObject = nullptr;
 
-		void (* const loadFunc)(GPE::Scene*, const char*) = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
-		loadFunc(currentScene, path.c_str());
+    void (*const loadFunc)(GPE::Scene*, const char*) = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
+    loadFunc(currentScene, path.c_str());
 
-		m_sceneEditor.view.bindScene(*currentScene);
-	}
+    m_sceneEditor.view.bindScene(*currentScene);
+}
 
-	void Editor::unbindCurrentScene()
-	{
-		m_sceneEditor.view.unbindScene();
-	}
+void Editor::unbindCurrentScene()
+{
+    m_sceneEditor.view.unbindScene();
+}
 
-	/* ========================== Constructor & destructor ========================== */
-	Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-		: m_sceneEditor{ editedScene }, m_gameViewer{}, m_logInspector{}, m_projectContent{ *this }, m_sceneGraph{ *this },
-		m_gameControlBar{}, m_saveFolder{}, m_window{ window }, m_inspectedObject{ nullptr }, m_showAppStyleEditor{ false },
-		m_showImGuiDemoWindows{ false }
-	{
-		glfwMaximizeWindow(window);
-		setupDearImGui();
-	}
+/* ========================== Constructor & destructor ========================== */
+Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
+    : m_sceneEditor{*this, editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{*this}, m_sceneGraph{*this},
+      m_gameControlBar{}, m_saveFolder{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false},
+      m_showImGuiDemoWindows{false}
+{
+    glfwMaximizeWindow(window);
+    setupDearImGui();
+}
 
-	void Editor::setSceneInEdition(GPE::Scene& scene)
-	{
-		m_sceneEditor.view.bindScene(scene);
-		GPE::Engine::getInstance()->inputManager.setInputMode("Editor");
-	}
+void Editor::setSceneInEdition(GPE::Scene& scene)
+{
+    m_sceneEditor.view.bindScene(scene);
+    GPE::Engine::getInstance()->inputManager.setInputMode("Editor");
+}
 
-	void Editor::releaseGameInputs()
-	{
-		m_gameViewer.releaseInputs();
-	}
+void Editor::releaseGameInputs()
+{
+    m_gameViewer.releaseInputs();
+}
 
-	void Editor::update(EditorStartup& startup)
-	{
-		auto syncImGui = GET_PROCESS((*m_reloadableCpp), setImguiCurrentContext);
-		auto syncGameUI = GET_PROCESS((*m_reloadableCpp), getGameUIContext);
+void Editor::update(EditorStartup& startup)
+{
+    auto syncImGui  = GET_PROCESS((*m_reloadableCpp), setImguiCurrentContext);
+    auto syncGameUI = GET_PROCESS((*m_reloadableCpp), getGameUIContext);
 
-		// Initialize a new frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+    // Initialize a new frame
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 
-		ImGuiContext* gameContext = syncGameUI();
-		syncImGui(ImGui::GetCurrentContext());
+    ImGuiContext* gameContext = syncGameUI();
+    syncImGui(ImGui::GetCurrentContext());
 
-		// Start drawing
-		if (m_showAppStyleEditor)
-		{
-			renderStyleEditor();
-		}
+    // Start drawing
+    if (m_showAppStyleEditor)
+    {
+        renderStyleEditor();
+    }
 
-		// Editor
-		renderMenuBar();
+    // Editor
+    renderMenuBar();
 
-		ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
+    ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
 
-		renderGameControlBar(startup);
-		renderLevelEditor();
-		renderSceneGraph();
-		renderExplorer();
-		renderInspector();
+    renderGameControlBar(startup);
+    renderLevelEditor();
+    renderSceneGraph();
+    renderExplorer();
+    renderInspector();
 
-		if (m_showImGuiDemoWindows)
-			ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
+    if (m_showImGuiDemoWindows)
+        ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
 
-		// Game
-		syncImGui(gameContext);
-		renderGameView(startup);
-	}
+    // Game
+    syncImGui(gameContext);
+    renderGameView(startup);
+}
 
-	void Editor::render()
-	{
-		ImGui::Render();
+void Editor::render()
+{
+    ImGui::Render();
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0u);
-		glViewport(0, 0, m_sceneEditor.view.width, m_sceneEditor.view.height);
-		glClearColor(1.f, 1.f, 1.f, .0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0u);
+    glViewport(0, 0, m_sceneEditor.view.width, m_sceneEditor.view.height);
+    glClearColor(1.f, 1.f, 1.f, .0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	}
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
 
-	bool Editor::isRunning()
-	{
-		return !glfwWindowShouldClose(m_window);
-	}
+bool Editor::isRunning()
+{
+    return !glfwWindowShouldClose(m_window);
+}
 
 } // End of namespace Editor

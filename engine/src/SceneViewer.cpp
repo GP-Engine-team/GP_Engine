@@ -136,7 +136,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     camera.setActive(true);
     pScene->sceneRenderer.setMainCamera(&camera);
 
-    freeFly.setActive(m_capturingInputs);
+    freeFly.setActive(false);
     inputs.setActive(m_capturingInputs);
 }
 
@@ -170,7 +170,7 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
 
     { // Render in the picking framebuffer
         RenderSystem& renderSys = pScene->sceneRenderer;
-        renderSys.render(renderSys.gameObjectIdentifierPipeline());
+        renderSys.render(renderSys.mousePickingPipeline());
     }
 
     // Find the hovered object, if any
@@ -252,8 +252,8 @@ void SceneViewer::unbindScene()
 
 void SceneViewer::update()
 {
-    // Camera is not set as child of wolrd. So we need to update it.
-    cameraOwner->updateSelfAndChildren();
+    // Camera is not set as child of world. So we need to update it.
+    cameraOwner->getTransform().update();
 
     // When the game is not launched, behaviours are not updated
     // Update FreeFly manually
@@ -274,7 +274,11 @@ void SceneViewer::update()
         }
 
         cameraOwner->getTransform().setTranslation(startPos.lerp(finalPos, lerpT));
-        cameraOwner->getTransform().setRotation(startRotation.slerp(finalRotation, lerpT));
+
+        if (startRotation.angleWith(finalRotation) > .0f)
+        {
+            cameraOwner->getTransform().setRotation(startRotation.slerp(finalRotation, lerpT));
+        }
     }
 }
 
@@ -286,6 +290,7 @@ void SceneViewer::render() const
 
     pScene->sceneRenderer.tryToResize(width, height);
     pScene->sceneRenderer.render(pScene->sceneRenderer.defaultRenderPipeline());
+    pScene->sceneRenderer.render(pScene->sceneRenderer.debugRenderPipeline());
 }
 
 void SceneViewer::captureInputs(bool shouldCapture)
@@ -301,16 +306,49 @@ void SceneViewer::captureInputs(bool shouldCapture)
 // TODO: move to class Camera, or to a new class
 void SceneViewer::lookAtObject(const GameObject& GOToLook)
 {
+    using namespace GPM;
+
+    const TransformComponent &cam{cameraOwner->getTransform()}, &target{GOToLook.getTransform()};
+
+    // Set defaults
+    startPos = finalPos = cameraOwner->getTransform().getGlobalPosition();
+    startRotation = finalRotation = cameraOwner->getTransform().getGlobalRotation();
+
+    { // Find the position which must be reached at the end of the transition
+        const Vec3 pos0{cam.getGlobalPosition()};
+        const Vec3 pos1 = [&]() -> const Vec3 {
+            Vec3 flatForward{target.getGlobalPosition() - cam.getGlobalPosition()};
+            flatForward.y = .0f;
+            flatForward.safelyNormalize();
+
+            return target.getGlobalPosition() - flatForward * transitionRadius;
+        }();
+
+        // Check whether a transition really is necessary
+        if (pos0.isNotEqualTo(pos1))
+        {
+            startPos = pos0;
+            finalPos = pos1;
+
+            lerpT              = 0.f;
+            isTransitionActive = true;
+        }
+    }
+
+    // Find the orientation which must be reached at the end of the transition
+    const f32 angle = [&]() -> const f32 {
+        const Vec3 flatTargetPos{target.getGlobalPosition().x, .0f, target.getGlobalPosition().z};
+        const Vec3 to{flatTargetPos - finalPos};
+
+        // The camera looks toward negative z
+        return (-Vec3::forward()).signedAngleWithUnitary(to.safelyNormalized());
+    }();
+
+    startRotation = cam.getGlobalRotation();
+    finalRotation = Quat::angleAxis(angle, Vec3::up());
+
+    lerpT              = 0.f;
     isTransitionActive = true;
-    startPos           = cameraOwner->getTransform().getGlobalPosition();
-    finalPos           = GOToLook.getTransform().getGlobalPosition();
-    finalPos += (startPos - finalPos).normalized() * transitionRadius;
-
-    const GPM::Transform toGO{GPM::Transform::lookAt(startPos, finalPos, GPM::Vec3::up())};
-
-    startRotation = cameraOwner->getTransform().getGlobalRotation();
-    finalRotation = GPM::toQuaternion(toGO.rotation());
-    lerpT         = 0.f;
 }
 
 } // namespace GPE
