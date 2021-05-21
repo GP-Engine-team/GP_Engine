@@ -27,7 +27,8 @@ CharacterController::CharacterController(GameObject& owner) noexcept
     desc.radius   = 1.f;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
-    Engine::getInstance()->physXSystem.addComponent(this);
+
+    updateToSystem();
 
     // controller->setUserData(&getOwner());
     controller->getActor()->userData = &getOwner();
@@ -111,16 +112,12 @@ void CharacterController::setJumping(float jumping) noexcept
 
 CharacterController::~CharacterController() noexcept
 {
-    Engine::getInstance()->physXSystem.removeComponent(this);
     // controller->release();
+    setActive(false);
 }
 
-void CharacterController::setActive(bool newState) noexcept
+void CharacterController::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
         Engine::getInstance()->physXSystem.addComponent(this);
     else

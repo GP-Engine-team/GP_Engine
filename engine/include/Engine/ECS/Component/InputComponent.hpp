@@ -36,19 +36,18 @@ namespace GPE RFKNamespace()
     class RFKClass(ComponentGen(), Serialize()) InputComponent : public Component
     {
     public:
+        InputComponent();
         InputComponent(GameObject & owner);
 
-        InputComponent();
-        InputComponent(const InputComponent& other) = delete;
-        InputComponent& operator=(InputComponent const& other) = delete;
         virtual ~InputComponent();
-        InputComponent(InputComponent && other);
-        InputComponent& operator=(InputComponent&& other);
 
     private:
         //RFKField(Serialize())
         std::unordered_map<std::string, GPE::Function> m_functionMap;
         int                                            m_key = -1;
+
+    protected:
+        virtual void updateToSystem() noexcept override;
 
     public:
         //RFKField(Serialize())
@@ -75,15 +74,6 @@ namespace GPE RFKNamespace()
          * @param action
          */
         void fireAction(const std::string& action) noexcept;
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
-
-        virtual void onPostLoad() override;
 
         InputComponent_GENERATED
     };

@@ -13,12 +13,12 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 ParticleComponent::ParticleComponent(GameObject& owner) : Component(owner)
 {
-    owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    updateToSystem();
     initializeDefaultSetting();
 }
 
@@ -29,14 +29,13 @@ ParticleComponent::ParticleComponent() : Component()
 
 ParticleComponent::ParticleComponent(GameObject& owner, const CreateArg& arg) : Component(owner)
 {
-    owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    updateToSystem();
     initializeDefaultSetting();
 }
 
 ParticleComponent::~ParticleComponent()
 {
-    if (getOwner().pOwnerScene)
-        getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
+    setActive(false);
 }
 
 void ParticleComponent::moveTowardScene(Scene& newOwner)
@@ -389,27 +388,15 @@ void ParticleComponent::emit(double dt)
         m_particles.wake(i);
 }
 
-void ParticleComponent::onPostLoad()
+void ParticleComponent::updateToSystem() noexcept
 {
-    if (m_isActivated)
-    {
-        getOwner().pOwnerScene->sceneRenderer.addParticleComponent(*this);
-    }
-}
-
-void ParticleComponent::setActive(bool newState) noexcept
-{
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
     {
         getOwner().pOwnerScene->sceneRenderer.addParticleComponent(*this);
     }
     else
     {
-
-        getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
+        if (getOwner().pOwnerScene)
+            getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
     }
 }

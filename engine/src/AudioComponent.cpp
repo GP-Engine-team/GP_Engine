@@ -12,7 +12,7 @@ using namespace std;
 
 AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
 {
-    m_key = Engine::getInstance()->soundSystem.addComponent(this);
+    updateToSystem();
 }
 
 void AudioComponent::setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept
@@ -91,12 +91,8 @@ void AudioComponent::stopAllSound() noexcept
     }
 }
 
-void AudioComponent::setActive(bool newState) noexcept
+void AudioComponent::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
         Engine::getInstance()->soundSystem.addComponent(this);
     else
@@ -108,19 +104,6 @@ void AudioComponent::setActive(bool newState) noexcept
 
 AudioComponent::~AudioComponent()
 {
-    stopAllSound();
-    Engine::getInstance()->soundSystem.removeComponent(m_key);
+    setActive(false);
 }
 
-void AudioComponent::onPostLoad()
-{
-    if (m_isActivated)
-    {
-        Engine::getInstance()->soundSystem.addComponent(this);
-    }
-    else
-    {
-        stopAllSound();
-        Engine::getInstance()->soundSystem.removeComponent(m_key);
-    }
-}

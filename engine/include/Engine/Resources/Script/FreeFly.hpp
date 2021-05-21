@@ -29,7 +29,6 @@ protected:
 public:
     FreeFly() noexcept = default;
     FreeFly(GameObject& owner) noexcept;
-    FreeFly(FreeFly&& other) noexcept = default;
     ~FreeFly() noexcept;
 
     RFKMethod()
@@ -60,8 +59,6 @@ public:
     inline void sprint();
 
     void update(double deltaTime) final;
-
-    FreeFly& operator=(FreeFly&& other) noexcept;
 
     FreeFly_GENERATED
 };

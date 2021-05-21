@@ -7,19 +7,11 @@ File_GENERATED
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
 
-    using namespace GPE;
+using namespace GPE;
 
 BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(owner)
 {
-    getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
-}
-
-void BehaviourComponent::onPostLoad()
-{
-    if (m_isActivated)
-    {
-        getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
-    }
+    updateToSystem();
 }
 
 BehaviourComponent::~BehaviourComponent() noexcept
@@ -27,7 +19,7 @@ BehaviourComponent::~BehaviourComponent() noexcept
     if (!m_isActivated || !getOwner().pOwnerScene)
         return;
 
-    getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);
+    m_isActivated = false;
 
     if (m_useFixedUpdate)
         getOwner().pOwnerScene->behaviourSystem.removeFixedUpdate(*this);
@@ -37,24 +29,8 @@ BehaviourComponent::~BehaviourComponent() noexcept
 
     if (m_useOnGUI)
         getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
-}
 
-BehaviourComponent::BehaviourComponent(BehaviourComponent&& other) noexcept
-    : Component(*other.m_gameObject), m_useUpdate(std::move(other.m_useUpdate)),
-      m_useFixedUpdate(std::move(other.m_useFixedUpdate)), m_useOnGUI(std::move(other.m_useOnGUI))
-{
-    getOwner().pOwnerScene->behaviourSystem.updateBehaviourPointer(this, &other);
-}
-
-BehaviourComponent& BehaviourComponent::operator=(BehaviourComponent&& other) noexcept
-{
-    m_useUpdate      = std::move(other.m_useUpdate);
-    m_useFixedUpdate = std::move(other.m_useFixedUpdate);
-    m_useOnGUI       = std::move(other.m_useOnGUI);
-
-    getOwner().pOwnerScene->behaviourSystem.updateBehaviourPointer(this, &other);
-
-    return static_cast<BehaviourComponent&>(Component::operator=(std::move(other)));
+    setActive(false);
 }
 
 void BehaviourComponent::enableUpdate(bool flag) noexcept
@@ -105,12 +81,8 @@ bool BehaviourComponent::isOnGUIEnable() const noexcept
     return m_useOnGUI;
 }
 
-void BehaviourComponent::setActive(bool newState) noexcept
+void BehaviourComponent::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
         getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
     else

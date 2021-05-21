@@ -34,13 +34,7 @@ namespace GPE RFKNamespace()
 
         virtual ~AudioComponent();
 
-        AudioComponent()                            = default;
-        AudioComponent(const AudioComponent& other) = delete;
-        AudioComponent& operator=(AudioComponent const& other) = delete;
-
-        // AudioComponent(AudioComponent&& other) noexcept = default;
-        AudioComponent& operator=(AudioComponent&& other) = delete;
-        AudioComponent(AudioComponent && other) noexcept = delete;
+        AudioComponent() = default;
 
     private:
         int m_key = -1;
@@ -54,6 +48,11 @@ namespace GPE RFKNamespace()
             SourceData_GENERATED
         };
         std::unordered_map<std::string, SourceData> sources;
+
+    protected:
+        virtual void updateToSystem() noexcept override;
+
+    public:
 
         /**
          * @brief Find and return the corresponding source in the source list
@@ -88,15 +87,6 @@ namespace GPE RFKNamespace()
         {
             return m_key;
         }
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
-
-        virtual void onPostLoad() override;
 
     private:
         [[nodiscard]] SourceData* getSource(const char* name) noexcept;
