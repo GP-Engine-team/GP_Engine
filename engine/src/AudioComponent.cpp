@@ -17,7 +17,6 @@ AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
 
 void AudioComponent::setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept
 {
-
     SourceData* source = getSource(sourceName);
     Sound::Buffer* buffer = Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName);
 
