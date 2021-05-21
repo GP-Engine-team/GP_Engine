@@ -2,18 +2,18 @@ namespace GPE
 {
 
 template <typename T>
-void load(XmlLoader& context, std::list<T>& inspected, const XmlLoader::LoadInfo& info)
+void load(XmlLoader& context, std::list<T>& loaded, const XmlLoader::LoadInfo& info)
 {
     if (context.goToSubChild(info))
     {
         size_t size = std::stoll(findAttribValue(context.top(), "size"));
 
-        inspected.clear();
+        loaded.clear();
 
         for (size_t i = 0; i < size; i++)
         {
-            inspected.emplace_back();
-            GPE::load(context, inspected.back(), XmlLoader::LoadInfo{std::to_string(i), "T", info.typeId});
+            loaded.emplace_back();
+            GPE::load(context, loaded.back(), XmlLoader::LoadInfo{std::to_string(i), "T", info.typeId});
         }
 
         context.pop();
@@ -21,9 +21,9 @@ void load(XmlLoader& context, std::list<T>& inspected, const XmlLoader::LoadInfo
 }
 
 template <typename T>
-void load(class XmlLoader& context, std::list<T>& inspected, const rfk::Field& info)
+void load(class XmlLoader& context, std::list<T>& loaded, const rfk::Field& info)
 {
-    GPE::load(context, inspected, fieldToLoadInfo(info));
+    GPE::load(context, loaded, fieldToLoadInfo(info));
 }
 
 template <typename T>
@@ -33,19 +33,19 @@ void load(XmlLoader& context, std::list<T*>& loaded, const rfk::Field& info)
 }
 
 template <typename T>
-void load(XmlLoader& context, std::list<T*>& inspected, const XmlLoader::LoadInfo& info)
+void load(XmlLoader& context, std::list<T*>& loaded, const XmlLoader::LoadInfo& info)
 {
     if (context.goToSubChild(info))
     {
         size_t size = std::stoll(findAttribValue(context.top(), "size"));
 
-        for (T* elem : inspected)
+        for (T* elem : loaded)
         {
             // delete elem;
             elem->destroy();
         }
 
-        inspected.clear();
+        loaded.clear();
 
         for (size_t i = 0; i < size; i++)
         {
@@ -54,7 +54,7 @@ void load(XmlLoader& context, std::list<T*>& inspected, const XmlLoader::LoadInf
 
             T* elem;
             GPE::load(context, elem, XmlLoader::LoadInfo{std::to_string(i), "T", info.typeId});
-            inspected.emplace_back(elem);
+            loaded.emplace_back(elem);
         }
 
         context.pop();
@@ -62,19 +62,25 @@ void load(XmlLoader& context, std::list<T*>& inspected, const XmlLoader::LoadInf
 }
 
 template <typename T>
-void load(XmlLoader& context, std::vector<T>& inspected, const XmlLoader::LoadInfo& info)
+void load(class XmlLoader& context, std::vector<T>& loaded, const rfk::Field& info)
+{
+    GPE::load(context, loaded, fieldToLoadInfo(info));
+}
+
+template <typename T>
+void load(XmlLoader& context, std::vector<T>& loaded, const XmlLoader::LoadInfo& info)
 {
     if (context.goToSubChild(info))
     {
         size_t size = std::stoll(findAttribValue(context.top(), "size"));
 
-        inspected.clear();
-        inspected.reserve(size);
+        loaded.clear();
+        loaded.reserve(size);
 
         for (size_t i = 0; i < size; i++)
         {
-            inspected.emplace_back();
-            GPE::load(context, inspected.back(), XmlLoader::LoadInfo{std::to_string(i), "T", info.typeId});
+            loaded.emplace_back();
+            GPE::load(context, loaded.back(), XmlLoader::LoadInfo{std::to_string(i), "T", info.typeId});
         }
 
         context.pop();
@@ -82,26 +88,26 @@ void load(XmlLoader& context, std::vector<T>& inspected, const XmlLoader::LoadIn
 }
 
 template <typename T, typename U>
-void load(XmlLoader& context, std::pair<T, U>& inspected, const XmlLoader::LoadInfo& info)
+void load(XmlLoader& context, std::pair<T, U>& loaded, const XmlLoader::LoadInfo& info)
 {
     if (context.goToSubChild(info))
     {
-        GPE::load(context, inspected.first, XmlLoader::LoadInfo{"key", "unknown", 0});
-        GPE::load(context, inspected.second, XmlLoader::LoadInfo{"value", "unknown", 0});
+        GPE::load(context, loaded.first, XmlLoader::LoadInfo{"key", "unknown", 0});
+        GPE::load(context, loaded.second, XmlLoader::LoadInfo{"value", "unknown", 0});
 
         context.pop();
     }
 }
 
 template <typename KEY, typename VALUE>
-void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const XmlLoader::LoadInfo& info)
+void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& loaded, const XmlLoader::LoadInfo& info)
 {
     if (context.goToSubChild(info))
     {
         size_t size = std::stoll(findAttribValue(context.top(), "size"));
 
-        inspected.clear();
-        inspected.reserve(size);
+        loaded.clear();
+        loaded.reserve(size);
 
         for (size_t i = 0; i < size; i++)
         {
@@ -111,7 +117,7 @@ void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const X
             if (context.goToSubChild(info))
             {
                 GPE::load(context, pair.first, XmlLoader::LoadInfo{"key", "unknown", 0});
-                auto insertReturned = inspected.insert(pair);
+                auto insertReturned = loaded.insert(pair);
                 GPE::load(context, insertReturned.first->second, XmlLoader::LoadInfo{"value", "unknown", 0});
 
                 context.pop();
@@ -122,9 +128,9 @@ void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const X
     }
 }
 template <typename KEY, typename VALUE>
-void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const rfk::Field& info)
+void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& loaded, const rfk::Field& info)
 {
-    GPE::load(context, inspected, XmlLoader::LoadInfo{info.name, "unknown", 0});
+    GPE::load(context, loaded, XmlLoader::LoadInfo{info.name, "unknown", 0});
 }
 
 template <typename T>
