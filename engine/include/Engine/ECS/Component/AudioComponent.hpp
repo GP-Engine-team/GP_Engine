@@ -48,16 +48,11 @@ namespace GPE RFKNamespace()
     public:
         struct RFKStruct(Serialize()) SourceData
         {
-            RFKField(Serialize())
             ALuint source;
-            RFKField(Serialize())
             ALint  state = AL_INITIAL;
-
-            Sound::Buffer* buffer = nullptr;
 
             SourceData_GENERATED
         };
-        RFKField(Serialize())
         std::unordered_map<std::string, SourceData> sources;
 
         /**

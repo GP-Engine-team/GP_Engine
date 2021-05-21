@@ -19,7 +19,7 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
 {
 
     SourceData* source = getSource(sourceName);
-    source->buffer     = Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName);
+    Sound::Buffer* buffer = Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName);
 
     AL_CALL(alGenSources, 1, &source->source);
     AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
@@ -27,7 +27,7 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSource3f, source->source, AL_POSITION, settings.position[0], settings.position[1], settings.position[2]);
     AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity[0], settings.velocity[1], settings.velocity[2]);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
-    AL_CALL(alSourcei, source->source, AL_BUFFER, source->buffer->buffer);
+    AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
 }
 
 AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept
@@ -59,7 +59,8 @@ void AudioComponent::playSound(const char* name, bool forceStart) noexcept
 
 AudioComponent::SourceData* AudioComponent::findSource(const char* name) noexcept
 {
-    if (sources.find(name) != sources.end())
+    auto it = sources.find(name); 
+    if (it != sources.end())
     {
         return &sources.find(name)->second;
     }
