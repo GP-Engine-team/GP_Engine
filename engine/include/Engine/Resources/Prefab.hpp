@@ -24,8 +24,9 @@ namespace GPE RFKNamespace()
         std::string                               m_name             = "";
 
     public:
-        Prefab()
+        Prefab(const char* path)
         {
+            loadPrefabFromPath(path);
         }
 
         ~Prefab() = default;
@@ -49,5 +50,15 @@ namespace GPE RFKNamespace()
         }
 
         Prefab_GENERATED
+    };
+
+    struct SharedPrefab
+    {
+        Prefab pref;
+        size_t instanceCounter = 0;
+
+        SharedPrefab(const char* path) : pref(path)
+        {
+        }
     };
 } // namespace )

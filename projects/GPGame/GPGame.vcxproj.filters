@@ -54,6 +54,9 @@
     <ClInclude Include="include\Sun.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CircularEntitiesSpawner.hpp">
+      <Filter>Header Files\FireArme</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
@@ -81,6 +84,9 @@
       <Filter>Header Files\FireArme</Filter>
     </ClCompile>
     <ClCompile Include="src\Sun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CircularEntitiesSpawner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

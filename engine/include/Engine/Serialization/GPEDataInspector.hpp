@@ -37,9 +37,9 @@ template <>
 bool DataInspector::inspect(InspectContext& context, class GameObject*& inspected, const char* name);
 
 template <>
-bool DataInspector::inspect(InspectContext& context, class Prefab& inspected, const rfk::Field& info);
+bool DataInspector::inspect(InspectContext& context, class Prefab*& inspected, const rfk::Field& info);
 
 template <>
-bool DataInspector::inspect(InspectContext& context, class Prefab& inspected, const char* name);
+bool DataInspector::inspect(InspectContext& context, class Prefab*& inspected, const char* name);
 
 } // namespace GPE

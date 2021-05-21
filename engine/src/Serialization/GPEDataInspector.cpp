@@ -1,10 +1,13 @@
 #include "Engine/Serialization/GPEDataInspector.hpp"
 
+#include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Prefab.hpp>
+#include <Engine/Resources/ResourcesManager.hpp>
 #include <Engine/Resources/Scene.hpp>
 #include <filesystem>
+#include <unordered_map>
 
 #include <imgui.h>
 
@@ -117,20 +120,20 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject*& insp
 }
 
 template <>
-bool DataInspector::inspect(InspectContext& context, Prefab& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool DataInspector::inspect(InspectContext& context, Prefab& inspected, const char* name)
+bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const char* name)
 {
     startProperty(name);
     bool hasChanged = false;
 
-    ImGui::Selectable(inspected.isEmpty() ? "None" : inspected.getName());
+    ImGui::Selectable(inspected ? inspected->getName() : "None");
 
-    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
+    if (inspected && ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
     {
         ImGui::OpenPopup("PrefabSelection");
     }
@@ -139,7 +142,20 @@ bool DataInspector::inspect(InspectContext& context, Prefab& inspected, const ch
     {
         if (ImGui::MenuItem("Remove", NULL, false))
         {
-            inspected.reset();
+            std::unordered_map<std::string, SharedPrefab>& pSPref =
+                Engine::getInstance()->resourceManager.getAll<GPE::SharedPrefab>();
+
+            for (auto&& it = pSPref.begin(); it != pSPref.end(); ++it)
+            {
+                if (&it->second.pref == inspected)
+                {
+                    if (--it->second.instanceCounter == 0)
+                        pSPref.erase(it);
+                    break;
+                }
+            }
+
+            inspected  = nullptr;
             hasChanged = true;
         }
 
@@ -154,7 +170,18 @@ bool DataInspector::inspect(InspectContext& context, Prefab& inspected, const ch
             IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
             std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
-            inspected.loadPrefabFromPath(path.string().c_str());
+            if (SharedPrefab* pSPref = Engine::getInstance()->resourceManager.get<SharedPrefab>(path.string().c_str()))
+            {
+                inspected = &pSPref->pref;
+                pSPref->instanceCounter++;
+            }
+            else
+            {
+                SharedPrefab& sPref = Engine::getInstance()->resourceManager.add<SharedPrefab>(path.string().c_str(),
+                                                                                               path.string().c_str());
+                inspected           = &sPref.pref;
+            }
+
             hasChanged = true;
         }
         ImGui::EndDragDropTarget();

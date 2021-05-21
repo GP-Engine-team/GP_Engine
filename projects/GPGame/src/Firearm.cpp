@@ -58,9 +58,9 @@ File_GENERATED
             {
                 if (GPE::GameObject* pOwner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData))
                 {
-                    if (!m_decalePrefab.isEmpty())
+                    if (!m_decalePrefab->isEmpty())
                     {
-                        GPE::GameObject& decaleGO = *m_decalePrefab.clone(*pOwner);
+                        GPE::GameObject& decaleGO = *m_decalePrefab->clone(*pOwner);
                         decaleGO.getTransform().setTranslation(
                             GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position));
 

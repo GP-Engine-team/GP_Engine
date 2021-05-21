@@ -41,7 +41,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) bool m_isReloadingNextBullet = false;
         RFKField(Inspect(), Serialize()) bool m_isReloading           = false;
 
-        RFKField(Serialize(), Inspect()) GPE::Prefab m_decalePrefab;
+        RFKField(Inspect()) GPE::Prefab* m_decalePrefab;
 
     public:
         Firearm() noexcept = default;
