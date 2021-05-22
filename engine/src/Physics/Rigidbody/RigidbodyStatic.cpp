@@ -43,22 +43,25 @@ void RigidbodyStatic::onPostLoad() noexcept
     //rigidbody = PxGetPhysics().createRigidStatic(
     //    PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
     //                PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
+    rigidbody = PxGetPhysics().createRigidStatic(
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(GPM::Vec3::zero()),
+                    PhysXSystem::GPMQuatToPxQuat(GPM::Quat::identity())));
 
-    //rigidbody->userData = &getOwner();
+    rigidbody->userData = &getOwner();
 
-    //if (!collider)
-    //{
-    //    FUNCT_ERROR("No collider assigned to the game object!");
-    //    m_isActivated = false;
-    //}
+    if (!collider)
+    {
+        FUNCT_ERROR("No collider assigned to the game object!");
+        m_isActivated = false;
+    }
 
-    //else
-    //{
-    //    rigidbody->attachShape(*collider->shape);
-    //    collider->shape->release();
-    //}
+    else
+    {
+        rigidbody->attachShape(*collider->shape);
+        collider->shape->release();
+    }
 
-    //Component::onPostLoad();
+    Component::onPostLoad();
 }
 
 RigidbodyStatic::~RigidbodyStatic() noexcept

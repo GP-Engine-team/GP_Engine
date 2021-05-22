@@ -153,6 +153,7 @@ size_t PhysXSystem::addComponent(RigidbodyStatic* rigidbody) noexcept
 
 void PhysXSystem::removeComponent(RigidbodyStatic* rigidbody) noexcept
 {
+    scene->removeActor(*rigidbody->rigidbody, false);
     for (std::vector<RigidbodyStatic*>::iterator it = rigidbodyStatics.begin(); it != rigidbodyStatics.end(); it++)
     {
         if ((*it) == rigidbody)
@@ -174,6 +175,7 @@ size_t PhysXSystem::addComponent(RigidbodyDynamic* rigidbody) noexcept
 
 void PhysXSystem::removeComponent(RigidbodyDynamic* rigidbody) noexcept
 {
+    scene->removeActor(*rigidbody->rigidbody, false);
     for (std::vector<RigidbodyDynamic*>::iterator it = rigidbodyDynamics.begin(); it != rigidbodyDynamics.end(); it++)
     {
         if ((*it) == rigidbody)
@@ -195,6 +197,7 @@ size_t PhysXSystem::addComponent(CharacterController* characterController) noexc
 
 void PhysXSystem::removeComponent(CharacterController* characterController) noexcept
 {
+    scene->removeActor(*characterController->controller->getActor(), false);
     for (std::vector<CharacterController*>::iterator it = characterControllers.begin();
          it != characterControllers.end(); it++)
     {

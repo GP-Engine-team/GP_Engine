@@ -46,24 +46,27 @@ void RigidbodyDynamic::onPostLoad() noexcept
     //rigidbody = PxGetPhysics().createRigidDynamic(
     //    PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
     //                PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
+     rigidbody = PxGetPhysics().createRigidDynamic(
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(GPM::Vec3::zero()),
+                    PhysXSystem::GPMQuatToPxQuat(GPM::Quat::identity())));
 
-    //rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
-    //rigidbody->setMass(1);
-    //rigidbody->userData = &getOwner();
+    rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
+    rigidbody->setMass(1);
+    rigidbody->userData = &getOwner();
 
-    //if (!collider)
-    //{
-    //    FUNCT_ERROR("No collider assigned to the game object!");
-    //    m_isActivated = false;
-    //}
+    if (!collider)
+    {
+        FUNCT_ERROR("No collider assigned to the game object!");
+        m_isActivated = false;
+    }
 
-    //else
-    //{
-    //    rigidbody->attachShape(*collider->shape);
-    //    collider->shape->release();
-    //}
+    else
+    {
+        rigidbody->attachShape(*collider->shape);
+        collider->shape->release();
+    }
 
-    //Component::onPostLoad();
+    Component::onPostLoad();
 }
 
 RigidbodyDynamic::~RigidbodyDynamic() noexcept
