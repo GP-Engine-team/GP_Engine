@@ -239,7 +239,7 @@ Game::Game()
             sunArg{"Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}}},
             playerArg{"Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}}},
             testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}},
-            groundArg{"GroundArg", TransformComponent::CreateArg{{0.f,-30.f,0.f}}};
+            groundArg{"GroundArg", TransformComponent::CreateArg{{0.f, -30.f, 0.f}}};
 
         // A ground, player, PhysX test
         cube      = &world.addChild(cubeArg);
@@ -296,7 +296,7 @@ Game::Game()
 
         ground->getTransform().setScale(Vec3{1000, 1, 1000});
 
-        RigidbodyStatic& rb    = ground->addComponent<RigidbodyStatic>(EShapeType::E_BOX);
+        RigidbodyStatic& rb    = ground->addComponent<RigidbodyStatic>();
         rb.collider->isVisible = true;
         // static_cast<BoxCollider*>(rb.collider.get())->setSizeOffset({1000.f, 1.f, 1000.f});
 

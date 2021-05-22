@@ -21,7 +21,7 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(false), Serialize(false)) RigidBodyBase : rfk::Object
     {
     public:
-        RigidBodyBase(GameObject & _owner, EShapeType _type) noexcept;
+        RigidBodyBase(GameObject & _owner) noexcept;
 
         RigidBodyBase() noexcept                           = default;
         RigidBodyBase(const RigidBodyBase& other) noexcept = delete;
@@ -33,8 +33,9 @@ namespace GPE RFKNamespace()
         virtual ~RigidBodyBase() noexcept = default;
 
     public:
-        RFKField(Serialize()) GameObject*                          owner = nullptr;
-        RFKField(Serialize(), Inspect("setType")) EShapeType       type;
+        RFKField(Serialize()) GameObject*                    owner = nullptr;
+        RFKField(Serialize(), Inspect("setType")) EShapeType type  = EShapeType::E_BOX;
+        ;
         RFKField(Serialize(), Inspect()) std::unique_ptr<Collider> collider;
 
         virtual void updateShape(physx::PxShape & oldShape) = 0;

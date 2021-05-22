@@ -20,7 +20,7 @@ namespace GPE RFKNamespace()
     {
 
     public:
-        RigidbodyStatic(GameObject & owner, EShapeType _type) noexcept;
+        RigidbodyStatic(GameObject & owner) noexcept;
 
         RigidbodyStatic() noexcept                             = default;
         RigidbodyStatic(const RigidbodyStatic& other) noexcept = delete;

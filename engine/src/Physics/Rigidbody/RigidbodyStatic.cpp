@@ -13,8 +13,7 @@ File_GENERATED
     using namespace GPE;
 using namespace physx;
 
-RigidbodyStatic::RigidbodyStatic(GameObject& owner, EShapeType _type) noexcept
-    : Component(owner), RigidBodyBase(owner, _type)
+RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner), RigidBodyBase(owner)
 {
     rigidbody = PxGetPhysics().createRigidStatic(
         PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
@@ -22,19 +21,19 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner, EShapeType _type) noexcept
 
     rigidbody->userData = &getOwner();
 
-    setType(_type);
+    setType(type);
 
     updateToSystem();
 }
 
 void RigidbodyStatic::onPostLoad() noexcept
 {
+    owner = &getOwner();
 
-    rigidbody = PxGetPhysics().createRigidStatic(
-        PxTransform(PhysXSystem::GPMVec3ToPxVec3(GPM::Vec3::zero()),
-            PhysXSystem::GPMQuatToPxQuat(GPM::Quat::identity())));
+    rigidbody = PxGetPhysics().createRigidStatic(PxTransform(PhysXSystem::GPMVec3ToPxVec3(GPM::Vec3::zero()),
+                                                             PhysXSystem::GPMQuatToPxQuat(GPM::Quat::identity())));
 
-    rigidbody->userData = &getOwner();
+    rigidbody->userData = owner;
 
     setType(type);
 

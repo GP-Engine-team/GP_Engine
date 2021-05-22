@@ -14,8 +14,7 @@ File_GENERATED
     using namespace GPE;
 using namespace physx;
 
-RigidbodyDynamic::RigidbodyDynamic(GameObject& owner, EShapeType _type) noexcept
-    : Component(owner), RigidBodyBase(owner, _type)
+RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner), RigidBodyBase(owner)
 {
     rigidbody = PxGetPhysics().createRigidDynamic(
         PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
@@ -25,7 +24,24 @@ RigidbodyDynamic::RigidbodyDynamic(GameObject& owner, EShapeType _type) noexcept
     rigidbody->setMass(1);
     rigidbody->userData = &getOwner();
 
-    setType(_type);
+    setType(type);
+
+    updateToSystem();
+}
+
+void RigidbodyDynamic::onPostLoad() noexcept
+{
+    owner = &getOwner();
+
+    rigidbody = PxGetPhysics().createRigidDynamic(PxTransform(PhysXSystem::GPMVec3ToPxVec3(GPM::Vec3::zero()),
+                                                              PhysXSystem::GPMQuatToPxQuat(GPM::Quat::identity())));
+
+    rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
+    rigidbody->setMass(1);
+
+    rigidbody->userData = owner;
+
+    setType(type);
 
     updateToSystem();
 }

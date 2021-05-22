@@ -20,7 +20,7 @@ namespace GPE RFKNamespace()
     class RFKClass(ComponentGen(), Inspect(), Serialize()) RigidbodyDynamic : public Component, public RigidBodyBase
     {
     public:
-        RigidbodyDynamic(GameObject & owner, EShapeType _type) noexcept;
+        RigidbodyDynamic(GameObject & owner) noexcept;
 
         RigidbodyDynamic() noexcept                              = default;
         RigidbodyDynamic(const RigidbodyDynamic& other) noexcept = delete;
@@ -42,6 +42,7 @@ namespace GPE RFKNamespace()
 
     protected:
         virtual void updateToSystem() noexcept override;
+        virtual void onPostLoad() noexcept override;
 
     public:
         void setKinematic(bool state) noexcept;

@@ -11,7 +11,7 @@ File_GENERATED
 
 void RigidBodyBase::setType(EShapeType& newType)
 {
-    if (newType == type)
+    if (collider && newType == type)
         return;
 
     type = newType;
@@ -44,7 +44,7 @@ void RigidBodyBase::setType(EShapeType& newType)
     collider->owner = owner;
 }
 
-RigidBodyBase::RigidBodyBase(GameObject& _owner, EShapeType _type) noexcept
+RigidBodyBase::RigidBodyBase(GameObject& _owner) noexcept
 {
     owner = &_owner;
 }
