@@ -117,6 +117,10 @@ void EditorStartup::openGame()
     auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
     m_game = a();
 
+    Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
+                                                    "./resources/shaders/vGameObjectIdentifier.vs",
+                                                    "./resources/shaders/fGameObjectIdentifier.fs");
+
     m_editor.setSceneInEdition(*m_engine->sceneManager.getCurrentScene());
 
     if (gameWasInstanciated)

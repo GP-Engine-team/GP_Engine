@@ -291,6 +291,10 @@ void Editor::saveCurrentScene()
 void Editor::reloadCurrentScene()
 {
     GPE::Scene*       currentScene = m_sceneEditor.view.pScene;
+
+    if (currentScene == nullptr)
+        return;
+
     const std::string path         = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
 
     m_sceneEditor.view.unbindScene();
