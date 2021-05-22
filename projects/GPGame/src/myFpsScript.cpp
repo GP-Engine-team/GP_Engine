@@ -65,7 +65,6 @@ File_GENERATED
         controller->setHasGravity(true);
         controller->setSpeed(1.f);
         controller->setMouseSpeed(.0025f);
-        controller->setGravity(.1f);
     }
 
     void MyFpsScript::onPostLoad()
@@ -101,10 +100,15 @@ File_GENERATED
 
     void MyFpsScript::jump()
     {
-        if (controller->getJumping() == false)
+        /*if (controller->getJumping() == false)
         {
             controller->addForce(GPM::Vec3::up() * 3.f);
             controller->setJumping(true);
+        }*/
+        if (controller->getCanJump() == true)
+        {
+            controller->addForce(GPM::Vec3::up() * 300.f);
+            controller->startJumpTimer();
         }
     }
 

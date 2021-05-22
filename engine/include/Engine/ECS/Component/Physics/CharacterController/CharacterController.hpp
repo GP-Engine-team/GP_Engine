@@ -12,7 +12,7 @@
 
 #include <Generated/CharacterController.rfk.h>
 
-#define EARTH_GRAVITY 0.980665f
+#define EARTH_GRAVITY 9.80665f
 
 namespace physx
 {
@@ -40,12 +40,14 @@ namespace GPE RFKNamespace()
         RFKField(Inspect(), Serialize()) GPM::Vec3 m_displacement  = {.0f};
         RFKField(Inspect(), Serialize()) GPM::Vec3 m_force         = {.0f};
         RFKField(Inspect(), Serialize()) float     m_gravity       = EARTH_GRAVITY;
+        RFKField(Inspect(), Serialize()) float     m_mass          = 90.f;
         RFKField(Inspect(), Serialize()) float     m_speed         = 1.f;
         RFKField(Inspect(), Serialize()) float     m_mouseSpeed    = 1.f;
         RFKField(Inspect(), Serialize()) float     m_startJumpTime = 0.f;
         RFKField(Inspect(), Serialize()) float     m_jumpTimeDelay = 1.f;
         RFKField(Inspect(), Serialize()) bool      m_hasGravity    = false;
-        RFKField(Inspect(), Serialize()) bool      m_jumping       = false;
+        RFKField(Inspect(), Serialize()) bool      m_grounded      = false;
+        RFKField(Inspect(), Serialize()) bool      m_canJump       = false;
 
     public:
         physx::PxController* controller = nullptr;
@@ -53,15 +55,48 @@ namespace GPE RFKNamespace()
         DEFAULT_GETTER_SETTER_BY_VALUE(MouseSpeed, m_mouseSpeed);
         DEFAULT_GETTER_SETTER_BY_VALUE(HasGravity, m_hasGravity);
         DEFAULT_GETTER_SETTER_BY_VALUE(Gravity, m_gravity);
-        GETTER_BY_VALUE(Jumping, m_jumping);
+        DEFAULT_GETTER_SETTER_BY_VALUE(Mass, m_mass);
+        GETTER_BY_VALUE(CanJump, m_canJump);
 
-        void setJumping(float jumping) noexcept;
+        /**
+         * @brief Start the jump timer and disable the ability to jump temporary;
+         * @return
+         */
+        void startJumpTimer() noexcept;
+
+        /**
+         * @brief move the character controller of "displacement";
+         * @param displacement
+         * @return
+         */
         void move(const GPM::Vec3& displacement) noexcept;
+
+        /**
+         * @brief move the character controller of "displacement" but with a custom speed;
+         * @param displacement
+         * @param customSpeed
+         * @return
+         */
         void move(const GPM::Vec3& displacement, float customSpeed) noexcept;
+
+        /**
+         * @brief Add a force to the character controller;
+         * @param displacement
+         * @return
+         */
         void addForce(const GPM::Vec3& displacement) noexcept;
+
+        /**
+         * @brief Apply the current force on the displacement vector;
+         * @return
+         */
         void updateForce() noexcept;
 
-        bool canJump() noexcept;
+        /**
+         * @brief Check if the character controller touch the ground;
+         * @return
+         */
+        void groundCheck() noexcept;
 
         /**
          * @brief Add or remove current component from it's system which have for effect to enable or disable it

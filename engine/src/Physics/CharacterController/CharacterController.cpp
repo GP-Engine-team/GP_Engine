@@ -50,19 +50,24 @@ void CharacterController::update(double deltaTime) noexcept
     PxControllerFilters filters;
     updateForce();
 
-    if (m_jumping == true)
-    {
-        if (const float accumulatedTime = float(Engine::getInstance()->timeSystem.getAccumulatedTime());
-            (accumulatedTime >= m_startJumpTime + m_jumpTimeDelay) && canJump() == true)
-        {
-            m_jumping = false;
-            m_force.x = m_force.y = m_force.z = .0f;
-            m_startJumpTime                   = 0.f;
-        }
+    groundCheck();
 
+    if (!m_grounded)
+    {
         if (m_hasGravity)
         {
             addForce({.0f, -m_gravity, .0f});
+        }
+    }
+
+    else
+    {
+        if (const float accumulatedTime = float(Engine::getInstance()->timeSystem.getAccumulatedTime());
+            (accumulatedTime >= m_startJumpTime + m_jumpTimeDelay))
+        {
+            m_force.x = m_force.y = m_force.z = .0f;
+            m_canJump                         = true;
+            m_startJumpTime                   = 0.f;
         }
     }
 
@@ -86,25 +91,24 @@ void CharacterController::move(const GPM::Vec3& displacement, float customSpeed)
 
 void CharacterController::addForce(const GPM::Vec3& force) noexcept
 {
-    m_force += force;
+    m_force += force / m_mass;
 }
 
 void CharacterController::updateForce() noexcept
 {
     m_displacement += m_force;
-    // m_force *= 0.9f;
 }
 
-bool CharacterController::canJump() noexcept
+void CharacterController::groundCheck() noexcept
 {
     PxControllerState cctState;
     controller->getState(cctState);
-    return (cctState.collisionFlags & PxControllerCollisionFlag::eCOLLISION_DOWN) != 0;
+    m_grounded = (cctState.collisionFlags & PxControllerCollisionFlag::eCOLLISION_DOWN) != 0;
 }
 
-void CharacterController::setJumping(float jumping) noexcept
+void CharacterController::startJumpTimer() noexcept
 {
-    m_jumping       = jumping;
+    m_canJump = false;
     m_startJumpTime = static_cast<float>(Engine::getInstance()->timeSystem.getAccumulatedTime());
 }
 
