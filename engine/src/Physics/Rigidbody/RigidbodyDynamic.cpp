@@ -50,21 +50,7 @@ void RigidbodyDynamic::setKinematic(bool state) noexcept
     rigidbody->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, state);
 }
 
-void RigidbodyDynamic::setActive(bool newState) noexcept
-{
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
-    updateToSystem();
-}
-
-void RigidbodyDynamic::onPostLoad()
-{
-    updateToSystem();
-}
-
-void RigidbodyDynamic::updateToSystem()
+void RigidbodyDynamic::updateToSystem() noexcept
 {
     if (m_isActivated)
         GPE::Engine::getInstance()->physXSystem.addComponent(this);

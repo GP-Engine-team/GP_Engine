@@ -42,7 +42,7 @@ Window::Window(const CreateArg& arg) noexcept
     }
 
     glfwMakeContextCurrent(m_window);
-    glfwSwapInterval(1); // enable v-sync
+    glfwSwapInterval(0); // discable v-sync
 
     Log::getInstance()->logInitializationEnd("GLFW window");
 }

@@ -18,6 +18,7 @@ namespace GPE RFKNamespace()
 
     class RFKClass(Inspect(), Serialize(), ComponentGen()) RigidbodyStatic : public Component, public RigidBodyBase
     {
+
     public:
         RigidbodyStatic(GameObject & owner, EShapeType _type) noexcept;
 
@@ -30,25 +31,17 @@ namespace GPE RFKNamespace()
         virtual ~RigidbodyStatic() noexcept;
 
     public:
-        physx::PxRigidStatic* rigidbody;
+        physx::PxRigidStatic* rigidbody = nullptr;
 
     protected:
-        void updateToSystem();
+        virtual void updateToSystem() noexcept override;
+        virtual void onPostLoad() noexcept override;
 
     public:
         /**
          * @brief Update the current shape of the rigidbody
          */
         virtual void updateShape(physx::PxShape & oldShape);
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
-
-        virtual void onPostLoad() override;
 
         RigidbodyStatic_GENERATED
     };

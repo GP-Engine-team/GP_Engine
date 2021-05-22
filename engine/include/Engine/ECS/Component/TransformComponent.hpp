@@ -41,15 +41,14 @@ namespace GPE RFKNamespace()
     public:
         RFKField(Serialize()) Event OnUpdate;
 
+    protected:
+        virtual void updateToSystem() noexcept override;
+
     public:
         TransformComponent(GameObject & refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
 
         TransformComponent() noexcept                                = default;
-        TransformComponent(const TransformComponent& other) noexcept = delete;
-        TransformComponent(TransformComponent && other) noexcept     = default;
-        virtual ~TransformComponent() noexcept                       = default;
-        TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
-        TransformComponent& operator                                            =(TransformComponent&& other);
+        virtual ~TransformComponent() noexcept;
 
         virtual void onPostLoad() override;
 

@@ -18,6 +18,7 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(), Serialize()) BoxCollider : public Collider
     {
     public:
+        BoxCollider() noexcept = default;
         BoxCollider(GameObject & owner) noexcept;
         BoxCollider(const BoxCollider& other) noexcept = delete;
         BoxCollider(BoxCollider && other) noexcept     = default;

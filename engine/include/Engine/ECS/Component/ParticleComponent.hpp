@@ -72,17 +72,20 @@ namespace GPE RFKNamespace()
          */
         void emit(double dt);
 
+         /**
+         * @brief Init render buffer
+         */
+        void generate();
+
+        virtual void updateToSystem() noexcept override;
+
     public:
         ParticleComponent(GameObject & owner);
         ParticleComponent(GameObject & owner, const CreateArg& arg);
 
-        ParticleComponent(const ParticleComponent& other) noexcept = delete;
-        ParticleComponent(ParticleComponent && other) noexcept     = default;
         virtual ~ParticleComponent();
 
         ParticleComponent();
-        ParticleComponent& operator=(ParticleComponent const& other) = delete;
-        ParticleComponent& operator=(ParticleComponent&& other) noexcept = default;
 
         void         moveTowardScene(class Scene & newOwner) override;
         virtual void inspect(InspectContext & context);
@@ -95,11 +98,6 @@ namespace GPE RFKNamespace()
          * @brief Kill all alive particle
          */
         void reset();
-
-        /**
-         * @brief Init render buffer
-         */
-        void generate();
 
         /**
          * @brief Start the particle effect
@@ -192,15 +190,6 @@ namespace GPE RFKNamespace()
          * @brief Update GPU data with CPU buffer
          */
         void sendDataToShader();
-
-        void onPostLoad() final;
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept final;
 
         ParticleComponent_GENERATED
     };

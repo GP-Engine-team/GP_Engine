@@ -33,7 +33,7 @@ namespace GPE RFKNamespace()
         virtual ~RigidBodyBase() noexcept = default;
 
     public:
-        RFKField(Serialize()) GameObject&                          owner;
+        RFKField(Serialize()) GameObject*                          owner = nullptr;
         RFKField(Serialize(), Inspect("setType")) EShapeType       type;
         RFKField(Serialize(), Inspect()) std::unique_ptr<Collider> collider;
 

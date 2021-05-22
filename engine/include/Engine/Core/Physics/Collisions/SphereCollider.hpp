@@ -18,6 +18,7 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(), Serialize()) SphereCollider : public Collider
     {
     public:
+        SphereCollider() noexcept = default;
         SphereCollider(GameObject & owner) noexcept;
         SphereCollider(const SphereCollider& other) noexcept = delete;
         SphereCollider(SphereCollider && other) noexcept     = default;

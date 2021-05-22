@@ -108,7 +108,6 @@ public:
     static inline GPM::Quat             PxQuatToGPMQuat(const physx::PxQuat& quaternion) noexcept;
     static inline physx::PxQuat         GPMQuatToPxQuat(const GPM::Quat& quaternion) noexcept;
     static physx::PxTransform GPETransformComponentToPxTransform(const TransformComponent& transform) noexcept;
-    static TransformComponent PxTransformToGPETransformComponent(const physx::PxTransform& transform) noexcept;
 };
 
 #include <Engine/ECS/System/PhysXSystem.inl>

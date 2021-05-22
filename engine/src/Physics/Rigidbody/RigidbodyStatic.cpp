@@ -23,38 +23,25 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner, EShapeType _type) noexcept
     rigidbody->userData = &getOwner();
 
     setType(_type);
-    // updateShape();
 
-    Engine::getInstance()->physXSystem.addComponent(this);
-}
-
-void RigidbodyStatic::setActive(bool newState) noexcept
-{
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     updateToSystem();
 }
 
-void RigidbodyStatic::onPostLoad()
+void RigidbodyStatic::onPostLoad() noexcept
 {
-    GPE::TransformComponent& transform = getOwner().getTransform();
-    transform.setDirty();
-    transform.update();
 
-    rigidbody =
-        PxGetPhysics().createRigidStatic(PxTransform(PhysXSystem::GPMVec3ToPxVec3(transform.getGlobalPosition()),
-                                                     PhysXSystem::GPMQuatToPxQuat(transform.getGlobalRotation())));
+    rigidbody = PxGetPhysics().createRigidStatic(
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(GPM::Vec3::zero()),
+            PhysXSystem::GPMQuatToPxQuat(GPM::Quat::identity())));
 
     rigidbody->userData = &getOwner();
 
-    rigidbody->attachShape(*collider->shape);
-    // updateShape();
+    setType(type);
+
     updateToSystem();
 }
 
-void RigidbodyStatic::updateToSystem()
+void RigidbodyStatic::updateToSystem() noexcept
 {
     if (m_isActivated)
     {

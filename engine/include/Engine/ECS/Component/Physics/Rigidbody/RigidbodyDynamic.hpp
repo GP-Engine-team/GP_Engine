@@ -41,7 +41,7 @@ namespace GPE RFKNamespace()
         RFKField(Inspect("setKinematic"), Serialize()) bool m_isKinematic = false;
 
     protected:
-        void updateToSystem();
+        virtual void updateToSystem() noexcept override;
 
     public:
         void setKinematic(bool state) noexcept;
@@ -51,15 +51,6 @@ namespace GPE RFKNamespace()
          * @brief Update the current shape of the rigidbody
          */
         virtual void updateShape(physx::PxShape & oldShape);
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
-
-        virtual void onPostLoad() override;
 
         RigidbodyDynamic_GENERATED
     };

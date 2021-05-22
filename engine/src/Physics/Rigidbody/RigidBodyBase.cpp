@@ -26,12 +26,12 @@ void RigidBodyBase::setType(EShapeType& newType)
     switch (newType)
     {
     case EShapeType::E_SPHERE:
-        collider = std::make_unique<SphereCollider>(owner);
-        owner.getTransform().OnUpdate += Function::make(static_cast<SphereCollider*>(collider.get()), "updateShape");
+        collider = std::make_unique<SphereCollider>(*owner);
+        owner->getTransform().OnUpdate += Function::make(static_cast<SphereCollider*>(collider.get()), "updateShape");
         break;
     case EShapeType::E_BOX:
-        collider = std::make_unique<BoxCollider>(owner);
-        owner.getTransform().OnUpdate += Function::make(static_cast<BoxCollider*>(collider.get()), "updateShape");
+        collider = std::make_unique<BoxCollider>(*owner);
+        owner->getTransform().OnUpdate += Function::make(static_cast<BoxCollider*>(collider.get()), "updateShape");
         break;
     default:
         break;
@@ -41,9 +41,10 @@ void RigidBodyBase::setType(EShapeType& newType)
 
     // rigidbody->attachShape(*collider->shape);
     // collider->shape->release();
-    collider->owner = &owner;
+    collider->owner = owner;
 }
 
-RigidBodyBase::RigidBodyBase(GameObject& _owner, EShapeType _type) noexcept : owner(_owner)
+RigidBodyBase::RigidBodyBase(GameObject& _owner, EShapeType _type) noexcept
 {
+    owner = &_owner;
 }

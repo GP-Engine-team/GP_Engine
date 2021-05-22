@@ -108,14 +108,10 @@ void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& inspected, const X
             std::pair<KEY, VALUE> pair;
             // GPE::load(context, pair, XmlLoader::LoadInfo{std::to_string(i), "std::pair", info.typeId});
             // Load Key
-            if (context.goToSubChild(info))
-            {
-                GPE::load(context, pair.first, XmlLoader::LoadInfo{"key", "unknown", 0});
-                auto insertReturned = inspected.insert(pair);
-                GPE::load(context, insertReturned.first->second, XmlLoader::LoadInfo{"value", "unknown", 0});
-
-                context.pop();
-            }
+            GPE::load(context, pair.first, XmlLoader::LoadInfo{"key" + std::to_string(i), "unknown", 0});
+            auto insertReturned = inspected.insert(pair);
+            GPE::load(context, insertReturned.first->second,
+                      XmlLoader::LoadInfo{"value" + std::to_string(i), "unknown", 0});
         }
 
         context.pop();

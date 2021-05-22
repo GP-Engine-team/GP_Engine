@@ -38,12 +38,10 @@ namespace GPE RFKNamespace()
 
     public:
         DirectionalLight(const DirectionalLight& other) = delete;
-        DirectionalLight(DirectionalLight && other)     = default;
         virtual ~DirectionalLight();
 
         DirectionalLight()        = default;
         DirectionalLight& operator=(DirectionalLight const& other) = delete;
-        DirectionalLight& operator=(DirectionalLight&& other) = default;
 
         DirectionalLight(GameObject & owner) noexcept;
 

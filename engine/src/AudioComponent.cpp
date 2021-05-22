@@ -12,24 +12,13 @@ using namespace std;
 
 AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
 {
-    m_key = Engine::getInstance()->soundSystem.addComponent(this);
-}
-
-AudioComponent& AudioComponent::operator=(AudioComponent&& other)
-{
-    m_key   = std::move(other.m_key);
-    sources = std::move(other.sources);
-
-    Engine::getInstance()->soundSystem.updateComponent(this);
-
-    Component::operator=(std::move(other));
-    return *this;
+    updateToSystem();
 }
 
 void AudioComponent::setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept
 {
-
     SourceData* source = getSource(sourceName);
+    Sound::Buffer* buffer = Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName);
 
     AL_CALL(alGenSources, 1, &source->source);
     AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
@@ -37,15 +26,15 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSource3f, source->source, AL_POSITION, settings.position[0], settings.position[1], settings.position[2]);
     AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity[0], settings.velocity[1], settings.velocity[2]);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
-    AL_CALL(alSourcei, source->source, AL_BUFFER,
-            Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName)->buffer);
+    AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
 }
 
 AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept
 {
-    if (sources.find(name) != sources.end())
+    auto it = sources.find(name);
+    if (it != sources.end())
     {
-        return &sources.find(name)->second;
+        return &it->second;
     }
 
     else
@@ -69,7 +58,8 @@ void AudioComponent::playSound(const char* name, bool forceStart) noexcept
 
 AudioComponent::SourceData* AudioComponent::findSource(const char* name) noexcept
 {
-    if (sources.find(name) != sources.end())
+    auto it = sources.find(name); 
+    if (it != sources.end())
     {
         return &sources.find(name)->second;
     }
@@ -100,12 +90,8 @@ void AudioComponent::stopAllSound() noexcept
     }
 }
 
-void AudioComponent::setActive(bool newState) noexcept
+void AudioComponent::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
         Engine::getInstance()->soundSystem.addComponent(this);
     else
@@ -117,19 +103,6 @@ void AudioComponent::setActive(bool newState) noexcept
 
 AudioComponent::~AudioComponent()
 {
-    stopAllSound();
-    Engine::getInstance()->soundSystem.removeComponent(m_key);
+    setActive(false);
 }
 
-void AudioComponent::onPostLoad()
-{
-    if (m_isActivated)
-    {
-        Engine::getInstance()->soundSystem.addComponent(this);
-    }
-    else
-    {
-        stopAllSound();
-        Engine::getInstance()->soundSystem.removeComponent(m_key);
-    }
-}
