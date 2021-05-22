@@ -93,33 +93,37 @@ void BehaviourSystem::start() noexcept
 {
     startOnBehaviourAdd = true;
 
-    for (auto&& behaviour : m_pBehaviours)
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_pBehaviours.size(); ++i)
     {
-        behaviour->start();
+        m_pBehaviours[i]->start();
     }
 }
 
 void BehaviourSystem::onGUI() const noexcept
 {
-    for (auto&& behaviour : m_onGUIFunctions)
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_onGUIFunctions.size(); ++i)
     {
-        behaviour->onGUI();
+        m_onGUIFunctions[i]->onGUI();
     }
 }
 
 void BehaviourSystem::fixedUpdate(double deltaTime) noexcept
 {
-    for (auto&& behaviour : m_fixedUpdateFunctions)
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_fixedUpdateFunctions.size(); ++i)
     {
-        behaviour->fixedUpdate(deltaTime);
+        m_fixedUpdateFunctions[i]->fixedUpdate(deltaTime);
     }
 }
 
 void BehaviourSystem::update(double deltaTime) const noexcept
 {
-    for (auto&& behaviour : m_updateFunctions)
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_updateFunctions.size(); ++i)
     {
-        behaviour->update(deltaTime);
+        m_updateFunctions[i]->update(deltaTime);
     }
 }
 
