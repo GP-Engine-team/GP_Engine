@@ -29,8 +29,8 @@ using namespace GPE;
 // Hint to use GPU if available
 extern "C"
 {
-	_declspec(dllexport) int NvOptimusEnablement = 1;
-	_declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+    _declspec(dllexport) int NvOptimusEnablement                  = 1;
+    _declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 
 namespace Editor
@@ -179,6 +179,7 @@ void Editor::renderGameControlBar(EditorStartup& startup)
 void Editor::renderLevelEditor()
 {
     m_sceneEditor.view.update();
+    GPE::Engine::getInstance()->physXSystem.drawDebugScene();
     m_sceneEditor.render(m_inspectedObject);
 }
 

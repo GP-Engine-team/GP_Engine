@@ -33,7 +33,6 @@ using namespace GPM::Random;
 void Game::update(double unscaledDeltaTime, double deltaTime)
 {
     ++unFixedUpdateFrameCount;
-    // GPE::Engine::getInstance()->physXSystem.drawDebugScene();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
