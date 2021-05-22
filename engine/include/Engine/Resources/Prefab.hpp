@@ -39,6 +39,7 @@ namespace GPE RFKNamespace()
             loadPrefabFromPath(path);
         }
 
+        Prefab()  = default;
         ~Prefab() = default;
 
         GameObject* clone(GameObject & parent);
