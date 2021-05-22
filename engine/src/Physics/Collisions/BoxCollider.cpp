@@ -8,15 +8,17 @@
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 using namespace physx;
 
-BoxCollider::BoxCollider() noexcept : Collider(), m_sizeOffset(10.f)
+BoxCollider::BoxCollider(GameObject& _owner) noexcept : Collider(), m_sizeOffset(1.f)
 {
-    material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, 0.f);
-    shape    = Engine::getInstance()->physXSystem.physics->createShape(
-        PxBoxGeometry(m_sizeOffset.x * .5f, m_sizeOffset.y * .5f, m_sizeOffset.z * .5f), *material, true);
+    GPM::Vec3 lol = m_sizeOffset;
+    material      = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, 0.f);
+    shape         = Engine::getInstance()->physXSystem.physics->createShape(
+        PxBoxGeometry(PhysXSystem::GPMVec3ToPxVec3((_owner.getTransform().getGlobalScale() + m_sizeOffset) * 0.5f)),
+        *material, true);
 
     material->release();
 }
@@ -29,7 +31,12 @@ void BoxCollider::setSizeOffset(const Vec3& newOffset) noexcept
 
 void BoxCollider::updateShape() noexcept
 {
+    GPM::Vec3 lol = m_sizeOffset;
     shape->setGeometry(
         PxBoxGeometry(PhysXSystem::GPMVec3ToPxVec3((owner->getTransform().getGlobalScale() + m_sizeOffset) * 0.5f)));
 }
 
+BoxCollider::~BoxCollider()
+{
+    owner->getTransform().OnUpdate -= Function::make(this, "updateShape");
+}

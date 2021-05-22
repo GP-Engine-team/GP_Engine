@@ -18,9 +18,7 @@ namespace GPE
 FreeFly::FreeFly(GameObject& owner) noexcept
     : BehaviourComponent(owner),
       timeSys{Engine::getInstance()->timeSystem}
-{
-    enableUpdate(true);
-}
+{}
 
 
 FreeFly::~FreeFly() noexcept

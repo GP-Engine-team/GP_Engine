@@ -18,16 +18,16 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(), Serialize()) BoxCollider : public Collider
     {
     public:
-        BoxCollider() noexcept;
+        BoxCollider(GameObject & owner) noexcept;
         BoxCollider(const BoxCollider& other) noexcept = delete;
         BoxCollider(BoxCollider && other) noexcept     = default;
-        virtual ~BoxCollider() noexcept                = default;
+        virtual ~BoxCollider() noexcept;
 
         BoxCollider& operator=(BoxCollider const& other) noexcept = delete;
         BoxCollider& operator=(BoxCollider&& other) noexcept = delete;
 
     private:
-        RFKField(Serialize()) GPM::Vector3 m_sizeOffset;
+        RFKField(Serialize(), Inspect("setSizeOffset")) GPM::Vector3 m_sizeOffset;
 
     public:
         GETTER_BY_VALUE(Offset, m_sizeOffset);

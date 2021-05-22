@@ -17,11 +17,14 @@
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/Serialization/SavedScene.hpp"
 
+#include <GPM/Shape3D/AABB.hpp>
+#include <GPM/Shape3D/Sphere.hpp>
+
 #include <vector>
 
 namespace GPE
 {
 
-using ResourceManagerType = ResourcesManager<std::vector<Mesh>, Model::CreateArg, Mesh, Shader, Texture, RenderBuffer,
-                                             RenderTexture, std::vector<Material>, Material, Sound::Buffer, SavedScene>;
+using ResourceManagerType = ResourcesManager<std::vector<Mesh>, Model::CreateArg, Mesh, Shader, Texture, RenderBuffer, RenderTexture,
+                     std::vector<Material>, Material, Sound::Buffer, SavedScene, GPM::Sphere, GPM::AABB>;
 } // namespace GPE

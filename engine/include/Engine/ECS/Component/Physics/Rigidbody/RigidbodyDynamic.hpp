@@ -11,51 +11,56 @@
 #include <Engine/ECS/Component/Component.hpp>
 #include <PxRigidDynamic.h>
 
- // Generated
+// Generated
 #include "Generated/RigidbodyDynamic.rfk.h"
 
 namespace GPE RFKNamespace()
 {
 
-	class RFKClass(ComponentGen(), Inspect(), Serialize()) RigidbodyDynamic : public Component, public RigidBodyBase
-	{
-	public:
-		RigidbodyDynamic(GameObject & owner, EShapeType _type) noexcept;
+    class RFKClass(ComponentGen(), Inspect(), Serialize()) RigidbodyDynamic : public Component, public RigidBodyBase
+    {
+    public:
+        RigidbodyDynamic(GameObject & owner, EShapeType _type) noexcept;
 
-		RigidbodyDynamic() noexcept = default;
-		RigidbodyDynamic(const RigidbodyDynamic & other) noexcept = delete;
-		RigidbodyDynamic(RigidbodyDynamic && other) noexcept = default;
-		RigidbodyDynamic& operator=(RigidbodyDynamic const& other) noexcept = delete;
-		RigidbodyDynamic& operator=(RigidbodyDynamic && other) noexcept = delete;
+        RigidbodyDynamic() noexcept                              = default;
+        RigidbodyDynamic(const RigidbodyDynamic& other) noexcept = delete;
+        RigidbodyDynamic(RigidbodyDynamic && other) noexcept     = default;
+        RigidbodyDynamic& operator=(RigidbodyDynamic const& other) noexcept = delete;
+        RigidbodyDynamic& operator=(RigidbodyDynamic&& other) noexcept = delete;
 
-		void update() noexcept;
+        void update() noexcept;
 
-		void updatePosition() noexcept;
+        void updatePosition() noexcept;
 
-		virtual ~RigidbodyDynamic() noexcept;
+        virtual ~RigidbodyDynamic() noexcept;
 
-	public:
-		physx::PxRigidDynamic* rigidbody;
+    public:
+        physx::PxRigidDynamic* rigidbody;
 
-	private:
-		RFKField(Inspect("setKinematic"), Serialize()) bool m_isKinematic = false;
+    private:
+        RFKField(Inspect("setKinematic"), Serialize()) bool m_isKinematic = false;
 
-	protected:
+    protected:
         void updateToSystem();
 
-	public:
-		void setKinematic(bool state) noexcept;
-		GETTER_BY_VALUE(KinematicState, m_isKinematic);
+    public:
+        void setKinematic(bool state) noexcept;
+        GETTER_BY_VALUE(KinematicState, m_isKinematic);
 
-		/**
-		 * @brief Add or remove current component from it's system which have for effect to enable or disable it
-		 * @param newState
-		 * @return
-		 */
-		void setActive(bool newState) noexcept override;
+        /**
+         * @brief Update the current shape of the rigidbody
+         */
+        virtual void updateShape(physx::PxShape & oldShape);
 
-		virtual void onPostLoad() override;
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
 
-		RigidbodyDynamic_GENERATED
-	};
+        virtual void onPostLoad() override;
+
+        RigidbodyDynamic_GENERATED
+    };
 } // namespace )

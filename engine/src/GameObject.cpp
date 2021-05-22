@@ -40,6 +40,9 @@ void GameObject::moveTowardScene(Scene& newOwner) noexcept
     }
 
     pOwnerScene = &newOwner;
+
+    for (auto&& child : children)
+        child->moveTowardScene(newOwner);
 }
 
 void GameObject::updateSelfAndChildren() noexcept
@@ -353,23 +356,23 @@ void GameObject::inspect(GPE::InspectContext& context)
             ImGui::OpenPopup("GameObjectContextePopup");
         }
 
-        bool isItCanIterator = true;
+        bool isIteratorDestroy = false;
         if (ImGui::BeginPopup("GameObjectContextePopup"))
         {
             if (ImGui::MenuItem("Remove component", NULL, false))
             {
-                it              = destroyComponent(*it);
-                isItCanIterator = false;
+                it                = destroyComponent(*it);
+                isIteratorDestroy = true;
             }
 
             ImGui::EndPopup();
         }
 
-        if (isCollapsingHOpen)
+        if (!isIteratorDestroy && isCollapsingHOpen)
             GPE::DataInspector::inspect(context, **it);
 
         ImGui::PopID();
-        if (isItCanIterator)
+        if (!isIteratorDestroy)
             ++it;
     }
 }

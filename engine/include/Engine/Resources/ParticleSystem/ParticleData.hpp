@@ -11,6 +11,9 @@
 #include <GPM/Vector4.hpp>
 #include <memory>
 
+// Generated
+//#include "Generated/ParticleData.rfk.h"
+
 namespace GPE
 {
 

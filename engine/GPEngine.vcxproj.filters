@@ -76,9 +76,6 @@
     <ClCompile Include="src\ModelImporterSetting.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ObjParser.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\ParticleComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -229,6 +226,9 @@
     <ClCompile Include="src\TextureImporterSetting.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\TextureInspectorPanel.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\TimeSystem.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -309,9 +309,6 @@
     <ClInclude Include="include\Engine\Core\HotReload\SingletonsSync.hpp">
       <Filter>include\Core\HotReload</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
-      <Filter>include\Core\Parsers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
       <Filter>include\Core\Parsers</Filter>
     </ClInclude>
@@ -319,19 +316,19 @@
       <Filter>include\Core\Parsers</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\Collisions\BoxCollider.hpp">
-      <Filter>include\Core\Physics\Collisions</Filter>
+      <Filter>include\Core\Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\Collisions\CapsuleCollider.hpp">
-      <Filter>include\Core\Physics\Collisions</Filter>
+      <Filter>include\Core\Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\Collisions\Collider.hpp">
-      <Filter>include\Core\Physics\Collisions</Filter>
+      <Filter>include\Core\Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\Collisions\MeshCollider.hpp">
-      <Filter>include\Core\Physics\Collisions</Filter>
+      <Filter>include\Core\Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\Collisions\SphereCollider.hpp">
-      <Filter>include\Core\Physics\Collisions</Filter>
+      <Filter>include\Core\Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Core\Physics\RigidBodyBase.hpp">
       <Filter>include\Core\Physics</Filter>
@@ -601,6 +598,9 @@
       <Filter>include\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\TextureImporterSetting.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\TextureInspectorPanel.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\xml\xmlLoader.hpp">
@@ -900,10 +900,10 @@
       <UniqueIdentifier>{e028e6cc-ce9d-4aea-b0c0-b0861b0d33f0}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\Core\Physics">
-      <UniqueIdentifier>{b8393e6d-0a89-447c-8be7-1dcba85244f7}</UniqueIdentifier>
+      <UniqueIdentifier>{4d6313cb-c435-4885-b625-be6f826db0b0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\Core\Physics\Collisions">
-      <UniqueIdentifier>{82eb9a89-c830-4288-a4cc-7c9fd87fa45e}</UniqueIdentifier>
+    <Filter Include="include\Core\Physics\Collision">
+      <UniqueIdentifier>{c941599f-99e2-451e-bd9d-b43aa13f0132}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\Core\Rendering">
       <UniqueIdentifier>{276d9617-8663-4173-9f8d-67cb222b99cb}</UniqueIdentifier>
@@ -931,6 +931,9 @@
     </Filter>
     <Filter Include="include\ECS\Component\Physics\CharacterController">
       <UniqueIdentifier>{858fd582-7868-4b02-8a0a-a81b09087f38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\ECS\Component\Physics\Collisions">
+      <UniqueIdentifier>{c9757943-57ff-42de-8a53-3b01c0312aaf}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\ECS\Component\Physics\Rigidbody">
       <UniqueIdentifier>{c944e1a1-4a35-4615-8465-f56569a8c40e}</UniqueIdentifier>

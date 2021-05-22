@@ -10,42 +10,46 @@
 #include <Engine/ECS/Component/Component.hpp>
 #include <PxRigidStatic.h>
 
- // Generated
+// Generated
 #include "Generated/RigidbodyStatic.rfk.h"
 
 namespace GPE RFKNamespace()
 {
 
-	class RFKClass(Inspect(), Serialize(), ComponentGen()) RigidbodyStatic : public Component, public RigidBodyBase
-	{
-	public:
-		RigidbodyStatic(GameObject & owner, EShapeType _type) noexcept;
+    class RFKClass(Inspect(), Serialize(), ComponentGen()) RigidbodyStatic : public Component, public RigidBodyBase
+    {
+    public:
+        RigidbodyStatic(GameObject & owner, EShapeType _type) noexcept;
 
-		RigidbodyStatic() noexcept = default;
-		RigidbodyStatic(const RigidbodyStatic & other) noexcept = delete;
-		RigidbodyStatic(RigidbodyStatic && other) noexcept = default;
-		RigidbodyStatic& operator=(RigidbodyStatic const& other) noexcept = delete;
-		RigidbodyStatic& operator=(RigidbodyStatic && other) noexcept = delete;
+        RigidbodyStatic() noexcept                             = default;
+        RigidbodyStatic(const RigidbodyStatic& other) noexcept = delete;
+        RigidbodyStatic(RigidbodyStatic && other) noexcept     = default;
+        RigidbodyStatic& operator=(RigidbodyStatic const& other) noexcept = delete;
+        RigidbodyStatic& operator=(RigidbodyStatic&& other) noexcept = delete;
 
-		virtual ~RigidbodyStatic() noexcept;
+        virtual ~RigidbodyStatic() noexcept;
 
-	public:
-		physx::PxRigidStatic* rigidbody;
+    public:
+        physx::PxRigidStatic* rigidbody;
 
-	protected:
+    protected:
         void updateToSystem();
 
-	public:
+    public:
+        /**
+         * @brief Update the current shape of the rigidbody
+         */
+        virtual void updateShape(physx::PxShape & oldShape);
 
-		/**
-		 * @brief Add or remove current component from it's system which have for effect to enable or disable it
-		 * @param newState
-		 * @return
-		 */
-		void setActive(bool newState) noexcept override;
+        /**
+         * @brief Add or remove current component from it's system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        void setActive(bool newState) noexcept override;
 
         virtual void onPostLoad() override;
 
-		RigidbodyStatic_GENERATED
-	};
+        RigidbodyStatic_GENERATED
+    };
 } // namespace )

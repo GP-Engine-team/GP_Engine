@@ -96,11 +96,11 @@ PhysXSystem::~PhysXSystem()
 {
     PxCloseExtensions();
 
-    manager->release();
+    /*manager->release();
     scene->release();
     // cooking->release();
-    // physics->release();
-    // foundation->release();
+    physics->release();
+    foundation->release();*/
 }
 
 void PhysXSystem::advance(double deltaTime) noexcept

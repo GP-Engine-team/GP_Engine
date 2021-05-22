@@ -41,8 +41,8 @@ namespace GPE RFKNamespace()
             RFKField(Serialize()) bool         isEnable             = false;
             RFKField(Serialize()) float        shadowMapSampleScale = 4.f;
             RFKField(Serialize()) unsigned int PCF                  = 3;
-            RFKField(Serialize()) float        bias                 = 0.05f;
-            RFKField(Serialize()) float        size                 = 1000.f;
+            // RFKField(Serialize()) float        bias                 = 0.05f;
+            RFKField(Serialize()) float size = 1000.f;
 
             ShadowProperties_GENERATED
         };
@@ -53,7 +53,7 @@ namespace GPE RFKNamespace()
         RFKField(Serialize()) SpecularComponent m_specularComp;
 
         RFKField(Serialize()) ShadowProperties m_shadowProterties;
-        
+
     public:
         inline Light(GameObject & owner, const CreateArg& arg);
 

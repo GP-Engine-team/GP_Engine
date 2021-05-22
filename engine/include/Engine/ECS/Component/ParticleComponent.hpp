@@ -11,6 +11,7 @@
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
+#include "Engine/Serialization/Serialize.hpp"
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleData.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
@@ -23,8 +24,9 @@
 namespace GPE RFKNamespace()
 {
     class GameObject;
+    class Shader;
 
-    class RFKClass(ComponentGen) ParticleComponent : public Component
+    class RFKClass(ComponentGen, Serialize()) ParticleComponent : public Component
     {
     public:
         struct CreateArg
@@ -32,15 +34,15 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        class Shader* m_shader = nullptr;
+        Shader* m_shader = nullptr;
 
-        ParticleData m_particles;
-        size_t       m_count              = 0;
-        float        m_emitRate           = 0.0;
-        float        m_duration           = std::numeric_limits<float>::infinity();
-        float        m_durationCount      = 0.f;
-        bool         m_canEmit            = false;
-        bool         m_isInGlobalPosition = true;
+        ParticleData                 m_particles;
+        RFKField(Serialize()) size_t m_count              = 0;
+        RFKField(Serialize()) float  m_emitRate           = 0.0;
+        RFKField(Serialize()) float  m_duration           = std::numeric_limits<float>::infinity();
+        RFKField(Serialize()) float  m_durationCount      = 0.f;
+        RFKField(Serialize()) bool   m_canEmit            = false;
+        RFKField(Serialize()) bool   m_isInGlobalPosition = true;
 
         /**
          * @brief Is used to define how the particle must be generated (color ? velocity ? Position ?)
@@ -78,7 +80,7 @@ namespace GPE RFKNamespace()
         ParticleComponent(ParticleComponent && other) noexcept     = default;
         virtual ~ParticleComponent();
 
-        ParticleComponent()        = default;
+        ParticleComponent();
         ParticleComponent& operator=(ParticleComponent const& other) = delete;
         ParticleComponent& operator=(ParticleComponent&& other) noexcept = default;
 
@@ -190,6 +192,8 @@ namespace GPE RFKNamespace()
          * @brief Update GPU data with CPU buffer
          */
         void sendDataToShader();
+
+        void onPostLoad() final;
 
         /**
          * @brief Add or remove current component from it's system which have for effect to enable or disable it

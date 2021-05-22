@@ -6,6 +6,8 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Parsers/ShaderParser.hpp"
 #include "Engine/Resources/Color.hpp"
+#include <Engine/Engine.hpp>
+#include <Engine/Resources/Importer/Importer.hpp>
 
 using namespace GPM;
 using namespace GPE;
@@ -170,7 +172,6 @@ uniform float unscaledTimeAcc;
 )";
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
-    : m_featureMask(featureMask), m_lightsUniformBuffer(0)
 {
     loadAndCompile(vertexPath, fragmentPath, featureMask);
 }
@@ -340,7 +341,7 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
             }
             else if (type == EType::FRAGMENT)
             {
-                Log::getInstance()->logError(std::string("Framgnet shader compilation error\n") + infoLog);
+                Log::getInstance()->logError(std::string("Fragment shader compilation error\n") + infoLog);
             }
         }
     }
@@ -357,7 +358,7 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
             }
             else if (type == EType::FRAGMENT)
             {
-                Log::getInstance()->logError((std::string("Fragmnet shader linking error\n") + infoLog).c_str());
+                Log::getInstance()->logError((std::string("Fragment shader linking error\n") + infoLog).c_str());
             }
         }
     }
@@ -365,6 +366,8 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
 
 void Shader::loadAndCompile(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
 {
+    m_featureMask = featureMask;
+
     std::string vertexCode;
     std::string fragmentCode;
 
@@ -413,3 +416,35 @@ void Shader::release()
 
     Log::getInstance()->log("Release vs and fs");
 }
+
+// template <>
+// void GPE::load(XmlLoader& context, Shader*& data, const rfk::Field& info)
+//{
+//    GPE::load(context, data, fieldToLoadInfo(info));
+//}
+//
+// template <>
+// void GPE::load(XmlLoader& context, Shader*& data, const XmlLoader::LoadInfo& info)
+//{
+//    std::string shaderName;
+//    GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
+//    if (!(data = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
+//    {
+//        data = loadShaderFile(shaderName.c_str());
+//    }
+//}
+//
+// template <>
+// void GPE::save(XmlSaver& context, Shader* const& data, const rfk::Field& info)
+//{
+//    GPE::save(context, data, fieldToSaveInfo(info));
+//}
+//
+// template <>
+// void GPE::save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info)
+//{
+//    if (const std::string* shaderName = GPE::Engine::getInstance()->resourceManager.getKey(data))
+//    {
+//        GPE::save(context, *shaderName, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
+//    }
+//}
