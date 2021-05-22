@@ -22,8 +22,8 @@ Mat4 DirectionalLight::getLightSpaceMatrix() noexcept
 {
     const float near_plane = 0.1f, far_plane = 1000.f;
     const Mat4  lightProjection =
-        Transform::orthographic(m_shadowProterties.size, -m_shadowProterties.size, m_shadowProterties.size,
-                                -m_shadowProterties.size, near_plane, far_plane);
+        Transform::orthographic(m_shadowProperties.size, -m_shadowProperties.size, m_shadowProperties.size,
+                                -m_shadowProperties.size, near_plane, far_plane);
     const Vec3 globalPos = getOwner().getTransform().getGlobalPosition();
     const Mat4 lightView = GPM::Transform::lookAt(globalPos, globalPos + m_direction.normalized(), Vec3::up());
     return lightProjection * lightView.inversed();

@@ -19,18 +19,11 @@ namespace GPE RFKNamespace()
     public:
         BoxCollider(GameObject& owner)                   noexcept;
         BoxCollider()                                    noexcept = default;
-        BoxCollider(const BoxCollider& other)            noexcept = delete;
-        BoxCollider(BoxCollider&& other)                 noexcept = default;
         virtual ~BoxCollider()                           noexcept = default;
-
-        BoxCollider& operator=(BoxCollider const& other) noexcept = delete;
-        BoxCollider& operator=(BoxCollider&& other)      noexcept = delete;
 
     private:
         RFKField(Inspect(), Serialize()) GPM::Vector3 m_center = {0,0,0};
         RFKField(Inspect(), Serialize()) GPM::Vector3 m_dimensions = {10,10,10};
-
-        virtual void onPostLoad() override;
 
     public:
         DEFAULT_GETTER_SETTER_BY_REF(Center, m_center);

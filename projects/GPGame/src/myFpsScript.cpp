@@ -75,6 +75,14 @@ void MyFpsScript::start()
 void MyFpsScript::onPostLoad()
 {
     BehaviourComponent::onPostLoad();
+
+    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+
+    GPE::SourceSettings sourceSettings;
+    sourceSettings.pitch = 1.f;
+    sourceSettings.loop  = AL_TRUE;
+
+    source->setSound("Western", "Western", sourceSettings);
 }
 
 void MyFpsScript::rotate(const GPM::Vec2& deltaDisplacement)

@@ -214,11 +214,3 @@ PxTransform PhysXSystem::GPETransformComponentToPxTransform(const TransformCompo
 
     return transform;
 }
-TransformComponent PhysXSystem::PxTransformToGPETransformComponent(const PxTransform& _transform) noexcept
-{
-    TransformComponent transform;
-    transform.setTranslation(PhysXSystem::PxVec3ToGPMVec3(_transform.p));
-    transform.setRotation(PhysXSystem::PxQuatToGPMQuat(_transform.q));
-
-    return transform;
-}

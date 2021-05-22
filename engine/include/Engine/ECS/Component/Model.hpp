@@ -82,32 +82,20 @@ namespace GPE RFKNamespace()
     protected:
         RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
 
-    public:
-        Model(GameObject & owner);
+        virtual void updateToSystem() noexcept override;
 
+    public:
+        Model()        = default;
+        Model(GameObject & owner);
         Model(GameObject & owner, const CreateArg& arg);
 
-        Model(const Model& other) noexcept = delete;
-        Model(Model && other) noexcept;
         virtual ~Model();
-
-        Model()        = default;
-        Model& operator=(Model const& other) = delete;
-        Model& operator                      =(Model&& other) noexcept;
 
         void moveTowardScene(class Scene & newOwner) override;
 
-        virtual void onPostLoad();
         virtual void inspect(InspectContext & context);
 
         void addSubModel(const SubModel::CreateArg& arg);
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
 
         Model_GENERATED
     };

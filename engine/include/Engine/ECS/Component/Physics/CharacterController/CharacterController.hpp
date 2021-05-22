@@ -47,6 +47,9 @@ namespace GPE RFKNamespace()
         RFKField(Inspect(), Serialize()) bool      m_hasGravity    = false;
         RFKField(Inspect(), Serialize()) bool      m_jumping       = false;
 
+    protected:
+        virtual void updateToSystem() noexcept override;
+
     public:
         physx::PxController* controller = nullptr;
         DEFAULT_GETTER_SETTER_BY_VALUE(Speed, m_speed);
@@ -62,13 +65,6 @@ namespace GPE RFKNamespace()
         void updateForce() noexcept;
 
         bool canJump() noexcept;
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
 
         CharacterController_GENERATED
     };

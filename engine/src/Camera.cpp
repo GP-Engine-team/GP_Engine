@@ -56,6 +56,7 @@ void Camera::moveTowardScene(Scene& newOwner)
 
 Camera::Camera(GameObject& owner) noexcept : Camera(owner, PerspectiveCreateArg{})
 {
+    updateToSystem();
 }
 
 Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Component(owner)
@@ -74,7 +75,7 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
 
     m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.znear, m_projInfo.zfar);
 
-    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
+    updateToSystem();
     getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     updateView();
 
@@ -109,28 +110,14 @@ void Camera::onPostLoad()
 {
     m_projection = Transform::orthographic(m_projInfo.hSide * .5f, -m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
                                            -m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
-    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
+    updateToSystem();
     updateView();
 }
 
 Camera::~Camera() noexcept
 {
     getOwner().getTransform().OnUpdate -= GPE::Function::make(this, "updateView");
-
-    if (m_isActivated && getOwner().pOwnerScene)
-        getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
-}
-
-Camera& Camera::operator=(Camera&& other) noexcept
-{
-    m_projInfo             = std::move(other.m_projInfo);
-    m_projection           = std::move(other.m_projection);
-    m_viewMatrix           = std::move(other.m_viewMatrix);
-    m_projectionViewMatrix = std::move(other.m_projectionViewMatrix);
-
-    getOwner().pOwnerScene->sceneRenderer.updateCameraPointer(this, &other);
-
-    return static_cast<Camera&>(Component::operator=(std::move(other)));
+    setActive(false);
 }
 
 void Camera::setFovY(const float fovY) noexcept
@@ -179,16 +166,15 @@ Frustum Camera::getFrustum() const noexcept
     return frustum;
 }
 
-void Camera::setActive(bool newState) noexcept
+void Camera::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
         getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
     else
-        getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
+    {
+        if (getOwner().pOwnerScene)
+            getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
+    }
 }
 
 /*

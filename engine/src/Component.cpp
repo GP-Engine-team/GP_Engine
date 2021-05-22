@@ -7,6 +7,11 @@
 #include "Generated/Component.rfk.h"
 File_GENERATED
 
+GPE::Component::~Component() noexcept
+{
+
+}
+
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, Component& inspected)
 {
@@ -15,5 +20,5 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, Component& inspec
 
 void GPE::Component::onPostLoad()
 {
-
+    updateToSystem();
 }
