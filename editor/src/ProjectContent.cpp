@@ -181,7 +181,7 @@ void ProjectContent::createNewScene()
     m_editorContext->saveScene(&scene, sceneDir.string().c_str());
     m_editorContext->m_sceneEditor.view.bindScene(scene);
     refreshResourcesList();
-    m_editorContext->m_saveFolder = sceneDir.string().c_str();
+    m_editorContext->m_saveFolder = sceneDir.parent_path().string().c_str();
 }
 
 void ProjectContent::removeFile(const std::filesystem::path& path)
@@ -449,7 +449,8 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     m_editorContext->m_sceneEditor.view.unbindScene();
                     Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName);
                     m_editorContext->loadScene(&scene, it->path.string().c_str());
-                    m_editorContext->m_saveFolder = it->path.string().c_str();
+                    scene.setName(it->filename.stem().string().c_str());
+                    m_editorContext->m_saveFolder = it->path.parent_path().string().c_str();
                     break;
                 }
 

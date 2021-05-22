@@ -39,6 +39,21 @@ BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept
 
     source->setSound("Western", "Western", sourceSettings);
 
+    { // Cursor
+        GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
+        io.setCursorTrackingState(true);
+        io.setCursorLockState(true);
+    }
+}
+
+void BasePlayer::start()
+{
+    BaseCharacter::start();
+
+    GAME_ASSERT(input, "null");
+    GAME_ASSERT(source, "null");
+    GAME_ASSERT(m_fireArme, "null");
+
     // Keys
     input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
     input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
@@ -52,17 +67,6 @@ BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept
     input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
     input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
-
-    { // Cursor
-        GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
-        io.setCursorTrackingState(true);
-        io.setCursorLockState(true);
-    }
-}
-
-void BasePlayer::start()
-{
-    BaseCharacter::start();
 
     // source->playSound("Western", true);
 }

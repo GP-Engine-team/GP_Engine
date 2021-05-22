@@ -26,6 +26,9 @@ void CircularEntitiesSpawner::start()
 {
     GAME_ASSERT(m_container, "Missing container ref in CircularEntitiesSpawner");
     m_nextDelay = m_spawnDelay + Random::ranged(-m_spawnDelayInterval, m_spawnDelayInterval);
+
+    for (auto&& elem : m_entitiesToSpawnInfo)
+        GAME_ASSERT(elem.prefab, "null");
 }
 
 void CircularEntitiesSpawner::update(double deltaTime)
@@ -37,6 +40,7 @@ void CircularEntitiesSpawner::update(double deltaTime)
 
     while (m_delayCount >= m_nextDelay)
     {
+
         m_delayCount -= m_nextDelay;
         m_nextDelay     = m_spawnDelay + Random::ranged(-m_spawnDelayInterval, m_spawnDelayInterval);
         Vec2 position2D = Random::circularCoordinate(

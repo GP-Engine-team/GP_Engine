@@ -278,8 +278,10 @@ void Editor::loadScene(GPE::Scene* scene, const char* path)
 
 void Editor::saveCurrentScene()
 {
-    GPE::Scene*       currentScene = m_sceneEditor.view.pScene;
-    const std::string path         = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
+    GPE::Scene*           currentScene = m_sceneEditor.view.pScene;
+    std::filesystem::path saveFolder   = m_saveFolder;
+    saveFolder /= currentScene->getName() + ".GPScene";
+    const std::string path = saveFolder.string();
     m_sceneEditor.view.unbindScene();
 
     auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);

@@ -22,7 +22,7 @@ namespace GPG RFKNamespace()
     struct RFKStruct(Inspect(), Serialize()) EntityPrefabCount
     {
         RFKField(Inspect(), Serialize()) unsigned int numberEntity;
-        RFKField(Inspect()) GPE::Prefab*              prefab = nullptr;
+        RFKField(Inspect(), Serialize()) GPE::Prefab* prefab = nullptr;
 
         EntityPrefabCount_GENERATED
     };

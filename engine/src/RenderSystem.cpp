@@ -868,8 +868,7 @@ void RenderSystem::addSubModel(SubModel& subModel) noexcept
     if (subModel.pMaterial->isOpaque())
     {
         m_pOpaqueSubModels.insert(std::upper_bound(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), &subModel,
-                                                   isSubModelHasPriorityOverAnother),
-                                  &subModel);
+                                                   isSubModelHasPriorityOverAnother), &subModel);
     }
     else
     {

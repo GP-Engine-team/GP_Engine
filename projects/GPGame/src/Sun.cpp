@@ -26,11 +26,14 @@ void Sun::start()
 {
     GAME_ASSERT(m_player, "Missing player ref");
     m_pSunDirectionnalLight = getOwner().getComponent<DirectionalLight>();
+
+    m_midDay   = m_dayStart + m_dayDuration / 2.f;
+    m_midNight = m_dayStart + m_nightDuration / 2.f;
 }
 
 void Sun::update(double deltaTime)
 {
-    m_currentTime += deltaTime;
+    m_currentTime += deltaTime * 20.f;
 
     if (m_currentTime > m_dayDuration + m_nightDuration)
     {
@@ -40,8 +43,8 @@ void Sun::update(double deltaTime)
     /*move light and sun*/
     Vec3 newDirection;
 
-    float rot    = (m_currentTime - m_dayStart) * (PI * 2.f) / (m_dayDuration + m_nightDuration);
-    newDirection = {cosf(rot), -sinf(rot), 0.f};
+    float rot    = (m_currentTime - m_dayStart) / (m_dayDuration + m_nightDuration) * PI;
+    newDirection = {cosf(std::abs(rot * 2.f)), -sinf(std::abs(rot)), cosf(std::abs(rot / 4.f))};
 
     getOwner().getTransform().setTranslation(m_player->getTransform().getGlobalPosition() -
                                              newDirection * m_sunDistance);
