@@ -1,12 +1,5 @@
 ﻿namespace GPE
 {
-
-inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
-    : m_name{arg.name}, m_pTransform{new TransformComponent(*this, arg.transformArg)}, m_pComponents{},
-      pOwnerScene{&scene}, m_parent{arg.parent}, m_id{++m_currentID}
-{
-}
-
 template <typename T, typename... Args>
 inline T& GameObject::addComponent(Args&&... args) noexcept
 {

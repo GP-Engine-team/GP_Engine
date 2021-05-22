@@ -17,6 +17,17 @@ using namespace GPM;
 
 unsigned int GameObject::m_currentID = 0;
 
+GameObject::GameObject(Scene& scene, const CreateArg& arg)
+    : m_name{arg.name}, m_pTransform{new TransformComponent(*this, arg.transformArg)}, m_pComponents{},
+      pOwnerScene{&scene}, m_parent{arg.parent}, m_id{++m_currentID}
+{
+}
+
+GameObject::GameObject()
+{
+    m_id = ++m_currentID;
+}
+
 GameObject::~GameObject() noexcept
 {
     m_pTransform->destroy();
@@ -374,31 +385,6 @@ void GameObject::inspect(GPE::InspectContext& context)
         ImGui::PopID();
         if (!isIteratorDestroy)
             ++it;
-    }
-}
-
-void GPE::save(XmlSaver& context, GameObject& inspected)
-{
-    const rfk::Class& archetype = GameObject::staticGetArchetype();
-
-    // TODO : Replace "gameObject" by unique name.
-    context.push("gameObject", archetype.name, archetype.id);
-
-    inspected.save(context);
-
-    context.pop();
-}
-
-void GPE::load(XmlLoader& context, class GameObject& inspected)
-{
-    const rfk::Class& archetype = GameObject::staticGetArchetype();
-
-    // TODO : Replace "gameObject" by unique name.
-    XmlLoader::LoadInfo info{"gameObject", archetype.name, archetype.id};
-    if (context.goToSubChild(info))
-    {
-        inspected.load(context);
-        context.pop();
     }
 }
 

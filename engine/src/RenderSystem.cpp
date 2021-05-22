@@ -83,9 +83,14 @@ void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float 
 
 RenderSystem::RenderSystem() noexcept
 {
-    Engine::getInstance()->resourceManager.add<Shader>(
+    Shader& defaultShader = Engine::getInstance()->resourceManager.add<Shader>(
         "Default", "./resources/shaders/vTextureWithLightAndShadowAndNM.vs",
         "./resources/shaders/fTextureWithLightAndShadowAndNM.fs", LIGHT_BLIN_PHONG);
+
+    defaultShader.use();
+    defaultShader.setInt("ourTexture", 0);
+    defaultShader.setInt("shadowMap", 1);
+    defaultShader.setInt("normalMap", 2);
 
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
