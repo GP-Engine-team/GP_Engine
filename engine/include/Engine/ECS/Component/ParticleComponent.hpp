@@ -72,6 +72,11 @@ namespace GPE RFKNamespace()
          */
         void emit(double dt);
 
+         /**
+         * @brief Init render buffer
+         */
+        void generate();
+
         virtual void updateToSystem() noexcept override;
 
     public:
@@ -93,11 +98,6 @@ namespace GPE RFKNamespace()
          * @brief Kill all alive particle
          */
         void reset();
-
-        /**
-         * @brief Init render buffer
-         */
-        void generate();
 
         /**
          * @brief Start the particle effect

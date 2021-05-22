@@ -209,7 +209,6 @@ void ParticleComponent::inspect(InspectContext& context)
 
     if (ImGui::Button("Start"))
     {
-        generate();
         start();
     }
 }
@@ -227,11 +226,18 @@ void ParticleComponent::generate()
 void ParticleComponent::start()
 {
     reset();
+
+    if (!m_renderer)
+        generate();
+
     m_canEmit = true;
 }
 
 void ParticleComponent::emit(unsigned int count)
 {
+    if (!m_renderer)
+        generate();
+
     const size_t startId = m_particles.m_countAlive;
     const size_t endId   = std::min(startId + count, m_particles.m_count - 1);
 
