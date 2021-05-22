@@ -108,14 +108,14 @@ void CharacterController::groundCheck() noexcept
 
 void CharacterController::startJumpTimer() noexcept
 {
-    m_canJump = false;
+    m_canJump       = false;
     m_startJumpTime = static_cast<float>(Engine::getInstance()->timeSystem.getAccumulatedTime());
 }
 
 CharacterController::~CharacterController() noexcept
 {
-    controller->release();
     Engine::getInstance()->physXSystem.removeComponent(this);
+    controller->release();
 }
 
 void CharacterController::setActive(bool newState) noexcept
