@@ -219,9 +219,9 @@ void EditorStartup::stopGame()
 {
     if (m_game->state == EGameState::STOPPED)
         return;
-
-    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = nullptr;
-    Engine::getInstance()->sceneManager.OnSceneChange                      = nullptr;
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.startOnBehaviourAdd = false;
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert        = nullptr;
+    Engine::getInstance()->sceneManager.OnSceneChange                             = nullptr;
 
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
     m_update      = [&](double unscaledDeltaTime, double deltaTime) {

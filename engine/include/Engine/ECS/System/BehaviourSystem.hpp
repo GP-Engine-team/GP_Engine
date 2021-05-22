@@ -24,6 +24,7 @@ protected:
 
 public:
     std::function<void(const char*)> onGameAssert;
+    bool                             startOnBehaviourAdd = false;
 
 public:
     void addUpdate(BehaviourComponent& updateFunction) noexcept;
@@ -38,7 +39,7 @@ public:
     void addBehaviour(BehaviourComponent& behaviour) noexcept;
     void removeBehaviour(BehaviourComponent& behaviour) noexcept;
 
-    void start() const noexcept;
+    void start() noexcept;
     void onGUI() const noexcept;
 
     void fixedUpdate(double deltaTime) noexcept;

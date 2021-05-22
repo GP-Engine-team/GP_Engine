@@ -70,12 +70,12 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
         {
             static void rec(GPE::GameObject* g)
             {
+                g->getTransform().onPostLoad();
+
                 for (GPE::Component* comp : g->getComponents())
                 {
                     comp->onPostLoad();
                 }
-
-                g->getTransform().onPostLoad();
 
                 for (GPE::GameObject* g2 : g->children)
                 {
@@ -123,12 +123,12 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
         {
             static void rec(GPE::GameObject* const g)
             {
+                g->getTransform().onPostLoad();
+
                 for (GPE::Component* comp : g->getComponents())
                 {
                     comp->onPostLoad();
                 }
-
-                g->getTransform().onPostLoad();
 
                 for (GPE::GameObject* g2 : g->children)
                 {

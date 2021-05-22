@@ -21,6 +21,9 @@ void BaseEnemy::start()
 {
     BaseCharacter::start();
 
+    controller->setSpeed(0.5f);
+    controller->setAngularSpeed(PI);
+
     m_target = Engine::getInstance()->sceneManager.getCurrentScene()->getGameObject("Player");
     GAME_ASSERT(m_target, "Player not found");
 }
@@ -32,5 +35,7 @@ void BaseEnemy::onPostLoad()
 
 void BaseEnemy::update(double deltaTime)
 {
-    rotateYToward(m_target->getTransform().getGlobalPosition(), deltaTime);
+    const Vec3 targetPos = m_target->getTransform().getGlobalPosition();
+
+    moveAndRotateToward(targetPos, deltaTime);
 }

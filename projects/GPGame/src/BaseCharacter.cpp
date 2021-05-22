@@ -65,6 +65,19 @@ void BaseCharacter::rotateYToward(const Vec3& target, float deltaTime)
     transform().setRotation(rotY * transform().getSpacialAttribut().rotation);
 }
 
+void BaseCharacter::moveToward(const GPM::Vec3& target)
+{
+    GPM::Vec3 displacement = (target - transform().getGlobalPosition()).normalized();
+    displacement.y         = .0f;
+    controller->move(displacement);
+}
+
+void BaseCharacter::moveAndRotateToward(const GPM::Vec3& target, float deltaTime)
+{
+    backward();
+    rotateYToward(target, deltaTime);
+}
+
 void BaseCharacter::jump()
 {
     if (controller->getJumping() == false)

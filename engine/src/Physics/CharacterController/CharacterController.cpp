@@ -20,10 +20,10 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
 {
     PxCapsuleControllerDesc desc;
 
-    desc.height   = 1.f;
+    desc.height   = 100.f;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition());
-    desc.radius   = 1.f;
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(owner.getTransform().getGlobalPosition());
+    desc.radius   = 50.f;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
     Engine::getInstance()->physXSystem.addComponent(this);

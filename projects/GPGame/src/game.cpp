@@ -103,12 +103,7 @@ void loadTreeResource()
     Model::CreateArg     arg;
 
     SubModel subModel;
-    subModel.pShader = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLightAndShadowAndNM.vs",
-                                       "./resources/shaders/fTextureWithLightAndShadowAndNM.fs", LIGHT_BLIN_PHONG);
-    subModel.pShader->use();
-    subModel.pShader->setInt("ourTexture", 0);
-    subModel.pShader->setInt("shadowMap", 1);
-    subModel.pShader->setInt("normalMap", 2);
+    subModel.pShader = rm.get<Shader>("Default");
 
     subModel.pMaterial = loadMaterialFile("resources\\meshs\\Trank_bark.GPMaterial");
     subModel.pMesh     = loadMeshFile("resources\\meshs\\g1.GPMesh");
@@ -283,7 +278,7 @@ Game::Game()
     { // cube
         cube->getTransform().setScale(Vec3{10, 10, 10});
         Model& mod = cube->addComponent<Model>();
-        mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
+        mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("Default"),
                                             loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial"),
                                             Engine::getInstance()->resourceManager.get<Mesh>("Sphere"), true});
     }
@@ -301,7 +296,7 @@ Game::Game()
         rb.collider          = &box;
         box.isVisible        = true;
         box.setDimensions({1000.f, 1.f, 1000.f});
-        mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
+        mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("Default"),
                                             loadMaterialFile("resources\\Materials\\GroundMat.GPMaterial"), planeMesh,
                                             true});
     }

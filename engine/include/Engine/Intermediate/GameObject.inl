@@ -69,7 +69,7 @@ inline GameObject& GameObject::addChild(Args&&... args) noexcept
     GameObject* pChild = children.emplace_back(new GameObject(*pOwnerScene, args...));
 
     pChild->m_parent = this;
-    pChild->getTransform().setDirty();
+    pChild->getTransform().update(getTransform().getModelMatrix());
     return *pChild;
 }
 

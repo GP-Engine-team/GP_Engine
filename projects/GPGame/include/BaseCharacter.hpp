@@ -30,6 +30,23 @@ namespace GPG RFKNamespace()
         void onPostLoad() override;
 
         RFKMethod() void rotateYToward(const GPM::Vec3& target, float deltaTime);
+
+        /**
+         * @brief This funciton include only translation. Displayement is erase in Y to avoid fly
+         * @param target
+         * @param deltaTime
+         * @return
+         */
+        RFKMethod() void moveToward(const GPM::Vec3& target);
+
+        /**
+         * @brief Rotate towar entity and move in its forward direction
+         * @param target
+         * @param deltaTime
+         * @return
+         */
+        RFKMethod() void moveAndRotateToward(const GPM::Vec3& target, float deltaTime);
+
         RFKMethod() void jump();
         RFKMethod() void forward();
         RFKMethod() void backward();

@@ -62,6 +62,9 @@ void BehaviourSystem::removeOnGUI(BehaviourComponent& functionToRemove) noexcept
 void BehaviourSystem::addBehaviour(BehaviourComponent& behaviour) noexcept
 {
     m_pBehaviours.push_back(&behaviour);
+
+    if (startOnBehaviourAdd)
+        behaviour.start();
 }
 
 void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
@@ -86,8 +89,10 @@ void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
     }
 }
 
-void BehaviourSystem::start() const noexcept
+void BehaviourSystem::start() noexcept
 {
+    startOnBehaviourAdd = true;
+
     for (auto&& behaviour : m_pBehaviours)
     {
         behaviour->start();
