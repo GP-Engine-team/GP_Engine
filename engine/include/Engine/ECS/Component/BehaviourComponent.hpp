@@ -27,15 +27,15 @@ namespace GPE RFKNamespace()
         RFKField(Inspect(), Serialize()) bool m_useFixedUpdate = false;
         RFKField(Inspect(), Serialize()) bool m_useOnGUI       = false;
 
+    protected:
+        virtual void updateToSystem() noexcept override;
+
     public:
         BehaviourComponent(GameObject & owner) noexcept;
 
         BehaviourComponent() noexcept                                = default;
         BehaviourComponent(const BehaviourComponent& other) noexcept = delete;
         virtual ~BehaviourComponent() noexcept;
-        BehaviourComponent& operator=(BehaviourComponent const& other) noexcept = delete;
-
-        virtual void onPostLoad();
 
         virtual void start()
         {
@@ -53,8 +53,6 @@ namespace GPE RFKNamespace()
         {
         }
 
-        void updateToSystem();
-
         void enableUpdate(bool flag) noexcept;
         void enableFixedUpdate(bool flag) noexcept;
         void enableOnGUI(bool flag) noexcept;
@@ -62,13 +60,6 @@ namespace GPE RFKNamespace()
         [[nodiscard]] bool isUpdateEnable() const noexcept;
         [[nodiscard]] bool isFixedUpdateEnable() const noexcept;
         [[nodiscard]] bool isOnGUIEnable() const noexcept;
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
 
         // UTILITY
     public:

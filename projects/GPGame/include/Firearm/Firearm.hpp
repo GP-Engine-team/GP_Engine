@@ -55,6 +55,8 @@ namespace GPG RFKNamespace()
         Firearm& operator=(Firearm const& other) noexcept = delete;
         Firearm& operator=(Firearm&& other) noexcept = delete;
 
+        virtual void onPostLoad() override;
+
         bool isMagazineEmpty() const;
         void triggered();
         void start() override;

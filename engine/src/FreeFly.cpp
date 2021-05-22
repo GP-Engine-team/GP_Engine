@@ -12,39 +12,38 @@
 #include <Generated/FreeFly.rfk.h>
 File_GENERATED
 
-    namespace GPE
+using namespace GPE;
+
+FreeFly::FreeFly(GameObject & owner) noexcept
+    : BehaviourComponent(owner), timeSys{Engine::getInstance()->timeSystem}
 {
-    FreeFly::FreeFly(GameObject & owner) noexcept
-        : BehaviourComponent(owner), timeSys{Engine::getInstance()->timeSystem}
+}
+
+FreeFly::~FreeFly() noexcept
+{
+    DataChunk<FreeFly>::getInstance()->destroy(this);
+}
+
+void FreeFly::update(double deltaTime)
+{
+    const GPM::Vec2 deltaPos = Engine::getInstance()->inputManager.getCursor().deltaPos;
+
+    if (deltaPos.x || deltaPos.y)
     {
+        rotate(deltaPos);
     }
+}
 
-    FreeFly::~FreeFly() noexcept
-    {
-        DataChunk<FreeFly>::getInstance()->destroy(this);
-    }
+// TODO: the rotation should depend on deltaTime
+void FreeFly::rotate(const GPM::Vector2& deltaDisplacement)
+{
+    using namespace GPM;
 
-    void FreeFly::update(double deltaTime)
-    {
-        const GPM::Vec2 deltaPos = Engine::getInstance()->inputManager.getCursor().deltaPos;
+    const Quat& orientation{getOwner().getTransform().getSpacialAttribut().rotation};
+    const Vec2  axis{deltaDisplacement.rotated90()};
+    const Quat  rotX{Quat::angleAxis(axis.x * m_rotationSpeed, Vec3::right())};
+    const Quat  rotY{Quat::angleAxis(axis.y * m_rotationSpeed, Vec3::up())};
+    const Quat  newRot{rotY * orientation * rotX};
 
-        if (deltaPos.x || deltaPos.y)
-        {
-            rotate(deltaPos);
-        }
-    }
-
-    // TODO: the rotation should depend on deltaTime
-    void FreeFly::rotate(const GPM::Vector2& deltaDisplacement)
-    {
-        using namespace GPM;
-
-        const Quat& orientation{getOwner().getTransform().getSpacialAttribut().rotation};
-        const Vec2  axis{deltaDisplacement.rotated90()};
-        const Quat  rotX{Quat::angleAxis(axis.x * m_rotationSpeed, Vec3::right())};
-        const Quat  rotY{Quat::angleAxis(axis.y * m_rotationSpeed, Vec3::up())};
-        const Quat  newRot{rotY * orientation * rotX};
-
-        getOwner().getTransform().setRotation(newRot);
-    }
+    getOwner().getTransform().setRotation(newRot);
 }

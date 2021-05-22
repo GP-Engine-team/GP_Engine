@@ -28,7 +28,6 @@ File_GENERATED
         enableUpdate(true);
 
         m_muzzleFlash->setDuration(.5f);
-        m_muzzleFlash->generate();
 
         GPE::Wave           sound("./resources/sounds/Firearm/machinegun.wav", "Shoot");
         GPE::SourceSettings sourceSettings;
@@ -114,6 +113,18 @@ File_GENERATED
     const GunMagazine& Firearm::getMagazine() const
     {
         return m_magazineStored;
+    }
+
+    void Firearm::onPostLoad()
+    {
+        BehaviourComponent::onPostLoad();
+
+        GPE::Wave           sound("./resources/sounds/Firearm/machinegun.wav", "Shoot");
+        GPE::SourceSettings sourceSettings;
+        sourceSettings.pitch = 1.f;
+        sourceSettings.loop  = AL_FALSE;
+
+        m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
     }
 
 } // End of namespace GPG

@@ -97,7 +97,8 @@ void save(XmlSaver& context, const std::unordered_map<KEY, VALUE>& saved, const 
     size_t i = 0;
     for (const std::pair<const KEY, VALUE>& pair : saved)
     {
-        GPE::save(context, pair, XmlSaver::SaveInfo{std::to_string(i), "std::pair", 0});
+        GPE::save(context, pair.first, XmlSaver::SaveInfo{"key" + std::to_string(i), "unknown", 0});
+        GPE::save(context, pair.second, XmlSaver::SaveInfo{"value" + std::to_string(i), "unknown", 0});
 
         i++;
     }

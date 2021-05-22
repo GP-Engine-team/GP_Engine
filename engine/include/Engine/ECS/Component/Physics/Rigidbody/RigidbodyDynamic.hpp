@@ -32,7 +32,7 @@ namespace GPE RFKNamespace()
 
         void updatePosition() noexcept;
 
-        virtual ~RigidbodyDynamic() noexcept = default;
+        virtual ~RigidbodyDynamic() noexcept;
 
     public:
         physx::PxRigidDynamic* rigidbody;
@@ -41,16 +41,13 @@ namespace GPE RFKNamespace()
     private:
         RFKField(Inspect("setKinematic")) bool m_isKinematic = false;
 
+    protected:
+        virtual void updateToSystem() noexcept override;
+        virtual void onPostLoad() noexcept override;
+
     public:
         void setKinematic(bool state) noexcept;
         GETTER_BY_VALUE(KinematicState, m_isKinematic);
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
 
         RigidbodyDynamic_GENERATED
     };

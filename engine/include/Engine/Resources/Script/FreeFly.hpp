@@ -23,11 +23,10 @@ namespace GPE RFKNamespace()
         float                     m_speed         = m_walkSpeed;
         RFKField(Inspect()) float m_rotationSpeed = .001f;
 
-    public:
-        FreeFly() noexcept = default;
-        FreeFly(GameObject & owner) noexcept;
-        FreeFly(FreeFly && other) noexcept = default;
-        ~FreeFly() noexcept;
+public:
+    FreeFly() noexcept = default;
+    FreeFly(GameObject& owner) noexcept;
+    ~FreeFly() noexcept;
 
         RFKMethod() void rotate(const GPM::Vector2& deltaDisplacement);
 

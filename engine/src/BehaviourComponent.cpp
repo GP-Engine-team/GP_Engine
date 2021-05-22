@@ -13,29 +13,12 @@ File_GENERATED
 
 BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(owner)
 {
-    getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
-}
-
-void BehaviourComponent::onPostLoad()
-{
     updateToSystem();
 }
 
 BehaviourComponent::~BehaviourComponent() noexcept
 {
-    if (!m_isActivated || !getOwner().pOwnerScene)
-        return;
-
-    if (m_useFixedUpdate)
-        getOwner().pOwnerScene->behaviourSystem.removeFixedUpdate(*this);
-
-    if (m_useUpdate)
-        getOwner().pOwnerScene->behaviourSystem.removeUpdate(*this);
-
-    if (m_useOnGUI)
-        getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
-
-    getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);
+    setActive(false);
 }
 
 void BehaviourComponent::enableUpdate(bool flag) noexcept
@@ -86,8 +69,11 @@ bool BehaviourComponent::isOnGUIEnable() const noexcept
     return m_useOnGUI;
 }
 
-void BehaviourComponent::updateToSystem()
+void BehaviourComponent::updateToSystem() noexcept
 {
+    if (!getOwner().pOwnerScene)
+        return;
+
     if (m_isActivated)
     {
         if (m_useUpdate)
@@ -107,18 +93,6 @@ void BehaviourComponent::updateToSystem()
 
         getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
     }
-    else
-        getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);
-}
-
-void BehaviourComponent::setActive(bool newState) noexcept
-{
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
-    if (m_isActivated)
-        getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
     else
         getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);
 }

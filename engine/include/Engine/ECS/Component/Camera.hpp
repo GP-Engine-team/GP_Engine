@@ -93,6 +93,8 @@ namespace GPE RFKNamespace()
 
         void updateProjection();
 
+        virtual void updateToSystem() noexcept override;
+
     public:
         static float computeAspect(int width, int height) noexcept;
 
@@ -128,11 +130,7 @@ namespace GPE RFKNamespace()
 
         Camera(const Camera& other) noexcept = delete;
 
-        Camera(Camera && other) noexcept = default;
-
         virtual ~Camera() noexcept;
-
-        Camera& operator=(Camera&& other) noexcept;
 
         Camera& operator=(Camera const& other) noexcept = delete;
 
@@ -185,13 +183,6 @@ namespace GPE RFKNamespace()
          * @return
          */
         Frustum getFrustum() const noexcept;
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
 
         virtual void onPostLoad() override;
 
