@@ -18,6 +18,8 @@
 
 namespace GPE RFKNamespace()
 {
+    class TransformComponent;
+
     class RFKClass(Inspect(), ComponentGen, Serialize()) BehaviourComponent : public Component
     {
     protected:
@@ -30,10 +32,8 @@ namespace GPE RFKNamespace()
 
         BehaviourComponent() noexcept                                = default;
         BehaviourComponent(const BehaviourComponent& other) noexcept = delete;
-        BehaviourComponent(BehaviourComponent && other) noexcept;
         virtual ~BehaviourComponent() noexcept;
         BehaviourComponent& operator=(BehaviourComponent const& other) noexcept = delete;
-        BehaviourComponent& operator                                            =(BehaviourComponent&& other) noexcept;
 
         virtual void onPostLoad();
 
@@ -52,6 +52,8 @@ namespace GPE RFKNamespace()
         virtual void onGUI()
         {
         }
+
+        void updateToSystem();
 
         void enableUpdate(bool flag) noexcept;
         void enableFixedUpdate(bool flag) noexcept;
@@ -73,6 +75,7 @@ namespace GPE RFKNamespace()
         /**
          * @brief Stop the game if condition is false in editor mode. In game mode work in debug only with real
          * assertion.
+         * If you want more detail about assertion use the macro GAME_ASSERT
          */
         void gameAssert(bool condition, const char* msg = "");
 
@@ -95,7 +98,26 @@ namespace GPE RFKNamespace()
         void logWarning(const std::string& msg);
         void logError(const std::string& msg);
 
+        TransformComponent& transform();
+
         BehaviourComponent_GENERATED
     };
+
+/**
+ * @brief Stop the game if condition is false in editor mode. In game mode work in debug only with real
+ * assertion.
+ */
+#ifdef NDEBUG
+
+#define GAME_ASSERT(expr, msg)
+
+#else /* Not NDEBUG.  */
+
+#define GAME_ASSERT(expr, msg)                                                                                         \
+    gameAssert(expr, GPE::stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s",                   \
+                                       F_RED("Game Assertion"), __FUNCTION__, __FILE__, __LINE__, BOLD(#expr), msg)    \
+                         .c_str());
+
+#endif // NDEBUG
 
 } // namespace )

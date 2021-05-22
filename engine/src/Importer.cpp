@@ -87,6 +87,62 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
     }
 }
 
+GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char* path)
+{
+    Scene                      scene;
+    GPE::SavedScene::CreateArg savedScene = GPE::readSceneFile(path);
+
+    // Load the file
+    if (savedScene.type == GPE::SavedScene::EType::XML)
+    {
+        // Load xml doc
+        rapidxml::xml_document<> doc;
+        std::unique_ptr<char[]>  buffer;
+        GPE::SavedScene::toDoc(doc, buffer, savedScene.data.c_str(), savedScene.data.size());
+
+        XmlLoader context(doc);
+        // Load each element
+        scene.load(context);
+
+        // Tell that pointers to the old scene should be replaced by pointers to the new scene
+        context.addConvertedPtr(scene.getWorld().pOwnerScene, &scene);
+
+        // Update old pointers into new ones
+        context.updateLazyPtrs();
+    }
+
+    // Init the prefab
+    GameObject* const go = scene.getWorld().children.front();
+    if (go)
+    {
+        go->setParent(&parent);
+        go->getTransform().setDirty();
+
+        // Call onPostLoad on GameObjects
+        struct Rec
+        {
+            static void rec(GPE::GameObject* const g)
+            {
+                for (GPE::Component* comp : g->getComponents())
+                {
+                    comp->onPostLoad();
+                }
+
+                g->getTransform().onPostLoad();
+
+                for (GPE::GameObject* g2 : g->children)
+                {
+                    rec(g2);
+                }
+            };
+        };
+        Rec::rec(go); // can't do recursives with lambdas, and std::function would be overkill
+    }
+
+    scene.getWorld().children.clear();
+    return go;
+}
+
 void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBoundingVolume boundingVolumeType) noexcept
 {
     GPE_ASSERT(srcPath != nullptr, "Void path");
@@ -164,8 +220,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
                 fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
                 materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-                writeTextureFile(fsDstPath.string().c_str(), arg);
+                stbi_uc* pix = stbi_load_from_memory(arg.pixels.get(), arg.len, &arg.w, &arg.h, &arg.comp, 0);
                 arg.pixels.release(); // Assimp manage it's mamory
+                arg.pixels.reset(pix);
+                writeTextureFile(fsDstPath.string().c_str(), arg);
             }
             else
             {
@@ -204,8 +262,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
                 fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
                 materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-                writeTextureFile(fsDstPath.string().c_str(), arg);
+                stbi_uc* pix = stbi_load_from_memory(arg.pixels.get(), arg.len, &arg.w, &arg.h, &arg.comp, 0);
                 arg.pixels.release(); // Assimp manage it's mamory
+                arg.pixels.reset(pix);
+                writeTextureFile(fsDstPath.string().c_str(), arg);
             }
             else
             {
@@ -245,8 +305,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
                 fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
                 materialArg.normalMapTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
-                writeTextureFile(fsDstPath.string().c_str(), arg);
+                stbi_uc* pix = stbi_load_from_memory(arg.pixels.get(), arg.len, &arg.w, &arg.h, &arg.comp, 0);
                 arg.pixels.release(); // Assimp manage it's mamory
+                arg.pixels.reset(pix);
+                writeTextureFile(fsDstPath.string().c_str(), arg);
             }
             else
             {
@@ -344,8 +406,14 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
 
     std::filesystem::path dstPrefPath = dstDirPath / fileName;
     dstPrefPath += ENGINE_PREFAB_EXTENSION;
-    saveSceneToPathImp(&prefab, dstPrefPath.string().c_str(), GPE::SavedScene::EType::XML);
-    prefab.getWorld().children.clear();
+
+    if (!prefab.getWorld().children.empty())
+    {
+        prefab.getWorld().children.front()->setName(dstPrefPath.stem().string().c_str());
+        prefab.getWorld().children.front()->pOwnerScene = nullptr;
+        saveSceneToPathImp(&prefab, dstPrefPath.string().c_str(), GPE::SavedScene::EType::XML);
+        prefab.getWorld().children.clear();
+    }
 
     Log::getInstance()->logInitializationEnd("Model importion");
 }
@@ -789,6 +857,7 @@ void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
     Log::getInstance()->log(stringFormat("Scene write to \"%s\"", dst));
 }
 
+#include <fstream>
 SavedScene::CreateArg GPE::readSceneFile(const char* src)
 {
     FILE*                 pFile = nullptr;
@@ -805,6 +874,10 @@ SavedScene::CreateArg GPE::readSceneFile(const char* src)
     SceneHeader header;
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
+    // int cursor = ftell(pFile);
+    // int end    = fseek(pFile, SEEK_END, 0);
+    // fseek(pFile, SEEK_SET, cursor);
+    // int sizeRemainig = end - cursor;
 
     arg.type = (SavedScene::EType)header.type;
     if (header.dataSize)

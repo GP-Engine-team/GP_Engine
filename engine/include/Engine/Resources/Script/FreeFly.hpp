@@ -14,58 +14,44 @@
 namespace GPE RFKNamespace()
 {
 
-class RFKClass() FreeFly final : public BehaviourComponent
-{
-protected:
-    TimeSystem& timeSys;
-    RFKField(Inspect())
-    float       m_walkSpeed     = 15.f; // m/s
-    RFKField(Inspect())
-    float       m_sprintSpeed   = 30.f;
-    float       m_speed         = m_walkSpeed;
-    RFKField(Inspect())
-    float       m_rotationSpeed = .001f;
+    class RFKClass() FreeFly final : public BehaviourComponent
+    {
+    protected:
+        TimeSystem&               timeSys;
+        RFKField(Inspect()) float m_walkSpeed     = 15.f; // m/s
+        RFKField(Inspect()) float m_sprintSpeed   = 30.f;
+        float                     m_speed         = m_walkSpeed;
+        RFKField(Inspect()) float m_rotationSpeed = .001f;
 
-public:
-    FreeFly() noexcept = default;
-    FreeFly(GameObject& owner) noexcept;
-    FreeFly(FreeFly&& other) noexcept = default;
-    ~FreeFly() noexcept;
+    public:
+        FreeFly() noexcept = default;
+        FreeFly(GameObject & owner) noexcept;
+        FreeFly(FreeFly && other) noexcept = default;
+        ~FreeFly() noexcept;
 
-    RFKMethod()
-    void rotate(const GPM::Vector2& deltaDisplacement);
+        RFKMethod() void rotate(const GPM::Vector2& deltaDisplacement);
 
-    RFKMethod()
-    inline void up();
-    
-    RFKMethod()
-    inline void down();
+        RFKMethod() inline void up();
 
-    RFKMethod()
-    inline void forward();
+        RFKMethod() inline void down();
 
-    RFKMethod()
-    inline void backward();
+        RFKMethod() inline void forward();
 
-    RFKMethod()
-    inline void left();
+        RFKMethod() inline void backward();
 
-    RFKMethod()
-    inline void right();
+        RFKMethod() inline void left();
 
-    RFKMethod()
-    inline void walk();
+        RFKMethod() inline void right();
 
-    RFKMethod()
-    inline void sprint();
+        RFKMethod() inline void walk();
 
-    void update(double deltaTime) final;
+        RFKMethod() inline void sprint();
 
-    FreeFly& operator=(FreeFly&& other) noexcept;
+        void update(double deltaTime) final;
 
-    FreeFly_GENERATED
-};
+        FreeFly_GENERATED
+    };
 
 #include "FreeFly.inl"
 
-} // namespace GPE
+} // namespace )

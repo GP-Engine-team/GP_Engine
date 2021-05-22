@@ -1,9 +1,13 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #define GLFW_INCLUDE_NONE
 
+#include <BasePlayer.hpp>
 #include <Game.hpp>
-#include <myFpsScript.hpp>
 
+#include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
+#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
@@ -237,7 +241,7 @@ Game::Game()
     {
         const GameObject::CreateArg cubeArg{"Cube", TransformComponent::CreateArg{{0.f, 10, 0.f}}},
             sunArg{"Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}}},
-            playerArg{"Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}}},
+            playerArg{"Player", TransformComponent::CreateArg{{0.f, 180.f, 0.f}}},
             testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}},
             groundArg{"GroundArg", TransformComponent::CreateArg{{0.f}}};
 
@@ -273,14 +277,8 @@ Game::Game()
         // sun->addComponent<Sun>();
     }
 
-    //{ // Light
-    //    const PointLight::CreateArg lightArg{
-    //        {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, .0014f, 7e-6f};
-    //    player->addComponent<PointLight>(lightArg);
-    //}
-
     // Scripts
-    player->addComponent<GPG::MyFpsScript>();
+    player->addComponent<GPG::BasePlayer>();
 
     { // cube
         cube->getTransform().setScale(Vec3{10, 10, 10});
@@ -314,29 +312,4 @@ Game::Game()
         sphere.setRadius(10.f);
         testPhysX->addComponent<RigidbodyDynamic>().collider = &sphere;
     }
-
-    /*
-    // FreeFly must be used to compile properly with GPGame.dll, to not be optimized out, for serialization.
-    {
-        rfk::Entity const* a = rfk::Database::getEntity(GPE::FreeFly::staticGetArchetype().id);
-    }
-
-    rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs",
-                "./resources/shaders/fTextureOnly.fs", AMBIANTE_COLOR_ONLY);
-
-    Model::CreateArg modelArg;
-    modelArg.subModels.emplace_back(SubModel{nullptr, Engine::getInstance()->resourceManager.get<Shader>("TextureOnly"),
-                                             Engine::getInstance()->resourceManager.get<Material>("SkyboxMaterial"),
-                                             Engine::getInstance()->resourceManager.get<Mesh>("Sphere")});
-
-    testPhysX->addComponent<Model>(modelArg);
-
-    Model::CreateArg modelArg2;
-    modelArg2.subModels.emplace_back(SubModel{nullptr,
-                                                Engine::getInstance()->resourceManager.get<Shader>("TextureOnly"),
-                                                Engine::getInstance()->resourceManager.get<Material>("SkyboxMaterial"),
-                                                Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug")});
-
-    ground.addComponent<Model>(modelArg2);
-    */
 }

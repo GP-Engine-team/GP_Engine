@@ -2,8 +2,9 @@
 
 File_GENERATED
 
-#include "Engine/ECS/System/BehaviourSystem.hpp"
 #include "imgui.h"
+#include <Engine/ECS/Component/TransformComponent.hpp>
+#include <Engine/ECS/System/BehaviourSystem.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
@@ -17,18 +18,13 @@ BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(o
 
 void BehaviourComponent::onPostLoad()
 {
-    if (m_isActivated)
-    {
-        getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
-    }
+    updateToSystem();
 }
 
 BehaviourComponent::~BehaviourComponent() noexcept
 {
     if (!m_isActivated || !getOwner().pOwnerScene)
         return;
-
-    getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);
 
     if (m_useFixedUpdate)
         getOwner().pOwnerScene->behaviourSystem.removeFixedUpdate(*this);
@@ -38,24 +34,8 @@ BehaviourComponent::~BehaviourComponent() noexcept
 
     if (m_useOnGUI)
         getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
-}
 
-BehaviourComponent::BehaviourComponent(BehaviourComponent&& other) noexcept
-    : Component(*other.m_gameObject), m_useUpdate(std::move(other.m_useUpdate)),
-      m_useFixedUpdate(std::move(other.m_useFixedUpdate)), m_useOnGUI(std::move(other.m_useOnGUI))
-{
-    getOwner().pOwnerScene->behaviourSystem.updateBehaviourPointer(this, &other);
-}
-
-BehaviourComponent& BehaviourComponent::operator=(BehaviourComponent&& other) noexcept
-{
-    m_useUpdate      = std::move(other.m_useUpdate);
-    m_useFixedUpdate = std::move(other.m_useFixedUpdate);
-    m_useOnGUI       = std::move(other.m_useOnGUI);
-
-    getOwner().pOwnerScene->behaviourSystem.updateBehaviourPointer(this, &other);
-
-    return static_cast<BehaviourComponent&>(Component::operator=(std::move(other)));
+    getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);
 }
 
 void BehaviourComponent::enableUpdate(bool flag) noexcept
@@ -104,6 +84,31 @@ bool BehaviourComponent::isFixedUpdateEnable() const noexcept
 bool BehaviourComponent::isOnGUIEnable() const noexcept
 {
     return m_useOnGUI;
+}
+
+void BehaviourComponent::updateToSystem()
+{
+    if (m_isActivated)
+    {
+        if (m_useUpdate)
+            getOwner().pOwnerScene->behaviourSystem.addUpdate(*this);
+        else
+            getOwner().pOwnerScene->behaviourSystem.removeUpdate(*this);
+
+        if (m_useFixedUpdate)
+            getOwner().pOwnerScene->behaviourSystem.addFixedUpdate(*this);
+        else
+            getOwner().pOwnerScene->behaviourSystem.removeFixedUpdate(*this);
+
+        if (m_useOnGUI)
+            getOwner().pOwnerScene->behaviourSystem.addOnGUI(*this);
+        else
+            getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
+
+        getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
+    }
+    else
+        getOwner().pOwnerScene->behaviourSystem.removeBehaviour(*this);
 }
 
 void BehaviourComponent::setActive(bool newState) noexcept
@@ -163,4 +168,9 @@ void BehaviourComponent::logWarning(const std::string& msg)
 void BehaviourComponent::logError(const std::string& msg)
 {
     Log::getInstance()->logError(msg);
+}
+
+TransformComponent& BehaviourComponent::transform()
+{
+    return getOwner().getTransform();
 }

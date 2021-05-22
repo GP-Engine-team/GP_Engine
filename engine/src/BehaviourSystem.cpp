@@ -61,30 +61,7 @@ void BehaviourSystem::removeOnGUI(BehaviourComponent& functionToRemove) noexcept
 
 void BehaviourSystem::addBehaviour(BehaviourComponent& behaviour) noexcept
 {
-    if (behaviour.isFixedUpdateEnable())
-        addFixedUpdate(behaviour);
-
-    if (behaviour.isUpdateEnable())
-        addUpdate(behaviour);
-
-    if (behaviour.isOnGUIEnable())
-        addOnGUI(behaviour);
-
     m_pBehaviours.push_back(&behaviour);
-}
-
-void BehaviourSystem::updateBehaviourPointer(BehaviourComponent*       newPointorBehaviour,
-                                             const BehaviourComponent* exPointorBehaviour) noexcept
-{
-    const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();
-    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != end; ++it)
-    {
-        if ((*it) == exPointorBehaviour)
-        {
-            *it = newPointorBehaviour;
-            return;
-        }
-    }
 }
 
 void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept

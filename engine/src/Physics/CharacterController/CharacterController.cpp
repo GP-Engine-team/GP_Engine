@@ -3,21 +3,20 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 
-#include <PhysX/characterkinematic/PxCapsuleController.h>
-#include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PhysX/PxPhysics.h>
 #include <PhysX/PxRigidDynamic.h>
+#include <PhysX/characterkinematic/PxCapsuleController.h>
+#include <PhysX/characterkinematic/PxControllerManager.h>
 
 // Generated
 #include <Generated/CharacterController.rfk.h>
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace physx;
 
-CharacterController::CharacterController(GameObject& owner) noexcept
-    : Component(owner)
+CharacterController::CharacterController(GameObject& owner) noexcept : Component(owner)
 {
     PxCapsuleControllerDesc desc;
 
@@ -56,9 +55,9 @@ void CharacterController::update(double deltaTime) noexcept
         if (const float accumulatedTime = float(Engine::getInstance()->timeSystem.getAccumulatedTime());
             (accumulatedTime >= m_startJumpTime + m_jumpTimeDelay) && canJump() == true)
         {
-            m_jumping       = false;
+            m_jumping = false;
             m_force.x = m_force.y = m_force.z = .0f;
-            m_startJumpTime = 0.f;
+            m_startJumpTime                   = 0.f;
         }
 
         if (m_hasGravity)

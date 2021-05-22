@@ -57,8 +57,9 @@ namespace GPG RFKNamespace()
 
         bool isMagazineEmpty() const;
         void triggered();
+        void start() override;
         void reload();
-        void update(double deltaTime) final;
+        void update(double deltaTime) override;
 
         const GunMagazine& getMagazine() const;
 

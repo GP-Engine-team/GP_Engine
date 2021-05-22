@@ -50,7 +50,7 @@ namespace GPG RFKNamespace()
         {
             if (ImGui::Button("Generate"))
             {
-                if (!m_treeContainer || m_treePrefab->isEmpty())
+                if (!m_treeContainer || !m_treePrefab)
                 {
                     GPE::Log::getInstance()->logError("Missing tree container GO or tree prefab");
                     return;

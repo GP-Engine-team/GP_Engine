@@ -80,6 +80,7 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, createComponentByName);
     ADD_PROCESS(m_reloadableCpp, createComponentByID);
     ADD_PROCESS(m_reloadableCpp, destroyComponent);
+    ADD_PROCESS(m_reloadableCpp, loadPrefabFromPath);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
@@ -166,24 +167,30 @@ void EditorStartup::playGame()
 
     // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
-        m_engine->physXSystem.advance(fixedDeltaTime);
-        m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
+        if (m_game->state == EGameState::PLAYING)
+        {
+            m_engine->physXSystem.advance(fixedDeltaTime);
+            m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
 
-        m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+            m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+        }
     };
 
     m_update = [&](double unscaledDeltaTime, double deltaTime) {
-        m_engine->inputManager.processInput();
+        if (m_game->state == EGameState::PLAYING)
+        {
+            m_engine->inputManager.processInput();
 
-        m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
-        m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
-        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+            m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
+            m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+            m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
 
-        m_game->update(unscaledDeltaTime, deltaTime);
+            m_game->update(unscaledDeltaTime, deltaTime);
 
-        // Editor MUST be the last element update because user can stop the game. If the game stops it should not be
-        // updated
-        m_editor.update(*this);
+            // Editor MUST be the last element update because user can stop the game. If the game stops it should not be
+            // updated
+            m_editor.update(*this);
+        }
     };
 
     m_game->state = EGameState::PLAYING;
@@ -195,11 +202,14 @@ void EditorStartup::pauseGame()
     // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
     m_update      = [&](double unscaledDeltaTime, double deltaTime) {
-        m_engine->inputManager.processInput();
+        if (m_game->state == EGameState::PAUSED)
+        {
+            m_engine->inputManager.processInput();
 
-        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+            m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
 
-        m_editor.update(*this);
+            m_editor.update(*this);
+        }
     };
 
     m_game->state = EGameState::PAUSED;
@@ -207,16 +217,22 @@ void EditorStartup::pauseGame()
 
 void EditorStartup::stopGame()
 {
+    if (m_game->state == EGameState::STOPPED)
+        return;
+
     m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = nullptr;
     Engine::getInstance()->sceneManager.OnSceneChange                      = nullptr;
 
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
     m_update      = [&](double unscaledDeltaTime, double deltaTime) {
-        m_engine->inputManager.processInput();
-        m_editor.update(*this);
-        m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+        if (m_game->state == EGameState::STOPPED)
+        {
+            m_engine->inputManager.processInput();
+            m_editor.update(*this);
+            m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
 
-        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+            m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+        }
     };
 
     m_editor.reloadCurrentScene();

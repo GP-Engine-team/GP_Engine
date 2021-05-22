@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\BaseCharacter.hpp" />
+    <ClInclude Include="include\BaseEnemy.hpp" />
     <ClInclude Include="include\CircularEntitiesSpawner.hpp" />
     <ClInclude Include="include\Sun.hpp" />
     <ClInclude Include="ShadowMap.hpp" />
@@ -27,20 +29,22 @@
     <ClInclude Include="include\Firearm\GunMagazine.hpp" />
     <ClInclude Include="include\Firearm\PPSH41.hpp" />
     <ClInclude Include="include\game.hpp" />
-    <ClInclude Include="include\myFpsScript.hpp" />
+    <ClInclude Include="include\BasePlayer.hpp" />
     <ClInclude Include="include\myFreeFlyScript.hpp" />
     <ClInclude Include="include\myFreeFlyWithCollisionScript.hpp" />
     <ClInclude Include="include\myScript.hpp" />
     <ClInclude Include="include\WorldGenerator.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\BaseCharacter.cpp" />
+    <ClCompile Include="src\BaseEnemy.cpp" />
     <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\CircularEntitiesSpawner.cpp" />
     <ClCompile Include="src\Sun.cpp" />
     <ClCompile Include="src\Firearm.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\GunMagazine.cpp" />
-    <ClCompile Include="src\myFpsScript.cpp" />
+    <ClCompile Include="src\BasePlayer.cpp" />
     <ClCompile Include="src\myScript.cpp" />
     <ClCompile Include="src\PPSH41.cpp" />
     <ClCompile Include="src\WorldGenerator.cpp" />

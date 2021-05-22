@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <Engine/ECS/Component/BehaviourComponent.hpp>
+#include <BaseCharacter.hpp>
 
-#include <Generated/myFpsScript.rfk.h>
+#include <Generated/BasePlayer.rfk.h>
 
 namespace GPE
 {
@@ -21,53 +21,41 @@ class CharacterController;
 
 namespace GPG RFKNamespace()
 {
-
     class Firearm;
 
-    class RFKClass(Inspect(), ComponentGen, Serialize()) MyFpsScript : public GPE::BehaviourComponent
+    class RFKClass(Inspect(), ComponentGen, Serialize()) BasePlayer : public BaseCharacter
     {
-    private:
+    protected:
         RFKField(Serialize()) GPE::InputComponent*        input         = nullptr;
         RFKField(Serialize()) GPE::AudioComponent*        source        = nullptr;
-        RFKField(Serialize()) GPE::CharacterController*   controller    = nullptr;
         RFKField(Serialize()) Firearm*                    m_fireArme    = nullptr;
         RFKField(Inspect(), Serialize()) GPE::GameObject* m_decalPrefab = nullptr;
 
     public:
-        MyFpsScript() noexcept = default;
-        MyFpsScript(GPE::GameObject & owner) noexcept;
-        MyFpsScript(const MyFpsScript& other) noexcept = delete;
-        MyFpsScript(MyFpsScript && other) noexcept     = delete;
-        virtual ~MyFpsScript() noexcept                = default;
+        BasePlayer() noexcept = default;
+        BasePlayer(GPE::GameObject & owner) noexcept;
+        BasePlayer(const BasePlayer& other) noexcept = delete;
+        BasePlayer(BasePlayer && other) noexcept     = delete;
+        virtual ~BasePlayer() noexcept               = default;
 
-        MyFpsScript& operator=(MyFpsScript const& other) noexcept = delete;
-        MyFpsScript& operator=(MyFpsScript&& other) noexcept = delete;
+        BasePlayer& operator=(BasePlayer const& other) noexcept = delete;
+        BasePlayer& operator=(BasePlayer&& other) noexcept = delete;
 
     public:
-        RFKMethod() void jump();
-        RFKMethod() void forward();
-        RFKMethod() void backward();
-        RFKMethod() void left();
-        RFKMethod() void right();
         RFKMethod() void leave();
-        RFKMethod() void sprintStart();
-        RFKMethod() void sprintEnd();
         RFKMethod() void raycastExample();
         RFKMethod() void shoot();
         RFKMethod() void playAmbiantMusic();
         RFKMethod() void playAmbiantMusicForce();
         RFKMethod() void stopAllMusic();
-        // RFKMethod() void growUpSphereCollider  ();
-        // RFKMethod() void growDownSphereCollider();
 
         void rotate(const GPM::Vec2& deltaDisplacement);
         void start() final;
         void onGUI() final;
-        void fixedUpdate(double deltaTime) final;
         void update(double deltaTime) final;
         void onPostLoad() final;
 
-        MyFpsScript_GENERATED
+        BasePlayer_GENERATED
     };
 
 } // namespace )

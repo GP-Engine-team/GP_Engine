@@ -53,6 +53,7 @@ GameObject* Prefab::clone(GameObject& parent)
 
     GameObject* const pGo = prefabScene.getWorld().children.front();
     pGo->setParent(&parent);
+    pGo->getTransform().setDirty();
 
     // Awake GameObjects
     struct Rec

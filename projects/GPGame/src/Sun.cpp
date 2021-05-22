@@ -24,7 +24,7 @@ void Sun::onPostLoad()
 
 void Sun::start()
 {
-    gameAssert(m_player, "Missing player ref");
+    GAME_ASSERT(m_player, "Missing player ref");
     m_pSunDirectionnalLight = getOwner().getComponent<DirectionalLight>();
 }
 

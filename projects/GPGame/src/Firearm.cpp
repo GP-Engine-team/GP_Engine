@@ -38,6 +38,11 @@ File_GENERATED
         m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
     }
 
+    void Firearm::start()
+    {
+        // GAME_ASSERT(m_decalePrefab, "Missing prefab");
+    }
+
     bool Firearm::isMagazineEmpty() const
     {
         return m_magazineStored.isEmpty();
@@ -58,7 +63,7 @@ File_GENERATED
             {
                 if (GPE::GameObject* pOwner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData))
                 {
-                    if (!m_decalePrefab->isEmpty())
+                    if (m_decalePrefab)
                     {
                         GPE::GameObject& decaleGO = *m_decalePrefab->clone(*pOwner);
                         decaleGO.getTransform().setTranslation(
