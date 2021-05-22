@@ -18,27 +18,24 @@ namespace GPE RFKNamespace()
 
     class RFKClass(Serialize(), ComponentGen) RigidbodyStatic : public Component
     {
+    protected:
+        virtual void updateToSystem() noexcept override;
+        virtual void onPostLoad() noexcept override;
+
     public:
         RigidbodyStatic(GameObject & owner) noexcept;
 
-        RigidbodyStatic() noexcept                             = default;
+        RigidbodyStatic() noexcept = default;
         RigidbodyStatic(const RigidbodyStatic& other) noexcept = delete;
         RigidbodyStatic(RigidbodyStatic && other) noexcept     = default;
         RigidbodyStatic& operator=(RigidbodyStatic const& other) noexcept = delete;
         RigidbodyStatic& operator=(RigidbodyStatic&& other) noexcept = delete;
 
-        virtual ~RigidbodyStatic() noexcept = default;
+        virtual ~RigidbodyStatic() noexcept;
 
     public:
         physx::PxRigidStatic* rigidbody;
         Collider*             collider;
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
 
         RigidbodyStatic_GENERATED
     };

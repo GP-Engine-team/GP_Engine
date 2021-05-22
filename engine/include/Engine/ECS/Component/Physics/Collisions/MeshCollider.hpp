@@ -18,7 +18,7 @@ class PxConvexMesh;
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(ComponentGen(), Inspect()) MeshCollider : public Collider
+    class RFKClass(ComponentGen(), Inspect(), Serialize()) MeshCollider : public Collider
     {
     public:
         MeshCollider(GameObject & owner) noexcept;

@@ -21,38 +21,58 @@
 namespace GPE RFKNamespace()
 {
     template <>
-    void DataInspector::inspect(GPE::InspectContext& context, class Component& inspected);
+    void DataInspector::inspect(GPE::InspectContext & context, class Component & inspected);
 
     class GameObject;
 
     class RFKClass(Inspect(false), Serialize(false)) Component : public rfk::Object
     {
     protected:
-        RFKField(Serialize()) GameObject*     m_gameObject{nullptr}; // can not be ref for move
+        RFKField(Serialize()) GameObject*                m_gameObject{nullptr}; // can not be ref for move
         RFKField(Inspect("setActive"), Serialize()) bool m_isActivated{true};
+
+    protected:
+        virtual void updateToSystem() noexcept = 0;
 
     public:
         inline Component(GameObject & owner) noexcept;
         inline Component() noexcept                       = default;
         inline Component(const Component& other) noexcept = delete;
-        inline Component(Component && other) noexcept     = default;
-        inline virtual ~Component() noexcept              = default;
+        inline Component(Component && other) noexcept     = delete;
+        virtual ~Component() noexcept;
         inline Component& operator=(const Component& other) noexcept = delete;
-        inline Component& operator=(Component&& other) noexcept = default;
+        inline Component& operator=(Component&& other) noexcept = delete;
 
         [[nodiscard]] constexpr inline GameObject& getOwner() noexcept;
+
+        /**
+         * @brief WARNING this function is not legal. Do not use it if you don't now exactly it's effect.
+                          Must be use only if the component is generate without parent
+         * @param owner
+         * @return
+        */
+        inline void setOwner(GameObject & owner) noexcept;
 
         [[nodiscard]] constexpr inline const GameObject& getOwner() const noexcept;
 
         [[nodiscard]] constexpr inline bool isActivated() const noexcept;
 
-        virtual inline void setActive(bool newState) noexcept;
+        /**
+         * @brief Add or remove current component from its system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        inline virtual void setActive(bool newState) noexcept;
 
-        virtual void moveTowardScene(class Scene & newOwner){}
+        virtual void moveTowardScene(class Scene & newOwner)
+        {
+        }
 
-        virtual void destroy(){}
+        virtual void destroy()
+        {
+        }
 
-        virtual void awake();
+        virtual void onPostLoad();
 
         Component_GENERATED
     };

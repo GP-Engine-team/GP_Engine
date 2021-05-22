@@ -52,25 +52,16 @@ namespace GPE RFKNamespace()
 
         struct RFKStruct(Inspect(), Serialize()) ProjectionInfo
         {
-            RFKField(Inspect(), Serialize())
-            std::string     name = "";
-            RFKField(Serialize())
-            EProjectionType type = EProjectionType::NONE;
+            RFKField(Inspect(), Serialize()) std::string name = "";
+            RFKField(Serialize()) EProjectionType        type = EProjectionType::NONE;
 
-            RFKField(Inspect(), Serialize())
-            float aspect = 16.f / 9.f;
-            RFKField(Inspect(), Serialize())
-            float znear  = 0.001f;
-            RFKField(Inspect(), Serialize())
-            float zfar   = 10.f;
-            RFKField(Inspect(), Serialize())
-            float hSide  = 1.f;
-            RFKField(Inspect(), Serialize())
-            float vSide  = 1.f;
-            RFKField(Inspect(), Serialize())
-            float fovY   = 70.f;
-            RFKField(Inspect(), Serialize())
-            float fovX   = 70.f;
+            RFKField(Inspect(), Serialize()) float aspect = 16.f / 9.f;
+            RFKField(Inspect(), Serialize()) float znear  = 0.001f;
+            RFKField(Inspect(), Serialize()) float zfar   = 10.f;
+            RFKField(Inspect(), Serialize()) float hSide  = 1.f;
+            RFKField(Inspect(), Serialize()) float vSide  = 1.f;
+            RFKField(Inspect(), Serialize()) float fovY   = 70.f;
+            RFKField(Inspect(), Serialize()) float fovX   = 70.f;
 
             ProjectionInfo_GENERATED
         };
@@ -94,17 +85,15 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect(), Serialize())
-        ProjectionInfo m_projInfo;
-        RFKField(Serialize())
-        GPM::Mat4      m_projection;
+        RFKField(Inspect(), Serialize()) ProjectionInfo m_projInfo;
+        RFKField(Serialize()) GPM::Mat4                 m_projection;
 
-        RFKField(Serialize())
-        GPM::Mat4 m_viewMatrix;
-        RFKField(Serialize())
-        GPM::Mat4 m_projectionViewMatrix;
+        RFKField(Serialize()) GPM::Mat4 m_viewMatrix;
+        RFKField(Serialize()) GPM::Mat4 m_projectionViewMatrix;
 
         void updateProjection();
+
+        virtual void updateToSystem() noexcept override;
 
     public:
         static float computeAspect(int width, int height) noexcept;
@@ -117,7 +106,7 @@ namespace GPE RFKNamespace()
          * @param owner
          * @return
          */
-        Camera(GameObject& owner) noexcept;
+        Camera(GameObject & owner) noexcept;
 
         /**
          * @brief Construct a new perspective camera object
@@ -129,7 +118,7 @@ namespace GPE RFKNamespace()
          * @param zfar     * @param fovY      : by default to 70 (human FovY)
          * @param name
          */
-        Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept;
+        Camera(GameObject & owner, const PerspectiveCreateArg& arg) noexcept;
 
         /**
          * @brief Construct a new orthographic camera object
@@ -137,15 +126,11 @@ namespace GPE RFKNamespace()
          * @param owner
          * @param arg
          */
-        Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept;
+        Camera(GameObject & owner, const OrthographicCreateArg& arg) noexcept;
 
-        Camera(const Camera& other)            noexcept = delete;
+        Camera(const Camera& other) noexcept = delete;
 
-        Camera(Camera&& other)                 noexcept = default;
-
-        virtual ~Camera()                      noexcept;
-
-        Camera& operator=(Camera&& other)      noexcept;
+        virtual ~Camera() noexcept;
 
         Camera& operator=(Camera const& other) noexcept = delete;
 
@@ -199,14 +184,7 @@ namespace GPE RFKNamespace()
          */
         Frustum getFrustum() const noexcept;
 
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
-
-        virtual void awake() override;
+        virtual void onPostLoad() override;
 
         Camera_GENERATED
     };

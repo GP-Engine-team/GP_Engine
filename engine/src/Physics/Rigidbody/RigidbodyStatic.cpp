@@ -26,23 +26,48 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner)
     if (!collider)
     {
         FUNCT_ERROR("No collider assigned to the game object!");
+        m_isActivated = false;
     }
 
     else
     {
         rigidbody->attachShape(*collider->shape);
         collider->shape->release();
-
-        Engine::getInstance()->physXSystem.addComponent(this);
     }
+
+    updateToSystem();
 }
 
-void RigidbodyStatic::setActive(bool newState) noexcept
+void RigidbodyStatic::onPostLoad() noexcept
 {
-    if (m_isActivated == newState)
-        return;
+    //rigidbody = PxGetPhysics().createRigidStatic(
+    //    PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
+    //                PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
 
-    m_isActivated = newState;
+    //rigidbody->userData = &getOwner();
+
+    //if (!collider)
+    //{
+    //    FUNCT_ERROR("No collider assigned to the game object!");
+    //    m_isActivated = false;
+    //}
+
+    //else
+    //{
+    //    rigidbody->attachShape(*collider->shape);
+    //    collider->shape->release();
+    //}
+
+    //Component::onPostLoad();
+}
+
+RigidbodyStatic::~RigidbodyStatic() noexcept
+{
+    setActive(false);
+}
+
+void RigidbodyStatic::updateToSystem() noexcept
+{
     if (m_isActivated)
         GPE::Engine::getInstance()->physXSystem.addComponent(this);
     else

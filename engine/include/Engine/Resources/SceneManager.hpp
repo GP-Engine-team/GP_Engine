@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <functional>
 #include <string>
 #include <unordered_map>
 
@@ -35,6 +36,9 @@ protected:
     Scene*                                 m_pCurrentScene = nullptr;
 
 public:
+    std::function<void(void)> OnSceneChange;
+
+public:
     SceneManager() noexcept = default;
 
     SceneManager(const SceneManager& other) noexcept = default;
@@ -52,11 +56,11 @@ public:
         return m_pCurrentScene;
     }
 
-    Scene& addEmpty(const std::string& sceneName);
+    Scene& setCurrentScene(const std::string& sceneName);
 
-    Scene& loadScene(const std::string&    sceneName,
-                     ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
-                     EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING);
+    // Scene& loadScene(const std::string&    sceneName,
+    //                 ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
+    //                 EResourceManagement   resourcesloadType  = EResourceManagement::RECYCLING);
 
     void removeScene(const std::string& sceneName);
     void removeScene(Scene& scene);

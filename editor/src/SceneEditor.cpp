@@ -1,8 +1,13 @@
 ﻿#include <Editor/SceneEditor.hpp>
 
 #include <Editor/Editor.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Resources/Importer/Importer.hpp>
 #include <imgui/imgui.h>
+
+// Don't move up
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 
 namespace Editor
 {
@@ -66,15 +71,14 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
                 inspectedObject = nullptr;
             }
         }
-        
+
         if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && inspectedObject)
             view.lookAtObject(*reinterpret_cast<GameObject*>(inspectedObject));
     }
 }
 
 // ========================== Public methods ==========================
-SceneEditor::SceneEditor(GPE::Scene& scene)
-    : view{scene}
+SceneEditor::SceneEditor(Editor& editorContext, GPE::Scene& scene) : m_editorContext{&editorContext}, view{scene}
 {
 }
 
@@ -95,6 +99,29 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
         view.render();
 
         ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
+
+        // Drop prefab to instanciate world in front of the camera
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_PREFAB_EXTENSION))
+            {
+                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+                std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+                Scene empty;
+                auto  loadFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), loadSceneFromPath);
+                loadFunc(&empty, path.string().c_str());
+                if (!empty.getWorld().children.empty())
+                {
+                    GameObject* const go = empty.getWorld().children.front();
+                    go->setParent(&GPE::Engine::getInstance()->sceneManager.getCurrentScene()->getWorld());
+                    go->getTransform().setDirty();
+                    go->getTransform().setTranslation(view.cameraOwner->getTransform().getGlobalPosition() +
+                                                      view.cameraOwner->getTransform().getVectorForward() * 10.f);
+                }
+            }
+            ImGui::EndDragDropTarget();
+        }
     }
     ImGui::End();
     ImGui::PopStyleVar(2);

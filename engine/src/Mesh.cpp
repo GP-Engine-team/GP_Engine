@@ -4,7 +4,9 @@
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Serialization/GPMDataInspector.hpp"
 #include "GPM/Constants.hpp"
+#include "GPM/Shape3D/AABB.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
+#include <Engine/Engine.hpp>
 
 #include <glad/glad.h>
 
@@ -16,38 +18,61 @@ using namespace GPM;
 Mesh::CreateIndiceBufferArg Mesh::convert(Mesh::CreateContiguousVerticesArg& arg)
 {
     CreateIndiceBufferArg newArg;
-    newArg.boundingVolume.reset(arg.boundingVolume.get());
-    arg.boundingVolume.release();
     newArg.boundingVolumeType = arg.boundingVolumeType;
 
     for (size_t i = 0u; i < arg.iBuffer.size(); ++i)
     {
-        newArg.vertices.push_back({arg.vBuffer[arg.iBuffer[i].iv], arg.vnBuffer[arg.iBuffer[i].ivn],
-                                  arg.vtBuffer[arg.iBuffer[i].ivt]});
+        newArg.vertices.push_back(
+            {arg.vBuffer[arg.iBuffer[i].iv], arg.vnBuffer[arg.iBuffer[i].ivn], arg.vtBuffer[arg.iBuffer[i].ivt]});
+
         newArg.indices.push_back((unsigned int)i);
     }
+
+    // Compute tangeantes
+    Vec3  edge1, edge2, tangent, deltaUV1, deltaUV2;
+    float f;
+    for (size_t i = 0u; i < arg.iBuffer.size(); i += 3)
+    {
+        // calculate tangent/bitangent vectors of both triangles
+        edge1    = newArg.vertices[i + 1].v - newArg.vertices[i].v;
+        edge2    = newArg.vertices[i + 2].v - newArg.vertices[i].v;
+        deltaUV1 = newArg.vertices[i + 1].vt - newArg.vertices[i].vt;
+        deltaUV2 = newArg.vertices[i + 2].vt - newArg.vertices[i].vt;
+
+        f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+        tangent.x                  = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent.y                  = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent.z                  = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+        newArg.vertices[i].vtg     = tangent;
+        newArg.vertices[i + 1].vtg = tangent;
+        newArg.vertices[i + 2].vtg = tangent;
+    }
+
     return newArg;
 }
 
 Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 {
-    // m_boundingVolumeType = arg.boundingVolumeType;
-
-    // if (arg.boundingVolume != nullptr)
-    //  m_boundingVolume = std::move(arg.boundingVolume);
+    if (arg.boundingVolumeType != Mesh::EBoundingVolume::NONE)
+    {
+        Vec3 minAABB, maxAABB;
+        generateAABB(arg.vertices, minAABB, maxAABB);
+        generateBoundingVolume(arg.boundingVolumeType, minAABB, maxAABB);
+    }
 
     m_verticesCount = static_cast<unsigned int>(arg.indices.size());
 
     // Generate buffer and bind VAO
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(2, &m_EBOBuffers.vbo);
-    glBindVertexArray(m_VAO);
+    glGenVertexArrays(1, &m_buffers.vao);
+    glGenBuffers(2, &m_buffers.vbo);
+    glBindVertexArray(m_buffers.vao);
 
     // define properties of EBO and VBO buffers
-    glBindBuffer(GL_ARRAY_BUFFER, m_EBOBuffers.vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_buffers.vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(arg.vertices[0]) * arg.vertices.size(), arg.vertices.data(), GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBOBuffers.ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffers.ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(arg.indices[0]) * arg.indices.size(), arg.indices.data(),
                  GL_STATIC_DRAW);
 
@@ -59,9 +84,13 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vn));
 
-    // 3nd attribute buffer : UVs
+    // 3th attribute buffer : UVs
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vt));
+
+    // 4th attribute buffer : Tangeantes
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vtg));
 
     glBindVertexArray(0);
 
@@ -70,26 +99,102 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 
 Mesh::~Mesh() noexcept
 {
-    if (m_vertexbuffer == 0)
-    {
-        glDeleteBuffers(2, &m_EBOBuffers.vbo);
-    }
-    else
-    {
-        glDeleteBuffers(1, &m_vertexbuffer);
-        glDeleteBuffers(1, &m_normalbuffer);
-        glDeleteBuffers(1, &m_uvbuffer);
-    }
+    removeBoundingVolume();
 
-    glDeleteBuffers(1, &m_VAO);
+    glDeleteBuffers(3, &m_buffers.vao);
 }
 
 void Mesh::draw() const noexcept
 {
-    glBindVertexArray(m_VAO);
+    glBindVertexArray(m_buffers.vao);
 
     unsigned int first = 0;
     glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(m_verticesCount));
+}
+
+void Mesh::setBoundingVolume(EBoundingVolume boundingVolumeType) noexcept
+{
+    std::vector<Vertex> posBuffer;
+    Vec3                minAABB, maxAABB;
+
+    getData(posBuffer);
+    generateAABB(posBuffer, minAABB, maxAABB);
+    generateBoundingVolume(boundingVolumeType, minAABB, maxAABB);
+}
+
+void Mesh::getData(std::vector<Vertex>& buffer)
+{
+    buffer.clear();
+
+    GLint64 bufSize;
+    glGetNamedBufferParameteri64v(m_buffers.vbo, GL_BUFFER_SIZE, &bufSize);
+
+    size_t elemCount = bufSize / sizeof(Vertex);
+
+    buffer.reserve(elemCount);
+    for (size_t i = 0; i < elemCount; ++i)
+        buffer.emplace_back();
+
+    glGetNamedBufferSubData(m_buffers.vbo, 0, bufSize, buffer.data());
+}
+
+void Mesh::generateAABB(const std::vector<Vertex>& vertices, Vector3& minAABB, Vector3& maxAABB) noexcept
+{
+    minAABB = Vec3(std::numeric_limits<float>::max());
+    maxAABB = Vec3(std::numeric_limits<float>::min());
+    for (auto&& v : vertices)
+    {
+        minAABB.x = std::min(minAABB.x, v.v.x);
+        minAABB.y = std::min(minAABB.y, v.v.y);
+        minAABB.z = std::min(minAABB.z, v.v.z);
+
+        maxAABB.x = std::max(maxAABB.x, v.v.x);
+        maxAABB.y = std::max(maxAABB.y, v.v.y);
+        maxAABB.z = std::max(maxAABB.z, v.v.z);
+    }
+}
+
+void Mesh::removeBoundingVolume()
+{
+    switch (m_boundingVolumeType)
+    {
+    case Mesh::EBoundingVolume::SPHERE: {
+        Engine::getInstance()->resourceManager.remove<Sphere>(std::to_string((size_t)this));
+        break;
+    }
+
+    case Mesh::EBoundingVolume::AABB: {
+        Engine::getInstance()->resourceManager.remove<AABB>(std::to_string((size_t)this));
+        break;
+    }
+    default:
+        break;
+    }
+    m_boundingVolume     = nullptr;
+    m_boundingVolumeType = EBoundingVolume::NONE;
+}
+
+void Mesh::generateBoundingVolume(EBoundingVolume boundingVolumeType, const Vector3& minAABB,
+                                  const Vector3& maxAABB) noexcept
+{
+    removeBoundingVolume();
+    m_boundingVolumeType = boundingVolumeType;
+    switch (boundingVolumeType)
+    {
+    case Mesh::EBoundingVolume::SPHERE: {
+        m_boundingVolume = &Engine::getInstance()->resourceManager.add<Sphere>(
+            std::to_string((size_t)this), std::max(minAABB.length(), maxAABB.length()), (maxAABB + minAABB) * 0.5);
+        break;
+    }
+
+    case Mesh::EBoundingVolume::AABB: {
+        m_boundingVolume =
+            &Engine::getInstance()->resourceManager.add<AABB>(std::to_string((size_t)this), minAABB, maxAABB);
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition,
@@ -121,6 +226,7 @@ Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, 
         mesh.vBuffer.push_back({0.f, halfHeight, -halfWidth});
         mesh.vBuffer.push_back({0.f, halfHeight, halfWidth});
         mesh.vBuffer.push_back({0.f, -halfHeight, halfWidth});
+        mesh.vnBuffer.push_back({1.f, 0.f, 0.f});
         break;
 
     case Axis::NEG_X:
@@ -128,20 +234,23 @@ Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, 
         mesh.vBuffer.push_back({0.f, -halfHeight, halfWidth});
         mesh.vBuffer.push_back({0.f, -halfHeight, -halfWidth});
         mesh.vBuffer.push_back({0.f, halfHeight, -halfWidth});
+        mesh.vnBuffer.push_back({-1.f, 0.f, 0.f});
         break;
 
     case Axis::Y:
-        mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth});
-        mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});
-        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
-        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
+        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});   // 0
+        mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});  // 1
+        mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth}); // 2
+        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});  // 3
+        mesh.vnBuffer.push_back({0.f, 1.f, 0.f});
         break;
 
     case Axis::NEG_Y:
-        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
-        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
         mesh.vBuffer.push_back({-halfHeight, 0.f, -halfWidth});
         mesh.vBuffer.push_back({halfHeight, 0.f, -halfWidth});
+        mesh.vBuffer.push_back({halfHeight, 0.f, halfWidth});
+        mesh.vBuffer.push_back({-halfHeight, 0.f, halfWidth});
+        mesh.vnBuffer.push_back({0.f, -1.f, 0.f});
         break;
 
     case Axis::Z:
@@ -149,6 +258,7 @@ Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, 
         mesh.vBuffer.push_back({halfHeight, -halfWidth, 0.f});
         mesh.vBuffer.push_back({halfHeight, halfWidth, 0.f});
         mesh.vBuffer.push_back({-halfHeight, halfWidth, 0.f});
+        mesh.vnBuffer.push_back({0.f, 0.f, 1.f});
         break;
 
     case Axis::NEG_Z:
@@ -156,6 +266,8 @@ Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, 
         mesh.vBuffer.push_back({halfHeight, -halfWidth, 0.f});
         mesh.vBuffer.push_back({halfHeight, halfWidth, 0.f});
         mesh.vBuffer.push_back({-halfHeight, halfWidth, 0.f});
+
+        mesh.vnBuffer.push_back({0.f, 0.f, -1.f});
         break;
 
     default:
@@ -170,9 +282,6 @@ Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, 
     mesh.vtBuffer.push_back({shiftX + textureRepetition, shiftY});
     mesh.vtBuffer.push_back({shiftX, shiftY + textureRepetition});
     mesh.vtBuffer.push_back({shiftX + textureRepetition, shiftY + textureRepetition});
-
-    // initialize normal :
-    mesh.vnBuffer.push_back({0.f, -1.f, 0.f});
 
     if (isRectoVerso)
     {

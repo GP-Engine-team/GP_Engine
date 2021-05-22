@@ -19,16 +19,24 @@ void loadFloatArray(XmlLoader& context, float* arr, size_t size, const XmlLoader
 {
     std::string loaded = "";
 
-    bool b = context.loadFromStr(loaded, info);
-    assert(b);
-
-    size_t off = 0;
-    for (size_t i = 0; i < size; i++)
+    if (context.loadFromStr(loaded, info))
     {
-        size_t n = loaded.find('*', off);
-        std::string sub = loaded.substr(off, n - off);
-        arr[i] = std::stof(sub);
-        off = n + 1;
+        size_t off = 0;
+        for (size_t i = 0; i < size; i++)
+        {
+            size_t      n   = loaded.find('*', off);
+            std::string sub = loaded.substr(off, n - off);
+            arr[i]          = std::stof(sub);
+            off             = n + 1;
+        }
+    }
+    else
+    {
+        for (size_t i = 0; i < size; i++)
+        {
+            arr[i] = 0.f;
+        }
+
     }
 }
 
@@ -36,6 +44,12 @@ template <>
 void load(XmlLoader& context, GPM::Vector3& data, const XmlLoader::LoadInfo& info)
 {
     loadFloatArray(context, data.e, 3, info);
+}
+
+template <>
+void load(XmlLoader& context, GPM::Vector4& data, const XmlLoader::LoadInfo& info)
+{
+    loadFloatArray(context, data.e, 4, info);
 }
 
 template <>

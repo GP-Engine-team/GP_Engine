@@ -20,17 +20,12 @@ class SceneViewer
 {
     // ==== Data members ====
 public:
-    GameObject*     cameraOwner;
+    GameObject*     cameraOwner = nullptr;
     FreeFly&        freeFly;
     Camera&         camera;
     InputComponent& inputs;
-    Scene*          pScene;
-
-    // Keep track of cameraOwner, from the perspective of
-    // its parent's list of child
-    GameObject::Children::iterator it;
-
-    unsigned int textureID;
+    Scene*          pScene = nullptr;
+    unsigned int    textureID;
 
 private:
     // TODO: factorize framebuffer and renderbuffer in classes

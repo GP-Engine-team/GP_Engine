@@ -4,30 +4,19 @@ Light::Light(GameObject& owner, const AmbiantComponent& ambient, const DiffuseCo
              const SpecularComponent& specular)
     : Component{owner}, m_ambientComp(ambient), m_diffuseComp(diffuse), m_specularComp(specular)
 {
-    getOwner().pOwnerScene->sceneRenderer.addLight(*this);
+    updateToSystem();
 }
 
 Light::Light(GameObject& owner, const CreateArg& arg)
     : Component{owner}, m_ambientComp(arg.ambient), m_diffuseComp(arg.diffuse), m_specularComp(arg.specular)
 {
-    getOwner().pOwnerScene->sceneRenderer.addLight(*this);
+    updateToSystem();
 }
 
 Light::~Light()
 {
-    getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
-}
-
-Light& Light::operator=(Light&& other) noexcept
-{
-    m_ambientComp  = std::move(other.m_ambientComp);
-    m_diffuseComp  = std::move(other.m_diffuseComp);
-    m_specularComp = std::move(other.m_specularComp);
-
-    getOwner().pOwnerScene->sceneRenderer.updateLightPointer(this, &other);
-
-    Component::operator=(std::move(other));
-    return *this;
+    if (getOwner().pOwnerScene)
+        getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
 }
 
 const AmbiantComponent& Light::getAmbient() const noexcept
@@ -41,6 +30,11 @@ const DiffuseComponent& Light::getDiffuse() const noexcept
 const SpecularComponent& Light::getSpecular() const noexcept
 {
     return m_specularComp;
+}
+
+const Light::ShadowProperties& Light::getShadowProperties() const noexcept
+{
+    return m_shadowProperties;
 }
 
 void Light::setGlobalComponent(const ColorRGBA& newComponent) noexcept

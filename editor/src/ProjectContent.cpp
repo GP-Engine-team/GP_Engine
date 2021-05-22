@@ -7,15 +7,16 @@
 #include <Engine/Core/Tools/Hash.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Serialization/MaterialInspectorPanel.hpp>
 #include <Engine/Serialization/MeshInspectorPanel.hpp>
 #include <Engine/Serialization/ShaderInspectorPanel.hpp>
-#include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/TextureImporterSetting.hpp>
+#include <Engine/Serialization/TextureInspectorPanel.hpp>
 
 // Don't move up
-#include <Editor/ExternalDeclarations.hpp>
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 
 #include <imgui/imgui.h>
 #include <string>
@@ -24,33 +25,33 @@ using namespace Editor;
 using namespace GPE;
 
 ProjectContent::ProjectContent(Editor& editorContext)
-    : m_folderIcone  {{"..\\..\\editor\\resources\\icone\\folder.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_textureIcone {{"..\\..\\editor\\resources\\icone\\texture.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+    : m_folderIcone{{"..\\..\\editor\\resources\\icone\\folder.png", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                     Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_textureIcone{{"..\\..\\editor\\resources\\icone\\texture.png", Texture::ETextureMinFilter::LINEAR,
+                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                      Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_materialIcone{{"..\\..\\editor\\resources\\icone\\material.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_sceneIcone   {{"..\\..\\editor\\resources\\icone\\scene.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_meshIcone    {{"..\\..\\editor\\resources\\icone\\mesh.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_shaderIcone  {{"..\\..\\editor\\resources\\icone\\shader.jpg", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_soundIcone   {{"..\\..\\editor\\resources\\icone\\sound.jpg", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_prefabIcone  {{"..\\..\\editor\\resources\\icone\\prefab.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
-      m_unknowIcone  {{"..\\..\\editor\\resources\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                       Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                       Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_sceneIcone{{"..\\..\\editor\\resources\\icone\\scene.png", Texture::ETextureMinFilter::LINEAR,
+                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                    Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_meshIcone{{"..\\..\\editor\\resources\\icone\\mesh.png", Texture::ETextureMinFilter::LINEAR,
+                   Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                   Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_shaderIcone{{"..\\..\\editor\\resources\\icone\\shader.jpg", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                     Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_soundIcone{{"..\\..\\editor\\resources\\icone\\sound.jpg", Texture::ETextureMinFilter::LINEAR,
+                    Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                    Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_prefabIcone{{"..\\..\\editor\\resources\\icone\\prefab.png", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                     Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_unknowIcone{{"..\\..\\editor\\resources\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                     Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_editorContext{&editorContext}
 {
     resourcesTree.name = RESOURCES_DIR;
@@ -95,15 +96,39 @@ static void explore(DirectoryInfo dir, int tab = 0)
     }
 }
 
+void ProjectContent::tryToSetCurrentCirToPreviousLocation(const std::filesystem::path& previousRelatifPath)
+{
+    DirectoryInfo* pNode = &resourcesTree;
+
+    for (auto&& str : previousRelatifPath)
+    {
+        bool isFound = false;
+        for (auto&& folder : pNode->directories)
+        {
+            if (folder.name == str)
+            {
+                pNode   = &folder;
+                isFound = true;
+                break;
+            }
+        }
+
+        if (!isFound)
+            break;
+    }
+    pCurrentDirectory = pNode;
+}
+
 void ProjectContent::refreshResourcesList()
 {
+    std::filesystem::path path = std::filesystem::current_path() / RESOURCES_DIR;
+    std::filesystem::path previousRelatifPath =
+        std::filesystem::relative(pCurrentDirectory ? pCurrentDirectory->path : path, path).relative_path();
+
     resourcesTree.files.clear();
     resourcesTree.directories.clear();
 
-    std::filesystem::path path = std::filesystem::current_path() / RESOURCES_DIR;
-
     DirectoryInfo* pCurrentNode = &resourcesTree;
-    pCurrentDirectory           = pCurrentNode;
 
     for (std::filesystem::recursive_directory_iterator next(path), end; next != end; ++next)
     {
@@ -129,27 +154,40 @@ void ProjectContent::refreshResourcesList()
                     pCurrentNode = pCurrentNode->pParent;
                 }
             }
-            pCurrentNode->files.emplace_back(
-                FileInfo{next->path(), next->path().filename(), next->path().extension(), next->file_size()});
+            pCurrentNode->files.emplace_back(FileInfo{std::filesystem::relative(next->path()), next->path().filename(),
+                                                      next->path().extension(), next->file_size()});
         }
     }
 
     explore(resourcesTree);
+    tryToSetCurrentCirToPreviousLocation(previousRelatifPath);
 }
 
-static bool renderIcone(const ImVec2& size, const ImVec4& tint_col = ImVec4(0.0f, 1.0f, 1.0f, 1.0f),
-                        const ImVec4& bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f))
+void ProjectContent::createNewScene()
 {
-    ImGuiIO&    io        = ImGui::GetIO();
-    ImTextureID my_tex_id = io.Fonts->TexID;
-    float       my_tex_w  = (float)io.Fonts->TexWidth;
-    float       my_tex_h  = (float)io.Fonts->TexHeight;
+    std::filesystem::path sceneDir  = pCurrentDirectory->path;
+    std::filesystem::path sceneName = "NewScene" ENGINE_SCENE_EXTENSION;
 
-    // -1 == uses default padding (style.FramePadding)
-    ImVec2 uv0 = ImVec2(0.0f, 0.0f);                         // UV coordinates for lower-left
-    ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h); // UV coordinates for (32,32) in our texture
+    int id = 0;
+    while (pCurrentDirectory->containFile(sceneName))
+    {
+        sceneName = stringFormat("NewScene(%i)" ENGINE_SCENE_EXTENSION, ++id);
+    }
 
-    return ImGui::ImageButton(my_tex_id, size, uv0, uv1, 1, bg_col, tint_col);
+    sceneDir /= sceneName;
+
+    m_editorContext->m_sceneEditor.view.unbindScene();
+    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName.stem().string().c_str());
+    m_editorContext->saveScene(&scene, sceneDir.string().c_str());
+    m_editorContext->m_sceneEditor.view.bindScene(scene);
+    refreshResourcesList();
+    m_editorContext->m_saveFolder = sceneDir.string().c_str();
+}
+
+void ProjectContent::removeFile(const std::filesystem::path& path)
+{
+    recycleFileOrDirectory(path);
+    refreshResourcesList();
 }
 
 void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject)
@@ -221,8 +259,9 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
     ImGui::TextUnformatted(pCurrentDirectory->path.string().c_str());
 
-    ImVec2      size  = ImVec2(32.0f, 32.0f); // Size of the image we want to make visible
-    ImGuiStyle& style = ImGui::GetStyle();
+    ImVec2                size  = ImVec2(32.0f, 32.0f); // Size of the image we want to make visible
+    ImGuiStyle&           style = ImGui::GetStyle();
+    std::filesystem::path pathToRemovePath;
 
     for (auto&& it = pCurrentDirectory->directories.begin(); it != pCurrentDirectory->directories.end(); ++it)
     {
@@ -239,6 +278,29 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 pSelectedDirectory = &*it;
             }
 
+            // On double left clic
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
+            {
+                ImGui::OpenPopup("FileContext");
+            }
+
+            if (ImGui::BeginPopup("FileContext"))
+            {
+                ImGui::Text(it->path.stem().string().c_str());
+
+                if (ImGui::MenuItem("Delete"))
+                {
+                    pathToRemovePath = it->path;
+                }
+
+                if (ImGui::MenuItem("Rename"))
+                {
+                    it->isInRenameMode = true;
+                }
+
+                ImGui::EndPopup();
+            }
+
             if (ImGui::IsItemHovered())
             {
                 ImGui::BeginTooltip();
@@ -253,7 +315,25 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::EndTooltip();
             }
 
-            ImGui::TextUnformatted(it->name.string().c_str());
+            if (it->isInRenameMode)
+            {
+                ImGui::SetNextItemWidth(size.x * 2);
+                constexpr size_t bufferSize = 256;
+                char             buffer[bufferSize];
+                strcpy_s(buffer, it->name.stem().string().c_str());
+                if (ImGui::InputText("", buffer, bufferSize, ImGuiInputTextFlags_EnterReturnsTrue))
+                {
+                    std::filesystem::path oldPath = it->path;
+                    it->name.replace_filename(buffer);
+                    it->path.replace_filename(buffer);
+                    std::filesystem::rename(oldPath, it->path);
+                    it->isInRenameMode = false;
+                }
+            }
+            else
+            {
+                ImGui::TextUnformatted(it->name.string().c_str());
+            }
         }
         ImGui::EndGroup();
 
@@ -270,7 +350,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
         ImGui::PopID();
     }
 
-    for (auto&& it = pCurrentDirectory->files.cbegin(); it != pCurrentDirectory->files.cend(); ++it)
+    for (auto&& it = pCurrentDirectory->files.begin(); it != pCurrentDirectory->files.end(); ++it)
     {
         ImGui::PushID(&*it);
 
@@ -336,6 +416,29 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             }
 
             // On double left clic
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
+            {
+                ImGui::OpenPopup("FileContext");
+            }
+
+            if (ImGui::BeginPopup("FileContext"))
+            {
+                ImGui::Text(it->path.stem().string().c_str());
+
+                if (ImGui::MenuItem("Delete"))
+                {
+                    pathToRemovePath = it->path;
+                }
+
+                if (ImGui::MenuItem("Rename"))
+                {
+                    it->isInRenameMode = true;
+                }
+
+                ImGui::EndPopup();
+            }
+
+            // On double left clic
             if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
             {
                 switch (GPE::hash(it->extention.string().c_str())) // runtime
@@ -343,9 +446,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                 {
                     std::string sceneName = it->filename.stem().string();
-                    Scene&      scene     = Engine::getInstance()->sceneManager.addEmpty(sceneName);
+                    m_editorContext->m_sceneEditor.view.unbindScene();
+                    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName);
                     m_editorContext->loadScene(&scene, it->path.string().c_str());
-                    Engine::getInstance()->sceneManager.loadScene(sceneName);
+                    m_editorContext->m_saveFolder = it->path.string().c_str();
                     break;
                 }
 
@@ -369,17 +473,14 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     selectedGameObject = importationSetting.get();
                     break;
 
-                case GPE::hash(".wav"): // compile time
-                case GPE::hash(".mp3"): // compile time
-
-                    break;
-
                 case GPE::hash(ENGINE_SHADER_EXTENSION): // compile time
                     importationSetting = std::make_unique<GPE::ShaderInspectorPanel>(it->path.string());
                     selectedGameObject = importationSetting.get();
                     break;
 
                 case GPE::hash(ENGINE_TEXTURE_EXTENSION): // compile time
+                    importationSetting = std::make_unique<GPE::TextureInspectorPanel>(it->path.string());
+                    selectedGameObject = importationSetting.get();
                     break;
 
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
@@ -393,7 +494,29 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 }
             }
 
-            ImGui::TextUnformatted(it->filename.string().c_str());
+            if (it->isInRenameMode)
+            {
+                ImGui::SetNextItemWidth(size.x * 2);
+                constexpr size_t bufferSize = 256;
+                char             buffer[bufferSize];
+                strcpy_s(buffer, it->filename.stem().string().c_str());
+                if (ImGui::InputText("", buffer, bufferSize, ImGuiInputTextFlags_EnterReturnsTrue))
+                {
+                    std::filesystem::path oldPath = it->path;
+                    it->filename.replace_filename(buffer);
+                    it->filename.replace_extension(it->extention);
+                    it->path.replace_filename(buffer);
+                    it->path.replace_extension(it->extention);
+                    std::filesystem::rename(oldPath, it->path);
+                    it->isInRenameMode = false;
+                }
+                ImGui::SameLine();
+                ImGui::TextUnformatted(it->extention.string().c_str());
+            }
+            else
+            {
+                ImGui::TextUnformatted(it->filename.string().c_str());
+            }
         }
         ImGui::EndGroup();
 
@@ -421,6 +544,22 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
     {
         if (ImGui::BeginMenu("Create"))
         {
+            if (ImGui::MenuItem("Directory"))
+            {
+                std::filesystem::path dir  = pCurrentDirectory->path;
+                std::filesystem::path name = "NewDirectory";
+
+                int id = 0;
+                while (pCurrentDirectory->containDirectory(name))
+                {
+                    name = stringFormat("NewDirectory(%i)" ENGINE_SHADER_EXTENSION, ++id);
+                }
+
+                dir /= name;
+                std::filesystem::create_directory(dir);
+                refreshResourcesList();
+            }
+
             if (ImGui::MenuItem("Shader"))
             {
                 std::filesystem::path shaderDir  = pCurrentDirectory->path;
@@ -435,6 +574,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 shaderDir /= shaderName;
 
                 writeShaderFile(shaderDir.string().c_str());
+                refreshResourcesList();
             }
 
             if (ImGui::MenuItem("Material"))
@@ -451,23 +591,12 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 materialDir /= materialName;
 
                 writeMaterialFile(materialDir.string().c_str());
+                refreshResourcesList();
             }
 
             if (ImGui::MenuItem("Scene"))
             {
-                std::filesystem::path sceneDir  = pCurrentDirectory->path;
-                std::filesystem::path sceneName = "NewScene" ENGINE_SCENE_EXTENSION;
-
-                int id = 0;
-                while (pCurrentDirectory->containFile(sceneName))
-                {
-                    sceneName = stringFormat("NewScene(%i)" ENGINE_SCENE_EXTENSION, ++id);
-                }
-
-                sceneDir /= sceneName;
-
-                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(sceneName.stem().string().c_str());
-                m_editorContext->saveScene(&scene, sceneDir.string().c_str());
+                createNewScene();
             }
 
             if (ImGui::MenuItem("Prefab"))
@@ -486,11 +615,17 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 Scene prefab;
                 auto  saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
                 saveFunc(&prefab, prefabDir.string().c_str(), GPE::SavedScene::EType::XML);
+                refreshResourcesList();
             }
 
             ImGui::EndMenu();
         }
 
         ImGui::EndPopup();
+    }
+
+    if (!pathToRemovePath.empty())
+    {
+        removeFile(pathToRemovePath);
     }
 }

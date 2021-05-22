@@ -7,6 +7,7 @@
 #pragma once
 
 #include <Engine/Core/Tools/ClassUtility.hpp>
+#include <Engine/ECS/System/BehaviourSystem.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Serialization/xml/xmlLoader.hpp>
 #include <map>
@@ -33,7 +34,8 @@ protected:
         m_loadedResourcesPath; // Indicate witch resource is loaded with counter
 
 public:
-    RenderSystem sceneRenderer;
+    RenderSystem    sceneRenderer;
+    BehaviourSystem behaviourSystem;
 
 public:
     Scene() noexcept;

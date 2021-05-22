@@ -16,6 +16,7 @@
 #include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/ResourcesManagerType.hpp>
 #include <Engine/Resources/Texture.hpp>
 #include <GPM/Shape3D/AABB.hpp>
@@ -26,16 +27,75 @@
 using namespace GPE;
 using namespace GPM;
 
-void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
+void GPE::saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
+{
+    if (saveMode == GPE::SavedScene::EType::XML)
+    {
+        rapidxml::xml_document<> doc;
+        XmlSaver                 context(doc);
+        context.addWeakPtr(scene);
+        scene->save(context);
+
+        GPE::SavedScene::CreateArg args;
+        args.data = docToString(doc);
+        args.type = GPE::SavedScene::EType::XML;
+
+        GPE::writeSceneFile(path, args);
+    }
+}
+
+void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
+{
+    GPE::SavedScene::CreateArg savedScene = GPE::readSceneFile(path);
+
+    if (savedScene.type == GPE::SavedScene::EType::XML)
+    {
+        // Load xml doc
+        rapidxml::xml_document<> doc;
+        std::unique_ptr<char[]>  buffer;
+        GPE::SavedScene::toDoc(doc, buffer, savedScene.data.c_str(), savedScene.data.size());
+
+        XmlLoader context(doc);
+        // Load each element
+        scene->load(context);
+
+        // Tell that pointers to the old scene should be replaced by pointers to the new scene
+        context.addConvertedPtr(scene->getWorld().pOwnerScene, scene);
+
+        // Update old pointers into new ones
+        context.updateLazyPtrs();
+
+        // Call onPostLoad on GameObjects
+        struct Rec
+        {
+            static void rec(GPE::GameObject* g)
+            {
+                for (GPE::Component* comp : g->getComponents())
+                {
+                    comp->onPostLoad();
+                }
+
+                g->getTransform().onPostLoad();
+
+                for (GPE::GameObject* g2 : g->children)
+                {
+                    rec(g2);
+                }
+            };
+        };
+        Rec::rec(&scene->getWorld()); // can't do recursives with lambdas, and std::function would be overkill
+    }
+}
+
+void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBoundingVolume boundingVolumeType) noexcept
 {
     GPE_ASSERT(srcPath != nullptr, "Void path");
 
     Log::getInstance()->logInitializationStart("Model importation");
 
-    ResourceManagerType& resourceManager = Engine::getInstance()->resourceManager;
-
     unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType |
-                                    aiProcess_GenNormals | aiProcess_GenUVCoords;
+                                    aiProcess_GenNormals | aiProcess_GenUVCoords | aiProcess_FlipUVs |
+                                    aiProcess_CalcTangentSpace;
 
     Assimp::Importer importer;
     const aiScene*   scene = importer.ReadFile(srcPath, postProcessflags);
@@ -46,9 +106,17 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
     }
 
     std::filesystem::path srcDirPath(srcPath);
-    srcDirPath = srcDirPath.parent_path();
+    std::filesystem::path fileName = srcDirPath.stem();
+    srcDirPath                     = srcDirPath.parent_path();
 
     std::filesystem::path dstDirPath(dstPath);
+    dstDirPath = std::filesystem::relative(dstDirPath);
+
+    Scene       prefab;
+    GameObject& prefGO    = prefab.getWorld().addChild();
+    Model&      prefModel = prefGO.addComponent<Model>();
+
+    std::vector<Material*> matList;
 
     for (size_t i = 0; i < scene->mNumMaterials; ++i)
     {
@@ -91,7 +159,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
                     arg.len = texture->mWidth;
                 }
                 arg.pixels.reset((unsigned char*)texture->pcData);
-                arg.flipTexture = true;
 
                 fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
                 fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
@@ -132,7 +199,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
                     arg.len = texture->mWidth;
                 }
                 arg.pixels.reset((unsigned char*)texture->pcData);
-                arg.flipTexture = true;
 
                 fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
                 fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
@@ -156,9 +222,9 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         }
 
         for (unsigned int iText = 0;
-             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_BASE_COLOR); ++iText)
+             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_NORMALS); ++iText)
         {
-            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_BASE_COLOR, iText, &path);
+            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_NORMALS, iText, &path);
 
             if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
             {
@@ -174,11 +240,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
                 }
 
                 arg.pixels.reset((unsigned char*)texture->pcData);
-                arg.flipTexture = true;
 
                 fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
                 fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-                materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                materialArg.normalMapTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
                 writeTextureFile(fsDstPath.string().c_str(), arg);
                 arg.pixels.release(); // Assimp manage it's mamory
@@ -191,7 +256,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
                 fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
                 fsDstPath = dstDirPath / fsPath;
 
-                materialArg.baseColorTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                materialArg.normalMapTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
 
                 importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
             }
@@ -200,7 +265,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         std::filesystem::path dstMaterialPath = dstDirPath / scene->mMaterials[i]->GetName().C_Str();
         dstMaterialPath += ENGINE_MATERIAL_EXTENSION;
 
-        writeMaterialFile(dstMaterialPath.string().c_str(), materialArg);
+        writeMaterialFile(std::filesystem::relative(dstMaterialPath).string().c_str(), materialArg);
+
+        // TODO: Not efficient to pass from HD -> RAM -> HD -> RAM
+        matList.emplace_back(loadMaterialFile(dstMaterialPath.string().c_str()));
     }
 
     // Mesh
@@ -242,9 +310,11 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
             const aiVector3D& vertice   = pMesh->mVertices[verticeId];
             const aiVector3D& textCoord = pMesh->mTextureCoords[0][verticeId];
             const aiVector3D& normal    = pMesh->mNormals[verticeId];
+            const aiVector3D& tangeante = pMesh->mTangents[verticeId];
 
             arg.vertices.emplace_back(Mesh::Vertex{Vec3{vertice.x, vertice.y, vertice.z},
-                                                   Vec3{normal.x, normal.y, normal.z}, Vec2{textCoord.x, textCoord.y}});
+                                                   Vec3{normal.x, normal.y, normal.z}, Vec2{textCoord.x, textCoord.y},
+                                                   Vec3{tangeante.x, tangeante.y, tangeante.z}});
         }
 
         // Indices
@@ -255,6 +325,9 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
             arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[2]);
         }
 
+        // Generate bounding volume
+        arg.boundingVolumeType = boundingVolumeType;
+
         std::filesystem::path dstMeshPath = dstDirPath / pMesh->mName.C_Str();
         if (i != 0 &&
             pMesh->mName == scene->mMeshes[i - 1]->mName) // Add differente name if the FBX containe mesh with same name
@@ -263,53 +336,39 @@ void GPE::importeModel(const char* srcPath, const char* dstPath) noexcept
         dstMeshPath += ENGINE_MESH_EXTENSION;
 
         writeMeshFile(dstMeshPath.string().c_str(), arg);
+
+        prefModel.addSubModel(SubModel::CreateArg{
+            Engine::getInstance()->resourceManager.get<Shader>("Default"), matList[pMesh->mMaterialIndex],
+            &Engine::getInstance()->resourceManager.add<Mesh>(dstMeshPath.string().c_str(), arg)});
     }
+
+    std::filesystem::path dstPrefPath = dstDirPath / fileName;
+    dstPrefPath += ENGINE_PREFAB_EXTENSION;
+    saveSceneToPathImp(&prefab, dstPrefPath.string().c_str(), GPE::SavedScene::EType::XML);
+    prefab.getWorld().children.clear();
 
     Log::getInstance()->logInitializationEnd("Model importion");
 }
 
 struct TextureHeader
 {
-    char assetID            = (char)EFileType::TEXTURE;
-    int  textureLenght      = 0;
-    bool vflipTextureOnLoad = false;
+    char                      assetID = (char)EFileType::TEXTURE;
+    Texture::RenderProperties props;
+    int                       textureLenght = 0;
 };
 
 void GPE::importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config)
 {
-    stbi_set_flip_vertically_on_load(config.verticalFlip);
-
     Texture::ImportArg arg;
+
+    stbi_set_flip_vertically_on_load(config.verticalFlip);
     arg.pixels.reset(stbi_load(srcPath, &arg.w, &arg.h, &arg.comp, 0));
-
-    if (arg.pixels == nullptr)
-    {
-        FUNCT_ERROR((std::string("STBI cannot load image: ") + srcPath).c_str());
-        FUNCT_ERROR(std::string("Reason: ") + stbi_failure_reason());
-        return;
-    }
-
-    switch (config.format)
-    {
-    case TextureImportConfig::EFormatType::PNG:
-    default: {
-        arg.pixels.reset(stbi_write_png_to_mem((const unsigned char*)arg.pixels.get(), arg.w * arg.comp, arg.w, arg.h,
-                                               arg.comp, &arg.len));
-
-        if (arg.pixels == NULL)
-        {
-            FUNCT_ERROR((std::string("STBI cannot write image with png format with this path : ") + srcPath).c_str());
-        }
-
-        break;
-    }
-    }
-
-    writeTextureFile(dstPath, arg);
     stbi_set_flip_vertically_on_load(false);
+
+    writeTextureFile(dstPath, arg, config);
 }
 
-void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data)
+void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data, const TextureImportConfig& config)
 {
     FILE* pFile = nullptr;
 
@@ -319,10 +378,29 @@ void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data)
         return;
     }
 
-    TextureHeader header{(char)EFileType::TEXTURE, data.len, data.flipTexture};
+    int                      newLen;
+    std::unique_ptr<stbi_uc> imgData;
+
+    switch (config.format)
+    {
+    case TextureImportConfig::EFormatType::PNG:
+    default: {
+        imgData.reset(stbi_write_png_to_mem((const unsigned char*)data.pixels.get(), data.w * data.comp, data.w, data.h,
+                                            data.comp, &newLen));
+
+        if (imgData == NULL)
+        {
+            FUNCT_ERROR((std::string("STBI cannot convert pixels to PNG to this dst : ") + dst).c_str());
+        }
+
+        break;
+    }
+    }
+
+    TextureHeader header{(char)EFileType::TEXTURE, data.properties, newLen};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
-    fwrite(data.pixels.get(), data.len, 1, pFile);
+    fwrite(imgData.get(), newLen, 1, pFile);
     fclose(pFile);
 
     Log::getInstance()->log(stringFormat("Texture write to \"%s\"", dst));
@@ -347,7 +425,8 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
         // copy the file into the buffer:
         fread(&header, sizeof(header), 1, pFile);
 
-        stbi_set_flip_vertically_on_load(header.vflipTextureOnLoad);
+        arg.properties = header.props;
+        arg.len        = header.textureLenght;
 
         std::vector<stbi_uc> texBuffer;
         texBuffer.assign(header.textureLenght, 0);
@@ -355,8 +434,6 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
         fread(&texBuffer[0], sizeof(stbi_uc), header.textureLenght, pFile); // Texture buffer
 
         arg.pixels.reset(stbi_load_from_memory(texBuffer.data(), header.textureLenght, &arg.w, &arg.h, &arg.comp, 0));
-
-        stbi_set_flip_vertically_on_load(false);
     }
     else
     {
@@ -376,10 +453,10 @@ Texture::ImportArg GPE::readTextureFile(const char* src)
 
 Texture* GPE::loadTextureFile(const char* src)
 {
-    std::filesystem::path srcPath(src);
-    if (Texture* const pTexture = Engine::getInstance()->resourceManager.get<Texture>(srcPath.filename().string()))
+    if (Texture* const pTexture = Engine::getInstance()->resourceManager.get<Texture>(src))
         return pTexture;
-    return &Engine::getInstance()->resourceManager.add<Texture>(srcPath.filename().string(), readTextureFile(src));
+
+    return &Engine::getInstance()->resourceManager.add<Texture>(src, readTextureFile(src));
 }
 
 struct MaterialHeader
@@ -402,12 +479,12 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
 
     MaterialHeader header{(char)EFileType::MATERIAL, arg.comp, static_cast<int>(arg.ambianteTexturePath.size()),
                           static_cast<int>(arg.diffuseTexturePath.size()),
-                          static_cast<int>(arg.baseColorTexturePath.size())};
+                          static_cast<int>(arg.normalMapTexturePath.size())};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
     fwrite(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght, pFile); // string buffer
     fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);   // string buffer
-    fwrite(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
+    fwrite(arg.normalMapTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
            pFile); // string buffer
 
     fclose(pFile);
@@ -447,8 +524,8 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
 
     if (header.pathBaseColorTextureLenght) // If base color texture existe
     {
-        arg.baseColorTexturePath.assign(header.pathBaseColorTextureLenght, '\0');
-        fread(arg.baseColorTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
+        arg.normalMapTexturePath.assign(header.pathBaseColorTextureLenght, '\0');
+        fread(arg.normalMapTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
               pFile); // string buffer
     }
 
@@ -459,33 +536,30 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
 
 Material* GPE::loadMaterialFile(const char* src)
 {
-    std::filesystem::path srcPath(src);
-    Material::ImporteArg  importeArg = readMaterialFile(src);
-    Material::CreateArg   arg;
+    Material::ImporteArg importeArg = readMaterialFile(src);
+    Material::CreateArg  arg;
     arg.comp = importeArg.comp;
 
     if (!importeArg.ambianteTexturePath.empty())
-        arg.pAmbianteTexture =
-            loadTextureFile((std::filesystem::current_path() / importeArg.ambianteTexturePath).string().c_str());
+        arg.pAmbianteTexture = loadTextureFile(importeArg.ambianteTexturePath.c_str());
 
     if (!importeArg.diffuseTexturePath.empty())
-        arg.pDiffuseTexture =
-            loadTextureFile((std::filesystem::current_path() / importeArg.diffuseTexturePath).string().c_str());
+        arg.pDiffuseTexture = loadTextureFile(importeArg.diffuseTexturePath.c_str());
 
-    if (!importeArg.baseColorTexturePath.empty())
-        arg.pBaseColorTexture =
-            loadTextureFile((std::filesystem::current_path() / importeArg.baseColorTexturePath).string().c_str());
+    if (!importeArg.normalMapTexturePath.empty())
+        arg.pNormalMapTexture = loadTextureFile(importeArg.normalMapTexturePath.c_str());
 
-    if (Material* const pMat = Engine::getInstance()->resourceManager.get<Material>(srcPath.filename().string()))
+    if (Material* const pMat = Engine::getInstance()->resourceManager.get<Material>(src))
         return pMat;
-    return &Engine::getInstance()->resourceManager.add<Material>(srcPath.filename().string(), arg);
+    return &Engine::getInstance()->resourceManager.add<Material>(src, arg);
 }
 
 struct MeshHeader
 {
-    char assetID       = (char)EFileType::MESH;
-    int  verticeLenght = 0;
-    int  indiceLenght  = 0;
+    char          assetID            = (char)EFileType::MESH;
+    int           verticeLenght      = 0;
+    int           indiceLenght       = 0;
+    unsigned char boundingVolumeType = (unsigned char)Mesh::EBoundingVolume::NONE;
 };
 
 void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
@@ -499,7 +573,7 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
     }
 
     MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
-                      static_cast<int>(arg.indices.size())};
+                      static_cast<int>(arg.indices.size()), static_cast<unsigned char>(arg.boundingVolumeType)};
     fwrite(&header, sizeof(header), 1, pFile);                                         // header
     fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
     fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
@@ -536,6 +610,8 @@ Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
         fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile); // indice buffer
     }
 
+    arg.boundingVolumeType = (Mesh::EBoundingVolume)header.boundingVolumeType;
+
     fclose(pFile);
     Log::getInstance()->log(stringFormat("Mesh read from \"%s\"", src));
 
@@ -544,11 +620,9 @@ Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
 
 Mesh* GPE::loadMeshFile(const char* src)
 {
-    std::filesystem::path srcPath(src);
-
-    if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(srcPath.filename().string()))
+    if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(src))
         return pMesh;
-    return &Engine::getInstance()->resourceManager.add<Mesh>(srcPath.filename().string(), readMeshFile(src));
+    return &Engine::getInstance()->resourceManager.add<Mesh>(src, readMeshFile(src));
 }
 
 struct ShaderHeader
@@ -556,7 +630,7 @@ struct ShaderHeader
     char     assetID            = (char)EFileType::SHADER;
     int      vertexPathLenght   = 0;
     int      fragmentPathLenght = 0;
-    uint8_t  featureMask        = 0;
+    uint16_t featureMask        = 0;
 };
 
 void GPE::writeShaderFile(const char* dst, const ShaderCreateConfig& arg)
@@ -618,14 +692,13 @@ ShaderCreateConfig GPE::readShaderFile(const char* src)
 
 Shader* GPE::loadShaderFile(const char* src)
 {
-    std::filesystem::path srcPath(src);
-    ShaderCreateConfig    arg = readShaderFile(src);
-
-    if (Shader* const pShader = Engine::getInstance()->resourceManager.get<Shader>(srcPath.filename().string()))
+    if (Shader* const pShader = Engine::getInstance()->resourceManager.get<Shader>(src))
         return pShader;
 
+    ShaderCreateConfig arg = readShaderFile(src);
+
     return &Engine::getInstance()->resourceManager.add<Shader>(
-        srcPath.filename().string(), (std::filesystem::current_path() / arg.vertexShaderPath).string().c_str(),
+        src, (std::filesystem::current_path() / arg.vertexShaderPath).string().c_str(),
         (std::filesystem::current_path() / arg.fragmentShaderPath).string().c_str(), arg.featureMask);
 }
 

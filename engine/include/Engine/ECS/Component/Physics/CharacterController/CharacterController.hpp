@@ -37,15 +37,18 @@ namespace GPE RFKNamespace()
         virtual ~CharacterController() noexcept;
 
     private:
-        RFKField(Inspect()) GPM::Vec3 m_displacement  = {.0f};
-        RFKField(Inspect()) GPM::Vec3 m_force         = {.0f};
-        RFKField(Inspect()) float     m_gravity       = EARTH_GRAVITY;
-        RFKField(Inspect()) float     m_speed         = 1.f;
-        RFKField(Inspect()) float     m_mouseSpeed    = 1.f;
-        RFKField(Inspect()) float     m_startJumpTime = 0.f;
-        RFKField(Inspect()) float     m_jumpTimeDelay = 1.f;
-        RFKField(Inspect()) bool      m_hasGravity    = false;
-        RFKField(Inspect()) bool      m_jumping       = false;
+        RFKField(Inspect(), Serialize()) GPM::Vec3 m_displacement  = {.0f};
+        RFKField(Inspect(), Serialize()) GPM::Vec3 m_force         = {.0f};
+        RFKField(Inspect(), Serialize()) float     m_gravity       = EARTH_GRAVITY;
+        RFKField(Inspect(), Serialize()) float     m_speed         = 1.f;
+        RFKField(Inspect(), Serialize()) float     m_mouseSpeed    = 1.f;
+        RFKField(Inspect(), Serialize()) float     m_startJumpTime = 0.f;
+        RFKField(Inspect(), Serialize()) float     m_jumpTimeDelay = 1.f;
+        RFKField(Inspect(), Serialize()) bool      m_hasGravity    = false;
+        RFKField(Inspect(), Serialize()) bool      m_jumping       = false;
+
+    protected:
+        virtual void updateToSystem() noexcept override;
 
     public:
         physx::PxController* controller = nullptr;
@@ -62,13 +65,6 @@ namespace GPE RFKNamespace()
         void updateForce() noexcept;
 
         bool canJump() noexcept;
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
 
         CharacterController_GENERATED
     };

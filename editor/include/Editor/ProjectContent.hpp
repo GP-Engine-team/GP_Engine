@@ -16,7 +16,7 @@ namespace GPE
 {
 class GameObject;
 class IInspectable;
-}
+} // namespace GPE
 
 #define RESOURCES_DIR "resources"
 
@@ -27,7 +27,8 @@ struct FileInfo
     std::filesystem::path path;
     std::filesystem::path filename;
     std::filesystem::path extention;
-    size_t                size = 0u;
+    size_t                size           = 0u;
+    bool                  isInRenameMode = false;
 };
 
 struct DirectoryInfo
@@ -35,8 +36,20 @@ struct DirectoryInfo
     std::filesystem::path    name;
     DirectoryInfo*           pParent = nullptr;
     std::filesystem::path    path;
-    std::list<DirectoryInfo> directories = {};
-    std::list<FileInfo>      files       = {};
+    std::list<DirectoryInfo> directories    = {};
+    std::list<FileInfo>      files          = {};
+    bool                     isInRenameMode = false;
+
+    bool containDirectory(std::filesystem::path name)
+    {
+        bool rst = false;
+
+        for (auto&& it = directories.cbegin(); it != directories.cend() && !rst; ++it)
+        {
+            rst |= it->name.filename() == name;
+        }
+        return rst;
+    }
 
     bool containFile(std::filesystem::path name)
     {
@@ -66,9 +79,12 @@ protected:
     DirectoryInfo  resourcesTree;
     DirectoryInfo* pCurrentDirectory = nullptr;
 
-    std::unique_ptr<GPE::IInspectable> importationSetting;
+    std::unique_ptr<GPE::IInspectable> importationSetting = nullptr;
 
     class Editor* m_editorContext = nullptr;
+
+protected:
+    void tryToSetCurrentCirToPreviousLocation(const std::filesystem::path& previousPath);
 
 public:
     ProjectContent(Editor& editorContext);
@@ -76,6 +92,9 @@ public:
     void refreshResourcesList();
 
     void renderAndGetSelected(GPE::IInspectable*& selectedGameObject);
+
+    void createNewScene();
+    void removeFile(const std::filesystem::path& path);
 };
 
 } // End of namespace Editor

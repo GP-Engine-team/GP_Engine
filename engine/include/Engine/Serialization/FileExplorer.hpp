@@ -38,6 +38,8 @@ std::filesystem::path openFolderExplorerAndGetAbsoluePath(LPCWSTR title = L"Open
 
 std::filesystem::path openFolderExplorerAndGetRelativePath(LPCWSTR title = L"Open");
 
+void recycleFileOrDirectory(const std::filesystem::path& path);
+
 #endif
 
 } // namespace GPE

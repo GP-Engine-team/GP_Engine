@@ -27,7 +27,8 @@ CharacterController::CharacterController(GameObject& owner) noexcept
     desc.radius   = 1.f;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
-    Engine::getInstance()->physXSystem.addComponent(this);
+
+    updateToSystem();
 
     // controller->setUserData(&getOwner());
     controller->getActor()->userData = &getOwner();
@@ -39,11 +40,10 @@ CharacterController::CharacterController() noexcept
 
     desc.height   = 1;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3{0,10,0});
     desc.radius   = 1;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
-    Engine::getInstance()->physXSystem.addComponent(this);
 }
 
 void CharacterController::update(double deltaTime) noexcept
@@ -111,16 +111,12 @@ void CharacterController::setJumping(float jumping) noexcept
 
 CharacterController::~CharacterController() noexcept
 {
-    Engine::getInstance()->physXSystem.removeComponent(this);
     // controller->release();
+    setActive(false);
 }
 
-void CharacterController::setActive(bool newState) noexcept
+void CharacterController::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
         Engine::getInstance()->physXSystem.addComponent(this);
     else

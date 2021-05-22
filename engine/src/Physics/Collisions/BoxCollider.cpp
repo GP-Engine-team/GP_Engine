@@ -11,8 +11,7 @@ using namespace GPE;
 using namespace GPM;
 using namespace physx;
 
-BoxCollider::BoxCollider(GameObject& owner) noexcept
-    : Collider(owner), m_center(.0f), m_dimensions(10.f)
+BoxCollider::BoxCollider(GameObject& owner) noexcept : Collider(owner)
 {
     material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, 1.f);
     shape    = Engine::getInstance()->physXSystem.physics->createShape(

@@ -12,6 +12,8 @@
 #include <vector>
 
 #include <Engine/Resources/ShaderType.hpp>
+#include <Engine/Serialization/xml/xmlLoader.hpp>
+#include <Engine/Serialization/xml/xmlSaver.hpp>
 #include <GPM/Vector3.hpp> //Vec3
 
 namespace GPE
@@ -26,6 +28,20 @@ namespace GPE
 #define PROJECTION_VIEW_MODEL_MATRIX (1 << 6)
 #define PROJECTION_MATRIX (1 << 7)
 #define VIEW_MATRIX (1 << 8)
+
+// class Shader;
+//
+// template <>
+// void load(XmlLoader& context, Shader*& data, const rfk::Field& info);
+//
+// template <>
+// void load(XmlLoader& context, Shader*& data, const XmlLoader::LoadInfo& info);
+//
+// template <>
+// void save(XmlSaver& context, Shader* const& data, const rfk::Field& info);
+//
+// template <>
+// void save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info);
 
 // Inspiread about code exemple on learn openGl : https://learnopengl.com/Getting-started/Shaders
 class Shader
@@ -42,9 +58,7 @@ protected:
     uint16_t     m_featureMask         = 0; // feature is shader interger into shader like light, blure etc....
     unsigned int m_lightsUniformBuffer = 0; // TODO: no sens to have id of uniform light in any shaders
 
-    unsigned int m_id         = 0;
-    unsigned int m_idVertex   = 0; // TODO: move in fragmentShader class to optimize recycling
-    unsigned int m_idFragment = 0; // TODO: move in vertexShader class to optimize recycling
+    unsigned int m_id = 0;
 
 public:
     /**

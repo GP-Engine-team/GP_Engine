@@ -1,6 +1,7 @@
 ﻿#include <Editor/EditorStartup.hpp>
 
 // Engine
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 #include <Engine/Core/Game/AbstractGame.hpp>
 #include <Engine/Core/HotReload/ReloadableCpp.hpp>
 #include <Engine/ECS/Component/Camera.hpp>
@@ -9,11 +10,11 @@
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/SceneManager.hpp>
 #include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 #include <Engine/Serialization/InspectContext.hpp>
 
 // Editor
-#include <Editor/ExternalDeclarations.hpp>
 #include <Editor/StylePanel.hpp>
 
 // Third-party
@@ -68,25 +69,36 @@ void Editor::renderMenuBar()
         // File
         if (ImGui::BeginMenu("File"))
         {
-            const std::string fileName = "NewScene";
-            const std::string path = m_saveFolder + fileName + ".GPScene";
-
             if (ImGui::MenuItem("New"))
             {
-                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(fileName.c_str());
-                saveScene(&scene, path.c_str());
+                m_projectContent.createNewScene();
             }
 
-            if (ImGui::MenuItem("Open"))
+            // if (ImGui::MenuItem("Open"))
+            //{
+            //    m_sceneEditor.view.unbindScene();
+            //    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(fileName);
+            //    loadScene(&scene, path.c_str());
+            //}
+
+            if (ImGui::MenuItem("Save to"))
             {
-                Scene& scene = Engine::getInstance()->sceneManager.addEmpty(fileName);
-                loadScene(&scene, path.c_str());
-                Engine::getInstance()->sceneManager.loadScene(fileName);
+                m_saveFolder               = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
+                std::filesystem::path path = m_saveFolder;
+                path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
+
+                saveScene(m_sceneEditor.view.pScene, path.string().c_str());
             }
 
             if (ImGui::MenuItem("Save"))
             {
-                saveScene(m_sceneEditor.view.pScene, path.c_str());
+                if (m_saveFolder.empty())
+                    m_saveFolder = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
+
+                std::filesystem::path path = m_saveFolder;
+                path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
+
+                saveScene(m_sceneEditor.view.pScene, path.string().c_str());
             }
 
             ImGui::EndMenu();
@@ -151,6 +163,9 @@ void Editor::renderMenuBar()
             ImGui::MenuItem("Useful links");
             ImGui::EndMenu();
         }
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize("FPS : 144").x -
+                             ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
+        ImGui::Text("FPS : %0.0f", ImGui::GetIO().Framerate);
 
         ImGui::EndMainMenuBar();
     }
@@ -246,30 +261,25 @@ void Editor::renderExplorer()
 
 void Editor::saveScene(GPE::Scene* scene, const char* path)
 {
-    GPE::Scene* currentScene = m_sceneEditor.view.pScene;
-    m_sceneEditor.view.unbindScene();
-
     auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
     saveFunc(scene, path, GPE::SavedScene::EType::XML);
-
-    m_sceneEditor.view.bindScene(*currentScene);
 }
 
 void Editor::loadScene(GPE::Scene* scene, const char* path)
 {
-    m_sceneEditor.view.unbindScene();
     m_inspectedObject = nullptr;
 
     auto loadFunc = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
     loadFunc(scene, path);
 
     m_sceneEditor.view.bindScene(*scene);
+    scene->getWorld().pOwnerScene->sceneRenderer.setDefaultMainCamera();
 }
 
 void Editor::saveCurrentScene()
 {
-    GPE::Scene* currentScene = m_sceneEditor.view.pScene;
-    const std::string path   = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
+    GPE::Scene*       currentScene = m_sceneEditor.view.pScene;
+    const std::string path         = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
     m_sceneEditor.view.unbindScene();
 
     auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
@@ -278,11 +288,10 @@ void Editor::saveCurrentScene()
     m_sceneEditor.view.bindScene(*currentScene);
 }
 
-
 void Editor::reloadCurrentScene()
 {
-    GPE::Scene* currentScene = m_sceneEditor.view.pScene;
-    const std::string path   = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
+    GPE::Scene*       currentScene = m_sceneEditor.view.pScene;
+    const std::string path         = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
 
     m_sceneEditor.view.unbindScene();
     m_inspectedObject = nullptr;
@@ -300,23 +309,12 @@ void Editor::unbindCurrentScene()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor         {editedScene},
-      m_gameViewer          {},
-      m_logInspector        {},
-      m_projectContent      {*this},
-      m_sceneGraph          {*this},
-      m_gameControlBar      {},
-      m_saveFolder          {(std::filesystem::current_path() / RESOURCES_DIR).string() + "\\Scene\\"},
-      m_window              {window},
-      m_inspectedObject     {nullptr},
-      m_showAppStyleEditor  {false},
+    : m_sceneEditor{*this, editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{*this}, m_sceneGraph{*this},
+      m_gameControlBar{}, m_saveFolder{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false},
       m_showImGuiDemoWindows{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
-
-    if (!std::filesystem::exists(m_saveFolder))
-        std::filesystem::create_directory(m_saveFolder);
 }
 
 void Editor::setSceneInEdition(GPE::Scene& scene)

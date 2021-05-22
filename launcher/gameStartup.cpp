@@ -1,9 +1,9 @@
-﻿#include "GameStartup.hpp"
+#include "GameStartup.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 #include "Engine/Engine.hpp"
 #include "Game.hpp"
-#include "SingletonsSync.hpp"
 #include <Engine/Intermediate/GameObject.hpp>
 
 #include <GLFW/glfw3.h>
@@ -27,7 +27,7 @@ GameStartup::GameStartup()
 
       // Make all systems update their components
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
-          m_engine->behaviourSystem.update(deltaTime);
+          m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
           m_engine->inputManager.processInput();
@@ -38,7 +38,7 @@ GameStartup::GameStartup()
       // Update physics
       m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
           m_engine->physXSystem.advance(fixedDeltaTime);
-          m_engine->behaviourSystem.fixedUpdate(fixedDeltaTime);
+          m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
 
           m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
       }},
@@ -70,6 +70,9 @@ GameStartup::GameStartup()
     // ============= Inputs =============
     m_engine->inputManager.setupCallbacks(m_engine->window.getGLFWWindow());
     m_engine->inputManager.setInputMode("Game");
+
+    Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&GameStartup::startScene, this);
+    startScene();
 }
 
 void GameStartup::update()
@@ -85,4 +88,9 @@ GameStartup::~GameStartup()
     m_engine->timeSystem.clearUnscaledTimer();
 
     destroyGameInstance(m_game);
+}
+
+void GameStartup::startScene()
+{
+    GPE::Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.start();
 }

@@ -15,6 +15,11 @@ inline T& GameObject::addComponent(Args&&... args) noexcept
     return *newComponent;
 }
 
+inline Component* GameObject::addExistingComponent(Component* pExistingComponent) noexcept
+{
+    return m_pComponents.emplace_back(pExistingComponent);
+}
+
 template <typename T>
 inline T* GameObject::getComponent() noexcept
 {
@@ -43,36 +48,6 @@ inline const GameObject* GameObject::getParent() const noexcept
 inline GameObject* GameObject::getParent() noexcept
 {
     return m_parent;
-}
-
-inline void GameObject::setParent(GameObject& newParent) noexcept
-{
-    // GPE_ASSERT(m_parent, "You cannot move gameObject without parent");
-    GPE_ASSERT(newParent.getParent() != this,
-               "You cannot associate new parent if it's the child of the current entity (leak)");
-
-    if (m_parent != nullptr)
-    {
-        for (std::list<GameObject*>::iterator it = m_parent->children.begin(); it != m_parent->children.end(); it++)
-        {
-            if (*it == this)
-            {
-                m_parent->children.erase(it);
-                break;
-            }
-        }
-    }
-
-    if (newParent.pOwnerScene)
-    {
-        moveTowardScene(*newParent.pOwnerScene);
-    }
-
-    newParent.children.emplace_back(this);
-    m_parent = &newParent;
-
-    Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
-                                         newParent.getName().c_str()));
 }
 
 inline void GameObject::forceSetParent(GameObject& newParent) noexcept
@@ -167,9 +142,15 @@ inline void GameObject::destroyUniqueComponentNow() noexcept
 
 inline void GameObject::setActive(bool newState)
 {
+    m_isActive = newState;
     for (auto&& i : m_pComponents)
     {
         i->setActive(newState);
+    }
+
+    for (auto&& child : children)
+    {
+        child->setActive(newState);
     }
 }
 

@@ -148,9 +148,6 @@
     <ClCompile Include="src\ModelImporterSetting.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ObjParser.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\PointLight.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -268,7 +265,22 @@
     <ClCompile Include="src\Serialization\PhysXDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\GPESave.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GPELoad.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Prefab.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Raycast.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShadowMap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextureInspectorPanel.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -630,9 +642,6 @@
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp">
       <Filter>include\Core\HotReload</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp">
-      <Filter>include\Core\Parsers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp">
       <Filter>include\Core\Parsers</Filter>
     </ClInclude>
@@ -719,6 +728,30 @@
     </ClInclude>
     <ClInclude Include="third_party\include\AL\efx-presets.h">
       <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\GPELoad.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\GPESave.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\HotReload\SingletonsSync.hpp">
+      <Filter>include\Core\HotReload</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\HotReload\EngineApiMacros.hpp">
+      <Filter>include\Core\HotReload</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Prefab.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\ShadowMap.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\ComponentInclude.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\TextureInspectorPanel.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

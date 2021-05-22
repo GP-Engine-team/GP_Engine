@@ -18,9 +18,7 @@ namespace GPE
 FreeFly::FreeFly(GameObject& owner) noexcept
     : BehaviourComponent(owner),
       timeSys{Engine::getInstance()->timeSystem}
-{
-    enableUpdate(true);
-}
+{}
 
 
 FreeFly::~FreeFly() noexcept
@@ -52,15 +50,6 @@ void FreeFly::rotate(const GPM::Vector2& deltaDisplacement)
     const Quat  newRot     {rotY * orientation * rotX};
 
     getOwner().getTransform().setRotation(newRot);
-}
-
-
-FreeFly& FreeFly::operator=(FreeFly&& other) noexcept
-{
-    m_speed         = other.m_speed;
-    m_rotationSpeed = other.m_rotationSpeed;
-
-    return static_cast<FreeFly&>(BehaviourComponent::operator=(std::move(other)));
 }
 
 } // namespace GPE
