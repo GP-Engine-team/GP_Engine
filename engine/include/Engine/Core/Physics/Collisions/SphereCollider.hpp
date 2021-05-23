@@ -33,6 +33,7 @@ namespace GPE RFKNamespace()
         GETTER_BY_VALUE(Radius, m_radius);
         void             setRadius(float newRadius) noexcept;
         RFKMethod() void updateShape() noexcept;
+        virtual void     onPostLoad() noexcept override;
 
         SphereCollider_GENERATED
     };

@@ -59,6 +59,8 @@ void TransformComponent::inspect(GPE::InspectContext& context)
 
 void TransformComponent::onPostLoad()
 {
+    Component::onPostLoad();
+    setDirty();
     update();
 }
 

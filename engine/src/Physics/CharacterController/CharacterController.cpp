@@ -39,10 +39,16 @@ CharacterController::CharacterController() noexcept
 
     desc.height   = 1;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3{0,10,0});
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3{0,0,0});
     desc.radius   = 1;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
+}
+
+void CharacterController::onPostLoad() noexcept
+{
+    GPE::Component::onPostLoad();
+    controller->getActor()->userData = &getOwner();
 }
 
 void CharacterController::update(double deltaTime) noexcept

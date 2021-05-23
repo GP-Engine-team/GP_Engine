@@ -39,7 +39,7 @@ void RigidbodyDynamic::onPostLoad() noexcept
     rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
     rigidbody->setMass(1);
 
-    rigidbody->userData = owner;
+    rigidbody->userData = &getOwner();
 
     setType(type);
 

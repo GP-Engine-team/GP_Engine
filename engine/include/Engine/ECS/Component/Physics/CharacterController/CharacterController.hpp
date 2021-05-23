@@ -51,6 +51,7 @@ namespace GPE RFKNamespace()
 
     protected:
         virtual void updateToSystem() noexcept override;
+        virtual void onPostLoad() noexcept override;
 
     public:
         physx::PxController* controller = nullptr;

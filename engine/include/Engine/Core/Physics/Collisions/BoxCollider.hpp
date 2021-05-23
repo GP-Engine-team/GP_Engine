@@ -18,7 +18,7 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(), Serialize()) BoxCollider : public Collider
     {
     public:
-        BoxCollider() noexcept = default;
+        BoxCollider() noexcept;
         BoxCollider(GameObject & owner) noexcept;
         BoxCollider(const BoxCollider& other) noexcept = delete;
         BoxCollider(BoxCollider && other) noexcept     = default;
@@ -33,7 +33,7 @@ namespace GPE RFKNamespace()
     public:
         GETTER_BY_VALUE(Offset, m_sizeOffset);
         void             setSizeOffset(const GPM::Vec3& newSizeOffset) noexcept;
-        void             onPostLoad() noexcept;
+        void             onPostLoad() noexcept override;
         RFKMethod() void updateShape() noexcept;
 
         BoxCollider_GENERATED

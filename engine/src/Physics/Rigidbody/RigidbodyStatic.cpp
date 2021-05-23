@@ -29,15 +29,18 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner),
 void RigidbodyStatic::onPostLoad() noexcept
 {
     owner = &getOwner();
+    collider->onPostLoad();
 
-    rigidbody = PxGetPhysics().createRigidStatic(PxTransform(PhysXSystem::GPMVec3ToPxVec3(GPM::Vec3::zero()),
-                                                             PhysXSystem::GPMQuatToPxQuat(GPM::Quat::identity())));
 
-    rigidbody->userData = owner;
+    rigidbody = PxGetPhysics().createRigidStatic(
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
+                    PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
+
+    rigidbody->userData = &getOwner();
 
     setType(type);
 
-    updateToSystem();
+    Component::onPostLoad();
 }
 
 void RigidbodyStatic::updateToSystem() noexcept

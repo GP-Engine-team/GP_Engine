@@ -44,6 +44,7 @@ namespace GPE RFKNamespace()
         void setCenter(const GPM::Vec3& newCenter) noexcept;
         void setLocalRotation(const GPM::Vec3& newLocalRotation) noexcept;
         void updateTransform() noexcept;
+        virtual void onPostLoad() noexcept {}
 
         Collider_GENERATED
     };
