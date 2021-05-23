@@ -45,10 +45,13 @@ GameObject::~GameObject() noexcept
 
 void GameObject::moveTowardScene(Scene& newOwner) noexcept
 {
-    for (Component* pComponent : m_pComponents)
-    {
-        pComponent->moveTowardScene(newOwner);
-    }
+    // Commented because moveToward Scene add to the Scene's system.
+    // But thank to onPostLoad function, this action is already execute.
+    // If you decommente this line, component will be add both time in scene.
+    // for (Component* pComponent : m_pComponents)
+    //{
+    //    pComponent->moveTowardScene(newOwner);
+    //}
 
     pOwnerScene = &newOwner;
 

@@ -770,11 +770,16 @@ Shader* GPE::loadShaderFile(const char* src)
         (std::filesystem::current_path() / arg.fragmentShaderPath).string().c_str(), arg.featureMask);
 }
 
+struct SceneHeader
+{
+    char     assetID = (char)EFileType::SCENE;
+    uint16_t type    = 0;
+};
+
 struct PrefabHeader
 {
-    char     assetID  = (char)EFileType::PREFAB;
-    uint16_t type     = 0;
-    size_t   dataSize = 0;
+    char     assetID = (char)EFileType::PREFAB;
+    uint16_t type    = 0;
 };
 
 void GPE::writePrefabFile(const char* dst, const SavedScene::CreateArg& arg)
@@ -787,7 +792,7 @@ void GPE::writePrefabFile(const char* dst, const SavedScene::CreateArg& arg)
         return;
     }
 
-    PrefabHeader header{(char)EFileType::PREFAB, (uint16_t)arg.type, arg.data.size()};
+    SceneHeader header{(char)EFileType::PREFAB, (uint16_t)arg.type};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
     fwrite(arg.data.data(), sizeof(char), arg.data.size(), pFile); // string buffer
@@ -802,22 +807,25 @@ SavedScene::CreateArg GPE::readPrefabFile(const char* src)
     std::filesystem::path srcPath(src);
     SavedScene::CreateArg arg;
 
-    if (srcPath.extension() != ENGINE_PREFAB_EXTENSION || fopen_s(&pFile, src, "rb"))
+    if ((srcPath.extension() == ENGINE_PREFAB_EXTENSION) && fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
         return arg;
     }
 
-    PrefabHeader header;
-    // copy the file into the buffer:
+    SceneHeader header;
+
+    // copy the file into the buffer. Read from head to EOF
     fread(&header, sizeof(header), 1, pFile);
+    int cursor = ftell(pFile);
+    fseek(pFile, 0, SEEK_END);
+    int end = ftell(pFile);
+    fseek(pFile, cursor, SEEK_SET);
+    int sizeRemainig = end - cursor;
 
     arg.type = (SavedScene::EType)header.type;
-    if (header.dataSize)
-    {
-        arg.data.assign(header.dataSize, '\0');
-        fread(arg.data.data(), sizeof(char), header.dataSize, pFile); // string buffer
-    }
+    arg.data.assign(sizeRemainig, '\0');
+    fread(arg.data.data(), sizeof(char), sizeRemainig, pFile); // string buffer
 
     fclose(pFile);
 
@@ -830,12 +838,6 @@ SavedScene::CreateArg GPE::loadPrefabFile(const char* src)
     std::filesystem::path srcPath(src);
     return readPrefabFile(src);
 }
-
-struct SceneHeader
-{
-    char     assetID = (char)EFileType::SCENE;
-    uint16_t type    = 0;
-};
 
 void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
 {

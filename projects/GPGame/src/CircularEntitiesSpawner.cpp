@@ -53,6 +53,7 @@ void CircularEntitiesSpawner::update(double deltaTime)
 
         /*Spawn this entity*/
         GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_container);
+        spawnedEntity->getTransform().setTranslation(newPosition);
 
         // if (spawnedEntity->getComponent<EnnemyController>())
         //    spawnedEntity->getComponent<EnnemyController>()->setCheckpoint(m_checkpoint);

@@ -68,7 +68,7 @@ void BasePlayer::start()
     input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
 
-    // source->playSound("Western", true);
+    source->playSound("Western", true);
 }
 
 void BasePlayer::onPostLoad()

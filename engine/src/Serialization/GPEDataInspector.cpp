@@ -170,8 +170,24 @@ bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, co
             IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
             std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
+            // Remove previous reference of prefab
+            if (inspected)
+            {
+                auto&& map = GPE::Engine::getInstance()->resourceManager.getAll<SharedPrefab>();
+                for (auto&& it = map.begin(); it != map.end(); ++it)
+                {
+                    if (&it->second.pref == inspected)
+                    {
+                        if (--it->second.instanceCounter == 0)
+                            map.erase(it);
+                        break;
+                    }
+                }
+            }
+
             if (SharedPrefab* pSPref = Engine::getInstance()->resourceManager.get<SharedPrefab>(path.string().c_str()))
             {
+                //Add the new reference
                 inspected = &pSPref->pref;
                 pSPref->instanceCounter++;
             }
@@ -180,6 +196,7 @@ bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, co
                 SharedPrefab& sPref = Engine::getInstance()->resourceManager.add<SharedPrefab>(path.string().c_str(),
                                                                                                path.string().c_str());
                 inspected           = &sPref.pref;
+                ++sPref.instanceCounter;
             }
 
             hasChanged = true;

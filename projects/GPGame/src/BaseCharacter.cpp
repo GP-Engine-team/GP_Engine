@@ -16,7 +16,6 @@ using namespace GPM;
 
 BaseCharacter::BaseCharacter(GameObject& owner) : BehaviourComponent(owner)
 {
-    enableFixedUpdate(true);
 }
 
 void BaseCharacter::onPostLoad()
@@ -26,6 +25,8 @@ void BaseCharacter::onPostLoad()
 
 void BaseCharacter::start()
 {
+    enableFixedUpdate(true);
+
     controller = &getOwner().addComponent<GPE::CharacterController>();
     GAME_ASSERT(controller, "null");
 

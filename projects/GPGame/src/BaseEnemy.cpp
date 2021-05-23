@@ -14,12 +14,12 @@ using namespace GPE;
 
 BaseEnemy::BaseEnemy(GPE::GameObject& owner) noexcept : BaseCharacter(owner)
 {
-    enableUpdate(true);
 }
 
 void BaseEnemy::start()
 {
     BaseCharacter::start();
+    enableUpdate(true);
 
     controller->setSpeed(0.5f);
     controller->setAngularSpeed(PI);

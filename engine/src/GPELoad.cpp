@@ -32,12 +32,13 @@ void load(XmlLoader& context, Prefab*& data, const XmlLoader::LoadInfo& info)
         if (SharedPrefab* pSPref = Engine::getInstance()->resourceManager.get<SharedPrefab>(path.c_str()))
         {
             data = &pSPref->pref;
-            pSPref->instanceCounter++;
+            ++pSPref->instanceCounter;
         }
         else
         {
             SharedPrefab& sPref = Engine::getInstance()->resourceManager.add<SharedPrefab>(path.c_str(), path.c_str());
             data                = &sPref.pref;
+            ++sPref.instanceCounter;
         }
         context.pop();
     }
