@@ -69,6 +69,6 @@ public:
     void save(XmlSaver&) const;
     void load(XmlLoader&);
 
-    GETTER_BY_CONST_REF(Name, m_name);
+    DEFAULT_GETTER_SETTER_BY_REF(Name, m_name);
 };
 } /*namespace GPE*/

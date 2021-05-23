@@ -4,6 +4,7 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
 
+#include <BaseCharacter.hpp>
 #include <PhysX/PxRigidActor.h>
 
 #include <gpm/DebugOutput.hpp>
@@ -28,7 +29,6 @@ File_GENERATED
         enableUpdate(true);
 
         m_muzzleFlash->setDuration(.5f);
-        m_muzzleFlash->generate();
 
         GPE::Wave           sound("./resources/sounds/Firearm/machinegun.wav", "Shoot");
         GPE::SourceSettings sourceSettings;
@@ -36,6 +36,11 @@ File_GENERATED
         sourceSettings.loop  = AL_FALSE;
 
         m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
+    }
+
+    void Firearm::start()
+    {
+        // GAME_ASSERT(m_decalePrefab, "Missing prefab");
     }
 
     bool Firearm::isMagazineEmpty() const
@@ -58,9 +63,9 @@ File_GENERATED
             {
                 if (GPE::GameObject* pOwner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData))
                 {
-                    if (!m_decalePrefab.isEmpty())
+                    if (m_decalePrefab)
                     {
-                        GPE::GameObject& decaleGO = *m_decalePrefab.clone(*pOwner);
+                        GPE::GameObject& decaleGO = *m_decalePrefab->clone(*pOwner);
                         decaleGO.getTransform().setTranslation(
                             GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position));
 
@@ -69,6 +74,15 @@ File_GENERATED
                             (GPM::Vec3::right()
                                  .cross(GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal))
                                  .normalized()));
+                    }
+
+                    if (pOwner->getTag() == "Character")
+                    {
+                        BaseCharacter* const bc = pOwner->getComponent<BaseCharacter>();
+
+                        GAME_ASSERT(bc, "null");
+
+                        bc->takeDamage(m_magazineStored.bulletData.getDammage());
                     }
 
                     getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(
@@ -109,6 +123,18 @@ File_GENERATED
     const GunMagazine& Firearm::getMagazine() const
     {
         return m_magazineStored;
+    }
+
+    void Firearm::onPostLoad()
+    {
+        BehaviourComponent::onPostLoad();
+
+        GPE::Wave           sound("./resources/sounds/Firearm/machinegun.wav", "Shoot");
+        GPE::SourceSettings sourceSettings;
+        sourceSettings.pitch = 1.f;
+        sourceSettings.loop  = AL_FALSE;
+
+        m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
     }
 
 } // End of namespace GPG

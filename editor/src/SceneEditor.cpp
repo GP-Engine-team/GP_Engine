@@ -88,7 +88,7 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
-    const std::string windowName = "Scene editor (" + view.pScene->getWorld().getName() + ')';
+    const std::string windowName = "Scene editor (" + view.pScene->getName() + ')';
     if (ImGui::Begin(windowName.c_str()))
     {
         const ImVec2 size{ImGui::GetContentRegionAvail()};
@@ -108,14 +108,20 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
                 IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
                 std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
-                Scene empty;
-                auto  loadFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), loadSceneFromPath);
-                loadFunc(&empty, path.string().c_str());
-                if (!empty.getWorld().children.empty())
+                GameObject* go = nullptr;
+                if (SharedPrefab* pSPref =
+                        Engine::getInstance()->resourceManager.get<SharedPrefab>(path.string().c_str()))
                 {
-                    GameObject* const go = empty.getWorld().children.front();
-                    go->setParent(&GPE::Engine::getInstance()->sceneManager.getCurrentScene()->getWorld());
-                    go->getTransform().setDirty();
+                    go = pSPref->pref.clone(view.pScene->getWorld());
+                }
+                else
+                {
+                    auto loadFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), loadPrefabFromPath);
+                    go            = loadFunc(view.pScene->getWorld(), path.string().c_str());
+                }
+
+                if (go)
+                {
                     go->getTransform().setTranslation(view.cameraOwner->getTransform().getGlobalPosition() +
                                                       view.cameraOwner->getTransform().getVectorForward() * 10.f);
                 }

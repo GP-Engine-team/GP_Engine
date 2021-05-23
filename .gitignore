@@ -498,5 +498,7 @@ MigrationBackup/
 x64/
 
 # Resource dir
-resources/*
+#!resources/*.GPScene
+#!resources/Scene/*.GPScene
+#resources/*
 !engine/include/Engine/Resources

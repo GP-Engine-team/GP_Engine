@@ -28,7 +28,7 @@ public:
     void set(A* instance, const std::string& methodName, bool shouldCheckInheritedMethods = true)
     {
         rfk::Struct const& s      = A::staticGetArchetype(); // No archetype found : Check if the class is reflected with RFKClass().
-        rfk::Method const* method = s.getMethod(methodName);
+        rfk::Method const* method = s.getMethod(methodName, rfk::EMethodFlags::Default, shouldCheckInheritedMethods);
         subFunctor                = MemberFunction{instance, method};
         assert(method != nullptr); // No matching method found : Method name invalid or method not reflected (put RFKMethod() to reflect it)
     }

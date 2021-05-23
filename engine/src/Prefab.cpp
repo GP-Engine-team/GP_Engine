@@ -53,18 +53,19 @@ GameObject* Prefab::clone(GameObject& parent)
 
     GameObject* const pGo = prefabScene.getWorld().children.front();
     pGo->setParent(&parent);
+    pGo->getTransform().setDirty();
 
     // Awake GameObjects
     struct Rec
     {
         static void rec(GPE::GameObject& g)
         {
+            g.getTransform().onPostLoad();
+
             for (GPE::Component* comp : g.getComponents())
             {
                 comp->onPostLoad();
             }
-
-            g.getTransform().onPostLoad();
 
             for (GPE::GameObject* g2 : g.children)
             {

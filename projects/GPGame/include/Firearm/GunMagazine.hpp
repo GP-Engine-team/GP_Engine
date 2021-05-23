@@ -20,13 +20,15 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), Serialize()) GunMagazine
     {
     protected:
-        RFKField(Inspect(), Serialize()) Bullet m_bulletStored;
-
         RFKField(Inspect(), Serialize()) unsigned int m_magazineCapacity = 0;
         RFKField(Inspect(), Serialize()) unsigned int m_bulletsRemaining = 0;
 
     public:
+        RFKField(Inspect(), Serialize()) Bullet bulletData;
+
+    public:
         GunMagazine(const Bullet& bulletStored, unsigned int magazineCapacity, unsigned int bulletsRemaining) noexcept;
+        GunMagazine() = default;
 
         void triggeredBullet();
 
@@ -36,13 +38,6 @@ namespace GPG RFKNamespace()
         void reload();
 
         bool isEmpty() const;
-
-        GunMagazine() noexcept                         = default;
-        GunMagazine(const GunMagazine& other) noexcept = default;
-        GunMagazine(GunMagazine && other) noexcept     = default;
-        virtual ~GunMagazine() noexcept                = default;
-        GunMagazine& operator=(GunMagazine const& other) noexcept = default;
-        GunMagazine& operator=(GunMagazine&& other) noexcept = default;
 
         GunMagazine_GENERATED
     };

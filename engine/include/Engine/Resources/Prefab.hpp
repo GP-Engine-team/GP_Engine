@@ -23,23 +23,8 @@ namespace GPE RFKNamespace()
         std::unique_ptr<char[]>                   m_pData            = nullptr;
         std::string                               m_name             = "";
 
-    public:
-        Prefab()
-        {
-        }
-
-        ~Prefab() = default;
-
+    protected:
         void loadPrefabFromPath(const char* path);
-
-        GameObject* clone(GameObject & parent);
-
-        const char* getName() const;
-
-        bool isEmpty() const
-        {
-            return !m_pPrefabBluePrint.get();
-        }
 
         void reset()
         {
@@ -48,6 +33,29 @@ namespace GPE RFKNamespace()
             m_name = "";
         }
 
+    public:
+        Prefab(const char* path)
+        {
+            loadPrefabFromPath(path);
+        }
+
+        Prefab()  = default;
+        ~Prefab() = default;
+
+        GameObject* clone(GameObject & parent);
+
+        const char* getName() const;
+
         Prefab_GENERATED
+    };
+
+    struct SharedPrefab
+    {
+        Prefab pref;
+        size_t instanceCounter = 0;
+
+        SharedPrefab(const char* path) : pref(path)
+        {
+        }
     };
 } // namespace )

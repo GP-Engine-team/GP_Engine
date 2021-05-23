@@ -38,7 +38,8 @@ inline void TransformComponent::update() noexcept
 
 inline void TransformComponent::update(const GPM::Mat4& parentMeshMatrix) noexcept
 {
-    m_transform.model = parentMeshMatrix * GPM::toTransform(m_spaceAttribut).model;
+    m_transform       = GPM::toTransform(m_spaceAttribut);
+    m_transform.model = parentMeshMatrix * m_transform.model;
     m_isDirty         = false;
     OnUpdate();
 }

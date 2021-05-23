@@ -7,24 +7,20 @@
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
-TransformComponent::TransformComponent(GameObject& refGameObject,
-                                       const TransformComponent::CreateArg& arg) noexcept
-    : Component(refGameObject),
-      m_spaceAttribut{GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)), arg.position, arg.scale},
+TransformComponent::TransformComponent(GameObject& refGameObject, const TransformComponent::CreateArg& arg) noexcept
+    : Component(refGameObject), m_spaceAttribut{GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)),
+                                                arg.position, arg.scale},
       m_transform{GPM::toTransform(m_spaceAttribut)}
 {
+    updateToSystem();
 }
 
-TransformComponent& TransformComponent::operator=(TransformComponent&& other)
+TransformComponent::~TransformComponent() noexcept
 {
-    m_spaceAttribut = std::move(other.m_spaceAttribut);
-    m_transform     = std::move(other.m_transform);
-    m_isDirty       = std::move(other.m_isDirty);
-
-    return static_cast<TransformComponent&>(Component::operator=(std::move(other)));
+    setActive(false);
 }
 
 void TransformComponent::setVecForward(const Vec3& newForward, const Vec3& up) noexcept
@@ -64,4 +60,9 @@ void TransformComponent::onPostLoad()
 {
     setDirty();
     update();
+}
+
+void TransformComponent::updateToSystem() noexcept
+{
+
 }

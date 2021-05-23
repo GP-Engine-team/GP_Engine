@@ -71,7 +71,10 @@ GameStartup::GameStartup()
     m_engine->inputManager.setupCallbacks(m_engine->window.getGLFWWindow());
     m_engine->inputManager.setInputMode("Game");
 
-    Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&GameStartup::startScene, this);
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = [](const char* msg) {
+        GPE_ASSERT(false, msg)
+    };
+    m_engine->sceneManager.OnSceneChange = std::bind(&GameStartup::startScene, this);
     startScene();
 }
 
