@@ -106,13 +106,14 @@ void GPE::save(XmlSaver& context, const SubModel& inspected, const XmlSaver::Sav
 
     GPE::save(context, inspected.pModel, XmlSaver::SaveInfo{"pModel", "Model*", 0});
 
-    if (inspected.pShader != nullptr)
-    {
-        if (const std::string* shaderName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pShader))
-        {
-            GPE::save(context, *shaderName, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
-        }
-    }
+    //if (inspected.pShader != nullptr)
+    //{
+        GPE::save(context, inspected.pShader, info);
+        //if (const std::string* shaderName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pShader))
+        //{
+        //    GPE::save(context, *shaderName, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
+        //}
+    //}
 
     if (inspected.pMaterial != nullptr)
     {
@@ -144,12 +145,13 @@ void GPE::load(XmlLoader& context, SubModel& inspected, const XmlLoader::LoadInf
         GPE::load(context, inspected.pModel, XmlLoader::LoadInfo{"pModel", "Model*", 0});
 
         {
-            std::string shaderName;
-            GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
-            if (!(inspected.pShader = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
-            {
-                inspected.pShader = loadShaderFile(shaderName.c_str());
-            }
+            GPE::load(context, inspected.pShader, info);
+            //std::string shaderName;
+            //GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
+            //if (!(inspected.pShader = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
+            //{
+            //    inspected.pShader = loadShaderFile(shaderName.c_str());
+            //}
         }
 
         {
