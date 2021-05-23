@@ -833,9 +833,8 @@ SavedScene::CreateArg GPE::loadPrefabFile(const char* src)
 
 struct SceneHeader
 {
-    char     assetID  = (char)EFileType::SCENE;
-    uint16_t type     = 0;
-    size_t   dataSize = 0;
+    char     assetID = (char)EFileType::SCENE;
+    uint16_t type    = 0;
 };
 
 void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
@@ -848,7 +847,7 @@ void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
         return;
     }
 
-    SceneHeader header{(char)EFileType::SCENE, (uint16_t)arg.type, arg.data.size()};
+    SceneHeader header{(char)EFileType::SCENE, (uint16_t)arg.type};
     fwrite(&header, sizeof(header), 1, pFile); // header
 
     fwrite(arg.data.data(), sizeof(char), arg.data.size(), pFile); // string buffer
@@ -872,19 +871,18 @@ SavedScene::CreateArg GPE::readSceneFile(const char* src)
     }
 
     SceneHeader header;
-    // copy the file into the buffer:
+
+    // copy the file into the buffer. Read from head to EOF
     fread(&header, sizeof(header), 1, pFile);
-    // int cursor = ftell(pFile);
-    // int end    = fseek(pFile, SEEK_END, 0);
-    // fseek(pFile, SEEK_SET, cursor);
-    // int sizeRemainig = end - cursor;
+    int cursor = ftell(pFile);
+    fseek(pFile, 0, SEEK_END);
+    int end = ftell(pFile);
+    fseek(pFile, cursor, SEEK_SET);
+    int sizeRemainig = end - cursor;
 
     arg.type = (SavedScene::EType)header.type;
-    if (header.dataSize)
-    {
-        arg.data.assign(header.dataSize, '\0');
-        fread(arg.data.data(), sizeof(char), header.dataSize, pFile); // string buffer
-    }
+    arg.data.assign(sizeRemainig, '\0');
+    fread(arg.data.data(), sizeof(char), sizeRemainig, pFile); // string buffer
 
     fclose(pFile);
 

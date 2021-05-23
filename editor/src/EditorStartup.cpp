@@ -236,7 +236,6 @@ void EditorStartup::stopGame()
     };
 
     m_editor.reloadCurrentScene();
-    // TODO: reload scene
     m_game->state = EGameState::STOPPED;
 }
 
