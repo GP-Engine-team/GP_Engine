@@ -24,8 +24,11 @@ void BaseEnemy::start()
     controller->setSpeed(0.5f);
     controller->setAngularSpeed(PI);
 
-    m_target = Engine::getInstance()->sceneManager.getCurrentScene()->getGameObject("Player");
-    GAME_ASSERT(m_target, "Player not found");
+    GameObject* playerGO = Engine::getInstance()->sceneManager.getCurrentScene()->getGameObject("Player");
+    GAME_ASSERT(playerGO, "Player not found");
+
+    m_target = playerGO->getComponent<BaseCharacter>();
+    GAME_ASSERT(m_target, "Player Base character component not found");
 }
 
 void BaseEnemy::onPostLoad()
@@ -46,8 +49,24 @@ void BaseEnemy::update(double deltaTime)
     }
     else
     {
-        const Vec3 targetPos = m_target->getTransform().getGlobalPosition();
+        const Vec3 targetPos = m_target->transform().getGlobalPosition();
 
         moveAndRotateToward(targetPos, deltaTime);
+
+        if (m_radiusAttack * m_radiusAttack >
+            (m_target->transform().getGlobalPosition() - transform().getGlobalPosition()).sqrLength())
+        {
+            m_attackCounter += deltaTime;
+
+            if (m_attackCounter >= m_attackCounterMax)
+            {
+                m_attackCounter = 0.f;
+                m_target->takeDamage(m_dammage);
+            }
+        }
+        else
+        {
+            m_attackCounter = 0.f;
+        }
     }
 }

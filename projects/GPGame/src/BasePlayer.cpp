@@ -1,3 +1,4 @@
+
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Core/Tools/Raycast.hpp>
@@ -9,10 +10,11 @@
 
 #include <PhysX/PxRigidActor.h>
 
-#include <GLFW/glfw3.h>
+//#define IMGUI_DEFINE_MATH_OPERATORS
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
-#include <imgui.h>
-#include <imgui_internal.h>
+#include <GLFW/glfw3.h>
 
 #include <BasePlayer.hpp>
 #include <Firearm/PPSH41.hpp>
@@ -134,16 +136,76 @@ void BasePlayer::stopAllMusic()
     source->stopAllSound();
 }
 
+// size_arg (for each axis) < 0.0f: align to end, 0.0f: auto, > 0.0f: specified size
+void displayLifeBar(float currentLife, float lifeMax, const ImVec2& size_arg)
+{
+    using namespace ImGui;
+
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return;
+
+    ImGuiContext&     g     = *GImGui;
+    const ImGuiStyle& style = g.Style;
+
+    static float r = style.FrameBorderSize;
+    DragFloat("Test", &r, 0.1);
+
+    ImVec2 pos  = window->DC.CursorPos;
+    ImVec2 size = CalcItemSize(size_arg, CalcItemWidth(), g.FontSize + style.FramePadding.y * 2.0f);
+    ImRect bb(pos, {pos.x + size.x, pos.y + size.y});
+    ItemSize(size, style.FramePadding.y);
+    if (!ItemAdd(bb, 0))
+        return;
+
+    // Render
+    float fraction = currentLife / lifeMax;
+    fraction       = ImSaturate(fraction);
+
+    // Background
+    const float rounding       = 7.0f;
+    const float borderSize     = 5.f;
+    const float halfBorderSize = borderSize * 0.5f;
+    bb.Max.y += borderSize;
+    bb.Min.y += borderSize;
+    window->DrawList->AddRectFilled(bb.Min, bb.Max, ImColor{0, 0, 0, 100}, rounding);
+    window->DrawList->AddRect(bb.Min - ImVec2(halfBorderSize, halfBorderSize),
+                              bb.Max + ImVec2(halfBorderSize, halfBorderSize), ImColor{0, 0, 0, 150}, rounding,
+                              ImDrawCornerFlags_All, borderSize);
+
+    bb.Expand(ImVec2(-style.FrameBorderSize, -style.FrameBorderSize));
+    const ImVec2 fill_br = ImVec2(ImLerp(bb.Min.x, bb.Max.x, fraction), bb.Max.y);
+    RenderRectFilledRangeH(window->DrawList, bb, ImColor{255, 0, 0, 150}, 0.0f, fraction, 7.f);
+
+    // Default displaying the fraction as percentage string, but user can override it
+    char        overlay_buf[32];
+    const char* overlay = nullptr;
+
+    ImFormatString(overlay_buf, IM_ARRAYSIZE(overlay_buf), "%.0f% / %.0f%", currentLife, lifeMax);
+    overlay = overlay_buf;
+
+    ImVec2 overlay_size = CalcTextSize(overlay, NULL);
+    if (overlay_size.x > 0.0f)
+        RenderTextClipped(ImVec2(ImClamp(fill_br.x + style.ItemSpacing.x, bb.Min.x,
+                                         bb.Max.x - overlay_size.x - style.ItemInnerSpacing.x),
+                                 bb.Min.y),
+                          bb.Max, overlay, NULL, &overlay_size, ImVec2(0.0f, 0.5f), &bb);
+}
+
 void BasePlayer::onGUI()
 {
-    static float ratio = 0.08f;
+    using namespace ImGui;
+    const float ratio = ImGui::GetWindowSize().y / ImGui::GetWindowSize().x;
 
-    ImGui::DragFloat("Ratio", &ratio, 0.01f, 0.f, 1.f);
+    // ImGui::DragFloat("Ratio", &ratio, 0.01f, 0.f, 1.f);
 
-    ImVec2 size = {ImGui::GetWindowSize().x * ratio, ImGui::GetWindowSize().y * ratio};
+    ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
 
-    ImGui::SetNextElementLayout(0.f, 0.f, size, ImGui::EHAlign::Left, ImGui::EVAlign::Top);
-    ImGui::Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
+    SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
+    displayLifeBar(m_currentLife, m_maxLife, size);
+
+    SetNextElementLayout(0.f, 1.f, size, EHAlign::Left, EVAlign::Bottom);
+    Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
 }
 
 void BasePlayer::update(double deltaTime)

@@ -138,7 +138,7 @@ void BaseCharacter::fixedUpdate(double deltaTime)
 
 void BaseCharacter::takeDamage(float damage)
 {
-    m_currentLife = std::min(0.f, m_currentLife - damage);
+    m_currentLife = std::max(0.f, m_currentLife - damage);
 }
 
 bool BaseCharacter::isDead()

@@ -32,7 +32,7 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), Serialize()) Bullet : public BaseBullet
     {
     protected:
-        RFKField(Serialize(), Inspect()) float m_dammage = 0.f;
+        RFKField(Serialize(), Inspect()) float m_dammage = 5.f;
 
     public:
         Bullet(float dammage) noexcept;
