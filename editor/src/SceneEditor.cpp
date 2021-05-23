@@ -112,7 +112,8 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
                 if (SharedPrefab* pSPref =
                         Engine::getInstance()->resourceManager.get<SharedPrefab>(path.string().c_str()))
                 {
-                    go = pSPref->pref.clone(view.pScene->getWorld());
+                    auto loadFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), clonePrefab);
+                    go            = loadFunc(pSPref->pref, view.pScene->getWorld());
                 }
                 else
                 {

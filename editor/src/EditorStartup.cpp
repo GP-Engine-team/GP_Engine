@@ -81,6 +81,7 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, createComponentByID);
     ADD_PROCESS(m_reloadableCpp, destroyComponent);
     ADD_PROCESS(m_reloadableCpp, loadPrefabFromPath);
+    ADD_PROCESS(m_reloadableCpp, clonePrefab);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 

@@ -62,9 +62,9 @@ GameObject* Prefab::clone(GameObject& parent)
         {
             g.getTransform().onPostLoad();
 
-            for (GPE::Component* comp : g.getComponents())
+            for (auto&& it = g.getComponents().begin(); it != g.getComponents().end(); ++it)
             {
-                comp->onPostLoad();
+                (*it)->onPostLoad();
             }
 
             for (GPE::GameObject* g2 : g.children)

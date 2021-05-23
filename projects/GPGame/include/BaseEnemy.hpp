@@ -22,9 +22,14 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BaseEnemy : public BaseCharacter
     {
     protected:
-        RFKField() GPE::GameObject*            m_target;
-        RFKField(Inspect(), Serialize()) float m_animDeapthCounter    = 0.f;
+        RFKField() BaseCharacter*              m_target               = nullptr;
+        RFKField(Serialize()) float            m_animDeapthCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float m_animDeapthCounterMax = 3.f;
+
+        RFKField(Serialize()) float            m_attackCounter    = 0.f;
+        RFKField(Inspect(), Serialize()) float m_attackCounterMax = 3.f;
+        RFKField(Inspect(), Serialize()) float m_radiusAttack     = 3.f;
+        RFKField(Inspect(), Serialize()) float m_dammage          = 3.f;
 
     public:
         BaseEnemy() noexcept = default;

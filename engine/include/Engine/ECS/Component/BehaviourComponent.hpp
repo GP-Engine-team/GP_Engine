@@ -105,10 +105,14 @@ namespace GPE RFKNamespace()
 #else /* Not NDEBUG.  */
 
 #define GAME_ASSERT(expr, msg)                                                                                         \
-    gameAssert(expr, GPE::stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s",                   \
-                                       F_RED("Game Assertion"), __FUNCTION__, __FILE__, __LINE__, BOLD(#expr), msg)    \
-                         .c_str());
-
+    if (!expr)                                                                                                         \
+    {                                                                                                                  \
+        gameAssert(expr,                                                                                               \
+                   GPE::stringFormat("%s in function %s %s : %d\nExpression \"%s\" == false.\n%s",                     \
+                                     F_RED("Game Assertion"), __FUNCTION__, __FILE__, __LINE__, BOLD(#expr), msg)      \
+                       .c_str());                                                                                      \
+        return;                                                                                                        \
+    }
 #endif // NDEBUG
 
 } // namespace )
