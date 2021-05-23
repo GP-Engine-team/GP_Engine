@@ -41,7 +41,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) bool m_isReloadingNextBullet = false;
         RFKField(Inspect(), Serialize()) bool m_isReloading           = false;
 
-        RFKField(Serialize(), Inspect()) GPE::Prefab m_decalePrefab;
+        RFKField(Inspect()) GPE::Prefab* m_decalePrefab;
 
     public:
         Firearm() noexcept = default;
@@ -59,8 +59,9 @@ namespace GPG RFKNamespace()
 
         bool isMagazineEmpty() const;
         void triggered();
+        void start() override;
         void reload();
-        void update(double deltaTime) final;
+        void update(double deltaTime) override;
 
         const GunMagazine& getMagazine() const;
 

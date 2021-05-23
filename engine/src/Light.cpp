@@ -1,6 +1,6 @@
+#include "Engine/ECS/Component/Light/Light.hpp"
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
-#include "Engine/ECS/Component/Light/Light.hpp"
 
 using namespace GPE;
 using namespace GPM;
