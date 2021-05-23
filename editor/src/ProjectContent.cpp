@@ -450,7 +450,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName);
                     m_editorContext->loadScene(&scene, it->path.string().c_str());
                     scene.setName(it->filename.stem().string().c_str());
-                    m_editorContext->m_saveFolder = it->path.parent_path().string().c_str();
+                    m_editorContext->m_saveFolder = it->path.parent_path().string();
                     break;
                 }
 
