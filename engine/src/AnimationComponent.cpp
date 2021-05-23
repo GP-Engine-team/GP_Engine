@@ -30,7 +30,7 @@ void AnimationComponent::onPostLoad()
     updateToSystem();
 }
 
-void AnimationComponent::updateToSystem()
+void AnimationComponent::updateToSystem() noexcept
 {
     if (m_isActivated)
     {

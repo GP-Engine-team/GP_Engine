@@ -269,6 +269,7 @@
     <ClInclude Include="include\Engine\Resources\Animation.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
     <ClInclude Include="include\Engine\Resources\Cursor.hpp" />
+    <ClInclude Include="include\Engine\Resources\Importer\AssimpUtilities.hpp" />
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp" />
     <ClInclude Include="include\Engine\Resources\Material.hpp" />
     <ClInclude Include="include\Engine\Resources\Mesh.hpp" />

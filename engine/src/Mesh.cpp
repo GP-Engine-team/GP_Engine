@@ -12,6 +12,11 @@
 
 #include <limits>
 
+#include <assimp/Importer.hpp>  // C++ importer interface
+#include <assimp/postprocess.h> // Post processing flags
+#include <assimp/scene.h>       // Output data structure
+#include <Engine/Resources/Importer/AssimpUtilities.hpp>
+
 using namespace GPE;
 using namespace GPM;
 
@@ -91,6 +96,14 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
     // 4th attribute buffer : Tangeantes
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vtg));
+
+    // 5th attribute buffer : Bone IDs
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 1, GL_INT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, boneIDs));
+
+    // 6th attribute buffer : Bone Weights
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, weights));
 
     glBindVertexArray(0);
 
@@ -570,6 +583,41 @@ Mesh::CreateIndiceBufferArg Mesh::createCylindre(unsigned int prescision) noexce
 
     return convert(mesh);
 }
+
+void Mesh::extractBoneWeightForVertices(std::vector<GPE::Mesh::Vertex>& vertices, aiMesh* mesh, const aiScene* scene,
+                                         std::map<std::string, GPE::Mesh::BoneInfo>& boneInfoMap, size_t& boneCounter)
+{
+    for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+    {
+        int         boneID   = -1;
+        std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+        if (boneInfoMap.find(boneName) == boneInfoMap.end())
+        {
+            GPE::Mesh::BoneInfo newBoneInfo;
+            newBoneInfo.id        = boneCounter;
+            newBoneInfo.offset    = mat4aiToGPM(mesh->mBones[boneIndex]->mOffsetMatrix);
+            boneInfoMap[boneName] = newBoneInfo;
+            boneID                = boneCounter;
+            boneCounter++;
+        }
+        else
+        {
+            boneID = boneInfoMap[boneName].id;
+        }
+        assert(boneID != -1);
+        auto weights    = mesh->mBones[boneIndex]->mWeights;
+        int  numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+        for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+        {
+            int   vertexId = weights[weightIndex].mVertexId;
+            float weight   = weights[weightIndex].mWeight;
+            assert(vertexId <= vertices.size());
+            setVertexBoneData(vertices[vertexId], boneID, weight);
+        }
+    }
+}
+
 
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, Mesh::Vertex& inspected)

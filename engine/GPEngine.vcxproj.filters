@@ -774,6 +774,9 @@
     <ClInclude Include="include\Engine\Serialization\TextureInspectorPanel.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Importer\AssimpUtilities.hpp">
+      <Filter>include\Resources\Importer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

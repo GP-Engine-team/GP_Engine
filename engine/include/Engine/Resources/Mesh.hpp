@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/Type.hpp>
@@ -17,6 +18,10 @@
 #include <GPM/Shape3D/Sphere.hpp>
 #include <GPM/Shape3D/Volume.hpp>
 #include <GPM/Vector3.hpp>
+#include <GPM/Matrix4.hpp>
+
+struct aiMesh;
+struct aiScene;
 
 namespace GPE
 {
@@ -34,10 +39,23 @@ public:
 
     struct Vertex
     {
+        static constexpr size_t maxBoneInfluence = 4;
+
         GPM::Vec3 v;   // position
         GPM::Vec3 vn;  // normal
         GPM::Vec2 vt;  // UV
         GPM::Vec3 vtg; // tangeante
+        int       boneIDs[maxBoneInfluence];
+        float     weights[maxBoneInfluence];
+    };
+
+    struct BoneInfo
+    {
+        /*id is index in finalBoneMatrices*/
+        int id;
+
+        /*offset matrix transforms vertex from model space to bone space*/
+        GPM::mat4 offset;
     };
 
     struct Indice
@@ -182,6 +200,39 @@ public:
      */
     void generateBoundingVolume(EBoundingVolume boundingVolumeType, const GPM::Vec3& minAABB,
                                 const GPM::Vec3& maxAABB) noexcept;
+
+
+    // ========== ANIMATIONS =========== //
+
+    static void setVertexBoneDataToDefault(GPE::Mesh::Vertex& vertex)
+    {
+        for (int i = 0; i < GPE::Mesh::Vertex::maxBoneInfluence; i++)
+        {
+            vertex.boneIDs[i] = -1;
+            vertex.weights[i] = 0.0f;
+        }
+    }
+
+    static void setVertexBoneData(GPE::Mesh::Vertex& vertex, int boneID, float weight)
+    {
+        for (int i = 0; i < GPE::Mesh::Vertex::maxBoneInfluence; ++i)
+        {
+            if (vertex.boneIDs[i] < 0)
+            {
+                vertex.weights[i] = weight;
+                vertex.boneIDs[i] = boneID;
+                break;
+            }
+        }
+    }
+
+    std::map<std::string, GPE::Mesh::BoneInfo> m_boneInfoMap;
+    size_t                                     m_boneCounter = 0;
+
+    static void extractBoneWeightForVertices(std::vector<GPE::Mesh::Vertex>& vertices, aiMesh* mesh,
+                                             const aiScene*                              scene,
+                                             std::map<std::string, GPE::Mesh::BoneInfo>& boneInfoMap,
+                                             size_t&                                     boneCounter);
 };
 
 template <>

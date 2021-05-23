@@ -378,6 +378,8 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
             arg.vertices.emplace_back(Mesh::Vertex{Vec3{vertice.x, vertice.y, vertice.z},
                                                    Vec3{normal.x, normal.y, normal.z}, Vec2{textCoord.x, textCoord.y},
                                                    Vec3{tangeante.x, tangeante.y, tangeante.z}});
+
+            Mesh::setVertexBoneDataToDefault(arg.vertices.back());
         }
 
         // Indices

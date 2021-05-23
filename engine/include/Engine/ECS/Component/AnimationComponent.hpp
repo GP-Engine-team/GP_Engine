@@ -44,7 +44,7 @@ namespace GPE RFKNamespace()
         //float alphaBlend  = 0.f;
 
     private:
-        void updateToSystem();
+        virtual void updateToSystem() noexcept override;
 
         void updateRenderFrame();
         void updateRenderFrameBoneFromParent(size_t boneIndex);
