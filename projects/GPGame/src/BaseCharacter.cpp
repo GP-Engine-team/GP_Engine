@@ -5,6 +5,7 @@ File_GENERATED
 
 #include <Engine/Core/Debug/assert.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <algorithm>
 #include <gpm/Vector3.hpp>
 #include <gpm/Vector4.hpp>
 
@@ -133,4 +134,19 @@ void BaseCharacter::sprintEnd()
 void BaseCharacter::fixedUpdate(double deltaTime)
 {
     controller->update(deltaTime);
+}
+
+void BaseCharacter::takeDamage(float damage)
+{
+    m_currentLife = std::min(0.f, m_currentLife - damage);
+}
+
+bool BaseCharacter::isDead()
+{
+    return m_currentLife <= std::numeric_limits<float>::epsilon();
+}
+
+void BaseCharacter::takeLife(float addedlife)
+{
+    m_currentLife = std::max(m_maxLife, m_currentLife + addedlife);
 }

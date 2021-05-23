@@ -18,7 +18,9 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BaseCharacter : public GPE::BehaviourComponent
     {
     protected:
-        RFKField(Serialize()) GPE::CharacterController* controller = nullptr;
+        RFKField(Serialize()) GPE::CharacterController* controller    = nullptr;
+        RFKField(Inspect(), Serialize()) float          m_maxLife     = 0.f;
+        RFKField(Inspect(), Serialize()) float          m_currentLife = 0.f;
 
     public:
         BaseCharacter(GPE::GameObject & owner);
@@ -54,6 +56,10 @@ namespace GPG RFKNamespace()
         RFKMethod() void right();
         RFKMethod() void sprintStart();
         RFKMethod() void sprintEnd();
+
+        RFKMethod() void takeDamage(float damage);
+        RFKMethod() bool isDead();
+        RFKMethod() void takeLife(float damage);
 
         BaseCharacter_GENERATED
     };

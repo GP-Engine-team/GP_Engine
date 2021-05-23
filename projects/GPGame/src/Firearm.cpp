@@ -4,6 +4,7 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
 
+#include <BaseCharacter.hpp>
 #include <PhysX/PxRigidActor.h>
 
 #include <gpm/DebugOutput.hpp>
@@ -73,6 +74,15 @@ File_GENERATED
                             (GPM::Vec3::right()
                                  .cross(GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal))
                                  .normalized()));
+                    }
+
+                    if (pOwner->getTag() == "Character")
+                    {
+                        BaseCharacter* const bc = pOwner->getComponent<BaseCharacter>();
+
+                        GAME_ASSERT(bc, "null");
+
+                        bc->takeDamage(m_magazineStored.bulletData.getDammage());
                     }
 
                     getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(

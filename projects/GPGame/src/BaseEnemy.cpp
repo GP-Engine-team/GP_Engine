@@ -35,7 +35,19 @@ void BaseEnemy::onPostLoad()
 
 void BaseEnemy::update(double deltaTime)
 {
-    const Vec3 targetPos = m_target->getTransform().getGlobalPosition();
+    if (isDead())
+    {
+        m_animDeapthCounter += deltaTime;
 
-    moveAndRotateToward(targetPos, deltaTime);
+        if (m_animDeapthCounter >= m_animDeapthCounterMax)
+        {
+            getOwner().destroy();
+        }
+    }
+    else
+    {
+        const Vec3 targetPos = m_target->getTransform().getGlobalPosition();
+
+        moveAndRotateToward(targetPos, deltaTime);
+    }
 }
