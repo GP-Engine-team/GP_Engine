@@ -10,7 +10,6 @@
 
 #include <PhysX/PxRigidActor.h>
 
-//#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
@@ -148,8 +147,8 @@ void displayLifeBar(float currentLife, float lifeMax, const ImVec2& size_arg)
     ImGuiContext&     g     = *GImGui;
     const ImGuiStyle& style = g.Style;
 
-    static float r = style.FrameBorderSize;
-    DragFloat("Test", &r, 0.1);
+    // static float r = style.FrameBorderSize;
+    // DragFloat("Test", &r, 0.1);
 
     ImVec2 pos  = window->DC.CursorPos;
     ImVec2 size = CalcItemSize(size_arg, CalcItemWidth(), g.FontSize + style.FramePadding.y * 2.0f);

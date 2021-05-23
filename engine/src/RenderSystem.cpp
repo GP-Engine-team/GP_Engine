@@ -83,14 +83,22 @@ void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float 
 
 RenderSystem::RenderSystem() noexcept
 {
-    Shader& defaultShader = Engine::getInstance()->resourceManager.add<Shader>(
-        "Default", "./resources/shaders/vTextureWithLightAndShadowAndNM.vs",
+    Shader* shader = &Engine::getInstance()->resourceManager.add<Shader>(
+        "DefaultWithNormalMap", "./resources/shaders/vTextureWithLightAndShadowAndNM.vs",
         "./resources/shaders/fTextureWithLightAndShadowAndNM.fs", LIGHT_BLIN_PHONG);
 
-    defaultShader.use();
-    defaultShader.setInt("ourTexture", 0);
-    defaultShader.setInt("shadowMap", 1);
-    defaultShader.setInt("normalMap", 2);
+    shader->use();
+    shader->setInt("ourTexture", 0);
+    shader->setInt("shadowMap", 1);
+    shader->setInt("normalMap", 2);
+
+    shader = &Engine::getInstance()->resourceManager.add<Shader>(
+        "Default", "./resources/shaders/vTextureWithLightAndShadow.vs",
+        "./resources/shaders/fTextureWithLightAndShadow.fs", LIGHT_BLIN_PHONG);
+
+    shader->use();
+    shader->setInt("ourTexture", 0);
+    shader->setInt("shadowMap", 1);
 
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
@@ -98,11 +106,11 @@ RenderSystem::RenderSystem() noexcept
     Engine::getInstance()->resourceManager.add<Shader>("ColorMesh", "./resources/shaders/vColorMesh.vs",
                                                        "./resources/shaders/fColorMesh.fs");
 
-    Shader& shader = Engine::getInstance()->resourceManager.add<Shader>(
-        "DepthOnly", "./resources/shaders/vDepthOnly.vs", "./resources/shaders/fDepthOnly.fs",
-        PROJECTION_VIEW_MODEL_MATRIX);
-    shader.use();
-    shader.setInt("depthMap", 0);
+    shader = &Engine::getInstance()->resourceManager.add<Shader>("DepthOnly", "./resources/shaders/vDepthOnly.vs",
+                                                                 "./resources/shaders/fDepthOnly.fs",
+                                                                 PROJECTION_VIEW_MODEL_MATRIX);
+    shader->use();
+    shader->setInt("depthMap", 0);
 
     m_sphereMesh = &Engine::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
     m_cubeMesh   = &Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
@@ -868,7 +876,8 @@ void RenderSystem::addSubModel(SubModel& subModel) noexcept
     if (subModel.pMaterial->isOpaque())
     {
         m_pOpaqueSubModels.insert(std::upper_bound(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), &subModel,
-                                                   isSubModelHasPriorityOverAnother), &subModel);
+                                                   isSubModelHasPriorityOverAnother),
+                                  &subModel);
     }
     else
     {

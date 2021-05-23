@@ -399,8 +399,12 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
 
         writeMeshFile(dstMeshPath.string().c_str(), arg);
 
+        // DefaultNormalMap
+        const char* idShader =
+            matList[pMesh->mMaterialIndex]->getNormalMapTexture() ? "DefaultWithNormalMap" : "Default";
+
         prefModel.addSubModel(SubModel::CreateArg{
-            Engine::getInstance()->resourceManager.get<Shader>("Default"), matList[pMesh->mMaterialIndex],
+            Engine::getInstance()->resourceManager.get<Shader>(idShader), matList[pMesh->mMaterialIndex],
             &Engine::getInstance()->resourceManager.add<Mesh>(dstMeshPath.string().c_str(), arg)});
     }
 

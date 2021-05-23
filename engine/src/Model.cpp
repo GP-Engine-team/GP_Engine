@@ -22,7 +22,7 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
@@ -96,86 +96,6 @@ void renderResourceExplorer(const char* name, T*& inRes)
             ;
 
         inRes = &it->second;
-    }
-}
-
-template <>
-void GPE::save(XmlSaver& context, const SubModel& inspected, const XmlSaver::SaveInfo& info)
-{
-    context.push(info);
-
-    GPE::save(context, inspected.pModel, XmlSaver::SaveInfo{"pModel", "Model*", 0});
-
-    //if (inspected.pShader != nullptr)
-    //{
-        GPE::save(context, inspected.pShader, info);
-        //if (const std::string* shaderName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pShader))
-        //{
-        //    GPE::save(context, *shaderName, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
-        //}
-    //}
-
-    if (inspected.pMaterial != nullptr)
-    {
-        if (const std::string* matName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pMaterial))
-        {
-            GPE::save(context, *matName, XmlSaver::SaveInfo{"pMaterial", "Material*", 0});
-        }
-    }
-
-    if (inspected.pMesh != nullptr)
-    {
-        if (const std::string* meshName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pMesh))
-        {
-            GPE::save(context, *meshName, XmlSaver::SaveInfo{"pMesh", "Mesh*", 0});
-        }
-    }
-
-    GPE::save(context, inspected.enableBackFaceCulling, XmlSaver::SaveInfo{"enableBackFaceCulling", "bool", 0});
-    GPE::save(context, inspected.castShadow, XmlSaver::SaveInfo{"castShadow", "bool", 0});
-
-    context.pop();
-}
-
-template <>
-void GPE::load(XmlLoader& context, SubModel& inspected, const XmlLoader::LoadInfo& info)
-{
-    if (context.goToSubChild(info))
-    {
-        GPE::load(context, inspected.pModel, XmlLoader::LoadInfo{"pModel", "Model*", 0});
-
-        {
-            GPE::load(context, inspected.pShader, info);
-            //std::string shaderName;
-            //GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
-            //if (!(inspected.pShader = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
-            //{
-            //    inspected.pShader = loadShaderFile(shaderName.c_str());
-            //}
-        }
-
-        {
-            std::string matName;
-            GPE::load(context, matName, XmlLoader::LoadInfo{"pMaterial", "Material*", 0});
-            if (!(inspected.pMaterial = Engine::getInstance()->resourceManager.get<GPE::Material>(matName)))
-            {
-                inspected.pMaterial = loadMaterialFile(matName.c_str());
-            }
-        }
-
-        {
-            std::string meshName;
-            GPE::load(context, meshName, XmlLoader::LoadInfo{"pMesh", "Mesh*", 0});
-            if (!(inspected.pMesh = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName)))
-            {
-                inspected.pMesh = loadMeshFile(meshName.c_str());
-            }
-        }
-
-        GPE::load(context, inspected.enableBackFaceCulling, XmlLoader::LoadInfo{"enableBackFaceCulling", "bool", 0});
-        GPE::load(context, inspected.castShadow, XmlLoader::LoadInfo{"castShadow", "bool", 0});
-
-        context.pop();
     }
 }
 
