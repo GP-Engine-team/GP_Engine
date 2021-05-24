@@ -50,6 +50,7 @@ EditorStartup::EditorStartup()
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
           m_engine->inputManager.processInput();
           m_editor.update(*this);
+          m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
       }},
@@ -123,6 +124,7 @@ void EditorStartup::openGame()
     auto loadFirstSceneFunct = GET_PROCESS(m_reloadableCpp, loadFirstScene);
     loadFirstSceneFunct();
     m_editor.setSceneInEdition(loadFirstSceneFunct());
+    m_editor.m_saveFolder = Engine::getInstance()->sceneManager.firstLoadedScene.string();
 
     if (gameWasInstanciated)
     {
@@ -186,6 +188,7 @@ void EditorStartup::playGame()
             m_engine->inputManager.processInput();
 
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
+            m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
 
@@ -209,7 +212,7 @@ void EditorStartup::pauseGame()
         if (m_game->state == EGameState::PAUSED)
         {
             m_engine->inputManager.processInput();
-
+            m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
 
             m_editor.update(*this);
@@ -233,6 +236,7 @@ void EditorStartup::stopGame()
         {
             m_engine->inputManager.processInput();
             m_editor.update(*this);
+            m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
 
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();

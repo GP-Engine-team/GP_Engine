@@ -136,6 +136,7 @@ public:
      * @return
      */
     void update(double dt) noexcept;
+    void updateDebug(double dt) noexcept;
 
     void drawDebugSphere(const GPM::Vec3& position, float radius,
                          const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, float duration = 0.f,

@@ -12,6 +12,7 @@ Scene& SceneManager::loadFirstScene()
         std::string name  = firstLoadedScene.stem().string();
         Scene&      scene = m_scenes[name];
         scene.m_name      = name;
+        m_pCurrentScene   = &scene;
 
         loadSceneFromPathImp(&scene, firstLoadedScene.string().c_str());
         Log::getInstance()->log("First scene load with path" + firstLoadedScene.string());

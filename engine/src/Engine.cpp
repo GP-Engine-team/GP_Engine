@@ -23,11 +23,13 @@ void Engine::importConfig()
     buffer.assign(sizeRemainig, '\0');
     fread(buffer.data(), sizeof(char), sizeRemainig, pFile); // string buffer
 
+    rapidxml::xml_document<> doc;
     doc.parse<0>(buffer.data());
 
     XmlLoader   context(doc);
     std::string firstLoadedSceneStr;
     GPE::load(context, firstLoadedSceneStr, XmlLoader::LoadInfo{"firstLoadedScene", "String", 0});
+    std::string str               = docToString(doc);
     sceneManager.firstLoadedScene = firstLoadedSceneStr;
     fclose(pFile);
 }
@@ -41,8 +43,10 @@ void Engine::exportConfig()
         return;
     }
 
-    XmlSaver context(doc);
-    GPE::save(context, sceneManager.firstLoadedScene.string(), XmlSaver::SaveInfo{"firstLoadedScene", "String", 0});
+    rapidxml::xml_document<> doc;
+    XmlSaver                 context(doc);
+    std::string              firstLoadedSceneStr = sceneManager.firstLoadedScene.string();
+    GPE::save(context, firstLoadedSceneStr, XmlSaver::SaveInfo{"firstLoadedScene", "String", 0});
     std::string str = docToString(doc);
     fwrite(str.data(), str.size(), 1, pFile); // header
     fclose(pFile);

@@ -134,8 +134,6 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
 
     // Update the Camera component and cameraOwner scene and parent
     camera.setActive(true);
-    pScene->sceneRenderer.setMainCamera(&camera);
-
     freeFly.setActive(false);
     inputs.setActive(m_capturingInputs);
 }

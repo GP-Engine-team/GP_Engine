@@ -738,14 +738,8 @@ void RenderSystem::render(RenderPipeline renderPipeline) noexcept
                    m_pParticleComponents, m_debugShape, m_debugLine, m_shadowMaps, *m_activeCamera);
 }
 
-void RenderSystem::update(double dt) noexcept
+void RenderSystem::updateDebug(double dt) noexcept
 {
-    // Update particle
-    for (auto&& particle : m_pParticleComponents)
-    {
-        particle->update(dt);
-    }
-
     // Update debug shape life time
     for (auto&& it = m_debugShape.begin(); it != m_debugShape.end();)
     {
@@ -753,6 +747,15 @@ void RenderSystem::update(double dt) noexcept
             it = m_debugShape.erase(it);
         else
             ++it;
+    }
+}
+
+void RenderSystem::update(double dt) noexcept
+{
+    // Update particle
+    for (auto&& particle : m_pParticleComponents)
+    {
+        particle->update(dt);
     }
 }
 
@@ -920,6 +923,7 @@ void RenderSystem::removeSubModel(SubModel& subModel) noexcept
 void RenderSystem::addCamera(Camera& camera) noexcept
 {
     m_pCameras.push_back(&camera);
+    m_mainCamera = &camera;
 }
 
 void RenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept

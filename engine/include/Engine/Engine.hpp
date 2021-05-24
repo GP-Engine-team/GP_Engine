@@ -29,7 +29,6 @@ protected:
     static Engine* m_instance;
 
     // Player pref and engine pref
-    rapidxml::xml_document<> doc;
     const std::string        configName = "EngineConfig.conf";
 
     void importConfig();

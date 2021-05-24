@@ -227,6 +227,9 @@ Game::Game()
         io.setCursorTrackingState(false);
     }
 
+    Mesh* planeMesh = &Engine::getInstance()->resourceManager.add<Mesh>(
+        "PlaneGround", Mesh::createQuad(1.f, 1.f, 100.f, 0, 0, Mesh::Axis::Y));
+
     //// =========== Scene ===========
     //// world is already initialized
 
