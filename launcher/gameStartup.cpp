@@ -72,7 +72,7 @@ GameStartup::GameStartup()
     m_engine->inputManager.setInputMode("Game");
 
     // ============= Scene =============
-    GPE::Engine::getInstance()->sceneManager.loadFirstScene();
+    loadFirstScene();
 
     m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = [](const char* msg) {
         GPE_ASSERT(false, msg)
