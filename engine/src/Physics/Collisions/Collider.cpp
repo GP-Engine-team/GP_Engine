@@ -12,7 +12,7 @@ using namespace physx;
 
 Collider::~Collider() noexcept
 {
-    //if (material && material->isReleasable())
+    // if (material && material->isReleasable())
     //{
     //    material->release();
     //}
@@ -35,5 +35,5 @@ void Collider::updateTransform() noexcept
     PxVec3 newPos = PhysXSystem::GPMVec3ToPxVec3(owner->getTransform().getGlobalPosition() + center);
     PxQuat newQuat =
         PhysXSystem::GPMQuatToPxQuat(owner->getTransform().getRotation() + GPM::Quat::fromEuler(localRotation));
-    shape->setLocalPose(PxTransform(newPos, newQuat));
+    // shape->setLocalPose(PxTransform(newPos, newQuat));
 }

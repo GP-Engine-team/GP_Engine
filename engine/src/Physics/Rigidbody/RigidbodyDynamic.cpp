@@ -41,9 +41,18 @@ void RigidbodyDynamic::onPostLoad() noexcept
 
     rigidbody->userData = &getOwner();
 
-    setType(type);
+    if (!collider)
+    {
+        setType(type);
+    }
+    else
+    {
+        rigidbody->attachShape(*collider->shape);
+    }
 
-    updateToSystem();
+    collider->updateTransform();
+
+    Component::onPostLoad();
 }
 
 void RigidbodyDynamic::update() noexcept
@@ -86,15 +95,5 @@ void RigidbodyDynamic::updateShape(physx::PxShape& oldShape)
 
 RigidbodyDynamic::~RigidbodyDynamic() noexcept
 {
-    if (collider && collider->shape)
-    {
-        rigidbody->detachShape(*collider->shape);
-    }
-
     setActive(false);
-
-    if (rigidbody != nullptr && rigidbody->isReleasable())
-    {
-        rigidbody->release();
-    }
 }

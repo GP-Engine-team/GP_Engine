@@ -1,4 +1,4 @@
-#include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
+﻿#include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
@@ -39,10 +39,12 @@ CharacterController::CharacterController() noexcept
 
     desc.height   = 1;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3{0,0,0});
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3{0, 0, 0});
     desc.radius   = 1;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
+
+    // updateToSystem();
 }
 
 void CharacterController::onPostLoad() noexcept

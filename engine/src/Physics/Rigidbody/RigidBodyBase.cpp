@@ -11,17 +11,19 @@ File_GENERATED
 
 void RigidBodyBase::setType(EShapeType& newType)
 {
-    if (collider && newType == type)
-        return;
-
-    type = newType;
-
     physx::PxShape* oldShape = nullptr;
 
     if (collider && collider->shape)
     {
+        if (newType == type)
+        {
+            return;
+        }
+
         oldShape = collider->shape;
     }
+
+    type = newType;
 
     switch (newType)
     {

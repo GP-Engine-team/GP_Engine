@@ -29,8 +29,6 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner),
 void RigidbodyStatic::onPostLoad() noexcept
 {
     owner = &getOwner();
-    collider->onPostLoad();
-
 
     rigidbody = PxGetPhysics().createRigidStatic(
         PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
@@ -38,7 +36,16 @@ void RigidbodyStatic::onPostLoad() noexcept
 
     rigidbody->userData = &getOwner();
 
-    setType(type);
+    if (!collider)
+    {
+        setType(type);
+    }
+    else
+    {
+        rigidbody->attachShape(*collider->shape);
+    }
+
+    collider->updateTransform();
 
     Component::onPostLoad();
 }
@@ -67,15 +74,5 @@ void RigidbodyStatic::updateShape(physx::PxShape& oldShape)
 
 RigidbodyStatic::~RigidbodyStatic() noexcept
 {
-    if (collider && collider->shape)
-    {
-        rigidbody->detachShape(*collider->shape);
-    }
-
     setActive(false);
-
-    if (rigidbody != nullptr && rigidbody->isReleasable())
-    {
-        rigidbody->release();
-    }
 }
