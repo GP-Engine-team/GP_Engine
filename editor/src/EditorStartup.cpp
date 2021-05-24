@@ -124,7 +124,7 @@ void EditorStartup::openGame()
     auto loadFirstSceneFunct = GET_PROCESS(m_reloadableCpp, loadFirstScene);
     loadFirstSceneFunct();
     m_editor.setSceneInEdition(loadFirstSceneFunct());
-    m_editor.m_saveFolder = Engine::getInstance()->sceneManager.firstLoadedScene.string();
+    m_editor.m_saveFolder = Engine::getInstance()->sceneManager.firstLoadedScene.parent_path().string();
 
     if (gameWasInstanciated)
     {

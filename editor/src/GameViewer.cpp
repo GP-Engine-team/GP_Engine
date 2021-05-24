@@ -67,14 +67,12 @@ void GameViewer::render(EditorStartup& startup)
 
         { // Set active camera
             RenderSystem& sceneRenderer = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
-            Camera*       mainCam       = sceneRenderer.getMainCamera();
 
-            sceneRenderer.setActiveCamera(mainCam);
-            mainCam = sceneRenderer.getMainCamera();
+            sceneRenderer.setDefaultMainCamera();
+            Camera* mainCam = sceneRenderer.getMainCamera();
             mainCam->setAspect(size.x / size.y);
-        
 
-         // Update game viewport
+            // Update game viewport
             const ImVec2       winPos{ImGui::GetWindowPos()};
             const ImGuiWindow* win{ImGui::GetCurrentWindow()};
             startup.game().setViewport(winPos.x + win->Viewport->CurrWorkOffsetMin.x,

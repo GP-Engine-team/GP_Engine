@@ -273,7 +273,7 @@ void RenderSystem::tryToBindShader(Shader& shader)
     m_currentShaderID   = shader.getID();
     m_currentPShaderUse = &shader;
 
-    sendDataToInitShader(*m_activeCamera, shader);
+    sendDataToInitShader(*m_mainCamera, shader);
 }
 
 void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
@@ -347,30 +347,11 @@ void RenderSystem::setDefaultMainCamera() noexcept
 void RenderSystem::setMainCamera(Camera* newMainCamera) noexcept
 {
     m_mainCamera = newMainCamera;
-
-    if (!m_mainCamera && m_activeCamera)
-        m_mainCamera = m_activeCamera;
 }
 
 Camera* RenderSystem::getMainCamera() noexcept
 {
     return m_mainCamera;
-}
-
-void RenderSystem::setActiveCamera(Camera* newActiveCamera) noexcept
-{
-    if (!m_activeCamera || newActiveCamera)
-    {
-        m_activeCamera = newActiveCamera;
-
-        if (!m_mainCamera)
-            m_mainCamera = m_activeCamera;
-    }
-}
-
-Camera* RenderSystem::getActiveCamera() noexcept
-{
-    return m_activeCamera;
 }
 
 void RenderSystem::resetCurrentRenderPassKey()
@@ -728,14 +709,14 @@ void RenderSystem::shadowMapPipeline() noexcept
 
 void RenderSystem::render(RenderPipeline renderPipeline) noexcept
 {
-    if (m_activeCamera == nullptr)
+    if (m_mainCamera == nullptr)
     {
         GPE_ASSERT(!m_pCameras.empty(), "Empty main camera");
-        m_activeCamera = m_mainCamera ? m_mainCamera : m_pCameras[0];
+        m_mainCamera = m_mainCamera ? m_mainCamera : m_pCameras[0];
     }
 
     renderPipeline(*this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_pParticleComponents, m_debugShape, m_debugLine, m_shadowMaps, *m_activeCamera);
+                   m_pParticleComponents, m_debugShape, m_debugLine, m_shadowMaps, *m_mainCamera);
 }
 
 void RenderSystem::updateDebug(double dt) noexcept
@@ -923,7 +904,6 @@ void RenderSystem::removeSubModel(SubModel& subModel) noexcept
 void RenderSystem::addCamera(Camera& camera) noexcept
 {
     m_pCameras.push_back(&camera);
-    m_mainCamera = &camera;
 }
 
 void RenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept

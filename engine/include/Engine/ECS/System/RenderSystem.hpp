@@ -76,8 +76,7 @@ protected:
     std::vector<DebugLine>          m_debugLine;
     std::vector<ShadowMap>          m_shadowMaps;
     unsigned int                    m_w = 0, m_h = 0;
-    Camera*                         m_mainCamera   = nullptr;
-    Camera*                         m_activeCamera = nullptr;
+    Camera*                         m_mainCamera = nullptr;
 
     unsigned int m_currentShaderID                  = 0u;
     unsigned int m_currentTextureID                 = 0u;
@@ -107,9 +106,6 @@ public:
     void    setDefaultMainCamera() noexcept;
     void    setMainCamera(Camera* newMainCamera) noexcept;
     Camera* getMainCamera() noexcept;
-
-    void    setActiveCamera(Camera* newMainCamera) noexcept;
-    Camera* getActiveCamera() noexcept;
 
     void resetCurrentRenderPassKey();
 

@@ -154,7 +154,7 @@ SceneViewer::~SceneViewer()
 unsigned int SceneViewer::getHoveredGameObjectID() const
 {
     // Set active view
-    pScene->sceneRenderer.setActiveCamera(&camera);
+    pScene->sceneRenderer.setMainCamera(&camera);
 
     { // Select the shader
         Shader& shaderGameObjectIdentifier =
@@ -236,7 +236,7 @@ void SceneViewer::bindScene(Scene& scene)
     inputs.setActive(true);
     freeFly.setActive(true);
     camera.setActive(true);
-    scene.sceneRenderer.setActiveCamera(&camera);
+    scene.sceneRenderer.setMainCamera(&camera);
     pScene = &scene;
 }
 
@@ -282,7 +282,7 @@ void SceneViewer::update()
 
 void SceneViewer::render() const
 {
-    pScene->sceneRenderer.setActiveCamera(&camera);
+    pScene->sceneRenderer.setMainCamera(&camera);
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
