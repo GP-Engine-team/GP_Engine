@@ -6,9 +6,13 @@
 
 #pragma once
 
+#include <filesystem>
 #include <functional>
 #include <string>
 #include <unordered_map>
+
+#include <Engine/Serialization/xml/xmlLoader.hpp>
+#include <Engine/Serialization/xml/xmlSaver.hpp>
 
 #include "Engine/Resources/Scene.hpp"
 
@@ -38,6 +42,9 @@ protected:
 public:
     std::function<void(void)> OnSceneChange;
 
+    // This scene will be load in first if possible
+    std::filesystem::path firstLoadedScene;
+
 public:
     SceneManager() noexcept = default;
 
@@ -57,6 +64,11 @@ public:
     }
 
     Scene& setCurrentScene(const std::string& sceneName);
+
+    /**
+     * @brief Load the first sc3ene register by the user
+     */
+    Scene& loadFirstScene();
 
     // Scene& loadScene(const std::string&    sceneName,
     //                 ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,

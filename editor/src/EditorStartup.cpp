@@ -82,6 +82,7 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, destroyComponent);
     ADD_PROCESS(m_reloadableCpp, loadPrefabFromPath);
     ADD_PROCESS(m_reloadableCpp, clonePrefab);
+    ADD_PROCESS(m_reloadableCpp, loadFirstScene);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
@@ -119,7 +120,9 @@ void EditorStartup::openGame()
     auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
     m_game = a();
 
-    m_editor.setSceneInEdition(*m_engine->sceneManager.getCurrentScene());
+    auto loadFirstSceneFunct = GET_PROCESS(m_reloadableCpp, loadFirstScene);
+    loadFirstSceneFunct();
+    m_editor.setSceneInEdition(loadFirstSceneFunct());
 
     if (gameWasInstanciated)
     {

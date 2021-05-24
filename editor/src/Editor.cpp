@@ -101,6 +101,14 @@ void Editor::renderMenuBar()
                 saveScene(m_sceneEditor.view.pScene, path.string().c_str());
             }
 
+            if (ImGui::MenuItem((std::string("Select first scene : ") +
+                                 Engine::getInstance()->sceneManager.firstLoadedScene.string())
+                                    .c_str()))
+            {
+                Engine::getInstance()->sceneManager.firstLoadedScene =
+                    openFileExplorerAndGetRelativePath(L"Select Scene", {{L"Scene", L"*.GPScene"}}).string().c_str();
+            }
+
             ImGui::EndMenu();
         }
 

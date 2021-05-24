@@ -88,8 +88,7 @@ void SceneEditor::render(GPE::IInspectable*& inspectedObject)
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
-    const std::string windowName = "Scene editor (" + view.pScene->getName() + ')';
-    if (ImGui::Begin(windowName.c_str()))
+    if (ImGui::Begin("Scene editor"))
     {
         const ImVec2 size{ImGui::GetContentRegionAvail()};
 

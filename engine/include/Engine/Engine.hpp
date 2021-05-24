@@ -28,26 +28,30 @@ class Engine
 protected:
     static Engine* m_instance;
 
+    // Player pref and engine pref
+    rapidxml::xml_document<> doc;
+    const std::string        configName = "EngineConfig.conf";
+
+    void importConfig();
+    void exportConfig();
+
 public:
-    Window              window;
-    Renderer            renderer;
-    TimeSystem          timeSystem;
-    InputManager        inputManager;
-    ResourceManagerType resourceManager;
-    SceneManager        sceneManager;
-    PhysXSystem         physXSystem;    
-    SoundSystem         soundSystem;
+    Window                window;
+    Renderer              renderer;
+    TimeSystem            timeSystem;
+    InputManager          inputManager;
+    ResourceManagerType   resourceManager;
+    SceneManager          sceneManager;
+    PhysXSystem           physXSystem;
+    SoundSystem           soundSystem;
     std::function<void()> exit;
 
 protected:
     Engine()
         : window{Window::CreateArg{"Window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          resourceManager{}, sceneManager{}, physXSystem{}, soundSystem{},
-          exit{[&]()
-          {
-              window.close();
-          }}
+          resourceManager{}, sceneManager{}, physXSystem{}, soundSystem{}, exit{[&]() { window.close(); }}
     {
+        importConfig();
     }
 
 public:
@@ -55,6 +59,11 @@ public:
      * Singletons should not be cloneable.
      */
     Engine(Engine& other) = delete;
+
+    ~Engine()
+    {
+        exportConfig();
+    }
 
     /**
      * Singletons should not be assignable.

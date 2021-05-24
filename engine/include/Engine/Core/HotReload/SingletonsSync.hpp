@@ -9,9 +9,9 @@
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Importer/Importer.hpp"
+#include "Engine/Resources/Prefab.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
-#include "Engine/Resources/Prefab.hpp"
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -63,7 +63,11 @@ extern "C"
     {
         return prefab.clone(parent);
     }
-    
+
+    ENGINE_API inline GPE::Scene& loadFirstScene()
+    {
+        return GPE::Engine::getInstance()->sceneManager.loadFirstScene();
+    }
 
     ENGINE_API inline GPE::GameObject* loadPrefabFromPath(GPE::GameObject& parent, const char* path)
     {

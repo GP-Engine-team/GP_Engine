@@ -1,8 +1,28 @@
 #include "Engine/Resources/SceneManager.hpp"
 
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Resources/Importer/Importer.hpp>
 
 using namespace GPE;
+
+Scene& SceneManager::loadFirstScene()
+{
+    if (std::filesystem::exists(firstLoadedScene))
+    {
+        std::string name  = firstLoadedScene.stem().string();
+        Scene&      scene = m_scenes[name];
+        scene.m_name      = name;
+
+        loadSceneFromPathImp(&scene, firstLoadedScene.string().c_str());
+        Log::getInstance()->log("First scene load with path" + firstLoadedScene.string());
+        return scene;
+    }
+    else
+    {
+        Log::getInstance()->logWarning("First scene not set. Use default scene instead.");
+        return setCurrentScene("Default");
+    }
+}
 
 Scene& SceneManager::setCurrentScene(const std::string& sceneName)
 {
