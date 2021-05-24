@@ -15,8 +15,13 @@ Light::Light(GameObject& owner, const CreateArg& arg)
 
 Light::~Light()
 {
-    if (getOwner().pOwnerScene)
+    if (getOwner().pOwnerScene && m_isActivated)
+    {
+        if (m_shadowProperties.isEnable)
+            getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);
+
         getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
+    }
 }
 
 const AmbiantComponent& Light::getAmbient() const noexcept

@@ -30,9 +30,6 @@ namespace GPE RFKNamespace()
     template <>
     void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
 
-    void save(XmlSaver & context, class GameObject & inspected);
-    void load(XmlLoader & context, class GameObject & sinspected);
-
     class Scene;
 
     class RFKClass(Serialize(false)) GameObject : public IInspectable
@@ -47,29 +44,29 @@ namespace GPE RFKNamespace()
             GameObject*                   parent = nullptr;
         };
 
-        // TODO: remove this variable for dataChunk localtion when data chunk will be rework
-        static unsigned int m_currentID;
-
     protected:
         RFKField(Inspect(), Serialize()) std::string m_name;
         RFKField(Serialize()) TransformComponent*    m_pTransform;
         RFKField(Serialize()) std::list<Component*>  m_pComponents;
         RFKField(Inspect(), Serialize()) std::string m_tag{"GameObject"};
         RFKField(Serialize()) GameObject*            m_parent = nullptr;
-        RFKField(Serialize()) unsigned int           m_id;
+        RFKField() unsigned int                      m_id;
         RFKField(Serialize()) bool                   m_isDead{
             false}; // Flag that inform it parent that this transform must be destroy on update loop
         RFKField(Serialize()) bool m_isActive = true;
+
+        //ID counter
+        static unsigned int m_currentID;
 
     public:
         RFKField(Serialize()) Scene*                 pOwnerScene = nullptr;
         RFKField(Serialize()) std::list<GameObject*> children    = {};
 
     public:
-        inline GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
+        GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
         ~GameObject() noexcept;
 
-        GameObject()                        = default;
+        GameObject();
         GameObject(const GameObject& other) = delete;            // TODO: when transform is available
         GameObject& operator=(GameObject const& other) = delete; // TODO
 

@@ -5,9 +5,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\FireArme">
-      <UniqueIdentifier>{773ccffb-4009-4208-b9a9-f3024c3120c2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -16,24 +13,15 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Header Files\FireArme">
+      <UniqueIdentifier>{773ccffb-4009-4208-b9a9-f3024c3120c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Firearm\Bullet.hpp">
-      <Filter>Header Files\FireArme</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Firearm\Firearm.hpp">
-      <Filter>Header Files\FireArme</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Firearm\GunMagazine.hpp">
-      <Filter>Header Files\FireArme</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Firearm\PPSH41.hpp">
-      <Filter>Header Files\FireArme</Filter>
-    </ClInclude>
     <ClInclude Include="include\game.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\myFpsScript.hpp">
+    <ClInclude Include="include\BasePlayer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\myFreeFlyScript.hpp">
@@ -48,33 +36,69 @@
     <ClInclude Include="include\WorldGenerator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Firearm\Bullet.hpp">
+      <Filter>Header Files\FireArme</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Firearm\Firearm.hpp">
+      <Filter>Header Files\FireArme</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Firearm\GunMagazine.hpp">
+      <Filter>Header Files\FireArme</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Firearm\PPSH41.hpp">
+      <Filter>Header Files\FireArme</Filter>
+    </ClInclude>
     <ClInclude Include="ShadowMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Sun.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CircularEntitiesSpawner.hpp">
+      <Filter>Header Files\FireArme</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BaseCharacter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BaseEnemy.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Bullet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Firearm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GunMagazine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\myFpsScript.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\myScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BasePlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bullet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GunMagazine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\PPSH41.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\WorldGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Firearm.cpp">
+      <Filter>Header Files\FireArme</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CircularEntitiesSpawner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaseCharacter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaseEnemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

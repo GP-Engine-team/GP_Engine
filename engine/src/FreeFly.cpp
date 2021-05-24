@@ -12,20 +12,17 @@
 #include <Generated/FreeFly.rfk.h>
 File_GENERATED
 
-namespace GPE
+using namespace GPE;
+
+FreeFly::FreeFly(GameObject & owner) noexcept
+    : BehaviourComponent(owner), timeSys{Engine::getInstance()->timeSystem}
 {
-
-FreeFly::FreeFly(GameObject& owner) noexcept
-    : BehaviourComponent(owner),
-      timeSys{Engine::getInstance()->timeSystem}
-{}
-
+}
 
 FreeFly::~FreeFly() noexcept
 {
     DataChunk<FreeFly>::getInstance()->destroy(this);
 }
-
 
 void FreeFly::update(double deltaTime)
 {
@@ -37,19 +34,16 @@ void FreeFly::update(double deltaTime)
     }
 }
 
-
 // TODO: the rotation should depend on deltaTime
 void FreeFly::rotate(const GPM::Vector2& deltaDisplacement)
 {
     using namespace GPM;
 
     const Quat& orientation{getOwner().getTransform().getSpacialAttribut().rotation};
-    const Vec2  axis       {deltaDisplacement.rotated90()};
-    const Quat  rotX       {Quat::angleAxis(axis.x * m_rotationSpeed, Vec3::right())};
-    const Quat  rotY       {Quat::angleAxis(axis.y * m_rotationSpeed, Vec3::up())};
-    const Quat  newRot     {rotY * orientation * rotX};
+    const Vec2  axis{deltaDisplacement.rotated90()};
+    const Quat  rotX{Quat::angleAxis(axis.x * m_rotationSpeed, Vec3::right())};
+    const Quat  rotY{Quat::angleAxis(axis.y * m_rotationSpeed, Vec3::up())};
+    const Quat  newRot{rotY * orientation * rotX};
 
     getOwner().getTransform().setRotation(newRot);
 }
-
-} // namespace GPE

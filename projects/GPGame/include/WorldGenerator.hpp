@@ -21,7 +21,7 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) WorldGenerator : public GPE::BehaviourComponent
     {
     private:
-        RFKField(Inspect(), Serialize()) GPE::Prefab      m_treePrefab;
+        RFKField(Inspect()) GPE::Prefab*                  m_treePrefab    = nullptr;
         RFKField(Inspect(), Serialize()) GPE::GameObject* m_treeContainer = nullptr;
 
     public:
@@ -50,7 +50,7 @@ namespace GPG RFKNamespace()
         {
             if (ImGui::Button("Generate"))
             {
-                if (!m_treeContainer || m_treePrefab.isEmpty())
+                if (!m_treeContainer || !m_treePrefab)
                 {
                     GPE::Log::getInstance()->logError("Missing tree container GO or tree prefab");
                     return;
