@@ -39,12 +39,6 @@ BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept
     sourceSettings.loop  = AL_TRUE;
 
     source->setSound("Western", "Western", sourceSettings);
-
-    { // Cursor
-        GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
-        io.setCursorTrackingState(true);
-        io.setCursorLockState(true);
-    }
 }
 
 void BasePlayer::start()
@@ -70,6 +64,12 @@ void BasePlayer::start()
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
 
     source->playSound("Western", true);
+
+    { // Cursor
+        GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
+        io.setCursorTrackingState(true);
+        io.setCursorLockState(true);
+    }
 }
 
 void BasePlayer::onPostLoad()
@@ -209,6 +209,7 @@ void BasePlayer::onGUI()
         SetNextElementLayout(0.5f, 0.6f, size, EHAlign::Middle, EVAlign::Middle);
         if (ImGui::Button("Quitte", size))
         {
+            closeApplication();
         }
     }
     else
@@ -229,7 +230,7 @@ void BasePlayer::onGUI()
 
 void BasePlayer::update(double deltaTime)
 {
-    if (true)
+    if (false)
     {
         if (!displayDepthMenu)
         {
@@ -240,6 +241,8 @@ void BasePlayer::update(double deltaTime)
                 Engine::getInstance()->timeSystem.setTimeScale(0.0);
                 m_animDepthCounter = 0;
                 displayDepthMenu   = true;
+                Engine::getInstance()->inputManager.setCursorTrackingState(false);
+                Engine::getInstance()->inputManager.setCursorLockState(false);
             }
         }
     }

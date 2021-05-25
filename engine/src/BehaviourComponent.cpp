@@ -159,3 +159,8 @@ void BehaviourComponent::loadNewScene(const char* path)
 {
     Engine::getInstance()->sceneManager.defferedLoadNewScene(path);
 }
+
+void BehaviourComponent::closeApplication()
+{
+    Engine::getInstance()->isRunning = false;
+}

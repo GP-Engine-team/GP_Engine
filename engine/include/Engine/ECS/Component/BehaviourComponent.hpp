@@ -92,6 +92,8 @@ namespace GPE RFKNamespace()
         void reloadScene();
         void loadNewScene(const char* path);
 
+        void closeApplication();
+
         TransformComponent& transform();
 
         BehaviourComponent_GENERATED

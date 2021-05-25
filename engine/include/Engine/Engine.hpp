@@ -29,7 +29,7 @@ protected:
     static Engine* m_instance;
 
     // Player pref and engine pref
-    const std::string        configName = "EngineConfig.conf";
+    const std::string configName = "EngineConfig.conf";
 
     void importConfig();
     void exportConfig();
@@ -44,6 +44,7 @@ public:
     PhysXSystem           physXSystem;
     SoundSystem           soundSystem;
     std::function<void()> exit;
+    bool                  isRunning = true;
 
 protected:
     Engine()

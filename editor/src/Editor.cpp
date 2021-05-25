@@ -348,12 +348,11 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
 void Editor::setSceneInEdition(GPE::Scene& scene)
 {
     m_sceneEditor.view.bindScene(scene);
-    GPE::Engine::getInstance()->inputManager.setInputMode("Editor");
 }
 
 void Editor::releaseGameInputs()
 {
-    m_gameViewer.releaseInputs();
+    m_gameViewer.lockInputToEditor();
 }
 
 void Editor::update(EditorStartup& startup)

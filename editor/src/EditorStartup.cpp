@@ -170,6 +170,8 @@ void EditorStartup::playGame()
     };
     Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&EditorStartup::startScene, this);
 
+    m_editor.m_gameViewer.lockInputToGame();
+
     if (m_game->state == EGameState::STOPPED)
         m_editor.saveCurrentScene();
 
@@ -270,7 +272,14 @@ void EditorStartup::update()
     }
 
     m_engine->timeSystem.update(m_fixedUpdate, m_update, m_render);
-    isRunning = m_editor.isRunning();
+
+    // Check if user try to stop game in editor
+    if (!Engine::getInstance()->isRunning)
+    {
+        Engine::getInstance()->isRunning = true;
+        stopGame();
+    }
+    Engine::getInstance()->isRunning = m_editor.isRunning();
 }
 
 void EditorStartup::startScene()

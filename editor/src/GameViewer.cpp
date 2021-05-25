@@ -16,24 +16,40 @@ namespace Editor
 
 using namespace GPE;
 
-void GameViewer::releaseInputs()
-{
-    InputManager& io = Engine::getInstance()->inputManager;
-    io.setCursorLockState(false);
-    io.setCursorTrackingState(false);
-    io.restorePreviousInputMode();
-
-    m_captureInputs = false;
-}
-
 void GameViewer::captureInputs()
 {
     InputManager& io = Engine::getInstance()->inputManager;
-    io.setCursorLockState(true);
-    io.setCursorTrackingState(true);
-    io.setInputMode("Game");
+    io.setCursorLockState(cursorLockStateInGame);
+    io.setCursorTrackingState(cursorTrackingStateInGame);
 
+    // TODO : Clamp mouse in window
+
+    lockInputToGame();
+}
+
+void GameViewer::lockInputToGame()
+{
+    setMouseInWindow = true;
+    Engine::getInstance()->inputManager.setInputMode("Game");
     m_captureInputs = true;
+
+    // TODO : Clamp mouse in window
+}
+
+void GameViewer::lockInputToEditor()
+{
+    InputManager& io = Engine::getInstance()->inputManager;
+
+    // Memorise the previous state
+    cursorLockStateInGame     = io.getCursorLockState();
+    cursorTrackingStateInGame = io.getCursorTrackingState();
+
+    // Set the previous state
+    io.setCursorLockState(false);
+    io.setCursorTrackingState(false);
+    io.setInputMode("Editor");
+
+    m_captureInputs = false;
 }
 
 GameViewer::GameViewer(int width, int height)
@@ -60,10 +76,17 @@ void GameViewer::render(EditorStartup& startup)
         // which prevents the use of InputComponent::bindAction()
         else if (m_captureInputs && glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
-            releaseInputs();
+            lockInputToEditor();
         }
 
         const ImVec2 size{ImGui::GetContentRegionAvail()};
+
+        if (setMouseInWindow)
+        {
+            Engine::getInstance()->inputManager.setMousePos(
+                {ImGui::GetWindowPos().x + size.x / 2.f, ImGui::GetWindowPos().y + size.y / 2.f});
+            setMouseInWindow = false;
+        }
 
         { // Set active camera
             RenderSystem& sceneRenderer = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
