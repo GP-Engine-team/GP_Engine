@@ -502,4 +502,5 @@ resources/*
 !engine/include/Engine/Resources
 *.GPScene
 engine/resources/
-projects/GPGame/resources/
+projects/GPGame/resources/**/*.*
+!projects/GPGame/resources/**/*.GPScene
