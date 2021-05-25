@@ -194,10 +194,11 @@ void displayLifeBar(float currentLife, float lifeMax, const ImVec2& size_arg)
 void BasePlayer::onGUI()
 {
     using namespace ImGui;
+    const float ratio = ImGui::GetWindowSize().y / ImGui::GetWindowSize().x;
 
     if (displayDepthMenu)
     {
-        ImVec2 size = {GetWindowSize().x / 4.f, GetWindowSize().y / 6.f};
+        ImVec2 size = {GetWindowSize().x / 4.f * ratio, GetWindowSize().y / 6.f * ratio};
 
         SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
         if (ImGui::Button("Retry", size))
@@ -214,23 +215,19 @@ void BasePlayer::onGUI()
     }
     else
     {
-        const float ratio = ImGui::GetWindowSize().y / ImGui::GetWindowSize().x;
-
-        // ImGui::DragFloat("Ratio", &ratio, 0.01f, 0.f, 1.f);
-
         ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
 
-        SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Middle);
+        SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
         displayLifeBar(m_currentLife, m_maxLife, size);
 
-        SetNextElementLayout(0.f, 1.f, size, EHAlign::Middle, EVAlign::Middle);
+        SetNextElementLayout(0.f, 1.f, size, EHAlign::Left, EVAlign::Bottom);
         Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
     }
 }
 
 void BasePlayer::update(double deltaTime)
 {
-    if (false)
+    if (isDead())
     {
         if (!displayDepthMenu)
         {
