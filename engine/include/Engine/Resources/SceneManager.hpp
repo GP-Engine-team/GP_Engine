@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <functional>
 #include <string>
 #include <unordered_map>
 
@@ -33,6 +34,9 @@ private:
 protected:
     std::unordered_map<std::string, Scene> m_scenes        = {};
     Scene*                                 m_pCurrentScene = nullptr;
+
+public:
+    std::function<void(void)> OnSceneChange;
 
 public:
     SceneManager() noexcept = default;

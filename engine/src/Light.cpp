@@ -18,9 +18,9 @@ void Light::inspect(InspectContext& context)
     DataInspector::inspect(context, m_diffuseComp, "DiffuseComp");
     DataInspector::inspect(context, m_specularComp, "SpecularComp");
 
-    if (ImGui::Checkbox("##isShadowEnable", &m_shadowProterties.isEnable))
+    if (ImGui::Checkbox("##isShadowEnable", &m_shadowProperties.isEnable))
     {
-        if (m_shadowProterties.isEnable)
+        if (m_shadowProperties.isEnable)
         {
             getOwner().pOwnerScene->sceneRenderer.addShadowMap(*this);
         }
@@ -31,10 +31,10 @@ void Light::inspect(InspectContext& context)
         }
     }
     ImGui::SameLine();
-    ImGui::PushEnabled(m_shadowProterties.isEnable);
+    ImGui::PushEnabled(m_shadowProperties.isEnable);
     if (ImGui::CollapsingHeader("Shadow"))
     {
-        if (DataInspector::inspect(context, m_shadowProterties.shadowMapSampleScale, "SampleScale"))
+        if (DataInspector::inspect(context, m_shadowProperties.shadowMapSampleScale, "SampleScale"))
         {
             // Remove previouse
             getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);
@@ -42,40 +42,41 @@ void Light::inspect(InspectContext& context)
             // Re create it with new size
             getOwner().pOwnerScene->sceneRenderer.addShadowMap(*this);
         }
-        DataInspector::inspect(context, m_shadowProterties.PCF, "PCF");
-        DataInspector::inspect(context, m_shadowProterties.bias, "Bias");
-        DataInspector::inspect(context, m_shadowProterties.size, "Size");
+        DataInspector::inspect(context, m_shadowProperties.PCF, "PCF");
+        // DataInspector::inspect(context, m_shadowProperties.bias, "Bias");
+        DataInspector::inspect(context, m_shadowProperties.size, "Size");
     }
     ImGui::PopEnabled();
 }
 
 void Light::setShadowActive(bool newState) noexcept
 {
-    if (m_shadowProterties.isEnable == newState)
+    if (m_shadowProperties.isEnable == newState)
         return;
 
-    m_shadowProterties.isEnable = newState;
-    if (m_isActivated)
+    m_shadowProperties.isEnable = newState;
+    if (m_shadowProperties.isEnable)
         getOwner().pOwnerScene->sceneRenderer.addShadowMap(*this);
     else
         getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);
 }
 
-void Light::onPostLoad()
+void Light::updateToSystem() noexcept
 {
-    getOwner().pOwnerScene->sceneRenderer.addLight(*this);
-}
-
-void Light::setActive(bool newState) noexcept
-{
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
+    {
+        if (m_shadowProperties.isEnable)
+            getOwner().pOwnerScene->sceneRenderer.addShadowMap(*this);
+
         getOwner().pOwnerScene->sceneRenderer.addLight(*this);
+    }
     else
+    {
+        if (m_shadowProperties.isEnable)
+            getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);
+
         getOwner().pOwnerScene->sceneRenderer.removeLight(*this);
+    }
 }
 
 File_GENERATED

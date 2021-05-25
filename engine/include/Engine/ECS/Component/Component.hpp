@@ -31,14 +31,17 @@ namespace GPE RFKNamespace()
         RFKField(Serialize()) GameObject*                m_gameObject{nullptr}; // can not be ref for move
         RFKField(Inspect("setActive"), Serialize()) bool m_isActivated{true};
 
+    protected:
+        virtual void updateToSystem() noexcept = 0;
+
     public:
         inline Component(GameObject & owner) noexcept;
         inline Component() noexcept                       = default;
         inline Component(const Component& other) noexcept = delete;
-        inline Component(Component && other) noexcept     = default;
-        inline virtual ~Component() noexcept              = default;
+        inline Component(Component && other) noexcept     = delete;
+        virtual ~Component() noexcept;
         inline Component& operator=(const Component& other) noexcept = delete;
-        inline Component& operator=(Component&& other) noexcept = default;
+        inline Component& operator=(Component&& other) noexcept = delete;
 
         [[nodiscard]] constexpr inline GameObject& getOwner() noexcept;
 
@@ -54,7 +57,12 @@ namespace GPE RFKNamespace()
 
         [[nodiscard]] constexpr inline bool isActivated() const noexcept;
 
-        virtual inline void setActive(bool newState) noexcept;
+        /**
+         * @brief Add or remove current component from its system which have for effect to enable or disable it
+         * @param newState
+         * @return
+         */
+        inline virtual void setActive(bool newState) noexcept;
 
         virtual void moveTowardScene(class Scene & newOwner)
         {

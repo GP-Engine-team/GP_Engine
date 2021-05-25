@@ -3,31 +3,31 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 
-#include <PhysX/characterkinematic/PxCapsuleController.h>
-#include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PhysX/PxPhysics.h>
 #include <PhysX/PxRigidDynamic.h>
+#include <PhysX/characterkinematic/PxCapsuleController.h>
+#include <PhysX/characterkinematic/PxControllerManager.h>
 
 // Generated
 #include <Generated/CharacterController.rfk.h>
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace physx;
 
-CharacterController::CharacterController(GameObject& owner) noexcept
-    : Component(owner)
+CharacterController::CharacterController(GameObject& owner) noexcept : Component(owner)
 {
     PxCapsuleControllerDesc desc;
 
-    desc.height   = 1.f;
+    desc.height   = 25.f;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition());
-    desc.radius   = 1.f;
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(owner.getTransform().getGlobalPosition());
+    desc.radius   = 10.f;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
-    Engine::getInstance()->physXSystem.addComponent(this);
+
+    updateToSystem();
 
     // controller->setUserData(&getOwner());
     controller->getActor()->userData = &getOwner();
@@ -39,11 +39,10 @@ CharacterController::CharacterController() noexcept
 
     desc.height   = 1;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3::zero());
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3{0, 10, 0});
     desc.radius   = 1;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
-    Engine::getInstance()->physXSystem.addComponent(this);
 }
 
 void CharacterController::update(double deltaTime) noexcept
@@ -56,9 +55,9 @@ void CharacterController::update(double deltaTime) noexcept
         if (const float accumulatedTime = float(Engine::getInstance()->timeSystem.getAccumulatedTime());
             (accumulatedTime >= m_startJumpTime + m_jumpTimeDelay) && canJump() == true)
         {
-            m_jumping       = false;
+            m_jumping = false;
             m_force.x = m_force.y = m_force.z = .0f;
-            m_startJumpTime = 0.f;
+            m_startJumpTime                   = 0.f;
         }
 
         if (m_hasGravity)
@@ -111,16 +110,12 @@ void CharacterController::setJumping(float jumping) noexcept
 
 CharacterController::~CharacterController() noexcept
 {
-    Engine::getInstance()->physXSystem.removeComponent(this);
     // controller->release();
+    setActive(false);
 }
 
-void CharacterController::setActive(bool newState) noexcept
+void CharacterController::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
         Engine::getInstance()->physXSystem.addComponent(this);
     else

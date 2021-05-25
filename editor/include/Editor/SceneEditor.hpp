@@ -46,8 +46,11 @@ private:
     void         checkKeys            ();
     void         checkCursor          (GPE::GameObject*& inspectedObject);
 
+private:
+    class Editor* m_editorContext = nullptr;
+
 public:
-    SceneEditor(GPE::Scene& scene);
+    SceneEditor(Editor& editorContext, GPE::Scene& scene);
 
     void render(GPE::GameObject*& inspectedObject);
 };

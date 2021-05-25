@@ -66,13 +66,19 @@ struct ShaderCreateConfig
 {
     std::string vertexShaderPath   = "";
     std::string fragmentShaderPath = "";
-    uint8_t     featureMask        = 0u;
+    uint16_t    featureMask        = 0u;
 };
 
-void importeModel(const char* srcPath, const char* dstPath) noexcept;
+void saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode);
+void loadSceneFromPathImp(GPE::Scene* scene, const char* path);
 
-void               importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config = {});
-void               writeTextureFile(const char* dst, const Texture::ImportArg& arg);
+GameObject* loadPrefabFromPathImp(GPE::GameObject& parent, const char* path);
+
+void importeModel(const char* srcPath, const char* dstPath,
+                  Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE) noexcept;
+
+void importeTextureFile(const char* srcPath, const char* dstPath, const TextureImportConfig& config = {});
+void writeTextureFile(const char* dst, const Texture::ImportArg& arg, const TextureImportConfig& config = {});
 Texture::ImportArg readTextureFile(const char* src);
 Texture*           loadTextureFile(const char* src);
 

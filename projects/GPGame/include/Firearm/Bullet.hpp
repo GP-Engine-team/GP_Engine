@@ -15,26 +15,32 @@
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/Serialize.hpp>
 
+#include <Engine/Core/Tools/ClassUtility.hpp>
+
 #include <Generated/Bullet.rfk.h>
 
 namespace GPG RFKNamespace()
 {
-    class RFKClass(Inspect(), Serialize()) Bullet
+    class RFKClass(Inspect(), Serialize()) BaseBullet
+    {
+    public:
+        virtual void triggered() = 0;
+
+        BaseBullet_GENERATED
+    };
+
+    class RFKClass(Inspect(), Serialize()) Bullet : public BaseBullet
     {
     protected:
-        RFKField(Serialize(), Inspect()) float m_dammage = 0.f;
+        RFKField(Serialize(), Inspect()) float m_dammage = 5.f;
 
     public:
         Bullet(float dammage) noexcept;
+        Bullet() = default;
 
-        void triggered();
+        void triggered() override;
 
-        Bullet() noexcept                    = default;
-        Bullet(const Bullet& other) noexcept = default;
-        Bullet(Bullet && other) noexcept     = default;
-        virtual ~Bullet() noexcept           = default;
-        Bullet& operator=(Bullet const& other) noexcept = default;
-        Bullet& operator=(Bullet&& other) noexcept = default;
+        DEFAULT_GETTER_SETTER_BY_VALUE(Dammage, m_dammage);
 
         Bullet_GENERATED
     };

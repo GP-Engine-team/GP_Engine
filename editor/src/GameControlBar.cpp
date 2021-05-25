@@ -1,5 +1,5 @@
-#include <Editor/GameControlBar.hpp>
 #include <Editor/EditorStartup.hpp>
+#include <Editor/GameControlBar.hpp>
 
 #include <Engine/Core/Game/AbstractGame.hpp>
 
@@ -22,22 +22,19 @@ unsigned int GameControlBar::pickColor(unsigned char flag) const
     return buttonColors[(bool)(buttonMask & flag)];
 }
 
-
-
 GameControlBar::GameControlBar()
     : playButtonTex{{"..\\..\\editor\\resources\\play.png", Texture::ETextureMinFilter::LINEAR,
-                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                     Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       pauseButtonTex{{"..\\..\\editor\\resources\\pause.png", Texture::ETextureMinFilter::LINEAR,
-                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                      Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                      Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       stopButtonTex{{"..\\..\\editor\\resources\\stop.png", Texture::ETextureMinFilter::LINEAR,
-                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrapS::CLAMP_TO_EDGE,
-                     Texture::ETextureWrapT::CLAMP_TO_EDGE, false, false}},
+                     Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                     Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       buttonMask{STOPPED}
 {
 }
-
 
 void GameControlBar::render(EditorStartup& startup)
 {
@@ -55,13 +52,13 @@ void GameControlBar::render(EditorStartup& startup)
         ImVec2 buttonSize, cursorPos;
 
         { // Compute the size and position of the buttons
-            const ImVec2 winSize  {ImGui::GetContentRegionAvail()};
+            const ImVec2 winSize{ImGui::GetContentRegionAvail()};
             const float  extraSide{ImGui::GetCurrentWindow()->WindowPadding.y * .5f};
-            const float  side     {winSize.y + extraSide};
+            const float  side{winSize.y + extraSide};
 
             buttonSize.x = buttonSize.y = side;
-            cursorPos.x  = winSize.x * .5f - side * 1.5f;
-            cursorPos.y  = extraSide;
+            cursorPos.x                 = winSize.x * .5f - side * 1.5f;
+            cursorPos.y                 = extraSide;
         }
 
         // Render the "Play" button

@@ -33,59 +33,19 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
            (lhs->pMaterial->isOpaque() && !rhs->pMaterial->isOpaque());
 }
 
-Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{other.m_subModels}
-{
-    auto&& itNew = m_subModels.begin();
-    auto&& itOld = other.m_subModels.begin();
-    for (; itNew != m_subModels.end(); ++itNew, ++itOld)
-    {
-        getOwner().pOwnerScene->sceneRenderer.updateSubModelPointer(&(*itNew), &(*itOld));
-    }
-}
-
 Model::~Model()
 {
-    if (!getOwner().pOwnerScene)
-        return;
-
-    for (SubModel& subMesh : m_subModels)
-    {
-        if (subMesh.isValide())
-            getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
-    }
+    setActive(false);
 }
 
 Model::Model(GameObject& owner) : Model(owner, CreateArg{})
 {
+    updateToSystem();
 }
 
 Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subModels{arg.subModels}
 {
-    for (SubModel& subMesh : m_subModels)
-    {
-        subMesh.pModel = this;
-        getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
-    }
-}
-
-Model& Model::operator=(Model&& other) noexcept
-{
-    m_subModels = other.m_subModels;
-
-    auto&& itNew = m_subModels.begin();
-    auto&& itOld = other.m_subModels.begin();
-    for (; itNew != m_subModels.end(); ++itNew, ++itOld)
-    {
-        getOwner().pOwnerScene->sceneRenderer.updateSubModelPointer(&(*itNew), &(*itOld));
-    }
-
-    return static_cast<Model&>(Component::operator=(std::move(other)));
-}
-
-void Model::onPostLoad()
-{
-    setActive(false);
-    setActive(true);
+    updateToSystem();
 }
 
 void Model::moveTowardScene(class Scene& newOwner)
@@ -136,82 +96,6 @@ void renderResourceExplorer(const char* name, T*& inRes)
             ;
 
         inRes = &it->second;
-    }
-}
-
-template <>
-void GPE::save(XmlSaver& context, const SubModel& inspected, const XmlSaver::SaveInfo& info)
-{
-    context.push(info);
-
-    GPE::save(context, inspected.pModel, XmlSaver::SaveInfo{"pModel", "Model*", 0});
-
-    if (inspected.pShader != nullptr)
-    {
-        if (const std::string* shaderName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pShader))
-        {
-            GPE::save(context, *shaderName, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
-        }
-    }
-
-    if (inspected.pMaterial != nullptr)
-    {
-        if (const std::string* matName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pMaterial))
-        {
-            GPE::save(context, *matName, XmlSaver::SaveInfo{"pMaterial", "Material*", 0});
-        }
-    }
-
-    if (inspected.pMesh != nullptr)
-    {
-        if (const std::string* meshName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pMesh))
-        {
-            GPE::save(context, *meshName, XmlSaver::SaveInfo{"pMesh", "Mesh*", 0});
-        }
-    }
-
-    GPE::save(context, inspected.enableBackFaceCulling, XmlSaver::SaveInfo{"enableBackFaceCulling", "bool", 0});
-
-    context.pop();
-}
-
-template <>
-void GPE::load(XmlLoader& context, SubModel& inspected, const XmlLoader::LoadInfo& info)
-{
-    if (context.goToSubChild(info))
-    {
-        GPE::load(context, inspected.pModel, XmlLoader::LoadInfo{"pModel", "Model*", 0});
-
-        {
-            std::string shaderName;
-            GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
-            if (!(inspected.pShader = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
-            {
-                inspected.pShader = loadShaderFile(shaderName.c_str());
-            }
-        }
-
-        {
-            std::string matName;
-            GPE::load(context, matName, XmlLoader::LoadInfo{"pMaterial", "Material*", 0});
-            if (!(inspected.pMaterial = Engine::getInstance()->resourceManager.get<GPE::Material>(matName)))
-            {
-                inspected.pMaterial = loadMaterialFile(matName.c_str());
-            }
-        }
-
-        {
-            std::string meshName;
-            GPE::load(context, meshName, XmlLoader::LoadInfo{"pMesh", "Mesh*", 0});
-            if (!(inspected.pMesh = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName)))
-            {
-                inspected.pMesh = loadMeshFile(meshName.c_str());
-            }
-        }
-
-        GPE::load(context, inspected.enableBackFaceCulling, XmlLoader::LoadInfo{"enableBackFaceCulling", "bool", 0});
-
-        context.pop();
     }
 }
 
@@ -295,6 +179,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
     }
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
+    ImGui::Checkbox("Cast shadow", &inspected.castShadow);
 
     // This operation check if element must be added or remove from the the scene render system
     if (isPreviousElementVoid != !inspected.isValide())
@@ -397,24 +282,25 @@ void Model::addSubModel(const SubModel::CreateArg& arg)
     getOwner().pOwnerScene->sceneRenderer.addSubModel(newSsub);
 }
 
-void Model::setActive(bool newState) noexcept
+void Model::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
     {
         for (SubModel& subMesh : m_subModels)
         {
+            subMesh.pModel = this;
             getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
         }
     }
     else
     {
+        if (!getOwner().pOwnerScene)
+            return;
+
         for (SubModel& subMesh : m_subModels)
         {
-            getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+            if (subMesh.isValide())
+                getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
         }
     }
 }

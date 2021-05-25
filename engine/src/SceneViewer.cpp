@@ -103,18 +103,15 @@ void SceneViewer::initializePickingFBO()
 
 void SceneViewer::initializeInputs()
 {
-    inputs.bindAction("up",       EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "up");
-    inputs.bindAction("down",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "down");
-    inputs.bindAction("right",    EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "right");
-    inputs.bindAction("left",     EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "left");
-    inputs.bindAction("forward",  EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "forward");
-    inputs.bindAction("backward", EKeyMode::KEY_DOWN,     "Level editor", &freeFly, "backward");
-    inputs.bindAction("sprint",   EKeyMode::KEY_PRESSED,  "Level editor", &freeFly, "sprint");
-    inputs.bindAction("walk",     EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
+    inputs.bindAction("up", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "up");
+    inputs.bindAction("down", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "down");
+    inputs.bindAction("right", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "right");
+    inputs.bindAction("left", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "left");
+    inputs.bindAction("forward", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "forward");
+    inputs.bindAction("backward", EKeyMode::KEY_DOWN, "Level editor", &freeFly, "backward");
+    inputs.bindAction("sprint", EKeyMode::KEY_PRESSED, "Level editor", &freeFly, "sprint");
+    inputs.bindAction("walk", EKeyMode::KEY_RELEASED, "Level editor", &freeFly, "walk");
 }
-
-
-
 
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
@@ -180,7 +177,7 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
 
     { // Render in the picking framebuffer
         RenderSystem& renderSys = pScene->sceneRenderer;
-        renderSys.render(renderSys.gameObjectIdentifierPipeline());
+        renderSys.render(renderSys.mousePickingPipeline());
     }
 
     // Find the hovered object, if any
@@ -300,6 +297,7 @@ void SceneViewer::render() const
 
     pScene->sceneRenderer.tryToResize(width, height);
     pScene->sceneRenderer.render(pScene->sceneRenderer.defaultRenderPipeline());
+    pScene->sceneRenderer.render(pScene->sceneRenderer.debugRenderPipeline());
 }
 
 void SceneViewer::captureInputs(bool shouldCapture)
@@ -322,17 +320,15 @@ void SceneViewer::lookAtObject(const GameObject& GOToLook)
 {
     using namespace GPM;
 
-    const TransformComponent& cam   {cameraOwner->getTransform()},
-                            & target{GOToLook.getTransform()};
+    const TransformComponent &cam{cameraOwner->getTransform()}, &target{GOToLook.getTransform()};
 
     // Set defaults
-    startPos      = finalPos      = cameraOwner->getTransform().getGlobalPosition();
+    startPos = finalPos = cameraOwner->getTransform().getGlobalPosition();
     startRotation = finalRotation = cameraOwner->getTransform().getGlobalRotation();
 
     { // Find the position which must be reached at the end of the transition
         const Vec3 pos0{cam.getGlobalPosition()};
-        const Vec3 pos1 = [&]() -> const Vec3
-        {
+        const Vec3 pos1 = [&]() -> const Vec3 {
             Vec3 flatForward{target.getGlobalPosition() - cam.getGlobalPosition()};
             flatForward.y = .0f;
             flatForward.safelyNormalize();
@@ -350,10 +346,9 @@ void SceneViewer::lookAtObject(const GameObject& GOToLook)
             isTransitionActive = true;
         }
     }
-    
+
     // Find the orientation which must be reached at the end of the transition
-    const f32 angle = [&]() -> const f32
-    {
+    const f32 angle = [&]() -> const f32 {
         const Vec3 flatTargetPos{target.getGlobalPosition().x, .0f, target.getGlobalPosition().z};
         const Vec3 to{flatTargetPos - finalPos};
 

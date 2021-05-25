@@ -18,20 +18,24 @@ using namespace GPM;
 
 ParticleComponent::ParticleComponent(GameObject& owner) : Component(owner)
 {
-    owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    updateToSystem();
+    initializeDefaultSetting();
+}
+
+ParticleComponent::ParticleComponent() : Component()
+{
     initializeDefaultSetting();
 }
 
 ParticleComponent::ParticleComponent(GameObject& owner, const CreateArg& arg) : Component(owner)
 {
-    owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    updateToSystem();
     initializeDefaultSetting();
 }
 
 ParticleComponent::~ParticleComponent()
 {
-    if (getOwner().pOwnerScene)
-        getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
+    setActive(false);
 }
 
 void ParticleComponent::moveTowardScene(Scene& newOwner)
@@ -205,7 +209,6 @@ void ParticleComponent::inspect(InspectContext& context)
 
     if (ImGui::Button("Start"))
     {
-        generate();
         start();
     }
 }
@@ -223,11 +226,18 @@ void ParticleComponent::generate()
 void ParticleComponent::start()
 {
     reset();
+
+    if (!m_renderer)
+        generate();
+
     m_canEmit = true;
 }
 
 void ParticleComponent::emit(unsigned int count)
 {
+    if (!m_renderer)
+        generate();
+
     const size_t startId = m_particles.m_countAlive;
     const size_t endId   = std::min(startId + count, m_particles.m_count - 1);
 
@@ -384,19 +394,15 @@ void ParticleComponent::emit(double dt)
         m_particles.wake(i);
 }
 
-void ParticleComponent::setActive(bool newState) noexcept
+void ParticleComponent::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
     {
         getOwner().pOwnerScene->sceneRenderer.addParticleComponent(*this);
     }
     else
     {
-
-        getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
+        if (getOwner().pOwnerScene)
+            getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
     }
 }

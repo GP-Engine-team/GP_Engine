@@ -24,11 +24,11 @@ namespace GPE RFKNamespace()
     class RFKClass(ComponentGen(), Inspect(), Serialize()) CharacterController : public Component
     {
     public:
-        CharacterController(GameObject& owner) noexcept;
+        CharacterController(GameObject & owner) noexcept;
 
         CharacterController() noexcept;
         CharacterController(const CharacterController& other) noexcept = delete;
-        CharacterController(CharacterController&& other) noexcept     = default;
+        CharacterController(CharacterController && other) noexcept     = default;
         CharacterController& operator=(CharacterController const& other) noexcept = delete;
         CharacterController& operator=(CharacterController&& other) noexcept = delete;
 
@@ -41,16 +41,19 @@ namespace GPE RFKNamespace()
         RFKField(Inspect(), Serialize()) GPM::Vec3 m_force         = {.0f};
         RFKField(Inspect(), Serialize()) float     m_gravity       = EARTH_GRAVITY;
         RFKField(Inspect(), Serialize()) float     m_speed         = 1.f;
-        RFKField(Inspect(), Serialize()) float     m_mouseSpeed    = 1.f;
+        RFKField(Inspect(), Serialize()) float     m_angularSpeed  = 1.f; // in rad by second
         RFKField(Inspect(), Serialize()) float     m_startJumpTime = 0.f;
         RFKField(Inspect(), Serialize()) float     m_jumpTimeDelay = 1.f;
         RFKField(Inspect(), Serialize()) bool      m_hasGravity    = false;
         RFKField(Inspect(), Serialize()) bool      m_jumping       = false;
 
+    protected:
+        virtual void updateToSystem() noexcept override;
+
     public:
         physx::PxController* controller = nullptr;
         DEFAULT_GETTER_SETTER_BY_VALUE(Speed, m_speed);
-        DEFAULT_GETTER_SETTER_BY_VALUE(MouseSpeed, m_mouseSpeed);
+        DEFAULT_GETTER_SETTER_BY_VALUE(AngularSpeed, m_angularSpeed);
         DEFAULT_GETTER_SETTER_BY_VALUE(HasGravity, m_hasGravity);
         DEFAULT_GETTER_SETTER_BY_VALUE(Gravity, m_gravity);
         GETTER_BY_VALUE(Jumping, m_jumping);
@@ -63,13 +66,6 @@ namespace GPE RFKNamespace()
 
         bool canJump() noexcept;
 
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
-
         CharacterController_GENERATED
     };
-} // namespace GPE
+} // namespace )

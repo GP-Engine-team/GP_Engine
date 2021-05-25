@@ -61,30 +61,10 @@ void BehaviourSystem::removeOnGUI(BehaviourComponent& functionToRemove) noexcept
 
 void BehaviourSystem::addBehaviour(BehaviourComponent& behaviour) noexcept
 {
-    if (behaviour.isFixedUpdateEnable())
-        addFixedUpdate(behaviour);
-
-    if (behaviour.isUpdateEnable())
-        addUpdate(behaviour);
-
-    if (behaviour.isOnGUIEnable())
-        addOnGUI(behaviour);
-
     m_pBehaviours.push_back(&behaviour);
-}
 
-void BehaviourSystem::updateBehaviourPointer(BehaviourComponent*       newPointorBehaviour,
-                                             const BehaviourComponent* exPointorBehaviour) noexcept
-{
-    const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();
-    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != end; ++it)
-    {
-        if ((*it) == exPointorBehaviour)
-        {
-            *it = newPointorBehaviour;
-            return;
-        }
-    }
+    if (startOnBehaviourAdd)
+        behaviour.start();
 }
 
 void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
@@ -109,34 +89,48 @@ void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
     }
 }
 
-void BehaviourSystem::start() const noexcept
+void BehaviourSystem::start() noexcept
 {
-    for (auto&& behaviour : m_pBehaviours)
+    startOnBehaviourAdd = true;
+
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_pBehaviours.size(); ++i)
     {
-        behaviour->start();
+        m_pBehaviours[i]->start();
     }
 }
 
 void BehaviourSystem::onGUI() const noexcept
 {
-    for (auto&& behaviour : m_onGUIFunctions)
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_onGUIFunctions.size(); ++i)
     {
-        behaviour->onGUI();
+        m_onGUIFunctions[i]->onGUI();
     }
 }
 
 void BehaviourSystem::fixedUpdate(double deltaTime) noexcept
 {
-    for (auto&& behaviour : m_fixedUpdateFunctions)
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_fixedUpdateFunctions.size(); ++i)
     {
-        behaviour->fixedUpdate(deltaTime);
+        m_fixedUpdateFunctions[i]->fixedUpdate(deltaTime);
     }
 }
 
 void BehaviourSystem::update(double deltaTime) const noexcept
 {
-    for (auto&& behaviour : m_updateFunctions)
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_updateFunctions.size(); ++i)
     {
-        behaviour->update(deltaTime);
+        m_updateFunctions[i]->update(deltaTime);
     }
+}
+
+void BehaviourSystem::gameAssert(bool condition, const char* msg)
+{
+#ifdef _DEBUG
+    if (!condition && onGameAssert)
+        onGameAssert(msg);
+#endif // DEBUG
 }

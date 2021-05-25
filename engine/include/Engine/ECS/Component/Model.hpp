@@ -27,7 +27,7 @@ namespace GPE RFKNamespace()
 
     struct SubModel;
 
-    struct SubModel
+    struct RFKStruct(Serialize()) SubModel
     {
         struct CreateArg
         {
@@ -36,11 +36,12 @@ namespace GPE RFKNamespace()
             Mesh*     pMesh;
 
             bool enableBackFaceCulling = true;
+            bool castShadow            = true;
         };
 
-        SubModel(Model& model, const CreateArg& arg)
+        SubModel(Model & model, const CreateArg& arg)
             : pModel{&model}, pShader{arg.pShader}, pMaterial{arg.pMaterial}, pMesh{arg.pMesh},
-              enableBackFaceCulling{arg.enableBackFaceCulling}
+              enableBackFaceCulling{arg.enableBackFaceCulling}, castShadow{arg.castShadow}
         {
         }
 
@@ -51,18 +52,16 @@ namespace GPE RFKNamespace()
             return pModel && pMesh && pShader && pMaterial;
         }
 
-        Model*    pModel    = nullptr;
-        Shader*   pShader   = nullptr;
-        Material* pMaterial = nullptr;
-        Mesh*     pMesh     = nullptr;
+        RFKField(Serialize()) Model*    pModel    = nullptr;
+        RFKField(Serialize()) Shader*   pShader   = nullptr;
+        RFKField(Serialize()) Material* pMaterial = nullptr;
+        RFKField(Serialize()) Mesh*     pMesh     = nullptr;
 
-        bool enableBackFaceCulling = true;
+        RFKField(Serialize()) bool enableBackFaceCulling = true;
+        RFKField(Serialize()) bool castShadow            = true;
+
+        SubModel_GENERATED
     };
-
-    template <>
-    void save(XmlSaver & context, const SubModel& inspected, const XmlSaver::SaveInfo& info);
-    template <>
-    void load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadInfo& info);
 
     template <>
     void DataInspector::inspect(GPE::InspectContext & context, SubModel & inspected);
@@ -80,32 +79,20 @@ namespace GPE RFKNamespace()
     protected:
         RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
 
-    public:
-        Model(GameObject & owner);
+        virtual void updateToSystem() noexcept override;
 
+    public:
+        Model() = default;
+        Model(GameObject & owner);
         Model(GameObject & owner, const CreateArg& arg);
 
-        Model(const Model& other) noexcept = delete;
-        Model(Model && other) noexcept;
         virtual ~Model();
-
-        Model()        = default;
-        Model& operator=(Model const& other) = delete;
-        Model& operator                      =(Model&& other) noexcept;
 
         void moveTowardScene(class Scene & newOwner) override;
 
-        virtual void onPostLoad();
         virtual void inspect(InspectContext & context);
 
         void addSubModel(const SubModel::CreateArg& arg);
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
 
         Model_GENERATED
     };

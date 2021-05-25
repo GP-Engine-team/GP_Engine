@@ -163,6 +163,9 @@ void Editor::renderMenuBar()
             ImGui::MenuItem("Useful links");
             ImGui::EndMenu();
         }
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize("FPS : 144").x -
+                             ImGui::GetScrollX() - 2 * ImGui::GetStyle().ItemSpacing.x);
+        ImGui::Text("FPS : %0.0f", ImGui::GetIO().Framerate);
 
         ImGui::EndMainMenuBar();
     }
@@ -284,8 +287,10 @@ void Editor::loadScene(GPE::Scene* scene, const char* path)
 
 void Editor::saveCurrentScene()
 {
-    GPE::Scene*       currentScene = m_sceneEditor.view.pScene;
-    const std::string path         = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
+    GPE::Scene*           currentScene = m_sceneEditor.view.pScene;
+    std::filesystem::path saveFolder   = m_saveFolder;
+    saveFolder /= currentScene->getName() + ".GPScene";
+    const std::string path = saveFolder.string();
     m_sceneEditor.view.unbindScene();
 
     auto saveFunc = GET_PROCESS((*m_reloadableCpp), saveSceneToPath);
@@ -296,16 +301,34 @@ void Editor::saveCurrentScene()
 
 void Editor::reloadCurrentScene()
 {
-    GPE::Scene*       currentScene = m_sceneEditor.view.pScene;
-    const std::string path         = m_saveFolder + currentScene->getWorld().getName() + ".GPScene";
+    GPE::Scene*           currentScene = m_sceneEditor.view.pScene;
+    std::filesystem::path path         = m_saveFolder;
+    path /= currentScene->getName() + ".GPScene";
 
-    m_sceneEditor.view.unbindScene();
-    m_inspectedObject = nullptr;
+    if (std::filesystem::exists(path))
+    {
+        // TODO: need to be replace when children is std::unique_ptr
+        for (auto&& child : currentScene->getWorld().children)
+        {
+            delete child;
+        }
+        currentScene->getWorld().children.clear();
 
-    void (*const loadFunc)(GPE::Scene*, const char*) = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
-    loadFunc(currentScene, path.c_str());
+        m_sceneEditor.view.unbindScene();
+        m_inspectedObject = nullptr;
 
-    m_sceneEditor.view.bindScene(*currentScene);
+        void (*const loadFunc)(GPE::Scene*, const char*) = GET_PROCESS((*m_reloadableCpp), loadSceneFromPath);
+        loadFunc(currentScene, path.string().c_str());
+
+        m_sceneEditor.view.bindScene(*currentScene);
+    }
+    else
+    {
+        saveCurrentScene();
+        Log::getInstance()->logError(
+            stringFormat("Path \"%s\" dosn't exist to reload scene. Use current save to prevent it's suppression",
+                         path.string().c_str()));
+    }
 }
 
 void Editor::unbindCurrentScene()
@@ -315,6 +338,7 @@ void Editor::unbindCurrentScene()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
+<<<<<<< HEAD
     : m_sceneEditor         {editedScene},
       m_gameViewer          {},
       m_logInspector        {},
@@ -325,6 +349,10 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
       m_window              {window},
       m_inspectedObject     {nullptr},
       m_showAppStyleEditor  {false},
+=======
+    : m_sceneEditor{*this, editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{*this}, m_sceneGraph{*this},
+      m_gameControlBar{}, m_saveFolder{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false},
+>>>>>>> develop
       m_showImGuiDemoWindows{false}
 {
     glfwMaximizeWindow(window);

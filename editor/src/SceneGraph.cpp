@@ -106,10 +106,17 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             auto getComponentClassFunct   = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), getComponentClass);
             auto createComponentByIDFunct = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), createComponentByID);
 
+            std::map<std::string, const rfk::Struct*> compSortedByName;
+
             for (auto&& child : getComponentClassFunct().children)
             {
-                if (ImGui::MenuItem(child->name.c_str()))
-                    createComponentByIDFunct(gameObject, child->id);
+                compSortedByName[child->name] = child;
+            }
+
+            for (const auto& [key, value] : compSortedByName)
+            {
+                if (ImGui::MenuItem(key.c_str()))
+                    createComponentByIDFunct(gameObject, value->id);
             }
 
             // Sorting mus be apply when RFK will be update with directChildren function

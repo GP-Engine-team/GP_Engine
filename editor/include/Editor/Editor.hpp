@@ -32,22 +32,23 @@ class EditorStartup;
 
 class Editor
 {
-private:
-    GLFWwindow* m_window;
 
 public:
-    SceneEditor         m_sceneEditor;
-    GameViewer          m_gameViewer;
-    LogInspector        m_logInspector;
-    ProjectContent      m_projectContent;
-    SceneGraph          m_sceneGraph;
-    GameControlBar      m_gameControlBar;
-    std::string         m_saveFolder;
-    GPE::IInspectable*  m_inspectedObject;
-    GPE::ReloadableCpp* m_reloadableCpp;
+    SceneEditor         sceneEditor;
+    GameViewer          gameViewer;
+    LogInspector        logInspector;
+    ProjectContent      projectContent;
+    SceneGraph          sceneGraph;
+    GameControlBar      gameControlBar;
+    std::string         saveFolder;
+    GPE::IInspectable*  inspectedObject;
+    GPE::ReloadableCpp* reloadableCpp;
+private:
+    GLFWwindow*         m_window;
 
-    bool                m_showAppStyleEditor;
-    bool                m_showImGuiDemoWindows;
+public:
+    bool                showAppStyleEditor;
+    bool                showImGuiDemoWindows;
 
 private:
     void setupDearImGui();

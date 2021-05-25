@@ -1,12 +1,17 @@
 ﻿#include <Editor/SceneEditor.hpp>
 
 #include <Editor/Editor.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Importer/Importer.hpp>
 
 #include <glfw/glfw3.h>
 
+
+// Don't move up
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 
 namespace Editor
 {
@@ -239,6 +244,36 @@ void SceneEditor::render(GPE::GameObject*& inspected)
         {
             checkKeys();
             renderGizmo(inspected->getTransform().get().model.e);
+        }
+        
+        // Drop prefab to instanciate world in front of the camera
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_PREFAB_EXTENSION))
+            {
+                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+                std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+                GameObject* go = nullptr;
+                if (SharedPrefab* pSPref =
+                        Engine::getInstance()->resourceManager.get<SharedPrefab>(path.string().c_str()))
+                {
+                    auto loadFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), clonePrefab);
+                    go            = loadFunc(pSPref->pref, view.pScene->getWorld());
+                }
+                else
+                {
+                    auto loadFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), loadPrefabFromPath);
+                    go            = loadFunc(view.pScene->getWorld(), path.string().c_str());
+                }
+
+                if (go)
+                {
+                    go->getTransform().setTranslation(view.cameraOwner->getTransform().getGlobalPosition() +
+                                                      view.cameraOwner->getTransform().getVectorForward() * 10.f);
+                }
+            }
+            ImGui::EndDragDropTarget();
         }
     }
 
