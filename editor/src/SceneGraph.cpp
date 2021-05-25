@@ -1,22 +1,20 @@
 ﻿#include <Editor/SceneGraph.hpp>
 
-#include <filesystem>
-
 #include <Editor/Editor.hpp>
-#include <Engine/Core/Tools/Hash.hpp>
-#include <Engine/Engine.hpp>
 
+#include <Engine/Core/Tools/Hash.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+#include <Engine/Core/HotReload/SingletonsSync.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
+#include <Engine/Resources/Scene.hpp>
 #include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 
-#include "Engine/Core/HotReload/SingletonsSync.hpp"
-#include <Engine/Core/HotReload/ReloadableCpp.hpp>
-
-#include <Engine/Resources/Scene.hpp>
+#include <filesystem>
 #include <imgui/imgui.h>
-
-#include <map>
+//#include <map>
 
 using namespace Editor;
 using namespace GPE;
