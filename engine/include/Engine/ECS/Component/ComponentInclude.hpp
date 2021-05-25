@@ -9,18 +9,18 @@ __RFK15829655788413352100u_GENERATED
 #include <Engine/ECS/Component/Camera.hpp>
     __RFK15829655788413352100u_GENERATED
 #include <Engine/ECS/Component/InputComponent.hpp>
-        __RFK15829655788413352100u_GENERATED
+
 #include <Engine/ECS/Component/Light/DirectionalLight.hpp>
-            __RFK15829655788413352100u_GENERATED
+        __RFK15829655788413352100u_GENERATED
 #include <Engine/ECS/Component/Light/PointLight.hpp>
-                __RFK15829655788413352100u_GENERATED
+            __RFK15829655788413352100u_GENERATED
 #include <Engine/ECS/Component/Light/SpotLight.hpp>
-                    __RFK15829655788413352100u_GENERATED
+                __RFK15829655788413352100u_GENERATED
 #include <Engine/ECS/Component/Model.hpp>
 #include <Engine/ECS/Component/ParticleComponent.hpp>
-                        __RFK15829655788413352100u_GENERATED
+                    __RFK15829655788413352100u_GENERATED
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
-                            __RFK15829655788413352100u_GENERATED
+                        __RFK15829655788413352100u_GENERATED
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
-                                __RFK15829655788413352100u_GENERATED
+                            __RFK15829655788413352100u_GENERATED

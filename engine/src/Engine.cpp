@@ -7,7 +7,7 @@ Engine* Engine::m_instance = nullptr;
 void Engine::importConfig()
 {
     FILE* pFile = nullptr;
-    if (fopen_s(&pFile, configName.c_str(), "r+b"))
+    if (fopen_s(&pFile, configName.c_str(), "r"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", configName));
         return;
@@ -37,7 +37,7 @@ void Engine::importConfig()
 void Engine::exportConfig()
 {
     FILE* pFile = nullptr;
-    if (fopen_s(&pFile, configName.c_str(), "w+b"))
+    if (fopen_s(&pFile, configName.c_str(), "w"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", configName));
         return;

@@ -39,7 +39,7 @@ BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept
     GPE::SourceSettings sourceSettings;
     sourceSettings.pitch = 1.f;
     sourceSettings.loop  = AL_TRUE;
-    sourceSettings.position = ALfloat(0.f);
+    // sourceSettings.position = ALfloat(0.f);
 
     source->setSound("Western", "Western", sourceSettings);
 }
