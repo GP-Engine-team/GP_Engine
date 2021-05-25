@@ -790,7 +790,7 @@ void GPE::writePrefabFile(const char* dst, const SavedScene::CreateArg& arg)
 {
     FILE* pFile = nullptr;
 
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (fopen_s(&pFile, dst, "w"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
         return;
@@ -811,7 +811,7 @@ SavedScene::CreateArg GPE::readPrefabFile(const char* src)
     std::filesystem::path srcPath(src);
     SavedScene::CreateArg arg;
 
-    if ((srcPath.extension() == ENGINE_PREFAB_EXTENSION) && fopen_s(&pFile, src, "rb"))
+    if ((srcPath.extension() == ENGINE_PREFAB_EXTENSION) && fopen_s(&pFile, src, "r"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
         return arg;
@@ -847,7 +847,7 @@ void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
 {
     FILE* pFile = nullptr;
 
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (fopen_s(&pFile, dst, "w"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
         return;
@@ -870,7 +870,7 @@ SavedScene::CreateArg GPE::readSceneFile(const char* src)
     SavedScene::CreateArg arg;
 
     if ((srcPath.extension() == ENGINE_SCENE_EXTENSION || srcPath.extension() == ENGINE_PREFAB_EXTENSION) &&
-        fopen_s(&pFile, src, "rb"))
+        fopen_s(&pFile, src, "r"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
         return arg;
