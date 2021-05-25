@@ -283,6 +283,18 @@
     <ClCompile Include="src\TextureInspectorPanel.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\AnimationSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimationComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Animation.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bone.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -762,8 +774,11 @@
     <ClInclude Include="include\Engine\Resources\Animation\Animation.hpp">
       <Filter>include\Resources\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\Resources\Animation\Animator.hpp">
-      <Filter>include\Resources\Animation</Filter>
+    <ClInclude Include="include\Engine\ECS\System\AnimationSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\AnimationComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

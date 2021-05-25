@@ -25,7 +25,7 @@ struct aiMesh;
 
 namespace GPE
 {
-class Animator;
+class AnimationComponent;
 
 class Mesh
 {
@@ -116,13 +116,13 @@ public:
 
 public:
     // Animation data
-    std::map<std::string, BoneInfo> m_BoneInfoMap; //
-    int                             m_BoneCounter = 0;
+    std::map<std::string, BoneInfo> m_boneInfoMap; //
+    int                             m_boneCounter = 0;
 
     class Animation* anim = nullptr;
     // TODO : Remove this monstruosity
     // HORROR
-    GPE::Animator* animator = nullptr;
+    GPE::AnimationComponent* animator = nullptr;
 
 public:
     static void setVertexBoneDataToDefault(GPE::Mesh::Vertex& vertex);

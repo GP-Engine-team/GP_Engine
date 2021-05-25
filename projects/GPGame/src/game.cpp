@@ -5,7 +5,7 @@
 #include <Game.hpp>
 
 #include <Engine/Resources/Mesh.hpp>
-#include <Engine/Resources/Animation/Animator.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
@@ -44,7 +44,7 @@ void Game::update(double unscaledDeltaTime, double deltaTime)
     // TODO : Clean up
     auto mesh =GPE::Engine::getInstance()->resourceManager.get<GPE::Mesh>("resources\\Character\\Zombie\\Yaku_zombie.GPMesh");
     if (mesh != nullptr)
-        mesh->animator->UpdateAnimation(deltaTime);
+        mesh->animator->update(deltaTime);
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)

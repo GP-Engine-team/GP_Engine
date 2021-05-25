@@ -20,7 +20,7 @@ namespace GPE RFKNamespace()
 {
     class TransformComponent;
 
-    class RFKClass(Inspect(), ComponentGen, Serialize()) BehaviourComponent : public Component
+    class RFKClass(Inspect(), ComponentGen(), Serialize()) BehaviourComponent : public Component
     {
     protected:
         RFKField(Inspect(), Serialize()) bool m_useUpdate      = false;
@@ -34,7 +34,6 @@ namespace GPE RFKNamespace()
         BehaviourComponent(GameObject & owner) noexcept;
 
         BehaviourComponent() noexcept                                = default;
-        BehaviourComponent(const BehaviourComponent& other) noexcept = delete;
         virtual ~BehaviourComponent() noexcept;
 
         virtual void start()

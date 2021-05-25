@@ -8,7 +8,7 @@
 #include "GPM/Shape3D/Sphere.hpp"
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Animation/Animation.hpp>
-#include <Engine/Resources/Animation/Animator.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 
 #include <glad/glad.h>
 
@@ -109,7 +109,8 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
             // TODO : Delete / LEAKS
             anim = new Animation(srcPath, this);
 
-            animator = new Animator(anim);
+            animator = new AnimationComponent();
+            animator->playAnimation(anim);
         }
     }
 
@@ -658,19 +659,19 @@ void Mesh::extractBoneWeightForVertices(std::vector<GPE::Mesh::Vertex>& vertices
     {
         int         boneID   = -1;
         std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
-        if (m_BoneInfoMap.find(boneName) == m_BoneInfoMap.end())
+        if (m_boneInfoMap.find(boneName) == m_boneInfoMap.end())
         {
             BoneInfo newBoneInfo;
-            newBoneInfo.id = m_BoneCounter;
+            newBoneInfo.id = m_boneCounter;
             newBoneInfo.offset = GPE::toMat4(mesh->mBones[boneIndex]->mOffsetMatrix);
 
-            m_BoneInfoMap[boneName] = newBoneInfo;
-            boneID                  = m_BoneCounter;
-            m_BoneCounter++;
+            m_boneInfoMap[boneName] = newBoneInfo;
+            boneID                  = m_boneCounter;
+            m_boneCounter++;
         }
         else
         {
-            boneID = m_BoneInfoMap[boneName].id;
+            boneID = m_boneInfoMap[boneName].id;
         }
         assert(boneID != -1);
         auto weights    = mesh->mBones[boneIndex]->mWeights;

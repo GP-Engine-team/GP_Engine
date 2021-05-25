@@ -20,7 +20,7 @@
 #include <Engine/Resources/RenderTexture.hpp>
 #include <Engine/Resources/Shader.hpp>
 #include <Engine/Resources/Animation/Animation.hpp>
-#include <Engine/Resources/Animation/Animator.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/AABB.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
@@ -547,7 +547,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 // Animations
                 if (pSubModel->pMesh->animator != nullptr)
                 {
-                    auto transforms = pSubModel->pMesh->animator->GetFinalBoneMatrices();
+                    auto& transforms = pSubModel->pMesh->animator->m_finalBoneMatrices;
                     for (int i = 0; i < transforms.size(); ++i)
                     {
 
