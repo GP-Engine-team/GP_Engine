@@ -28,11 +28,11 @@ class SceneEditor
     };
 
 public:
-    GPE::SceneViewer view;
+    GPE::SceneViewer    view;
 
 private:
-    string_enum      m_operations[3];
-    string_enum      m_modes[2];
+    string_enum         m_operations[3];
+    string_enum         m_modes[2];
 
 public:
     ImGuizmo::OPERATION activeOperation;
