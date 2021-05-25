@@ -62,7 +62,7 @@ EditorStartup::EditorStartup()
                GPE::Engine::getInstance()->sceneManager.setCurrentScene("Default scene")},
       m_reloadableCpp{gameDllPath}, m_game{nullptr}, m_engine{GPE::Engine::getInstance()}
 {
-    m_editor.m_reloadableCpp = &m_reloadableCpp;
+    m_editor.reloadableCpp = &m_reloadableCpp;
 
     ADD_PROCESS(m_reloadableCpp, createGameInstance);
     ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
