@@ -176,7 +176,16 @@ void Editor::renderGameControlBar(EditorStartup& startup)
 void Editor::renderLevelEditor()
 {
     m_sceneEditor.view.update();
-    m_sceneEditor.render(m_inspectedObject);
+
+    GameObject* inspected = dynamic_cast<GameObject*>(m_inspectedObject);
+    GameObject* prev      = inspected;
+
+    m_sceneEditor.render(inspected);
+
+    if (prev != inspected)
+    {
+        m_inspectedObject = inspected;
+    }
 }
 
 void Editor::renderGameView(EditorStartup& startup)
@@ -306,8 +315,16 @@ void Editor::unbindCurrentScene()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : m_sceneEditor{editedScene}, m_gameViewer{}, m_logInspector{}, m_projectContent{*this}, m_sceneGraph{*this},
-      m_gameControlBar{}, m_saveFolder{}, m_window{window}, m_inspectedObject{nullptr}, m_showAppStyleEditor{false},
+    : m_sceneEditor         {editedScene},
+      m_gameViewer          {},
+      m_logInspector        {},
+      m_projectContent      {*this},
+      m_sceneGraph          {*this},
+      m_gameControlBar      {},
+      m_saveFolder          {},
+      m_window              {window},
+      m_inspectedObject     {nullptr},
+      m_showAppStyleEditor  {false},
       m_showImGuiDemoWindows{false}
 {
     glfwMaximizeWindow(window);
@@ -356,7 +373,9 @@ void Editor::update(EditorStartup& startup)
     renderInspector();
 
     if (m_showImGuiDemoWindows)
+    {
         ImGui::ShowDemoWindow(&m_showImGuiDemoWindows);
+    }
 
     // Game
     syncImGui(gameContext);
