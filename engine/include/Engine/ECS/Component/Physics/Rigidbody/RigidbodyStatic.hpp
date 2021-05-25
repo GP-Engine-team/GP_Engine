@@ -6,8 +6,8 @@
  */
 
 #pragma once
+#include <Engine/Core/Physics/RigidBodyBase.hpp>
 #include <Engine/ECS/Component/Component.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <PxRigidStatic.h>
 
 // Generated
@@ -16,16 +16,13 @@
 namespace GPE RFKNamespace()
 {
 
-    class RFKClass(Serialize(), ComponentGen) RigidbodyStatic : public Component
+    class RFKClass(Inspect(), Serialize(), ComponentGen()) RigidbodyStatic : public Component, public RigidBodyBase
     {
-    protected:
-        virtual void updateToSystem() noexcept override;
-        virtual void onPostLoad() noexcept override;
 
     public:
         RigidbodyStatic(GameObject & owner) noexcept;
 
-        RigidbodyStatic() noexcept = default;
+        RigidbodyStatic() noexcept                             = default;
         RigidbodyStatic(const RigidbodyStatic& other) noexcept = delete;
         RigidbodyStatic(RigidbodyStatic && other) noexcept     = default;
         RigidbodyStatic& operator=(RigidbodyStatic const& other) noexcept = delete;
@@ -34,8 +31,17 @@ namespace GPE RFKNamespace()
         virtual ~RigidbodyStatic() noexcept;
 
     public:
-        physx::PxRigidStatic* rigidbody;
-        Collider*             collider;
+        physx::PxRigidStatic* rigidbody = nullptr;
+
+    protected:
+        virtual void updateToSystem() noexcept override;
+        virtual void onPostLoad() noexcept override;
+
+    public:
+        /**
+         * @brief Update the current shape of the rigidbody
+         */
+        virtual void updateShape(physx::PxShape & oldShape);
 
         RigidbodyStatic_GENERATED
     };

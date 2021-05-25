@@ -1,4 +1,5 @@
-
+﻿
+#include <AL/alc.h>
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Core/Tools/Raycast.hpp>
@@ -32,13 +33,16 @@ BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept
     enableUpdate(true);
     enableOnGUI(true);
 
-    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+    // GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+    // GPE::Wave testSound3("./resources/sounds/YMCA.wav", "YMCA");
 
-    GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch = 1.f;
-    sourceSettings.loop  = AL_TRUE;
+    // GPE::SourceSettings sourceSettings;
+    // sourceSettings.pitch = 1.f;
+    // sourceSettings.loop  = AL_TRUE;
+    // sourceSettings.position = ALfloat(0.f);
 
-    source->setSound("Western", "Western", sourceSettings);
+    // source->setSound("YMCA", "YMCA", sourceSettings);
+    // source->setSound("Western", "Western", sourceSettings);
 
     { // Cursor
         GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
@@ -69,7 +73,10 @@ void BasePlayer::start()
     input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
 
-    source->playSound("Western", true);
+    // source->playSound("Western", true);
+    // source->playSound("YMCA", true);
+
+    transform().OnUpdate += Function::make(this, "updateListener");
 }
 
 void BasePlayer::onPostLoad()
@@ -225,4 +232,14 @@ void BasePlayer::shoot()
 
     if (m_fireArme->isMagazineEmpty())
         m_fireArme->reload();
+}
+
+void BasePlayer::updateListener()
+{
+    GPM::Vec3 pos                   = transform().getGlobalPosition();
+    GPM::Vec3 forward               = transform().getVectorForward();
+    GPM::Vec3 up                    = transform().getVectorUp();
+    ALfloat   listenerOrientation[] = {forward.x, forward.y, forward.z, up.x, up.y, up.z};
+    alListener3f(AL_POSITION, pos.x, pos.y, pos.z);
+    alListenerfv(AL_ORIENTATION, listenerOrientation);
 }

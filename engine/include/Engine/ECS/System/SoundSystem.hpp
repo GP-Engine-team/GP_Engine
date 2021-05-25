@@ -45,12 +45,12 @@ public:
      */
     inline void removeComponent(int key) noexcept;
 
-private:
-    ALboolean   m_enumeration;
-    ALCdevice*  m_device;
-    ALCcontext* m_openALContext;
-    ALCboolean  m_contextMadeCurrent = false;
-    ALCboolean  m_closed;
+public:
+    ALboolean   enumeration;
+    ALCdevice*  device;
+    ALCcontext* openALContext;
+    ALCboolean  contextMadeCurrent = false;
+    ALCboolean  closed;
 };
 
 #include "Engine/ECS/System/SoundSystem.inl"
