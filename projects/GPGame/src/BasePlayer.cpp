@@ -26,22 +26,10 @@ File_GENERATED
 using namespace GPM;
 using namespace GPE;
 
-BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept
-    : BaseCharacter(owner), input{&owner.addComponent<GPE::InputComponent>()},
-      source{&owner.addComponent<GPE::AudioComponent>()}, m_fireArme{&owner.addComponent<PPSH41>()}
+BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept : BaseCharacter(owner)
 {
     enableUpdate(true);
     enableOnGUI(true);
-
-    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
-    // GPE::Wave testSound3("./resources/sounds/YMCA.wav", "YMCA");
-
-    GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch = 1.f;
-    sourceSettings.loop  = AL_TRUE;
-    // sourceSettings.position = ALfloat(0.f);
-
-    source->setSound("Western", "Western", sourceSettings);
 }
 
 void BasePlayer::start()
@@ -78,6 +66,10 @@ void BasePlayer::start()
 void BasePlayer::onPostLoad()
 {
     BaseCharacter::onPostLoad();
+
+    input      = &getOwner().addComponent<GPE::InputComponent>();
+    source     = &getOwner().addComponent<GPE::AudioComponent>();
+    m_fireArme = &getOwner().addComponent<PPSH41>();
 
     GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
