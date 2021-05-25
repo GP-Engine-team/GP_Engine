@@ -666,20 +666,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             GameObject&                 gameObject = **static_cast<GPE::GameObject**>(payload->Data);
             const std::filesystem::path path =
                 pCurrentDirectory->path / (gameObject.getName() + ENGINE_PREFAB_EXTENSION);
-            Scene             tempScene;
-            GameObject* const pPreviousParent     = gameObject.getParent();
-            Scene* const      pPreviousOwnedScene = gameObject.pOwnerScene;
 
-            tempScene.getWorld().children.emplace_back(&gameObject);
-            gameObject.forceSetParent(tempScene.getWorld());
-            gameObject.pOwnerScene = nullptr;
+            auto saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), savePrefabToPath);
+            saveFunc(gameObject, path.string().c_str(), GPE::SavedScene::EType::XML);
 
-            auto saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
-            saveFunc(&tempScene, path.string().c_str(), GPE::SavedScene::EType::XML);
-
-            gameObject.pOwnerScene = pPreviousOwnedScene;
-            gameObject.forceSetParent(*pPreviousParent);
-            tempScene.getWorld().children.clear();
             refreshResourcesList();
 
             // deferedSetParent.bind(**static_cast<GPE::GameObject**>(payload->Data), gameObject);

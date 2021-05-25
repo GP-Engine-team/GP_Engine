@@ -54,6 +54,11 @@ extern "C"
         GPE::saveSceneToPathImp(scene, path, saveMode);
     }
 
+    ENGINE_API inline void savePrefabToPath(GPE::GameObject& prefab, const char* path, GPE::SavedScene::EType saveMode)
+    {
+        GPE::savePrefabToPathImp(prefab, path, saveMode);
+    }
+
     ENGINE_API inline void loadSceneFromPath(GPE::Scene* scene, const char* path)
     {
         GPE::loadSceneFromPathImp(scene, path);
@@ -72,13 +77,12 @@ extern "C"
     ENGINE_API inline GPE::GameObject* loadPrefabFromPath(GPE::GameObject& parent, const char* path)
     {
         return GPE::loadPrefabFromPathImp(parent, path);
-    }\
+    }
 
     ENGINE_API inline void updateSceneManager()
     {
         GPE::Engine::getInstance()->sceneManager.update();
     }
-    
 
     ENGINE_API class GPE::AbstractGame* createGameInstance();
     ENGINE_API void                     destroyGameInstance(class GPE::AbstractGame* game);

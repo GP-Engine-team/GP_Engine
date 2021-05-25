@@ -87,6 +87,23 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
     }
 }
 
+void GPE::savePrefabToPathImp(GPE::GameObject& prefab, const char* path, GPE::SavedScene::EType saveMode)
+{
+    Scene             tempScene;
+    GameObject* const pPreviousParent     = prefab.getParent();
+    Scene* const      pPreviousOwnedScene = prefab.pOwnerScene;
+
+    tempScene.getWorld().children.emplace_back(&prefab);
+    prefab.forceSetParent(tempScene.getWorld());
+    prefab.pOwnerScene = nullptr;
+
+    saveSceneToPathImp(&tempScene, path, saveMode);
+
+    prefab.pOwnerScene = pPreviousOwnedScene;
+    prefab.forceSetParent(*pPreviousParent);
+    tempScene.getWorld().children.clear();
+}
+
 GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char* path)
 {
     Scene                      scene;
@@ -790,7 +807,7 @@ void GPE::writePrefabFile(const char* dst, const SavedScene::CreateArg& arg)
 {
     FILE* pFile = nullptr;
 
-    if (fopen_s(&pFile, dst, "w"))
+    if (fopen_s(&pFile, dst, "wb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
         return;
@@ -811,7 +828,7 @@ SavedScene::CreateArg GPE::readPrefabFile(const char* src)
     std::filesystem::path srcPath(src);
     SavedScene::CreateArg arg;
 
-    if ((srcPath.extension() == ENGINE_PREFAB_EXTENSION) && fopen_s(&pFile, src, "r"))
+    if ((srcPath.extension() == ENGINE_PREFAB_EXTENSION) && fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
         return arg;
@@ -847,7 +864,7 @@ void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
 {
     FILE* pFile = nullptr;
 
-    if (fopen_s(&pFile, dst, "w"))
+    if (fopen_s(&pFile, dst, "wb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
         return;
@@ -870,7 +887,7 @@ SavedScene::CreateArg GPE::readSceneFile(const char* src)
     SavedScene::CreateArg arg;
 
     if ((srcPath.extension() == ENGINE_SCENE_EXTENSION || srcPath.extension() == ENGINE_PREFAB_EXTENSION) &&
-        fopen_s(&pFile, src, "r"))
+        fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
         return arg;

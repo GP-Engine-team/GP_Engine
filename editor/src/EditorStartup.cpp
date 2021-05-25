@@ -73,6 +73,7 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, getGameUIContext);
     ADD_PROCESS(m_reloadableCpp, getGameUIContext);
     ADD_PROCESS(m_reloadableCpp, saveSceneToPath);
+    ADD_PROCESS(m_reloadableCpp, savePrefabToPath);
     ADD_PROCESS(m_reloadableCpp, loadSceneFromPath);
     ADD_PROCESS(m_reloadableCpp, getAllComponentsName);
     ADD_PROCESS(m_reloadableCpp, getComponentClass);
