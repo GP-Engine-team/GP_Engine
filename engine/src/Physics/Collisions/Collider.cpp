@@ -32,8 +32,7 @@ void Collider::setLocalRotation(const GPM::Vec3& newLocalRotation) noexcept
 
 void Collider::updateTransform() noexcept
 {
-    PxVec3 newPos = PhysXSystem::GPMVec3ToPxVec3(owner->getTransform().getGlobalPosition() + center);
-    PxQuat newQuat =
-        PhysXSystem::GPMQuatToPxQuat(owner->getTransform().getRotation() + GPM::Quat::fromEuler(localRotation));
-    // shape->setLocalPose(PxTransform(newPos, newQuat));
+    PxVec3 newPos  = PhysXSystem::GPMVec3ToPxVec3(center);
+    PxQuat newQuat = PhysXSystem::GPMQuatToPxQuat(GPM::Quat::fromEuler(localRotation));
+    shape->setLocalPose(PxTransform(newPos, newQuat));
 }
