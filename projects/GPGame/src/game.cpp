@@ -10,6 +10,7 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
+#include <SpatializedSoundPlayerScript.hpp>
 
 #include <Sun.hpp>
 #include <WorldGenerator.hpp>
@@ -220,7 +221,6 @@ Game::Game()
         io.bindInput(GLFW_KEY_KP_1, "playAmbiantMusic");
         io.bindInput(GLFW_KEY_KP_2, "playAmbiantMusicForce");
         io.bindInput(GLFW_KEY_KP_0, "stopAllMusic");
-        io.bindInput(GLFW_KEY_KP_3, "drawDebugRef");
         // io.bindInput(GLFW_KEY_KP_ADD,       "growUpCollider");
         // io.bindInput(GLFW_KEY_KP_SUBTRACT,  "growDownCollider");
 
@@ -233,20 +233,22 @@ Game::Game()
 
     // Place content in the scene
     GPE::GameObject& world = Engine::getInstance()->sceneManager.setCurrentScene("main").getWorld();
-    GameObject *     ground, *player, *testPhysX, *sun, *cube;
+    GameObject *     ground, *player, *testPhysX, *sun, *cube, *audioPlayer;
     {
         const GameObject::CreateArg cubeArg{"Cube", TransformComponent::CreateArg{{0.f, 10, 0.f}}},
             sunArg{"Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}}},
             playerArg{"Player", TransformComponent::CreateArg{{0.f, 180.f, 0.f}}},
             testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}},
-            groundArg{"GroundArg", TransformComponent::CreateArg{{0.f, -30.f, 0.f}}};
+            groundArg{"Ground", TransformComponent::CreateArg{{0.f, -30.f, 0.f}}},
+            audioPlayerArg{"AudioPlayer", TransformComponent::CreateArg{{0.f, 0.f, 0.f}}};
 
         // A ground, player, PhysX test
-        cube      = &world.addChild(cubeArg);
-        sun       = &world.addChild(sunArg);
-        ground    = &world.addChild(groundArg);
-        player    = &world.addChild(playerArg);
-        testPhysX = &world.addChild(testPhysXArg);
+        cube        = &world.addChild(cubeArg);
+        sun         = &world.addChild(sunArg);
+        ground      = &world.addChild(groundArg);
+        player      = &world.addChild(playerArg);
+        testPhysX   = &world.addChild(testPhysXArg);
+        audioPlayer = &world.addChild(audioPlayerArg);
     }
 
     world.addComponent<GPG::WorldGenerator>();
@@ -274,7 +276,10 @@ Game::Game()
     }
 
     // Scripts
-    player->addComponent<GPG::BasePlayer>();
+    {
+        player->addComponent<GPG::BasePlayer>();
+        audioPlayer->addComponent<GPG::SpatializedSoundPlayerScript>();
+    }
 
     { // cube
         cube->getTransform().setScale(Vec3{10, 10, 10});

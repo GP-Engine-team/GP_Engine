@@ -48,7 +48,7 @@ namespace GPG RFKNamespace()
         RFKMethod() void playAmbiantMusic();
         RFKMethod() void playAmbiantMusicForce();
         RFKMethod() void stopAllMusic();
-        RFKMethod() void drawDebugRef();
+        RFKMethod() void updateListener();
 
         void rotate(const GPM::Vec2& deltaDisplacement);
         void start() final;
