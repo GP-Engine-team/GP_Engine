@@ -894,9 +894,14 @@ namespace ImGuizmo
       gContext.mIsOrthographic = isOrthographic;
    }
 
-   void SetDrawlist(ImDrawList* drawlist)
+   void SetDrawlist()
    {
-      gContext.mDrawList = drawlist ? drawlist : ImGui::GetWindowDrawList();
+      gContext.mDrawList = ImGui::GetWindowDrawList();
+   }
+
+    void SetDrawlist(ImDrawList* drawlist)
+   {
+      gContext.mDrawList = drawlist;
    }
 
    void SetImGuiContext(ImGuiContext* ctx)
@@ -906,23 +911,33 @@ namespace ImGuizmo
 
    void BeginFrame()
    {
-      const ImU32 flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus;
+      const ImU32 flags =   ImGuiWindowFlags_NoTitleBar
+                          | ImGuiWindowFlags_NoResize
+                          | ImGuiWindowFlags_NoScrollbar
+                          | ImGuiWindowFlags_NoInputs
+                          | ImGuiWindowFlags_NoSavedSettings
+                          | ImGuiWindowFlags_NoFocusOnAppearing
+                          | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
 #ifdef IMGUI_HAS_VIEWPORT
-      ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
-      ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
+      {
+        ImGuiViewport* viewport = ImGui::GetWindowViewport();
+        ImGui::SetNextWindowSize(viewport->Size);
+        ImGui::SetNextWindowPos(viewport->Pos);
+      }
 #else
       ImGuiIO& io = ImGui::GetIO();
       ImGui::SetNextWindowSize(io.DisplaySize);
       ImGui::SetNextWindowPos(ImVec2(0, 0));
 #endif
 
-      ImGui::PushStyleColor(ImGuiCol_WindowBg, 0);
-      ImGui::PushStyleColor(ImGuiCol_Border, 0);
+      ImGui::PushStyleColor(ImGuiCol_WindowBg, 0u);
+      ImGui::PushStyleColor(ImGuiCol_Border, 0u);
       ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 
-      ImGui::Begin("gizmo", NULL, flags);
+      ImGui::Begin("gizmo", nullptr, flags);
       gContext.mDrawList = ImGui::GetWindowDrawList();
+      ImGui::BringWindowToDisplayBack(ImGui::GetCurrentWindow());
       ImGui::End();
       ImGui::PopStyleVar();
       ImGui::PopStyleColor(2);
@@ -1364,7 +1379,7 @@ namespace ImGuizmo
       // draw
       bool belowAxisLimit = false;
       bool belowPlaneLimit = false;
-      for (unsigned int i = 0; i < 3; ++i)
+      for (unsigned int i = 0u; i < 3u; ++i)
       {
          vec_t dirPlaneX, dirPlaneY, dirAxis;
          ComputeTripodAxisAndVisibility(i, dirAxis, dirPlaneX, dirPlaneY, belowAxisLimit, belowPlaneLimit);

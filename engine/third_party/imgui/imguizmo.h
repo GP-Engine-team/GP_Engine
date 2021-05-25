@@ -115,7 +115,8 @@ namespace ImGuizmo
 {
    // call inside your own window and before Manipulate() in order to draw gizmo to that window.
    // Or pass a specific ImDrawList to draw to (e.g. ImGui::GetForegroundDrawList()).
-   IMGUI_API void SetDrawlist(ImDrawList* drawlist = nullptr);
+   IMGUI_API void SetDrawlist();
+   IMGUI_API void SetDrawlist(ImDrawList* drawlist);
 
    // call BeginFrame right after ImGui_XXXX_NewFrame();
    IMGUI_API void BeginFrame();
