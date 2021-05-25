@@ -13,6 +13,7 @@
 namespace GPE
 {
 class IInspectable;
+class ReloadableCpp;
 }
 
 namespace Editor
@@ -45,14 +46,12 @@ private:
     void         renderGizmo          (float* inspectedTransfo);
     void         checkKeys            ();
     void         checkCursor          (GPE::GameObject*& inspectedObject);
-
-private:
-    class Editor* m_editorContext = nullptr;
+    void         dragDropLevelEditor  (GPE::ReloadableCpp* cpp);
 
 public:
-    SceneEditor(Editor& editorContext, GPE::Scene& scene);
+    SceneEditor(GPE::Scene& scene);
 
-    void render(GPE::GameObject*& inspectedObject);
+    void render(Editor& editorContext);
 };
 
 } // namespace Editor
