@@ -44,8 +44,6 @@ void Editor::setupDearImGui()
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
-    // io.ConfigViewportsNoAutoMerge   = true;
-    // io.ConfigViewportsNoTaskBarIcon = true;
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -56,8 +54,10 @@ void Editor::renderStyleEditor()
 {
     if (m_showAppStyleEditor)
     {
-        ImGui::Begin("Style Editor", &m_showAppStyleEditor);
-        ShowStyleEditor();
+        if (ImGui::Begin("Style Editor", &m_showAppStyleEditor))
+        {
+            ShowStyleEditor();
+        }
         ImGui::End();
     }
 }
