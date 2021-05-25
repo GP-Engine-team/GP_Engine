@@ -1,6 +1,7 @@
 ﻿#include <Editor/SceneEditor.hpp>
 
 #include <Editor/Editor.hpp>
+#include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/Engine.hpp>
 #include <imgui/imgui.h>
 
@@ -41,17 +42,18 @@ static unsigned int pickColor(unsigned short flag, unsigned short bitset)
 }
 
 
-void SceneEditor::renderGizmoControls()
+void SceneEditor::renderGizmoControlBar()
 {
     if (ImGui::BeginMenuBar())
     {
         float cursorX = ImGui::GetCursorPosX() + ImGui::GetColumnWidth();
         unsigned int col;
+
         // Active transformation operation
         for (unsigned char i = 0u; i < 3u; ++i)
         {
             cursorX -= ImGui::CalcTextSize(m_operations[i].string).x + 2.f * ImGui::GetStyle().ItemSpacing.x;
-            col = pickColor(ImGuizmo::OPERATION(m_operations[i].id), activeOperation);
+            col      = pickColor(ImGuizmo::OPERATION(m_operations[i].id), activeOperation);
 
             ImGui::SetCursorPosX(cursorX);
             ImGui::PushStyleColor(ImGuiCol_Text, col);
@@ -85,15 +87,36 @@ void SceneEditor::renderGizmoControls()
             }
         }
 
+        ImGui::GetItemRectMin();
         ImGui::EndMenuBar();
     }
 }
 
-void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
-{
-    const bool hovered = ImGui::IsWindowHovered();
 
-    if (hovered)
+void SceneEditor::renderGizmo(GameObject* inspected)
+{
+    if (inspected)
+    {
+        ImGuizmo::BeginFrame();
+        ImGuizmo::SetDrawlist();
+
+        {
+            const ImVec2 winPos{ImGui::GetWindowPos()};        
+            ImGuizmo::SetRect(winPos.x, winPos.y, view.width, view.height);
+        }
+
+        ImGuizmo::Manipulate(view.camera.getView().e,
+                             view.camera.getProjection().e,
+                             activeOperation,
+                             activeMode,
+                             inspected->getTransform().get().model.e);
+    }
+}
+
+
+void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
+{
+    if (ImGui::IsWindowHovered())
     {
         if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
         {
@@ -105,13 +128,13 @@ void SceneEditor::checkCursor(GPE::IInspectable*& inspectedObject)
             captureInputs(false);
         }
 
-        else if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+        else if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGuizmo::IsOver())
         {
             const unsigned int idSelectedGameObject = view.getHoveredGameObjectID();
             if (idSelectedGameObject)
             {
                 if (GameObject* const selectionGameObject =
-                        view.pScene->getWorld().getGameObjectCorrespondingToID(idSelectedGameObject))
+                    view.pScene->getWorld().getGameObjectCorrespondingToID(idSelectedGameObject))
                 {
                     inspectedObject = selectionGameObject;
                 }
@@ -153,34 +176,30 @@ SceneEditor::SceneEditor(GPE::Scene& scene)
       activeOperation{ImGuizmo::OPERATION::TRANSLATE},
       activeMode     {ImGuizmo::MODE::WORLD}
 {
+    ImGuizmo::AllowAxisFlip(false);
+    ImGuizmo::Enable(true);
 }
 
-void SceneEditor::render(GPE::IInspectable*& inspectedObject)
+void SceneEditor::render(GPE::GameObject*& inspected)
 {
-    //if (inspectedObject)
-    //{
-    //    ImGuizmo::BeginFrame();
-    //}
-
-    // Use the whole window content
+    // Use the whole window rectangle
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
-    const std::string windowName = "Scene editor (" + view.pScene->getWorld().getName() + ')';
-    if (ImGui::Begin(windowName.c_str(), nullptr, ImGuiWindowFlags_MenuBar))
+    if (ImGui::Begin("Scene editor", nullptr, ImGuiWindowFlags_MenuBar))
     {
-        renderGizmoControls();
+        checkCursor(inspected);
+
+        renderGizmoControlBar();
 
         const ImVec2 size{ImGui::GetContentRegionAvail()};
-        ImGui::GetWindowContentRegionMin();
-
-        checkCursor(inspectedObject);
-
         view.resize(int(size.x), int(size.y));
         view.render();
 
         ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
+        renderGizmo(inspected);
     }
+
     ImGui::End();
     ImGui::PopStyleVar(2);
 }
