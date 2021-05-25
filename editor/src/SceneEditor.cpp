@@ -202,6 +202,46 @@ void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
     }
 }
 
+void SceneEditor::dragDropLevelEditor(ReloadableCpp* cpp)
+{
+    // Drop prefab to instanciate world in front of the camera
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_PREFAB_EXTENSION))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            GameObject* go = nullptr;
+            GameObject& world{view.pScene->getWorld()};
+
+            if (SharedPrefab* pSPref =
+                    Engine::getInstance()->resourceManager.get<SharedPrefab>(path.string().c_str()))
+            {
+                const auto loadFunc = GET_PROCESS((*cpp), clonePrefab);
+                go                  = loadFunc(pSPref->pref, world);
+            }
+
+            else
+            {
+                const auto loadFunc = GET_PROCESS((*cpp), loadPrefabFromPath);
+                go                  = loadFunc(world, path.string().c_str());
+            }
+
+            if (go)
+            {
+                const TransformComponent& const camTransfo{view.cameraOwner->getTransform()};
+                go->getTransform().setTranslation(camTransfo.getGlobalPosition() +
+                                                  camTransfo.getVectorForward() * 10.f);
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+}
+
+
+
+
 // ========================== Public methods ==========================
 SceneEditor::SceneEditor(GPE::Scene& scene)
     : view{scene},
@@ -222,11 +262,14 @@ SceneEditor::SceneEditor(GPE::Scene& scene)
     ImGuizmo::AllowAxisFlip(false);
 }
 
-void SceneEditor::render(GPE::GameObject*& inspected)
+void SceneEditor::render(Editor& editorContext)
 {
     // Use the whole window rectangle
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {.0f, .0f});
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
+
+    GameObject* inspected = dynamic_cast<GameObject*>(editorContext.inspectedObject);
+    GameObject* prev      = inspected;
 
     if (ImGui::Begin("Scene editor", nullptr, ImGuiWindowFlags_MenuBar))
     {
@@ -246,39 +289,16 @@ void SceneEditor::render(GPE::GameObject*& inspected)
             renderGizmo(inspected->getTransform().get().model.e);
         }
         
-        // Drop prefab to instanciate world in front of the camera
-        if (ImGui::BeginDragDropTarget())
-        {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_PREFAB_EXTENSION))
-            {
-                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-                std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-                GameObject* go = nullptr;
-                if (SharedPrefab* pSPref =
-                        Engine::getInstance()->resourceManager.get<SharedPrefab>(path.string().c_str()))
-                {
-                    auto loadFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), clonePrefab);
-                    go            = loadFunc(pSPref->pref, view.pScene->getWorld());
-                }
-                else
-                {
-                    auto loadFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), loadPrefabFromPath);
-                    go            = loadFunc(view.pScene->getWorld(), path.string().c_str());
-                }
-
-                if (go)
-                {
-                    go->getTransform().setTranslation(view.cameraOwner->getTransform().getGlobalPosition() +
-                                                      view.cameraOwner->getTransform().getVectorForward() * 10.f);
-                }
-            }
-            ImGui::EndDragDropTarget();
-        }
+        dragDropLevelEditor(editorContext.reloadableCpp);
     }
 
     ImGui::End();
     ImGui::PopStyleVar(2);
+
+    if (prev != inspected)
+    {
+        editorContext.inspectedObject = inspected;
+    }
 }
 
 } // End of namespace Editor
