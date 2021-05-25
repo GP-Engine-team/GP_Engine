@@ -7,6 +7,7 @@
 #pragma once
 
 #include <Engine/Intermediate/Viewers/SceneViewer.hpp>
+#include <imgui/imgui.h>
 #include <imgui/imguizmo.h>
 
 namespace GPE
@@ -41,7 +42,8 @@ public:
 private:
     void         captureInputs        (bool toggle);
     void         renderGizmoControlBar();
-    void         renderGizmo          (GPE::GameObject* inspected);
+    void         renderGizmo          (float* inspectedTransfo);
+    void         checkKeys            ();
     void         checkCursor          (GPE::GameObject*& inspectedObject);
 
 public:
