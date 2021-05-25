@@ -1,4 +1,4 @@
-
+﻿
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Core/Tools/Raycast.hpp>
@@ -68,6 +68,7 @@ void BasePlayer::start()
     input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
     input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
+    input->bindAction("drawDebugRef", EKeyMode::KEY_DOWN, "Game", this, "drawDebugRef");
 
     source->playSound("Western", true);
 }
@@ -225,4 +226,11 @@ void BasePlayer::shoot()
 
     if (m_fireArme->isMagazineEmpty())
         m_fireArme->reload();
+}
+
+void BasePlayer::drawDebugRef()
+{
+    drawDebugLine({0, 0, 0}, {500, 0, 0});
+    drawDebugLine({0, 0, 0}, {0, 500, 0});
+    drawDebugLine({0, 0, 0}, {0, 0, 500});
 }

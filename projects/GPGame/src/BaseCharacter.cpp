@@ -35,7 +35,6 @@ void BaseCharacter::start()
     controller->setHasGravity(true);
     controller->setSpeed(1.f);
     controller->setAngularSpeed(HALF_PI / 8.f);
-    controller->setGravity(.1f);
 }
 
 void BaseCharacter::rotateYToward(const Vec3& target, float deltaTime)

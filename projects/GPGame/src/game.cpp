@@ -220,6 +220,7 @@ Game::Game()
         io.bindInput(GLFW_KEY_KP_1, "playAmbiantMusic");
         io.bindInput(GLFW_KEY_KP_2, "playAmbiantMusicForce");
         io.bindInput(GLFW_KEY_KP_0, "stopAllMusic");
+        io.bindInput(GLFW_KEY_KP_3, "drawDebugRef");
         // io.bindInput(GLFW_KEY_KP_ADD,       "growUpCollider");
         // io.bindInput(GLFW_KEY_KP_SUBTRACT,  "growDownCollider");
 

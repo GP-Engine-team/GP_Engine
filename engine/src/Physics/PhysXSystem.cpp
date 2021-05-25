@@ -44,13 +44,13 @@ PhysXSystem::PhysXSystem()
         FUNCT_ERROR("PxCreateFoundation failed!");
 
     bool recordMemoryAllocations = true;
-    /*pvd                          = PxCreatePvd(*foundation);
+    pvd                          = PxCreatePvd(*foundation);
 
     PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
 
     if (transport == NULL)
         return;
-    pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);*/
+    pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
     PxTolerancesScale scale;
     physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, recordMemoryAllocations, pvd);
