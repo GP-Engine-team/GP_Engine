@@ -73,7 +73,7 @@ void Scene::addLoadedResourcePath(const char* path) noexcept
     if (itRst.second)
     {
         // importeResource(path);
-        Log::getInstance()->log(stringFormat("Resource add to scene \"%s\" with path : %s", m_name.c_str(), path));
+        Log::getInstance()->log(stringFormat("Resource add to scene \"%s\" with path : %s", getName().c_str(), path));
     }
     else
     {
@@ -86,7 +86,8 @@ void Scene::removeLoadedResourcePath(const char* path) noexcept
     if (--m_loadedResourcesPath[path] == 0)
     {
         m_loadedResourcesPath.erase(path);
-        Log::getInstance()->log(stringFormat("Resource remove from scene \"%s\" with path : %s", m_name.c_str(), path));
+        Log::getInstance()->log(
+            stringFormat("Resource remove from scene \"%s\" with path : %s", getName().c_str(), path));
     }
 }
 
@@ -105,4 +106,14 @@ template <>
 void GPE::load(XmlLoader& context, GPE::Scene*& inspected, const XmlLoader::LoadInfo& info)
 {
     context.addLazy((void**)&inspected);
+}
+
+const std::string& Scene::getName() const
+{
+    return m_pWorld->getName();
+}
+
+void Scene::setName(const char* newName)
+{
+    m_pWorld->setName(newName);
 }

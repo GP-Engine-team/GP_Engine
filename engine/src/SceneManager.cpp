@@ -24,8 +24,8 @@ Scene& SceneManager::loadFirstScene()
 
     if (std::filesystem::exists(firstLoadedScene))
     {
-        Scene& scene    = m_scenes[firstLoadedScene.string()];
-        scene.m_name    = firstLoadedScene.stem().string();
+        Scene& scene = m_scenes[firstLoadedScene.string()];
+        scene.setName(firstLoadedScene.stem().string().c_str());
         m_pCurrentScene = &scene;
 
         loadSceneFromPathImp(&scene, firstLoadedScene.string().c_str());
@@ -64,7 +64,7 @@ Scene& SceneManager::setCurrentScene(const std::string& sceneName)
         removeCurrentScene();
 
     Scene& scene = m_scenes[sceneName];
-    scene.m_name = std::filesystem::path(sceneName).stem().string();
+    scene.setName(std::filesystem::path(sceneName).stem().string().c_str());
 
     m_pCurrentScene = &scene;
 
@@ -149,7 +149,7 @@ void SceneManager::removeScene(const std::string& sceneName)
 
 void SceneManager::removeScene(Scene& scene)
 {
-    removeScene(scene.m_name);
+    removeScene(scene.getName());
 }
 
 void SceneManager::removeScenes()

@@ -27,7 +27,6 @@ class Scene
     friend class SceneManager;
 
 protected:
-    std::string                 m_name   = "Scene";
     std::unique_ptr<GameObject> m_pWorld = nullptr;
 
     std::unordered_map<std::string, unsigned int>
@@ -69,6 +68,7 @@ public:
     void save(XmlSaver&) const;
     void load(XmlLoader&);
 
-    DEFAULT_GETTER_SETTER_BY_REF(Name, m_name);
+    const std::string& getName() const;
+    void               setName(const char* newName);
 };
 } /*namespace GPE*/
