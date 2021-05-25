@@ -86,7 +86,7 @@ void GameStartup::update()
 {
     m_engine->timeSystem.update(m_fixedUpdate, m_update, m_render);
 
-    isRunning = !glfwWindowShouldClose(m_engine->window.getGLFWWindow());
+    Engine::getInstance()->isRunning = !glfwWindowShouldClose(m_engine->window.getGLFWWindow());
 }
 
 GameStartup::~GameStartup()
