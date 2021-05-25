@@ -3,6 +3,9 @@
 #include <Editor/Editor.hpp>
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+
+#include <glfw/glfw3.h>
 
 
 namespace Editor
@@ -14,6 +17,7 @@ using namespace GPE;
 void SceneEditor::captureInputs(bool toggle)
 {
     InputManager& io = Engine::getInstance()->inputManager;
+    
     io.setCursorLockState(toggle);
     io.setCursorTrackingState(toggle);
     view.captureInputs(toggle);
@@ -91,24 +95,45 @@ void SceneEditor::renderGizmoControlBar()
 }
 
 
-void SceneEditor::renderGizmo(GameObject* inspected)
+void SceneEditor::renderGizmo(float* inspectedTransfo)
 {
+
     ImVec2 topLeft = ImGui::GetWindowPos();
     topLeft.y     += ImGui::GetWindowContentRegionMin().y;
 
-
-    if (inspected)
-    {
-        ImGuizmo::BeginFrame();
-        ImGuizmo::SetDrawlist();
+    ImGuizmo::BeginFrame();
+    ImGuizmo::SetDrawlist();
    
-        ImGuizmo::SetRect(topLeft.x, topLeft.y, view.width, view.height);
+    ImGuizmo::SetRect(topLeft.x, topLeft.y, view.width, view.height);
 
-        ImGuizmo::Manipulate(view.camera.getView().e,
-                             view.camera.getProjection().e,
-                             activeOperation,
-                             activeMode,
-                             inspected->getTransform().get().model.e);
+    ImGuizmo::Manipulate(view.camera.getView().e,
+                         view.camera.getProjection().e,
+                         activeOperation,
+                         activeMode,
+                         inspectedTransfo);
+}
+
+
+void SceneEditor::checkKeys()
+{
+    if (!view.capturingInputs() && !ImGuizmo::IsUsing())
+    {
+        GLFWwindow* const window = GPE::Engine::getInstance()->window.getGLFWWindow();
+
+        if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+        {
+            activeOperation = ImGuizmo::TRANSLATE;
+        }
+
+        else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+        {
+            activeOperation = ImGuizmo::ROTATE;
+        }
+
+        else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            activeOperation = ImGuizmo::SCALE;
+        }
     }
 }
 
@@ -138,8 +163,9 @@ void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
         captureInputs(false);
     }
 
-    else if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)
-                && !ImGuizmo::IsOver())
+    else if (!ImGui::IsMouseDown(ImGuiMouseButton_Right)
+             && ImGui::IsMouseClicked(ImGuiMouseButton_Left)
+             && !ImGuizmo::IsOver())
     {
         const unsigned int idSelectedGameObject = view.getHoveredGameObjectID();
         if (idSelectedGameObject)
@@ -208,7 +234,12 @@ void SceneEditor::render(GPE::GameObject*& inspected)
         view.render();
 
         ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
-        renderGizmo(inspected);
+
+        if (inspected)
+        {
+            checkKeys();
+            renderGizmo(inspected->getTransform().get().model.e);
+        }
     }
 
     ImGui::End();
