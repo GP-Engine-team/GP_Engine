@@ -7,6 +7,7 @@
 #include <PhysX/PxRigidDynamic.h>
 #include <PhysX/characterkinematic/PxCapsuleController.h>
 #include <PhysX/characterkinematic/PxControllerManager.h>
+#include <PxScene.h>
 
 // Generated
 #include <Generated/CharacterController.rfk.h>
@@ -20,10 +21,10 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
 {
     PxCapsuleControllerDesc desc;
 
-    desc.height   = 25.f;
+    desc.height   = m_height;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(owner.getTransform().getGlobalPosition());
-    desc.radius   = 10.f;
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(/*owner.getTransform().getGlobalPosition()*/ {0, 0, 0});
+    desc.radius   = m_radius;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
 
@@ -31,16 +32,18 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
 
     // controller->setUserData(&getOwner());
     controller->getActor()->userData = &getOwner();
+
+    owner.getTransform().OnUpdate += Function::make(this, "updateShape");
 }
 
 CharacterController::CharacterController() noexcept
 {
     PxCapsuleControllerDesc desc;
 
-    desc.height   = 1;
+    desc.height   = m_height;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(GPM::Vec3{0, 10, 0});
-    desc.radius   = 1;
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(/*GPM::Vec3{0, 10, 0}*/ {0, 0, 0});
+    desc.radius   = m_radius;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
 
@@ -51,6 +54,7 @@ void CharacterController::onPostLoad() noexcept
 {
     GPE::Component::onPostLoad();
     controller->getActor()->userData = &getOwner();
+    getOwner().getTransform().OnUpdate += Function::make(this, "updateShape");
 }
 
 void CharacterController::update(double deltaTime) noexcept
@@ -82,9 +86,11 @@ void CharacterController::update(double deltaTime) noexcept
     if (controller == nullptr)
         return;
 
+    physx::PxExtendedVec3 debugvect = controller->getPosition();
     controller->move(PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, float(deltaTime), filters);
     m_displacement.x = m_displacement.y = m_displacement.z = .0f;
-    getOwner().getTransform().setTranslation(PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()));
+    getOwner().getTransform().setTranslation(PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()) -
+                                             m_center);
 }
 
 void CharacterController::move(const GPM::Vec3& displacement) noexcept
@@ -124,6 +130,7 @@ CharacterController::~CharacterController() noexcept
 {
     setActive(false);
     controller->release();
+    getOwner().getTransform().OnUpdate -= Function::make(this, "updateShape");
 }
 
 void CharacterController::updateToSystem() noexcept
@@ -132,4 +139,31 @@ void CharacterController::updateToSystem() noexcept
         Engine::getInstance()->physXSystem.addComponent(this);
     else
         Engine::getInstance()->physXSystem.removeComponent(this);
+}
+
+void CharacterController::updateShape() noexcept
+{
+    Engine::getInstance()->physXSystem.scene->removeActor(*controller->getActor(), false);
+    controller->release();
+
+    GPM::Vec3 scale = getOwner().getTransform().getGlobalScale();
+
+    PxCapsuleControllerDesc desc;
+
+    desc.height   = scale.y + m_height;
+    desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
+    desc.radius   = std::max(scale.x, scale.z) + m_radius;
+
+    controller = Engine::getInstance()->physXSystem.manager->createController(desc);
+}
+
+void CharacterController::setCenter(const GPM::Vec3& newCenter) noexcept
+{
+    if (newCenter == m_center)
+        return;
+
+    m_center = newCenter;
+    controller->setPosition(
+        PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center));
 }

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU
  * license terms in the LICENSE file
@@ -37,17 +37,21 @@ namespace GPE RFKNamespace()
         virtual ~CharacterController() noexcept;
 
     private:
-        RFKField(Inspect(), Serialize()) GPM::Vec3 m_displacement  = {.0f};
-        RFKField(Inspect(), Serialize()) GPM::Vec3 m_force         = {.0f};
-        RFKField(Inspect(), Serialize()) float     m_gravity       = EARTH_GRAVITY;
-        RFKField(Inspect(), Serialize()) float     m_mass          = 90.f;
-        RFKField(Inspect(), Serialize()) float     m_speed         = 1.f;
-        RFKField(Inspect(), Serialize()) float     m_angularSpeed  = 1.f; // in rad by second
-        RFKField(Inspect(), Serialize()) float     m_startJumpTime = 0.f;
-        RFKField(Inspect(), Serialize()) float     m_jumpTimeDelay = 1.f;
-        RFKField(Inspect(), Serialize()) bool      m_hasGravity    = false;
-        RFKField(Inspect(), Serialize()) bool      m_grounded      = false;
-        RFKField(Inspect(), Serialize()) bool      m_canJump       = false;
+        RFKField(Inspect(), Serialize()) float                m_gravity       = EARTH_GRAVITY;
+        RFKField(Inspect(), Serialize()) float                m_mass          = 90.f;
+        RFKField(Inspect(), Serialize()) float                m_speed         = 1.f;
+        RFKField(Inspect(), Serialize()) float                m_angularSpeed  = 1.f; // in rad by second
+        RFKField(Inspect(), Serialize()) float                m_startJumpTime = 0.f;
+        RFKField(Inspect(), Serialize()) float                m_jumpTimeDelay = 1.f;
+        RFKField(Inspect(), Serialize()) bool                 m_hasGravity    = false;
+        RFKField(Inspect(), Serialize()) bool                 m_canJump       = false;
+        RFKField(Inspect(), Serialize()) float                m_height        = 25.f;
+        RFKField(Inspect(), Serialize()) float                m_radius        = 10.f;
+        RFKField(Inspect("setCenter"), Serialize()) GPM::Vec3 m_center        = {.0f};
+
+        GPM::Vec3 m_force        = {.0f};
+        bool      m_grounded     = false;
+        GPM::Vec3 m_displacement = {.0f};
 
     protected:
         virtual void updateToSystem() noexcept override;
@@ -101,6 +105,18 @@ namespace GPE RFKNamespace()
          * @return
          */
         void groundCheck() noexcept;
+
+        /**
+         * @brief update the shape of the CharacterController;
+         * @return
+         */
+        RFKMethod() void updateShape() noexcept;
+
+        /**
+         * @brief set the new local center of the collider;
+         * @return
+         */
+        RFKMethod() void setCenter(const GPM::Vec3& newCenter) noexcept;
 
         CharacterController_GENERATED
     };

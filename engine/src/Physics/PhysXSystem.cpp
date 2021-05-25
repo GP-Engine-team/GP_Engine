@@ -195,7 +195,6 @@ void PhysXSystem::removeComponent(RigidbodyDynamic* rigidbody) noexcept
 size_t PhysXSystem::addComponent(CharacterController* characterController) noexcept
 {
     characterControllers.push_back(characterController);
-    // scene->addActor(*characterController->controller->getActor());
 
     return characterControllers.size();
 }
