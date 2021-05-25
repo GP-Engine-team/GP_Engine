@@ -1,11 +1,10 @@
 ﻿#pragma once
 
-#include "Engine/Intermediate/GameObject.hpp"
-
 namespace GPE
 {
 class IInspectable;
-} // namespace GPE
+class GameObject;
+}
 
 namespace Editor
 {
