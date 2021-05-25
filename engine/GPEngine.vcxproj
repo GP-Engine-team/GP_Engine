@@ -264,8 +264,12 @@
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
     <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp" />
+    <ClInclude Include="include\Engine\Resources\Animation\Animation.hpp" />
+    <ClInclude Include="include\Engine\Resources\Animation\Animator.hpp" />
+    <ClInclude Include="include\Engine\Resources\Animation\Bone.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
     <ClInclude Include="include\Engine\Resources\Cursor.hpp" />
+    <ClInclude Include="include\Engine\Resources\Importer\AssimpUtilities.hpp" />
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp" />
     <ClInclude Include="include\Engine\Resources\Material.hpp" />
     <ClInclude Include="include\Engine\Resources\Mesh.hpp" />

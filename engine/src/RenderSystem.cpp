@@ -19,6 +19,8 @@
 #include <Engine/Resources/RenderBuffer.hpp>
 #include <Engine/Resources/RenderTexture.hpp>
 #include <Engine/Resources/Shader.hpp>
+#include <Engine/Resources/Animation/Animation.hpp>
+#include <Engine/Resources/Animation/Animator.hpp>
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/AABB.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
@@ -95,6 +97,14 @@ RenderSystem::RenderSystem() noexcept
     shader = &Engine::getInstance()->resourceManager.add<Shader>(
         "Default", "./resources/shaders/vTextureWithLightAndShadow.vs",
         "./resources/shaders/fTextureWithLightAndShadow.fs", LIGHT_BLIN_PHONG);
+
+    shader->use();
+    shader->setInt("ourTexture", 0);
+    shader->setInt("shadowMap", 1);
+
+    shader = &Engine::getInstance()->resourceManager.add<Shader>(
+    "DefaultWithAnims", "./resources/shaders/vTextureWithLightAndShadowAndAnims.vs",
+    "./resources/shaders/fTextureWithLightAndShadowAndAnims.fs", LIGHT_BLIN_PHONG);
 
     shader->use();
     shader->setInt("ourTexture", 0);
@@ -532,6 +542,21 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
+
+                // TODO : To Clean
+                // Animations
+                if (pSubModel->pMesh->animator != nullptr)
+                {
+                    auto transforms = pSubModel->pMesh->animator->GetFinalBoneMatrices();
+                    for (int i = 0; i < transforms.size(); ++i)
+                    {
+
+                        pSubModel->pShader->setMat4(
+                            std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(),
+                            transforms[i].e);
+                    }
+                }
+
 
                 // TODO: To optimize ! Use Draw instanced Array
 

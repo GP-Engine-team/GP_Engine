@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/Type.hpp>
@@ -17,9 +18,14 @@
 #include <GPM/Shape3D/Sphere.hpp>
 #include <GPM/Shape3D/Volume.hpp>
 #include <GPM/Vector3.hpp>
+#include <GPM/Matrix4.hpp>
+
+struct aiScene;
+struct aiMesh;
 
 namespace GPE
 {
+class Animator;
 
 class Mesh
 {
@@ -38,6 +44,15 @@ public:
         GPM::Vec3 vn;  // normal
         GPM::Vec2 vt;  // UV
         GPM::Vec3 vtg; // tangeante
+
+
+        static constexpr size_t maxBoneInfluence = 4;
+        
+        // bone indexes which will influence this vertex
+        int m_BoneIDs[maxBoneInfluence];
+
+        // weights from each bone
+        float m_Weights[maxBoneInfluence];
     };
 
     struct Indice
@@ -88,6 +103,33 @@ protected:
 
 protected:
     void removeBoundingVolume();
+
+public:
+    struct BoneInfo
+    {
+        /*id is index in finalBoneMatrices*/
+        int id;
+
+        /*offset matrix transforms vertex from model space to bone space*/
+        GPM::mat4 offset;
+    };
+
+public:
+    // Animation data
+    std::map<std::string, BoneInfo> m_BoneInfoMap; //
+    int                             m_BoneCounter = 0;
+
+    class Animation* anim = nullptr;
+    // TODO : Remove this monstruosity
+    // HORROR
+    GPE::Animator* animator = nullptr;
+
+public:
+    static void setVertexBoneDataToDefault(GPE::Mesh::Vertex& vertex);
+
+    static void setVertexBoneData(GPE::Mesh::Vertex& vertex, int boneID, float weight);
+
+    void extractBoneWeightForVertices(std::vector<GPE::Mesh::Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 
 public:
     Mesh(CreateIndiceBufferArg& arg) noexcept;
