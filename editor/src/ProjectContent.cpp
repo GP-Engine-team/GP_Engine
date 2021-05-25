@@ -15,6 +15,9 @@
 #include <Engine/Serialization/TextureImporterSetting.hpp>
 #include <Engine/Serialization/TextureInspectorPanel.hpp>
 
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+#include <Engine/Core/HotReload/SingletonsSync.hpp>
+
 // Don't move up
 #include "Engine/Core/HotReload/SingletonsSync.hpp"
 
@@ -277,6 +280,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
     }
 
     ImGui::TextUnformatted(pCurrentDirectory->path.string().c_str());
+
+    // Drop prefab to save as prefab
+
+    ImGui::BeginChild("DropRegion");
 
     ImVec2                size  = ImVec2(32.0f, 32.0f); // Size of the image we want to make visible
     ImGuiStyle&           style = ImGui::GetStyle();
@@ -646,5 +653,37 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
     if (!pathToRemovePath.empty())
     {
         removeFile(pathToRemovePath);
+    }
+
+    // End drop region
+    ImGui::EndChild();
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(GameObject*));
+
+            GameObject&                 gameObject = **static_cast<GPE::GameObject**>(payload->Data);
+            const std::filesystem::path path =
+                pCurrentDirectory->path / (gameObject.getName() + ENGINE_PREFAB_EXTENSION);
+            Scene             tempScene;
+            GameObject* const pPreviousParent     = gameObject.getParent();
+            Scene* const      pPreviousOwnedScene = gameObject.pOwnerScene;
+
+            tempScene.getWorld().children.emplace_back(&gameObject);
+            gameObject.forceSetParent(tempScene.getWorld());
+            gameObject.pOwnerScene = nullptr;
+
+            auto saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
+            saveFunc(&tempScene, path.string().c_str(), GPE::SavedScene::EType::XML);
+
+            gameObject.pOwnerScene = pPreviousOwnedScene;
+            gameObject.forceSetParent(*pPreviousParent);
+            tempScene.getWorld().children.clear();
+            refreshResourcesList();
+
+            // deferedSetParent.bind(**static_cast<GPE::GameObject**>(payload->Data), gameObject);
+        }
+        ImGui::EndDragDropTarget();
     }
 }
