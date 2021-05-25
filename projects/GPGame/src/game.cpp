@@ -1,17 +1,16 @@
-#define IMGUI_DEFINE_MATH_OPERATORS
+﻿#define IMGUI_DEFINE_MATH_OPERATORS
 #define GLFW_INCLUDE_NONE
 
 #include <BasePlayer.hpp>
 #include <Game.hpp>
 
-#include <Engine/ECS/Component/Physics/Collisions/BoxCollider.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
+#include <SpatializedSoundPlayerScript.hpp>
 
 #include <Sun.hpp>
 #include <WorldGenerator.hpp>
@@ -28,6 +27,9 @@
 
 #include "Engine/Core/HotReload/SingletonsSync.hpp"
 
+#include <Engine/Core/Physics/Collisions/BoxCollider.hpp>
+#include <Engine/Core/Physics/Collisions/SphereCollider.hpp>
+
 using namespace GPG;
 using namespace GPE;
 using namespace GPM;
@@ -36,7 +38,6 @@ using namespace GPM::Random;
 void Game::update(double unscaledDeltaTime, double deltaTime)
 {
     ++unFixedUpdateFrameCount;
-    GPE::Engine::getInstance()->physXSystem.drawDebugScene();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)

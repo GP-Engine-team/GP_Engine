@@ -26,7 +26,9 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSource3f, source->source, AL_POSITION, settings.position[0], settings.position[1], settings.position[2]);
     AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity[0], settings.velocity[1], settings.velocity[2]);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
+    AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, settings.relative);
     AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
+    // AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, )
 }
 
 AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept

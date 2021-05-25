@@ -114,7 +114,18 @@ void save(XmlSaver& context, const std::unordered_map<KEY, VALUE>& saved, const 
 template <typename T>
 void save(XmlSaver& context, const std::unique_ptr<T>& saved, const XmlSaver::SaveInfo& info)
 {
-    GPE::save(context, saved.get(), info);
+    XmlSaver::SaveInfo newInfo = info;
+
+    if constexpr (std::is_base_of<rfk::Object, T>::value)
+    {
+        if (newInfo.typeId == 0)
+        {
+            newInfo.typeName = saved->getArchetype().name;
+            newInfo.typeId   = saved->getArchetype().id;
+        }
+    }
+
+    GPE::save(context, saved.get(), newInfo);
 }
 
 } // namespace GPE

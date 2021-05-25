@@ -31,7 +31,6 @@
     <ClInclude Include="include\Firearm\PPSH41.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\BasePlayer.hpp" />
-    <ClInclude Include="include\myFreeFlyScript.hpp" />
     <ClInclude Include="include\myFreeFlyWithCollisionScript.hpp" />
     <ClInclude Include="include\myScript.hpp" />
     <ClInclude Include="include\WorldGenerator.hpp" />

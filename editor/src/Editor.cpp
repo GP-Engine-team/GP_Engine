@@ -187,6 +187,7 @@ void Editor::renderGameControlBar(EditorStartup& startup)
 void Editor::renderLevelEditor()
 {
     m_sceneEditor.view.update();
+    GPE::Engine::getInstance()->physXSystem.drawDebugScene();
     m_sceneEditor.render(m_inspectedObject);
 }
 
