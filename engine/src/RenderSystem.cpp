@@ -382,7 +382,10 @@ RenderSystem::RenderPipeline RenderSystem::debugRenderPipeline() const noexcept
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
               std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
               std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines,
-              std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
+              std::vector<ShadowMap>& shadowMaps, Camera* pMainCamera) {
+        if (!pMainCamera)
+            return;
+
         // Draw debug shape
         {
             glEnable(GL_BLEND);
@@ -399,7 +402,7 @@ RenderSystem::RenderPipeline RenderSystem::debugRenderPipeline() const noexcept
                     rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
 
                     shaderToUse->setMat4("projectViewModelMatrix",
-                                         (mainCamera.getProjectionView() * shape.transform.model).e);
+                                         (pMainCamera->getProjectionView() * shape.transform.model).e);
 
                     shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
 
@@ -414,7 +417,7 @@ RenderSystem::RenderPipeline RenderSystem::debugRenderPipeline() const noexcept
             {
                 const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("ColorMesh");
                 glUseProgram(shaderToUse->getID());
-                shaderToUse->setMat4("projectViewMatrix", mainCamera.getProjectionView().e);
+                shaderToUse->setMat4("projectViewMatrix", pMainCamera->getProjectionView().e);
                 rs.tryToSetBackFaceCulling(false);
                 glEnable(GL_LINE_SMOOTH);
                 struct LineAttrib
@@ -487,8 +490,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
               std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
               std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines,
-              std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
-        if (pCameras.empty())
+              std::vector<ShadowMap>& shadowMaps, Camera* pMainCamera) {
+        if (!pMainCamera)
             return;
 
         rs.shadowMapPipeline();
@@ -500,7 +503,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Frustum camFrustum = mainCamera.getFrustum();
+        Frustum camFrustum = pMainCamera->getFrustum();
 
         /*Display opaque element*/
         {
@@ -523,7 +526,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(mainCamera, *pSubModel->pShader,
+                rs.sendModelDataToShader(*pMainCamera, *pSubModel->pShader,
                                          pSubModel->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*pSubModel);
             }
@@ -540,7 +543,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 if (rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    float distance = (mainCamera.getOwner().getTransform().getGlobalPosition() -
+                    float distance = (pMainCamera->getOwner().getTransform().getGlobalPosition() -
                                       (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
                                          .sqrLength();
                     mapElemSortedByDistance[distance] = pSubModel;
@@ -558,7 +561,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(mainCamera, *it->second->pShader,
+                rs.sendModelDataToShader(*pMainCamera, *it->second->pShader,
                                          it->second->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*it->second);
             };
@@ -579,7 +582,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 if (particle->getShader())
                 {
                     rs.tryToBindShader(*particle->getShader());
-                    rs.sendModelDataToShader(mainCamera, *particle->getShader(),
+                    rs.sendModelDataToShader(*pMainCamera, *particle->getShader(),
                                              particle->getOwner().getTransform().getModelMatrix());
                 }
                 rs.tryToBindMesh(particle->getMeshID());
@@ -598,7 +601,10 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
               std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
               std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
-              std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
+              std::vector<ShadowMap>& shadowMaps, Camera* pMainCamera) {
+        if (!pMainCamera)
+            return;
+
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -606,7 +612,7 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
         glClearColor(0.f, 0.f, 0.f, 0.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        const Frustum camFrustum = mainCamera.getFrustum();
+        const Frustum camFrustum = pMainCamera->getFrustum();
 
         Shader& shaderGameObjectIdentifier =
             *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
@@ -628,7 +634,8 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
 
                 shaderGameObjectIdentifier.setMat4(
                     "projectViewModelMatrix",
-                    (mainCamera.getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix()).e);
+                    (pMainCamera->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                        .e);
                 rs.drawModelPart(*pSubModel);
             }
 
@@ -645,7 +652,8 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
 
                 shaderGameObjectIdentifier.setMat4(
                     "projectViewModelMatrix",
-                    (mainCamera.getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix()).e);
+                    (pMainCamera->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                        .e);
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -723,7 +731,7 @@ void RenderSystem::render(RenderPipeline renderPipeline) noexcept
     }
 
     renderPipeline(*this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_pParticleComponents, m_debugShape, m_debugLine, m_shadowMaps, *m_mainCamera);
+                   m_pParticleComponents, m_debugShape, m_debugLine, m_shadowMaps, m_mainCamera);
 }
 
 void RenderSystem::updateDebug(double dt) noexcept

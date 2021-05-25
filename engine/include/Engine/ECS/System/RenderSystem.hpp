@@ -63,7 +63,7 @@ public:
     using RenderPipeline =
         std::function<void(RenderSystem&, std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
                            std::vector<Camera*>&, std::vector<Light*>&, std::vector<ParticleComponent*>&,
-                           std::vector<DebugShape>&, std::vector<DebugLine>&, std::vector<ShadowMap>&, Camera&)>;
+                           std::vector<DebugShape>&, std::vector<DebugLine>&, std::vector<ShadowMap>&, Camera*)>;
 
 protected:
     std::vector<Renderer*>          m_pRenderers;
