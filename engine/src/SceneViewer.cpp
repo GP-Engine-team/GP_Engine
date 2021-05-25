@@ -1,11 +1,11 @@
 ﻿#include <Engine/Intermediate/Viewers/SceneViewer.hpp>
-// Engine
 
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/ECS/Component/InputComponent.hpp>
 #include <Engine/ECS/System/InputManagerGLFW.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
 
@@ -129,8 +129,8 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
       FBOIDtextureID    {0u},
       FBOIDdepthID      {0u},
       FBOIDframebufferID{0u},
-      FBOIDwidth        {static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight       {static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDwidth        {int(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight       {int(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
       width             {width_},
       height            {height_},
       m_capturingInputs {false}
@@ -310,6 +310,11 @@ void SceneViewer::captureInputs(bool shouldCapture)
     m_capturingInputs = shouldCapture;
 
     inputs.setActive(shouldCapture);
+}
+
+bool SceneViewer::capturingInputs() const
+{
+    return m_capturingInputs;
 }
 
 // TODO: move to class Camera, or to a new class
