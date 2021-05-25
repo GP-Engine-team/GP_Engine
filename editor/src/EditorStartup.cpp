@@ -47,7 +47,8 @@ void EditorStartup::initializeDefaultInputs() const
 
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {}},
-      m_update{[&](double unscaledDeltaTime, double deltaTime) {
+      m_update{[&](double unscaledDeltaTime, double deltaTime)
+      {
           m_engine->inputManager.processInput();
           m_editor.update(*this);
 
@@ -156,17 +157,21 @@ void EditorStartup::closeGame()
 void EditorStartup::playGame()
 {
     if (m_game->state == EGameState::STOPPED)
+    {
         m_editor.saveCurrentScene();
+    }
 
     // Do not change the order of instructions inside the lambdas
-    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
+    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+    {
         m_engine->physXSystem.advance(fixedDeltaTime);
         m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
 
         m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
     };
 
-    m_update = [&](double unscaledDeltaTime, double deltaTime) {
+    m_update = [&](double unscaledDeltaTime, double deltaTime)
+    {
         m_engine->inputManager.processInput();
         m_editor.update(*this);
 
@@ -197,10 +202,12 @@ void EditorStartup::pauseGame()
 
 void EditorStartup::stopGame()
 {
-    pauseGame();
-    m_editor.reloadCurrentScene();
-    // TODO: reload scene
-    m_game->state = EGameState::STOPPED;
+    if (m_game->state != EGameState::STOPPED)
+    {
+        pauseGame();
+        m_editor.reloadCurrentScene();
+        m_game->state = EGameState::STOPPED;
+    }
 }
 
 void EditorStartup::update()
