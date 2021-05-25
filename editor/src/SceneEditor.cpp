@@ -129,7 +129,6 @@ void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
     }
 
     // Actual method content
-    GPE::Log::getInstance()->log("Inside");
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
     {
         captureInputs(true);
