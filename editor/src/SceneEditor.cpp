@@ -3,7 +3,7 @@
 #include <Editor/Editor.hpp>
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/Engine.hpp>
-#include <imgui/imgui.h>
+//#include <imgui/imgui.h>
 
 
 namespace Editor
@@ -87,7 +87,6 @@ void SceneEditor::renderGizmoControlBar()
             }
         }
 
-        ImGui::GetItemRectMin();
         ImGui::EndMenuBar();
     }
 }
@@ -95,15 +94,16 @@ void SceneEditor::renderGizmoControlBar()
 
 void SceneEditor::renderGizmo(GameObject* inspected)
 {
+    ImVec2 topLeft = ImGui::GetWindowPos();
+    topLeft.y     += ImGui::GetWindowContentRegionMin().y;
+
+
     if (inspected)
     {
         ImGuizmo::BeginFrame();
         ImGuizmo::SetDrawlist();
-
-        {
-            const ImVec2 winPos{ImGui::GetWindowPos()};        
-            ImGuizmo::SetRect(winPos.x, winPos.y, view.width, view.height);
-        }
+   
+        ImGuizmo::SetRect(topLeft.x, topLeft.y, view.width, view.height);
 
         ImGuizmo::Manipulate(view.camera.getView().e,
                              view.camera.getProjection().e,
@@ -116,46 +116,60 @@ void SceneEditor::renderGizmo(GameObject* inspected)
 
 void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
 {
-    if (ImGui::IsWindowHovered())
+    { // Check whether the cursor is inside the window
+        ImVec2 topLeft = ImGui::GetWindowPos();
+        topLeft.y     += ImGui::GetWindowContentRegionMin().y;
+
+        const ImVec2 bottomRight{topLeft.x + view.width, topLeft.y + view.height};
+
+        if (!ImGui::IsMouseHoveringRect(topLeft, bottomRight))
+        {
+            return;
+        }
+    }
+
+    // Actual method content
+    GPE::Log::getInstance()->log("Inside");
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
     {
-        if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-        {
-            captureInputs(true);
-        }
+        captureInputs(true);
+    }
 
-        else if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
-        {
-            captureInputs(false);
-        }
+    else if (ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+    {
+        captureInputs(false);
+    }
 
-        else if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGuizmo::IsOver())
+    else if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)
+                && !ImGuizmo::IsOver())
+    {
+        const unsigned int idSelectedGameObject = view.getHoveredGameObjectID();
+        if (idSelectedGameObject)
         {
-            const unsigned int idSelectedGameObject = view.getHoveredGameObjectID();
-            if (idSelectedGameObject)
+            if (GameObject* const selectedObject =
+                view.pScene->getWorld().getGameObjectCorrespondingToID(idSelectedGameObject))
             {
-                if (GameObject* const selectionGameObject =
-                    view.pScene->getWorld().getGameObjectCorrespondingToID(idSelectedGameObject))
-                {
-                    inspectedObject = selectionGameObject;
-                }
-
-                else
-                {
-                    GPE::Log::getInstance()->logError(
-                        stringFormat("No gameObject corresponding to the id %i", idSelectedGameObject));
-                }
+                inspectedObject = selectedObject;
+                ImGuizmo::Enable(true);
             }
 
             else
             {
-                inspectedObject = nullptr;
+                GPE::Log::getInstance()->logError(
+                    stringFormat("No gameObject corresponding to the id %i", idSelectedGameObject));
             }
         }
 
-        if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && inspectedObject)
+        else
         {
-            view.lookAtObject(*reinterpret_cast<GameObject*>(inspectedObject));
+            inspectedObject = nullptr;
+            ImGuizmo::Enable(false);
         }
+    }
+
+    if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && inspectedObject)
+    {
+        view.lookAtObject(*reinterpret_cast<GameObject*>(inspectedObject));
     }
 }
 
@@ -177,7 +191,6 @@ SceneEditor::SceneEditor(GPE::Scene& scene)
       activeMode     {ImGuizmo::MODE::WORLD}
 {
     ImGuizmo::AllowAxisFlip(false);
-    ImGuizmo::Enable(true);
 }
 
 void SceneEditor::render(GPE::GameObject*& inspected)
