@@ -119,6 +119,19 @@ void ProjectContent::tryToSetCurrentCirToPreviousLocation(const std::filesystem:
     pCurrentDirectory = pNode;
 }
 
+void createResroucePath(DirectoryInfo& base, std::vector<ResourcesPath>& rp)
+{
+    for (auto&& dir : base.directories)
+    {
+        createResroucePath(dir, rp);
+    }
+
+    for (auto&& file : base.files)
+    {
+        rp.emplace_back(ResourcesPath{file.path});
+    }
+}
+
 void ProjectContent::refreshResourcesList()
 {
     std::filesystem::path path = std::filesystem::current_path() / RESOURCES_DIR;
@@ -158,6 +171,12 @@ void ProjectContent::refreshResourcesList()
                                                       next->path().extension(), next->file_size()});
         }
     }
+
+    std::vector<ResourcesPath> pathContainer;
+    createResroucePath(resourcesTree, pathContainer);
+
+    GPE::Engine::getInstance()->resourceManager.clear<std::vector<GPE::ResourcesPath>>();
+    GPE::Engine::getInstance()->resourceManager.add<std::vector<GPE::ResourcesPath>>("Path", std::move(pathContainer));
 
     explore(resourcesTree);
     tryToSetCurrentCirToPreviousLocation(previousRelatifPath);

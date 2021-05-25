@@ -42,4 +42,34 @@ bool DataInspector::inspect(InspectContext& context, class Prefab*& inspected, c
 template <>
 bool DataInspector::inspect(InspectContext& context, class Prefab*& inspected, const char* name);
 
+template <>
+bool DataInspector::inspect(InspectContext& context, class Material*& inspected, const rfk::Field& info);
+
+template <>
+bool DataInspector::inspect(InspectContext& context, class Material*& inspected, const char* name);
+
+template <>
+bool DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const rfk::Field& info);
+
+template <>
+bool DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const char* name);
+
+template <>
+bool DataInspector::inspect(InspectContext& context, class Texture*& inspected, const rfk::Field& info);
+
+template <>
+bool DataInspector::inspect(InspectContext& context, class Texture*& inspected, const char* name);
+
+template <>
+bool DataInspector::inspect(InspectContext& context, class Shader*& inspected, const rfk::Field& info);
+
+template <>
+bool DataInspector::inspect(InspectContext& context, class Shader*& inspected, const char* name);
+
+template <>
+bool DataInspector::inspect(InspectContext& context, class Scene*& inspected, const rfk::Field& info);
+
+template <>
+bool DataInspector::inspect(InspectContext& context, class Scene*& inspected, const char* name);
+
 } // namespace GPE
