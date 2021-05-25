@@ -34,7 +34,6 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) GPE::InputComponent*        input         = nullptr;
         RFKField(Serialize()) GPE::AudioComponent*        source        = nullptr;
         RFKField(Serialize()) Firearm*                    m_fireArme    = nullptr;
-        RFKField(Inspect(), Serialize()) GPE::GameObject* m_decalPrefab = nullptr;
 
     public:
         BasePlayer() noexcept = default;

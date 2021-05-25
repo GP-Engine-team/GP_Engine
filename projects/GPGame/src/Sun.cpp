@@ -4,6 +4,7 @@
 File_GENERATED
 
 #include <Engine/Core/Debug/assert.hpp>
+#include <Engine/Engine.hpp>
 #include <gpm/Vector3.hpp>
 #include <gpm/Vector4.hpp>
 
@@ -13,19 +14,20 @@ using namespace GPM;
 
 Sun::Sun(GameObject& owner) : BehaviourComponent(owner)
 {
-    enableUpdate(true);
 }
 
 void Sun::onPostLoad()
 {
-    enableUpdate(true);
     BehaviourComponent::onPostLoad();
+    enableUpdate(true);
 }
 
 void Sun::start()
 {
-    GAME_ASSERT(m_player, "Missing player ref");
-    m_pSunDirectionnalLight = getOwner().getComponent<DirectionalLight>();
+    GameObject* m_player = GPE::Engine::getInstance()->sceneManager.getCurrentScene()->getGameObject("Player");
+    GAME_ASSERT(m_player, "Player not found");
+
+    m_pSunDirectionnalLight = &getOwner().getOrCreateComponent<DirectionalLight>();
 
     m_midDay   = m_dayStart + m_dayDuration / 2.f;
     m_midNight = m_dayStart + m_nightDuration / 2.f;
