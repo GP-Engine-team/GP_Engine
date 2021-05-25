@@ -194,28 +194,65 @@ void displayLifeBar(float currentLife, float lifeMax, const ImVec2& size_arg)
 void BasePlayer::onGUI()
 {
     using namespace ImGui;
-    const float ratio = ImGui::GetWindowSize().y / ImGui::GetWindowSize().x;
 
-    // ImGui::DragFloat("Ratio", &ratio, 0.01f, 0.f, 1.f);
+    if (displayDepthMenu)
+    {
+        ImVec2 size = {GetWindowSize().x / 4.f, GetWindowSize().y / 6.f};
 
-    ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
+        SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
+        if (ImGui::Button("Retry", size))
+        {
+            reloadScene();
+            Engine::getInstance()->timeSystem.setTimeScale(1.0);
+        }
 
-    SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
-    displayLifeBar(m_currentLife, m_maxLife, size);
+        SetNextElementLayout(0.5f, 0.6f, size, EHAlign::Middle, EVAlign::Middle);
+        if (ImGui::Button("Quitte", size))
+        {
+        }
+    }
+    else
+    {
+        const float ratio = ImGui::GetWindowSize().y / ImGui::GetWindowSize().x;
 
-    SetNextElementLayout(0.f, 1.f, size, EHAlign::Left, EVAlign::Bottom);
-    Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
+        // ImGui::DragFloat("Ratio", &ratio, 0.01f, 0.f, 1.f);
+
+        ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
+
+        SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Middle);
+        displayLifeBar(m_currentLife, m_maxLife, size);
+
+        SetNextElementLayout(0.f, 1.f, size, EHAlign::Middle, EVAlign::Middle);
+        Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
+    }
 }
 
 void BasePlayer::update(double deltaTime)
 {
-    // TODO: find a fix to relieve the user from having to check this, or leave it like that?
-    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
+    if (true)
     {
-        const GPM::Vec2 deltaPos = GPE::Engine::getInstance()->inputManager.getCursor().deltaPos;
+        if (!displayDepthMenu)
+        {
+            m_animDepthCounter += deltaTime;
 
-        if (deltaPos.x || deltaPos.y)
-            rotate(deltaPos);
+            if (m_animDepthCounter >= m_animDepthCounterMax)
+            {
+                Engine::getInstance()->timeSystem.setTimeScale(0.0);
+                m_animDepthCounter = 0;
+                displayDepthMenu   = true;
+            }
+        }
+    }
+    else
+    {
+        // TODO: find a fix to relieve the user from having to check this, or leave it like that?
+        if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
+        {
+            const GPM::Vec2 deltaPos = GPE::Engine::getInstance()->inputManager.getCursor().deltaPos;
+
+            if (deltaPos.x || deltaPos.y)
+                rotate(deltaPos);
+        }
     }
 }
 

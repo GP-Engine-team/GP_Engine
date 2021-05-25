@@ -48,6 +48,7 @@ void EditorStartup::initializeDefaultInputs() const
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {}},
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
+          m_engine->sceneManager.update();
           m_engine->inputManager.processInput();
           m_editor.update(*this);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
@@ -84,6 +85,7 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, loadPrefabFromPath);
     ADD_PROCESS(m_reloadableCpp, clonePrefab);
     ADD_PROCESS(m_reloadableCpp, loadFirstScene);
+    ADD_PROCESS(m_reloadableCpp, updateSceneManager);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
@@ -185,6 +187,8 @@ void EditorStartup::playGame()
     m_update = [&](double unscaledDeltaTime, double deltaTime) {
         if (m_game->state == EGameState::PLAYING)
         {
+            auto updateSceneManagerFunct = GET_PROCESS(m_reloadableCpp, updateSceneManager);
+            updateSceneManagerFunct();
             m_engine->inputManager.processInput();
 
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
@@ -211,6 +215,8 @@ void EditorStartup::pauseGame()
     m_update      = [&](double unscaledDeltaTime, double deltaTime) {
         if (m_game->state == EGameState::PAUSED)
         {
+            auto updateSceneManagerFunct = GET_PROCESS(m_reloadableCpp, updateSceneManager);
+            updateSceneManagerFunct();
             m_engine->inputManager.processInput();
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
@@ -234,6 +240,9 @@ void EditorStartup::stopGame()
     m_update      = [&](double unscaledDeltaTime, double deltaTime) {
         if (m_game->state == EGameState::STOPPED)
         {
+            auto updateSceneManagerFunct = GET_PROCESS(m_reloadableCpp, updateSceneManager);
+            updateSceneManagerFunct();
+
             m_engine->inputManager.processInput();
             m_editor.update(*this);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);

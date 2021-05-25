@@ -26,6 +26,11 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BasePlayer : public BaseCharacter
     {
     protected:
+        RFKField(Serialize()) float            m_animDepthCounter    = 0.f;
+        RFKField(Inspect(), Serialize()) float m_animDepthCounterMax = 3.f;
+
+        RFKField(Serialize()) bool displayDepthMenu = false;
+
         RFKField(Serialize()) GPE::InputComponent*        input         = nullptr;
         RFKField(Serialize()) GPE::AudioComponent*        source        = nullptr;
         RFKField(Serialize()) Firearm*                    m_fireArme    = nullptr;

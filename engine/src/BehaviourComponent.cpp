@@ -6,6 +6,7 @@ File_GENERATED
 #include <Engine/ECS/Component/TransformComponent.hpp>
 #include <Engine/ECS/System/BehaviourSystem.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
+#include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
 
@@ -147,4 +148,14 @@ void BehaviourComponent::logError(const std::string& msg)
 TransformComponent& BehaviourComponent::transform()
 {
     return getOwner().getTransform();
+}
+
+void BehaviourComponent::reloadScene()
+{
+    Engine::getInstance()->sceneManager.defferedReloadCurrentScene();
+}
+
+void BehaviourComponent::loadNewScene(const char* path)
+{
+    Engine::getInstance()->sceneManager.defferedLoadNewScene(path);
 }

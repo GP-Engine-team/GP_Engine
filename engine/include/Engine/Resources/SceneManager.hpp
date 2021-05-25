@@ -39,11 +39,18 @@ protected:
     std::unordered_map<std::string, Scene> m_scenes        = {};
     Scene*                                 m_pCurrentScene = nullptr;
 
+    // Path to the next scene to load
+    std::filesystem::path m_pathNextSceneToLoad;
+    bool                  m_isDead = false; // usefull to signal to change th current scene
+
 public:
     std::function<void(void)> OnSceneChange;
 
     // This scene will be load in first if possible
     std::filesystem::path firstLoadedScene;
+
+protected:
+    void removeCurrentScene();
 
 public:
     SceneManager() noexcept = default;
@@ -57,6 +64,18 @@ public:
     SceneManager& operator=(SceneManager const& other) noexcept = default;
 
     SceneManager& operator=(SceneManager&& other) noexcept = default;
+
+    /**
+     * @brief Defered action. To load new scene or reload the current
+     * @param sceneName
+     */
+    void defferedReloadCurrentScene();
+    void defferedLoadNewScene(const char* path);
+
+    /**
+     * @brief Update deffered action
+     */
+    void update();
 
     Scene* getCurrentScene() noexcept
     {
@@ -77,6 +96,9 @@ public:
     void removeScene(const std::string& sceneName);
     void removeScene(Scene& scene);
     void removeScenes();
+
+    void saveSceneToPath(const std::filesystem::path& path, GPE::SavedScene::EType saveMode);
+    void loadSceneFromPath(const std::filesystem::path& path);
 };
 
 } /*namespace GPE*/

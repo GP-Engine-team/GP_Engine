@@ -89,6 +89,9 @@ namespace GPE RFKNamespace()
         void logWarning(const std::string& msg);
         void logError(const std::string& msg);
 
+        void reloadScene();
+        void loadNewScene(const char* path);
+
         TransformComponent& transform();
 
         BehaviourComponent_GENERATED

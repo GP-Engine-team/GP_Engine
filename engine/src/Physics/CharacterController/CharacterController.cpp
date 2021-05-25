@@ -71,7 +71,8 @@ void CharacterController::update(double deltaTime) noexcept
 
     controller->move(PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, float(deltaTime), filters);
     m_displacement.x = m_displacement.y = m_displacement.z = .0f;
-    getOwner().getTransform().setTranslation(PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()));
+    getOwner().getTransform().setTranslation(deltaTime *
+                                             PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()));
 }
 
 void CharacterController::move(const GPM::Vec3& displacement) noexcept

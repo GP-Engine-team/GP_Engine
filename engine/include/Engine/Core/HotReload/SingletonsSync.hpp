@@ -72,7 +72,13 @@ extern "C"
     ENGINE_API inline GPE::GameObject* loadPrefabFromPath(GPE::GameObject& parent, const char* path)
     {
         return GPE::loadPrefabFromPathImp(parent, path);
+    }\
+
+    ENGINE_API inline void updateSceneManager()
+    {
+        GPE::Engine::getInstance()->sceneManager.update();
     }
+    
 
     ENGINE_API class GPE::AbstractGame* createGameInstance();
     ENGINE_API void                     destroyGameInstance(class GPE::AbstractGame* game);

@@ -7,7 +7,7 @@
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace std;
 
 AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
@@ -17,7 +17,7 @@ AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
 
 void AudioComponent::setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept
 {
-    SourceData* source = getSource(sourceName);
+    SourceData*    source = getSource(sourceName);
     Sound::Buffer* buffer = Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName);
 
     AL_CALL(alGenSources, 1, &source->source);
@@ -48,7 +48,7 @@ void AudioComponent::playSound(const char* name, bool forceStart) noexcept
     if (m_isActivated)
     {
         SourceData* source = findSource(name);
-        if (source->state != AL_PLAYING || forceStart)
+        if (source && (source->state != AL_PLAYING || forceStart))
         {
             AL_CALL(alSourcePlay, source->source);
             source->state = AL_PLAYING;
@@ -58,7 +58,7 @@ void AudioComponent::playSound(const char* name, bool forceStart) noexcept
 
 AudioComponent::SourceData* AudioComponent::findSource(const char* name) noexcept
 {
-    auto it = sources.find(name); 
+    auto it = sources.find(name);
     if (it != sources.end())
     {
         return &sources.find(name)->second;
@@ -105,4 +105,3 @@ AudioComponent::~AudioComponent()
 {
     setActive(false);
 }
-
