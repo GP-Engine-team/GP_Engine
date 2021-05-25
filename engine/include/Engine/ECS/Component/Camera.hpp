@@ -53,7 +53,7 @@ namespace GPE RFKNamespace()
         struct RFKStruct(Inspect(), Serialize()) ProjectionInfo
         {
             RFKField(Inspect(), Serialize()) std::string name = "";
-            RFKField(Serialize()) EProjectionType        type = EProjectionType::NONE;
+            RFKField(Serialize()) EProjectionType        type = EProjectionType::PERSPECTIVE;
 
             RFKField(Inspect(), Serialize()) float aspect = 16.f / 9.f;
             RFKField(Inspect(), Serialize()) float znear  = 0.001f;
