@@ -22,10 +22,8 @@ SpatializedSoundPlayerScript::SpatializedSoundPlayerScript(GameObject& owner)
     GPE::SourceSettings sourceSettings;
     sourceSettings.pitch = 1.f;
     sourceSettings.loop  = AL_TRUE;
-    // sourceSettings.position = ALfloat(0.f);
 
     source->setSound("YMCA", "YMCA", sourceSettings);
-    // source->setSound("Western", "Western", sourceSettings);
 }
 
 void SpatializedSoundPlayerScript::onPostLoad()

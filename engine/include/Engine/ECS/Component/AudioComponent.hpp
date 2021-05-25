@@ -43,8 +43,9 @@ namespace GPE RFKNamespace()
     public:
         struct RFKStruct(Serialize()) SourceData
         {
-            ALuint source;
-            ALint  state = AL_INITIAL;
+            ALuint    source;
+            ALint     state      = AL_INITIAL;
+            ALboolean isRelative = AL_FALSE;
 
             SourceData_GENERATED
         };
@@ -82,6 +83,8 @@ namespace GPE RFKNamespace()
          * @return
          */
         void stopAllSound() noexcept;
+
+        RFKMethod() void updatePosition();
 
         [[nodiscard]] int getKey() const noexcept
         {
