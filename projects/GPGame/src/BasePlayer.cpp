@@ -258,7 +258,7 @@ void BasePlayer::update(double deltaTime)
 
 void BasePlayer::shoot()
 {
-    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && !isDead())
     {
         m_fireArme->triggered();
 
