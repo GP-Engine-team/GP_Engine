@@ -43,6 +43,11 @@ inline GameObject* GameObject::getParent() noexcept
     return m_parent;
 }
 
+inline bool GameObject::isDead()
+{
+    return m_isDead;
+}
+
 inline void GameObject::forceSetParent(GameObject& newParent) noexcept
 {
     m_parent = &newParent;

@@ -135,7 +135,7 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
     // Update the Camera component and cameraOwner scene and parent
     camera.setActive(true);
     freeFly.setActive(false);
-    inputs.setActive(m_capturingInputs);
+    // inputs.setActive(true);
 }
 
 SceneViewer::~SceneViewer()
@@ -233,7 +233,7 @@ void SceneViewer::bindScene(Scene& scene)
     cameraOwner->pOwnerScene = &scene;
 
     // Update the Camera component and cameraOwner scene and parent
-    inputs.setActive(true);
+    // inputs.setActive(true);
     freeFly.setActive(true);
     camera.setActive(true);
     scene.sceneRenderer.setMainCamera(&camera);
@@ -242,7 +242,7 @@ void SceneViewer::bindScene(Scene& scene)
 
 void SceneViewer::unbindScene()
 {
-    inputs.setActive(false);
+    // inputs.setActive(false);
     freeFly.setActive(false);
     camera.setActive(false);
     pScene = nullptr;
@@ -297,8 +297,6 @@ void SceneViewer::captureInputs(bool shouldCapture)
         return;
 
     m_capturingInputs = shouldCapture;
-
-    inputs.setActive(shouldCapture);
 }
 
 // TODO: move to class Camera, or to a new class

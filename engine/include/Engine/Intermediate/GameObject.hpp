@@ -55,7 +55,7 @@ namespace GPE RFKNamespace()
             false}; // Flag that inform it parent that this transform must be destroy on update loop
         RFKField(Serialize()) bool m_isActive = true;
 
-        //ID counter
+        // ID counter
         static unsigned int m_currentID;
 
     public:
@@ -117,6 +117,8 @@ namespace GPE RFKNamespace()
          * @param newName
          */
         inline void setName(const char* newName) noexcept;
+
+        inline bool isDead();
 
         /**
          * @brief Get the Transform object

@@ -197,6 +197,17 @@ void Editor::renderGameView(EditorStartup& startup)
 
 void Editor::renderInspector()
 {
+    if (m_inspectedObject)
+    {
+        if (GameObject* pGo = dynamic_cast<GameObject*>(m_inspectedObject))
+        {
+            if (pGo->isDead())
+            {
+                m_inspectedObject = nullptr;
+            }
+        }
+    }
+
     if (ImGui::Begin("Inspector"))
     {
         if (m_inspectedObject != nullptr)

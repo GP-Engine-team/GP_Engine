@@ -261,8 +261,11 @@ void BasePlayer::update(double deltaTime)
 
 void BasePlayer::shoot()
 {
-    m_fireArme->triggered();
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
+    {
+        m_fireArme->triggered();
 
-    if (m_fireArme->isMagazineEmpty())
-        m_fireArme->reload();
+        if (m_fireArme->isMagazineEmpty())
+            m_fireArme->reload();
+    }
 }
