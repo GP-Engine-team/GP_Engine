@@ -26,7 +26,7 @@ namespace GPE RFKNamespace()
     public:
         CharacterController(GameObject & owner) noexcept;
 
-        CharacterController() noexcept;
+        CharacterController() noexcept                                 = default;
         CharacterController(const CharacterController& other) noexcept = delete;
         CharacterController(CharacterController && other) noexcept     = default;
         CharacterController& operator=(CharacterController const& other) noexcept = delete;
@@ -43,10 +43,10 @@ namespace GPE RFKNamespace()
         RFKField(Inspect(), Serialize()) float                m_angularSpeed  = 1.f; // in rad by second
         RFKField(Inspect(), Serialize()) float                m_startJumpTime = 0.f;
         RFKField(Inspect(), Serialize()) float                m_jumpTimeDelay = 1.f;
-        RFKField(Inspect(), Serialize()) bool                 m_hasGravity    = false;
+        RFKField(Inspect(), Serialize()) bool                 m_hasGravity    = true;
         RFKField(Inspect(), Serialize()) bool                 m_canJump       = false;
-        RFKField(Inspect(), Serialize()) float                m_height        = 25.f;
-        RFKField(Inspect(), Serialize()) float                m_radius        = 10.f;
+        RFKField(Inspect("setHeight"), Serialize()) float     m_height        = 25.f;
+        RFKField(Inspect("setRadius"), Serialize()) float     m_radius        = 10.f;
         RFKField(Inspect("setCenter"), Serialize()) GPM::Vec3 m_center        = {.0f};
 
         GPM::Vec3 m_force        = {.0f};
@@ -114,9 +114,24 @@ namespace GPE RFKNamespace()
 
         /**
          * @brief set the new local center of the collider;
+         * @param newCenter
          * @return
          */
         RFKMethod() void setCenter(const GPM::Vec3& newCenter) noexcept;
+
+        /**
+         * @brief set the new height of the collider;
+         * @param newHeight
+         * @return
+         */
+        RFKMethod() void setHeight(float newHeight) noexcept;
+
+        /**
+         * @brief set the new radius of the collider;
+         * @param newRadius
+         * @return
+         */
+        RFKMethod() void setRadius(float newRadius) noexcept;
 
         CharacterController_GENERATED
     };

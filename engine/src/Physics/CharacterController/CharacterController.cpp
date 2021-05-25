@@ -23,7 +23,7 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
 
     desc.height   = m_height;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(/*owner.getTransform().getGlobalPosition()*/ {0, 0, 0});
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(owner.getTransform().getGlobalPosition() + m_center);
     desc.radius   = m_radius;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
@@ -36,29 +36,29 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
     owner.getTransform().OnUpdate += Function::make(this, "updateShape");
 }
 
-CharacterController::CharacterController() noexcept
-{
-    PxCapsuleControllerDesc desc;
-
-    desc.height   = m_height;
-    desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(/*GPM::Vec3{0, 10, 0}*/ {0, 0, 0});
-    desc.radius   = m_radius;
-
-    controller = Engine::getInstance()->physXSystem.manager->createController(desc);
-
-    // updateToSystem();
-}
-
 void CharacterController::onPostLoad() noexcept
 {
     GPE::Component::onPostLoad();
+
+    GPM::Vec3 scale = getOwner().getTransform().getGlobalScale();
+
+    PxCapsuleControllerDesc desc;
+
+    desc.height   = scale.y + m_height;
+    desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
+    desc.radius   = std::max(scale.x, scale.z) + m_radius;
+
+    controller = Engine::getInstance()->physXSystem.manager->createController(desc);
+
     controller->getActor()->userData = &getOwner();
+
     getOwner().getTransform().OnUpdate += Function::make(this, "updateShape");
 }
 
 void CharacterController::update(double deltaTime) noexcept
 {
+    GameObject*         owner = &getOwner();
     PxControllerFilters filters;
     updateForce();
 
@@ -143,8 +143,11 @@ void CharacterController::updateToSystem() noexcept
 
 void CharacterController::updateShape() noexcept
 {
-    Engine::getInstance()->physXSystem.scene->removeActor(*controller->getActor(), false);
-    controller->release();
+    if (controller)
+    {
+        Engine::getInstance()->physXSystem.scene->removeActor(*controller->getActor(), false);
+        controller->release();
+    }
 
     GPM::Vec3 scale = getOwner().getTransform().getGlobalScale();
 
@@ -166,4 +169,22 @@ void CharacterController::setCenter(const GPM::Vec3& newCenter) noexcept
     m_center = newCenter;
     controller->setPosition(
         PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center));
+}
+
+void CharacterController::setHeight(float newHeight) noexcept
+{
+    if (newHeight == m_height)
+        return;
+
+    m_height = newHeight;
+    updateShape();
+}
+
+void CharacterController::setRadius(float newRadius) noexcept
+{
+    if (newRadius == m_radius)
+        return;
+
+    m_radius = newRadius;
+    updateShape();
 }

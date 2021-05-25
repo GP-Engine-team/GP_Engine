@@ -35,8 +35,8 @@ namespace GPE RFKNamespace()
     public:
         physx::PxShape*                                                 shape         = nullptr;
         physx::PxMaterial*                                              material      = nullptr;
-        RFKField(Serialize(), Inspect()) bool                           isTrigger     = false;
-        RFKField(Serialize(), Inspect()) bool                           isVisible     = false;
+        RFKField(Serialize()) bool                                      isTrigger     = false;
+        RFKField(Serialize()) bool                                      isVisible     = false;
         RFKField(Serialize(), Inspect("setCenter")) GPM::Vector3        center        = {0.f, 0.f, 0.f};
         RFKField(Serialize(), Inspect("setLocalRotation")) GPM::Vector3 localRotation = {0.f, 0.f, 0.f};
         RFKField(Serialize()) GameObject*                               owner         = nullptr;

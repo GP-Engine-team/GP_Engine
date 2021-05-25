@@ -34,11 +34,11 @@ namespace GPE RFKNamespace()
 
         virtual ~RigidbodyDynamic() noexcept;
 
-    public:
-        physx::PxRigidDynamic* rigidbody;
-
     private:
         RFKField(Inspect("setKinematic"), Serialize()) bool m_isKinematic = false;
+
+    public:
+        physx::PxRigidDynamic* rigidbody;
 
     protected:
         virtual void updateToSystem() noexcept override;

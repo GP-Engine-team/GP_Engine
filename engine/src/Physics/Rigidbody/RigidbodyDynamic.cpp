@@ -17,8 +17,8 @@ using namespace physx;
 RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner), RigidBodyBase(owner)
 {
     rigidbody = PxGetPhysics().createRigidDynamic(
-        PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
-                    PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(owner.getTransform().getGlobalPosition()),
+                    PhysXSystem::GPMQuatToPxQuat(owner.getTransform().getGlobalRotation())));
 
     rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
     rigidbody->setMass(1);
@@ -33,8 +33,9 @@ void RigidbodyDynamic::onPostLoad() noexcept
 {
     owner = &getOwner();
 
-    rigidbody = PxGetPhysics().createRigidDynamic(PxTransform(PhysXSystem::GPMVec3ToPxVec3(GPM::Vec3::zero()),
-                                                              PhysXSystem::GPMQuatToPxQuat(GPM::Quat::identity())));
+    rigidbody = PxGetPhysics().createRigidDynamic(
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(owner->getTransform().getGlobalPosition()),
+                    PhysXSystem::GPMQuatToPxQuat(owner->getTransform().getGlobalRotation())));
 
     rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
     rigidbody->setMass(1);
@@ -62,11 +63,7 @@ void RigidbodyDynamic::update() noexcept
 
 void RigidbodyDynamic::updatePosition() noexcept
 {
-    // getOwner().getTransform().
-    // getOwner().getTransform().setTranslation(PhysXSystem::PxVec3ToGPMVec3(rigidbody->getGlobalPose().p));
     rigidbody->setGlobalPose(PhysXSystem::GPETransformComponentToPxTransform(getOwner().getTransform()));
-    // rigidbody->setKinematicTarget(physx::PxTransform::transform(physx::PxPlane::));
-    // collider->shape
 }
 
 void RigidbodyDynamic::setKinematic(bool state) noexcept
