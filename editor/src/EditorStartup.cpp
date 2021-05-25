@@ -33,14 +33,14 @@ GLFWwindow* EditorStartup::initDearImGuiProxy(GLFWwindow* window)
 void EditorStartup::initializeDefaultInputs() const
 {
     // Default editor-specific input bindings
-    m_engine->inputManager.bindInput(GLFW_KEY_SPACE, "up");
+    m_engine->inputManager.bindInput(GLFW_KEY_SPACE,        "up");
     m_engine->inputManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-    m_engine->inputManager.bindInput(GLFW_KEY_D, "right");
-    m_engine->inputManager.bindInput(GLFW_KEY_A, "left");
-    m_engine->inputManager.bindInput(GLFW_KEY_W, "forward");
-    m_engine->inputManager.bindInput(GLFW_KEY_S, "backward");
-    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
-    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_SHIFT, "walk");
+    m_engine->inputManager.bindInput(GLFW_KEY_D,            "right");
+    m_engine->inputManager.bindInput(GLFW_KEY_A,            "left");
+    m_engine->inputManager.bindInput(GLFW_KEY_W,            "forward");
+    m_engine->inputManager.bindInput(GLFW_KEY_S,            "backward");
+    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprint");
+    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_SHIFT,   "walk");
 
     m_engine->inputManager.setupCallbacks(m_engine->window.getGLFWWindow());
 }
