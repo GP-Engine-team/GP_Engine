@@ -61,7 +61,6 @@ void Game::render()
     Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.onGUI();
     ImGui::End();
     ImGui::Render();
-
     RenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
 
     sceneRS.tryToResize(unsigned(m_w), unsigned(m_h));
@@ -266,12 +265,6 @@ Game::Game()
         sun->addComponent<DirectionalLight>(lightArg).setShadowActive(true);
     }
 
-    //{ // Light
-    //    const PointLight::CreateArg lightArg{
-    //        {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, .0014f, 7e-6f};
-    //    player->addComponent<PointLight>(lightArg);
-    //}
-
     // Scripts
     player->addComponent<GPG::MyFpsScript>();
 
@@ -332,12 +325,13 @@ Game::Game()
 
     ground.addComponent<Model>(modelArg2);
     */
-
+    
     // =========== Timer ===========
     Log&                        logger = *Log::getInstance();
-    const std::function<void()> timer  = [&]() {
+    const std::function<void()> timer  = [&]()
+    {
         logger.log(stringFormat("FPS (fixedUpdate): %f\n", fixedUpdateFrameCount / FPLogDelay));
-        logger.log(stringFormat("FPS (unFixedUpdate): %f\n\n", unFixedUpdateFrameCount / FPLogDelay));
+        logger.log(stringFormat("FPS (update): %f\n\n", unFixedUpdateFrameCount / FPLogDelay));
         fixedUpdateFrameCount   = 0;
         unFixedUpdateFrameCount = 0;
     };
