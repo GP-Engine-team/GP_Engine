@@ -895,12 +895,7 @@ namespace ImGuizmo
       gContext.mIsOrthographic = isOrthographic;
    }
 
-   void SetDrawlist()
-   {
-      gContext.mDrawList = ImGui::GetWindowDrawList();
-   }
-
-    void SetDrawlist(ImDrawList* drawlist)
+   void SetDrawlist(ImDrawList* drawlist)
    {
       gContext.mDrawList = drawlist;
    }
