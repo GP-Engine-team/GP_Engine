@@ -165,6 +165,7 @@ namespace ImGuizmo
    // translation is applied in world space
    enum OPERATION
    {
+      NONE             = 0u,
       TRANSLATE_X      = (1u << 0),
       TRANSLATE_Y      = (1u << 1),
       TRANSLATE_Z      = (1u << 2),
@@ -192,7 +193,7 @@ namespace ImGuizmo
       WORLD = (1u << 1)
    };
 
-   IMGUI_API bool Manipulate(const float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float* deltaMatrix = nullptr, const float* snap = nullptr, const float* localBounds = nullptr, const float* boundsSnap = nullptr);
+   IMGUI_API OPERATION Manipulate(const float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float* deltaMatrix = nullptr, const float* snap = nullptr, const float* localBounds = nullptr, const float* boundsSnap = nullptr);
    //
    // Please note that this cubeview is patented by Autodesk : https://patents.google.com/patent/US7782319B2/en
    // It seems to be a defensive patent in the US. I don't think it will bring troubles using it as

@@ -1862,15 +1862,15 @@ namespace ImGuizmo
       return type;
    }
 
-   static bool HandleTranslation(float* matrix, float* deltaMatrix, OPERATION op, int& type, const float* snap)
+   static OPERATION HandleTranslation(float* matrix, float* deltaMatrix, OPERATION op, int& type, const float* snap)
    {
       if(!Intersects(op, TRANSLATE) || type != MT_NONE)
       {
-        return false;
+        return NONE;
       }
       ImGuiIO& io = ImGui::GetIO();
       bool applyRotationLocaly = gContext.mMode == LOCAL || type == MT_MOVE_SCREEN;
-      bool modified = false;
+      OPERATION modified = NONE;
 
       // move
       if (gContext.mbUsing && (gContext.mActualID == -1 || gContext.mActualID == gContext.mEditingID) && IsTranslateType(gContext.mCurrentOperation))
@@ -1916,7 +1916,7 @@ namespace ImGuizmo
 
          if (delta != gContext.mTranslationLastDelta)
          {
-            modified = true;
+            modified = TRANSLATE;
          }
          gContext.mTranslationLastDelta = delta;
 
@@ -1975,14 +1975,14 @@ namespace ImGuizmo
       return modified;
    }
 
-   static bool HandleScale(float* matrix, float* deltaMatrix, OPERATION op, int& type, const float* snap)
+   static OPERATION HandleScale(float* matrix, float* deltaMatrix, OPERATION op, int& type, const float* snap)
    {
       if(!Intersects(op, SCALE) || type != MT_NONE)
       {
-         return false;
+         return NONE;
       }
       ImGuiIO& io = ImGui::GetIO();
-      bool modified = false;
+      OPERATION modified = NONE;
 
       if (!gContext.mbUsing)
       {
@@ -2051,7 +2051,7 @@ namespace ImGuizmo
 
          if (gContext.mScaleLast != gContext.mScale)
          {
-            modified = true;
+            modified = SCALE;
          }
          gContext.mScaleLast = gContext.mScale;
 
@@ -2088,15 +2088,15 @@ namespace ImGuizmo
       return modified;
    }
 
-   static bool HandleRotation(float* matrix, float* deltaMatrix, OPERATION op, int& type, const float* snap)
+   static OPERATION HandleRotation(float* matrix, float* deltaMatrix, OPERATION op, int& type, const float* snap)
    {
       if(!Intersects(op, ROTATE) || type != MT_NONE)
       {
-        return false;
+        return NONE;
       }
       ImGuiIO& io = ImGui::GetIO();
       bool applyRotationLocaly = gContext.mMode == LOCAL;
-      bool modified = false;
+      OPERATION modified = NONE;
 
       if (!gContext.mbUsing)
       {
@@ -2154,7 +2154,7 @@ namespace ImGuizmo
          deltaRotation.RotationAxis(rotationAxisLocalSpace, gContext.mRotationAngle - gContext.mRotationAngleOrigin);
          if (gContext.mRotationAngle != gContext.mRotationAngleOrigin)
          {
-            modified = true;
+            modified = ROTATE;
          }
          gContext.mRotationAngleOrigin = gContext.mRotationAngle;
 
@@ -2248,7 +2248,7 @@ namespace ImGuizmo
      gContext.mAllowAxisFlip = value;
    }
 
-   bool Manipulate(const float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float* deltaMatrix, const float* snap, const float* localBounds, const float* boundsSnap)
+   OPERATION Manipulate(const float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float* deltaMatrix, const float* snap, const float* localBounds, const float* boundsSnap)
    {
       ComputeContext(view, projection, matrix, mode);
 
@@ -2263,19 +2263,19 @@ namespace ImGuizmo
       camSpacePosition.TransformPoint(makeVect(0.f, 0.f, 0.f), gContext.mMVP);
       if (!gContext.mIsOrthographic && camSpacePosition.z < 0.001f)
       {
-         return false;
+         return NONE;
       }
 
       // --
       int type = MT_NONE;
-      bool manipulated = false;
+      OPERATION manipulated = NONE;
       if (gContext.mbEnable)
       {
          if (!gContext.mbUsingBounds)
          {
-            manipulated = HandleTranslation(matrix, deltaMatrix, operation, type, snap) ||
-                          HandleScale(matrix, deltaMatrix, operation, type, snap) ||
-                          HandleRotation(matrix, deltaMatrix, operation, type, snap);
+            manipulated =   HandleTranslation(matrix, deltaMatrix, operation, type, snap)
+                          | HandleScale(matrix, deltaMatrix, operation, type, snap)
+                          | HandleRotation(matrix, deltaMatrix, operation, type, snap);
          }
       }
 
