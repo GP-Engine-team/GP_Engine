@@ -58,7 +58,7 @@ void SceneEditor::renderGizmoControlBar()
         unsigned int col;
 
         // Active transformation operation
-        for (unsigned char i = 0u; i < 3u; ++i)
+        for (unsigned char i = 0u; i < IM_ARRAYSIZE(m_operations); ++i)
         {
             cursorX -= ImGui::CalcTextSize(m_operations[i].string).x + 2.f * ImGui::GetStyle().ItemSpacing.x;
             col      = pickColor(ImGuizmo::OPERATION(m_operations[i].id), activeOperation);
@@ -79,7 +79,7 @@ void SceneEditor::renderGizmoControlBar()
         ImGui::Separator();
 
         // Active referential
-        for (unsigned char i = 0u; i < 2u; ++i)
+        for (unsigned char i = 0u; i < IM_ARRAYSIZE(m_modes); ++i)
         {
             cursorX -= ImGui::CalcTextSize(m_modes[i].string).x + 2.f * ImGui::GetStyle().ItemSpacing.x;
             col = pickColor(ImGuizmo::MODE(m_modes[i].id), activeMode);
@@ -145,17 +145,27 @@ void SceneEditor::checkKeys()
     {
         GLFWwindow* const window = GPE::Engine::getInstance()->window.getGLFWWindow();
 
-        if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+        {
+            activeMode = ImGuizmo::LOCAL;
+        }
+
+        else if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+        {
+            activeMode = ImGuizmo::WORLD;
+        }
+
+        else if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
         {
             activeOperation = ImGuizmo::TRANSLATE;
         }
 
-        else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+        else if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
         {
             activeOperation = ImGuizmo::ROTATE;
         }
 
-        else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        else if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
         {
             activeOperation = ImGuizmo::SCALE;
         }
@@ -267,14 +277,14 @@ SceneEditor::SceneEditor(GPE::Scene& scene)
     : view{scene},
       m_operations
       {
-          {"Scale",     ImGuizmo::SCALE},
-          {"Rotate",    ImGuizmo::ROTATE},
-          {"Translate", ImGuizmo::TRANSLATE}
+          {"Scale (5)",     ImGuizmo::SCALE},
+          {"Rotate (4)",   ImGuizmo::ROTATE},
+          {"Translate (3)", ImGuizmo::TRANSLATE}
       },
       m_modes
       {
-          {"World", ImGuizmo::WORLD},
-          {"Local", ImGuizmo::LOCAL}
+          {"World (2)", ImGuizmo::WORLD},
+          {"Local (1)", ImGuizmo::LOCAL}
       },
       activeOperation{ImGuizmo::OPERATION::TRANSLATE},
       activeMode     {ImGuizmo::MODE::WORLD}
