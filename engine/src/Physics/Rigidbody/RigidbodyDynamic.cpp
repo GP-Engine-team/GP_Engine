@@ -14,64 +14,46 @@ File_GENERATED
     using namespace GPE;
 using namespace physx;
 
-RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner)
+RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner), RigidBodyBase(owner)
 {
     rigidbody = PxGetPhysics().createRigidDynamic(
-        PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
-                    PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
-
-    collider = owner.getComponent<Collider>();
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(owner.getTransform().getGlobalPosition()),
+                    PhysXSystem::GPMQuatToPxQuat(owner.getTransform().getGlobalRotation())));
 
     rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
     rigidbody->setMass(1);
     rigidbody->userData = &getOwner();
 
-    if (!collider)
-    {
-        FUNCT_ERROR("No collider assigned to the game object!");
-        m_isActivated = false;
-    }
-
-    else
-    {
-        rigidbody->attachShape(*collider->shape);
-        collider->shape->release();
-    }
+    setType(type);
 
     updateToSystem();
 }
 
 void RigidbodyDynamic::onPostLoad() noexcept
 {
-    //rigidbody = PxGetPhysics().createRigidDynamic(
-    //    PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
-    //                PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
-     rigidbody = PxGetPhysics().createRigidDynamic(
-        PxTransform(PhysXSystem::GPMVec3ToPxVec3(GPM::Vec3::zero()),
-                    PhysXSystem::GPMQuatToPxQuat(GPM::Quat::identity())));
+    owner = &getOwner();
+
+    rigidbody = PxGetPhysics().createRigidDynamic(
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(owner->getTransform().getGlobalPosition()),
+                    PhysXSystem::GPMQuatToPxQuat(owner->getTransform().getGlobalRotation())));
 
     rigidbody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
     rigidbody->setMass(1);
+
     rigidbody->userData = &getOwner();
 
     if (!collider)
     {
-        FUNCT_ERROR("No collider assigned to the game object!");
-        m_isActivated = false;
+        setType(type);
     }
-
     else
     {
         rigidbody->attachShape(*collider->shape);
-        collider->shape->release();
     }
 
-    Component::onPostLoad();
-}
+    collider->updateTransform();
 
-RigidbodyDynamic::~RigidbodyDynamic() noexcept
-{
-    setActive(false);
+    Component::onPostLoad();
 }
 
 void RigidbodyDynamic::update() noexcept
@@ -81,11 +63,7 @@ void RigidbodyDynamic::update() noexcept
 
 void RigidbodyDynamic::updatePosition() noexcept
 {
-    // getOwner().getTransform().
-    // getOwner().getTransform().setTranslation(PhysXSystem::PxVec3ToGPMVec3(rigidbody->getGlobalPose().p));
     rigidbody->setGlobalPose(PhysXSystem::GPETransformComponentToPxTransform(getOwner().getTransform()));
-    // rigidbody->setKinematicTarget(physx::PxTransform::transform(physx::PxPlane::));
-    // collider->shape
 }
 
 void RigidbodyDynamic::setKinematic(bool state) noexcept
@@ -100,4 +78,19 @@ void RigidbodyDynamic::updateToSystem() noexcept
         GPE::Engine::getInstance()->physXSystem.addComponent(this);
     else
         GPE::Engine::getInstance()->physXSystem.removeComponent(this);
+}
+
+void RigidbodyDynamic::updateShape(physx::PxShape& oldShape)
+{
+    if (&oldShape)
+    {
+        rigidbody->detachShape(oldShape);
+    }
+
+    rigidbody->attachShape(*collider->shape);
+}
+
+RigidbodyDynamic::~RigidbodyDynamic() noexcept
+{
+    setActive(false);
 }

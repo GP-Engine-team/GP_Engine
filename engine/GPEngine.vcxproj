@@ -221,6 +221,12 @@
     <ClInclude Include="include\Engine\Core\HotReload\SingletonsSync.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\BoxCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\CapsuleCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\Collider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\MeshCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\SphereCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\RigidBodyBase.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\BinaryMask.hpp" />
@@ -246,11 +252,6 @@
     <ClInclude Include="include\Engine\ECS\Component\Model.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\ParticleComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Physics\CharacterController\CharacterController.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\CapsuleCollider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\Collider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\MeshCollider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\SphereCollider.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyDynamic.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyStatic.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp" />
@@ -374,7 +375,6 @@
     <ClCompile Include="src\BehaviourComponent.cpp" />
     <ClCompile Include="src\BehaviourSystem.cpp" />
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\Collider.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\Engine.cpp" />
@@ -403,9 +403,11 @@
     <ClCompile Include="src\ParticleSystem\ParticleUpdater.cpp" />
     <ClCompile Include="src\Physics\CharacterController\CharacterController.cpp" />
     <ClCompile Include="src\Physics\Collisions\BoxCollider.cpp" />
+    <ClCompile Include="src\Physics\Collisions\Collider.cpp" />
     <ClCompile Include="src\Physics\Collisions\MeshCollider.cpp" />
     <ClCompile Include="src\Physics\Collisions\SphereCollider.cpp" />
     <ClCompile Include="src\Physics\PhysXSystem.cpp" />
+    <ClCompile Include="src\Physics\Rigidbody\RigidBodyBase.cpp" />
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyDynamic.cpp" />
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyStatic.cpp" />
     <ClCompile Include="src\PointLight.cpp" />

@@ -13,66 +13,66 @@ File_GENERATED
     using namespace GPE;
 using namespace physx;
 
-RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner)
+RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner), RigidBodyBase(owner)
 {
     rigidbody = PxGetPhysics().createRigidStatic(
         PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
                     PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
 
-    collider = owner.getComponent<Collider>();
-
     rigidbody->userData = &getOwner();
 
-    if (!collider)
-    {
-        FUNCT_ERROR("No collider assigned to the game object!");
-        m_isActivated = false;
-    }
-
-    else
-    {
-        rigidbody->attachShape(*collider->shape);
-        collider->shape->release();
-    }
+    setType(type);
 
     updateToSystem();
 }
 
 void RigidbodyStatic::onPostLoad() noexcept
 {
-    //rigidbody = PxGetPhysics().createRigidStatic(
-    //    PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
-    //                PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
+    owner = &getOwner();
+
     rigidbody = PxGetPhysics().createRigidStatic(
-        PxTransform(PhysXSystem::GPMVec3ToPxVec3(GPM::Vec3::zero()),
-                    PhysXSystem::GPMQuatToPxQuat(GPM::Quat::identity())));
+        PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
+                    PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
 
     rigidbody->userData = &getOwner();
 
     if (!collider)
     {
-        FUNCT_ERROR("No collider assigned to the game object!");
-        m_isActivated = false;
+        setType(type);
     }
-
     else
     {
         rigidbody->attachShape(*collider->shape);
-        collider->shape->release();
     }
 
-    Component::onPostLoad();
-}
+    collider->updateTransform();
 
-RigidbodyStatic::~RigidbodyStatic() noexcept
-{
-    setActive(false);
+    Component::onPostLoad();
 }
 
 void RigidbodyStatic::updateToSystem() noexcept
 {
     if (m_isActivated)
-        GPE::Engine::getInstance()->physXSystem.addComponent(this);
+    {
+        Engine::getInstance()->physXSystem.addComponent(this);
+    }
     else
-        GPE::Engine::getInstance()->physXSystem.removeComponent(this);
+    {
+        Engine::getInstance()->physXSystem.removeComponent(this);
+    }
+}
+
+void RigidbodyStatic::updateShape(physx::PxShape& oldShape)
+{
+    if (&oldShape)
+    {
+        rigidbody->detachShape(oldShape);
+    }
+
+    rigidbody->attachShape(*collider->shape);
+}
+
+RigidbodyStatic::~RigidbodyStatic() noexcept
+{
+    setActive(false);
 }

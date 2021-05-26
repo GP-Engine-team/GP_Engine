@@ -1,4 +1,4 @@
-
+﻿
 namespace GPE
 {
 namespace DataInspector
@@ -17,6 +17,9 @@ bool inspect(GPE::InspectContext& context, T& inspected, const char* name)
     const bool hasBeenModified = GPE::DataInspector::inspect(inspected);
     endProperty();
     return hasBeenModified;
+
+    // inspected.inspect(context);
+    // return false;
 }
 
 template <typename T>

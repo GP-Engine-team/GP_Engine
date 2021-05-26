@@ -11,6 +11,7 @@
 #include "Engine/Resources/Importer/Importer.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
+#include "Engine/Resources/Prefab.hpp"
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -52,9 +53,21 @@ extern "C"
     {
         GPE::saveSceneToPathImp(scene, path, saveMode);
     }
+
     ENGINE_API inline void loadSceneFromPath(GPE::Scene* scene, const char* path)
     {
         GPE::loadSceneFromPathImp(scene, path);
+    }
+
+    ENGINE_API inline GPE::GameObject* clonePrefab(GPE::Prefab& prefab, GPE::GameObject& parent)
+    {
+        return prefab.clone(parent);
+    }
+    
+
+    ENGINE_API inline GPE::GameObject* loadPrefabFromPath(GPE::GameObject& parent, const char* path)
+    {
+        return GPE::loadPrefabFromPathImp(parent, path);
     }
 
     ENGINE_API class GPE::AbstractGame* createGameInstance();

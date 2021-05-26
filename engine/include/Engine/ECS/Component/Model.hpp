@@ -27,7 +27,7 @@ namespace GPE RFKNamespace()
 
     struct SubModel;
 
-    struct SubModel
+    struct RFKStruct(Serialize()) SubModel
     {
         struct CreateArg
         {
@@ -39,7 +39,7 @@ namespace GPE RFKNamespace()
             bool castShadow            = true;
         };
 
-        SubModel(Model& model, const CreateArg& arg)
+        SubModel(Model & model, const CreateArg& arg)
             : pModel{&model}, pShader{arg.pShader}, pMaterial{arg.pMaterial}, pMesh{arg.pMesh},
               enableBackFaceCulling{arg.enableBackFaceCulling}, castShadow{arg.castShadow}
         {
@@ -52,19 +52,16 @@ namespace GPE RFKNamespace()
             return pModel && pMesh && pShader && pMaterial;
         }
 
-        Model*    pModel    = nullptr;
-        Shader*   pShader   = nullptr;
-        Material* pMaterial = nullptr;
-        Mesh*     pMesh     = nullptr;
+        RFKField(Serialize()) Model*    pModel    = nullptr;
+        RFKField(Serialize()) Shader*   pShader   = nullptr;
+        RFKField(Serialize()) Material* pMaterial = nullptr;
+        RFKField(Serialize()) Mesh*     pMesh     = nullptr;
 
-        bool enableBackFaceCulling = true;
-        bool castShadow            = true;
+        RFKField(Serialize()) bool enableBackFaceCulling = true;
+        RFKField(Serialize()) bool castShadow            = true;
+
+        SubModel_GENERATED
     };
-
-    template <>
-    void save(XmlSaver & context, const SubModel& inspected, const XmlSaver::SaveInfo& info);
-    template <>
-    void load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadInfo& info);
 
     template <>
     void DataInspector::inspect(GPE::InspectContext & context, SubModel & inspected);
@@ -85,7 +82,7 @@ namespace GPE RFKNamespace()
         virtual void updateToSystem() noexcept override;
 
     public:
-        Model()        = default;
+        Model() = default;
         Model(GameObject & owner);
         Model(GameObject & owner, const CreateArg& arg);
 

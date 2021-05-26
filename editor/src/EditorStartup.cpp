@@ -1,4 +1,4 @@
-#include <Editor/EditorStartup.hpp>
+﻿#include <Editor/EditorStartup.hpp>
 #include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Game/AbstractGame.hpp>
 #include <Engine/Core/Rendering/Window/WindowGLFW.hpp>
@@ -80,6 +80,8 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, createComponentByName);
     ADD_PROCESS(m_reloadableCpp, createComponentByID);
     ADD_PROCESS(m_reloadableCpp, destroyComponent);
+    ADD_PROCESS(m_reloadableCpp, loadPrefabFromPath);
+    ADD_PROCESS(m_reloadableCpp, clonePrefab);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
@@ -163,32 +165,45 @@ void EditorStartup::closeGame()
 
 void EditorStartup::playGame()
 {
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = [&](const char* msg) {
+        Log::getInstance()->logError(msg);
+        stopGame();
+    };
     Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&EditorStartup::startScene, this);
-    startScene();
 
     if (m_game->state == EGameState::STOPPED)
         m_editor.saveCurrentScene();
 
     // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
-        m_engine->physXSystem.advance(fixedDeltaTime);
-        m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
+        if (m_game->state == EGameState::PLAYING)
+        {
+            m_engine->physXSystem.advance(fixedDeltaTime);
+            m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
 
-        m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+            m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+        }
     };
 
     m_update = [&](double unscaledDeltaTime, double deltaTime) {
-        m_engine->inputManager.processInput();
-        m_editor.update(*this);
+        if (m_game->state == EGameState::PLAYING)
+        {
+            m_engine->inputManager.processInput();
 
-        m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
-        m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
-        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+            m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
+            m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+            m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
 
-        m_game->update(unscaledDeltaTime, deltaTime);
+            m_game->update(unscaledDeltaTime, deltaTime);
+
+            // Editor MUST be the last element update because user can stop the game. If the game stops it should not be
+            // updated
+            m_editor.update(*this);
+        }
     };
 
     m_game->state = EGameState::PLAYING;
+    startScene();
 }
 
 void EditorStartup::pauseGame()
@@ -196,10 +211,14 @@ void EditorStartup::pauseGame()
     // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
     m_update      = [&](double unscaledDeltaTime, double deltaTime) {
-        m_engine->inputManager.processInput();
-        m_editor.update(*this);
+        if (m_game->state == EGameState::PAUSED)
+        {
+            m_engine->inputManager.processInput();
 
-        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+            m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+
+            m_editor.update(*this);
+        }
     };
 
     m_game->state = EGameState::PAUSED;
@@ -207,19 +226,25 @@ void EditorStartup::pauseGame()
 
 void EditorStartup::stopGame()
 {
-    Engine::getInstance()->sceneManager.OnSceneChange = nullptr;
+    if (m_game->state == EGameState::STOPPED)
+        return;
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.startOnBehaviourAdd = false;
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert        = nullptr;
+    Engine::getInstance()->sceneManager.OnSceneChange                             = nullptr;
 
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
     m_update      = [&](double unscaledDeltaTime, double deltaTime) {
-        m_engine->inputManager.processInput();
-        m_editor.update(*this);
-        m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+        if (m_game->state == EGameState::STOPPED)
+        {
+            m_engine->inputManager.processInput();
+            m_editor.update(*this);
+            m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
 
-        m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+            m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
+        }
     };
 
     m_editor.reloadCurrentScene();
-    // TODO: reload scene
     m_game->state = EGameState::STOPPED;
 }
 

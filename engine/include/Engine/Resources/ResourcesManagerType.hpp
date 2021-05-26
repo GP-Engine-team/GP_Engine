@@ -9,6 +9,7 @@
 #include "Engine/ECS/Component/Model.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
+#include "Engine/Resources/Prefab.hpp"
 #include "Engine/Resources/RenderBuffer.hpp"
 #include "Engine/Resources/RenderTexture.hpp"
 #include "Engine/Resources/ResourcesManager.hpp"
@@ -25,6 +26,7 @@
 namespace GPE
 {
 
-using ResourceManagerType = ResourcesManager<std::vector<Mesh>, Model::CreateArg, Mesh, Shader, Texture, RenderBuffer, RenderTexture,
-                     std::vector<Material>, Material, Sound::Buffer, SavedScene, GPM::Sphere, GPM::AABB>;
+using ResourceManagerType =
+    ResourcesManager<std::vector<Mesh>, Model::CreateArg, Mesh, Shader, Texture, RenderBuffer, RenderTexture,
+                     std::vector<Material>, Material, Sound::Buffer, SavedScene, GPM::Sphere, GPM::AABB, SharedPrefab>;
 } // namespace GPE

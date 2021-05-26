@@ -57,8 +57,7 @@ public:
         GPM::Vec3 pt1;
         GPM::Vec3 pt2;
         float     width;
-        ColorRGBA color  = ColorRGBA{1.f, 0.f, 0.f, 0.5f};
-        bool      smooth = true;
+        ColorRGBA color = ColorRGBA{1.f, 0.f, 0.f, 0.5f};
     };
 
     using RenderPipeline =
@@ -149,7 +148,7 @@ public:
                        EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
 
     void drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width = 1.f,
-                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, bool smooth = true) noexcept;
+                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}) noexcept;
 
     void displayGameObjectRef(const GameObject& go, float dist = 100.f, float size = 10.f) noexcept;
 

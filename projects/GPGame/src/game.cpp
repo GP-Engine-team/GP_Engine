@@ -1,14 +1,18 @@
-#define IMGUI_DEFINE_MATH_OPERATORS
+﻿#define IMGUI_DEFINE_MATH_OPERATORS
 #define GLFW_INCLUDE_NONE
 
+#include <BasePlayer.hpp>
 #include <Game.hpp>
-#include <myFpsScript.hpp>
 
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
+#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
+#include <SpatializedSoundPlayerScript.hpp>
 
+#include <Sun.hpp>
 #include <WorldGenerator.hpp>
 
 #include <GPM/Random.hpp>
@@ -23,6 +27,10 @@
 
 #include "Engine/Core/HotReload/SingletonsSync.hpp"
 
+#include <Engine/Core/Physics/Collisions/BoxCollider.hpp>
+#include <Engine/Core/Physics/Collisions/SphereCollider.hpp>
+
+using namespace GPG;
 using namespace GPE;
 using namespace GPM;
 using namespace GPM::Random;
@@ -30,7 +38,6 @@ using namespace GPM::Random;
 void Game::update(double unscaledDeltaTime, double deltaTime)
 {
     ++unFixedUpdateFrameCount;
-    GPE::Engine::getInstance()->physXSystem.drawDebugScene();
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
@@ -97,12 +104,7 @@ void loadTreeResource()
     Model::CreateArg     arg;
 
     SubModel subModel;
-    subModel.pShader = &rm.add<Shader>("TextureWithLihghts", "./resources/shaders/vTextureWithLightAndShadowAndNM.vs",
-                                       "./resources/shaders/fTextureWithLightAndShadowAndNM.fs", LIGHT_BLIN_PHONG);
-    subModel.pShader->use();
-    subModel.pShader->setInt("ourTexture", 0);
-    subModel.pShader->setInt("shadowMap", 1);
-    subModel.pShader->setInt("normalMap", 2);
+    subModel.pShader = rm.get<Shader>("Default");
 
     subModel.pMaterial = loadMaterialFile("resources\\meshs\\Trank_bark.GPMaterial");
     subModel.pMesh     = loadMeshFile("resources\\meshs\\g1.GPMesh");
@@ -231,20 +233,22 @@ Game::Game()
 
     // Place content in the scene
     GPE::GameObject& world = Engine::getInstance()->sceneManager.setCurrentScene("main").getWorld();
-    GameObject *     ground, *player, *testPhysX, *sun, *cube;
+    GameObject *     ground, *player, *testPhysX, *sun, *cube, *audioPlayer;
     {
         const GameObject::CreateArg cubeArg{"Cube", TransformComponent::CreateArg{{0.f, 10, 0.f}}},
             sunArg{"Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}}},
-            playerArg{"Player", TransformComponent::CreateArg{{0.f, 50.f, 0.f}}},
+            playerArg{"Player", TransformComponent::CreateArg{{0.f, 180.f, 0.f}}},
             testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}},
-            groundArg{"GroundArg", TransformComponent::CreateArg{{0.f}}};
+            groundArg{"Ground", TransformComponent::CreateArg{{0.f, -30.f, 0.f}}},
+            audioPlayerArg{"AudioPlayer", TransformComponent::CreateArg{{0.f, 0.f, 0.f}}};
 
         // A ground, player, PhysX test
-        cube      = &world.addChild(cubeArg);
-        sun       = &world.addChild(sunArg);
-        ground    = &world.addChild(groundArg);
-        player    = &world.addChild(playerArg);
-        testPhysX = &world.addChild(testPhysXArg);
+        cube        = &world.addChild(cubeArg);
+        sun         = &world.addChild(sunArg);
+        ground      = &world.addChild(groundArg);
+        player      = &world.addChild(playerArg);
+        testPhysX   = &world.addChild(testPhysXArg);
+        audioPlayer = &world.addChild(audioPlayerArg);
     }
 
     world.addComponent<GPG::WorldGenerator>();
@@ -268,21 +272,19 @@ Game::Game()
         const DirectionalLight::CreateArg lightArg{
             {0.f, -0.5f, 0.5f}, {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}};
         sun->addComponent<DirectionalLight>(lightArg).setShadowActive(true);
+        // sun->addComponent<Sun>();
     }
 
-    //{ // Light
-    //    const PointLight::CreateArg lightArg{
-    //        {1.f, 1.f, 1.f, 0.1f}, {1.f, 1.f, 1.f, 1.0f}, {1.f, 1.f, 1.f, 1.f}, 1.0f, .0014f, 7e-6f};
-    //    player->addComponent<PointLight>(lightArg);
-    //}
-
     // Scripts
-    player->addComponent<GPG::MyFpsScript>();
+    {
+        player->addComponent<GPG::BasePlayer>();
+        audioPlayer->addComponent<GPG::SpatializedSoundPlayerScript>();
+    }
 
     { // cube
         cube->getTransform().setScale(Vec3{10, 10, 10});
         Model& mod = cube->addComponent<Model>();
-        mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
+        mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("Default"),
                                             loadMaterialFile("./resources/meshs/Trank_bark.GPMaterial"),
                                             Engine::getInstance()->resourceManager.get<Mesh>("Sphere"), true});
     }
@@ -290,50 +292,22 @@ Game::Game()
     // Physics
     { // ground
         Mesh* planeMesh = &Engine::getInstance()->resourceManager.add<Mesh>(
-            "PlaneFround", Mesh::createQuad(1.f, 1.f, 100.f, 0, 0, Mesh::Axis::Y));
+            "PlaneFround", Mesh::createQuad(0.5f, 0.5f, 100.f, 0, 0, Mesh::Axis::Y));
 
         ground->getTransform().setScale(Vec3{1000, 1, 1000});
-        // ground->getTransform().setRotation(Quaternion::fromEuler({PI / 2.f, 0.f, 0.f}));
-        BoxCollider&     box = ground->addComponent<BoxCollider>();
-        RigidbodyStatic& rb  = ground->addComponent<RigidbodyStatic>();
-        Model&           mod = ground->addComponent<Model>();
-        rb.collider          = &box;
-        box.isVisible        = true;
-        box.setDimensions({1000.f, 1.f, 1000.f});
-        mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("TextureWithLihghts"),
+
+        RigidbodyStatic& rb    = ground->addComponent<RigidbodyStatic>();
+        rb.collider->isVisible = true;
+
+        Model& mod = ground->addComponent<Model>();
+        mod.addSubModel(SubModel::CreateArg{Engine::getInstance()->resourceManager.get<Shader>("Default"),
                                             loadMaterialFile("resources\\Materials\\GroundMat.GPMaterial"), planeMesh,
                                             true});
     }
 
     { // testPhysX
-        SphereCollider& sphere = testPhysX->addComponent<SphereCollider>();
-        sphere.isVisible       = true;
-        sphere.setRadius(10.f);
-        testPhysX->addComponent<RigidbodyDynamic>().collider = &sphere;
+        /*RigidbodyDynamic& rb = ground->addComponent<RigidbodyDynamic>(EShapeType::E_SPHERE);
+        rb.collider->isVisible = true;
+        static_cast<SphereCollider*>(rb.collider.get())->setRadius(10.f);*/
     }
-
-    /*
-    // FreeFly must be used to compile properly with GPGame.dll, to not be optimized out, for serialization.
-    {
-        rfk::Entity const* a = rfk::Database::getEntity(GPE::FreeFly::staticGetArchetype().id);
-    }
-
-    rm.add<Shader>("TextureOnly", "./resources/shaders/vTextureOnly.vs",
-                "./resources/shaders/fTextureOnly.fs", AMBIANTE_COLOR_ONLY);
-
-    Model::CreateArg modelArg;
-    modelArg.subModels.emplace_back(SubModel{nullptr, Engine::getInstance()->resourceManager.get<Shader>("TextureOnly"),
-                                             Engine::getInstance()->resourceManager.get<Material>("SkyboxMaterial"),
-                                             Engine::getInstance()->resourceManager.get<Mesh>("Sphere")});
-
-    testPhysX->addComponent<Model>(modelArg);
-
-    Model::CreateArg modelArg2;
-    modelArg2.subModels.emplace_back(SubModel{nullptr,
-                                                Engine::getInstance()->resourceManager.get<Shader>("TextureOnly"),
-                                                Engine::getInstance()->resourceManager.get<Material>("SkyboxMaterial"),
-                                                Engine::getInstance()->resourceManager.get<Mesh>("CubeDebug")});
-
-    ground.addComponent<Model>(modelArg2);
-    */
 }

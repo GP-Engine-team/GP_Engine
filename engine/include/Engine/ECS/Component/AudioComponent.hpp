@@ -25,6 +25,7 @@ namespace GPE RFKNamespace()
         ALfloat   position[3] = {0, 0, 0};
         ALfloat   velocity[3] = {0, 0, 0};
         ALboolean loop        = AL_FALSE;
+        ALboolean relative    = AL_FALSE;
     };
 
     class RFKClass(Inspect(), Serialize()) AudioComponent : public Component
@@ -53,7 +54,6 @@ namespace GPE RFKNamespace()
         virtual void updateToSystem() noexcept override;
 
     public:
-
         /**
          * @brief Find and return the corresponding source in the source list
          * @param name of the source

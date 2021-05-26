@@ -1,4 +1,4 @@
-#include <Engine/ECS/System/PhysXSystem.hpp>
+﻿#include <Engine/ECS/System/PhysXSystem.hpp>
 
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
@@ -7,20 +7,21 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 
-#include <PhysX/gpu/PxGpu.h>
 #include <PhysX/PxPhysics.h>
 #include <PhysX/PxPhysicsVersion.h>
 #include <PhysX/PxScene.h>
 #include <PhysX/PxSceneDesc.h>
 #include <PhysX/Pxfoundation.h>
-#include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PhysX/characterkinematic/PxController.h>
-#include <PhysX/cooking/PxCooking.h>
+#include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PhysX/common/PxRenderBuffer.h>
 #include <PhysX/common/PxTolerancesScale.h>
+#include <PhysX/cooking/PxCooking.h>
 #include <PhysX/extensions/PxDefaultAllocator.h>
-#include <PhysX/extensions/PxDefaultSimulationFilterShader.h>
 #include <PhysX/extensions/PxExtensionsAPI.h>
+#include <PhysX/gpu/PxGpu.h>
+#include <PhysX/pvd/PxPvd.h>
+#include <PhysX/pvd/PxPvdTransport.h>
 
 using namespace GPE;
 using namespace physx;
@@ -28,34 +29,31 @@ using namespace physx;
 static UserErrorCallback  gDefaultErrorCallback;
 static PxDefaultAllocator gDefaultAllocatorCallback;
 
-void UserErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file, int line) noexcept
+void UserErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file,
+                                    int line) noexcept
 {
     FUNCT_ERROR(message);
 }
 
-
 PhysXSystem::PhysXSystem()
-    : foundation          {nullptr},
-      physics             {nullptr},
-      cooking             {nullptr},
-      scene               {nullptr},
-      manager             {nullptr},
-      rigidbodyStatics    {},
-      rigidbodyDynamics   {},
-      characterControllers{}
+    : foundation{nullptr}, physics{nullptr}, cooking{nullptr}, scene{nullptr}, manager{nullptr}, rigidbodyStatics{},
+      rigidbodyDynamics{}, characterControllers{}
 {
     foundation = PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
     if (!foundation)
         FUNCT_ERROR("PxCreateFoundation failed!");
 
     bool recordMemoryAllocations = true;
-//#ifdef ENABLE_PVD
-//    pvd                       = PxCreatePvd(*foundation);
-//    PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-//    pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
-//#endif
+    pvd                          = PxCreatePvd(*foundation);
+
+    PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+
+    if (transport == NULL)
+        return;
+    pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+
     PxTolerancesScale scale;
-    physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, recordMemoryAllocations, nullptr);
+    physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, recordMemoryAllocations, pvd);
     if (!physics)
         FUNCT_ERROR("PxCreatePhysics failed!");
 
@@ -102,12 +100,11 @@ PhysXSystem::~PhysXSystem()
 {
     PxCloseExtensions();
 
-    manager->release();
+    /*manager->release();
     scene->release();
-    cooking->release();
+    // cooking->release();
     physics->release();
-    // pvd->release();
-    foundation->release();
+    foundation->release();*/
 }
 
 void PhysXSystem::advance(double deltaTime) noexcept
@@ -146,7 +143,11 @@ void PhysXSystem::drawDebugScene()
 size_t PhysXSystem::addComponent(RigidbodyStatic* rigidbody) noexcept
 {
     rigidbodyStatics.push_back(rigidbody);
-    scene->addActor(*rigidbody->rigidbody);
+    PxScene* debugScene = rigidbody->rigidbody->getScene();
+    if (!debugScene)
+    {
+        scene->addActor(*rigidbody->rigidbody);
+    }
 
     return rigidbodyStatics.size();
 }
@@ -168,7 +169,11 @@ void PhysXSystem::removeComponent(RigidbodyStatic* rigidbody) noexcept
 size_t PhysXSystem::addComponent(RigidbodyDynamic* rigidbody) noexcept
 {
     rigidbodyDynamics.push_back(rigidbody);
-    scene->addActor(*rigidbody->rigidbody);
+    PxScene* debugScene = rigidbody->rigidbody->getScene();
+    if (!debugScene)
+    {
+        scene->addActor(*rigidbody->rigidbody);
+    }
 
     return rigidbodyDynamics.size();
 }
@@ -190,7 +195,6 @@ void PhysXSystem::removeComponent(RigidbodyDynamic* rigidbody) noexcept
 size_t PhysXSystem::addComponent(CharacterController* characterController) noexcept
 {
     characterControllers.push_back(characterController);
-    scene->addActor(*characterController->controller->getActor());
 
     return characterControllers.size();
 }

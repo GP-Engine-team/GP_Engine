@@ -12,10 +12,21 @@
 #include "Generated/GameObject.rfk.h"
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 unsigned int GameObject::m_currentID = 0;
+
+GameObject::GameObject(Scene& scene, const CreateArg& arg)
+    : m_name{arg.name}, m_pTransform{new TransformComponent(*this, arg.transformArg)}, m_pComponents{},
+      pOwnerScene{&scene}, m_parent{arg.parent}, m_id{++m_currentID}
+{
+}
+
+GameObject::GameObject()
+{
+    m_id = ++m_currentID;
+}
 
 GameObject::~GameObject() noexcept
 {
@@ -34,10 +45,13 @@ GameObject::~GameObject() noexcept
 
 void GameObject::moveTowardScene(Scene& newOwner) noexcept
 {
-    for (Component* pComponent : m_pComponents)
-    {
-        pComponent->moveTowardScene(newOwner);
-    }
+    // Commented because moveToward Scene add to the Scene's system.
+    // But thank to onPostLoad function, this action is already execute.
+    // If you decommente this line, component will be add both time in scene.
+    // for (Component* pComponent : m_pComponents)
+    //{
+    //    pComponent->moveTowardScene(newOwner);
+    //}
 
     pOwnerScene = &newOwner;
 
@@ -374,31 +388,6 @@ void GameObject::inspect(GPE::InspectContext& context)
         ImGui::PopID();
         if (!isIteratorDestroy)
             ++it;
-    }
-}
-
-void GPE::save(XmlSaver& context, GameObject& inspected)
-{
-    const rfk::Class& archetype = GameObject::staticGetArchetype();
-
-    // TODO : Replace "gameObject" by unique name.
-    context.push("gameObject", archetype.name, archetype.id);
-
-    inspected.save(context);
-
-    context.pop();
-}
-
-void GPE::load(XmlLoader& context, class GameObject& inspected)
-{
-    const rfk::Class& archetype = GameObject::staticGetArchetype();
-
-    // TODO : Replace "gameObject" by unique name.
-    XmlLoader::LoadInfo info{"gameObject", archetype.name, archetype.id};
-    if (context.goToSubChild(info))
-    {
-        inspected.load(context);
-        context.pop();
     }
 }
 
