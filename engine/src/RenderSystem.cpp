@@ -918,7 +918,8 @@ void RenderSystem::removeSubModel(SubModel& subModel) noexcept
 
 void RenderSystem::addCamera(Camera& camera) noexcept
 {
-    m_pCameras.push_back(&camera);
+    m_pCameras.emplace_back(&camera);
+    m_mainCamera = &camera;
 }
 
 void RenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept
