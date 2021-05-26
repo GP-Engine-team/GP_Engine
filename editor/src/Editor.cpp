@@ -57,7 +57,7 @@ void Editor::renderStyleEditor()
     if (m_showAppStyleEditor)
     {
         ImGui::Begin("Style Editor", &m_showAppStyleEditor);
-        ShowStyleEditor();
+        ShowStyleEditor(*this);
         ImGui::End();
     }
 }
@@ -424,6 +424,9 @@ void Editor::update(EditorStartup& startup)
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
+    if (OnUIBeginFrame)
+        OnUIBeginFrame(*this);
+
     ImGui::NewFrame();
 
     ImGuiContext* gameContext = syncGameUI();

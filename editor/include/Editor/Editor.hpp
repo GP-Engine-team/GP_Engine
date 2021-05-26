@@ -49,6 +49,8 @@ public:
     bool m_showAppStyleEditor;
     bool m_showImGuiDemoWindows;
 
+    std::function<void(Editor&)> OnUIBeginFrame;
+
 private:
     void setupDearImGui();
 

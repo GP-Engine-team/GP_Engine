@@ -67,6 +67,9 @@ To edit and save a style, you can use the default ImGui example and append to th
 
 #define PATH_UI_STYLE "Layout/UIStyle.ini"
 
+#include <Editor/Editor.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
+
 namespace GPE
 {
 static size_t ImFormatString(char* buf, size_t buf_size, const char* fmt, ...)
@@ -80,7 +83,7 @@ static size_t ImFormatString(char* buf, size_t buf_size, const char* fmt, ...)
 }
 //---------------------------------------------------------------------------
 
-void ImGuiSaveStyle(const char* filename, const ImGuiStyle& style)
+void ImGuiSaveStyle(const char* filename, const ImGuiStyle& style, const char* currentFont)
 {
     // Write .style file
     FILE* f = nullptr;
@@ -100,6 +103,10 @@ void ImGuiSaveStyle(const char* filename, const ImGuiStyle& style)
     fprintf(f, "[TouchExtraPadding]\n%1.3f %1.3f\n", style.TouchExtraPadding.x, style.TouchExtraPadding.y);
     fprintf(f, "[WindowRounding]\n%1.3f\n", style.WindowRounding);
     fprintf(f, "[ColumnsMinSpacing]\n%1.3f\n", style.ColumnsMinSpacing);
+    if (strcmp(currentFont, "default") == 0)
+        fprintf(f, "[Font]\n%s\n", currentFont);
+    else
+        fprintf(f, "[Font]\n%s %i\n", currentFont, ImGui::GetFont()->ConfigData->SizePixels);
 
     for (size_t i = 0; i != ImGuiCol_COUNT; i++)
     {
@@ -230,6 +237,10 @@ void ImGuiLoadStyle(const char* filename, ImGuiStyle& style)
                     npf   = 1;
                     pf[0] = &style.ColumnsMinSpacing;
                 }
+                else if (strcmp(name, "Font") == 0)
+                {
+                    npf = 5;
+                }
                 // all the colors here
                 else
                 {
@@ -292,10 +303,38 @@ void ImGuiLoadStyle(const char* filename, ImGuiStyle& style)
                     *pf[2] = z;
                     *pf[3] = w;
                 }
-                else
-                    fprintf(stderr, "Warning in ImGui::LoadStyle(\"%s\"): skipped [%s] (parsing error).\n", filename,
-                            name);
                 break;
+            case 5: {
+                const char* line_endProps = line_start;
+                char        str[256];
+                int         strSize = 0;
+                float       v       = 0.f;
+
+                // Read the str
+                while (line_endProps < buf_end && *line_endProps != ' ' && *line_endProps != '\n' &&
+                       *line_endProps != '\r')
+                {
+                    str[strSize++] = *line_endProps;
+                    line_endProps++;
+                }
+                line_endProps++;
+                str[strSize] = '\0';
+
+                if (strcmp(str, "Default") != 0)
+                {
+                    // Read the size
+                    sscanf_s(line_endProps, "%f", &v);
+
+                    if (!ImGui::GetIO().Fonts->Locked)
+                    {
+                        if (ImGui::GetIO().Fonts->AddFontFromFileTTF(str, v > 0 ? v : 14))
+                        {
+                            ImGui_ImplOpenGL3_CreateFontsTexture();
+                        }
+                    }
+                }
+            }
+            break;
             default:
                 fprintf(stderr, "Warning in ImGui::LoadStyle(\"%s\"): skipped [%s] (unknown field).\n", filename, name);
                 break;
@@ -520,12 +559,40 @@ bool ShowStyleSelector(const char* label)
     return false;
 }
 
-void ShowStyleEditor(ImGuiStyle* ref = nullptr)
+void ShowFontSelector(const char* label, int& idCurrentFont)
+{
+    ImGuiIO& io           = ImGui::GetIO();
+    ImFont*  font_current = ImGui::GetFont();
+    if (ImGui::BeginCombo(label, font_current->GetDebugName()))
+    {
+        for (int n = 0; n < io.Fonts->Fonts.Size; n++)
+        {
+            ImFont* font = io.Fonts->Fonts[n];
+            ImGui::PushID((void*)font);
+            if (ImGui::Selectable(font->GetDebugName(), font == font_current))
+            {
+                idCurrentFont  = n - 1;
+                io.FontDefault = font;
+            }
+            ImGui::PopID();
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::SameLine();
+    HelpMarker("- Load additional fonts with io.Fonts->AddFontFromFileTTF().\n"
+               "- The font atlas is built when calling io.Fonts->GetTexDataAsXXXX() or io.Fonts->Build().\n"
+               "- Read FAQ and docs/FONTS.md for more details.\n"
+               "- If you need to add/remove fonts at runtime (e.g. for DPI change), do it before calling NewFrame().");
+}
+
+void ShowStyleEditor(Editor::Editor& editor, ImGuiStyle* ref = nullptr)
 {
     // You can pass in a reference ImGuiStyle structure to compare to, revert to and save to
     // (without a reference style pointer, we will use one compared locally as a reference)
-    ImGuiStyle&       style = ImGui::GetStyle();
-    static ImGuiStyle ref_saved_style;
+    static std::vector<std::string> fonts;
+    static int                      idCurrentFont = -1;
+    ImGuiStyle&                     style         = ImGui::GetStyle();
+    static ImGuiStyle               ref_saved_style;
 
     // Default to using internal storage as reference
     static bool init = true;
@@ -539,7 +606,21 @@ void ShowStyleEditor(ImGuiStyle* ref = nullptr)
 
     if (ShowStyleSelector("Colors##Selector"))
         ref_saved_style = style;
-    ImGui::ShowFontSelector("Fonts##Selector");
+    ShowFontSelector("Fonts##Selector", idCurrentFont);
+
+    static float fontSize = 14;
+    if (ImGui::Button("Add font"))
+    {
+        editor.OnUIBeginFrame = [&](Editor::Editor& editor) {
+            std::string path = openFileExplorerAndGetRelativePath(L"Select font", {{L"Font", L"*.ttf"}}).string();
+            ImGui::GetIO().Fonts->AddFontFromFileTTF(path.c_str(), fontSize);
+            ImGui_ImplOpenGL3_CreateFontsTexture();
+            fonts.emplace_back(path);
+            editor.OnUIBeginFrame = nullptr;
+        };
+    }
+    ImGui::SameLine();
+    ImGui::DragFloat("Size", &fontSize, 0.1f, 0.f, 100.f);
 
     // Simplified Settings (expose floating-pointer border sizes as boolean representing 0.0f or 1.0f)
     if (ImGui::SliderFloat("FrameRounding", &style.FrameRounding, 0.0f, 12.0f, "%.0f"))
@@ -571,7 +652,8 @@ void ShowStyleEditor(ImGuiStyle* ref = nullptr)
     // Save/Revert button
     if (ImGui::Button("Export"))
     {
-        ImGuiSaveStyle(PATH_UI_STYLE, style);
+        ImGuiSaveStyle(PATH_UI_STYLE, style,
+                       (fonts.empty() || idCurrentFont == -1) ? "Default" : fonts[idCurrentFont].c_str());
     }
     ImGui::SameLine();
     if (ImGui::Button("Import"))
