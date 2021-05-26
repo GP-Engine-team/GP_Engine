@@ -22,6 +22,7 @@
     <ClInclude Include="include\BaseCharacter.hpp" />
     <ClInclude Include="include\BaseEnemy.hpp" />
     <ClInclude Include="include\CircularEntitiesSpawner.hpp" />
+    <ClInclude Include="include\DebugSphere.hpp" />
     <ClInclude Include="include\SpawnManager.hpp" />
     <ClInclude Include="include\Sun.hpp" />
     <ClInclude Include="ShadowMap.hpp" />
@@ -40,6 +41,7 @@
     <ClCompile Include="src\BaseEnemy.cpp" />
     <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\CircularEntitiesSpawner.cpp" />
+    <ClCompile Include="src\DebugSphere.cpp" />
     <ClCompile Include="src\SpawnManager.cpp" />
     <ClCompile Include="src\Sun.cpp" />
     <ClCompile Include="src\Firearm.cpp" />
