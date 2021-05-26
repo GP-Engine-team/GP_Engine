@@ -167,6 +167,18 @@ void Editor::renderMenuBar()
         {
             ImGui::MenuItem("Demo ImGui", NULL, &m_showImGuiDemoWindows);
 
+            if (ImGui::BeginMenu("shorthand"))
+            {
+                ImGui::Text("Delete : Delete selected game object");
+                ImGui::Text("F1 : For set the default layout");
+                ImGui::Text("F2 : Refreash asset");
+                ImGui::Text("F5 : Start");
+                ImGui::Text("F6 : Pause");
+                ImGui::Text("F7 : Stop");
+
+                ImGui::EndMenu();
+            }
+
             // Menu content
             ImGui::MenuItem("Useful links");
             ImGui::EndMenu();
@@ -372,6 +384,11 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
     if (ImGui::IsKeyDown(GLFW_KEY_F1))
     {
         ImGui::LoadIniSettingsFromDisk("Layout/defaultGUILayout.ini");
+    }
+
+    if (ImGui::IsKeyDown(GLFW_KEY_F2))
+    {
+        m_projectContent.refreshResourcesList();
     }
 
     if (ImGui::IsKeyDown(GLFW_KEY_F5))
