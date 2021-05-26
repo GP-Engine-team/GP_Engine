@@ -141,6 +141,8 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
 
 SceneViewer::~SceneViewer()
 {
+    // Owner scene is already remove
+    cameraOwner->pOwnerScene = nullptr;
     delete cameraOwner;
 
     glDeleteFramebuffers(1, &framebufferID);
@@ -236,7 +238,7 @@ void SceneViewer::bindScene(Scene& scene)
     // Update the Camera component and cameraOwner scene and parent
     // inputs.setActive(true);
     freeFly.setActive(true);
-    camera.setActive(true);
+    // camera.setActive(true);
     scene.sceneRenderer.setMainCamera(&camera);
     pScene = &scene;
 }
@@ -245,7 +247,7 @@ void SceneViewer::unbindScene()
 {
     // inputs.setActive(false);
     freeFly.setActive(false);
-    camera.setActive(false);
+    // camera.setActive(false);
     pScene = nullptr;
 }
 
