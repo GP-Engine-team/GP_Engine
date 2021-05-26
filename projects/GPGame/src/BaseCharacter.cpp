@@ -20,13 +20,13 @@ BaseCharacter::BaseCharacter(GameObject& owner) : BehaviourComponent(owner)
 void BaseCharacter::onPostLoad()
 {
     BehaviourComponent::onPostLoad();
+
+    enableFixedUpdate(true);
+    controller = &getOwner().getOrCreateComponent<GPE::CharacterController>();
 }
 
 void BaseCharacter::start()
 {
-    enableFixedUpdate(true);
-
-    controller = &getOwner().addComponent<GPE::CharacterController>();
     GAME_ASSERT(controller, "null");
 
     // Setup controller
