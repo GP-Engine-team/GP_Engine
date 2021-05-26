@@ -28,8 +28,27 @@ using namespace GPE;
 
 BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept : BaseCharacter(owner)
 {
+    onPostLoad();
+}
+
+void BasePlayer::onPostLoad()
+{
+    BaseCharacter::onPostLoad();
+
     enableUpdate(true);
     enableOnGUI(true);
+
+    input      = &getOwner().getOrCreateComponent<GPE::InputComponent>();
+    source     = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
+    m_fireArme = &getOwner().getOrCreateComponent<PPSH41>();
+
+    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+
+    GPE::SourceSettings sourceSettings;
+    sourceSettings.pitch = 1.f;
+    sourceSettings.loop  = AL_TRUE;
+
+    source->setSound("Western", "Western", sourceSettings);
 }
 
 void BasePlayer::start()
@@ -61,23 +80,6 @@ void BasePlayer::start()
         io.setCursorTrackingState(true);
         io.setCursorLockState(true);
     }
-}
-
-void BasePlayer::onPostLoad()
-{
-    BaseCharacter::onPostLoad();
-
-    input      = &getOwner().addComponent<GPE::InputComponent>();
-    source     = &getOwner().addComponent<GPE::AudioComponent>();
-    m_fireArme = &getOwner().addComponent<PPSH41>();
-
-    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
-
-    GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch = 1.f;
-    sourceSettings.loop  = AL_TRUE;
-
-    source->setSound("Western", "Western", sourceSettings);
 }
 
 void BasePlayer::rotate(const GPM::Vec2& deltaDisplacement)

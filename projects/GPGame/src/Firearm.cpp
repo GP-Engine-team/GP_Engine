@@ -15,17 +15,25 @@ File_GENERATED
 
     Firearm::Firearm(GPE::GameObject & owner) noexcept : GPE::BehaviourComponent(owner)
     {
+        onPostLoad();
     }
 
     Firearm::Firearm(GPE::GameObject & owner, const GunMagazine& magazineStored, float reloadingDuration,
                      float rateOfFire) noexcept
-        : GPE::BehaviourComponent(owner), m_magazineStored{magazineStored},
-          m_shootSound{&owner.addComponent<GPE::AudioComponent>()},
-          m_muzzleFlash{&owner.addComponent<GPE::ParticleComponent>()}, m_rateOfFire{rateOfFire},
+        : GPE::BehaviourComponent(owner), m_magazineStored{magazineStored}, m_rateOfFire{rateOfFire},
           m_reloadingBulletTimeCount{rateOfFire}, m_reloadingDuration{reloadingDuration}
     {
+        onPostLoad();
+    }
+
+    void Firearm::onPostLoad()
+    {
+        BehaviourComponent::onPostLoad();
+
         enableUpdate(true);
 
+        m_shootSound  = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
+        m_muzzleFlash = &getOwner().getOrCreateComponent<GPE::ParticleComponent>();
         m_muzzleFlash->setDuration(.5f);
 
         GPE::Wave           sound("./resources/sounds/Firearm/machinegun.wav", "Shoot");
@@ -121,18 +129,6 @@ File_GENERATED
     const GunMagazine& Firearm::getMagazine() const
     {
         return m_magazineStored;
-    }
-
-    void Firearm::onPostLoad()
-    {
-        BehaviourComponent::onPostLoad();
-
-        GPE::Wave           sound("./resources/sounds/Firearm/machinegun.wav", "Shoot");
-        GPE::SourceSettings sourceSettings;
-        sourceSettings.pitch = 1.f;
-        sourceSettings.loop  = AL_FALSE;
-
-        m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
     }
 
 } // End of namespace GPG

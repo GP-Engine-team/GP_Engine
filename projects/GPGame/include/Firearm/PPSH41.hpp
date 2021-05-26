@@ -21,12 +21,7 @@ namespace GPG RFKNamespace()
         PPSH41(GPE::GameObject & owner) noexcept;
 
         PPSH41()                    noexcept = default;
-        PPSH41(const PPSH41& other) noexcept = delete;
-        PPSH41(PPSH41 && other)     noexcept = delete;
-        virtual ~PPSH41()           noexcept = default;
-
-        PPSH41& operator=(PPSH41 const& other) noexcept = delete;
-        PPSH41& operator=(PPSH41&& other)      noexcept = delete;
+        virtual ~PPSH41() noexcept = default;
 
         PPSH41_GENERATED
     };
