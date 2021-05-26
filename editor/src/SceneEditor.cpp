@@ -100,7 +100,7 @@ void SceneEditor::renderGizmoControlBar()
 }
 
 
-void SceneEditor::renderGizmo(float* inspectedTransfo)
+void SceneEditor::renderGizmo(TransformComponent& transfo)
 {
 
     ImVec2 topLeft = ImGui::GetWindowPos();
@@ -109,13 +109,33 @@ void SceneEditor::renderGizmo(float* inspectedTransfo)
     ImGuizmo::BeginFrame();
     ImGuizmo::SetDrawlist();
    
-    ImGuizmo::SetRect(topLeft.x, topLeft.y, view.width, view.height);
+    ImGuizmo::SetRect(topLeft.x, topLeft.y, float(view.width), float(view.height));
 
-    ImGuizmo::Manipulate(view.camera.getView().e,
-                         view.camera.getProjection().e,
-                         activeOperation,
-                         activeMode,
-                         inspectedTransfo);
+    const ImGuizmo::OPERATION operation = ImGuizmo::Manipulate(view.camera.getView().e,
+                                                               view.camera.getProjection().e,
+                                                               activeOperation,
+                                                               activeMode,
+                                                               transfo.get().model.e);
+    if (operation)
+    {
+        if (operation & ImGuizmo::SCALE)
+        {
+            transfo.setScale(transfo.get().scaling());
+        }
+
+        else if (operation & ImGuizmo::ROTATE)
+        {
+            transfo.setRotation(GPM::toQuaternion(transfo.get().rotation()));
+        }
+
+        else if (operation & ImGuizmo::TRANSLATE)
+        {
+            transfo.setTranslation(transfo.get().translation());
+        }
+
+        transfo.setDirty(false);
+        transfo.OnUpdate();
+    }    
 }
 
 
@@ -286,7 +306,7 @@ void SceneEditor::render(Editor& editorContext)
         if (inspected)
         {
             checkKeys();
-            renderGizmo(inspected->getTransform().get().model.e);
+            renderGizmo(inspected->getTransform());
         }
         
         dragDropLevelEditor(editorContext.reloadableCpp);
