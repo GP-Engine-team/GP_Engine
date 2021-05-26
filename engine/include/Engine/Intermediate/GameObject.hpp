@@ -18,6 +18,8 @@
 #include "Engine/Serialization/InspectContext.hpp"
 #include "Engine/Serialization/STDReflect.hpp"
 
+#include <Engine/Core/Tools/ClassUtility.hpp>
+
 // in Inl
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Format.hpp"
@@ -231,6 +233,14 @@ namespace GPE RFKNamespace()
          */
         GameObject* getGameObjectCorrespondingToID(unsigned int ID) noexcept;
 
+        /**
+         * @brief Get the Entity object in function of path in arg
+         *
+         * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3
+         * @return GameObject&
+         */
+        GameObject* getGameObject(const std::string& path) noexcept;
+
         [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;
 
         template <typename T>
@@ -258,6 +268,18 @@ namespace GPE RFKNamespace()
 
         GameObject_GENERATED
     };
+
+    /**
+     * @brief GameObjectLinker allow user to link local gameObject in editor. Thank's to it, user can associate
+     * gameObject and serialize it. Warning ! : Assocation is local of the base scene. For prefab, the base scene is the
+     * first gameObject. So user cannot link gameObject that is not inside the prefab.
+     *
+     */
+    struct GameObjectLinker
+    {
+        class GameObject* pGo = nullptr;
+    };
+
 } // namespace )
 
 #include "GameObject.inl"

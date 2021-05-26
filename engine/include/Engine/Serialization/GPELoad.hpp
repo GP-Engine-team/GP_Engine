@@ -10,9 +10,13 @@ class Mesh;
 class Shader;
 class Material;
 class Texture;
+struct GameObjectLinker;
 
 template <>
 void load(XmlLoader& context, AmbiantComponent& data, const XmlLoader::LoadInfo& info);
+
+template <>
+void load(XmlLoader& context, GameObjectLinker& data, const XmlLoader::LoadInfo& info);
 
 template <>
 void load(XmlLoader& context, Prefab*& data, const XmlLoader::LoadInfo& info);

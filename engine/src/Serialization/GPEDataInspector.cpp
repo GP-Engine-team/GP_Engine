@@ -74,18 +74,18 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent&
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject*& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObjectLinker& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject*& inspected, const char* name)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObjectLinker& inspected, const char* name)
 {
     startProperty(name);
     bool hasChanged = false;
 
-    ImGui::Selectable(inspected == nullptr ? "None" : inspected->getName().c_str());
+    ImGui::Selectable(inspected.pGo == nullptr ? "None" : inspected.pGo->getName().c_str());
 
     if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
     {
@@ -96,8 +96,8 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject*& insp
     {
         if (ImGui::MenuItem("Remove", NULL, false))
         {
-            inspected  = nullptr;
-            hasChanged = true;
+            inspected.pGo = nullptr;
+            hasChanged    = true;
         }
 
         ImGui::EndPopup();
@@ -109,8 +109,8 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject*& insp
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
         {
             IM_ASSERT(payload->DataSize == sizeof(GPE::GameObject*));
-            inspected  = *static_cast<GPE::GameObject**>(payload->Data);
-            hasChanged = true;
+            inspected.pGo = *static_cast<GPE::GameObject**>(payload->Data);
+            hasChanged    = true;
         }
         ImGui::EndDragDropTarget();
     }
@@ -239,12 +239,12 @@ bool renderResourceExplorer(const char* name, T*& inRes, const char* acceptedPay
     const char* label = inRes ? items[itemCurrent] : "None";
     if (ImGui::BeginCombo(name, label, 0))
     {
-        static int isExternal = 0;
-        ImGui::RadioButton("Internal", &isExternal, 0);
+        static int isInContentBrowser = 0;
+        ImGui::RadioButton("Used", &isInContentBrowser, 0);
         ImGui::SameLine();
-        ImGui::RadioButton("External", &isExternal, 1);
+        ImGui::RadioButton("All", &isInContentBrowser, 1);
 
-        if (isExternal)
+        if (isInContentBrowser)
         {
             std::vector<GPE::ResourcesPath>& pathContainer =
                 *GPE::Engine::getInstance()->resourceManager.get<std::vector<GPE::ResourcesPath>>("Path");

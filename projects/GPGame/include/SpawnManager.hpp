@@ -7,15 +7,11 @@
 #pragma once
 
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Prefab.hpp>
 
 // Generated
 #include <Generated/SpawnManager.rfk.h>
-
-namespace GPE
-{
-class GameObject;
-}
 
 namespace GPG RFKNamespace()
 {
@@ -30,7 +26,7 @@ namespace GPG RFKNamespace()
 
         struct RFKStruct(Inspect(), Serialize()) Spawner
         {
-            RFKField(Inspect(), Serialize()) GPE::GameObject* go = nullptr;
+            RFKField(Inspect(), Serialize()) GPE::GameObjectLinker go;
 
             Spawner_GENERATED
         };
@@ -39,13 +35,13 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) std::vector<Spawner>      m_spawners{};
         RFKField(Inspect(), Serialize()) std::vector<EntityPrefab> m_entitiesToSpawnInfo{};
 
-        RFKField(Inspect(), Serialize()) float            m_zoneRadius{3.f};
-        RFKField(Inspect(), Serialize()) float            m_spawnDelay{1.f};         /*in sec*/
-        RFKField(Inspect(), Serialize()) float            m_spawnDelayInterval{0.f}; /*in sec*/
-        RFKField(Inspect(), Serialize()) float            m_delayCount{0.f};
-        RFKField(Inspect(), Serialize()) float            m_nextDelay{m_spawnDelay};
-        RFKField(Inspect(), Serialize()) GPE::GameObject* m_enemiesContainer{nullptr};
-        RFKField() GPE::GameObject*                       m_player{nullptr};
+        RFKField(Inspect(), Serialize()) float                 m_zoneRadius{3.f};
+        RFKField(Inspect(), Serialize()) float                 m_spawnDelay{1.f};         /*in sec*/
+        RFKField(Inspect(), Serialize()) float                 m_spawnDelayInterval{0.f}; /*in sec*/
+        RFKField(Inspect(), Serialize()) float                 m_delayCount{0.f};
+        RFKField(Inspect(), Serialize()) float                 m_nextDelay{m_spawnDelay};
+        RFKField(Inspect(), Serialize()) GPE::GameObjectLinker m_enemiesContainer;
+        RFKField() GPE::GameObject*                            m_player;
 
     public:
         /**

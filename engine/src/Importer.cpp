@@ -64,6 +64,7 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
 
         // Update old pointers into new ones
         context.updateLazyPtrs();
+        context.updateGameObjectLinker(scene->getWorld());
 
         // Call onPostLoad on GameObjects
         struct Rec
@@ -126,6 +127,10 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
 
         // Update old pointers into new ones
         context.updateLazyPtrs();
+
+        GameObject* const go = scene.getWorld().children.front();
+        if (go)
+            context.updateGameObjectLinker(*go);
     }
 
     // Init the prefab

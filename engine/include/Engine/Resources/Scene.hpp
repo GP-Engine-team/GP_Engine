@@ -52,14 +52,6 @@ public:
     // TODO: Can scene be moved ? How to manage resource
     constexpr inline Scene& operator=(Scene&& other) noexcept = delete;
 
-    /**
-     * @brief Get the Entity object in function of path in arg
-     *
-     * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3
-     * @return GraphEntity&
-     */
-    GameObject* getGameObject(const std::string& path) noexcept;
-
     GameObject& getWorld() noexcept;
 
     void addLoadedResourcePath(const char* path) noexcept;

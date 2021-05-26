@@ -24,7 +24,7 @@ void Sun::onPostLoad()
 
 void Sun::start()
 {
-    m_player = GPE::Engine::getInstance()->sceneManager.getCurrentScene()->getGameObject("Player");
+    m_player = GPE::Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");
     GAME_ASSERT(m_player, "Player not found");
 
     m_pSunDirectionnalLight = &getOwner().getOrCreateComponent<DirectionalLight>();

@@ -6,16 +6,21 @@
 
 #pragma once
 
-#include <Refureku/Refureku.h>
+#include "Engine/Serialization/STDReflect.hpp"
 #include "Engine/Serialization/xml/xmlUtilities.hpp"
 #include "RapidXML/rapidxml.hpp"
+#include "Refureku/TypeInfo/Variables/Field.h"
+#include <Refureku/Refureku.h>
+#include <map>
 #include <set>
 #include <stack>
-#include "Engine/Serialization/STDReflect.hpp"
-#include "Refureku/TypeInfo/Variables/Field.h"
-#include <map>
-#include <stack>
 #include <type_traits>
+
+namespace GPE
+{
+class GameObject;
+struct GameObjectLinker;
+} // namespace GPE
 
 class XmlLoader
 {
@@ -41,6 +46,9 @@ protected:
     };
     // key is the saved ptr
     std::map<void*, LoadedPtr> alreadyLoadedPtrs;
+
+public:
+    std::map<std::string, GPE::GameObjectLinker*> gameObjectLinkers;
 
 protected:
     /**
@@ -115,6 +123,7 @@ public:
     void updateLazyPtr(void*& weak);
 
     void updateLazyPtrs();
+    void updateGameObjectLinker(GPE::GameObject& base);
 };
 
 XmlLoader::LoadInfo fieldToLoadInfo(rfk::Field const& field);
@@ -182,7 +191,7 @@ void load(XmlLoader& context, rfk::Method const*& data, const XmlLoader::LoadInf
 
 } // namespace GPE
 
-#include "Engine/Serialization/STDLoad.hpp"
-#include "Engine/Serialization/GPMLoad.hpp"
 #include "Engine/Serialization/GPELoad.hpp"
+#include "Engine/Serialization/GPMLoad.hpp"
+#include "Engine/Serialization/STDLoad.hpp"
 #include "Engine/Serialization/xml/xmlLoader.inl"

@@ -28,15 +28,18 @@ void SpawnManager::start()
     GAME_ASSERT(m_spawners.empty(), "Empty buffer");
     GAME_ASSERT(m_entitiesToSpawnInfo.empty(), "Empty buffer");
 
-    m_player = Engine::getInstance()->sceneManager.getCurrentScene()->getGameObject("Player");
+    m_player = Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");
     GAME_ASSERT(m_player, "Player not found");
 
-    GAME_ASSERT(m_enemiesContainer, "Missing container ref in SpawnManager");
+    GAME_ASSERT(m_enemiesContainer.pGo, "Missing container ref in SpawnManager");
     m_nextDelay = m_spawnDelay + Random::ranged(-m_spawnDelayInterval, m_spawnDelayInterval);
+
+    GAME_ASSERT(!m_entitiesToSpawnInfo.empty(), "Spawner without info");
+    GAME_ASSERT(!m_spawners.empty(), "SpawnerManager without spawner");
 
     for (auto&& elem : m_spawners)
     {
-        GAME_ASSERT(elem.go, "null");
+        GAME_ASSERT(elem.go.pGo, "null");
     }
 }
 
@@ -58,12 +61,12 @@ void SpawnManager::update(double deltaTime)
 
         /*Choose spawner*/
         unsigned int spawnerIndex    = Random::ranged<int>(m_spawners.size() - 1);
-        const Vec3   spawnerPosition = m_spawners[spawnerIndex].go->getTransform().getGlobalPosition();
+        const Vec3   spawnerPosition = m_spawners[spawnerIndex].go.pGo->getTransform().getGlobalPosition();
         const Vec3   newPosition     = {position2D.x + spawnerPosition.x, spawnerPosition.y,
                                   position2D.y + spawnerPosition.z};
 
         /*Spawn this entity*/
-        GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer);
+        GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer.pGo);
         spawnedEntity->getTransform().setTranslation(newPosition);
     }
 }

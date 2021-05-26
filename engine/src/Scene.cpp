@@ -27,39 +27,6 @@ Scene::~Scene() noexcept
         m_pWorld.release(); // The parent will manage the memory
 }
 
-GameObject* Scene::getGameObject(const std::string& path) noexcept
-{
-    GPE_ASSERT(!path.empty(), "Empty path");
-
-    std::stringstream sPath(path);
-    std::string       word;
-    GameObject*       currentEntity = m_pWorld.get();
-
-    while (std::getline(sPath, word, '/'))
-    {
-        if (word.empty() || word == "." || word == "world")
-            continue;
-
-        bool isFound = false;
-        for (auto&& child : currentEntity->children)
-        {
-            if (child->getName() == word)
-            {
-                currentEntity = child;
-                isFound       = true;
-                break;
-            }
-        }
-
-        if (!isFound)
-        {
-            Log::getInstance()->logError(std::string("Canno't found \"") + word + "\" in scene graph \"" + path + "\"");
-            return nullptr;
-        }
-    }
-    return currentEntity;
-}
-
 GameObject& Scene::getWorld() noexcept
 {
     return *m_pWorld;

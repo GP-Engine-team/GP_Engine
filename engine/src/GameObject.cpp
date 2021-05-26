@@ -12,7 +12,7 @@
 #include "Generated/GameObject.rfk.h"
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 unsigned int GameObject::m_currentID = 0;
@@ -417,4 +417,34 @@ void* GameObject::operator new(std::size_t size)
 void GameObject::operator delete(void* ptr)
 {
     GPE::DataChunk<GameObject>::getInstance()->destroy(static_cast<GameObject*>(ptr));
+}
+
+GameObject* GameObject::getGameObject(const std::string& path) noexcept
+{
+    GPE_ASSERT(!path.empty(), "Empty path");
+
+    std::stringstream sPath(path);
+    std::string       word;
+    GameObject*       currentEntity = this;
+
+    while (std::getline(sPath, word, '/'))
+    {
+        if (word.empty() || word == "." || word == getName())
+            continue;
+
+        bool isFound = false;
+        for (auto&& child : currentEntity->children)
+        {
+            if (child->getName() == word)
+            {
+                currentEntity = child;
+                isFound       = true;
+                break;
+            }
+        }
+
+        if (!isFound)
+            return nullptr;
+    }
+    return currentEntity;
 }

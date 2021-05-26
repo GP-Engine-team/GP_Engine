@@ -52,6 +52,8 @@ GameObject* Prefab::clone(GameObject& parent)
         return nullptr;
 
     GameObject* const pGo = prefabScene.getWorld().children.front();
+
+    prefab.updateGameObjectLinker(*pGo);
     pGo->setParent(&parent);
     pGo->getTransform().setDirty();
 
