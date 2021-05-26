@@ -68,7 +68,7 @@ template <>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, float& inspected, const char* name)
 {
     startProperty(name);
-    bool hasChanged = ImGui::InputFloat("", &inspected);
+    bool hasChanged = ImGui::DragFloat("", &inspected);
     endProperty();
     return hasChanged;
 }
