@@ -34,7 +34,7 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        Shader* m_shader = nullptr;
+        RFKField(Serialize()) Shader* m_shader = nullptr;
 
         ParticleData                 m_particles;
         RFKField(Serialize()) size_t m_count              = 0;
@@ -72,7 +72,7 @@ namespace GPE RFKNamespace()
          */
         void emit(double dt);
 
-         /**
+        /**
          * @brief Init render buffer
          */
         void generate();
