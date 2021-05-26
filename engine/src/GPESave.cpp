@@ -7,6 +7,7 @@
 #include "Engine/Resources/Type.hpp"
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Color.hpp>
 #include <Engine/Resources/Prefab.hpp>
 #include <Engine/Resources/ResourcesManager.hpp>
 
@@ -17,6 +18,30 @@ template <>
 void save(XmlSaver& context, const AmbiantComponent& data, const XmlSaver::SaveInfo& info)
 {
     GPE::save(context, data.rgbi, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGBA& data, const rfk::Field& info)
+{
+    GPE::save(context, data.v, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGBA& data, const XmlSaver::SaveInfo& info)
+{
+    GPE::save(context, data.v, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGB& data, const rfk::Field& info)
+{
+    GPE::save(context, data.v, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGB& data, const XmlSaver::SaveInfo& info)
+{
+    GPE::save(context, data.v, info);
 }
 
 template <>

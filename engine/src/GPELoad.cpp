@@ -22,6 +22,18 @@ void load(XmlLoader& context, AmbiantComponent& data, const XmlLoader::LoadInfo&
 }
 
 template <>
+void load(XmlLoader& context, ColorRGBA& data, const XmlLoader::LoadInfo& info)
+{
+    GPE::load(context, data.v, info);
+}
+
+template <>
+void load(XmlLoader& context, ColorRGB& data, const XmlLoader::LoadInfo& info)
+{
+    GPE::load(context, data.v, info);
+}
+
+template <>
 void load(XmlLoader& context, GameObjectLinker& data, const XmlLoader::LoadInfo& info)
 {
     std::string path;
