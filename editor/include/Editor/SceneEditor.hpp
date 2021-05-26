@@ -14,6 +14,7 @@ namespace GPE
 {
 class IInspectable;
 class ReloadableCpp;
+class TransformComponent;
 }
 
 namespace Editor
@@ -43,7 +44,7 @@ public:
 private:
     void         captureInputs        (bool toggle);
     void         renderGizmoControlBar();
-    void         renderGizmo          (float* inspectedTransfo);
+    void         renderGizmo          (GPE::TransformComponent& transfo);
     void         checkKeys            ();
     void         checkCursor          (GPE::GameObject*& inspectedObject);
     void         dragDropLevelEditor  (GPE::ReloadableCpp* cpp);
