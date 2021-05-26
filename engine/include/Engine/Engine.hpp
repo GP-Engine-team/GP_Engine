@@ -48,7 +48,7 @@ public:
 
 protected:
     Engine()
-        : window{Window::CreateArg{"Window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
+        : window{Window::CreateArg{"Green portal", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
           resourceManager{}, sceneManager{}, physXSystem{}, soundSystem{}, exit{[&]() { window.close(); }}
     {
         importConfig();
