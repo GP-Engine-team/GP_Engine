@@ -170,7 +170,7 @@ void Editor::renderMenuBar()
             if (ImGui::BeginMenu("shorthand"))
             {
                 ImGui::Text("Delete : Delete selected game object");
-                ImGui::Text("F1 : For set the default layout");
+                ImGui::Text("F1 : Set default layout");
                 ImGui::Text("F2 : Refreash asset");
                 ImGui::Text("F5 : Start");
                 ImGui::Text("F6 : Pause");
