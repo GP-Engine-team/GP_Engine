@@ -341,14 +341,7 @@ void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
 
 void RenderSystem::setDefaultMainCamera() noexcept
 {
-    if (!m_pCameras.empty())
-    {
-        setMainCamera(m_pCameras.at(0));
-    }
-    else
-    {
-        Log::getInstance()->logWarning("No camera to set default main camera");
-    }
+    setMainCamera(m_pCameras.empty() ? nullptr : m_pCameras.at(0));
 }
 
 void RenderSystem::setMainCamera(Camera* newMainCamera) noexcept

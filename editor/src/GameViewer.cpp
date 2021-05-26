@@ -88,11 +88,12 @@ void GameViewer::render(EditorStartup& startup)
             setMouseInWindow = false;
         }
 
-        { // Set active camera
-            RenderSystem& sceneRenderer = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
+        // Set active camera
+        RenderSystem& sceneRenderer = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
 
-            sceneRenderer.setDefaultMainCamera();
-            Camera* mainCam = sceneRenderer.getMainCamera();
+        sceneRenderer.setDefaultMainCamera();
+        if (Camera* mainCam = sceneRenderer.getMainCamera())
+        {
             mainCam->setAspect(size.x / size.y);
 
             // Update game viewport
@@ -100,15 +101,23 @@ void GameViewer::render(EditorStartup& startup)
             const ImGuiWindow* win{ImGui::GetCurrentWindow()};
             startup.game().setViewport(winPos.x + win->Viewport->CurrWorkOffsetMin.x,
                                        winPos.y + win->Viewport->CurrWorkOffsetMin.y, size.x, size.y);
+
+            // Update camera's aspect and resizing FBO
+            framebuffer.resize(int(size.x), int(size.y));
+            framebuffer.bind();
+
+            // Render
+            startup.game().render();
+            ImGui::Image((void*)(intptr_t)framebuffer.textureID(), size, {.0f, 1.f}, {1.f, .0f});
         }
-
-        // Update camera's aspect and resizing FBO
-        framebuffer.resize(int(size.x), int(size.y));
-        framebuffer.bind();
-
-        // Render
-        startup.game().render();
-        ImGui::Image((void*)(intptr_t)framebuffer.textureID(), size, {.0f, 1.f}, {1.f, .0f});
+        else
+        {
+            const char*  text     = "No main camera set";
+            const ImVec2 textSize = ImGui::CalcTextSize(text);
+            ImGui::SetCursorPos(
+                {ImGui::GetWindowSize().x / 2.f - textSize.x / 2.f, ImGui::GetWindowSize().y / 2.f - textSize.y / 2.f});
+            ImGui::Text(text);
+        }
     }
     ImGui::End();
 
