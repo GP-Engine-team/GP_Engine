@@ -367,6 +367,38 @@ void Editor::releaseGameInputs()
     m_gameViewer.lockInputToEditor();
 }
 
+void Editor::updateKeyboardShorthand(EditorStartup& startup)
+{
+    if (ImGui::IsKeyDown(GLFW_KEY_F1))
+    {
+        ImGui::LoadIniSettingsFromDisk("Layout/defaultGUILayout.ini");
+    }
+
+    if (ImGui::IsKeyDown(GLFW_KEY_F5))
+    {
+        startup.playGame();
+    }
+
+    if (ImGui::IsKeyDown(GLFW_KEY_F6))
+    {
+        startup.pauseGame();
+    }
+
+    if (ImGui::IsKeyDown(GLFW_KEY_F7))
+    {
+        startup.stopGame();
+    }
+
+    if (ImGui::IsKeyDown(GLFW_KEY_DELETE))
+    {
+        if (GameObject* pGo = dynamic_cast<GameObject*>(m_inspectedObject))
+        {
+            m_inspectedObject = nullptr;
+            pGo->destroy();
+        }
+    }
+}
+
 void Editor::update(EditorStartup& startup)
 {
     auto syncImGui  = GET_PROCESS((*m_reloadableCpp), setImguiCurrentContext);
@@ -387,6 +419,8 @@ void Editor::update(EditorStartup& startup)
     }
 
     // Editor
+    updateKeyboardShorthand(startup);
+
     renderMenuBar();
 
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());

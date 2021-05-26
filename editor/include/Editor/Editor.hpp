@@ -46,8 +46,8 @@ public:
     GPE::IInspectable*  m_inspectedObject;
     GPE::ReloadableCpp* m_reloadableCpp;
 
-    bool                m_showAppStyleEditor;
-    bool                m_showImGuiDemoWindows;
+    bool m_showAppStyleEditor;
+    bool m_showImGuiDemoWindows;
 
 private:
     void setupDearImGui();
@@ -70,6 +70,7 @@ public:
     void update(EditorStartup& startup);
     void render();
     bool isRunning();
+    void updateKeyboardShorthand(EditorStartup& startup);
 
     // Removes Editor elements from the scene before saving
     void saveScene(GPE::Scene* scene, const char* path);
