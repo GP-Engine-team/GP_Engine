@@ -133,8 +133,15 @@ void SceneEditor::renderGizmo(TransformComponent& transfo)
             transfo.setTranslation(transfo.get().translation());
         }
 
+        // The update is handled internally to prevent unecessary extraneous computations
         transfo.setDirty(false);
         transfo.OnUpdate();
+
+        // Cascade the changes made on this transform 
+        for (GPE::GameObject* child : transfo.getOwner().children)
+        {
+            child->forceUpdate();
+        }
     }    
 }
 
