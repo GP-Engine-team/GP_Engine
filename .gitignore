@@ -504,3 +504,4 @@ resources/*
 engine/resources/
 projects/GPGame/resources/**/*.*
 !projects/GPGame/resources/**/*.GPScene
+!projects/GPGame/resources/**/*.GPPrefab
