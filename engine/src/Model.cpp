@@ -16,6 +16,7 @@ File_GENERATED
 #include <Engine/Resources/Shader.hpp>
 #include <Engine/Resources/Texture.hpp>
 #include <Engine/Resources/Animation/Skeleton.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <GPM/Matrix3.hpp>
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
@@ -37,6 +38,11 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
 Model::~Model()
 {
     setActive(false);
+    if (m_animComponent != nullptr)
+    {
+        m_animComponent->setModel(nullptr);
+        m_animComponent = nullptr;
+    }
 }
 
 Model::Model(GameObject& owner) : Model(owner, CreateArg{})
@@ -305,57 +311,10 @@ void Model::updateToSystem() noexcept
         }
     }
 }
-//
-//void SubModel::reloadAnimFunc(bool)
-//{
-//    //// Animations : TODO: to clean
-//    //{
-//
-//
-//    //    if (arg.vertices.size() == 5322)
-//    //    {
-//
-//    //        // TODO : To move in Importer.cpp
-//    //        // Load anim data
-//    //        unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
-//    //                                        aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords |
-//    //                                        aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights;
-//
-//    //        const char* srcPath = "C:\\Users\\t.dallard\\Downloads\\GP_Engine - Copy (1)\\GP_Engine - "
-//    //                              "Copy\\projects\\GPGame\\resources\\Character\\Taunt.fbx";
-//
-//    //        Assimp::Importer importer;
-//    //        const aiScene*   scene = importer.ReadFile(srcPath, postProcessflags);
-//    //        if (!scene)
-//    //        {
-//    //            FUNCT_ERROR(importer.GetErrorString());
-//    //            return;
-//    //        }
-//
-//    //        // Mesh
-//    //        for (size_t i = 0; i < scene->mNumMeshes; ++i)
-//    //        {
-//    //            aiMesh* pMesh = scene->mMeshes[i];
-//
-//    //            extractBoneWeightForVertices(arg.vertices, pMesh, scene);
-//    //        }
-//
-//    //        // TODO : Delete / LEAKS
-//    //        anim = new Animation(srcPath, this);
-//
-//    //        animator = new AnimationComponent();
-//    //        animator->playAnimation(anim);
-//    //    }
-//    //}
-//}
-//
 
-void Model::setSubmodelsAnimationComponent(AnimationComponent* animComponent)
+void Model::setAnimComponent(AnimationComponent* newAnimComp)
 {
-    for (SubModel& sub : m_subModels)
-    {
-        sub.animator = animComponent;
-    }
+    m_animComponent = newAnimComp;
 }
 
 void Model::bindSkin(Skin& skin)
@@ -364,4 +323,11 @@ void Model::bindSkin(Skin& skin)
     {
         sub.pMesh->bindSkin(skin);
     }
+}
+
+std::vector<GPM::Mat4>& Model::getFinalBonesTransforms() const
+{
+    GPE_ASSERT(m_animComponent != nullptr,
+               "It is not possible to get the bone data if there are no animations. Check with isAnimated() first.");
+    return m_animComponent->m_finalBoneMatrices;
 }

@@ -34,10 +34,18 @@ void AnimationComponent::updateToSystem() noexcept
 {
     if (m_isActivated)
     {
+        if (m_model != nullptr)
+        {
+            m_model->setAnimComponent(this);
+        }
         GPE::Engine::getInstance()->animSystem.addComponent(this);
     }
     else
     {
+        if (m_model != nullptr)
+        {
+            m_model->setAnimComponent(nullptr);
+        }
         GPE::Engine::getInstance()->animSystem.removeComponent(this);
     }
 }
@@ -112,7 +120,7 @@ void AnimationComponent::setupAnims(bool newValue)
 
         // subModel
         m_model = m_gameObject->getComponent<GPE::Model>();
-        m_model->setSubmodelsAnimationComponent(this);
+        m_model->setAnimComponent(this);
 
         // Mesh
         for (size_t i = 0; i < scene->mNumMeshes; ++i)
@@ -147,6 +155,23 @@ void AnimationComponent::setSkeleton(Skeleton* newSkeleton)
         m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
 }
 
+void AnimationComponent::setModel(Model* newModel)
+{
+    if (m_model == newModel)
+        return;
+
+    if (m_model != nullptr)
+    {
+        m_model->setAnimComponent(nullptr);
+    }
+
+    if (newModel != nullptr)
+    {
+        newModel->setAnimComponent(this);
+    }
+
+    m_model = newModel;
+}
 
  void AnimationComponent::drawDebugSkeleton(const GPM::Vec4& offset) const
 {

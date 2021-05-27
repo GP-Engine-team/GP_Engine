@@ -51,6 +51,7 @@ public:
 
     void calculateBoneTransform(const struct AssimpNodeData& node, const GPM::mat4& parentTransform);
 
+    void setModel(Model* model);
     void setSkeleton(Skeleton* skeleton);
 
     void drawDebugSkeleton(const GPM::Vec4& offset = GPM::Vec4{0, -100, 0}) const;

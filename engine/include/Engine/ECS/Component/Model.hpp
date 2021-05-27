@@ -17,6 +17,12 @@
 // Generated
 #include "Generated/Model.rfk.h"
 
+namespace GPM
+{
+union Matrix4;
+using Mat4 = Matrix4;
+}
+
 namespace GPE RFKNamespace()
 {
     class Mesh;
@@ -53,21 +59,6 @@ namespace GPE RFKNamespace()
             return pModel && pMesh && pShader && pMaterial;
         }
 
-        //////////////////////////////////////////
-        /* ANIMATIONS */
-        //Skeleton* skeleton = nullptr;
-
-        //class Animation* anim = nullptr;
-        //// TODO : Remove this monstruosity
-        //// HORROR
-        GPE::AnimationComponent* animator = nullptr;
-
-        //RFKField(Inspect("reloadAnimFunc")) bool reloadAnim = false;
-
-        //void reloadAnimFunc(bool);
-
-        ////////////////////////////////////////
-
         RFKField(Serialize()) Model*    pModel    = nullptr;
         RFKField(Serialize()) Shader*   pShader   = nullptr;
         RFKField(Serialize()) Material* pMaterial = nullptr;
@@ -95,6 +86,8 @@ namespace GPE RFKNamespace()
     protected:
         RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
 
+        class AnimationComponent* m_animComponent = nullptr;
+
         virtual void updateToSystem() noexcept override;
 
     public:
@@ -110,9 +103,16 @@ namespace GPE RFKNamespace()
 
         void addSubModel(const SubModel::CreateArg& arg);
 
-        void setSubmodelsAnimationComponent(AnimationComponent* animCOmponent);
+        void setAnimComponent(AnimationComponent* newAnimComp);
 
         void bindSkin(class Skin& skin);
+
+        std::vector<GPM::Mat4>& getFinalBonesTransforms() const;
+
+        inline bool isAnimated() const
+        {
+            return m_animComponent != nullptr;
+        }
 
         Model_GENERATED
     };
