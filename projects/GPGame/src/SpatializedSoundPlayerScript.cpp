@@ -10,21 +10,22 @@ File_GENERATED
 #include <Engine/Resources/Wave.hpp>
 #include <algorithm>
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPG;
 using namespace GPM;
 
 SpatializedSoundPlayerScript::SpatializedSoundPlayerScript(GameObject& owner)
     : BehaviourComponent(owner), source{&owner.addComponent<GPE::AudioComponent>()}
 {
-    GPE::Wave testSound3("./resources/sounds/YMCA.wav", "YMCA");
+    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "E_Western");
 
     GPE::SourceSettings sourceSettings;
     sourceSettings.pitch = 1.f;
     sourceSettings.loop  = AL_TRUE;
     // sourceSettings.position = ALfloat(0.f);
 
-    source->setSound("YMCA", "YMCA", sourceSettings);
+    source->setSound("E_Western", "E_Western", sourceSettings);
+    source->stopSound("E_Western");
     // source->setSound("Western", "Western", sourceSettings);
 }
 
@@ -38,5 +39,5 @@ void SpatializedSoundPlayerScript::start()
     enableUpdate(true);
     GAME_ASSERT(source, "null");
 
-    source->playSound("YMCA", true);
+    source->playSound("E_Western", true);
 }

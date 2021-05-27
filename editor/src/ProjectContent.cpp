@@ -198,12 +198,12 @@ void ProjectContent::createNewScene()
 
     sceneDir /= sceneName;
 
-    m_editorContext->m_sceneEditor.view.unbindScene();
+    m_editorContext->sceneEditor.view.unbindScene();
     Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName.string());
     m_editorContext->saveScene(&scene, sceneDir.string().c_str());
-    m_editorContext->m_sceneEditor.view.bindScene(scene);
+    m_editorContext->sceneEditor.view.bindScene(scene);
     refreshResourcesList();
-    m_editorContext->m_saveFolder = sceneDir.parent_path().string().c_str();
+    m_editorContext->saveFolder = sceneDir.parent_path().string().c_str();
 }
 
 void ProjectContent::removeFile(const std::filesystem::path& path)
@@ -471,11 +471,11 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 {
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                 {
-                    m_editorContext->m_sceneEditor.view.unbindScene();
+                    m_editorContext->sceneEditor.view.unbindScene();
                     Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(it->path.string());
                     m_editorContext->loadScene(&scene, it->path.string().c_str());
                     scene.setName(it->filename.stem().string().c_str());
-                    m_editorContext->m_saveFolder = it->path.parent_path().string();
+                    m_editorContext->saveFolder = it->path.parent_path().string();
                     break;
                 }
 
@@ -639,7 +639,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 prefabDir /= prefabName;
 
                 Scene prefab;
-                auto  saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
+                auto  saveFunc = GET_PROCESS((*m_editorContext->reloadableCpp), saveSceneToPath);
                 saveFunc(&prefab, prefabDir.string().c_str(), GPE::SavedScene::EType::XML);
                 refreshResourcesList();
             }
@@ -667,7 +667,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             const std::filesystem::path path =
                 pCurrentDirectory->path / (gameObject.getName() + ENGINE_PREFAB_EXTENSION);
 
-            auto saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), savePrefabToPath);
+            auto saveFunc = GET_PROCESS((*m_editorContext->reloadableCpp), savePrefabToPath);
             saveFunc(gameObject, path.string().c_str(), GPE::SavedScene::EType::XML);
 
             refreshResourcesList();

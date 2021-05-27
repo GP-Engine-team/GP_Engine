@@ -63,7 +63,7 @@ EditorStartup::EditorStartup()
                GPE::Engine::getInstance()->sceneManager.setCurrentScene("Default scene")},
       m_reloadableCpp{gameDllPath}, m_game{nullptr}, m_engine{GPE::Engine::getInstance()}
 {
-    m_editor.m_reloadableCpp = &m_reloadableCpp;
+    m_editor.reloadableCpp = &m_reloadableCpp;
 
     ADD_PROCESS(m_reloadableCpp, createGameInstance);
     ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
@@ -127,7 +127,7 @@ void EditorStartup::openGame()
     auto loadFirstSceneFunct = GET_PROCESS(m_reloadableCpp, loadFirstScene);
     loadFirstSceneFunct();
     m_editor.setSceneInEdition(loadFirstSceneFunct());
-    m_editor.m_saveFolder = Engine::getInstance()->sceneManager.firstLoadedScene.parent_path().string();
+    m_editor.saveFolder = Engine::getInstance()->sceneManager.firstLoadedScene.parent_path().string();
 
     if (gameWasInstanciated)
     {
@@ -171,10 +171,12 @@ void EditorStartup::playGame()
     };
     Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&EditorStartup::startScene, this);
 
-    m_editor.m_gameViewer.lockInputToGame();
+    m_editor.gameViewer.lockInputToGame();
 
     if (m_game->state == EGameState::STOPPED)
+    {
         m_editor.saveCurrentScene();
+    }
 
     // Do not change the order of instructions inside the lambdas
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
@@ -235,6 +237,7 @@ void EditorStartup::stopGame()
 {
     if (m_game->state == EGameState::STOPPED)
         return;
+
     m_engine->sceneManager.getCurrentScene()->behaviourSystem.startOnBehaviourAdd = false;
     m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert        = nullptr;
     Engine::getInstance()->sceneManager.OnSceneChange                             = nullptr;

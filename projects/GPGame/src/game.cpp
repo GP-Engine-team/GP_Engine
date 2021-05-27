@@ -68,7 +68,6 @@ void Game::render()
     Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.onGUI();
     ImGui::End();
     ImGui::Render();
-
     RenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
 
     sceneRS.tryToResize(unsigned(m_w), unsigned(m_h));

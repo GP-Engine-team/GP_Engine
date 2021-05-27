@@ -13,8 +13,11 @@ using namespace GPE;
 
 unsigned int GameControlBar::pickColor(unsigned char flag) const
 {
-    const unsigned int buttonColors[2]{ImGui::ColorConvertFloat4ToU32(ImGui::GetStyleColorVec4(ImGuiCol_Button)),
-                                       ImGui::ColorConvertFloat4ToU32(ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive))};
+    const unsigned int buttonColors[2]
+    {
+        ImGui::GetColorU32(ImGuiCol_Button),
+        ImGui::GetColorU32(ImGuiCol_ButtonActive)
+    };
 
     return buttonColors[(bool)(buttonMask & flag)];
 }

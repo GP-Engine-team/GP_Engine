@@ -1,11 +1,11 @@
 ﻿#include <Engine/Intermediate/Viewers/SceneViewer.hpp>
-// Engine
 
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/ECS/Component/InputComponent.hpp>
 #include <Engine/ECS/System/InputManagerGLFW.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
 #include <GPM/Vector3.hpp>
@@ -116,15 +116,22 @@ void SceneViewer::initializeInputs()
 
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : cameraOwner{new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
-      freeFly{cameraOwner->addComponent<FreeFly>()},
-      camera{cameraOwner->addComponent<Camera>(
-          Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
-      inputs{cameraOwner->addComponent<GPE::InputComponent>()}, pScene{&viewed}, textureID{0u}, depthStencilID{0u},
-      framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u}, FBOIDframebufferID{0u},
-      FBOIDwidth{static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight{static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_},
-      m_capturingInputs{false}
+    : cameraOwner       {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
+      freeFly           {cameraOwner->addComponent<FreeFly>()},
+      camera            {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
+      inputs            {cameraOwner->addComponent<GPE::InputComponent>()},
+      pScene            {&viewed},
+      textureID         {0u},
+      depthStencilID    {0u},
+      framebufferID     {0u},
+      FBOIDtextureID    {0u},
+      FBOIDdepthID      {0u},
+      FBOIDframebufferID{0u},
+      FBOIDwidth        {int(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight       {int(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
+      width             {width_},
+      height            {height_},
+      m_capturingInputs {false}
 {
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
@@ -303,6 +310,11 @@ void SceneViewer::captureInputs(bool shouldCapture)
         return;
 
     m_capturingInputs = shouldCapture;
+}
+
+bool SceneViewer::capturingInputs() const
+{
+    return m_capturingInputs;
 }
 
 // TODO: move to class Camera, or to a new class

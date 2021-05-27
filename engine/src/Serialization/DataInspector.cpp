@@ -8,11 +8,8 @@ void GPE::DataInspector::startProperty(const char* name)
 
     ImGui::Text(name);
 
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.ItemSpacing.x;
-
     ImVec2 v = ImGui::GetWindowSize();
-    v.x *= 0.5;
+    v.x *= .5f;
     ImGui::SameLine(v.x);
     ImGui::PushItemWidth(v.x);
 }
