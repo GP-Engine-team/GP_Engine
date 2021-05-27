@@ -545,9 +545,9 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO : To Clean
                 // Animations
-                if (pSubModel->pMesh->animator != nullptr)
+                if (pSubModel->animator != nullptr)
                 {
-                    auto& transforms = pSubModel->pMesh->animator->m_finalBoneMatrices;
+                    auto& transforms = pSubModel->animator->m_finalBoneMatrices;
                     for (int i = 0; i < transforms.size(); ++i)
                     {
 

@@ -6,12 +6,16 @@
 
 #include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Resources/Animation/Skeleton.hpp>
+#include <Engine/Resources/Animation/Animation.hpp>
+#include <Engine/Resources/Animation/Skin.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 
 // Generated
 #include <Generated/AnimationComponent.rfk.h>
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 
 AnimationComponent::AnimationComponent(GameObject& owner) noexcept : Component(owner)
 {
@@ -49,17 +53,12 @@ void AnimationComponent::playAnimation(Animation* pAnimation)
 {
     m_currentAnimation = pAnimation;
     m_currentTime      = 0.0f;
-
-    m_finalBoneMatrices.reserve(pAnimation->getNbBones());
-
-    for (int i = 0; i < pAnimation->getNbBones(); i++)
-        m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
 }
 
 void AnimationComponent::calculateBoneTransform(const AssimpNodeData* node, const GPM::mat4& parentTransform)
 {
-    std::string nodeName      = node->name;
-    GPM::Mat4   nodeTransform = node->transformation;
+    const std::string& nodeName      = node->name;
+    GPM::Mat4          nodeTransform = node->transformation;
 
     Bone* bone = m_currentAnimation->findBone(nodeName);
 
@@ -71,14 +70,73 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData* node, cons
 
     GPM::Mat4 globalTransformation = parentTransform * nodeTransform;
 
-    auto boneInfoMap = m_currentAnimation->getBoneInfoMap();
-    if (boneInfoMap.find(nodeName) != boneInfoMap.end())
+    auto& boneInfoMap = m_skeleton->m_boneInfoMap;
+    auto  it          = boneInfoMap.find(nodeName);
+    if (it != boneInfoMap.end())
     {
-        int       index            = boneInfoMap[nodeName].id;
-        GPM::Mat4 offset           = boneInfoMap[nodeName].offset;
+        int       index            = it->second.id;
+        GPM::Mat4 offset           = it->second.offset;
         m_finalBoneMatrices[index] = globalTransformation * offset;
     }
 
     for (int i = 0; i < node->childrenCount; i++)
         calculateBoneTransform(&node->children[i], globalTransformation);
+}
+
+void AnimationComponent::setupAnims(bool newValue)
+{
+    if (debugAnimUpdateCallback != newValue)
+    {
+        debugAnimUpdateCallback = newValue;
+
+        // TODO : To move in Importer.cpp
+        // Load anim data
+        unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
+                                        aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords |
+                                        aiProcess_FlipUVs | aiProcess_CalcTangentSpace |
+                                        aiProcess_LimitBoneWeights;
+
+        const char* srcPath = "C:\\Users\\Utilisateur\\Downloads\\GP_Engine - Copy2\\GP_Engine - Copy\\projects\\GPGame\\resources\\Character\\Taunt.fbx";
+
+        Assimp::Importer importer;
+        const aiScene*   scene = importer.ReadFile(srcPath, postProcessflags);
+        if (!scene)
+        {
+            FUNCT_ERROR(importer.GetErrorString());
+            return;
+        }
+
+        // subModel
+        m_model = m_gameObject->getComponent<GPE::Model>();
+        m_model->setSubmodelsAnimationComponent(this);
+
+        // Mesh
+        for (size_t i = 0; i < scene->mNumMeshes; ++i)
+        {
+            aiMesh* pMesh = scene->mMeshes[i];
+
+            // Skin / Skeleton
+            // TODO : Delete / LEAKS
+            m_skin     = new Skin();
+            m_skeleton = new Skeleton();
+            loadSkinAndSkeleton(*m_skin, *m_skeleton, pMesh);
+            m_model->bindSkin(*m_skin);
+        }
+
+        // animation
+        // TODO : Delete / LEAKS
+        m_currentAnimation = new Animation(srcPath, *m_skeleton);
+        playAnimation(m_currentAnimation);
+
+    }
+}
+
+void AnimationComponent::setSkeleton(Skeleton* newSkeleton)
+{
+    m_skeleton = newSkeleton;
+
+    m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
+
+    for (int i = 0; i < m_skeleton->getNbBones(); i++)
+        m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
 }

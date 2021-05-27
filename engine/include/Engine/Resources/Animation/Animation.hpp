@@ -36,27 +36,27 @@ private:
     int                                        m_ticksPerSecond;
     std::vector<Bone>                          m_bones;
     AssimpNodeData                             m_root;
-    std::map<std::string, GPE::Mesh::BoneInfo> m_boneInfoMap;
+    //std::map<std::string, GPE::Model::BoneInfo> m_boneInfoMap;
 
-    void readMissingBones(const aiAnimation* animation, Mesh& mesh);
+    void readMissingBones(const aiAnimation* animation, class Skeleton& skeleton);
     void readHierarchyData(AssimpNodeData& dest, const aiNode* src);
 
 public:
     Animation() = default;
 
-    Animation(const std::string& animationPath, Mesh* mesh);
+    Animation(const std::string& animationPath, Skeleton& skeleton);
     Bone* findBone(const std::string& name);
 
-    size_t getNbBones() const
-    {
-        return 100;
-    }
+    //size_t getNbBones() const
+    //{
+    //    return 100;
+    //}
 
 public:
     GETTER_BY_VALUE(TicksPerSecond, m_ticksPerSecond);
     GETTER_BY_VALUE(Duration, m_duration);
     GETTER_BY_CONST_REF(Root, m_root);
-    GETTER_BY_CONST_REF(BoneInfoMap, m_boneInfoMap);
+    //GETTER_BY_CONST_REF(BoneInfoMap, m_boneInfoMap);
 };
 
 } // namespace GPE

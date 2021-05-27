@@ -19,13 +19,14 @@
 
 namespace GPE RFKNamespace()
 {
-
     class Mesh;
     class Shader;
     class Material;
     class Model;
-
+    class Skeleton;
     struct SubModel;
+
+    class AnimationComponent;
 
     struct RFKStruct(Serialize()) SubModel
     {
@@ -47,10 +48,25 @@ namespace GPE RFKNamespace()
 
         SubModel() = default;
 
-        bool isValide()
+        bool isValid() const
         {
             return pModel && pMesh && pShader && pMaterial;
         }
+
+        //////////////////////////////////////////
+        /* ANIMATIONS */
+        //Skeleton* skeleton = nullptr;
+
+        //class Animation* anim = nullptr;
+        //// TODO : Remove this monstruosity
+        //// HORROR
+        GPE::AnimationComponent* animator = nullptr;
+
+        //RFKField(Inspect("reloadAnimFunc")) bool reloadAnim = false;
+
+        //void reloadAnimFunc(bool);
+
+        ////////////////////////////////////////
 
         RFKField(Serialize()) Model*    pModel    = nullptr;
         RFKField(Serialize()) Shader*   pShader   = nullptr;
@@ -93,6 +109,10 @@ namespace GPE RFKNamespace()
         virtual void inspect(InspectContext & context);
 
         void addSubModel(const SubModel::CreateArg& arg);
+
+        void setSubmodelsAnimationComponent(AnimationComponent* animCOmponent);
+
+        void bindSkin(class Skin& skin);
 
         Model_GENERATED
     };

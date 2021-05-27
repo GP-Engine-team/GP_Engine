@@ -15,6 +15,7 @@ File_GENERATED
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Shader.hpp>
 #include <Engine/Resources/Texture.hpp>
+#include <Engine/Resources/Animation/Skeleton.hpp>
 #include <GPM/Matrix3.hpp>
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
@@ -102,7 +103,7 @@ void renderResourceExplorer(const char* name, T*& inRes)
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspected)
 {
-    const bool isPreviousElementVoid = !inspected.isValide();
+    const bool isPreviousElementVoid = !inspected.isValid();
 
     renderResourceExplorer<Mesh>("Mesh", inspected.pMesh);
     // Drop
@@ -182,7 +183,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
     ImGui::Checkbox("Cast shadow", &inspected.castShadow);
 
     // This operation check if element must be added or remove from the the scene render system
-    if (isPreviousElementVoid != !inspected.isValide())
+    if (isPreviousElementVoid != !inspected.isValid())
     {
         if (isPreviousElementVoid)
         {
@@ -299,8 +300,68 @@ void Model::updateToSystem() noexcept
 
         for (SubModel& subMesh : m_subModels)
         {
-            if (subMesh.isValide())
+            if (subMesh.isValid())
                 getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
         }
+    }
+}
+//
+//void SubModel::reloadAnimFunc(bool)
+//{
+//    //// Animations : TODO: to clean
+//    //{
+//
+//
+//    //    if (arg.vertices.size() == 5322)
+//    //    {
+//
+//    //        // TODO : To move in Importer.cpp
+//    //        // Load anim data
+//    //        unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
+//    //                                        aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords |
+//    //                                        aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights;
+//
+//    //        const char* srcPath = "C:\\Users\\t.dallard\\Downloads\\GP_Engine - Copy (1)\\GP_Engine - "
+//    //                              "Copy\\projects\\GPGame\\resources\\Character\\Taunt.fbx";
+//
+//    //        Assimp::Importer importer;
+//    //        const aiScene*   scene = importer.ReadFile(srcPath, postProcessflags);
+//    //        if (!scene)
+//    //        {
+//    //            FUNCT_ERROR(importer.GetErrorString());
+//    //            return;
+//    //        }
+//
+//    //        // Mesh
+//    //        for (size_t i = 0; i < scene->mNumMeshes; ++i)
+//    //        {
+//    //            aiMesh* pMesh = scene->mMeshes[i];
+//
+//    //            extractBoneWeightForVertices(arg.vertices, pMesh, scene);
+//    //        }
+//
+//    //        // TODO : Delete / LEAKS
+//    //        anim = new Animation(srcPath, this);
+//
+//    //        animator = new AnimationComponent();
+//    //        animator->playAnimation(anim);
+//    //    }
+//    //}
+//}
+//
+
+void Model::setSubmodelsAnimationComponent(AnimationComponent* animComponent)
+{
+    for (SubModel& sub : m_subModels)
+    {
+        sub.animator = animComponent;
+    }
+}
+
+void Model::bindSkin(Skin& skin)
+{
+    for (SubModel& sub : m_subModels)
+    {
+        sub.pMesh->bindSkin(skin);
     }
 }

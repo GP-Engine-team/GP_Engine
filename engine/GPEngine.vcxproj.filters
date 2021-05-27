@@ -295,6 +295,12 @@
     <ClCompile Include="src\Bone.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Skeleton.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Skin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp">
@@ -779,6 +785,12 @@
     </ClInclude>
     <ClInclude Include="include\Engine\ECS\Component\AnimationComponent.hpp">
       <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Animation\Skeleton.hpp">
+      <Filter>include\Resources\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Animation\Skin.hpp">
+      <Filter>include\Resources\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -268,6 +268,8 @@
     <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp" />
     <ClInclude Include="include\Engine\Resources\Animation\Animation.hpp" />
     <ClInclude Include="include\Engine\Resources\Animation\Bone.hpp" />
+    <ClInclude Include="include\Engine\Resources\Animation\Skeleton.hpp" />
+    <ClInclude Include="include\Engine\Resources\Animation\Skin.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
     <ClInclude Include="include\Engine\Resources\Cursor.hpp" />
     <ClInclude Include="include\Engine\Resources\Importer\AssimpUtilities.hpp" />
@@ -448,6 +450,8 @@
     <ClCompile Include="src\ShaderInspectorPanel.cpp" />
     <ClCompile Include="src\ShaderParser.cpp" />
     <ClCompile Include="src\ShadowMap.cpp" />
+    <ClCompile Include="src\Skeleton.cpp" />
+    <ClCompile Include="src\Skin.cpp" />
     <ClCompile Include="src\SoundSystem.cpp" />
     <ClCompile Include="src\SpotLight.cpp" />
     <ClCompile Include="src\Texture.cpp" />

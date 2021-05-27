@@ -18,15 +18,12 @@
 #include <GPM/Shape3D/Sphere.hpp>
 #include <GPM/Shape3D/Volume.hpp>
 #include <GPM/Vector3.hpp>
-#include <GPM/Matrix4.hpp>
 
 struct aiScene;
 struct aiMesh;
 
 namespace GPE
 {
-class AnimationComponent;
-
 class Mesh
 {
 public:
@@ -46,13 +43,13 @@ public:
         GPM::Vec3 vtg; // tangeante
 
 
-        static constexpr size_t maxBoneInfluence = 4;
-        
-        // bone indexes which will influence this vertex
-        int m_BoneIDs[maxBoneInfluence];
+        //static constexpr size_t maxBoneInfluence = 4;
+        //
+        //// bone indexes which will influence this vertex
+        //int m_BoneIDs[maxBoneInfluence];
 
-        // weights from each bone
-        float m_Weights[maxBoneInfluence];
+        //// weights from each bone
+        //float m_Weights[maxBoneInfluence];
     };
 
     struct Indice
@@ -104,32 +101,12 @@ protected:
 protected:
     void removeBoundingVolume();
 
-public:
-    struct BoneInfo
-    {
-        /*id is index in finalBoneMatrices*/
-        int id;
-
-        /*offset matrix transforms vertex from model space to bone space*/
-        GPM::mat4 offset;
-    };
-
-public:
-    // Animation data
-    std::map<std::string, BoneInfo> m_boneInfoMap; //
-    int                             m_boneCounter = 0;
-
-    class Animation* anim = nullptr;
-    // TODO : Remove this monstruosity
-    // HORROR
-    GPE::AnimationComponent* animator = nullptr;
-
-public:
-    static void setVertexBoneDataToDefault(GPE::Mesh::Vertex& vertex);
-
-    static void setVertexBoneData(GPE::Mesh::Vertex& vertex, int boneID, float weight);
-
-    void extractBoneWeightForVertices(std::vector<GPE::Mesh::Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
+//public:
+//    static void setVertexBoneDataToDefault(GPE::Mesh::Vertex& vertex);
+//
+//    static void setVertexBoneData(GPE::Mesh::Vertex& vertex, int boneID, float weight);
+//
+//    void extractBoneWeightForVertices(std::vector<GPE::Mesh::Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 
 public:
     Mesh(CreateIndiceBufferArg& arg) noexcept;
@@ -224,6 +201,8 @@ public:
      */
     void generateBoundingVolume(EBoundingVolume boundingVolumeType, const GPM::Vec3& minAABB,
                                 const GPM::Vec3& maxAABB) noexcept;
+
+    void bindSkin(class Skin& skin);
 };
 
 template <>

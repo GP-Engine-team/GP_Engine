@@ -5,10 +5,11 @@
  */
 
 #include <Engine/Resources/Animation/Animation.hpp>
+#include <Engine/Resources/Animation/Skeleton.hpp>
 
 using namespace GPE;
 
-Animation::Animation(const std::string& animationPath, Mesh* mesh)
+Animation::Animation(const std::string& animationPath, Skeleton& skeleton)
 {
     Assimp::Importer importer;
     const aiScene*   scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
@@ -17,15 +18,15 @@ Animation::Animation(const std::string& animationPath, Mesh* mesh)
     m_duration       = animation->mDuration;
     m_ticksPerSecond = animation->mTicksPerSecond;
     readHierarchyData(m_root, scene->mRootNode);
-    readMissingBones(animation, *mesh);
+    readMissingBones(animation, skeleton);
 }
 
-void Animation::readMissingBones(const aiAnimation* animation, Mesh& mesh)
+void Animation::readMissingBones(const aiAnimation* animation, Skeleton& skeleton)
 {
     int size = animation->mNumChannels;
 
-    auto& boneInfoMap = mesh.m_boneInfoMap; // getting m_boneInfoMap from Model class
-    int&  boneCount   = mesh.m_boneCounter; // getting the m_BoneCounter from Model class
+    auto& boneInfoMap = skeleton.m_boneInfoMap; // getting m_boneInfoMap from Model class
+    int&  boneCount   = skeleton.m_boneCounter; // getting the m_BoneCounter from Model class
 
     // reading channels(bones engaged in an animation and their keyframes)
     for (int i = 0; i < size; i++)
@@ -40,8 +41,6 @@ void Animation::readMissingBones(const aiAnimation* animation, Mesh& mesh)
         }
         m_bones.push_back(Bone{std::string(channel->mNodeName.data), boneInfoMap[channel->mNodeName.data].id, channel});
     }
-
-    m_boneInfoMap = boneInfoMap;
 }
 
 void Animation::readHierarchyData(AssimpNodeData& dest, const aiNode* src)

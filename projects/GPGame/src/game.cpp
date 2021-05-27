@@ -39,12 +39,6 @@ void Game::update(double unscaledDeltaTime, double deltaTime)
 {
     ++unFixedUpdateFrameCount;
     GPE::Engine::getInstance()->physXSystem.drawDebugScene();
-
-    // Animations
-    // TODO : Clean up
-    auto mesh =GPE::Engine::getInstance()->resourceManager.get<GPE::Mesh>("resources\\Character\\Zombie\\Yaku_zombie.GPMesh");
-    if (mesh != nullptr)
-        mesh->animator->update(deltaTime);
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)

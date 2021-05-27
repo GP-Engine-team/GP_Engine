@@ -182,6 +182,7 @@ void EditorStartup::playGame()
         {
             m_engine->inputManager.processInput();
 
+            m_engine->animSystem.update(deltaTime);
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();

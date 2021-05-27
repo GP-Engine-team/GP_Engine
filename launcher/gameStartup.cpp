@@ -27,6 +27,7 @@ GameStartup::GameStartup()
 
       // Make all systems update their components
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
+          m_engine->animSystem.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
