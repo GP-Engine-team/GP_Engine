@@ -68,7 +68,6 @@ void Game::render()
     Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.onGUI();
     ImGui::End();
     ImGui::Render();
-
     RenderSystem& sceneRS = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
 
     sceneRS.tryToResize(unsigned(m_w), unsigned(m_h));
@@ -233,14 +232,14 @@ Game::Game()
 
     // Place content in the scene
     GPE::GameObject& world = Engine::getInstance()->sceneManager.setCurrentScene("main").getWorld();
-    GameObject *     ground, *player, *testPhysX, *sun, *cube, *audioPlayer;
+    GameObject*      ground, *player, *testPhysX, *sun, *cube, *audioPlayer;
     {
-        const GameObject::CreateArg cubeArg{"Cube", TransformComponent::CreateArg{{0.f, 10, 0.f}}},
-            sunArg{"Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}}},
-            playerArg{"Player", TransformComponent::CreateArg{{0.f, 180.f, 0.f}}},
-            testPhysXArg{"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}},
-            groundArg{"Ground", TransformComponent::CreateArg{{0.f, -30.f, 0.f}}},
-            audioPlayerArg{"AudioPlayer", TransformComponent::CreateArg{{0.f, 0.f, 0.f}}};
+        const GameObject::CreateArg cubeArg       {"Cube", TransformComponent::CreateArg{{0.f, 10, 0.f}}},
+                                    sunArg        {"Sun", TransformComponent::CreateArg{{0.f, 200.f, 0.f}}},
+                                    playerArg     {"Player", TransformComponent::CreateArg{{0.f, 180.f, 0.f}}},
+                                    testPhysXArg  {"TestphysX", TransformComponent::CreateArg{{0.f, 0.f, 50.f}}},
+                                    groundArg     {"Ground", TransformComponent::CreateArg{{0.f, -30.f, 0.f}}},
+                                    audioPlayerArg{"AudioPlayer", TransformComponent::CreateArg{{0.f, 0.f, 0.f}}};
 
         // A ground, player, PhysX test
         cube        = &world.addChild(cubeArg);

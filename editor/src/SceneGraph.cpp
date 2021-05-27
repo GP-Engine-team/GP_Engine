@@ -1,22 +1,20 @@
 ﻿#include <Editor/SceneGraph.hpp>
 
-#include <filesystem>
-
 #include <Editor/Editor.hpp>
-#include <Engine/Core/Tools/Hash.hpp>
-#include <Engine/Engine.hpp>
 
+#include <Engine/Core/Tools/Hash.hpp>
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+#include <Engine/Core/HotReload/SingletonsSync.hpp>
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
+#include <Engine/Resources/Scene.hpp>
 #include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 
-#include "Engine/Core/HotReload/SingletonsSync.hpp"
-#include <Engine/Core/HotReload/ReloadableCpp.hpp>
-
-#include <Engine/Resources/Scene.hpp>
+#include <filesystem>
 #include <imgui/imgui.h>
-
-#include <map>
+//#include <map>
 
 using namespace Editor;
 using namespace GPE;
@@ -73,7 +71,7 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
             Scene empty;
-            auto  loadFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), loadSceneFromPath);
+            auto  loadFunc = GET_PROCESS((*m_pEditorContext->reloadableCpp), loadSceneFromPath);
             loadFunc(&empty, path.string().c_str());
             if (!empty.getWorld().children.empty())
             {
@@ -105,8 +103,8 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
 
         if (ImGui::BeginMenu("Add component"))
         {
-            auto getComponentClassFunct   = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), getComponentClass);
-            auto createComponentByIDFunct = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), createComponentByID);
+            auto getComponentClassFunct   = GET_PROCESS((*m_pEditorContext->reloadableCpp), getComponentClass);
+            auto createComponentByIDFunct = GET_PROCESS((*m_pEditorContext->reloadableCpp), createComponentByID);
 
             std::map<std::string, const rfk::Struct*> compSortedByName;
 
@@ -198,7 +196,7 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             gameObject.forceSetParent(tempScene.getWorld());
             gameObject.pOwnerScene = nullptr;
 
-            auto saveFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), saveSceneToPath);
+            auto saveFunc = GET_PROCESS((*m_pEditorContext->reloadableCpp), saveSceneToPath);
             saveFunc(&tempScene, path.string().c_str(), GPE::SavedScene::EType::XML);
 
             gameObject.pOwnerScene = pPreviousOwnedScene;
@@ -247,7 +245,7 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInsp
     }
 
     if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && selectedGameObject)
-        m_pEditorContext->m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(selectedGameObject));
+        m_pEditorContext->sceneEditor.view.lookAtObject(*static_cast<GameObject*>(selectedGameObject));
 }
 
 void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject)

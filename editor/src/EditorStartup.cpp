@@ -33,21 +33,22 @@ GLFWwindow* EditorStartup::initDearImGuiProxy(GLFWwindow* window)
 void EditorStartup::initializeDefaultInputs() const
 {
     // Default editor-specific input bindings
-    m_engine->inputManager.bindInput(GLFW_KEY_SPACE, "up");
+    m_engine->inputManager.bindInput(GLFW_KEY_SPACE,        "up");
     m_engine->inputManager.bindInput(GLFW_KEY_LEFT_CONTROL, "down");
-    m_engine->inputManager.bindInput(GLFW_KEY_D, "right");
-    m_engine->inputManager.bindInput(GLFW_KEY_A, "left");
-    m_engine->inputManager.bindInput(GLFW_KEY_W, "forward");
-    m_engine->inputManager.bindInput(GLFW_KEY_S, "backward");
-    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_SHIFT, "sprint");
-    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_SHIFT, "walk");
+    m_engine->inputManager.bindInput(GLFW_KEY_D,            "right");
+    m_engine->inputManager.bindInput(GLFW_KEY_A,            "left");
+    m_engine->inputManager.bindInput(GLFW_KEY_W,            "forward");
+    m_engine->inputManager.bindInput(GLFW_KEY_S,            "backward");
+    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_SHIFT,   "sprint");
+    m_engine->inputManager.bindInput(GLFW_KEY_LEFT_SHIFT,   "walk");
 
     m_engine->inputManager.setupCallbacks(m_engine->window.getGLFWWindow());
 }
 
 EditorStartup::EditorStartup()
     : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {}},
-      m_update{[&](double unscaledDeltaTime, double deltaTime) {
+      m_update{[&](double unscaledDeltaTime, double deltaTime)
+      {
           m_engine->inputManager.processInput();
           m_editor.update(*this);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
@@ -61,7 +62,7 @@ EditorStartup::EditorStartup()
                GPE::Engine::getInstance()->sceneManager.setCurrentScene("Default scene")},
       m_reloadableCpp{gameDllPath}, m_game{nullptr}, m_engine{GPE::Engine::getInstance()}
 {
-    m_editor.m_reloadableCpp = &m_reloadableCpp;
+    m_editor.reloadableCpp = &m_reloadableCpp;
 
     ADD_PROCESS(m_reloadableCpp, createGameInstance);
     ADD_PROCESS(m_reloadableCpp, destroyGameInstance);
@@ -164,10 +165,13 @@ void EditorStartup::playGame()
     Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&EditorStartup::startScene, this);
 
     if (m_game->state == EGameState::STOPPED)
+    {
         m_editor.saveCurrentScene();
+    }
 
     // Do not change the order of instructions inside the lambdas
-    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
+    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+    {
         if (m_game->state == EGameState::PLAYING)
         {
             m_engine->physXSystem.advance(fixedDeltaTime);
@@ -177,7 +181,8 @@ void EditorStartup::playGame()
         }
     };
 
-    m_update = [&](double unscaledDeltaTime, double deltaTime) {
+    m_update = [&](double unscaledDeltaTime, double deltaTime)
+    {
         if (m_game->state == EGameState::PLAYING)
         {
             m_engine->inputManager.processInput();
@@ -220,12 +225,14 @@ void EditorStartup::stopGame()
 {
     if (m_game->state == EGameState::STOPPED)
         return;
+
     m_engine->sceneManager.getCurrentScene()->behaviourSystem.startOnBehaviourAdd = false;
     m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert        = nullptr;
     Engine::getInstance()->sceneManager.OnSceneChange                             = nullptr;
 
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
-    m_update      = [&](double unscaledDeltaTime, double deltaTime) {
+    m_update      = [&](double unscaledDeltaTime, double deltaTime)
+    {
         if (m_game->state == EGameState::STOPPED)
         {
             m_engine->inputManager.processInput();

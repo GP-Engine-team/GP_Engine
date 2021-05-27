@@ -6,11 +6,13 @@
 
 #pragma once
 
-#include <Engine/Intermediate/GameObject.hpp>
+#include <GPM/Vector3.hpp>
+#include <GPM/Quaternion.hpp>
 
 namespace GPE
 {
 
+class GameObject;
 class FreeFly;
 class Scene;
 class Camera;
@@ -76,6 +78,7 @@ public:
     void update();
     void render() const;
     void captureInputs(bool shouldCapture);
+    bool capturingInputs() const;
 
     /**
      * @brief Allow user to move and turn toward indicate GO
