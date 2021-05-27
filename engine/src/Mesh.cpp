@@ -71,44 +71,6 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 
     m_verticesCount = static_cast<unsigned int>(arg.indices.size());
 
-    //// Animations : TODO: to clean
-    //{
-    //    if (arg.vertices.size() == 5322)
-    //    {
-
-    //        // TODO : To move in Importer.cpp
-    //        // Load anim data
-    //        unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
-    //                                        aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords |
-    //                                        aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_LimitBoneWeights;
-
-
-    //        const char* srcPath = "C:\\Users\\t.dallard\\Downloads\\GP_Engine - Copy (1)\\GP_Engine - Copy\\projects\\GPGame\\resources\\Character\\Taunt.fbx";
-
-    //        Assimp::Importer importer;
-    //        const aiScene*   scene = importer.ReadFile(srcPath, postProcessflags);
-    //        if (!scene)
-    //        {
-    //            FUNCT_ERROR(importer.GetErrorString());
-    //            return;
-    //        }
-
-    //        // Mesh
-    //        for (size_t i = 0; i < scene->mNumMeshes; ++i)
-    //        {
-    //            aiMesh* pMesh = scene->mMeshes[i];
-
-    //            extractBoneWeightForVertices(arg.vertices, pMesh, scene);
-    //        }
-
-    //        // TODO : Delete / LEAKS
-    //        anim = new Animation(srcPath, this);
-
-    //        animator = new AnimationComponent();
-    //        animator->playAnimation(anim);
-    //    }
-    //}
-
     // Generate buffer and bind VAO
     glGenVertexArrays(1, &m_buffers.vao);
     glGenBuffers(2, &m_buffers.vbo);
@@ -137,23 +99,6 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
     // 4th attribute buffer : Tangeantes
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, vtg));
-
-    //Skeleton* s;
-
-    //int skeletonVbo;
-    //glGenBuffers(1, &skeletonVbo);
-    //glBindBuffer(GL_ARRAY_BUFFER, skeletonVbo);
-    //skeleton->uploadToGpu();
-    //skeleton->bindVertex(4,5);
-
-    //// ids
-    //glEnableVertexAttribArray(4);
-    //glVertexAttribIPointer(4, Vertex::maxBoneInfluence, GL_INT, sizeof(arg.vertices[0]), (GLvoid*)offsetof(Vertex, m_BoneIDs));
-
-    //// weights
-    //glEnableVertexAttribArray(5);
-    //glVertexAttribPointer(5, Vertex::maxBoneInfluence, GL_FLOAT, GL_FALSE, sizeof(arg.vertices[0]),
-    //                      (GLvoid*)offsetof(Vertex, m_Weights));
 
     glBindVertexArray(0);
 
@@ -633,65 +578,6 @@ Mesh::CreateIndiceBufferArg Mesh::createCylindre(unsigned int prescision) noexce
 
     return convert(mesh);
 }
-//
-//void Mesh::setVertexBoneDataToDefault(GPE::Mesh::Vertex& vertex)
-//{
-//    for (int i = 0; i < GPE::Mesh::Vertex::maxBoneInfluence; i++)
-//    {
-//        vertex.m_BoneIDs[i] = -1;
-//        vertex.m_Weights[i] = 0.0f;
-//    }
-//}
-//
-//void Mesh::setVertexBoneData(GPE::Mesh::Vertex& vertex, int boneID, float weight)
-//{
-//    for (int i = 0; i < GPE::Mesh::Vertex::maxBoneInfluence; ++i)
-//    {
-//        if (vertex.m_BoneIDs[i] < 0)
-//        {
-//            vertex.m_Weights[i] = weight;
-//            vertex.m_BoneIDs[i] = boneID;
-//            break;
-//        }
-//    }
-//}
-//
-//void Mesh::extractBoneWeightForVertices(std::vector<GPE::Mesh::Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
-//{
-//    for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
-//    {
-//        int         boneID   = -1;
-//        std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
-//        if (m_boneInfoMap.find(boneName) == m_boneInfoMap.end())
-//        {
-//            BoneInfo newBoneInfo;
-//            newBoneInfo.id = m_boneCounter;
-//            newBoneInfo.offset = GPE::toMat4(mesh->mBones[boneIndex]->mOffsetMatrix);
-//
-//            m_boneInfoMap[boneName] = newBoneInfo;
-//            boneID                  = m_boneCounter;
-//            m_boneCounter++;
-//        }
-//        else
-//        {
-//            boneID = m_boneInfoMap[boneName].id;
-//        }
-//        assert(boneID != -1);
-//        auto weights    = mesh->mBones[boneIndex]->mWeights;
-//        int  numWeights = mesh->mBones[boneIndex]->mNumWeights;
-//
-//        if (numWeights != 0)
-//        {
-//            for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
-//            {
-//                int   vertexId = weights[weightIndex].mVertexId;
-//                float weight   = weights[weightIndex].mWeight;
-//                assert(vertexId <= vertices.size());
-//                setVertexBoneData(vertices[vertexId], boneID, weight);
-//            }
-//        }
-//    }
-//}
 
 void Mesh::bindSkin(Skin& skin)
 {

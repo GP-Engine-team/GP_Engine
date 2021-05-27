@@ -10,6 +10,9 @@
 #include <Engine/Resources/Animation/Animation.hpp>
 #include <Engine/Resources/Animation/Skin.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <assimp/Importer.hpp>  // C++ importer interface
+#include <assimp/postprocess.h> // Post processing flags
+#include <assimp/scene.h>       // Output data structure
 
 // Generated
 #include <Generated/AnimationComponent.rfk.h>
@@ -45,7 +48,7 @@ void AnimationComponent::update(float dt)
     {
         m_currentTime += m_currentAnimation->getTicksPerSecond() * dt * m_timeScale;
         m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
-        calculateBoneTransform(&m_currentAnimation->getRoot(), GPM::Mat4::identity());
+        calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
     }
 }
 
@@ -55,12 +58,11 @@ void AnimationComponent::playAnimation(Animation* pAnimation)
     m_currentTime      = 0.0f;
 }
 
-void AnimationComponent::calculateBoneTransform(const AssimpNodeData* node, const GPM::mat4& parentTransform)
+void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, const GPM::mat4& parentTransform)
 {
-    const std::string& nodeName      = node->name;
-    GPM::Mat4          nodeTransform = node->transformation;
+    GPM::Mat4          nodeTransform = node.transformation;
 
-    Bone* bone = m_currentAnimation->findBone(nodeName);
+    Bone* bone = m_currentAnimation->findBone(node.name);
 
     if (bone)
     {
@@ -71,7 +73,7 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData* node, cons
     GPM::Mat4 globalTransformation = parentTransform * nodeTransform;
 
     auto& boneInfoMap = m_skeleton->m_boneInfoMap;
-    auto  it          = boneInfoMap.find(nodeName);
+    auto  it          = boneInfoMap.find(node.name);
     if (it != boneInfoMap.end())
     {
         int       index            = it->second.id;
@@ -79,8 +81,10 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData* node, cons
         m_finalBoneMatrices[index] = globalTransformation * offset;
     }
 
-    for (int i = 0; i < node->childrenCount; i++)
-        calculateBoneTransform(&node->children[i], globalTransformation);
+    for (const GPE::AssimpNodeData& node : node.children)
+    {
+        calculateBoneTransform(node, globalTransformation);
+    }
 }
 
 void AnimationComponent::setupAnims(bool newValue)
@@ -118,8 +122,10 @@ void AnimationComponent::setupAnims(bool newValue)
             // Skin / Skeleton
             // TODO : Delete / LEAKS
             m_skin     = new Skin();
-            m_skeleton = new Skeleton();
-            loadSkinAndSkeleton(*m_skin, *m_skeleton, pMesh);
+            Skeleton* skeleton = new Skeleton();
+            skeleton->readHierarchyData(scene->mRootNode);
+            loadSkinAndSkeleton(*m_skin, *skeleton, pMesh);
+            setSkeleton(skeleton);
             m_model->bindSkin(*m_skin);
         }
 
@@ -139,4 +145,23 @@ void AnimationComponent::setSkeleton(Skeleton* newSkeleton)
 
     for (int i = 0; i < m_skeleton->getNbBones(); i++)
         m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
+}
+
+
+ void AnimationComponent::drawDebugSkeleton(const GPM::Vec4& offset) const
+{
+    //// for (int boneIndex = skeleton->firstDrawnBoneIndex; boneIndex <= skeleton->lastDrawnBoneIndex; boneIndex++)
+    //for (size_t boneIndex = 0; boneIndex <= m_skeleton->getNbBones(); boneIndex++)
+    //{
+    //    int parentIndex = m_skeleton->getParentBoneIndex(boneIndex);
+    //    if (parentIndex != -1)
+    //    {
+    //        GPM::Mat4 transform       = worldBonesTransform[boneIndex];
+    //        GPM::Mat4 parentTransform = worldBonesTransform[parentIndex];
+
+    //        GPM::Vec4 p1 = transform * GPM::Vec4{0, 0, 0, 1} + offset;
+    //        GPM::Vec4 p2 = parentTransform * GPM::Vec4{0, 0, 0, 1} + offset;
+    //        GPE::Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.drawDebugLine(p1.xyz, p2.xyz);
+    //    }
+    //}
 }

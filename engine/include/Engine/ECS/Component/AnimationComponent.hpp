@@ -49,9 +49,11 @@ public:
 
     void playAnimation(Animation * pAnimation);
 
-    void calculateBoneTransform(const struct AssimpNodeData* node, const GPM::mat4& parentTransform);
+    void calculateBoneTransform(const struct AssimpNodeData& node, const GPM::mat4& parentTransform);
 
     void setSkeleton(Skeleton* skeleton);
+
+    void drawDebugSkeleton(const GPM::Vec4& offset = GPM::Vec4{0, -100, 0}) const;
 
     GETTER_BY_VALUE(TimeScale, m_timeScale);
     GETTER_BY_VALUE(CurrentTime, m_currentTime);

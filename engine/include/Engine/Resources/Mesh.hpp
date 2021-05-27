@@ -41,15 +41,6 @@ public:
         GPM::Vec3 vn;  // normal
         GPM::Vec2 vt;  // UV
         GPM::Vec3 vtg; // tangeante
-
-
-        //static constexpr size_t maxBoneInfluence = 4;
-        //
-        //// bone indexes which will influence this vertex
-        //int m_BoneIDs[maxBoneInfluence];
-
-        //// weights from each bone
-        //float m_Weights[maxBoneInfluence];
     };
 
     struct Indice
@@ -100,13 +91,6 @@ protected:
 
 protected:
     void removeBoundingVolume();
-
-//public:
-//    static void setVertexBoneDataToDefault(GPE::Mesh::Vertex& vertex);
-//
-//    static void setVertexBoneData(GPE::Mesh::Vertex& vertex, int boneID, float weight);
-//
-//    void extractBoneWeightForVertices(std::vector<GPE::Mesh::Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 
 public:
     Mesh(CreateIndiceBufferArg& arg) noexcept;

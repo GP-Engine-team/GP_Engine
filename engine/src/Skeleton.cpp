@@ -5,6 +5,25 @@
  */
 
 #include <Engine/Resources/Animation/Skeleton.hpp>
+#include <Engine/Core/Debug/Assert.hpp>
+#include <Engine/Resources/Importer/AssimpUtilities.hpp>
+#include <assimp/Importer.hpp>  // C++ importer interface
+#include <assimp/postprocess.h> // Post processing flags
+#include <assimp/scene.h>       // Output data structure
 
 using namespace GPE;
 
+void Skeleton::readHierarchyData(AssimpNodeData& dest, const aiNode* src)
+{
+    GPE_ASSERT(src != nullptr, "Node should not be null.");
+
+    dest.name           = src->mName.data;
+    dest.transformation = GPE::toMat4(src->mTransformation);
+
+    for (int i = 0; i < src->mNumChildren; i++)
+    {
+        AssimpNodeData newData;
+        readHierarchyData(newData, src->mChildren[i]);
+        dest.children.push_back(newData);
+    }
+}

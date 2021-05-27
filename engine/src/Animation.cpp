@@ -17,7 +17,7 @@ Animation::Animation(const std::string& animationPath, Skeleton& skeleton)
     auto animation   = scene->mAnimations[0];
     m_duration       = animation->mDuration;
     m_ticksPerSecond = animation->mTicksPerSecond;
-    readHierarchyData(m_root, scene->mRootNode);
+    //readHierarchyData(m_root, scene->mRootNode);
     readMissingBones(animation, skeleton);
 }
 
@@ -40,22 +40,6 @@ void Animation::readMissingBones(const aiAnimation* animation, Skeleton& skeleto
             boneCount++;
         }
         m_bones.push_back(Bone{std::string(channel->mNodeName.data), boneInfoMap[channel->mNodeName.data].id, channel});
-    }
-}
-
-void Animation::readHierarchyData(AssimpNodeData& dest, const aiNode* src)
-{
-    assert(src);
-
-    dest.name           = src->mName.data;
-    dest.transformation = GPE::toMat4(src->mTransformation);
-    dest.childrenCount  = src->mNumChildren;
-
-    for (int i = 0; i < src->mNumChildren; i++)
-    {
-        AssimpNodeData newData;
-        readHierarchyData(newData, src->mChildren[i]);
-        dest.children.push_back(newData);
     }
 }
 
