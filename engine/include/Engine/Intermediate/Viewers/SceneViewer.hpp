@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <GPM/Vector3.hpp>
 #include <GPM/Quaternion.hpp>
+#include <GPM/Vector3.hpp>
 
 namespace GPE
 {
@@ -28,6 +28,7 @@ public:
     InputComponent& inputs;
     Scene*          pScene = nullptr;
     unsigned int    textureID;
+    bool            drawFrustumScene = false;
 
 private:
     // TODO: factorize framebuffer and renderbuffer in classes

@@ -19,10 +19,10 @@ BaseCharacter::BaseCharacter(GameObject& owner) : BehaviourComponent(owner)
 
 void BaseCharacter::onPostLoad()
 {
-    BehaviourComponent::onPostLoad();
-
     enableFixedUpdate(true);
     controller = &getOwner().getOrCreateComponent<GPE::CharacterController>();
+
+    BehaviourComponent::onPostLoad();
 }
 
 void BaseCharacter::start()

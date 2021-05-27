@@ -116,22 +116,15 @@ void SceneViewer::initializeInputs()
 
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : cameraOwner       {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
-      freeFly           {cameraOwner->addComponent<FreeFly>()},
-      camera            {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
-      inputs            {cameraOwner->addComponent<GPE::InputComponent>()},
-      pScene            {&viewed},
-      textureID         {0u},
-      depthStencilID    {0u},
-      framebufferID     {0u},
-      FBOIDtextureID    {0u},
-      FBOIDdepthID      {0u},
-      FBOIDframebufferID{0u},
-      FBOIDwidth        {int(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight       {int(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
-      width             {width_},
-      height            {height_},
-      m_capturingInputs {false}
+    : cameraOwner{new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
+      freeFly{cameraOwner->addComponent<FreeFly>()},
+      camera{cameraOwner->addComponent<Camera>(
+          Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
+      inputs{cameraOwner->addComponent<GPE::InputComponent>()}, pScene{&viewed}, textureID{0u}, depthStencilID{0u},
+      framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u}, FBOIDframebufferID{0u},
+      FBOIDwidth{int(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight{int(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_}, m_capturingInputs{
+                                                                                                     false}
 {
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
@@ -293,7 +286,8 @@ void SceneViewer::update()
 void SceneViewer::render() const
 {
     // Observe previous camera
-    pScene->sceneRenderer.renderFrustumCulling();
+    if (drawFrustumScene)
+        pScene->sceneRenderer.renderFrustumCulling();
 
     pScene->sceneRenderer.setMainCamera(&camera);
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);

@@ -167,7 +167,7 @@ void Editor::renderMenuBar()
         {
             ImGui::MenuItem("Demo ImGui", NULL, &showImGuiDemoWindows);
 
-            if (ImGui::BeginMenu("shorthand"))
+            if (ImGui::BeginMenu("Shortcut"))
             {
                 ImGui::Text("Delete : Delete selected game object");
                 ImGui::Text("F1 : Set default layout");

@@ -35,10 +35,10 @@ namespace GPG RFKNamespace()
     public:
         virtual void start()
         {
-            enableUpdate(true);
+            enableUpdateEditor(true);
         }
 
-        void update(double deltaTime) final
+        void updateEditor(double deltaTime) final
         {
             drawDebugSphere(transform().getGlobalPosition(), m_radius, m_color, 0.f, true);
         }

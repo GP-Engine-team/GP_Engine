@@ -15,7 +15,7 @@ namespace GPE
 class IInspectable;
 class ReloadableCpp;
 class TransformComponent;
-}
+} // namespace GPE
 
 namespace Editor
 {
@@ -31,23 +31,24 @@ class SceneEditor
     };
 
 public:
-    GPE::SceneViewer    view;
+    GPE::SceneViewer view;
 
 private:
-    string_enum         m_operations[3];
-    string_enum         m_modes[2];
+    string_enum m_operations[3];
+    string_enum m_modes[2];
 
 public:
     ImGuizmo::OPERATION activeOperation;
     ImGuizmo::MODE      activeMode;
 
 private:
-    void         captureInputs        (bool toggle);
-    void         renderGizmoControlBar();
-    void         renderGizmo          (GPE::TransformComponent& transfo);
-    void         checkKeys            ();
-    void         checkCursor          (GPE::GameObject*& inspectedObject);
-    void         dragDropLevelEditor  (GPE::ReloadableCpp* cpp);
+    void captureInputs(bool toggle);
+    void renderGizmoControlBar();
+    void renderControlBar();
+    void renderGizmo(GPE::TransformComponent& transfo);
+    void checkKeys();
+    void checkCursor(GPE::GameObject*& inspectedObject);
+    void dragDropLevelEditor(GPE::ReloadableCpp* cpp);
 
 public:
     SceneEditor(GPE::Scene& scene);

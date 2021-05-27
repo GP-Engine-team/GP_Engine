@@ -23,9 +23,10 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BehaviourComponent : public Component
     {
     protected:
-        RFKField(Inspect(), Serialize()) bool m_useUpdate      = false;
-        RFKField(Inspect(), Serialize()) bool m_useFixedUpdate = false;
-        RFKField(Inspect(), Serialize()) bool m_useOnGUI       = false;
+        RFKField(Inspect(), Serialize()) bool m_useUpdate       = false;
+        RFKField(Inspect(), Serialize()) bool m_useFixedUpdate  = false;
+        RFKField(Inspect(), Serialize()) bool m_useOnGUI        = false;
+        RFKField(Inspect(), Serialize()) bool m_useUpdateEditor = false;
 
     protected:
         virtual void updateToSystem() noexcept override;
@@ -49,6 +50,10 @@ namespace GPE RFKNamespace()
         {
         }
 
+        virtual void updateEditor(double deltaTime)
+        {
+        }
+
         virtual void onGUI()
         {
         }
@@ -56,10 +61,12 @@ namespace GPE RFKNamespace()
         void enableUpdate(bool flag) noexcept;
         void enableFixedUpdate(bool flag) noexcept;
         void enableOnGUI(bool flag) noexcept;
+        void enableUpdateEditor(bool flag) noexcept;
 
         [[nodiscard]] bool isUpdateEnable() const noexcept;
         [[nodiscard]] bool isFixedUpdateEnable() const noexcept;
         [[nodiscard]] bool isOnGUIEnable() const noexcept;
+        [[nodiscard]] bool isUpdateEditorEnable() const noexcept;
 
         // UTILITY
     public:

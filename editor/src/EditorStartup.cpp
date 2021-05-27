@@ -52,6 +52,7 @@ EditorStartup::EditorStartup()
           m_engine->inputManager.processInput();
           m_editor.update(*this);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
+          m_engine->sceneManager.getCurrentScene()->behaviourSystem.updateEditor(deltaTime);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
       }},
@@ -198,6 +199,7 @@ void EditorStartup::playGame()
 
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
+            m_engine->sceneManager.getCurrentScene()->behaviourSystem.updateEditor(deltaTime);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
 
@@ -224,6 +226,7 @@ void EditorStartup::pauseGame()
             updateSceneManagerFunct();
             m_engine->inputManager.processInput();
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
+            m_engine->sceneManager.getCurrentScene()->behaviourSystem.updateEditor(deltaTime);
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
 
             m_editor.update(*this);
@@ -252,6 +255,7 @@ void EditorStartup::stopGame()
             m_engine->inputManager.processInput();
             m_editor.update(*this);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
+            m_engine->sceneManager.getCurrentScene()->behaviourSystem.updateEditor(deltaTime);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
 
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();

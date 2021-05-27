@@ -61,6 +61,7 @@ namespace GPG RFKNamespace()
         void onPostLoad() final;
 
         void update(double deltaTime) final;
+        void updateEditor(double deltaTime) final;
 
         SpawnManager_GENERATED
     };

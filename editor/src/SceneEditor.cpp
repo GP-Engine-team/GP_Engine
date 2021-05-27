@@ -43,52 +43,64 @@ static unsigned int pickColor(unsigned short flag, unsigned short bitset)
     return textColors[(bool)(bitset & flag)];
 }
 
-void SceneEditor::renderGizmoControlBar()
+void SceneEditor::renderControlBar()
 {
     if (ImGui::BeginMenuBar())
     {
-        float        cursorX = ImGui::GetCursorPosX() + ImGui::GetColumnWidth();
-        unsigned int col;
-
-        // Active transformation operation
-        for (unsigned char i = 0u; i < IM_ARRAYSIZE(m_operations); ++i)
+        if (ImGui::BeginMenu("Debug"))
         {
-            cursorX -= ImGui::CalcTextSize(m_operations[i].string).x + 2.f * ImGui::GetStyle().ItemSpacing.x;
-            col = pickColor(ImGuizmo::OPERATION(m_operations[i].id), activeOperation);
+            ImGui::MenuItem("Guizmo", nullptr, &view.drawFrustumScene);
 
-            ImGui::SetCursorPosX(cursorX);
-            ImGui::PushStyleColor(ImGuiCol_Text, col);
-            ImGui::MenuItem(m_operations[i].string);
-            ImGui::PopStyleColor();
-
-            if (ImGui::IsItemClicked())
-            {
-                activeOperation = ImGuizmo::OPERATION(m_operations[i].id ^ (activeOperation & m_operations[i].id));
-            }
+            ImGui::EndMenu();
         }
-
-        cursorX -= ImGui::GetStyle().ItemSpacing.x;
-        ImGui::SetCursorPosX(cursorX);
         ImGui::Separator();
 
-        // Active referential
-        for (unsigned char i = 0u; i < IM_ARRAYSIZE(m_modes); ++i)
-        {
-            cursorX -= ImGui::CalcTextSize(m_modes[i].string).x + 2.f * ImGui::GetStyle().ItemSpacing.x;
-            col = pickColor(ImGuizmo::MODE(m_modes[i].id), activeMode);
-
-            ImGui::SetCursorPosX(cursorX);
-            ImGui::PushStyleColor(ImGuiCol_Text, col);
-            ImGui::MenuItem(m_modes[i].string);
-            ImGui::PopStyleColor();
-
-            if (ImGui::IsItemClicked())
-            {
-                activeMode = ImGuizmo::MODE(m_modes[i].id);
-            }
-        }
-
+        renderGizmoControlBar();
         ImGui::EndMenuBar();
+    }
+}
+
+void SceneEditor::renderGizmoControlBar()
+{
+    float        cursorX = ImGui::GetCursorPosX() + ImGui::GetColumnWidth();
+    unsigned int col;
+
+    // Active transformation operation
+    for (unsigned char i = 0u; i < IM_ARRAYSIZE(m_operations); ++i)
+    {
+        cursorX -= ImGui::CalcTextSize(m_operations[i].string).x + 2.f * ImGui::GetStyle().ItemSpacing.x;
+        col = pickColor(ImGuizmo::OPERATION(m_operations[i].id), activeOperation);
+
+        ImGui::SetCursorPosX(cursorX);
+        ImGui::PushStyleColor(ImGuiCol_Text, col);
+        ImGui::MenuItem(m_operations[i].string);
+        ImGui::PopStyleColor();
+
+        if (ImGui::IsItemClicked())
+        {
+            activeOperation = ImGuizmo::OPERATION(m_operations[i].id ^ (activeOperation & m_operations[i].id));
+        }
+    }
+
+    cursorX -= ImGui::GetStyle().ItemSpacing.x;
+    ImGui::SetCursorPosX(cursorX);
+    ImGui::Separator();
+
+    // Active referential
+    for (unsigned char i = 0u; i < IM_ARRAYSIZE(m_modes); ++i)
+    {
+        cursorX -= ImGui::CalcTextSize(m_modes[i].string).x + 2.f * ImGui::GetStyle().ItemSpacing.x;
+        col = pickColor(ImGuizmo::MODE(m_modes[i].id), activeMode);
+
+        ImGui::SetCursorPosX(cursorX);
+        ImGui::PushStyleColor(ImGuiCol_Text, col);
+        ImGui::MenuItem(m_modes[i].string);
+        ImGui::PopStyleColor();
+
+        if (ImGui::IsItemClicked())
+        {
+            activeMode = ImGuizmo::MODE(m_modes[i].id);
+        }
     }
 }
 
@@ -285,7 +297,7 @@ void SceneEditor::render(Editor& editorContext)
     {
         checkCursor(inspected);
 
-        renderGizmoControlBar();
+        renderControlBar();
 
         const ImVec2 size{ImGui::GetContentRegionAvail()};
         view.resize(int(size.x), int(size.y));

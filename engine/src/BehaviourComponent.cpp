@@ -55,6 +55,17 @@ void BehaviourComponent::enableOnGUI(bool flag) noexcept
         getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
 }
 
+void BehaviourComponent::enableUpdateEditor(bool flag) noexcept
+{
+    if (m_useUpdateEditor == flag)
+        return;
+
+    if (m_useUpdateEditor = flag)
+        getOwner().pOwnerScene->behaviourSystem.addUpdateEditor(*this);
+    else
+        getOwner().pOwnerScene->behaviourSystem.removeUpdateEditor(*this);
+}
+
 bool BehaviourComponent::isUpdateEnable() const noexcept
 {
     return m_useUpdate;
@@ -68,6 +79,11 @@ bool BehaviourComponent::isFixedUpdateEnable() const noexcept
 bool BehaviourComponent::isOnGUIEnable() const noexcept
 {
     return m_useOnGUI;
+}
+
+bool BehaviourComponent::isUpdateEditorEnable() const noexcept
+{
+    return m_useUpdateEditor;
 }
 
 void BehaviourComponent::updateToSystem() noexcept
@@ -91,6 +107,11 @@ void BehaviourComponent::updateToSystem() noexcept
             getOwner().pOwnerScene->behaviourSystem.addOnGUI(*this);
         else
             getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
+
+        if (m_useUpdateEditor)
+            getOwner().pOwnerScene->behaviourSystem.addUpdateEditor(*this);
+        else
+            getOwner().pOwnerScene->behaviourSystem.removeUpdateEditor(*this);
 
         getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
     }

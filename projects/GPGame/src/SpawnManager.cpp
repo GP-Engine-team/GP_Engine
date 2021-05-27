@@ -14,28 +14,26 @@ using namespace GPM;
 
 SpawnManager::SpawnManager(GameObject& gameObject) : BehaviourComponent(gameObject)
 {
-    enableUpdate(true);
+    onPostLoad();
 }
 
 void SpawnManager::onPostLoad()
 {
-    enableUpdate(true);
     BehaviourComponent::onPostLoad();
+    enableUpdate(true);
+    enableUpdateEditor(true);
 }
 
 void SpawnManager::start()
 {
-    GAME_ASSERT(m_spawners.empty(), "Empty buffer");
-    GAME_ASSERT(m_entitiesToSpawnInfo.empty(), "Empty buffer");
-
     m_player = Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");
     GAME_ASSERT(m_player, "Player not found");
 
     GAME_ASSERT(m_enemiesContainer.pGo, "Missing container ref in SpawnManager");
     m_nextDelay = m_spawnDelay + Random::ranged(-m_spawnDelayInterval, m_spawnDelayInterval);
 
-    GAME_ASSERT(!m_entitiesToSpawnInfo.empty(), "Spawner without info");
-    GAME_ASSERT(!m_spawners.empty(), "SpawnerManager without spawner");
+    GAME_ASSERT(m_entitiesToSpawnInfo.size(), "Spawner without info");
+    GAME_ASSERT(m_spawners.size(), "SpawnerManager without spawner");
 
     for (auto&& elem : m_spawners)
     {
@@ -68,5 +66,17 @@ void SpawnManager::update(double deltaTime)
         /*Spawn this entity*/
         GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer.pGo);
         spawnedEntity->getTransform().setTranslation(newPosition);
+    }
+}
+
+void SpawnManager::updateEditor(double deltaTime)
+{
+    for (auto&& elem : m_spawners)
+    {
+        GAME_ASSERT(elem.go.pGo, "null");
+
+        if (elem.go.pGo)
+            drawDebugSphere(elem.go.pGo->getTransform().getGlobalPosition(), m_zoneRadius, RGBA{RGB::green(), 0.5f},
+                            0.f, true);
     }
 }
