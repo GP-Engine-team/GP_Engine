@@ -47,13 +47,13 @@ namespace GPE RFKNamespace()
         /**
          * @brief Is used to define how the particle must be generated (color ? velocity ? Position ?)
          */
-        std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
+        RFKField(Serialize()) std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
 
         /**
          * @brief Us used to define how the particle must be update (life time ? acceleration ? color changement ?)
          */
-        std::vector<std::unique_ptr<ParticleUpdater>> m_updaters;
-        std::unique_ptr<GPE::ParticleRenderer>        m_renderer = nullptr;
+        RFKField(Serialize()) std::vector<std::unique_ptr<ParticleUpdater>> m_updaters;
+        std::unique_ptr<GPE::ParticleRenderer>                              m_renderer = nullptr;
 
     protected:
         /**

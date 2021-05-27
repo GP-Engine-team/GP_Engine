@@ -1,17 +1,20 @@
 #include "Engine/Resources/ParticleSystem/ParticleUpdater.hpp"
 
-File_GENERATED
-
 #include <Engine/Resources/Color.hpp>
 #include <algorithm>
 #include <assert.h>
 
-using namespace GPE;
+// Generated
+#include <Generated/ParticleUpdater.rfk.h>
+File_GENERATED
+
+    using namespace GPE;
 using namespace GPM;
 
 void EulerUpdater::update(double dt, ParticleData* p)
 {
-    const Vec4  globalA(f32(dt) * m_globalAcceleration.x, f32(dt) * m_globalAcceleration.y, f32(dt) * m_globalAcceleration.z, 0.f);
+    const Vec4  globalA(f32(dt) * m_globalAcceleration.x, f32(dt) * m_globalAcceleration.y,
+                       f32(dt) * m_globalAcceleration.z, 0.f);
     const float localDT = (float)dt;
 
     Vec4* acc = p->m_acc.get();
