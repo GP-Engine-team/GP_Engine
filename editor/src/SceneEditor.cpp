@@ -7,6 +7,8 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 
+#include <Engine/Resources/Script/FreeFly.hpp>
+
 #include <glfw/glfw3.h>
 
 // Don't move up
@@ -55,9 +57,47 @@ void SceneEditor::renderControlBar()
         }
         ImGui::Separator();
 
+        float sliderWidth = (ImGui::GetContentRegionAvailWidth() - getGizmoControlBarWidth()) / 2.f;
+        float ts          = Engine::getInstance()->timeSystem.getTimeScale();
+        ImGui::TextUnformatted("Time scale");
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(sliderWidth);
+        if (ImGui::SliderFloat("##TimeScaleSlider", &ts, 0.f, 1.f))
+        {
+            Engine::getInstance()->timeSystem.setTimeScale(ts);
+        }
+
+        ImGui::Separator();
+
+        ImGui::TextUnformatted("Speed");
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(sliderWidth);
+        ImGui::SliderFloat("##SpeedSlider", &view.freeFly.m_speed, 0.f, 100.f);
+        ImGui::Separator();
+
         renderGizmoControlBar();
         ImGui::EndMenuBar();
     }
+}
+
+float SceneEditor::getGizmoControlBarWidth()
+{
+    float width = 0.f;
+
+    // Active transformation operation
+    for (unsigned char i = 0u; i < IM_ARRAYSIZE(m_operations); ++i)
+    {
+        width += ImGui::CalcTextSize(m_operations[i].string).x + 2.f * ImGui::GetStyle().ItemSpacing.x;
+    }
+    width += ImGui::GetStyle().ItemSpacing.x;
+
+    // Active referential
+    for (unsigned char i = 0u; i < IM_ARRAYSIZE(m_modes); ++i)
+    {
+        width += ImGui::CalcTextSize(m_modes[i].string).x + 2.f * ImGui::GetStyle().ItemSpacing.x;
+    }
+    // brut value represente safe area and space of ImGui
+    return width + 175;
 }
 
 void SceneEditor::renderGizmoControlBar()
@@ -106,7 +146,6 @@ void SceneEditor::renderGizmoControlBar()
 
 void SceneEditor::renderGizmo(TransformComponent& transfo)
 {
-
     ImVec2 topLeft = ImGui::GetWindowPos();
     topLeft.y += ImGui::GetWindowContentRegionMin().y;
 

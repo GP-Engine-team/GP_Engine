@@ -42,13 +42,14 @@ public:
     ImGuizmo::MODE      activeMode;
 
 private:
-    void captureInputs(bool toggle);
-    void renderGizmoControlBar();
-    void renderControlBar();
-    void renderGizmo(GPE::TransformComponent& transfo);
-    void checkKeys();
-    void checkCursor(GPE::GameObject*& inspectedObject);
-    void dragDropLevelEditor(GPE::ReloadableCpp* cpp);
+    void  captureInputs(bool toggle);
+    float getGizmoControlBarWidth();
+    void  renderGizmoControlBar();
+    void  renderControlBar();
+    void  renderGizmo(GPE::TransformComponent& transfo);
+    void  checkKeys();
+    void  checkCursor(GPE::GameObject*& inspectedObject);
+    void  dragDropLevelEditor(GPE::ReloadableCpp* cpp);
 
 public:
     SceneEditor(GPE::Scene& scene);
