@@ -102,7 +102,13 @@ void ParticleComponent::inspect(InspectContext& context)
 
     bool isDurationUsed = !std::isinf(m_duration);
 
-    DataInspector::inspect(context, m_isInGlobalPosition, "Is in Global Position");
+    ImGui::PushEnabled(!m_useGlobalPosition);
+    DataInspector::inspect(context, m_useGameObjectTransform, "Use transform");
+    ImGui::PopEnabled();
+
+    ImGui::PushEnabled(!m_useGameObjectTransform);
+    DataInspector::inspect(context, m_useGlobalPosition, "Use global position");
+    ImGui::PopEnabled();
 
     ImGui::PushEnabled(!isDurationUsed);
     DataInspector::inspect(context, m_emitRate, "EmitRate");
@@ -183,7 +189,7 @@ void ParticleComponent::emit(unsigned int count)
     for (auto& gen : m_generators) // << gen loop
         gen->generate(&m_particles, startId, endId);
 
-    if (m_isInGlobalPosition)
+    if (m_useGameObjectTransform)
     {
         if (m_particles.m_pos)
             for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
@@ -195,6 +201,12 @@ void ParticleComponent::emit(unsigned int count)
             for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
                 m_particles.m_vel[i].xyz = rotScaleMat * m_particles.m_vel[i].xyz;
         }
+    }
+    else if (m_useGlobalPosition)
+    {
+        if (m_particles.m_pos)
+            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+                m_particles.m_pos[i] = Vec4{getOwner().getTransform().getGlobalPosition(), 0.f} + m_particles.m_pos[i];
     }
 
     for (size_t i = startId; i < endId; ++i) // << wake loop
@@ -315,7 +327,7 @@ void ParticleComponent::emit(double dt)
     for (auto& gen : m_generators) // << gen loop
         gen->generate(&m_particles, startId, endId);
 
-    if (m_isInGlobalPosition)
+    if (m_useGameObjectTransform)
     {
         if (m_particles.m_pos)
             for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
@@ -327,6 +339,12 @@ void ParticleComponent::emit(double dt)
             for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
                 m_particles.m_vel[i].xyz = rotScaleMat * m_particles.m_vel[i].xyz;
         }
+    }
+    else if (m_useGlobalPosition)
+    {
+        if (m_particles.m_pos)
+            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+                m_particles.m_pos[i] = Vec4{getOwner().getTransform().getGlobalPosition(), 0.f} + m_particles.m_pos[i];
     }
 
     for (size_t i = startId; i < endId; ++i) // << wake loop

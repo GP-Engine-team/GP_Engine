@@ -42,7 +42,8 @@ namespace GPE RFKNamespace()
         RFKField(Serialize()) float  m_duration           = std::numeric_limits<float>::infinity();
         RFKField(Serialize()) float  m_durationCount      = 0.f;
         RFKField(Serialize()) bool   m_canEmit            = false;
-        RFKField(Serialize()) bool   m_isInGlobalPosition = true;
+        RFKField(Serialize()) bool   m_useGlobalPosition = true;
+        RFKField(Serialize()) bool   m_useGameObjectTransform = false;
 
         /**
          * @brief Is used to define how the particle must be generated (color ? velocity ? Position ?)
