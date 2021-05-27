@@ -115,7 +115,7 @@ void Editor::renderMenuBar()
         // Edit
         if (ImGui::BeginMenu("Edit"))
         {
-            ImGui::MenuItem("Edit something");
+            /*ImGui::MenuItem("Edit something");*/
             ImGui::EndMenu();
         }
 
@@ -169,6 +169,8 @@ void Editor::renderMenuBar()
 
             if (ImGui::BeginMenu("Shortcut"))
             {
+                ImGui::Text("WASD : Move");
+                ImGui::Text("Shift : Move fast");
                 ImGui::Text("Delete : Delete selected game object");
                 ImGui::Text("F1 : Set default layout");
                 ImGui::Text("F2 : Refreash asset");
@@ -179,8 +181,6 @@ void Editor::renderMenuBar()
                 ImGui::EndMenu();
             }
 
-            // Menu content
-            ImGui::MenuItem("Useful links");
             ImGui::EndMenu();
         }
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize("FPS : 144").x -
