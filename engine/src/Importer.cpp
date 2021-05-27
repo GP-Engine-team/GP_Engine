@@ -69,10 +69,18 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
         // Call onPostLoad on GameObjects
         struct Rec
         {
-            static void rec(GPE::GameObject* g)
+        private:
+            static void recTransform(GPE::GameObject* g)
             {
                 g->getTransform().onPostLoad();
 
+                for (GPE::GameObject* g2 : g->children)
+                {
+                    recTransform(g2);
+                }
+            };
+            static void recComponent(GPE::GameObject* g)
+            {
                 for (GPE::Component* comp : g->getComponents())
                 {
                     comp->onPostLoad();
@@ -80,9 +88,18 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
 
                 for (GPE::GameObject* g2 : g->children)
                 {
-                    rec(g2);
+                    recComponent(g2);
                 }
             };
+
+        public:
+            static void rec(GPE::GameObject* g)
+            {
+                recTransform(g);
+                g->updateSelfAndChildren();
+                recComponent(g);
+            }
+
         };
         Rec::rec(&scene->getWorld()); // can't do recursives with lambdas, and std::function would be overkill
     }
@@ -143,10 +160,18 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
         // Call onPostLoad on GameObjects
         struct Rec
         {
-            static void rec(GPE::GameObject* const g)
+        private:
+            static void recTransform(GPE::GameObject* g)
             {
                 g->getTransform().onPostLoad();
 
+                for (GPE::GameObject* g2 : g->children)
+                {
+                    recTransform(g2);
+                }
+            };
+            static void recComponent(GPE::GameObject* g)
+            {
                 for (GPE::Component* comp : g->getComponents())
                 {
                     comp->onPostLoad();
@@ -154,9 +179,17 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
 
                 for (GPE::GameObject* g2 : g->children)
                 {
-                    rec(g2);
+                    recComponent(g2);
                 }
             };
+
+        public:
+            static void rec(GPE::GameObject* g)
+            {
+                recTransform(g);
+                g->updateSelfAndChildren();
+                recComponent(g);
+            }
         };
         Rec::rec(go); // can't do recursives with lambdas, and std::function would be overkill
     }

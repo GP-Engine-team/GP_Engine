@@ -60,22 +60,38 @@ GameObject* Prefab::clone(GameObject& parent)
     // Awake GameObjects
     struct Rec
     {
-        static void rec(GPE::GameObject& g)
+    private:
+        static void recTransform(GPE::GameObject* g)
         {
-            g.getTransform().onPostLoad();
+            g->getTransform().onPostLoad();
 
-            for (auto&& it = g.getComponents().begin(); it != g.getComponents().end(); ++it)
+            for (GPE::GameObject* g2 : g->children)
             {
-                (*it)->onPostLoad();
+                recTransform(g2);
+            }
+        }
+        static void recComponent(GPE::GameObject* g)
+        {
+            for (GPE::Component* comp : g->getComponents())
+            {
+                comp->onPostLoad();
             }
 
-            for (GPE::GameObject* g2 : g.children)
+            for (GPE::GameObject* g2 : g->children)
             {
-                rec(*g2);
+                recComponent(g2);
             }
-        };
+        }
+
+    public:
+        static void rec(GPE::GameObject* g)
+        {
+            recTransform(g);
+            g->updateSelfAndChildren();
+            recComponent(g);
+        }
     };
-    Rec::rec(*pGo); // can't do recursives with lambdas, and std::function would be overkill
+    Rec::rec(pGo); // can't do recursives with lambdas, and std::function would be overkill
 
     return pGo;
 }
