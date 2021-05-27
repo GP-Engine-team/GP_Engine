@@ -33,14 +33,11 @@ BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept : BaseCharacter(owner)
 
 void BasePlayer::onPostLoad()
 {
-    BaseCharacter::onPostLoad();
-
     enableUpdate(true);
     enableOnGUI(true);
 
-    input      = &getOwner().getOrCreateComponent<GPE::InputComponent>();
-    source     = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
-    m_fireArme = &getOwner().getOrCreateComponent<PPSH41>();
+    input  = &getOwner().getOrCreateComponent<GPE::InputComponent>();
+    source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
 
     GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
@@ -49,6 +46,8 @@ void BasePlayer::onPostLoad()
     sourceSettings.loop  = AL_TRUE;
 
     source->setSound("Western", "Western", sourceSettings);
+
+    BaseCharacter::onPostLoad();
 }
 
 void BasePlayer::start()
@@ -57,7 +56,13 @@ void BasePlayer::start()
 
     GAME_ASSERT(input, "null");
     GAME_ASSERT(source, "null");
-    GAME_ASSERT(m_fireArme, "null");
+
+    for (auto&& firearm : m_firearmsGO)
+    {
+        GAME_ASSERT(firearm.pGo, "No gameObject");
+        m_firearms.emplace_back(firearm.pGo->getComponent<Firearm>());
+        GAME_ASSERT(m_firearms.back(), "No firearm in gameObject");
+    }
 
     // Keys
     input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
@@ -217,8 +222,12 @@ void BasePlayer::onGUI()
         SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
         displayLifeBar(m_currentLife, m_maxLife, size);
 
-        SetNextElementLayout(0.f, 1.f, size, EHAlign::Left, EVAlign::Bottom);
-        Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
+        if (m_firearms.size())
+        {
+            SetNextElementLayout(0.f, 1.f, size, EHAlign::Left, EVAlign::Bottom);
+            Text("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
+                 m_firearms.front()->getMagazine().getCapacity());
+        }
     }
 }
 
@@ -255,12 +264,12 @@ void BasePlayer::update(double deltaTime)
 
 void BasePlayer::shoot()
 {
-    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && !isDead())
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && !isDead() && m_firearms.size())
     {
-        m_fireArme->triggered();
+        m_firearms.front()->triggered();
 
-        if (m_fireArme->isMagazineEmpty())
-            m_fireArme->reload();
+        if (m_firearms.front()->isMagazineEmpty())
+            m_firearms.front()->reload();
     }
 }
 

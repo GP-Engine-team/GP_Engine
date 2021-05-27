@@ -120,6 +120,12 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObjectLinker&
 }
 
 template <>
+void GPE::DataInspector::inspect(InspectContext& context, GameObjectLinker& inspected)
+{
+    GPE::DataInspector::inspect(context, inspected, "GameObject");
+}
+
+template <>
 bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());

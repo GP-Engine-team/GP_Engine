@@ -37,6 +37,9 @@ template <>
 bool DataInspector::inspect(InspectContext& context, struct GameObjectLinker& inspected, const char* name);
 
 template <>
+void DataInspector::inspect(InspectContext& context, struct GameObjectLinker& inspected);
+
+template <>
 bool DataInspector::inspect(InspectContext& context, class Prefab*& inspected, const rfk::Field& info);
 
 template <>

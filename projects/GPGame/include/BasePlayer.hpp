@@ -8,11 +8,11 @@
 
 #include <BaseCharacter.hpp>
 
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Generated/BasePlayer.rfk.h>
 
 namespace GPE
 {
-
 class InputComponent;
 class AudioComponent;
 class CharacterController;
@@ -31,9 +31,10 @@ namespace GPG RFKNamespace()
 
         RFKField(Serialize()) bool displayDepthMenu = false;
 
-        RFKField(Serialize()) GPE::InputComponent*        input         = nullptr;
-        RFKField(Serialize()) GPE::AudioComponent*        source        = nullptr;
-        RFKField(Serialize()) Firearm*                    m_fireArme    = nullptr;
+        RFKField(Serialize()) GPE::InputComponent*                          input  = nullptr;
+        RFKField(Serialize()) GPE::AudioComponent*                          source = nullptr;
+        RFKField(Inspect(), Serialize()) std::vector<GPE::GameObjectLinker> m_firearmsGO;
+        RFKField() std::vector<Firearm*>                                    m_firearms;
 
     public:
         BasePlayer() noexcept = default;
