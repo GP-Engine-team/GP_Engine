@@ -96,6 +96,9 @@ void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
     if (behaviour.isOnGUIEnable())
         removeOnGUI(behaviour);
 
+    if (behaviour.isUpdateEditorEnable())
+        removeUpdateEditor(behaviour);
+
     for (auto&& it = m_pBehaviours.begin(); it != m_pBehaviours.end(); ++it)
     {
         if ((*it) == &behaviour)
