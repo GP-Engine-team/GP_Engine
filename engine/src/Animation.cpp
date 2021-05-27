@@ -9,16 +9,11 @@
 
 using namespace GPE;
 
-Animation::Animation(const std::string& animationPath, Skeleton& skeleton)
+Animation::Animation(const aiAnimation* aiAnim, Skeleton& skeleton)
 {
-    Assimp::Importer importer;
-    const aiScene*   scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
-    assert(scene && scene->mRootNode);
-    auto animation   = scene->mAnimations[0];
-    m_duration       = animation->mDuration;
-    m_ticksPerSecond = animation->mTicksPerSecond;
-    //readHierarchyData(m_root, scene->mRootNode);
-    readMissingBones(animation, skeleton);
+    m_duration       = aiAnim->mDuration;
+    m_ticksPerSecond = aiAnim->mTicksPerSecond;
+    readMissingBones(aiAnim, skeleton);
 }
 
 void Animation::readMissingBones(const aiAnimation* animation, Skeleton& skeleton)

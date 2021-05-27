@@ -49,10 +49,10 @@ private:
     std::vector<KeyPosition> m_positions;
     std::vector<KeyRotation> m_rotations;
     std::vector<KeyScale>    m_scales;
-    int                      m_numPositions;
-    int                      m_numRotations;
-    int                      m_numScalings;
 
+    /**
+     * @brief The new local transform (relative to the parent bone) computed after update(), with the transform variations.
+    */
     GPM::Mat4   m_localTransform;
     std::string m_name;
     int         m_id;

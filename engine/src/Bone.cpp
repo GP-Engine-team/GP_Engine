@@ -12,9 +12,8 @@ using namespace GPE;
 Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
     : m_name(name), m_id(ID), m_localTransform(GPM::Matrix4::identity())
 {
-    m_numPositions = channel->mNumPositionKeys;
-
-    for (int positionIndex = 0; positionIndex < m_numPositions; ++positionIndex)
+    m_positions.reserve(channel->mNumPositionKeys);
+    for (int positionIndex = 0; positionIndex < channel->mNumPositionKeys; ++positionIndex)
     {
         aiVector3D  aiPosition = channel->mPositionKeys[positionIndex].mValue;
         float       timeStamp  = channel->mPositionKeys[positionIndex].mTime;
@@ -24,8 +23,8 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
         m_positions.push_back(data);
     }
 
-    m_numRotations = channel->mNumRotationKeys;
-    for (int rotationIndex = 0; rotationIndex < m_numRotations; ++rotationIndex)
+    m_rotations.reserve(channel->mNumPositionKeys);
+    for (int rotationIndex = 0; rotationIndex < channel->mNumRotationKeys; ++rotationIndex)
     {
         aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
         float        timeStamp     = channel->mRotationKeys[rotationIndex].mTime;
@@ -35,8 +34,8 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
         m_rotations.push_back(data);
     }
 
-    m_numScalings = channel->mNumScalingKeys;
-    for (int keyIndex = 0; keyIndex < m_numScalings; ++keyIndex)
+    m_scales.reserve(channel->mNumScalingKeys);
+    for (int keyIndex = 0; keyIndex < channel->mNumScalingKeys; ++keyIndex)
     {
         aiVector3D scale     = channel->mScalingKeys[keyIndex].mValue;
         float      timeStamp = channel->mScalingKeys[keyIndex].mTime;
@@ -47,7 +46,7 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
     }
 }
 
-    /* Gets normalized value for Lerp & Slerp*/
+/* Gets normalized value for Lerp & Slerp*/
 float Bone::getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
 {
     float scaleFactor  = 0.0f;
@@ -61,7 +60,7 @@ float Bone::getScaleFactor(float lastTimeStamp, float nextTimeStamp, float anima
 and returns the translation matrix */
 GPM::Mat4 Bone::interpolatePosition(float animationTime)
 {
-    if (1 == m_numPositions)
+    if (m_positions.size() == 1)
         return GPM::Transform::translation(m_positions[0].position);
 
     int   p0Index     = getPositionIndex(animationTime);
@@ -75,7 +74,7 @@ GPM::Mat4 Bone::interpolatePosition(float animationTime)
 and returns the rotation matrix */
 GPM::Mat4 Bone::interpolateRotation(float animationTime)
 {
-    if (1 == m_numRotations)
+    if (m_rotations.size() == 1)
     {
         auto rotation = m_rotations[0].orientation.normalized();
         return GPM::toMatrix4(rotation);
@@ -93,7 +92,7 @@ GPM::Mat4 Bone::interpolateRotation(float animationTime)
 and returns the scale matrix */
 GPM::Mat4 Bone::interpolateScaling(float animationTime)
 {
-    if (1 == m_numScalings)
+    if (m_scales.size() == 1)
         return GPM::Transform::scaling(m_scales[0].scale);
 
     int       p0Index     = getScaleIndex(animationTime);
@@ -117,7 +116,7 @@ void Bone::update(float animationTime)
 animation time */
 int Bone::getPositionIndex(float animationTime)
 {
-    for (int index = 0; index < m_numPositions - 1; ++index)
+    for (int index = 0; index < m_positions.size() - 1; ++index)
     {
         if (animationTime < m_positions[index + 1].timeStamp)
             return index;
@@ -129,7 +128,7 @@ int Bone::getPositionIndex(float animationTime)
 animation time */
 int Bone::getRotationIndex(float animationTime)
 {
-    for (int index = 0; index < m_numRotations - 1; ++index)
+    for (int index = 0; index < m_rotations.size() - 1; ++index)
     {
         if (animationTime < m_rotations[index + 1].timeStamp)
             return index;
@@ -141,7 +140,7 @@ int Bone::getRotationIndex(float animationTime)
 animation time */
 int Bone::getScaleIndex(float animationTime)
 {
-    for (int index = 0; index < m_numScalings - 1; ++index)
+    for (int index = 0; index < m_scales.size() - 1; ++index)
     {
         if (animationTime < m_scales[index + 1].timeStamp)
             return index;

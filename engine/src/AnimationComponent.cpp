@@ -131,7 +131,7 @@ void AnimationComponent::setupAnims(bool newValue)
 
         // animation
         // TODO : Delete / LEAKS
-        m_currentAnimation = new Animation(srcPath, *m_skeleton);
+        m_currentAnimation = new Animation(scene->mAnimations[0], *m_skeleton);
         playAnimation(m_currentAnimation);
 
     }

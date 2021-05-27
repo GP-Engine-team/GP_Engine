@@ -30,7 +30,7 @@ public:
 public:
     Animation() = default;
 
-    Animation(const std::string& animationPath, Skeleton& skeleton);
+    Animation(const aiAnimation* aiAnim, Skeleton& skeleton);
     Bone* findBone(const std::string& name);
 
 public:
