@@ -1,4 +1,4 @@
-#include <Editor/EditorStartup.hpp>
+﻿#include <Editor/EditorStartup.hpp>
 #include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Game/AbstractGame.hpp>
 #include <Engine/Core/Rendering/Window/WindowGLFW.hpp>

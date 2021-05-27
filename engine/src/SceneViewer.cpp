@@ -8,6 +8,7 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
+#include <GPM/Vector3.hpp>
 
 // Third-party
 #include <glad/glad.h>

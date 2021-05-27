@@ -22,6 +22,7 @@
     <ClInclude Include="include\BaseCharacter.hpp" />
     <ClInclude Include="include\BaseEnemy.hpp" />
     <ClInclude Include="include\CircularEntitiesSpawner.hpp" />
+    <ClInclude Include="include\SpatializedSoundPlayerScript.hpp" />
     <ClInclude Include="include\Sun.hpp" />
     <ClInclude Include="ShadowMap.hpp" />
     <ClInclude Include="include\Firearm\Bullet.hpp" />
@@ -30,7 +31,6 @@
     <ClInclude Include="include\Firearm\PPSH41.hpp" />
     <ClInclude Include="include\game.hpp" />
     <ClInclude Include="include\BasePlayer.hpp" />
-    <ClInclude Include="include\myFreeFlyScript.hpp" />
     <ClInclude Include="include\myFreeFlyWithCollisionScript.hpp" />
     <ClInclude Include="include\myScript.hpp" />
     <ClInclude Include="include\WorldGenerator.hpp" />
@@ -40,6 +40,7 @@
     <ClCompile Include="src\BaseEnemy.cpp" />
     <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\CircularEntitiesSpawner.cpp" />
+    <ClCompile Include="src\SpatializedSoundPlayerScript.cpp" />
     <ClCompile Include="src\Sun.cpp" />
     <ClCompile Include="src\Firearm.cpp" />
     <ClCompile Include="src\game.cpp" />

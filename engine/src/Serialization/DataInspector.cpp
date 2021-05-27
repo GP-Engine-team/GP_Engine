@@ -1,8 +1,9 @@
-#include "Engine/Serialization/DataInspector.hpp"
+﻿#include "Engine/Serialization/DataInspector.hpp"
 #include "imgui.h"
 
 void GPE::DataInspector::startProperty(const char* name)
 {
+    ImGui::Indent(16.0f);
     ImGui::PushID(name);
 
     ImGui::Text(name);
@@ -15,6 +16,7 @@ void GPE::DataInspector::startProperty(const char* name)
 
 void GPE::DataInspector::endProperty()
 {
+    ImGui::Unindent(16.0f);
     ImGui::PopItemWidth();
     ImGui::PopID();
 }

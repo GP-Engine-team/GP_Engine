@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Engine/Serialization/InspectContext.hpp"
 #include "Refureku/TypeInfo/Variables/Field.h"
@@ -39,7 +39,8 @@ bool inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 
 } // namespace GPE
 
+#include "DataInspector.inl"
 #include "GPEDataInspector.hpp"
 #include "GPMDataInspector.hpp"
+#include "PhysXDataInspector.hpp"
 #include "STDDataInspector.hpp"
-#include "DataInspector.inl"
