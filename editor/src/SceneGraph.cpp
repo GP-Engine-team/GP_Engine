@@ -72,14 +72,16 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
             std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
-            Scene empty;
-            auto  loadFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), loadSceneFromPath);
-            loadFunc(&empty, path.string().c_str());
-            if (!empty.getWorld().children.empty())
+            GameObject* go = nullptr;
+            if (SharedPrefab* pSPref = Engine::getInstance()->resourceManager.get<SharedPrefab>(path.string().c_str()))
             {
-                GameObject* const go = empty.getWorld().children.front();
-                go->setParent(&gameObject);
-                go->getTransform().setDirty();
+                auto loadFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), clonePrefab);
+                go            = loadFunc(pSPref->pref, gameObject);
+            }
+            else
+            {
+                auto loadFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), loadPrefabFromPath);
+                go            = loadFunc(gameObject, path.string().c_str());
             }
         }
         ImGui::EndDragDropTarget();
