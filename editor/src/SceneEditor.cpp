@@ -51,7 +51,9 @@ void SceneEditor::renderControlBar()
     {
         if (ImGui::BeginMenu("Debug"))
         {
-            ImGui::MenuItem("Guizmo", nullptr, &view.drawFrustumScene);
+            ImGui::MenuItem("Frustum culling", nullptr, &view.drawFrustumScene);
+            ImGui::MenuItem("Debug Shape", nullptr, &view.drawDebugShape);
+            ImGui::MenuItem("Debug Line", nullptr, &view.drawDebugLine);
 
             ImGui::EndMenu();
         }

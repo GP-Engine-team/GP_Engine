@@ -116,9 +116,10 @@ public:
     void sendDataToInitShader(Camera& camToUse, Shader& shader);
 
     RenderPipeline defaultRenderPipeline() const noexcept;
-    RenderPipeline debugRenderPipeline() const noexcept;
     RenderPipeline mousePickingPipeline() const noexcept;
 
+    void renderDebugShape(Camera& observer) noexcept;
+    void renderDebugLine(Camera& observer) noexcept;
     void renderFrustumCulling() noexcept;
     void shadowMapPipeline() noexcept;
 

@@ -386,112 +386,107 @@ void RenderSystem::resetCurrentRenderPassKey()
     glBindVertexArray(0);
 }
 
-RenderSystem::RenderPipeline RenderSystem::debugRenderPipeline() const noexcept
+void RenderSystem::renderDebugShape(Camera& observer) noexcept
 {
-    return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
-              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
-              std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
-              std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines,
-              std::vector<ShadowMap>& shadowMaps, Camera* pMainCamera) {
-        if (!pMainCamera)
-            return;
+    if (!m_debugShape.empty())
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
+        glUseProgram(shaderToUse->getID());
 
-        // Draw debug shape
+        for (auto&& shape : m_debugShape)
         {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
+            tryToSetBackFaceCulling(shape.enableBackFaceCullling);
 
-            if (!debugShape.empty())
-            {
-                const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
-                glUseProgram(shaderToUse->getID());
+            shaderToUse->setMat4("projectViewModelMatrix", (observer.getProjectionView() * shape.transform.model).e);
 
-                for (auto&& shape : debugShape)
-                {
-                    glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
-                    rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
+            shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
 
-                    shaderToUse->setMat4("projectViewModelMatrix",
-                                         (pMainCamera->getProjectionView() * shape.transform.model).e);
+            tryToBindMesh(shape.shape->getID());
 
-                    shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
-
-                    rs.tryToBindMesh(shape.shape->getID());
-
-                    glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
-                }
-            }
-
-            // Draw debug line
-            if (!debugLines.empty())
-            {
-                const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("ColorMesh");
-                glUseProgram(shaderToUse->getID());
-                shaderToUse->setMat4("projectViewMatrix", pMainCamera->getProjectionView().e);
-                rs.tryToSetBackFaceCulling(false);
-                glEnable(GL_LINE_SMOOTH);
-                struct LineAttrib
-                {
-                    Vec3 pos;
-                    Vec4 col;
-                };
-
-                std::vector<LineAttrib> lines;
-                lines.reserve(debugLines.size());
-
-                for (auto&& line : debugLines)
-                {
-                    lines.emplace_back(LineAttrib{line.pt1, line.color.v});
-                    lines.emplace_back(LineAttrib{line.pt2, line.color.v});
-                }
-
-                GLuint lineVAO, lineVBO;
-                glGenVertexArrays(1, &lineVAO);
-                glGenBuffers(1, &lineVBO);
-                glBindVertexArray(lineVAO);
-                glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
-                glBufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(lines[0]), lines.data(), GL_STATIC_DRAW);
-
-                // Pos
-                glEnableVertexAttribArray(0);
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(lines[0]), (GLvoid*)offsetof(LineAttrib, pos));
-
-                // Color
-                glEnableVertexAttribArray(1);
-                glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(lines[0]), (GLvoid*)offsetof(LineAttrib, col));
-
-                int   offset         = 0;
-                int   first          = 0;
-                int   count          = 0;
-                float previouisWidth = debugLines.front().width;
-                while (first + count < debugLines.size())
-                {
-                    first = first + count;
-
-                    for (count = 0; first + count < debugLines.size(); ++count)
-                    {
-                        if (debugLines[first + count].width != previouisWidth)
-                        {
-                            glLineWidth(debugLines[first + count].width);
-                            previouisWidth = debugLines[first + count].width;
-                            break;
-                        }
-                    }
-                    glDrawArrays(GL_LINES, first * 2, count * 2);
-                }
-
-                glLineWidth(1.0f);
-                glDisable(GL_LINE_SMOOTH);
-                glDeleteVertexArrays(1, &lineVAO);
-                glDeleteBuffers(1, &lineVBO);
-
-                debugLines.clear();
-            }
-
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
         }
-        rs.resetCurrentRenderPassKey();
-    };
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    resetCurrentRenderPassKey();
+}
+
+void RenderSystem::renderDebugLine(Camera& observer) noexcept
+{
+    // Draw debug line
+    if (!m_debugLine.empty())
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("ColorMesh");
+        glUseProgram(shaderToUse->getID());
+        shaderToUse->setMat4("projectViewMatrix", observer.getProjectionView().e);
+
+        tryToSetBackFaceCulling(false);
+        glEnable(GL_LINE_SMOOTH);
+
+        struct LineAttrib
+        {
+            Vec3 pos;
+            Vec4 col;
+        };
+
+        std::vector<LineAttrib> lines;
+        lines.reserve(m_debugLine.size());
+
+        for (auto&& line : m_debugLine)
+        {
+            lines.emplace_back(LineAttrib{line.pt1, line.color.v});
+            lines.emplace_back(LineAttrib{line.pt2, line.color.v});
+        }
+
+        GLuint lineVAO, lineVBO;
+        glGenVertexArrays(1, &lineVAO);
+        glGenBuffers(1, &lineVBO);
+        glBindVertexArray(lineVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
+        glBufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(lines[0]), lines.data(), GL_STATIC_DRAW);
+
+        // Pos
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(lines[0]), (GLvoid*)offsetof(LineAttrib, pos));
+
+        // Color
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(lines[0]), (GLvoid*)offsetof(LineAttrib, col));
+
+        int   offset         = 0;
+        int   first          = 0;
+        int   count          = 0;
+        float previouisWidth = m_debugLine.front().width;
+        while (first + count < m_debugLine.size())
+        {
+            first = first + count;
+
+            for (count = 0; first + count < m_debugLine.size(); ++count)
+            {
+                if (m_debugLine[first + count].width != previouisWidth)
+                {
+                    glLineWidth(m_debugLine[first + count].width);
+                    previouisWidth = m_debugLine[first + count].width;
+                    break;
+                }
+            }
+            glDrawArrays(GL_LINES, first * 2, count * 2);
+        }
+
+        glLineWidth(1.0f);
+        glDisable(GL_LINE_SMOOTH);
+        glDeleteVertexArrays(1, &lineVAO);
+        glDeleteBuffers(1, &lineVBO);
+
+        m_debugLine.clear();
+    }
+    resetCurrentRenderPassKey();
 }
 
 void RenderSystem::renderFrustumCulling() noexcept

@@ -29,6 +29,8 @@ public:
     Scene*          pScene = nullptr;
     unsigned int    textureID;
     bool            drawFrustumScene = false;
+    bool            drawDebugShape   = true;
+    bool            drawDebugLine    = true;
 
 private:
     // TODO: factorize framebuffer and renderbuffer in classes

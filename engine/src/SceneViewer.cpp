@@ -285,17 +285,25 @@ void SceneViewer::update()
 
 void SceneViewer::render() const
 {
-    // Observe previous camera
+    pScene->sceneRenderer.setDefaultMainCamera();
+
     if (drawFrustumScene)
         pScene->sceneRenderer.renderFrustumCulling();
 
+    // Observe previous camera
     pScene->sceneRenderer.setMainCamera(&camera);
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
     pScene->sceneRenderer.tryToResize(width, height);
+
     pScene->sceneRenderer.render(pScene->sceneRenderer.defaultRenderPipeline());
-    pScene->sceneRenderer.render(pScene->sceneRenderer.debugRenderPipeline());
+
+    if (drawDebugShape)
+        pScene->sceneRenderer.renderDebugShape(camera);
+
+    if (drawDebugLine)
+        pScene->sceneRenderer.renderDebugLine(camera);
 }
 
 void SceneViewer::captureInputs(bool shouldCapture)
