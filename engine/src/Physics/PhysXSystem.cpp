@@ -135,8 +135,10 @@ void PhysXSystem::drawDebugScene()
     for (PxU32 i = 0; i < rb.getNbLines(); i++)
     {
         const PxDebugLine& line = rb.getLines()[i];
-        Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.drawDebugLine(PxVec3ToGPMVec3(line.pos0),
-                                                                                           PxVec3ToGPMVec3(line.pos1));
+
+        // Force reinterpret cast
+        Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.drawDebugLine(
+            *(GPM::Vec3*)&line.pos0, *(GPM::Vec3*)&line.pos1, ColorRGB{0.5, 0.5, 0});
     }
 }
 

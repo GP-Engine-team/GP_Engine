@@ -30,6 +30,7 @@ public:
     unsigned int    textureID;
     bool            drawFrustumScene = false;
     bool            drawDebugShape   = true;
+    bool            drawDebugPhysic  = true;
     bool            drawDebugLine    = true;
 
 private:

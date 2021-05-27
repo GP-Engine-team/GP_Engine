@@ -200,8 +200,6 @@ void Editor::renderLevelEditor()
 {
     sceneEditor.view.update();
     sceneEditor.render(*this);
-
-    GPE::Engine::getInstance()->physXSystem.drawDebugScene();
 }
 
 void Editor::renderGameView(EditorStartup& startup)

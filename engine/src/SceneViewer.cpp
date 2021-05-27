@@ -287,6 +287,9 @@ void SceneViewer::render() const
 {
     pScene->sceneRenderer.setDefaultMainCamera();
 
+    if (drawDebugPhysic)
+        Engine::getInstance()->physXSystem.drawDebugScene();
+
     if (drawFrustumScene)
         pScene->sceneRenderer.renderFrustumCulling();
 

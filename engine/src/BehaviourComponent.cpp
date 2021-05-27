@@ -145,10 +145,9 @@ void BehaviourComponent::drawDebugQuad(const GPM::Vec3& position, const GPM::Vec
                                                         RenderSystem::EDebugShapeMode::FILL, enableBackFaceCullling);
 }
 
-void BehaviourComponent::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width,
-                                       const ColorRGBA& color) noexcept
+void BehaviourComponent::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, const ColorRGB& color) noexcept
 {
-    getOwner().pOwnerScene->sceneRenderer.drawDebugLine(pt1, pt2, width, color);
+    getOwner().pOwnerScene->sceneRenderer.drawDebugLine(pt1, pt2, color);
 }
 
 void BehaviourComponent::log(const std::string& msg)

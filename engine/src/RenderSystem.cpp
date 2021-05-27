@@ -70,12 +70,12 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
     }
 }
 
-void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float size) noexcept
+void RenderSystem::displayGameObjectRef(const GameObject& go, float dist) noexcept
 {
     const Vec3& pos = go.getTransform().getGlobalPosition();
-    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorRight() * dist, size, ColorRGBA{1.f, 0.f, 0.f, 1.f});
-    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorUp() * dist, size, ColorRGBA{0.f, 1.f, 0.f, 1.f});
-    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorForward() * dist, size, ColorRGBA{0.f, 0.f, 1.f, 1.f});
+    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorRight() * dist, ColorRGB::red());
+    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorUp() * dist, ColorRGB::green());
+    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorForward() * dist, ColorRGB::blue());
 }
 
 RenderSystem::RenderSystem() noexcept
@@ -429,57 +429,25 @@ void RenderSystem::renderDebugLine(Camera& observer) noexcept
         tryToSetBackFaceCulling(false);
         glEnable(GL_LINE_SMOOTH);
 
-        struct LineAttrib
-        {
-            Vec3 pos;
-            Vec4 col;
-        };
-
-        std::vector<LineAttrib> lines;
-        lines.reserve(m_debugLine.size());
-
-        for (auto&& line : m_debugLine)
-        {
-            lines.emplace_back(LineAttrib{line.pt1, line.color.v});
-            lines.emplace_back(LineAttrib{line.pt2, line.color.v});
-        }
-
         GLuint lineVAO, lineVBO;
         glGenVertexArrays(1, &lineVAO);
         glGenBuffers(1, &lineVBO);
         glBindVertexArray(lineVAO);
         glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
-        glBufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(lines[0]), lines.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, m_debugLine.size() * sizeof(m_debugLine[0]), m_debugLine.data(), GL_STATIC_DRAW);
 
         // Pos
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(lines[0]), (GLvoid*)offsetof(LineAttrib, pos));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(m_debugLine[0]),
+                              (GLvoid*)offsetof(DebugLine::Point, pos));
 
         // Color
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(lines[0]), (GLvoid*)offsetof(LineAttrib, col));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(m_debugLine[0]),
+                              (GLvoid*)offsetof(DebugLine::Point, col));
 
-        int   offset         = 0;
-        int   first          = 0;
-        int   count          = 0;
-        float previouisWidth = m_debugLine.front().width;
-        while (first + count < m_debugLine.size())
-        {
-            first = first + count;
+        glDrawArrays(GL_LINES, 0, m_debugLine.size() * 2);
 
-            for (count = 0; first + count < m_debugLine.size(); ++count)
-            {
-                if (m_debugLine[first + count].width != previouisWidth)
-                {
-                    glLineWidth(m_debugLine[first + count].width);
-                    previouisWidth = m_debugLine[first + count].width;
-                    break;
-                }
-            }
-            glDrawArrays(GL_LINES, first * 2, count * 2);
-        }
-
-        glLineWidth(1.0f);
         glDisable(GL_LINE_SMOOTH);
         glDeleteVertexArrays(1, &lineVAO);
         glDeleteBuffers(1, &lineVBO);
@@ -525,7 +493,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
               std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
-              std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines,
+              std::vector<DebugShape>& debugShape, std::vector<DebugLine::Point>& debugLines,
               std::vector<ShadowMap>& shadowMaps, Camera* pMainCamera) {
         if (!pMainCamera)
             return;
@@ -634,7 +602,7 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
               std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
-              std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
+              std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine::Point>& debugLine,
               std::vector<ShadowMap>& shadowMaps, Camera* pMainCamera) {
         if (!pMainCamera)
             return;
@@ -812,13 +780,10 @@ void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Ve
                    color, mode, enableBackFaceCullling, EDebugDrawShapeMode::TRAINGLES, duration});
 }
 
-void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width,
-                                 const ColorRGBA& color) noexcept
+void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, const ColorRGB& color) noexcept
 {
-    DebugLine newLine = {pt1, pt2, width, color};
-    m_debugLine.insert(std::upper_bound(m_debugLine.begin(), m_debugLine.end(), width,
-                                        [](float value, const DebugLine& rhs) { return value > rhs.width; }),
-                       newLine);
+    m_debugLine.emplace_back(DebugLine::Point{pt1, color});
+    m_debugLine.emplace_back(DebugLine::Point{pt2, color});
 }
 
 void RenderSystem::addParticleComponent(ParticleComponent& particleComponent) noexcept

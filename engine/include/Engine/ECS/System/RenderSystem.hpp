@@ -52,18 +52,24 @@ public:
         float               duration               = 0.f;
     };
 
+    /**
+     * @brief Color is duplicate to optimize send data to GPU
+     */
     struct DebugLine
     {
-        GPM::Vec3 pt1;
-        GPM::Vec3 pt2;
-        float     width;
-        ColorRGBA color = ColorRGBA{1.f, 0.f, 0.f, 0.5f};
+        struct Point
+        {
+            GPM::Vec3 pos;
+            ColorRGB  col = ColorRGB::black();
+        };
+        Point pt1;
+        Point pt2;
     };
 
     using RenderPipeline =
         std::function<void(RenderSystem&, std::vector<Renderer*>&, std::vector<SubModel*>&, std::vector<SubModel*>&,
                            std::vector<Camera*>&, std::vector<Light*>&, std::vector<ParticleComponent*>&,
-                           std::vector<DebugShape>&, std::vector<DebugLine>&, std::vector<ShadowMap>&, Camera*)>;
+                           std::vector<DebugShape>&, std::vector<DebugLine::Point>&, std::vector<ShadowMap>&, Camera*)>;
 
 protected:
     std::vector<Renderer*>          m_pRenderers;
@@ -73,7 +79,7 @@ protected:
     std::vector<Light*>             m_pLights;
     std::vector<ParticleComponent*> m_pParticleComponents;
     std::vector<DebugShape>         m_debugShape;
-    std::vector<DebugLine>          m_debugLine;
+    std::vector<DebugLine::Point>   m_debugLine;
     std::vector<ShadowMap>          m_shadowMaps;
     unsigned int                    m_w = 0, m_h = 0;
     Camera*                         m_mainCamera = nullptr;
@@ -148,10 +154,9 @@ public:
                        const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, float duration = 0.f,
                        EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = false) noexcept;
 
-    void drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width = 1.f,
-                       const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}) noexcept;
+    void drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, const ColorRGB& color = ColorRGB::black()) noexcept;
 
-    void displayGameObjectRef(const GameObject& go, float dist = 100.f, float size = 10.f) noexcept;
+    void displayGameObjectRef(const GameObject& go, float dist = 100.f) noexcept;
 
     void displayBoundingVolume(const SubModel* pSubModel, const ColorRGBA& color) noexcept;
 
