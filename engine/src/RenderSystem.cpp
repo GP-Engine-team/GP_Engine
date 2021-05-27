@@ -451,8 +451,6 @@ void RenderSystem::renderDebugLine(Camera& observer) noexcept
         glDisable(GL_LINE_SMOOTH);
         glDeleteVertexArrays(1, &lineVAO);
         glDeleteBuffers(1, &lineVBO);
-
-        m_debugLine.clear();
     }
     resetCurrentRenderPassKey();
 }
@@ -746,6 +744,8 @@ void RenderSystem::updateDebug(double dt) noexcept
         else
             ++it;
     }
+
+    m_debugLine.clear();
 }
 
 void RenderSystem::update(double dt) noexcept

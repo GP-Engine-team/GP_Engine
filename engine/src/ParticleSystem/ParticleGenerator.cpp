@@ -52,7 +52,7 @@ void BasicColorGen::generate(ParticleData* p, size_t startId, size_t endId)
     for (size_t i = startId; i < endId; ++i)
     {
         p->m_startCol[i].r = Random::ranged(m_minStartCol.r, m_maxStartCol.r);
-        p->m_startCol[i].g = Random::ranged(m_minStartCol.g, m_maxStartCol.b);
+        p->m_startCol[i].g = Random::ranged(m_minStartCol.g, m_maxStartCol.g);
         p->m_startCol[i].b = Random::ranged(m_minStartCol.b, m_maxStartCol.b);
         p->m_startCol[i].a = Random::ranged(m_minStartCol.a, m_maxStartCol.a);
 

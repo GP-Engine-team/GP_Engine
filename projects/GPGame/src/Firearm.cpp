@@ -34,7 +34,6 @@ File_GENERATED
 
         m_shootSound  = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
         m_muzzleFlash = &getOwner().getOrCreateComponent<GPE::ParticleComponent>();
-        m_muzzleFlash->setDuration(.5f);
 
         GPE::Wave           sound("./resources/sounds/Firearm/machinegun.wav", "Shoot");
         GPE::SourceSettings sourceSettings;
