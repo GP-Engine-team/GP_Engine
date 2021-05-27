@@ -306,7 +306,7 @@ void SceneEditor::render(Editor& editorContext)
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, .0f);
 
     GameObject* inspected = dynamic_cast<GameObject*>(editorContext.inspectedObject);
-    GameObject* prev      = inspected;
+    const GameObject* const prev = inspected;
 
     if (ImGui::Begin("Scene editor", nullptr, ImGuiWindowFlags_MenuBar))
     {
