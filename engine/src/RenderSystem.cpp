@@ -73,12 +73,9 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
 void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float size) noexcept
 {
     const Vec3& pos = go.getTransform().getGlobalPosition();
-
-    drawDebugSphere(pos + go.getTransform().getVectorRight() * dist, size, ColorRGBA{1.f, 0.f, 0.f, 1.f});
-
-    drawDebugSphere(pos + go.getTransform().getVectorUp() * dist, size, ColorRGBA{0.f, 1.f, 0.f, 1.f});
-
-    drawDebugSphere(pos + go.getTransform().getVectorForward() * dist, size, ColorRGBA{0.f, 0.f, 1.f, 1.f});
+    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorRight() * dist, size, ColorRGBA{1.f, 0.f, 0.f, 1.f});
+    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorUp() * dist, size, ColorRGBA{0.f, 1.f, 0.f, 1.f});
+    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorForward() * dist, size, ColorRGBA{0.f, 0.f, 1.f, 1.f});
 }
 
 RenderSystem::RenderSystem() noexcept
@@ -120,6 +117,26 @@ RenderSystem::RenderSystem() noexcept
 
 RenderSystem::~RenderSystem() noexcept
 {
+}
+
+void RenderSystem::renderFurstum(const Frustum& frustum, float size)
+{
+    const vec3 pos     = m_mainCamera->getOwner().getTransform().getGlobalPosition();
+    const vec3 up      = m_mainCamera->getOwner().getTransform().getVectorForward();
+    const vec3 rigth   = m_mainCamera->getOwner().getTransform().getVectorRight();
+    const vec3 forawrd = m_mainCamera->getOwner().getTransform().getVectorForward();
+
+    const vec3 cLU = Vec3::cross(frustum.leftFace.getNormal(), up);
+    drawDebugQuad(pos, frustum.leftFace.getNormal(), Vec3::one() * size, ColorRGBA{1.0, 0.5f, 0.5f, 0.8f});
+
+    const vec3 cRU = Vec3::cross(frustum.rightFace.getNormal(), up);
+    drawDebugQuad(pos, frustum.rightFace.getNormal(), Vec3::one() * size, ColorRGBA::red());
+
+    const vec3 cTU = Vec3::cross(frustum.topFace.getNormal(), rigth);
+    drawDebugQuad(pos, frustum.topFace.getNormal(), Vec3::one() * size, ColorRGBA::green());
+
+    const vec3 cBU = Vec3::cross(frustum.bottomFace.getNormal(), rigth);
+    drawDebugQuad(pos, frustum.bottomFace.getNormal(), Vec3::one() * size, ColorRGBA{0.5f, 1.0f, 0.5f, 0.8f});
 }
 
 bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
@@ -477,6 +494,37 @@ RenderSystem::RenderPipeline RenderSystem::debugRenderPipeline() const noexcept
     };
 }
 
+void RenderSystem::renderFrustumCulling() noexcept
+{
+    if (!m_mainCamera)
+        return;
+
+    Frustum camFrustum = m_mainCamera->getFrustum();
+
+    // DEBUG
+    for (auto&& pSubModel : m_pOpaqueSubModels)
+    {
+        if (!isOnFrustum(camFrustum, pSubModel))
+        {
+            displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
+            continue;
+        }
+        displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
+    }
+
+    /*Display transparent element*/
+
+    for (auto&& pSubModel : m_pTransparenteSubModels)
+    {
+        if (!isOnFrustum(camFrustum, pSubModel))
+        {
+            displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
+            continue;
+        }
+        displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
+    }
+}
+
 RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
 {
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
@@ -506,10 +554,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 if (!rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
                     continue;
                 }
-                rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMaterial(*pSubModel->pShader, *pSubModel->pMaterial);

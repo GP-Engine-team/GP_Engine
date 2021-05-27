@@ -30,15 +30,14 @@ void Camera::updateView()
 
 void Camera::updateProjection()
 {
-    switch (m_projInfo.type)
+    switch (type)
     {
     case EProjectionType::ORTHOGRAPHIC:
-        m_projection = Transform::orthographic(m_projInfo.hSide * .5f, -m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
-                                               -m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
+        m_projection = Transform::orthographic(hSide * .5f, -hSide * .5f, vSide * .5f, -vSide * .5f, znear, zfar);
         break;
 
     case EProjectionType::PERSPECTIVE:
-        m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.znear, m_projInfo.zfar);
+        m_projection = Transform::perspective(fovY, aspect, znear, zfar);
         break;
 
     default:
@@ -59,25 +58,40 @@ Camera::Camera(GameObject& owner) noexcept : Camera(owner, PerspectiveCreateArg{
     updateToSystem();
 }
 
+Camera::Camera() noexcept
+{
+    if (type == EProjectionType::PERSPECTIVE)
+    {
+        fovX  = aspect * fovY;
+        hSide = zfar * tanf(fovX * .5f) * 2.f;
+        vSide = zfar * tanf(fovY * .5f) * 2.f;
+        Log::getInstance()->log((std::string("Perspective projection added with name \"") + name + "\"").c_str());
+    }
+    else
+    {
+        fovY = atanf((vSide * .5f) / zfar) * 180 / PI;
+        fovX = atanf((hSide * .5f) / zfar) * 180.f / PI;
+
+        Log::getInstance()->log((std::string("Orthographic projection add with name \"") + name + "\"").c_str());
+    }
+}
+
 Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Component(owner)
 {
     GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");
 
-    m_projInfo.name   = arg.name;
-    m_projInfo.type   = EProjectionType::PERSPECTIVE;
-    m_projInfo.aspect = arg.aspect;
-    m_projInfo.znear  = arg.nearVal;
-    m_projInfo.zfar   = arg.farVal;
-    m_projInfo.fovY   = arg.fovY * PI / 180.f;
-    m_projInfo.fovX   = arg.aspect * m_projInfo.fovY;
-    m_projInfo.hSide  = arg.farVal * tanf(m_projInfo.fovX * .5f) * 2.f;
-    m_projInfo.vSide  = arg.farVal * tanf(m_projInfo.fovY * .5f) * 2.f;
+    name   = arg.name;
+    type   = EProjectionType::PERSPECTIVE;
+    aspect = arg.aspect;
+    znear  = arg.nearVal;
+    zfar   = arg.farVal;
+    fovY   = arg.fovY * PI / 180.f;
+    fovX   = arg.aspect * fovY;
+    hSide  = arg.farVal * tanf(fovX * .5f) * 2.f;
+    vSide  = arg.farVal * tanf(fovY * .5f) * 2.f;
 
-    m_projection = Transform::perspective(m_projInfo.fovY, m_projInfo.aspect, m_projInfo.znear, m_projInfo.zfar);
-
-    updateToSystem();
-    getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
-    updateView();
+    m_projection = Transform::perspective(fovY, aspect, znear, zfar);
+    onPostLoad();
 
     Log::getInstance()->log((std::string("Perspective projection added with name \"") + arg.name + "\"").c_str());
 }
@@ -86,30 +100,26 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
 {
     GPE_ASSERT(arg.nearVal > 0.f, "Near must be greater than 0");
 
-    m_projInfo.name   = arg.name;
-    m_projInfo.type   = EProjectionType::ORTHOGRAPHIC;
-    m_projInfo.aspect = arg.hSide / arg.vSide;
-    m_projInfo.znear  = arg.nearVal;
-    m_projInfo.zfar   = arg.farVal;
-    m_projInfo.fovY   = atanf((arg.vSide * .5f) / arg.farVal) * 360.f / PI;
-    m_projInfo.fovX   = atanf((arg.hSide * .5f) / arg.farVal) * 360.f / PI;
-    m_projInfo.hSide  = arg.hSide;
-    m_projInfo.vSide  = arg.vSide;
+    name   = arg.name;
+    type   = EProjectionType::ORTHOGRAPHIC;
+    aspect = arg.hSide / arg.vSide;
+    znear  = arg.nearVal;
+    zfar   = arg.farVal;
+    fovY   = atanf((arg.vSide * .5f) / arg.farVal) * 180 / PI;
+    fovX   = atanf((arg.hSide * .5f) / arg.farVal) * 180.f / PI;
+    hSide  = arg.hSide;
+    vSide  = arg.vSide;
 
-    m_projection = Transform::orthographic(m_projInfo.hSide * .5f, -m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
-                                           -m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
+    m_projection = Transform::orthographic(hSide * .5f, -hSide * .5f, vSide * .5f, -vSide * .5f, znear, zfar);
 
-    getOwner().pOwnerScene->sceneRenderer.addCamera(*this);
-    getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
-    updateView();
+    onPostLoad();
 
     Log::getInstance()->log((std::string("Orthographic projection add with name \"") + arg.name + "\"").c_str());
 }
 
 void Camera::onPostLoad()
 {
-    m_projection = Transform::orthographic(m_projInfo.hSide * .5f, -m_projInfo.hSide * .5f, m_projInfo.vSide * .5f,
-                                           -m_projInfo.vSide * .5f, m_projInfo.znear, m_projInfo.zfar);
+    getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     updateToSystem();
     updateView();
 }
@@ -120,29 +130,38 @@ Camera::~Camera() noexcept
     setActive(false);
 }
 
-void Camera::setFovY(const float fovY) noexcept
+void Camera::updateFovY()
 {
-    m_projInfo.fovY  = fovY * PI / 180.f;
-    m_projInfo.fovX  = m_projInfo.aspect * m_projInfo.fovY;
-    m_projInfo.hSide = m_projInfo.zfar * tanf(m_projInfo.fovX * .5f) * 2.f;
-    m_projInfo.vSide = m_projInfo.zfar * tanf(m_projInfo.fovY * .5f) * 2.f;
+    fovX  = aspect * fovY;
+    hSide = zfar * tanf(fovX * .5f) * 2.f;
+    vSide = zfar * tanf(fovY * .5f) * 2.f;
 
     updateProjection();
     updateView();
 }
 
-void Camera::setAspect(const float newAspect) noexcept
+void Camera::updateAspect()
 {
-    m_projInfo.aspect = newAspect;
-
-    if (m_projInfo.type != EProjectionType::ORTHOGRAPHIC)
+    if (type != EProjectionType::ORTHOGRAPHIC)
     {
-        m_projInfo.fovX  = m_projInfo.aspect * m_projInfo.fovY;
-        m_projInfo.hSide = m_projInfo.zfar * tanf(m_projInfo.fovX * .5f) * 2.f;
+        fovX  = aspect * fovY;
+        hSide = zfar * tanf(fovX * .5f) * 2.f;
     }
 
     updateProjection();
     updateView();
+}
+
+void Camera::setFovY(const float newfovY) noexcept
+{
+    fovY = newfovY * PI / 180.f;
+    updateFovY();
+}
+
+void Camera::setAspect(const float newAspect) noexcept
+{
+    aspect = newAspect;
+    updateAspect();
 }
 
 Frustum Camera::getFrustum() const noexcept
@@ -153,15 +172,15 @@ Frustum Camera::getFrustum() const noexcept
     const Vec3& right          = getOwner().getTransform().getVectorRight();
     const Vec3& up             = getOwner().getTransform().getVectorUp();
     const Vec3& globalPosition = -getOwner().getTransform().getGlobalPosition();
-    const float halfHSide      = m_projInfo.hSide * .5f;
-    const float halfVSide      = m_projInfo.vSide * .5f;
+    const float halfHSide      = hSide * .5f;
+    const float halfVSide      = vSide * .5f;
 
-    frustum.nearFace   = {globalPosition + m_projInfo.znear * -forward, forward};
-    frustum.farFace    = {globalPosition + m_projInfo.zfar * -forward, -forward};
-    frustum.rightFace  = {globalPosition, -Vec3::cross(forward * m_projInfo.zfar + right * halfHSide, up)};
-    frustum.leftFace   = {globalPosition, Vec3::cross(forward * m_projInfo.zfar + right * -halfHSide, up)};
-    frustum.topFace    = {globalPosition, -Vec3::cross(forward * m_projInfo.zfar + up * -halfVSide, right)};
-    frustum.bottomFace = {globalPosition, Vec3::cross(forward * m_projInfo.zfar + up * halfVSide, right)};
+    frustum.nearFace   = {globalPosition + znear * -forward, forward};
+    frustum.farFace    = {globalPosition + zfar * -forward, -forward};
+    frustum.rightFace  = {globalPosition, -Vec3::cross(forward * zfar + right * halfHSide, up)};
+    frustum.leftFace   = {globalPosition, Vec3::cross(forward * zfar + right * -halfHSide, up)};
+    frustum.topFace    = {globalPosition, -Vec3::cross(forward * zfar + up * -halfVSide, right)};
+    frustum.bottomFace = {globalPosition, Vec3::cross(forward * zfar + up * halfVSide, right)};
 
     return frustum;
 }
@@ -228,7 +247,7 @@ Frustum Camera::getFrustum() const noexcept
     norm.z = m[2][3] + m[2][2];
     // d      = m[3][3] + m[3][2];
 
-    d = -m_projInfo.znear;
+    d = -znear;
 
     frustum.nearFace = {(playerDist + d) * test, norm.normalized()};
 
@@ -237,7 +256,7 @@ Frustum Camera::getFrustum() const noexcept
     norm.y = m[1][3] - m[1][2];
     norm.z = m[2][3] - m[2][2];
     // d      = m[3][3] - m[3][2];
-    d = m_projInfo.zfar;
+    d = zfar;
 
     frustum.farFace = {(playerDist + d) * test, norm.normalized()};
 

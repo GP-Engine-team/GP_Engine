@@ -285,6 +285,9 @@ void SceneViewer::update()
 
 void SceneViewer::render() const
 {
+    // Observe previous camera
+    pScene->sceneRenderer.renderFrustumCulling();
+
     pScene->sceneRenderer.setMainCamera(&camera);
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);

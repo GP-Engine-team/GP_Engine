@@ -109,6 +109,7 @@ public:
 
     void resetCurrentRenderPassKey();
 
+    void renderFurstum(const Frustum& frustum, float size);
     bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept;
     void drawModelPart(const SubModel& subModel);
     void sendModelDataToShader(Camera& camToUse, Shader& shader, const GPM::Mat4& modelMatrix);
@@ -117,7 +118,9 @@ public:
     RenderPipeline defaultRenderPipeline() const noexcept;
     RenderPipeline debugRenderPipeline() const noexcept;
     RenderPipeline mousePickingPipeline() const noexcept;
-    void           shadowMapPipeline() noexcept;
+
+    void renderFrustumCulling() noexcept;
+    void shadowMapPipeline() noexcept;
 
     /**
      * @brief Render the scene thanks to the call back set in input. This callback will be used as the render pipeline.
@@ -142,7 +145,7 @@ public:
                        EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
     void drawDebugQuad(const GPM::Vec3& position, const GPM::Vec3& dir, const GPM::Vec3& scale,
                        const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, float duration = 0.f,
-                       EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = true) noexcept;
+                       EDebugShapeMode mode = EDebugShapeMode::FILL, bool enableBackFaceCullling = false) noexcept;
 
     void drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width = 1.f,
                        const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}) noexcept;

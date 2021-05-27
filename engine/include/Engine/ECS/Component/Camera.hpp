@@ -17,6 +17,7 @@
 
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/Plane.hpp>
+#include <gpm/constants.hpp>
 
 // Generated
 #include <Generated/Camera.rfk.h>
@@ -50,20 +51,18 @@ namespace GPE RFKNamespace()
             NONE
         };
 
-        struct RFKStruct(Inspect(), Serialize()) ProjectionInfo
+        struct ProjectionInfo
         {
-            RFKField(Inspect(), Serialize()) std::string name = "";
-            RFKField(Serialize()) EProjectionType        type = EProjectionType::PERSPECTIVE;
+            std::string     name = "";
+            EProjectionType type = EProjectionType::PERSPECTIVE;
 
-            RFKField(Inspect(), Serialize()) float aspect = 16.f / 9.f;
-            RFKField(Inspect(), Serialize()) float znear  = 0.001f;
-            RFKField(Inspect(), Serialize()) float zfar   = 10.f;
-            RFKField(Inspect(), Serialize()) float hSide  = 1.f;
-            RFKField(Inspect(), Serialize()) float vSide  = 1.f;
-            RFKField(Inspect(), Serialize()) float fovY   = 70.f;
-            RFKField(Inspect(), Serialize()) float fovX   = 70.f;
-
-            ProjectionInfo_GENERATED
+            float aspect = 16.f / 9.f;
+            float znear  = 0.001f;
+            float zfar   = 1000.f;
+            float hSide  = 1.f;
+            float vSide  = 1.f;
+            float fovY   = 7.f * PI / 18.f; // 70deg
+            float fovX   = 7. * PI / 18.f;  // 70deg
         };
 
         struct PerspectiveCreateArg
@@ -85,8 +84,21 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect(), Serialize()) ProjectionInfo m_projInfo;
-        RFKField(Serialize()) GPM::Mat4                 m_projection;
+        RFKField(Inspect(), Serialize()) std::string name = "";
+        RFKField(Serialize()) EProjectionType        type = EProjectionType::PERSPECTIVE;
+
+        // TODO: Uncomment when inspection function not call each frame
+        RFKField(Inspect(/*"setAspect"*/), Serialize()) float aspect = 16.f / 9.f;
+        RFKField(Inspect(), Serialize()) float                znear  = 0.001f;
+        RFKField(Inspect(), Serialize()) float                zfar   = 1000.f;
+        RFKField(Inspect(), Serialize()) float                hSide  = 1.f;
+        RFKField(Inspect(), Serialize()) float                vSide  = 1.f;
+
+        // TODO: Uncomment when inspection function not call each frame
+        RFKField(Inspect(/*"setFovY"*/), Serialize()) float fovY = 7.f * PI / 18.f; // 70deg
+        RFKField(Inspect(), Serialize()) float              fovX = 7. * PI / 18.f;  // 70deg
+
+        RFKField(Serialize()) GPM::Mat4 m_projection;
 
         RFKField(Serialize()) GPM::Mat4 m_viewMatrix;
         RFKField(Serialize()) GPM::Mat4 m_projectionViewMatrix;
@@ -95,11 +107,20 @@ namespace GPE RFKNamespace()
 
         virtual void updateToSystem() noexcept override;
 
+    protected:
+        /**
+         * @brief Update the camera if the FovY change
+         * @param owner
+         * @return
+         */
+        void updateFovY();
+        void updateAspect();
+
     public:
         static float computeAspect(int width, int height) noexcept;
 
     public:
-        Camera() noexcept = default;
+        Camera() noexcept;
 
         /**
          * @brief Default constructor. Call perspective constructor by default
@@ -149,13 +170,6 @@ namespace GPE RFKNamespace()
         void setFovY(const float fovY) noexcept;
 
         void setAspect(const float newAspect) noexcept;
-
-        /**
-         * @brief Get the Projection Info in specifie index
-         *
-         * @return const ProjectionInfo&
-         */
-        inline const ProjectionInfo& getProjectionInfo() const noexcept;
 
         /**
          * @brief Get the view * projection matrix
