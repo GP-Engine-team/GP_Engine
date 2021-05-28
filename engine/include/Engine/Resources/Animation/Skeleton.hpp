@@ -11,12 +11,13 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <Engine/Serialization/binary/BinaryLoader.hpp>
+#include <Engine/Serialization/binary/BinarySaver.hpp>
 
 struct aiNode;
 
 namespace GPE
 {
-
 struct AssimpNodeData
 {
     /**
@@ -26,6 +27,22 @@ struct AssimpNodeData
     std::string                 name;
     std::vector<AssimpNodeData> children;
 };
+
+template <>
+inline void load(BinaryLoader& context, AssimpNodeData& loaded, const BinaryLoader::LoadInfo* info)
+{
+    GPE::load(context, loaded.transformation, nullptr);
+    GPE::load(context, loaded.name, nullptr);
+    GPE::load(context, loaded.children, nullptr);
+}
+
+template <>
+inline void save(BinarySaver& context, const AssimpNodeData& saved, const BinarySaver::SaveInfo* info)
+{
+    GPE::save(context, saved.transformation, nullptr);
+    GPE::save(context, saved.name, nullptr);
+    GPE::save(context, saved.children, nullptr);
+}
 
 class Skeleton
 {
@@ -41,8 +58,14 @@ public:
         GPM::mat4 offset;
     };
 
+    struct CreateArgs
+    {
+        std::map<std::string, BoneInfo> m_boneInfoMap; 
+        AssimpNodeData m_root;
+    };
+
     // Animation data
-    std::map<std::string, BoneInfo> m_boneInfoMap; //
+    std::map<std::string, BoneInfo> m_boneInfoMap; 
     int                             m_boneCounter = 0;
 
     AssimpNodeData m_root;

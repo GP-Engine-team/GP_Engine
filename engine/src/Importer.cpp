@@ -19,6 +19,8 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/ResourcesManagerType.hpp>
 #include <Engine/Resources/Texture.hpp>
+#include <Engine/Serialization/binary/BinarySaver.hpp>
+#include <Engine/Serialization/binary/BinaryLoader.hpp>
 #include <GPM/Shape3D/AABB.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
 
@@ -841,7 +843,6 @@ SavedScene::CreateArg GPE::readPrefabFile(const char* src)
 
 SavedScene::CreateArg GPE::loadPrefabFile(const char* src)
 {
-    std::filesystem::path srcPath(src);
     return readPrefabFile(src);
 }
 
@@ -901,4 +902,208 @@ SavedScene::CreateArg GPE::readSceneFile(const char* src)
 SavedScene::CreateArg GPE::loadSceneFile(const char* src)
 {
     return readSceneFile(src);
+}
+
+
+
+struct SkeletonHeader
+{
+    char assetID       = (char)EFileType::SKELETON;
+    int  nbBones;
+};
+
+void writeSkeletonFile(const char* dst, const Skeleton::CreateArgs& arg)
+{
+    FILE* pFile = nullptr;
+
+    if (fopen_s(&pFile, dst, "w+b"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
+        return;
+    }
+
+    SkeletonHeader header{(char)EFileType::MESH, arg.m_boneInfoMap.size()};
+
+    GPE::BinarySaver;
+
+    fwrite(&header, sizeof(header), 1, pFile); // header
+
+    GPE::BinarySaver saver;
+    saver.file = pFile;
+    GPE::save(saver, arg.m_boneInfoMap, nullptr);
+    GPE::save(saver, arg.m_root, nullptr);
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
+}
+
+Skeleton::CreateArgs GPE::readSkeletonFile(const char* src)
+{
+    FILE*                       pFile = nullptr;
+    std::filesystem::path       srcPath(src);
+    Skeleton::CreateArgs        arg;
+
+    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
+        return arg;
+    }
+
+    MeshHeader header;
+    // copy the file into the buffer:
+    fread(&header, sizeof(header), 1, pFile);
+
+    GPE::BinaryLoader loader;
+    loader.file = pFile;
+    GPE::load(loader, arg.m_boneInfoMap, nullptr);
+    GPE::load(loader, arg.m_root, nullptr);
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
+
+    return arg;
+}
+
+Skeleton* GPE::loadSkeletonFile(const char* src)
+{
+    std::filesystem::path srcPath(src);
+
+    // if (Skeleton* const pSkeleton =
+    // Engine::getInstance()->resourceManager.get<Skeleton>(srcPath.filename().string()))
+    //    return pSkeleton;
+    // return &Engine::getInstance()->resourceManager.add<Skeleton>(srcPath.filename().string(), readMeshFile(src));
+    return nullptr;
+}
+
+struct AnimationHeader
+{
+    char assetID       = (char)EFileType::ANIMATION;
+    int  verticeLength = 0;
+    int  indiceLength  = 0;
+};
+
+void GPE::writeAnimationFile(const char* dst, const Animation::CreateArgs& arg)
+{
+    FILE* pFile = nullptr;
+
+    if (fopen_s(&pFile, dst, "w+b"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
+        return;
+    }
+
+    // MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
+    //                  static_cast<int>(arg.indices.size())};
+    // fwrite(&header, sizeof(header), 1, pFile);                                         // header
+    // fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLength, pFile); // vertice buffer
+    // fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLength, pFile);    // indice buffer
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
+}
+
+Animation::CreateArgs GPE::readAnimationFile(const char* src)
+{
+    FILE*                       pFile = nullptr;
+    std::filesystem::path       srcPath(src);
+    Animation::CreateArgs       arg;
+
+    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
+        return arg;
+    }
+
+    // MeshHeader header;
+    //// copy the file into the buffer:
+    // fread(&header, sizeof(header), 1, pFile);
+
+    // if (header.verticeLength)
+    //{
+    //    arg.vertices.assign(header.verticeLength, Mesh::Vertex{});
+    //    fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLength, pFile); // vertice buffer
+    //}
+
+    // if (header.indiceLength)
+    //{
+    //    arg.indices.assign(header.indiceLength, 0);
+    //    fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLength, pFile); // indice buffer
+    //}
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
+
+    return arg;
+}
+
+Animation* GPE::loadAnimationFile(const char* src)
+{
+    std::filesystem::path srcPath(src);
+
+    // if (Animation* const pAnim = Engine::getInstance()->resourceManager.get<Animation>(srcPath.filename().string()))
+    //    return pAnim;
+    // return &Engine::getInstance()->resourceManager.add<Animation>(srcPath.filename().string(), readMeshFile(src));
+    return nullptr;
+}
+
+
+struct SkinHeader
+{
+    char assetID       = (char)EFileType::SKIN;
+};
+
+void GPE::writeSkinFile(const char* dst, const Skin::CreateArgs& arg)
+{
+    FILE* pFile = nullptr;
+
+    if (fopen_s(&pFile, dst, "w+b"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
+        return;
+    }
+
+    MeshHeader header{(char)EFileType::MESH};
+    fwrite(&header, sizeof(header), 1, pFile); // header
+
+    GPE::BinarySaver saver;
+    saver.file = pFile;
+    GPE::save(saver, arg.m_verticesBoneData, nullptr);
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
+}
+
+Skin::CreateArgs GPE::readSkinFile(const char* src)
+{
+    FILE*                       pFile = nullptr;
+    std::filesystem::path       srcPath(src);
+    Skin::CreateArgs            arg;
+
+    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
+        return arg;
+    }
+
+    MeshHeader header;
+    // copy the file into the buffer:
+    fread(&header, sizeof(header), 1, pFile);
+
+    GPE::BinaryLoader loader;
+    loader.file = pFile;
+    GPE::load(loader, arg.m_verticesBoneData, nullptr);
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
+
+    return arg;
+}
+
+Skin* GPE::loadSkinFile(const char* src)
+{
+    std::filesystem::path srcPath(src);
+
+     if (Skin* const pSkin = Engine::getInstance()->resourceManager.get<Skin>(srcPath.filename().string()))
+        return pSkin;
+     return &Engine::getInstance()->resourceManager.add<Skin>(srcPath.filename().string(), readMeshFile(src));
 }

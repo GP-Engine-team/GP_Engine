@@ -19,6 +19,14 @@ namespace GPE
 {
 class Animation
 {
+public:
+    struct CreateArgs
+    {
+        float             m_duration;
+        int               m_ticksPerSecond;
+        std::vector<Bone> m_bones; 
+    };
+
 private:
     float                                      m_duration;
     int                                        m_ticksPerSecond;

@@ -792,6 +792,12 @@
     <ClInclude Include="include\Engine\Resources\Animation\Skin.hpp">
       <Filter>include\Resources\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\binary\BinarySaver.hpp">
+      <Filter>include\Serialization\binary</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\binary\BinaryLoader.hpp">
+      <Filter>include\Serialization\binary</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -1027,6 +1033,9 @@
     </Filter>
     <Filter Include="include\Resources\Animation">
       <UniqueIdentifier>{f881cb2d-1287-4807-a37b-9e420c052d4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Serialization\binary">
+      <UniqueIdentifier>{2e085ac7-60b6-423d-8b02-4834e8b54930}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

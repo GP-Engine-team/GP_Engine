@@ -108,7 +108,7 @@ void AnimationComponent::setupAnims(bool newValue)
                                         aiProcess_FlipUVs | aiProcess_CalcTangentSpace |
                                         aiProcess_LimitBoneWeights;
 
-        const char* srcPath = "C:\\Users\\Utilisateur\\Downloads\\GP_Engine - Copy2\\GP_Engine - Copy\\projects\\GPGame\\resources\\Character\\Taunt.fbx";
+        const char* srcPath = "C:\\Users\\t.dallard\\Downloads\\GP_Engine - Copy (1)\\GP_Engine - Copy\\projects\\GPGame\\resources\\Character\\Taunt.fbx";
 
         Assimp::Importer importer;
         const aiScene*   scene = importer.ReadFile(srcPath, postProcessflags);

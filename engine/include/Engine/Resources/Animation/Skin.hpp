@@ -31,6 +31,11 @@ public:
         float m_weights[maxBoneInfluence];
     };
 
+    struct CreateArgs
+    {
+        std::vector<VertexBoneData> m_verticesBoneData; // contains the weights of each vertex
+    };
+
 public:
     unsigned int                m_skinVbo = 0;
     std::vector<VertexBoneData> m_verticesBoneData; // contains the weights of each vertex

@@ -66,6 +66,7 @@ struct DirectoryInfo
 class ProjectContent
 {
 protected:
+    // TODO : icone -> icon
     GPE::Texture m_folderIcone;
     GPE::Texture m_textureIcone;
     GPE::Texture m_materialIcone;
@@ -75,6 +76,9 @@ protected:
     GPE::Texture m_soundIcone;
     GPE::Texture m_unknowIcone;
     GPE::Texture m_prefabIcone;
+    GPE::Texture m_skeletonIcon;
+    GPE::Texture m_animationIcon;
+    GPE::Texture m_skinIcon;
 
     DirectoryInfo  resourcesTree;
     DirectoryInfo* pCurrentDirectory = nullptr;
