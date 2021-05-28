@@ -47,10 +47,7 @@ namespace GPE RFKNamespace()
 
         SubModel() = default;
 
-        bool isValide()
-        {
-            return pModel && pMesh && pShader && pMaterial;
-        }
+        bool isValide();
 
         RFKField(Serialize()) Model*    pModel    = nullptr;
         RFKField(Serialize()) Shader*   pShader   = nullptr;
