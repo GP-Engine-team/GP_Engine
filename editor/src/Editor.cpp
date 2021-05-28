@@ -171,7 +171,10 @@ void Editor::renderMenuBar()
             {
                 ImGui::Text("WASD : Move");
                 ImGui::Text("Shift : Move fast");
+                ImGui::Separator();
+                ImGui::Text("Ctrl + S : Save");
                 ImGui::Text("Delete : Delete selected game object");
+                ImGui::Separator();
                 ImGui::Text("F1 : Set default layout");
                 ImGui::Text("F2 : Refreash asset");
                 ImGui::Text("F5 : Start");
@@ -380,38 +383,50 @@ void Editor::releaseGameInputs()
 
 void Editor::updateKeyboardShorthand(EditorStartup& startup)
 {
-    if (ImGui::IsKeyDown(GLFW_KEY_F1))
+    if (ImGui::IsKeyPressed(GLFW_KEY_F1))
     {
         ImGui::LoadIniSettingsFromDisk("Layout/defaultGUILayout.ini");
     }
 
-    if (ImGui::IsKeyDown(GLFW_KEY_F2))
+    if (ImGui::IsKeyPressed(GLFW_KEY_F2))
     {
         projectContent.refreshResourcesList();
     }
 
-    if (ImGui::IsKeyDown(GLFW_KEY_F5))
+    if (ImGui::IsKeyPressed(GLFW_KEY_F5))
     {
         startup.playGame();
     }
 
-    if (ImGui::IsKeyDown(GLFW_KEY_F6))
+    if (ImGui::IsKeyPressed(GLFW_KEY_F6))
     {
         startup.pauseGame();
     }
 
-    if (ImGui::IsKeyDown(GLFW_KEY_F7))
+    if (ImGui::IsKeyPressed(GLFW_KEY_F7))
     {
         startup.stopGame();
     }
 
-    if (ImGui::IsKeyDown(GLFW_KEY_DELETE))
+    if (ImGui::IsKeyPressed(GLFW_KEY_DELETE))
     {
         if (GameObject* pGo = dynamic_cast<GameObject*>(inspectedObject))
         {
             inspectedObject = nullptr;
             pGo->destroy();
         }
+    }
+
+    if (ImGui::IsKeyPressed(GLFW_KEY_S) &&
+        (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
+    {
+        if (saveFolder.empty())
+            saveFolder = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
+
+        std::filesystem::path path = saveFolder;
+        path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
+
+        saveScene(sceneEditor.view.pScene, path.string().c_str());
     }
 }
 

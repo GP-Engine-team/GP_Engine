@@ -35,13 +35,17 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) std::vector<Spawner>      m_spawners{};
         RFKField(Inspect(), Serialize()) std::vector<EntityPrefab> m_entitiesToSpawnInfo{};
 
-        RFKField(Inspect(), Serialize()) float                 m_zoneRadius{3.f};
+        RFKField(Inspect(), Serialize()) float                 m_spawnerZoneRadius{100.f};
+        RFKField(Inspect(), Serialize()) float                 m_playerZoneRadius{250.f};
+        float                                                  sqrTotalRadius = 0;
         RFKField(Inspect(), Serialize()) float                 m_spawnDelay{1.f};         /*in sec*/
         RFKField(Inspect(), Serialize()) float                 m_spawnDelayInterval{0.f}; /*in sec*/
         RFKField(Inspect(), Serialize()) float                 m_delayCount{0.f};
         RFKField(Inspect(), Serialize()) float                 m_nextDelay{m_spawnDelay};
         RFKField(Inspect(), Serialize()) GPE::GameObjectLinker m_enemiesContainer;
         RFKField() GPE::GameObject*                            m_player;
+
+        RFKField(Inspect()) bool m_debug = true;
 
     public:
         /**
