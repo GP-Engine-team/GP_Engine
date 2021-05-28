@@ -64,6 +64,11 @@ void BasePlayer::start()
         GAME_ASSERT(m_firearms.back(), "No firearm in gameObject");
     }
 
+    GAME_ASSERT(m_groundParticleGO.pGo, "null");
+    m_pGroundParticleComponent = m_groundParticleGO.pGo->getComponent<ParticleComponent>();
+    GAME_ASSERT(m_pGroundParticleComponent, "null");
+    m_pGroundParticleComponent->start();
+
     // Keys
     input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
     input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");

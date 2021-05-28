@@ -2,6 +2,7 @@
 
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <gpm/Calc.hpp>
 #include <gpm/Random.hpp>
 #include <gpm/Vector3.hpp>
 
@@ -31,8 +32,6 @@ void SpawnManager::onPostLoad()
 void SpawnManager::start()
 {
     GAME_ASSERT(m_enemiesContainer.pGo, "Missing container ref in SpawnManager");
-    m_nextDelay = m_spawnDelay + Random::ranged(-m_spawnDelayInterval, m_spawnDelayInterval);
-
     GAME_ASSERT(m_entitiesToSpawnInfo.size(), "Spawner without info");
     GAME_ASSERT(m_spawners.size(), "SpawnerManager without spawner");
 
@@ -42,17 +41,29 @@ void SpawnManager::start()
     }
 
     sqrTotalRadius = (m_spawnerZoneRadius + m_playerZoneRadius) * (m_spawnerZoneRadius + m_playerZoneRadius);
+
+    if (m_difficultyInfo.empty())
+    {
+        autoGenerateLinearDifficulty(10, DifficultyLevel{3.f, 3u}, DifficultyLevel{0.5f, 30u});
+    }
+    GAME_ASSERT(m_difficultyInfo.size(), "No difficulty set");
+    setDifficulty(m_currentDifficulty); // clamp
 }
 
 void SpawnManager::update(double deltaTime)
 {
+    if (m_enemiesContainer.pGo->children.size() > m_difficultyInfo[m_currentDifficulty].m_maxEntity)
+        return;
+
     m_delayCount += deltaTime;
 
     while (m_delayCount >= m_nextDelay)
     {
 
         m_delayCount -= m_nextDelay;
-        m_nextDelay     = m_spawnDelay + Random::ranged(-m_spawnDelayInterval, m_spawnDelayInterval);
+        // m_nextDelay     = m_spawnDelay + Random::ranged(-m_spawnDelayInterval, m_spawnDelayInterval);
+        m_nextDelay = m_difficultyInfo[m_currentDifficulty].m_spawnfrequency;
+
         Vec2 position2D = Random::circularCoordinate(
             {m_gameObject->getTransform().getGlobalPosition().x, m_gameObject->getTransform().getGlobalPosition().z},
             m_spawnerZoneRadius);
@@ -101,5 +112,24 @@ void SpawnManager::updateEditor(double deltaTime)
         if (elem.go.pGo)
             drawDebugSphere(elem.go.pGo->getTransform().getGlobalPosition(), m_spawnerZoneRadius,
                             RGBA{RGB::green(), 0.2f}, 0.f, true);
+    }
+}
+
+void SpawnManager::setDifficulty(unsigned int level)
+{
+    m_currentDifficulty = std::clamp(level, 0u, (unsigned int)(m_difficultyInfo.size() - 1));
+    m_nextDelay         = m_difficultyInfo[m_currentDifficulty].m_spawnfrequency;
+}
+
+void SpawnManager::autoGenerateLinearDifficulty(unsigned int count, const DifficultyLevel& min,
+                                                const DifficultyLevel& max)
+{
+    m_difficultyInfo.clear();
+
+    for (unsigned int i = 0; i < count; ++i)
+    {
+        float t = i / ((float)count - 1.f);
+        m_difficultyInfo.emplace_back(GPM::lerp(min.m_spawnfrequency, max.m_spawnfrequency, t),
+                                      GPM::lerp(min.m_maxEntity, max.m_maxEntity, t));
     }
 }

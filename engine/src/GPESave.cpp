@@ -79,8 +79,12 @@ void save(XmlSaver& context, const GameObjectLinker& data, const rfk::Field& inf
 template <>
 void save(XmlSaver& context, const GameObjectLinker& data, const XmlSaver::SaveInfo& info)
 {
-    std::string str = data.pGo->getAbsolutePath();
-    str.erase(0, str.find_first_of('/', 0) + 1); // remove the world
+    std::string str = "";
+    if (data.pGo)
+    {
+        str = data.pGo->getAbsolutePath();
+        str.erase(0, str.find_first_of('/', 0) + 1); // remove the world
+    }
 
     GPE::save(context, str, XmlSaver::SaveInfo{info.name, info.typeName, 0});
 }

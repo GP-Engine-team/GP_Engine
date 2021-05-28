@@ -421,7 +421,8 @@ void GameObject::operator delete(void* ptr)
 
 GameObject* GameObject::getGameObject(const std::string& path) noexcept
 {
-    GPE_ASSERT(!path.empty(), "Empty path");
+    if (path.empty())
+        return nullptr;
 
     std::stringstream sPath(path);
     std::string       word;
