@@ -155,6 +155,7 @@ void SceneManager::removeScene(Scene& scene)
 void SceneManager::removeScenes()
 {
     m_scenes.clear();
+    m_pCurrentScene = nullptr;
 }
 
 void SceneManager::update()

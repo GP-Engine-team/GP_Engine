@@ -318,6 +318,8 @@ void Editor::saveCurrentScene()
 void Editor::reloadCurrentScene()
 {
     GPE::Scene*           currentScene = sceneEditor.view.pScene;
+    if (currentScene == nullptr)
+        return;
     std::filesystem::path path         = saveFolder;
     path /= currentScene->getName() + ".GPScene";
 
@@ -428,7 +430,7 @@ void Editor::update(EditorStartup& startup)
 
     ImGui::NewFrame();
 
-    ImGuiContext* gameContext = syncGameUI();
+    ImGuiContext* gameContext = (syncGameUI == nullptr) ? nullptr : syncGameUI();
     syncImGui(ImGui::GetCurrentContext());
 
     // Start drawing
