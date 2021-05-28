@@ -165,7 +165,14 @@ void ParticleComponent::generate()
     if (!std::isinf(m_duration))
         m_emitRate = m_count / m_duration;
 
-    m_particles.generate(m_count, m_particles.m_maskType);
+    U16BMask mask;
+    for (auto&& updater : m_updaters)
+        mask.add(updater->getRequiereConfig().get());
+
+    for (auto&& generator : m_generators)
+        mask.add(generator->getRequiereConfig().get());
+
+    m_particles.generate(m_count, mask);
 
     initializeRenderer();
 }
