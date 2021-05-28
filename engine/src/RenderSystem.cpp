@@ -584,6 +584,11 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     rs.tryToBindShader(*particle->getShader());
                     rs.sendModelDataToShader(*pMainCamera, *particle->getShader(),
                                              particle->getOwner().getTransform().getModelMatrix());
+
+                    if (particle->getTexture())
+                    {
+                        rs.tryToBindTexture(particle->getTexture()->getID());
+                    }
                 }
                 rs.tryToBindMesh(particle->getMeshID());
 
