@@ -15,13 +15,15 @@
 #include <Engine/Serialization/STDDataInspector.hpp>
 
 #include <Engine/Core/Tools/BinaryMask.hpp>
+#include <Engine/Serialization/Serialize.hpp>
+#include <Refureku/Object.h>
 
 // Generated
 #include <Generated/ParticleUpdater.rfk.h>
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Inspect()) ParticleUpdater
+    class RFKClass(Serialize(false), Inspect(false)) ParticleUpdater : public rfk::Object
     {
     public:
         ParticleUpdater()
@@ -38,10 +40,10 @@ namespace GPE RFKNamespace()
         ParticleUpdater_GENERATED
     };
 
-    class RFKClass(Inspect()) EulerUpdater : public ParticleUpdater
+    class RFKClass(Serialize(), Inspect()) EulerUpdater : public ParticleUpdater
     {
     public:
-        RFKField(Inspect()) GPM::Vec4 m_globalAcceleration;
+        RFKField(Serialize(), Inspect()) GPM::Vec4 m_globalAcceleration;
 
     public:
         EulerUpdater() : m_globalAcceleration(0.0)
@@ -55,12 +57,27 @@ namespace GPE RFKNamespace()
         EulerUpdater_GENERATED
     };
 
+    class RFKClass(Serialize(), Inspect()) SizeUpdater : public ParticleUpdater
+    {
+
+    public:
+        SizeUpdater()
+        {
+        }
+
+        virtual void update(double dt, ParticleData* p) override;
+
+        U16BMask getRequiereConfig() const override;
+
+        SizeUpdater_GENERATED
+    };
+
     // collision with the floor :) todo: implement a collision model
-    class RFKClass(Inspect()) FloorUpdater : public ParticleUpdater
+    class RFKClass(Serialize(), Inspect()) FloorUpdater : public ParticleUpdater
     {
     public:
-        RFKField(Inspect()) float m_floorY;
-        RFKField(Inspect()) float m_bounceFactor;
+        RFKField(Serialize(), Inspect()) float m_floorY;
+        RFKField(Serialize(), Inspect()) float m_bounceFactor;
 
     public:
         FloorUpdater() : m_floorY(0.0), m_bounceFactor(0.5f)
@@ -74,10 +91,10 @@ namespace GPE RFKNamespace()
         FloorUpdater_GENERATED
     };
 
-    class RFKClass(Inspect()) AttractorUpdater : public ParticleUpdater
+    class RFKClass(Serialize(), Inspect()) AttractorUpdater : public ParticleUpdater
     {
     protected:
-        RFKField(Inspect()) std::vector<GPM::Vec4> m_attractors; // .w is force
+        RFKField(Serialize(), Inspect()) std::vector<GPM::Vec4> m_attractors; // .w is force
     public:
         virtual void update(double dt, ParticleData* p) override;
 
@@ -101,7 +118,7 @@ namespace GPE RFKNamespace()
         AttractorUpdater_GENERATED
     };
 
-    class RFKClass(Inspect()) BasicColorUpdater : public ParticleUpdater
+    class RFKClass(Serialize(), Inspect()) BasicColorUpdater : public ParticleUpdater
     {
     public:
         virtual void update(double dt, ParticleData* p) override;
@@ -111,11 +128,11 @@ namespace GPE RFKNamespace()
         BasicColorUpdater_GENERATED
     };
 
-    class RFKClass(Inspect()) PosColorUpdater : public ParticleUpdater
+    class RFKClass(Serialize(), Inspect()) PosColorUpdater : public ParticleUpdater
     {
     public:
-        RFKField(Inspect()) GPM::Vec4 m_minPos;
-        RFKField(Inspect()) GPM::Vec4 m_maxPos;
+        RFKField(Serialize(), Inspect()) GPM::Vec4 m_minPos;
+        RFKField(Serialize(), Inspect()) GPM::Vec4 m_maxPos;
 
     public:
         PosColorUpdater() : m_minPos(0.0), m_maxPos(1.0)
@@ -129,11 +146,11 @@ namespace GPE RFKNamespace()
         PosColorUpdater_GENERATED
     };
 
-    class RFKClass(Inspect()) VelColorUpdater : public ParticleUpdater
+    class RFKClass(Serialize(), Inspect()) VelColorUpdater : public ParticleUpdater
     {
     public:
-        RFKField(Inspect()) GPM::Vec4 m_minVel;
-        RFKField(Inspect()) GPM::Vec4 m_maxVel;
+        RFKField(Serialize(), Inspect()) GPM::Vec4 m_minVel;
+        RFKField(Serialize(), Inspect()) GPM::Vec4 m_maxVel;
 
     public:
         VelColorUpdater() : m_minVel(0.0), m_maxVel(1.0)
@@ -147,7 +164,7 @@ namespace GPE RFKNamespace()
         VelColorUpdater_GENERATED
     };
 
-    class RFKClass(Inspect()) BasicTimeUpdater : public ParticleUpdater
+    class RFKClass(Serialize(), Inspect()) BasicTimeUpdater : public ParticleUpdater
     {
     public:
         virtual void update(double dt, ParticleData* p) override;

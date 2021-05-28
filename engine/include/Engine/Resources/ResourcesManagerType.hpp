@@ -21,12 +21,17 @@
 #include <GPM/Shape3D/AABB.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
 
+#include <filesystem>
 #include <vector>
 
 namespace GPE
 {
+struct ResourcesPath
+{
+    std::filesystem::path path;
+};
 
-using ResourceManagerType =
-    ResourcesManager<std::vector<Mesh>, Model::CreateArg, Mesh, Shader, Texture, RenderBuffer, RenderTexture,
-                     std::vector<Material>, Material, Sound::Buffer, SavedScene, GPM::Sphere, GPM::AABB, SharedPrefab>;
+using ResourceManagerType = ResourcesManager<std::vector<Mesh>, Model::CreateArg, Mesh, Shader, Texture, RenderBuffer,
+                                             RenderTexture, std::vector<Material>, Material, Sound::Buffer, SavedScene,
+                                             GPM::Sphere, GPM::AABB, SharedPrefab, std::vector<ResourcesPath>>;
 } // namespace GPE

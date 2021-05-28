@@ -18,6 +18,8 @@
 #include "Engine/Serialization/InspectContext.hpp"
 #include "Engine/Serialization/STDReflect.hpp"
 
+#include <Engine/Core/Tools/ClassUtility.hpp>
+
 // in Inl
 #include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Core/Tools/Format.hpp"
@@ -55,7 +57,7 @@ namespace GPE RFKNamespace()
             false}; // Flag that inform it parent that this transform must be destroy on update loop
         RFKField(Serialize()) bool m_isActive = true;
 
-        //ID counter
+        // ID counter
         static unsigned int m_currentID;
 
     public:
@@ -118,6 +120,8 @@ namespace GPE RFKNamespace()
          */
         inline void setName(const char* newName) noexcept;
 
+        inline bool isDead();
+
         /**
          * @brief Get the Transform object
          * @return const char*
@@ -139,6 +143,9 @@ namespace GPE RFKNamespace()
          */
         template <typename T, typename... Args>
         T& addComponent(Args && ... args) noexcept;
+
+        template <typename T>
+        T& getOrCreateComponent();
 
         inline Component* addExistingComponent(Component * pExistingComponent) noexcept;
 
@@ -226,6 +233,14 @@ namespace GPE RFKNamespace()
          */
         GameObject* getGameObjectCorrespondingToID(unsigned int ID) noexcept;
 
+        /**
+         * @brief Get the Entity object in function of path in arg
+         *
+         * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3
+         * @return GameObject&
+         */
+        GameObject* getGameObject(const std::string& path) noexcept;
+
         [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;
 
         template <typename T>
@@ -253,6 +268,18 @@ namespace GPE RFKNamespace()
 
         GameObject_GENERATED
     };
+
+    /**
+     * @brief GameObjectLinker allow user to link local gameObject in editor. Thank's to it, user can associate
+     * gameObject and serialize it. Warning ! : Assocation is local of the base scene. For prefab, the base scene is the
+     * first gameObject. So user cannot link gameObject that is not inside the prefab.
+     *
+     */
+    struct GameObjectLinker
+    {
+        class GameObject* pGo = nullptr;
+    };
+
 } // namespace )
 
 #include "GameObject.inl"

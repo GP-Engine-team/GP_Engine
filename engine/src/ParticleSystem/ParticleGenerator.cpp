@@ -1,12 +1,15 @@
 #include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
 
-File_GENERATED
-
 #include "GPM/Random.hpp"
 #include "GPM/Vector4.hpp"
 #include "GPM/constants.hpp"
+#include <Engine/Serialization/xml/xmlSaver.hpp>
 #include <algorithm>
 #include <assert.h>
+
+// Generated
+#include <Generated/ParticleGenerator.rfk.h>
+File_GENERATED
 
     using namespace GPE;
 using namespace GPM;
@@ -30,12 +33,27 @@ U16BMask BoxPosGen::getRequiereConfig() const
     return ParticleData::EParam::POSITION;
 }
 
-void RoundPosGen::generate(ParticleData* p, size_t startId, size_t endId)
+void SizeGen::generate(ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
     {
+        p->m_startSize[i] = Random::ranged(m_minStartSize, m_maxStartSize);
+        p->m_endSize[i]   = Random::ranged(m_minEndSize, m_maxEndSize);
+    }
+}
+
+U16BMask SizeGen::getRequiereConfig() const
+{
+    return ParticleData::EParam::START_SIZE | ParticleData::EParam::END_SIZE;
+}
+
+void RoundPosGen::generate(ParticleData* p, size_t startId, size_t endId)
+{
+    const Vec4 center4 = Vec4{m_center, 1.f};
+    for (size_t i = startId; i < endId; ++i)
+    {
         float ang   = Random::ranged(0.f, PI * 2.f);
-        p->m_pos[i] = m_center + Vec4(m_radX * sin(ang), m_radY * cos(ang), 0.f, 1.f);
+        p->m_pos[i] = center4 + Vec4(m_radX * sin(ang), m_radY * cos(ang), 0.f, 0.f);
     }
 }
 
@@ -49,7 +67,7 @@ void BasicColorGen::generate(ParticleData* p, size_t startId, size_t endId)
     for (size_t i = startId; i < endId; ++i)
     {
         p->m_startCol[i].r = Random::ranged(m_minStartCol.r, m_maxStartCol.r);
-        p->m_startCol[i].g = Random::ranged(m_minStartCol.g, m_maxStartCol.b);
+        p->m_startCol[i].g = Random::ranged(m_minStartCol.g, m_maxStartCol.g);
         p->m_startCol[i].b = Random::ranged(m_minStartCol.b, m_maxStartCol.b);
         p->m_startCol[i].a = Random::ranged(m_minStartCol.a, m_maxStartCol.a);
 

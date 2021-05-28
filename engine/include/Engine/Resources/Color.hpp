@@ -52,9 +52,17 @@ struct ColorRGB
 struct ColorRGBA
 {
     union {
-        struct
-        {
-            float r, g, b, a;
+        union {
+            struct
+            {
+                ColorRGB rgb;
+                float    a;
+            };
+
+            struct
+            {
+                float r, g, b, a;
+            };
         };
         GPM::Vec4 v;
         float     e[4];

@@ -8,11 +8,12 @@
 
 #include <BaseCharacter.hpp>
 
+#include <Engine/ECS/Component/ParticleComponent.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Generated/BasePlayer.rfk.h>
 
 namespace GPE
 {
-
 class InputComponent;
 class AudioComponent;
 class CharacterController;
@@ -26,10 +27,19 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BasePlayer : public BaseCharacter
     {
     protected:
-        RFKField(Serialize()) GPE::InputComponent*        input         = nullptr;
-        RFKField(Serialize()) GPE::AudioComponent*        source        = nullptr;
-        RFKField(Serialize()) Firearm*                    m_fireArme    = nullptr;
-        RFKField(Inspect(), Serialize()) GPE::GameObject* m_decalPrefab = nullptr;
+        RFKField(Serialize()) float            m_animDepthCounter    = 0.f;
+        RFKField(Inspect(), Serialize()) float m_animDepthCounterMax = 3.f;
+
+        RFKField(Serialize()) bool displayDepthMenu = false;
+
+        RFKField(Serialize()) GPE::InputComponent* input  = nullptr;
+        RFKField(Serialize()) GPE::AudioComponent* source = nullptr;
+
+        RFKField(Inspect(), Serialize()) std::vector<GPE::GameObjectLinker> m_firearmsGO;
+        RFKField() std::vector<Firearm*>                                    m_firearms;
+
+        RFKField(Inspect(), Serialize()) GPE::GameObjectLinker m_groundParticleGO;
+        RFKField() GPE::ParticleComponent*                     m_pGroundParticleComponent;
 
     public:
         BasePlayer() noexcept = default;

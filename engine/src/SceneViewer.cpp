@@ -116,22 +116,15 @@ void SceneViewer::initializeInputs()
 
 // ========================== Public methods ==========================
 SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
-    : cameraOwner       {new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
-      freeFly           {cameraOwner->addComponent<FreeFly>()},
-      camera            {cameraOwner->addComponent<Camera>(Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
-      inputs            {cameraOwner->addComponent<GPE::InputComponent>()},
-      pScene            {&viewed},
-      textureID         {0u},
-      depthStencilID    {0u},
-      framebufferID     {0u},
-      FBOIDtextureID    {0u},
-      FBOIDdepthID      {0u},
-      FBOIDframebufferID{0u},
-      FBOIDwidth        {int(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight       {int(ceilf(height_ * INV_DOWN_SAMPLING_COEF))},
-      width             {width_},
-      height            {height_},
-      m_capturingInputs {false}
+    : cameraOwner{new GameObject(viewed, {"Editor camera", {}, &viewed.getWorld()})},
+      freeFly{cameraOwner->addComponent<FreeFly>()},
+      camera{cameraOwner->addComponent<Camera>(
+          Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
+      inputs{cameraOwner->addComponent<GPE::InputComponent>()}, pScene{&viewed}, textureID{0u}, depthStencilID{0u},
+      framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u}, FBOIDframebufferID{0u},
+      FBOIDwidth{int(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight{int(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_}, m_capturingInputs{
+                                                                                                     false}
 {
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
                                                        "./resources/shaders/vGameObjectIdentifier.vs",
@@ -142,14 +135,14 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
 
     // Update the Camera component and cameraOwner scene and parent
     camera.setActive(true);
-    pScene->sceneRenderer.setMainCamera(&camera);
-
     freeFly.setActive(false);
-    inputs.setActive(m_capturingInputs);
+    // inputs.setActive(true);
 }
 
 SceneViewer::~SceneViewer()
 {
+    // Owner scene is already remove
+    cameraOwner->pOwnerScene = nullptr;
     delete cameraOwner;
 
     glDeleteFramebuffers(1, &framebufferID);
@@ -164,7 +157,7 @@ SceneViewer::~SceneViewer()
 unsigned int SceneViewer::getHoveredGameObjectID() const
 {
     // Set active view
-    pScene->sceneRenderer.setActiveCamera(&camera);
+    pScene->sceneRenderer.setMainCamera(&camera);
 
     { // Select the shader
         Shader& shaderGameObjectIdentifier =
@@ -243,18 +236,18 @@ void SceneViewer::bindScene(Scene& scene)
     cameraOwner->pOwnerScene = &scene;
 
     // Update the Camera component and cameraOwner scene and parent
-    inputs.setActive(true);
+    // inputs.setActive(true);
     freeFly.setActive(true);
-    camera.setActive(true);
-    scene.sceneRenderer.setActiveCamera(&camera);
+    // camera.setActive(true);
+    scene.sceneRenderer.setMainCamera(&camera);
     pScene = &scene;
 }
 
 void SceneViewer::unbindScene()
 {
-    inputs.setActive(false);
+    // inputs.setActive(false);
     freeFly.setActive(false);
-    camera.setActive(false);
+    // camera.setActive(false);
     pScene = nullptr;
 }
 
@@ -292,13 +285,28 @@ void SceneViewer::update()
 
 void SceneViewer::render() const
 {
-    pScene->sceneRenderer.setActiveCamera(&camera);
+    pScene->sceneRenderer.setDefaultMainCamera();
+
+    if (drawDebugPhysic)
+        Engine::getInstance()->physXSystem.drawDebugScene();
+
+    if (drawFrustumScene)
+        pScene->sceneRenderer.renderFrustumCulling();
+
+    // Observe previous camera
+    pScene->sceneRenderer.setMainCamera(&camera);
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
     pScene->sceneRenderer.tryToResize(width, height);
+
     pScene->sceneRenderer.render(pScene->sceneRenderer.defaultRenderPipeline());
-    pScene->sceneRenderer.render(pScene->sceneRenderer.debugRenderPipeline());
+
+    if (drawDebugShape)
+        pScene->sceneRenderer.renderDebugShape(camera);
+
+    if (drawDebugLine)
+        pScene->sceneRenderer.renderDebugLine(camera);
 }
 
 void SceneViewer::captureInputs(bool shouldCapture)
@@ -307,8 +315,6 @@ void SceneViewer::captureInputs(bool shouldCapture)
         return;
 
     m_capturingInputs = shouldCapture;
-
-    inputs.setActive(shouldCapture);
 }
 
 bool SceneViewer::capturingInputs() const

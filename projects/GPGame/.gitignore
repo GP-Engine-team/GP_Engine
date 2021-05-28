@@ -485,6 +485,7 @@ x64/
 #Resources
 /resources/**/*.*
 !/resources/**/*.GPScene
+!/resources/**/*.GPPrefab
 
 .vscode/*
 .idea/*

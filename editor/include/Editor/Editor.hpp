@@ -32,6 +32,8 @@ class EditorStartup;
 
 class Editor
 {
+private:
+    GLFWwindow* m_window;
 
 public:
     SceneEditor         sceneEditor;
@@ -43,12 +45,11 @@ public:
     std::string         saveFolder;
     GPE::IInspectable*  inspectedObject;
     GPE::ReloadableCpp* reloadableCpp;
-private:
-    GLFWwindow*         m_window;
 
-public:
-    bool                showAppStyleEditor;
-    bool                showImGuiDemoWindows;
+    bool showAppStyleEditor;
+    bool showImGuiDemoWindows;
+
+    std::function<void(Editor&)> OnUIBeginFrame;
 
 private:
     void setupDearImGui();
@@ -71,6 +72,7 @@ public:
     void update(EditorStartup& startup);
     void render();
     bool isRunning();
+    void updateKeyboardShorthand(EditorStartup& startup);
 
     // Removes Editor elements from the scene before saving
     void saveScene(GPE::Scene* scene, const char* path);

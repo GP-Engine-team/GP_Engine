@@ -21,6 +21,7 @@ protected:
     std::vector<BehaviourComponent*> m_updateFunctions;
     std::vector<BehaviourComponent*> m_fixedUpdateFunctions;
     std::vector<BehaviourComponent*> m_onGUIFunctions;
+    std::vector<BehaviourComponent*> m_updateEditorFunctions;
 
 public:
     std::function<void(const char*)> onGameAssert;
@@ -30,10 +31,12 @@ public:
     void addUpdate(BehaviourComponent& updateFunction) noexcept;
     void addFixedUpdate(BehaviourComponent& fixedUpdateFunction) noexcept;
     void addOnGUI(BehaviourComponent& fixedUpdateFunction) noexcept;
+    void addUpdateEditor(BehaviourComponent& updateEditorFunction) noexcept;
 
     void removeUpdate(BehaviourComponent& updateFunctionToRemove) noexcept;
     void removeFixedUpdate(BehaviourComponent& fixedUpdateFunctionToRemove) noexcept;
     void removeOnGUI(BehaviourComponent& updateFunctionToRemove) noexcept;
+    void removeUpdateEditor(BehaviourComponent& updateEditorFunction) noexcept;
 
     // TODO: Remove this shit and create variadic templated system
     void addBehaviour(BehaviourComponent& behaviour) noexcept;
@@ -42,9 +45,9 @@ public:
     void start() noexcept;
     void onGUI() const noexcept;
 
-    void fixedUpdate(double deltaTime) noexcept;
-
+    void fixedUpdate(double deltaTime) const noexcept;
     void update(double deltaTime) const noexcept;
+    void updateEditor(double deltaTime) const noexcept;
 
     /**
      * @brief Call game assert event if condition == null

@@ -6,6 +6,8 @@
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Type.hpp"
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Color.hpp>
 #include <Engine/Resources/Prefab.hpp>
 #include <Engine/Resources/ResourcesManager.hpp>
 
@@ -16,6 +18,30 @@ template <>
 void save(XmlSaver& context, const AmbiantComponent& data, const XmlSaver::SaveInfo& info)
 {
     GPE::save(context, data.rgbi, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGBA& data, const rfk::Field& info)
+{
+    GPE::save(context, data.v, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGBA& data, const XmlSaver::SaveInfo& info)
+{
+    GPE::save(context, data.v, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGB& data, const rfk::Field& info)
+{
+    GPE::save(context, data.v, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGB& data, const XmlSaver::SaveInfo& info)
+{
+    GPE::save(context, data.v, info);
 }
 
 template <>
@@ -42,6 +68,25 @@ void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info
     }
 
     context.pop();
+}
+
+template <>
+void save(XmlSaver& context, const GameObjectLinker& data, const rfk::Field& info)
+{
+    GPE::save(context, data, fieldToSaveInfo(info));
+}
+
+template <>
+void save(XmlSaver& context, const GameObjectLinker& data, const XmlSaver::SaveInfo& info)
+{
+    std::string str = "";
+    if (data.pGo)
+    {
+        str = data.pGo->getAbsolutePath();
+        str.erase(0, str.find_first_of('/', 0) + 1); // remove the world
+    }
+
+    GPE::save(context, str, XmlSaver::SaveInfo{info.name, info.typeName, 0});
 }
 
 template <>

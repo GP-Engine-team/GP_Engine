@@ -18,15 +18,15 @@ namespace GPE RFKNamespace()
     {
     protected:
         TimeSystem&               timeSys;
-        RFKField(Inspect()) float m_walkSpeed     = 15.f; // m/s
-        RFKField(Inspect()) float m_sprintSpeed   = 30.f;
-        float                     m_speed         = m_walkSpeed;
+        RFKField(Inspect()) float m_speedCoef     = 2.f;
         RFKField(Inspect()) float m_rotationSpeed = .001f;
 
-public:
-    FreeFly() noexcept = default;
-    FreeFly(GameObject& owner) noexcept;
-    ~FreeFly() noexcept;
+    public:
+        float m_speed = 30.f;
+
+        FreeFly() noexcept = default;
+        FreeFly(GameObject & owner) noexcept;
+        ~FreeFly() noexcept;
 
         RFKMethod() void rotate(const GPM::Vector2& deltaDisplacement);
 

@@ -64,14 +64,23 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
 
         // Update old pointers into new ones
         context.updateLazyPtrs();
+        context.updateGameObjectLinker(scene->getWorld());
 
         // Call onPostLoad on GameObjects
         struct Rec
         {
-            static void rec(GPE::GameObject* g)
+        private:
+            static void recTransform(GPE::GameObject* g)
             {
                 g->getTransform().onPostLoad();
 
+                for (GPE::GameObject* g2 : g->children)
+                {
+                    recTransform(g2);
+                }
+            };
+            static void recComponent(GPE::GameObject* g)
+            {
                 for (GPE::Component* comp : g->getComponents())
                 {
                     comp->onPostLoad();
@@ -79,12 +88,38 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
 
                 for (GPE::GameObject* g2 : g->children)
                 {
-                    rec(g2);
+                    recComponent(g2);
                 }
             };
+
+        public:
+            static void rec(GPE::GameObject* g)
+            {
+                recTransform(g);
+                g->updateSelfAndChildren();
+                recComponent(g);
+            }
+
         };
         Rec::rec(&scene->getWorld()); // can't do recursives with lambdas, and std::function would be overkill
     }
+}
+
+void GPE::savePrefabToPathImp(GPE::GameObject& prefab, const char* path, GPE::SavedScene::EType saveMode)
+{
+    Scene             tempScene;
+    GameObject* const pPreviousParent     = prefab.getParent();
+    Scene* const      pPreviousOwnedScene = prefab.pOwnerScene;
+
+    tempScene.getWorld().children.emplace_back(&prefab);
+    prefab.forceSetParent(tempScene.getWorld());
+    prefab.pOwnerScene = nullptr;
+
+    saveSceneToPathImp(&tempScene, path, saveMode);
+
+    prefab.pOwnerScene = pPreviousOwnedScene;
+    prefab.forceSetParent(*pPreviousParent);
+    tempScene.getWorld().children.clear();
 }
 
 GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char* path)
@@ -109,6 +144,10 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
 
         // Update old pointers into new ones
         context.updateLazyPtrs();
+
+        GameObject* const go = scene.getWorld().children.front();
+        if (go)
+            context.updateGameObjectLinker(*go);
     }
 
     // Init the prefab
@@ -121,10 +160,18 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
         // Call onPostLoad on GameObjects
         struct Rec
         {
-            static void rec(GPE::GameObject* const g)
+        private:
+            static void recTransform(GPE::GameObject* g)
             {
                 g->getTransform().onPostLoad();
 
+                for (GPE::GameObject* g2 : g->children)
+                {
+                    recTransform(g2);
+                }
+            };
+            static void recComponent(GPE::GameObject* g)
+            {
                 for (GPE::Component* comp : g->getComponents())
                 {
                     comp->onPostLoad();
@@ -132,9 +179,17 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
 
                 for (GPE::GameObject* g2 : g->children)
                 {
-                    rec(g2);
+                    recComponent(g2);
                 }
             };
+
+        public:
+            static void rec(GPE::GameObject* g)
+            {
+                recTransform(g);
+                g->updateSelfAndChildren();
+                recComponent(g);
+            }
         };
         Rec::rec(go); // can't do recursives with lambdas, and std::function would be overkill
     }
@@ -790,7 +845,7 @@ void GPE::writePrefabFile(const char* dst, const SavedScene::CreateArg& arg)
 {
     FILE* pFile = nullptr;
 
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (fopen_s(&pFile, dst, "wb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
         return;
@@ -847,7 +902,7 @@ void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
 {
     FILE* pFile = nullptr;
 
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (fopen_s(&pFile, dst, "wb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
         return;

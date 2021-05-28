@@ -6,6 +6,7 @@ File_GENERATED
 #include <Engine/ECS/Component/TransformComponent.hpp>
 #include <Engine/ECS/System/BehaviourSystem.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
+#include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
 
@@ -54,6 +55,17 @@ void BehaviourComponent::enableOnGUI(bool flag) noexcept
         getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
 }
 
+void BehaviourComponent::enableUpdateEditor(bool flag) noexcept
+{
+    if (m_useUpdateEditor == flag)
+        return;
+
+    if (m_useUpdateEditor = flag)
+        getOwner().pOwnerScene->behaviourSystem.addUpdateEditor(*this);
+    else
+        getOwner().pOwnerScene->behaviourSystem.removeUpdateEditor(*this);
+}
+
 bool BehaviourComponent::isUpdateEnable() const noexcept
 {
     return m_useUpdate;
@@ -67,6 +79,11 @@ bool BehaviourComponent::isFixedUpdateEnable() const noexcept
 bool BehaviourComponent::isOnGUIEnable() const noexcept
 {
     return m_useOnGUI;
+}
+
+bool BehaviourComponent::isUpdateEditorEnable() const noexcept
+{
+    return m_useUpdateEditor;
 }
 
 void BehaviourComponent::updateToSystem() noexcept
@@ -90,6 +107,11 @@ void BehaviourComponent::updateToSystem() noexcept
             getOwner().pOwnerScene->behaviourSystem.addOnGUI(*this);
         else
             getOwner().pOwnerScene->behaviourSystem.removeOnGUI(*this);
+
+        if (m_useUpdateEditor)
+            getOwner().pOwnerScene->behaviourSystem.addUpdateEditor(*this);
+        else
+            getOwner().pOwnerScene->behaviourSystem.removeUpdateEditor(*this);
 
         getOwner().pOwnerScene->behaviourSystem.addBehaviour(*this);
     }
@@ -123,10 +145,9 @@ void BehaviourComponent::drawDebugQuad(const GPM::Vec3& position, const GPM::Vec
                                                         RenderSystem::EDebugShapeMode::FILL, enableBackFaceCullling);
 }
 
-void BehaviourComponent::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width,
-                                       const ColorRGBA& color) noexcept
+void BehaviourComponent::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, const ColorRGB& color) noexcept
 {
-    getOwner().pOwnerScene->sceneRenderer.drawDebugLine(pt1, pt2, width, color);
+    getOwner().pOwnerScene->sceneRenderer.drawDebugLine(pt1, pt2, color);
 }
 
 void BehaviourComponent::log(const std::string& msg)
@@ -147,4 +168,19 @@ void BehaviourComponent::logError(const std::string& msg)
 TransformComponent& BehaviourComponent::transform()
 {
     return getOwner().getTransform();
+}
+
+void BehaviourComponent::reloadScene()
+{
+    Engine::getInstance()->sceneManager.defferedReloadCurrentScene();
+}
+
+void BehaviourComponent::loadNewScene(const char* path)
+{
+    Engine::getInstance()->sceneManager.defferedLoadNewScene(path);
+}
+
+void BehaviourComponent::closeApplication()
+{
+    Engine::getInstance()->isRunning = false;
 }

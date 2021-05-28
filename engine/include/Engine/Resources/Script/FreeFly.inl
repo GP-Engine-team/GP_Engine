@@ -36,10 +36,10 @@ inline void FreeFly::right()
 
 inline void FreeFly::walk()
 {
-    m_speed = m_walkSpeed;
+    m_speed /= m_speedCoef;
 }
 
 inline void FreeFly::sprint()
 {
-    m_speed = m_sprintSpeed;
+    m_speed *= m_speedCoef;
 }

@@ -1,9 +1,9 @@
 ﻿#include <Editor/EditorStartup.hpp>
 
 // Engine
-#include <Engine/Core/HotReload/SingletonsSync.hpp>
 #include <Engine/Core/Game/AbstractGame.hpp>
 #include <Engine/Core/HotReload/ReloadableCpp.hpp>
+#include <Engine/Core/HotReload/SingletonsSync.hpp>
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
@@ -56,7 +56,7 @@ void Editor::renderStyleEditor()
     {
         if (ImGui::Begin("Style Editor", &showAppStyleEditor))
         {
-            ShowStyleEditor();
+            ShowStyleEditor(*this);
         }
         ImGui::End();
     }
@@ -83,7 +83,7 @@ void Editor::renderMenuBar()
 
             if (ImGui::MenuItem("Save to"))
             {
-                saveFolder               = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
+                saveFolder                 = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
                 std::filesystem::path path = saveFolder;
                 path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
 
@@ -92,13 +92,15 @@ void Editor::renderMenuBar()
 
             if (ImGui::MenuItem("Save"))
             {
-                if (saveFolder.empty())
-                    saveFolder = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
+                saveCurrentScene();
+            }
 
-                std::filesystem::path path = saveFolder;
-                path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
-
-                saveScene(sceneEditor.view.pScene, path.string().c_str());
+            if (ImGui::MenuItem((std::string("Select first scene : ") +
+                                 Engine::getInstance()->sceneManager.firstLoadedScene.string())
+                                    .c_str()))
+            {
+                Engine::getInstance()->sceneManager.firstLoadedScene =
+                    openFileExplorerAndGetRelativePath(L"Select Scene", {{L"Scene", L"*.GPScene"}}).string().c_str();
             }
 
             ImGui::EndMenu();
@@ -107,7 +109,7 @@ void Editor::renderMenuBar()
         // Edit
         if (ImGui::BeginMenu("Edit"))
         {
-            ImGui::MenuItem("Edit something");
+            /*ImGui::MenuItem("Edit something");*/
             ImGui::EndMenu();
         }
 
@@ -159,8 +161,23 @@ void Editor::renderMenuBar()
         {
             ImGui::MenuItem("Demo ImGui", NULL, &showImGuiDemoWindows);
 
-            // Menu content
-            ImGui::MenuItem("Useful links");
+            if (ImGui::BeginMenu("Shortcut"))
+            {
+                ImGui::Text("WASD : Move");
+                ImGui::Text("Shift : Move fast");
+                ImGui::Separator();
+                ImGui::Text("Ctrl + S : Save");
+                ImGui::Text("Delete : Delete selected game object");
+                ImGui::Separator();
+                ImGui::Text("F1 : Set default layout");
+                ImGui::Text("F2 : Refreash asset");
+                ImGui::Text("F5 : Start");
+                ImGui::Text("F6 : Pause");
+                ImGui::Text("F7 : Stop");
+
+                ImGui::EndMenu();
+            }
+
             ImGui::EndMenu();
         }
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize("FPS : 144").x -
@@ -180,8 +197,6 @@ void Editor::renderLevelEditor()
 {
     sceneEditor.view.update();
     sceneEditor.render(*this);
-
-    GPE::Engine::getInstance()->physXSystem.drawDebugScene();
 }
 
 void Editor::renderGameView(EditorStartup& startup)
@@ -191,6 +206,17 @@ void Editor::renderGameView(EditorStartup& startup)
 
 void Editor::renderInspector()
 {
+    if (inspectedObject)
+    {
+        if (GameObject* pGo = dynamic_cast<GameObject*>(inspectedObject))
+        {
+            if (pGo->isDead())
+            {
+                inspectedObject = nullptr;
+            }
+        }
+    }
+
     if (ImGui::Begin("Inspector"))
     {
         if (inspectedObject != nullptr)
@@ -280,16 +306,13 @@ void Editor::loadScene(GPE::Scene* scene, const char* path)
 
 void Editor::saveCurrentScene()
 {
-    GPE::Scene*           currentScene = sceneEditor.view.pScene;
-    std::filesystem::path saveFolder   = saveFolder;
-    saveFolder /= currentScene->getName() + ".GPScene";
-    const std::string path = saveFolder.string();
-    sceneEditor.view.unbindScene();
+    if (saveFolder.empty())
+        saveFolder = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
 
-    auto saveFunc = GET_PROCESS((*reloadableCpp), saveSceneToPath);
-    saveFunc(currentScene, path.c_str(), GPE::SavedScene::EType::XML);
+    std::filesystem::path path = saveFolder;
+    path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
 
-    sceneEditor.view.bindScene(*currentScene);
+    saveScene(sceneEditor.view.pScene, path.string().c_str());
 }
 
 void Editor::reloadCurrentScene()
@@ -331,17 +354,9 @@ void Editor::unbindCurrentScene()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : sceneEditor         {editedScene},
-      gameViewer          {},
-      logInspector        {},
-      projectContent      {*this},
-      sceneGraph          {*this},
-      gameControlBar      {},
-      saveFolder          {},
-      m_window            {window},
-      inspectedObject     {nullptr},
-      showAppStyleEditor  {false},
-      showImGuiDemoWindows{false}
+    : sceneEditor(editedScene), gameViewer{}, logInspector{}, projectContent(*this),
+      sceneGraph(*this), gameControlBar{}, saveFolder{}, m_window{window}, inspectedObject{nullptr},
+      showAppStyleEditor{false}, showImGuiDemoWindows{false}
 {
     glfwMaximizeWindow(window);
     setupDearImGui();
@@ -350,12 +365,54 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
 void Editor::setSceneInEdition(GPE::Scene& scene)
 {
     sceneEditor.view.bindScene(scene);
-    GPE::Engine::getInstance()->inputManager.setInputMode("Editor");
 }
 
 void Editor::releaseGameInputs()
 {
-    gameViewer.releaseInputs();
+    gameViewer.lockInputToEditor();
+}
+
+void Editor::updateKeyboardShorthand(EditorStartup& startup)
+{
+    if (ImGui::IsKeyPressed(GLFW_KEY_F1))
+    {
+        ImGui::LoadIniSettingsFromDisk("Layout/defaultGUILayout.ini");
+    }
+
+    if (ImGui::IsKeyPressed(GLFW_KEY_F2))
+    {
+        projectContent.refreshResourcesList();
+    }
+
+    if (ImGui::IsKeyPressed(GLFW_KEY_F5))
+    {
+        startup.playGame();
+    }
+
+    if (ImGui::IsKeyPressed(GLFW_KEY_F6))
+    {
+        startup.pauseGame();
+    }
+
+    if (ImGui::IsKeyPressed(GLFW_KEY_F7))
+    {
+        startup.stopGame();
+    }
+
+    if (ImGui::IsKeyPressed(GLFW_KEY_DELETE))
+    {
+        if (GameObject* pGo = dynamic_cast<GameObject*>(inspectedObject))
+        {
+            inspectedObject = nullptr;
+            pGo->destroy();
+        }
+    }
+
+    if (ImGui::IsKeyPressed(GLFW_KEY_S) &&
+        (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
+    {
+        saveCurrentScene();
+    }
 }
 
 void Editor::update(EditorStartup& startup)
@@ -366,6 +423,9 @@ void Editor::update(EditorStartup& startup)
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
+    if (OnUIBeginFrame)
+        OnUIBeginFrame(*this);
+
     ImGui::NewFrame();
 
     ImGuiContext* gameContext = syncGameUI();
@@ -378,6 +438,8 @@ void Editor::update(EditorStartup& startup)
     }
 
     // Editor
+    updateKeyboardShorthand(startup);
+
     renderMenuBar();
 
     ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport());
