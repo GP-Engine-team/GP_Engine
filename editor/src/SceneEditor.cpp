@@ -226,17 +226,8 @@ void SceneEditor::checkKeys()
 
 void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
 {
-    { // Check whether the cursor is inside the window
-        ImVec2 topLeft = ImGui::GetWindowPos();
-        topLeft.y += ImGui::GetWindowContentRegionMin().y;
-
-        const ImVec2 bottomRight{topLeft.x + view.width, topLeft.y + view.height};
-
-        if (!ImGui::IsMouseHoveringRect(topLeft, bottomRight))
-        {
-            return;
-        }
-    }
+    if (!ImGui::IsWindowHovered())
+        return;
 
     // Actual method content
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
