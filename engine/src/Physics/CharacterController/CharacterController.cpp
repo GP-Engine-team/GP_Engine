@@ -68,7 +68,7 @@ void CharacterController::update(double deltaTime) noexcept
     {
         if (m_hasGravity)
         {
-            addForce({.0f, -m_gravity, .0f});
+            addForce({.0f, -m_gravity * m_mass, .0f});
         }
     }
 
@@ -86,8 +86,7 @@ void CharacterController::update(double deltaTime) noexcept
     if (controller == nullptr)
         return;
 
-    physx::PxExtendedVec3 debugvect = controller->getPosition();
-    controller->move(PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, float(deltaTime), filters);
+    controller->move(PhysXSystem::GPMVec3ToPxVec3(deltaTime * m_displacement), 0.1f, float(deltaTime), filters);
     m_displacement.x = m_displacement.y = m_displacement.z = .0f;
     getOwner().getTransform().setTranslation(PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()) -
                                              m_center);

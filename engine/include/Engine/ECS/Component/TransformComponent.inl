@@ -6,9 +6,9 @@ inline constexpr bool TransformComponent::isDirty() const
     return m_isDirty;
 }
 
-inline constexpr void TransformComponent::setDirty()
+inline constexpr void TransformComponent::setDirty(bool toggle)
 {
-    m_isDirty = true;
+    m_isDirty = toggle;
 }
 
 inline constexpr GPM::Vec3 TransformComponent::getGlobalPosition() const noexcept
@@ -35,6 +35,7 @@ inline void TransformComponent::update() noexcept
     m_isDirty   = false;
     OnUpdate();
 }
+
 
 inline void TransformComponent::update(const GPM::Mat4& parentMeshMatrix) noexcept
 {

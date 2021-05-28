@@ -80,6 +80,12 @@ public:
     void setCursorMode(int mode) noexcept;
 
     /**
+     * @brief Set the mouse position in screen space
+     * @param pos
+     */
+    void setMousePos(GPM::Vec2 pos);
+
+    /**
      * @brief Set the current input mode
      * @param inputMode
      * @return
@@ -106,6 +112,7 @@ public:
      * @return
      */
     inline void setCursorTrackingState(bool trackState) noexcept;
+    inline bool getCursorTrackingState() const noexcept;
 
     /**
      * @brief Set the cursor lock state
@@ -113,6 +120,7 @@ public:
      * @return
      */
     void setCursorLockState(bool lockState) noexcept;
+    bool getCursorLockState() const noexcept;
 
     /**
      * @brief bind a key to an action

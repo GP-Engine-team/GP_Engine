@@ -24,7 +24,7 @@ void BaseEnemy::start()
     controller->setSpeed(0.5f);
     controller->setAngularSpeed(PI);
 
-    GameObject* playerGO = Engine::getInstance()->sceneManager.getCurrentScene()->getGameObject("Player");
+    GameObject* playerGO = Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");
     GAME_ASSERT(playerGO, "Player not found");
 
     m_target = playerGO->getComponent<BaseCharacter>();

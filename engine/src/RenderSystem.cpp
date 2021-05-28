@@ -70,15 +70,12 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
     }
 }
 
-void RenderSystem::displayGameObjectRef(const GameObject& go, float dist, float size) noexcept
+void RenderSystem::displayGameObjectRef(const GameObject& go, float dist) noexcept
 {
     const Vec3& pos = go.getTransform().getGlobalPosition();
-
-    drawDebugSphere(pos + go.getTransform().getVectorRight() * dist, size, ColorRGBA{1.f, 0.f, 0.f, 1.f});
-
-    drawDebugSphere(pos + go.getTransform().getVectorUp() * dist, size, ColorRGBA{0.f, 1.f, 0.f, 1.f});
-
-    drawDebugSphere(pos + go.getTransform().getVectorForward() * dist, size, ColorRGBA{0.f, 0.f, 1.f, 1.f});
+    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorRight() * dist, ColorRGB::red());
+    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorUp() * dist, ColorRGB::green());
+    drawDebugLine(Vec3::zero(), pos + go.getTransform().getVectorForward() * dist, ColorRGB::blue());
 }
 
 RenderSystem::RenderSystem() noexcept
@@ -120,6 +117,26 @@ RenderSystem::RenderSystem() noexcept
 
 RenderSystem::~RenderSystem() noexcept
 {
+}
+
+void RenderSystem::renderFurstum(const Frustum& frustum, float size)
+{
+    const vec3 pos     = m_mainCamera->getOwner().getTransform().getGlobalPosition();
+    const vec3 up      = m_mainCamera->getOwner().getTransform().getVectorForward();
+    const vec3 rigth   = m_mainCamera->getOwner().getTransform().getVectorRight();
+    const vec3 forawrd = m_mainCamera->getOwner().getTransform().getVectorForward();
+
+    const vec3 cLU = Vec3::cross(frustum.leftFace.getNormal(), up);
+    drawDebugQuad(pos, frustum.leftFace.getNormal(), Vec3::one() * size, ColorRGBA{1.0, 0.5f, 0.5f, 0.8f});
+
+    const vec3 cRU = Vec3::cross(frustum.rightFace.getNormal(), up);
+    drawDebugQuad(pos, frustum.rightFace.getNormal(), Vec3::one() * size, ColorRGBA::red());
+
+    const vec3 cTU = Vec3::cross(frustum.topFace.getNormal(), rigth);
+    drawDebugQuad(pos, frustum.topFace.getNormal(), Vec3::one() * size, ColorRGBA::green());
+
+    const vec3 cBU = Vec3::cross(frustum.bottomFace.getNormal(), rigth);
+    drawDebugQuad(pos, frustum.bottomFace.getNormal(), Vec3::one() * size, ColorRGBA{0.5f, 1.0f, 0.5f, 0.8f});
 }
 
 bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
@@ -273,7 +290,7 @@ void RenderSystem::tryToBindShader(Shader& shader)
     m_currentShaderID   = shader.getID();
     m_currentPShaderUse = &shader;
 
-    sendDataToInitShader(*m_activeCamera, shader);
+    sendDataToInitShader(*m_mainCamera, shader);
 }
 
 void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
@@ -341,36 +358,17 @@ void RenderSystem::tryToSetBackFaceCulling(bool useBackFaceCulling)
 
 void RenderSystem::setDefaultMainCamera() noexcept
 {
-    setMainCamera(m_pCameras.at(0));
+    setMainCamera(m_pCameras.empty() ? nullptr : m_pCameras.at(0));
 }
 
 void RenderSystem::setMainCamera(Camera* newMainCamera) noexcept
 {
     m_mainCamera = newMainCamera;
-
-    if (!m_mainCamera && m_activeCamera)
-        m_mainCamera = m_activeCamera;
 }
 
 Camera* RenderSystem::getMainCamera() noexcept
 {
     return m_mainCamera;
-}
-
-void RenderSystem::setActiveCamera(Camera* newActiveCamera) noexcept
-{
-    if (!m_activeCamera || newActiveCamera)
-    {
-        m_activeCamera = newActiveCamera;
-
-        if (!m_mainCamera)
-            m_mainCamera = m_activeCamera;
-    }
-}
-
-Camera* RenderSystem::getActiveCamera() noexcept
-{
-    return m_activeCamera;
 }
 
 void RenderSystem::resetCurrentRenderPassKey()
@@ -388,109 +386,104 @@ void RenderSystem::resetCurrentRenderPassKey()
     glBindVertexArray(0);
 }
 
-RenderSystem::RenderPipeline RenderSystem::debugRenderPipeline() const noexcept
+void RenderSystem::renderDebugShape(Camera& observer) noexcept
 {
-    return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
-              std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
-              std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
-              std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines,
-              std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
-        // Draw debug shape
+    if (!m_debugShape.empty())
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
+        glUseProgram(shaderToUse->getID());
+
+        for (auto&& shape : m_debugShape)
         {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
+            tryToSetBackFaceCulling(shape.enableBackFaceCullling);
 
-            if (!debugShape.empty())
-            {
-                const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("UniqueColor");
-                glUseProgram(shaderToUse->getID());
+            shaderToUse->setMat4("projectViewModelMatrix", (observer.getProjectionView() * shape.transform.model).e);
 
-                for (auto&& shape : debugShape)
-                {
-                    glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
-                    rs.tryToSetBackFaceCulling(shape.enableBackFaceCullling);
+            shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
 
-                    shaderToUse->setMat4("projectViewModelMatrix",
-                                         (mainCamera.getProjectionView() * shape.transform.model).e);
+            tryToBindMesh(shape.shape->getID());
 
-                    shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
-
-                    rs.tryToBindMesh(shape.shape->getID());
-
-                    glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
-                }
-            }
-
-            // Draw debug line
-            if (!debugLines.empty())
-            {
-                const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("ColorMesh");
-                glUseProgram(shaderToUse->getID());
-                shaderToUse->setMat4("projectViewMatrix", mainCamera.getProjectionView().e);
-                rs.tryToSetBackFaceCulling(false);
-                glEnable(GL_LINE_SMOOTH);
-                struct LineAttrib
-                {
-                    Vec3 pos;
-                    Vec4 col;
-                };
-
-                std::vector<LineAttrib> lines;
-                lines.reserve(debugLines.size());
-
-                for (auto&& line : debugLines)
-                {
-                    lines.emplace_back(LineAttrib{line.pt1, line.color.v});
-                    lines.emplace_back(LineAttrib{line.pt2, line.color.v});
-                }
-
-                GLuint lineVAO, lineVBO;
-                glGenVertexArrays(1, &lineVAO);
-                glGenBuffers(1, &lineVBO);
-                glBindVertexArray(lineVAO);
-                glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
-                glBufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(lines[0]), lines.data(), GL_STATIC_DRAW);
-
-                // Pos
-                glEnableVertexAttribArray(0);
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(lines[0]), (GLvoid*)offsetof(LineAttrib, pos));
-
-                // Color
-                glEnableVertexAttribArray(1);
-                glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(lines[0]), (GLvoid*)offsetof(LineAttrib, col));
-
-                int   offset         = 0;
-                int   first          = 0;
-                int   count          = 0;
-                float previouisWidth = debugLines.front().width;
-                while (first + count < debugLines.size())
-                {
-                    first = first + count;
-
-                    for (count = 0; first + count < debugLines.size(); ++count)
-                    {
-                        if (debugLines[first + count].width != previouisWidth)
-                        {
-                            glLineWidth(debugLines[first + count].width);
-                            previouisWidth = debugLines[first + count].width;
-                            break;
-                        }
-                    }
-                    glDrawArrays(GL_LINES, first * 2, count * 2);
-                }
-
-                glLineWidth(1.0f);
-                glDisable(GL_LINE_SMOOTH);
-                glDeleteVertexArrays(1, &lineVAO);
-                glDeleteBuffers(1, &lineVBO);
-
-                debugLines.clear();
-            }
-
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glDrawArrays(static_cast<GLenum>(shape.drawMode), 0, shape.shape->getVerticesCount());
         }
-        rs.resetCurrentRenderPassKey();
-    };
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    resetCurrentRenderPassKey();
+}
+
+void RenderSystem::renderDebugLine(Camera& observer) noexcept
+{
+    // Draw debug line
+    if (!m_debugLine.empty())
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("ColorMesh");
+        glUseProgram(shaderToUse->getID());
+        shaderToUse->setMat4("projectViewMatrix", observer.getProjectionView().e);
+
+        tryToSetBackFaceCulling(false);
+        glEnable(GL_LINE_SMOOTH);
+
+        GLuint lineVAO, lineVBO;
+        glGenVertexArrays(1, &lineVAO);
+        glGenBuffers(1, &lineVBO);
+        glBindVertexArray(lineVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
+        glBufferData(GL_ARRAY_BUFFER, m_debugLine.size() * sizeof(m_debugLine[0]), m_debugLine.data(), GL_STATIC_DRAW);
+
+        // Pos
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(m_debugLine[0]),
+                              (GLvoid*)offsetof(DebugLine::Point, pos));
+
+        // Color
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(m_debugLine[0]),
+                              (GLvoid*)offsetof(DebugLine::Point, col));
+
+        glDrawArrays(GL_LINES, 0, m_debugLine.size() * 2);
+
+        glDisable(GL_LINE_SMOOTH);
+        glDeleteVertexArrays(1, &lineVAO);
+        glDeleteBuffers(1, &lineVBO);
+    }
+    resetCurrentRenderPassKey();
+}
+
+void RenderSystem::renderFrustumCulling() noexcept
+{
+    if (!m_mainCamera)
+        return;
+
+    Frustum camFrustum = m_mainCamera->getFrustum();
+
+    // DEBUG
+    for (auto&& pSubModel : m_pOpaqueSubModels)
+    {
+        if (!isOnFrustum(camFrustum, pSubModel))
+        {
+            displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
+            continue;
+        }
+        displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
+    }
+
+    /*Display transparent element*/
+
+    for (auto&& pSubModel : m_pTransparenteSubModels)
+    {
+        if (!isOnFrustum(camFrustum, pSubModel))
+        {
+            displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
+            continue;
+        }
+        displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
+    }
 }
 
 RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcept
@@ -498,9 +491,9 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
               std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
-              std::vector<DebugShape>& debugShape, std::vector<DebugLine>& debugLines,
-              std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
-        if (pCameras.empty())
+              std::vector<DebugShape>& debugShape, std::vector<DebugLine::Point>& debugLines,
+              std::vector<ShadowMap>& shadowMaps, Camera* pMainCamera) {
+        if (!pMainCamera)
             return;
 
         rs.shadowMapPipeline();
@@ -512,7 +505,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Frustum camFrustum = mainCamera.getFrustum();
+        Frustum camFrustum = pMainCamera->getFrustum();
 
         /*Display opaque element*/
         {
@@ -522,10 +515,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 if (!rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
                     continue;
                 }
-                rs.displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
 
                 rs.tryToBindShader(*pSubModel->pShader);
                 rs.tryToBindMaterial(*pSubModel->pShader, *pSubModel->pMaterial);
@@ -535,7 +526,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(mainCamera, *pSubModel->pShader,
+                rs.sendModelDataToShader(*pMainCamera, *pSubModel->pShader,
                                          pSubModel->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*pSubModel);
             }
@@ -552,7 +543,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             {
                 if (rs.isOnFrustum(camFrustum, pSubModel))
                 {
-                    float distance = (mainCamera.getOwner().getTransform().getGlobalPosition() -
+                    float distance = (pMainCamera->getOwner().getTransform().getGlobalPosition() -
                                       (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
                                          .sqrLength();
                     mapElemSortedByDistance[distance] = pSubModel;
@@ -570,7 +561,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(mainCamera, *it->second->pShader,
+                rs.sendModelDataToShader(*pMainCamera, *it->second->pShader,
                                          it->second->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*it->second);
             };
@@ -591,7 +582,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 if (particle->getShader())
                 {
                     rs.tryToBindShader(*particle->getShader());
-                    rs.sendModelDataToShader(mainCamera, *particle->getShader(),
+                    rs.sendModelDataToShader(*pMainCamera, *particle->getShader(),
                                              particle->getOwner().getTransform().getModelMatrix());
                 }
                 rs.tryToBindMesh(particle->getMeshID());
@@ -609,8 +600,11 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
     return [](RenderSystem& rs, std::vector<Renderer*>& pRenderers, std::vector<SubModel*>& pOpaqueSubModels,
               std::vector<SubModel*>& pTransparenteSubModels, std::vector<Camera*>& pCameras,
               std::vector<Light*>& pLights, std::vector<ParticleComponent*>& pParticleComponents,
-              std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine>& debugLine,
-              std::vector<ShadowMap>& shadowMaps, Camera& mainCamera) {
+              std::vector<RenderSystem::DebugShape>& debugShape, std::vector<RenderSystem::DebugLine::Point>& debugLine,
+              std::vector<ShadowMap>& shadowMaps, Camera* pMainCamera) {
+        if (!pMainCamera)
+            return;
+
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -618,7 +612,7 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
         glClearColor(0.f, 0.f, 0.f, 0.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        const Frustum camFrustum = mainCamera.getFrustum();
+        const Frustum camFrustum = pMainCamera->getFrustum();
 
         Shader& shaderGameObjectIdentifier =
             *Engine::getInstance()->resourceManager.get<Shader>("gameObjectIdentifier");
@@ -640,7 +634,8 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
 
                 shaderGameObjectIdentifier.setMat4(
                     "projectViewModelMatrix",
-                    (mainCamera.getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix()).e);
+                    (pMainCamera->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                        .e);
                 rs.drawModelPart(*pSubModel);
             }
 
@@ -657,7 +652,8 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
 
                 shaderGameObjectIdentifier.setMat4(
                     "projectViewModelMatrix",
-                    (mainCamera.getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix()).e);
+                    (pMainCamera->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
+                        .e);
                 rs.drawModelPart(*pSubModel);
             }
         }
@@ -728,14 +724,28 @@ void RenderSystem::shadowMapPipeline() noexcept
 
 void RenderSystem::render(RenderPipeline renderPipeline) noexcept
 {
-    if (m_activeCamera == nullptr)
+    if (m_mainCamera == nullptr)
     {
         GPE_ASSERT(!m_pCameras.empty(), "Empty main camera");
-        m_activeCamera = m_mainCamera ? m_mainCamera : m_pCameras[0];
+        m_mainCamera = m_mainCamera ? m_mainCamera : m_pCameras[0];
     }
 
     renderPipeline(*this, m_pRenderers, m_pOpaqueSubModels, m_pTransparenteSubModels, m_pCameras, m_pLights,
-                   m_pParticleComponents, m_debugShape, m_debugLine, m_shadowMaps, *m_activeCamera);
+                   m_pParticleComponents, m_debugShape, m_debugLine, m_shadowMaps, m_mainCamera);
+}
+
+void RenderSystem::updateDebug(double dt) noexcept
+{
+    // Update debug shape life time
+    for (auto&& it = m_debugShape.begin(); it != m_debugShape.end();)
+    {
+        if ((it->duration -= float(dt)) <= 0.f)
+            it = m_debugShape.erase(it);
+        else
+            ++it;
+    }
+
+    m_debugLine.clear();
 }
 
 void RenderSystem::update(double dt) noexcept
@@ -744,15 +754,6 @@ void RenderSystem::update(double dt) noexcept
     for (auto&& particle : m_pParticleComponents)
     {
         particle->update(dt);
-    }
-
-    // Update debug shape life time
-    for (auto&& it = m_debugShape.begin(); it != m_debugShape.end();)
-    {
-        if ((it->duration -= float(dt)) <= 0.f)
-            it = m_debugShape.erase(it);
-        else
-            ++it;
     }
 }
 
@@ -779,13 +780,10 @@ void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Ve
                    color, mode, enableBackFaceCullling, EDebugDrawShapeMode::TRAINGLES, duration});
 }
 
-void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width,
-                                 const ColorRGBA& color) noexcept
+void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, const ColorRGB& color) noexcept
 {
-    DebugLine newLine = {pt1, pt2, width, color};
-    m_debugLine.insert(std::upper_bound(m_debugLine.begin(), m_debugLine.end(), width,
-                                        [](float value, const DebugLine& rhs) { return value > rhs.width; }),
-                       newLine);
+    m_debugLine.emplace_back(DebugLine::Point{pt1, color});
+    m_debugLine.emplace_back(DebugLine::Point{pt2, color});
 }
 
 void RenderSystem::addParticleComponent(ParticleComponent& particleComponent) noexcept
@@ -919,7 +917,8 @@ void RenderSystem::removeSubModel(SubModel& subModel) noexcept
 
 void RenderSystem::addCamera(Camera& camera) noexcept
 {
-    m_pCameras.push_back(&camera);
+    m_pCameras.emplace_back(&camera);
+    m_mainCamera = &camera;
 }
 
 void RenderSystem::updateCameraPointer(Camera* newPointerCamera, Camera* exPointerCamera) noexcept

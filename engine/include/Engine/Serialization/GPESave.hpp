@@ -10,15 +10,35 @@ class Mesh;
 class Shader;
 class Material;
 class Texture;
+struct GameObjectLinker;
+struct ColorRGBA;
 
 template <>
 void save(XmlSaver& context, const AmbiantComponent& data, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, const ColorRGBA& data, const rfk::Field& info);
+
+template <>
+void save(XmlSaver& context, const ColorRGBA& data, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, const ColorRGB& data, const rfk::Field& info);
+
+template <>
+void save(XmlSaver& context, const ColorRGB& data, const XmlSaver::SaveInfo& info);
 
 template <>
 void save(XmlSaver& context, Prefab* const& data, const rfk::Field& info);
 
 template <>
 void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, const GameObjectLinker& data, const rfk::Field& info);
+
+template <>
+void save(XmlSaver& context, const GameObjectLinker& data, const XmlSaver::SaveInfo& info);
 
 template <>
 void save(XmlSaver& context, Shader* const& data, const rfk::Field& info);

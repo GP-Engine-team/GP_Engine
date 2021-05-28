@@ -9,6 +9,8 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
 template <typename T>
 bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const char* name)
 {
+    ImGui::PushID(&inspected);
+
     const ImGuiTreeNodeFlags nodeFlag =
         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
@@ -82,6 +84,7 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
         ImGui::TreePop();
     }
 
+    ImGui::PopID();
     return false;
 }
 

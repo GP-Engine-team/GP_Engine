@@ -36,18 +36,20 @@ private:
     GLFWwindow* m_window;
 
 public:
-    SceneEditor         m_sceneEditor;
-    GameViewer          m_gameViewer;
-    LogInspector        m_logInspector;
-    ProjectContent      m_projectContent;
-    SceneGraph          m_sceneGraph;
-    GameControlBar      m_gameControlBar;
-    std::string         m_saveFolder;
-    GPE::IInspectable*  m_inspectedObject;
-    GPE::ReloadableCpp* m_reloadableCpp;
+    SceneEditor         sceneEditor;
+    GameViewer          gameViewer;
+    LogInspector        logInspector;
+    ProjectContent      projectContent;
+    SceneGraph          sceneGraph;
+    GameControlBar      gameControlBar;
+    std::string         saveFolder;
+    GPE::IInspectable*  inspectedObject;
+    GPE::ReloadableCpp* reloadableCpp;
 
-    bool                m_showAppStyleEditor;
-    bool                m_showImGuiDemoWindows;
+    bool showAppStyleEditor;
+    bool showImGuiDemoWindows;
+
+    std::function<void(Editor&)> OnUIBeginFrame;
 
 private:
     void setupDearImGui();
@@ -70,6 +72,7 @@ public:
     void update(EditorStartup& startup);
     void render();
     bool isRunning();
+    void updateKeyboardShorthand(EditorStartup& startup);
 
     // Removes Editor elements from the scene before saving
     void saveScene(GPE::Scene* scene, const char* path);

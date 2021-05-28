@@ -232,6 +232,12 @@
     <ClCompile Include="src\TimeSystem.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="third_party\imgui\imguizmo.cpp">
+      <Filter>third_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextureInspectorPanel.cpp">
+        <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\TransformComponent.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -755,6 +761,12 @@
     </ClInclude>
     <ClInclude Include="third_party\include\KHR\khrplatform.h">
       <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\imguizmo.h">
+      <Filter>third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\TextureInspectorPanel.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp">
       <Filter>third_party</Filter>

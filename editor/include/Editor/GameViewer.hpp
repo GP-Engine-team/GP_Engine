@@ -18,11 +18,14 @@ class EditorStartup;
 class GameViewer
 {
 public:
-    WindowFBO            framebuffer;
-    GLFWwindow*          window;
+    WindowFBO   framebuffer;
+    GLFWwindow* window;
 
 private:
-    bool                 m_captureInputs;
+    bool m_captureInputs           = false;
+    bool cursorLockStateInGame     = false;
+    bool cursorTrackingStateInGame = false;
+    bool setMouseInWindow          = false;
 
 public:
     GameViewer(int width = 1, int height = 1);
@@ -31,7 +34,8 @@ public:
 
     void captureInputs();
 
-    void releaseInputs();
+    void lockInputToGame();
+    void lockInputToEditor();
 };
 
-}
+} // namespace Editor
