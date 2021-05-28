@@ -61,22 +61,25 @@ void SceneEditor::renderControlBar()
         ImGui::Separator();
 
         float sliderWidth = (ImGui::GetContentRegionAvailWidth() - getGizmoControlBarWidth()) / 2.f;
-        float ts          = Engine::getInstance()->timeSystem.getTimeScale();
-        ImGui::TextUnformatted("Time scale");
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(sliderWidth);
-        if (ImGui::SliderFloat("##TimeScaleSlider", &ts, 0.f, 1.f))
+        if (sliderWidth > 0)
         {
-            Engine::getInstance()->timeSystem.setTimeScale(ts);
+            float ts = Engine::getInstance()->timeSystem.getTimeScale();
+            ImGui::TextUnformatted("Time scale");
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(sliderWidth);
+            if (ImGui::SliderFloat("##TimeScaleSlider", &ts, 0.f, 1.f))
+            {
+                Engine::getInstance()->timeSystem.setTimeScale(ts);
+            }
+
+            ImGui::Separator();
+
+            ImGui::TextUnformatted("Speed");
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(sliderWidth);
+            ImGui::SliderFloat("##SpeedSlider", &view.freeFly.m_speed, 0.f, 100.f);
+            ImGui::Separator();
         }
-
-        ImGui::Separator();
-
-        ImGui::TextUnformatted("Speed");
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(sliderWidth);
-        ImGui::SliderFloat("##SpeedSlider", &view.freeFly.m_speed, 0.f, 100.f);
-        ImGui::Separator();
 
         renderGizmoControlBar();
         ImGui::EndMenuBar();
