@@ -1,6 +1,7 @@
 #include "Engine/Resources/ParticleSystem/ParticleUpdater.hpp"
 
 #include <Engine/Resources/Color.hpp>
+#include <GPM/Calc.hpp>
 #include <algorithm>
 #include <assert.h>
 
@@ -33,6 +34,26 @@ void EulerUpdater::update(double dt, ParticleData* p)
 U16BMask EulerUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
+}
+
+void SizeUpdater::update(double dt, ParticleData* p)
+{
+    Vec4*  pos       = p->m_pos.get();
+    float* startSize = p->m_startSize.get();
+    float* endSize   = p->m_endSize.get();
+    Vec4*  t         = p->m_time.get();
+
+    const size_t endId = p->m_countAlive;
+
+    // Use the w channel of the position
+    for (size_t i = 0; i < endId; ++i)
+        pos[i].w = lerp(startSize[i], endSize[i], t[i].z);
+}
+
+U16BMask SizeUpdater::getRequiereConfig() const
+{
+    return ParticleData::EParam::POSITION | ParticleData::EParam::TIME | ParticleData::EParam::START_SIZE |
+           ParticleData::EParam::END_SIZE;
 }
 
 void FloorUpdater::update(double dt, ParticleData* p)

@@ -33,12 +33,27 @@ U16BMask BoxPosGen::getRequiereConfig() const
     return ParticleData::EParam::POSITION;
 }
 
-void RoundPosGen::generate(ParticleData* p, size_t startId, size_t endId)
+void SizeGen::generate(ParticleData* p, size_t startId, size_t endId)
 {
     for (size_t i = startId; i < endId; ++i)
     {
+        p->m_startSize[i] = Random::ranged(m_minStartSize, m_maxStartSize);
+        p->m_endSize[i]   = Random::ranged(m_minEndSize, m_maxEndSize);
+    }
+}
+
+U16BMask SizeGen::getRequiereConfig() const
+{
+    return ParticleData::EParam::START_SIZE | ParticleData::EParam::END_SIZE;
+}
+
+void RoundPosGen::generate(ParticleData* p, size_t startId, size_t endId)
+{
+    const Vec4 center4 = Vec4{m_center, 1.f};
+    for (size_t i = startId; i < endId; ++i)
+    {
         float ang   = Random::ranged(0.f, PI * 2.f);
-        p->m_pos[i] = m_center + Vec4(m_radX * sin(ang), m_radY * cos(ang), 0.f, 1.f);
+        p->m_pos[i] = center4 + Vec4(m_radX * sin(ang), m_radY * cos(ang), 0.f, 0.f);
     }
 }
 

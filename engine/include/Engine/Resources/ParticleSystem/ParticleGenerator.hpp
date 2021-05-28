@@ -49,8 +49,8 @@ namespace GPE RFKNamespace()
     class RFKClass(Serialize(), Inspect()) BoxPosGen : public ParticleGenerator
     {
     public:
-        RFKField(Serialize(), Inspect()) GPM::Vec4 m_pos{0.0};
-        RFKField(Serialize(), Inspect()) GPM::Vec4 m_maxStartPosOffset{0.0};
+        RFKField(Serialize(), Inspect()) GPM::Vec3 m_pos{0.0};
+        RFKField(Serialize(), Inspect()) GPM::Vec3 m_maxStartPosOffset{0.0};
 
     public:
         BoxPosGen()
@@ -64,10 +64,30 @@ namespace GPE RFKNamespace()
         BoxPosGen_GENERATED
     };
 
+    class RFKClass(Serialize(), Inspect()) SizeGen : public ParticleGenerator
+    {
+    public:
+        RFKField(Serialize(), Inspect()) float m_minStartSize{1.0};
+        RFKField(Serialize(), Inspect()) float m_maxStartSize{20.0};
+        RFKField(Serialize(), Inspect()) float m_minEndSize{2.0};
+        RFKField(Serialize(), Inspect()) float m_maxEndSize{22.0};
+
+    public:
+        SizeGen()
+        {
+        }
+
+        virtual void generate(ParticleData * p, size_t startId, size_t endId) override;
+
+        U16BMask getRequiereConfig() const override;
+
+        SizeGen_GENERATED
+    };
+
     class RFKClass(Serialize(), Inspect()) RoundPosGen : public ParticleGenerator
     {
     public:
-        RFKField(Serialize(), Inspect()) GPM::Vec4 m_center{0.0};
+        RFKField(Serialize(), Inspect()) GPM::Vec3 m_center{0.0};
         RFKField(Serialize(), Inspect()) float     m_radX{0.0};
         RFKField(Serialize(), Inspect()) float     m_radY{0.0};
 
@@ -75,7 +95,7 @@ namespace GPE RFKNamespace()
         RoundPosGen()
         {
         }
-        RoundPosGen(const GPM::Vec4& center, double radX, double radY)
+        RoundPosGen(const GPM::Vec3& center, double radX, double radY)
             : m_center(center), m_radX((float)radX), m_radY((float)radY)
         {
         }
