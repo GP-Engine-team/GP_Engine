@@ -134,6 +134,7 @@ void ParticleComponent::inspect(InspectContext& context)
     ImGui::TextUnformatted("Generator");
     PARTICLE_GENERATOR_INSPECT(BoxPosGen)
     PARTICLE_GENERATOR_INSPECT(RoundPosGen)
+    PARTICLE_GENERATOR_INSPECT(SizeGen)
     PARTICLE_GENERATOR_INSPECT(BasicColorGen)
     PARTICLE_GENERATOR_INSPECT(BasicVelGen)
     PARTICLE_GENERATOR_INSPECT(SphereVelGen)
@@ -142,6 +143,7 @@ void ParticleComponent::inspect(InspectContext& context)
 
     ImGui::TextUnformatted("Updater");
     PARTICLE_UPDATER_INSPECT(EulerUpdater)
+    PARTICLE_UPDATER_INSPECT(SizeUpdater)
     PARTICLE_UPDATER_INSPECT(FloorUpdater)
     PARTICLE_UPDATER_INSPECT(AttractorUpdater)
     PARTICLE_UPDATER_INSPECT(BasicColorUpdater)
@@ -156,6 +158,12 @@ void ParticleComponent::inspect(InspectContext& context)
     {
         start();
     }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Stop"))
+    {
+        reset();
+    }
 }
 
 void ParticleComponent::generate()
@@ -163,7 +171,14 @@ void ParticleComponent::generate()
     if (!std::isinf(m_duration))
         m_emitRate = m_count / m_duration;
 
-    m_particles.generate(m_count, 0);
+    U16BMask mask;
+    for (auto&& updater : m_updaters)
+        mask.add(updater->getRequiereConfig().get());
+
+    for (auto&& generator : m_generators)
+        mask.add(generator->getRequiereConfig().get());
+
+    m_particles.generate(m_count, mask);
 
     initializeRenderer();
 }
@@ -221,8 +236,8 @@ void ParticleComponent::initializeDefaultSetting()
     {
         // pos:
         auto m_posGenerator                 = std::make_unique<BoxPosGen>();
-        m_posGenerator->m_pos               = Vec4{.0f, .0f, .0f, .0f};
-        m_posGenerator->m_maxStartPosOffset = Vec4{.0f, .0f, .0f, .0f};
+        m_posGenerator->m_pos               = Vec3{.0f, .0f, .0f};
+        m_posGenerator->m_maxStartPosOffset = Vec3{.0f, .0f, .0f};
         m_generators.emplace_back(std::move(m_posGenerator));
 
         auto m_colGenerator           = std::make_unique<BasicColorGen>();

@@ -25,6 +25,12 @@ File_GENERATED
 using namespace GPE;
 using namespace GPM;
 
+bool SubModel::isValide()
+{
+    // TODO: remove diffuse texture check
+    return pModel && pMesh && pShader && pMaterial && pMaterial->getDiffuseTexture();
+}
+
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
 {
     return lhs->pShader->getID() < rhs->pShader->getID() || lhs->pMesh->getID() < rhs->pMesh->getID() ||
@@ -183,7 +189,8 @@ void Model::updateToSystem() noexcept
         for (SubModel& subMesh : m_subModels)
         {
             subMesh.pModel = this;
-            getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
+            if (subMesh.isValide())
+                getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
         }
     }
     else

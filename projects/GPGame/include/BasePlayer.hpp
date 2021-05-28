@@ -8,6 +8,7 @@
 
 #include <BaseCharacter.hpp>
 
+#include <Engine/ECS/Component/ParticleComponent.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Generated/BasePlayer.rfk.h>
 
@@ -31,10 +32,14 @@ namespace GPG RFKNamespace()
 
         RFKField(Serialize()) bool displayDepthMenu = false;
 
-        RFKField(Serialize()) GPE::InputComponent*                          input  = nullptr;
-        RFKField(Serialize()) GPE::AudioComponent*                          source = nullptr;
+        RFKField(Serialize()) GPE::InputComponent* input  = nullptr;
+        RFKField(Serialize()) GPE::AudioComponent* source = nullptr;
+
         RFKField(Inspect(), Serialize()) std::vector<GPE::GameObjectLinker> m_firearmsGO;
         RFKField() std::vector<Firearm*>                                    m_firearms;
+
+        RFKField(Inspect(), Serialize()) GPE::GameObjectLinker m_groundParticleGO;
+        RFKField() GPE::ParticleComponent*                     m_pGroundParticleComponent;
 
     public:
         BasePlayer() noexcept = default;

@@ -57,6 +57,21 @@ namespace GPE RFKNamespace()
         EulerUpdater_GENERATED
     };
 
+    class RFKClass(Serialize(), Inspect()) SizeUpdater : public ParticleUpdater
+    {
+
+    public:
+        SizeUpdater()
+        {
+        }
+
+        virtual void update(double dt, ParticleData* p) override;
+
+        U16BMask getRequiereConfig() const override;
+
+        SizeUpdater_GENERATED
+    };
+
     // collision with the floor :) todo: implement a collision model
     class RFKClass(Serialize(), Inspect()) FloorUpdater : public ParticleUpdater
     {
