@@ -92,13 +92,7 @@ void Editor::renderMenuBar()
 
             if (ImGui::MenuItem("Save"))
             {
-                if (saveFolder.empty())
-                    saveFolder = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
-
-                std::filesystem::path path = saveFolder;
-                path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
-
-                saveScene(sceneEditor.view.pScene, path.string().c_str());
+                saveCurrentScene();
             }
 
             if (ImGui::MenuItem((std::string("Select first scene : ") +
@@ -312,16 +306,13 @@ void Editor::loadScene(GPE::Scene* scene, const char* path)
 
 void Editor::saveCurrentScene()
 {
-    GPE::Scene*           currentScene = sceneEditor.view.pScene;
-    std::filesystem::path saveFolder   = saveFolder;
-    saveFolder /= currentScene->getName() + ".GPScene";
-    const std::string path = saveFolder.string();
-    sceneEditor.view.unbindScene();
+    if (saveFolder.empty())
+        saveFolder = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
 
-    auto saveFunc = GET_PROCESS((*reloadableCpp), saveSceneToPath);
-    saveFunc(currentScene, path.c_str(), GPE::SavedScene::EType::XML);
+    std::filesystem::path path = saveFolder;
+    path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
 
-    sceneEditor.view.bindScene(*currentScene);
+    saveScene(sceneEditor.view.pScene, path.string().c_str());
 }
 
 void Editor::reloadCurrentScene()
@@ -420,13 +411,7 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
     if (ImGui::IsKeyPressed(GLFW_KEY_S) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
-        if (saveFolder.empty())
-            saveFolder = openFolderExplorerAndGetRelativePath(L"Save location").string().c_str();
-
-        std::filesystem::path path = saveFolder;
-        path /= Engine::getInstance()->sceneManager.getCurrentScene()->getName() + ".GPScene";
-
-        saveScene(sceneEditor.view.pScene, path.string().c_str());
+        saveCurrentScene();
     }
 }
 
