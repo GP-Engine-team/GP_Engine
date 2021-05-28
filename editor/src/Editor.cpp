@@ -399,7 +399,7 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
         startup.stopGame();
     }
 
-    if (ImGui::IsKeyPressed(GLFW_KEY_DELETE))
+    if (ImGui::IsKeyPressed(GLFW_KEY_DELETE) && !ImGui::IsAnyItemActive())
     {
         if (GameObject* pGo = dynamic_cast<GameObject*>(inspectedObject))
         {

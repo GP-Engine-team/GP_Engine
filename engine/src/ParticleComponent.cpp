@@ -158,6 +158,12 @@ void ParticleComponent::inspect(InspectContext& context)
     {
         start();
     }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Stop"))
+    {
+        reset();
+    }
 }
 
 void ParticleComponent::generate()
