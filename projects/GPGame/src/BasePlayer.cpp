@@ -229,10 +229,14 @@ void BasePlayer::onGUI()
 
         if (m_firearms.size())
         {
-            SetNextElementLayout(0.f, 1.f, size, EHAlign::Left, EVAlign::Bottom);
+            size = ImGui::CalcTextSize("30/30");
+            SetNextElementLayout(0.05f, 0.95f, size, EHAlign::Left, EVAlign::Bottom);
             Text("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
                  m_firearms.front()->getMagazine().getCapacity());
         }
+        size = ImGui::CalcTextSize("FPS : 144");
+        SetNextElementLayout(0.95f, 0.f, size, EHAlign::Right, EVAlign::Top);
+        Text("FPS : %0.0f", ImGui::GetIO().Framerate);
     }
 }
 

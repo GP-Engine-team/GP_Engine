@@ -120,6 +120,11 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
 void Camera::onPostLoad()
 {
     getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
+    if (type == EProjectionType::PERSPECTIVE)
+    {
+        hSide = zfar * tanf(fovX * .5f) * 2.f;
+        vSide = zfar * tanf(fovY * .5f) * 2.f;
+    }
     updateToSystem();
     updateView();
 }
