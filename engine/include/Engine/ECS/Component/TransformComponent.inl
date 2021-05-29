@@ -97,17 +97,17 @@ inline GPM::Vec3 TransformComponent::getVectorUp() const noexcept
 
 inline GPM::Vec3 TransformComponent::getLocalForward() const noexcept
 {
-    return GPM::Transform{GPM::toMatrix4(m_spaceAttribut.rotation)}.forward();
+    return m_spaceAttribut.rotation * GPM::Vec3::forward();
 }
 
 inline GPM::Vec3 TransformComponent::getLocalRight() const noexcept
 {
-    return GPM::Transform{GPM::toMatrix4(m_spaceAttribut.rotation)}.right();
+    return m_spaceAttribut.rotation * GPM::Vec3::right();
 }
 
 inline GPM::Vec3 TransformComponent::getLocalUp() const noexcept
 {
-    return GPM::Transform{GPM::toMatrix4(m_spaceAttribut.rotation)}.up();
+    return m_spaceAttribut.rotation * GPM::Vec3::up();
 }
 
 inline constexpr GPM::SplitTransform& TransformComponent::getSpacialAttribut()
