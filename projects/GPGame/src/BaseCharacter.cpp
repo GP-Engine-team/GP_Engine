@@ -30,8 +30,8 @@ void BaseCharacter::start()
     GAME_ASSERT(controller, "null");
 
     // Setup controller
-    controller->setHasGravity(true);
-    controller->setSpeed(1.f);
+    //controller->setHasGravity(true);
+    //controller->setSpeed(1.f);
     controller->setAngularSpeed(HALF_PI / 8.f);
 }
 
