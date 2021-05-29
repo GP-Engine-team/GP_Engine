@@ -2,7 +2,6 @@
 
 #include "DataInspector.hpp"
 #include <Engine/Resources/Color.hpp>
-#include <Engine/Resources/Linker.hpp>
 #include <Engine/Resources/Type.hpp>
 
 namespace GPE
@@ -30,27 +29,27 @@ bool DataInspector::inspect(InspectContext& context, AmbiantComponent& inspected
 
 template <>
 bool DataInspector::inspect(InspectContext& context, AmbiantComponent& inspected, const char* name);
-
-namespace DataInspector
-{
-template <typename T>
-bool inspect(InspectContext& context, Linker<T>& inspected, const rfk::Field& info);
-
-template <typename T>
-bool inspect(InspectContext& context, Linker<T>& inspected, const char* name);
-
-template <typename T>
-void inspect(InspectContext& context, Linker<T>& inspected);
-} // namespace DataInspector
-
-template <>
-bool DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info);
-
-template <>
-bool DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected, const char* name);
-
-template <>
-void DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected);
+//
+// namespace DataInspector
+//{
+// template <typename T>
+// bool inspect(InspectContext& context, Linker<T>& inspected, const rfk::Field& info);
+//
+// template <typename T>
+// bool inspect(InspectContext& context, Linker<T>& inspected, const char* name);
+//
+// template <typename T>
+// void inspect(InspectContext& context, Linker<T>& inspected);
+//} // namespace DataInspector
+//
+// template <>
+// bool DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info);
+//
+// template <>
+// bool DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected, const char* name);
+//
+// template <>
+// void DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected);
 
 template <>
 bool DataInspector::inspect(InspectContext& context, class Prefab*& inspected, const rfk::Field& info);

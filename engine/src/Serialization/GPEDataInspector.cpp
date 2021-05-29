@@ -72,58 +72,58 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent&
 
     return hasChanged;
 }
-
-template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, Linker<GameObject>& inspected, const char* name)
-{
-    startProperty(name);
-    bool hasChanged = false;
-
-    ImGui::Selectable(inspected.pData == nullptr ? "None" : inspected.pData->getName().c_str());
-
-    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
-    {
-        ImGui::OpenPopup("GOSelection");
-    }
-
-    if (ImGui::BeginPopup("GOSelection"))
-    {
-        if (ImGui::MenuItem("Remove", NULL, false))
-        {
-            inspected.pData = nullptr;
-            hasChanged      = true;
-        }
-
-        ImGui::EndPopup();
-    }
-
-    // Drop from scene graph
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(GPE::GameObject*));
-            inspected.pData = *static_cast<GPE::GameObject**>(payload->Data);
-            hasChanged      = true;
-        }
-        ImGui::EndDragDropTarget();
-    }
-    endProperty();
-
-    return hasChanged;
-}
-
-template <>
-void GPE::DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected)
-{
-    GPE::DataInspector::inspect(context, inspected, "GameObject");
-}
+//
+// template <>
+// bool GPE::DataInspector::inspect(GPE::InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info)
+//{
+//    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+//}
+//
+// template <>
+// bool GPE::DataInspector::inspect(GPE::InspectContext& context, Linker<GameObject>& inspected, const char* name)
+//{
+//    startProperty(name);
+//    bool hasChanged = false;
+//
+//    ImGui::Selectable(inspected.pData == nullptr ? "None" : inspected.pData->getName().c_str());
+//
+//    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
+//    {
+//        ImGui::OpenPopup("GOSelection");
+//    }
+//
+//    if (ImGui::BeginPopup("GOSelection"))
+//    {
+//        if (ImGui::MenuItem("Remove", NULL, false))
+//        {
+//            inspected.pData = nullptr;
+//            hasChanged      = true;
+//        }
+//
+//        ImGui::EndPopup();
+//    }
+//
+//    // Drop from scene graph
+//    if (ImGui::BeginDragDropTarget())
+//    {
+//        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
+//        {
+//            IM_ASSERT(payload->DataSize == sizeof(GPE::GameObject*));
+//            inspected.pData = *static_cast<GPE::GameObject**>(payload->Data);
+//            hasChanged      = true;
+//        }
+//        ImGui::EndDragDropTarget();
+//    }
+//    endProperty();
+//
+//    return hasChanged;
+//}
+//
+// template <>
+// void GPE::DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected)
+//{
+//    GPE::DataInspector::inspect(context, inspected, "GameObject");
+//}
 
 template <>
 bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const rfk::Field& info)

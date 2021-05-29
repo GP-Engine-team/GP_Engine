@@ -1,30 +1,28 @@
-#include <Engine/Intermediate/GameObject.hpp>
-#include <Engine/Resources/Linker.hpp>
-#include <Engine/Serialization/Inspect.hpp>
-#include <Engine/Serialization/xml/xmlSaver.hpp>
-
-using namespace GPE;
-
-void Linker<GameObject>::setData(GameObject& newData)
+namespace GPE
 {
-    pData = &newData;
+template <typename T>
+void Linker<T>::setData(GameObject& owner)
+{
+    pData = owner.getComponent<T>();
 }
 
-void Linker<GameObject>::save(XmlSaver& context) const
+template <typename T>
+void Linker<T>::save(XmlSaver& context) const
 {
     std::string str = "";
     if (pData)
     {
-        str = pData->getAbsolutePath();
+        str = pData->getOwner().getAbsolutePath();
         str.erase(0, str.find_first_of('/', 0) + 1); // remove the world
     }
 
-    GPE::save(context, str, XmlSaver::SaveInfo{"GLinker", "GLinker", 0});
+    GPE::save(context, str, XmlSaver::SaveInfo{"CLinker", "CLinker", 0});
 }
 
-void Linker<GameObject>::inspect(InspectContext& context)
+template <typename T>
+void Linker<T>::inspect(InspectContext& context)
 {
-    DataInspector::startProperty("GameObject");
+    DataInspector::startProperty("Component");
     // bool hasChanged = false;
 
     ImGui::Selectable(pData == nullptr ? "None" : pData->getName().c_str());
@@ -51,8 +49,12 @@ void Linker<GameObject>::inspect(InspectContext& context)
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
         {
             IM_ASSERT(payload->DataSize == sizeof(GPE::GameObject*));
-            pData = *static_cast<GPE::GameObject**>(payload->Data);
-            // hasChanged      = true;
+            GPE::GameObject* pGo = *static_cast<GPE::GameObject**>(payload->Data);
+            if (T* pCom = pGo->getComponent<T>())
+            {
+                pData = pCom;
+                // hasChanged      = true;
+            }
         }
         ImGui::EndDragDropTarget();
     }
@@ -60,3 +62,4 @@ void Linker<GameObject>::inspect(InspectContext& context)
 
     // return hasChanged;
 }
+} // namespace GPE

@@ -2,8 +2,6 @@
 
 #include "xml/xmlSaver.hpp"
 
-#include <Engine/Resources/Linker.hpp>
-
 namespace GPE
 {
 union AmbiantComponent;
@@ -34,9 +32,6 @@ void save(XmlSaver& context, Prefab* const& data, const rfk::Field& info);
 
 template <>
 void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info);
-
-template <typename T>
-void save(XmlSaver& context, const Linker<T>& data, const rfk::Field& info);
 
 template <>
 void save(XmlSaver& context, Shader* const& data, const rfk::Field& info);
