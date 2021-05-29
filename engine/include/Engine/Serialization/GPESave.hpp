@@ -38,14 +38,6 @@ void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info
 template <typename T>
 void save(XmlSaver& context, const Linker<T>& data, const rfk::Field& info);
 
-// Linker of component
-template <typename T>
-void save(XmlSaver& context, const Linker<T>& data, const XmlSaver::SaveInfo& info);
-
-// Linker of gameObject
-template <>
-void save(XmlSaver& context, const Linker<GameObject>& data, const XmlSaver::SaveInfo& info);
-
 template <>
 void save(XmlSaver& context, Shader* const& data, const rfk::Field& info);
 

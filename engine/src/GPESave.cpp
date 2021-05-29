@@ -71,19 +71,6 @@ void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info
 }
 
 template <>
-void save(XmlSaver& context, const Linker<GameObject>& data, const XmlSaver::SaveInfo& info)
-{
-    std::string str = "";
-    if (data.pData)
-    {
-        str = data.pData->getAbsolutePath();
-        str.erase(0, str.find_first_of('/', 0) + 1); // remove the world
-    }
-
-    GPE::save(context, str, XmlSaver::SaveInfo{info.name, info.typeName, 0});
-}
-
-template <>
 void save(XmlSaver& context, Shader* const& data, const rfk::Field& info)
 {
     GPE::save(context, data, fieldToSaveInfo(info));

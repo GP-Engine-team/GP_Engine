@@ -6,6 +6,8 @@
 
 #pragma once
 
+class XmlSaver;
+
 namespace GPE
 {
 class GameObject;
@@ -31,6 +33,8 @@ struct Linker : public BaseLinker
     T* pData = nullptr;
 
     void setData(GameObject& owner) override;
+
+    void save(XmlSaver& context) const;
 };
 
 /**
@@ -42,5 +46,7 @@ struct Linker<GameObject> : public BaseLinker
     GameObject* pData = nullptr;
 
     void setData(GameObject& newData) override;
+
+    void save(XmlSaver& context) const;
 };
 } // namespace GPE

@@ -31,6 +31,18 @@ bool DataInspector::inspect(InspectContext& context, AmbiantComponent& inspected
 template <>
 bool DataInspector::inspect(InspectContext& context, AmbiantComponent& inspected, const char* name);
 
+namespace DataInspector
+{
+template <typename T>
+bool inspect(InspectContext& context, Linker<T>& inspected, const rfk::Field& info);
+
+template <typename T>
+bool inspect(InspectContext& context, Linker<T>& inspected, const char* name);
+
+template <typename T>
+void inspect(InspectContext& context, Linker<T>& inspected);
+} // namespace DataInspector
+
 template <>
 bool DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info);
 
@@ -39,15 +51,6 @@ bool DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspect
 
 template <>
 void DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected);
-
-// template <typename T>
-// bool DataInspector::inspect(InspectContext& context, Linker<T>& inspected, const rfk::Field& info);
-//
-// template <typename T>
-// bool DataInspector::inspect(InspectContext& context, Linker<T>& inspected, const char* name);
-//
-// template <typename T>
-// void DataInspector::inspect(InspectContext& context, Linker<T>& inspected);
 
 template <>
 bool DataInspector::inspect(InspectContext& context, class Prefab*& inspected, const rfk::Field& info);

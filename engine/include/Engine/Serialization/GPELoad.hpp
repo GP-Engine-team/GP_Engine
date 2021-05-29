@@ -31,9 +31,6 @@ void load(XmlLoader& context, Linker<T>& data, const XmlLoader::LoadInfo& info)
     context.linkers[path] = &data;
 }
 
-// template <>
-// void load<Linker<GameObject>>(XmlLoader& context, Linker<GameObject>& data, const XmlLoader::LoadInfo& info);
-
 template <>
 void load(XmlLoader& context, Prefab*& data, const XmlLoader::LoadInfo& info);
 
