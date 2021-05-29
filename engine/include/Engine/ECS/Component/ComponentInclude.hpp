@@ -23,3 +23,5 @@ __RFK15829655788413352100u_GENERATED
                     __RFK15829655788413352100u_GENERATED
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
                         __RFK15829655788413352100u_GENERATED
+#include <Engine/ECS/Component/ShakeEffect.hpp>
+                            __RFK15829655788413352100u_GENERATED

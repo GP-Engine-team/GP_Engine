@@ -8,6 +8,7 @@
 
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Linker.hpp>
 #include <Engine/Resources/Prefab.hpp>
 
 // Generated
@@ -26,7 +27,7 @@ namespace GPG RFKNamespace()
 
         struct RFKStruct(Inspect(), Serialize()) Spawner
         {
-            RFKField(Inspect(), Serialize()) GPE::GameObjectLinker go;
+            RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> go;
 
             Spawner_GENERATED
         };
@@ -55,10 +56,10 @@ namespace GPG RFKNamespace()
         float                                         sqrTotalRadius = 0;
         // RFKField(Inspect(), Serialize()) float                 m_spawnDelay{1.f};         /*in sec*/
         // RFKField(Inspect(), Serialize()) float                 m_spawnDelayInterval{0.f}; /*in sec*/
-        RFKField(Inspect(), Serialize()) float                 m_delayCount{0.f};
-        RFKField(Inspect(), Serialize()) float                 m_nextDelay{0.f};
-        RFKField(Inspect(), Serialize()) GPE::GameObjectLinker m_enemiesContainer;
-        RFKField() GPE::GameObject*                            m_player;
+        RFKField(Inspect(), Serialize()) float                        m_delayCount{0.f};
+        RFKField(Inspect(), Serialize()) float                        m_nextDelay{0.f};
+        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> m_enemiesContainer;
+        RFKField() GPE::GameObject*                                   m_player;
 
         RFKField(Inspect()) bool m_debug = true;
 

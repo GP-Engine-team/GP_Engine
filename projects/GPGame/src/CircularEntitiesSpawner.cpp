@@ -24,7 +24,7 @@ void CircularEntitiesSpawner::onPostLoad()
 
 void CircularEntitiesSpawner::start()
 {
-    GAME_ASSERT(m_container.pGo, "Missing container ref in CircularEntitiesSpawner");
+    GAME_ASSERT(m_container.pData, "Missing container ref in CircularEntitiesSpawner");
     m_nextDelay = m_spawnDelay + Random::ranged(-m_spawnDelayInterval, m_spawnDelayInterval);
 
     for (auto&& elem : m_entitiesToSpawnInfo)
@@ -52,7 +52,7 @@ void CircularEntitiesSpawner::update(double deltaTime)
         unsigned int indexEntityToSpawn = Random::ranged<int>(m_entitiesToSpawnInfo.size() - 1);
 
         /*Spawn this entity*/
-        GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_container.pGo);
+        GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_container.pData);
         spawnedEntity->getTransform().setTranslation(newPosition);
 
         // if (spawnedEntity->getComponent<EnnemyController>())

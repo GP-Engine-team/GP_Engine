@@ -74,18 +74,18 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent&
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObjectLinker& inspected, const rfk::Field& info)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObjectLinker& inspected, const char* name)
+bool GPE::DataInspector::inspect(GPE::InspectContext& context, Linker<GameObject>& inspected, const char* name)
 {
     startProperty(name);
     bool hasChanged = false;
 
-    ImGui::Selectable(inspected.pGo == nullptr ? "None" : inspected.pGo->getName().c_str());
+    ImGui::Selectable(inspected.pData == nullptr ? "None" : inspected.pData->getName().c_str());
 
     if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
     {
@@ -96,8 +96,8 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObjectLinker&
     {
         if (ImGui::MenuItem("Remove", NULL, false))
         {
-            inspected.pGo = nullptr;
-            hasChanged    = true;
+            inspected.pData = nullptr;
+            hasChanged      = true;
         }
 
         ImGui::EndPopup();
@@ -109,8 +109,8 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObjectLinker&
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
         {
             IM_ASSERT(payload->DataSize == sizeof(GPE::GameObject*));
-            inspected.pGo = *static_cast<GPE::GameObject**>(payload->Data);
-            hasChanged    = true;
+            inspected.pData = *static_cast<GPE::GameObject**>(payload->Data);
+            hasChanged      = true;
         }
         ImGui::EndDragDropTarget();
     }
@@ -120,10 +120,66 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObjectLinker&
 }
 
 template <>
-void GPE::DataInspector::inspect(InspectContext& context, GameObjectLinker& inspected)
+void GPE::DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected)
 {
     GPE::DataInspector::inspect(context, inspected, "GameObject");
 }
+
+// template <typename T>
+// bool GPE::DataInspector::inspect(GPE::InspectContext& context, Linker<T>& inspected, const rfk::Field& info)
+//{
+//    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+//}
+//
+// template <typename T>
+// bool GPE::DataInspector::inspect(GPE::InspectContext& context, Linker<T>& inspected, const char* name)
+//{
+//    startProperty(name);
+//    bool hasChanged = false;
+//
+//    ImGui::Selectable(inspected.pData == nullptr ? "None" : inspected.pData->getName().c_str());
+//
+//    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
+//    {
+//        ImGui::OpenPopup("GOSelection");
+//    }
+//
+//    if (ImGui::BeginPopup("GOSelection"))
+//    {
+//        if (ImGui::MenuItem("Remove", NULL, false))
+//        {
+//            inspected.pData = nullptr;
+//            hasChanged      = true;
+//        }
+//
+//        ImGui::EndPopup();
+//    }
+//
+//    // Drop from scene graph
+//    if (ImGui::BeginDragDropTarget())
+//    {
+//        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
+//        {
+//            IM_ASSERT(payload->DataSize == sizeof(GPE::GameObject*));
+//            GPE::GameObject* pGo = *static_cast<GPE::GameObject**>(payload->Data);
+//            if (T* pCom = pGo->getComponent<T>())
+//            {
+//                inspected.pData = pComp;
+//                hasChanged      = true;
+//            }
+//        }
+//        ImGui::EndDragDropTarget();
+//    }
+//    endProperty();
+//
+//    return hasChanged;
+//}
+//
+// template <typename T>
+// void GPE::DataInspector::inspect(InspectContext& context, Linker<T>& inspected)
+//{
+//    GPE::DataInspector::inspect(context, inspected, "Component");
+//}
 
 template <>
 bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const rfk::Field& info)

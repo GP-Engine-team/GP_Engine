@@ -64,7 +64,7 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
 
         // Update old pointers into new ones
         context.updateLazyPtrs();
-        context.updateGameObjectLinker(scene->getWorld());
+        context.updateLinker(scene->getWorld());
 
         // Call onPostLoad on GameObjects
         struct Rec
@@ -99,7 +99,6 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
                 g->updateSelfAndChildren();
                 recComponent(g);
             }
-
         };
         Rec::rec(&scene->getWorld()); // can't do recursives with lambdas, and std::function would be overkill
     }
@@ -147,7 +146,7 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
 
         GameObject* const go = scene.getWorld().children.front();
         if (go)
-            context.updateGameObjectLinker(*go);
+            context.updateLinker(*go);
     }
 
     // Init the prefab

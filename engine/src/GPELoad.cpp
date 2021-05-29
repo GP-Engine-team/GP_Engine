@@ -33,13 +33,21 @@ void load(XmlLoader& context, ColorRGB& data, const XmlLoader::LoadInfo& info)
     GPE::load(context, data.v, info);
 }
 
-template <>
-void load(XmlLoader& context, GameObjectLinker& data, const XmlLoader::LoadInfo& info)
-{
-    std::string path;
-    GPE::load(context, path, XmlLoader::LoadInfo{info.name, info.typeName, 0});
-    context.gameObjectLinkers[path] = &data;
-}
+// template <typename T>
+// void load(XmlLoader& context, Linker<T>& data, const XmlLoader::LoadInfo& info)
+//{
+//    std::string path;
+//    GPE::load(context, path, XmlLoader::LoadInfo{info.name, info.typeName, 0});
+//    context.linkers[path] = &data;
+//}
+
+// template <>
+// void load(XmlLoader& context, Linker<GameObject>& data, const XmlLoader::LoadInfo& info)
+//{
+//    std::string path;
+//    GPE::load(context, path, XmlLoader::LoadInfo{info.name, info.typeName, 0});
+//    context.linkers[path] = &data;
+//}
 
 template <>
 void load(XmlLoader& context, Prefab*& data, const XmlLoader::LoadInfo& info)

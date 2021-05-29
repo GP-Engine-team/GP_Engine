@@ -71,18 +71,12 @@ void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info
 }
 
 template <>
-void save(XmlSaver& context, const GameObjectLinker& data, const rfk::Field& info)
-{
-    GPE::save(context, data, fieldToSaveInfo(info));
-}
-
-template <>
-void save(XmlSaver& context, const GameObjectLinker& data, const XmlSaver::SaveInfo& info)
+void save(XmlSaver& context, const Linker<GameObject>& data, const XmlSaver::SaveInfo& info)
 {
     std::string str = "";
-    if (data.pGo)
+    if (data.pData)
     {
-        str = data.pGo->getAbsolutePath();
+        str = data.pData->getAbsolutePath();
         str.erase(0, str.find_first_of('/', 0) + 1); // remove the world
     }
 

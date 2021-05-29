@@ -2,6 +2,8 @@
 
 #include "xml/xmlSaver.hpp"
 
+#include <Engine/Resources/Linker.hpp>
+
 namespace GPE
 {
 union AmbiantComponent;
@@ -10,7 +12,6 @@ class Mesh;
 class Shader;
 class Material;
 class Texture;
-struct GameObjectLinker;
 struct ColorRGBA;
 
 template <>
@@ -34,11 +35,16 @@ void save(XmlSaver& context, Prefab* const& data, const rfk::Field& info);
 template <>
 void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info);
 
-template <>
-void save(XmlSaver& context, const GameObjectLinker& data, const rfk::Field& info);
+template <typename T>
+void save(XmlSaver& context, const Linker<T>& data, const rfk::Field& info);
 
+// Linker of component
+template <typename T>
+void save(XmlSaver& context, const Linker<T>& data, const XmlSaver::SaveInfo& info);
+
+// Linker of gameObject
 template <>
-void save(XmlSaver& context, const GameObjectLinker& data, const XmlSaver::SaveInfo& info);
+void save(XmlSaver& context, const Linker<GameObject>& data, const XmlSaver::SaveInfo& info);
 
 template <>
 void save(XmlSaver& context, Shader* const& data, const rfk::Field& info);
@@ -65,3 +71,5 @@ template <>
 void save(XmlSaver& context, Texture* const& data, const XmlSaver::SaveInfo& info);
 
 } // namespace GPE
+
+#include <Engine/Serialization/GPESave.inl>

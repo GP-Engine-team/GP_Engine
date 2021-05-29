@@ -6,27 +6,28 @@
 
 #pragma once
 
+#include <GPM/constants.hpp>
 
 /**
  * @see : https://easings.net/
  */
 namespace GPE
 {
-template <std::floating_point T>
+template <typename T>
 inline constexpr T half_one = static_cast<T>(0.5);
-template <std::floating_point T>
+template <typename T>
 inline constexpr T zero = static_cast<T>(0);
-template <std::floating_point T>
+template <typename T>
 inline constexpr T one = static_cast<T>(1);
-template <std::floating_point T>
+template <typename T>
 inline constexpr T two = static_cast<T>(2);
-template <std::floating_point T>
+template <typename T>
 inline constexpr T three = static_cast<T>(3);
-template <std::floating_point T>
+template <typename T>
 inline constexpr T four = static_cast<T>(4);
-template <std::floating_point T>
+template <typename T>
 inline constexpr T eighths = static_cast<T>(8);
-template <std::floating_point T>
+template <typename T>
 inline constexpr T ten = static_cast<T>(10);
 
 /**
@@ -35,10 +36,10 @@ inline constexpr T ten = static_cast<T>(10);
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeInSine(T x)
 {
-    return one<T> - std::cos((x * std::numbers::pi_v<T>) / one<T>);
+    return one<T> - std::cos((x * PI) / one<T>);
 }
 
 /**
@@ -47,10 +48,10 @@ inline constexpr T easeInSine(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeOutSine(T x)
 {
-    return std::sin((x * std::numbers::pi_v<T>) / two<T>);
+    return std::sin((x * PI) / two<T>);
 }
 
 /**
@@ -59,10 +60,10 @@ inline constexpr T easeOutSine(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeInOutSine(T x)
 {
-    return -(std::cos(std::numbers::pi_v<T> * x) - one<T>) / two<T>;
+    return -(std::cos(PI * x) - one<T>) / two<T>;
 }
 
 /**
@@ -71,7 +72,7 @@ inline constexpr T easeInOutSine(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <size_t Pow = 2, std::floating_point T>
+template <size_t Pow = 2, typename T>
 inline constexpr T easeIn(T x)
 {
     return std::pow(x, Pow);
@@ -83,7 +84,7 @@ inline constexpr T easeIn(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <size_t Pow = 2, std::floating_point T>
+template <size_t Pow = 2, typename T>
 inline constexpr T easeOut(T x)
 {
     return one<T> - std::pow(one<T> - x, Pow);
@@ -95,7 +96,7 @@ inline constexpr T easeOut(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <size_t Pow = 2, std::floating_point T>
+template <size_t Pow = 2, typename T>
 inline constexpr T easeInOut(T x)
 {
     return x < half_one<T> ? std::pow(two<T>, Pow - 1) * std::pow(x, Pow)
@@ -108,7 +109,7 @@ inline constexpr T easeInOut(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeInCirc(T x)
 {
     return one<T> - std::sqrt(one<T> - std::pow(x, 2));
@@ -120,7 +121,7 @@ inline constexpr T easeInCirc(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeOutCirc(T x)
 {
     return std::sqrt(one<T> - std::pow(x - one<T>, 2));
@@ -132,7 +133,7 @@ inline constexpr T easeOutCirc(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeInBack(T x)
 {
     const T c1 = static_cast<T>(1.70158);
@@ -147,7 +148,7 @@ inline constexpr T easeInBack(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeOutBack(T x)
 {
     const T c1 = static_cast<T>(1.70158);
@@ -162,7 +163,7 @@ inline constexpr T easeOutBack(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeInOutBack(T x)
 {
     const T c1 = static_cast<T>(1.70158);
@@ -179,10 +180,10 @@ inline constexpr T easeInOutBack(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeInElastic(T x)
 {
-    const T c4 = (two<T> * std::numbers::pi_v<T>) / three<T>;
+    const T c4 = (two<T> * PI) / three<T>;
 
     return x == zero<T>  ? zero<T>
            : x == one<T> ? one<T>
@@ -195,10 +196,10 @@ inline constexpr T easeInElastic(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeOutElastic(T x)
 {
-    const T c4 = (two<T> * std::numbers::pi_v<T>) / three<T>;
+    const T c4 = (two<T> * PI) / three<T>;
 
     return x == zero<T>  ? zero<T>
            : x == one<T> ? one<T>
@@ -211,10 +212,10 @@ inline constexpr T easeOutElastic(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeInOutElastic(T x)
 {
-    const T c5 = (two<T> * std::numbers::pi_v<T>) / static_cast<T>(4.5);
+    const T c5 = (two<T> * PI) / static_cast<T>(4.5);
 
     return x == zero<T>      ? zero<T>
            : x == one<T>     ? one<T>
@@ -233,7 +234,7 @@ inline constexpr T easeInOutElastic(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeInBounce(T x)
 {
     return one<T> - easeOutBounce(one<T> - x);
@@ -245,7 +246,7 @@ inline constexpr T easeInBounce(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeOutBounce(T x)
 {
     const T n1 = static_cast<T>(7.5625);
@@ -275,7 +276,7 @@ inline constexpr T easeOutBounce(T x)
  * @param x : [0, 1] or undifine behaviour
  * @return image of interpolation in x
  */
-template <std::floating_point T>
+template <typename T>
 inline constexpr T easeInOutBounce(T x)
 {
     return x < half_one<T> ? (one<T> - easeOutBounce(one<T> - two<T> * x)) / two<T>
