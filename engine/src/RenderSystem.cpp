@@ -226,9 +226,9 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
 
     if ((shader.getFeature() & FOG) == FOG)
     {
+        shader.setBool("fogParams.isEnabled", m_mainCamera->getFogParameter().isEnabled);
         if (m_mainCamera->getFogParameter().isEnabled)
         {
-            shader.setBool("fogParams.isEnabled", m_mainCamera->getFogParameter().isEnabled);
             shader.setVec3("fogParams.color", m_mainCamera->getFogParameter().color.r,
                            m_mainCamera->getFogParameter().color.g, m_mainCamera->getFogParameter().color.b);
             shader.setInt("fogParams.equation", m_mainCamera->getFogParameter().equation);

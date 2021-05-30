@@ -93,7 +93,7 @@ namespace GPE RFKNamespace()
             RFKField(Serialize()) float density     = 1.f;
 
             RFKField(Serialize()) int  equation  = 0;
-            RFKField(Serialize()) bool isEnabled = true;
+            RFKField(Serialize()) bool isEnabled = false;
             ;
             RFKField(Serialize()) bool isStartFogEnable = false;
             RFKField(Serialize()) bool isEndFogEnable   = false;
