@@ -70,6 +70,33 @@ void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info
     context.pop();
 }
 
+inline void saveGameObjectLinker(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data,
+                                             const XmlSaver::SaveInfo& info)
+{
+    std::string str = "";
+    if (data.pData)
+    {
+        str = data.pData->getAbsolutePath();
+        str.erase(0, str.find_first_of('/', 0) + 1); // remove the world
+    }
+
+    GPE::save(context, str, XmlSaver::SaveInfo{"GLinker", "GLinker", 0});
+}
+
+template <>
+void GPE::save<GPE::Linker<GPE::GameObject>>(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data,
+                                const XmlSaver::SaveInfo& info)
+{
+    saveGameObjectLinker(context, data, info);
+}
+
+template <>
+void GPE::save<GPE::GameObject>(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data,
+                                             const XmlSaver::SaveInfo& info)
+{
+    saveGameObjectLinker(context, data, info);
+}
+
 template <>
 void save(XmlSaver& context, Shader* const& data, const rfk::Field& info)
 {

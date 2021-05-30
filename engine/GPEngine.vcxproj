@@ -499,6 +499,7 @@
     <None Include="include\Engine\Resources\Texture.inl" />
     <None Include="include\Engine\Serialization\DataInspector.inl" />
     <None Include="include\Engine\Serialization\GPEDataInspector.inl" />
+    <None Include="include\Engine\Serialization\GPELoad.inl" />
     <None Include="include\Engine\Serialization\GPESave.inl" />
     <None Include="include\Engine\Serialization\STDDataInspector.inl" />
     <None Include="include\Engine\Serialization\STDLoad.inl" />

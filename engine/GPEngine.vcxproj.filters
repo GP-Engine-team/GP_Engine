@@ -912,6 +912,9 @@
     <None Include="include\Engine\Serialization\GPEDataInspector.inl">
       <Filter>include\Serialization</Filter>
     </None>
+    <None Include="include\Engine\Serialization\GPELoad.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">

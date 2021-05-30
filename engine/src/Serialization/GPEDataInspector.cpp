@@ -8,6 +8,7 @@
 #include <Engine/Resources/Scene.hpp>
 #include <filesystem>
 #include <unordered_map>
+#include <Engine/Intermediate/GameObject.hpp>
 
 #include <imgui.h>
 
@@ -80,7 +81,7 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, Linker<GameObject
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, Linker<GameObject>& inspected, const char* name)
+bool GPE::DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected, const char* name)
 {
     startProperty(name);
     bool hasChanged = false;

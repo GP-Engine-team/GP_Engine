@@ -34,7 +34,7 @@ struct Linker : public BaseLinker
 
     void setData(GameObject& owner) override;
 
-    void save(XmlSaver& context) const;
+    //void save(XmlSaver& context) const;
 };
 
 /**
@@ -47,6 +47,6 @@ struct Linker<GameObject> : public BaseLinker
 
     void setData(GameObject& newData) override;
 
-    void save(XmlSaver& context) const;
+    //void save(XmlSaver& context) const;
 };
 } // namespace GPE
