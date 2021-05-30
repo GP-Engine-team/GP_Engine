@@ -46,25 +46,11 @@ const std::string* ResourcesManager<LType>::getKey(const LType* data) const noex
 
 template <class LType>
 template <typename... Args>
-LType& ResourcesManager<LType>::add(std::string key, Args&&... args) noexcept(std::is_nothrow_constructible_v<LType>)
+LType& ResourcesManager<LType>::add(const std::string& key,
+                                    Args&&... args) noexcept(std::is_nothrow_constructible_v<LType>)
 {
-    // auto for pair of iterator of LType and bool
-
-    LType* ptr = get(key);
-
-    if (ptr)
-    {
-        Log::getInstance()->logWarning(std::string("resource insert with same key as an element existing : ") + key +
-                                       ". Resource type : " + typeid(LType).name());
-        return *ptr;
-    }
-    else
-    {
-        auto rst =
-            m_resources.emplace(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple(args...));
-
-        return rst.first->second;
-    }
+    auto rst = m_resources.try_emplace(key, std::forward<Args>(args)...);
+    return rst.first->second;
 }
 
 template <class LType>
