@@ -490,6 +490,7 @@
     <None Include="include\Engine\ECS\System\TimeSystem.inl" />
     <None Include="include\Engine\Intermediate\DataChunk.inl" />
     <None Include="include\Engine\Intermediate\GameObject.inl" />
+    <None Include="include\Engine\Resources\Linker.inl" />
     <None Include="include\Engine\Resources\Material.inl" />
     <None Include="include\Engine\Resources\Mesh.inl" />
     <None Include="include\Engine\Resources\ParticleSystem\ParticleComponent.inl" />

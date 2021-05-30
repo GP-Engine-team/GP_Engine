@@ -2,8 +2,6 @@
 
 #include "xml/xmlSaver.hpp"
 
-//#include <Engine/Resources/Linker.hpp>
-
 namespace GPE
 {
 union AmbiantComponent;

@@ -11,6 +11,7 @@ class XmlSaver;
 namespace GPE
 {
 class GameObject;
+class InspectContext;
 
 /**
  * @brief Linker allow user to link local object in editor. Thank's to it, user can associate
@@ -35,6 +36,7 @@ struct Linker : public BaseLinker
     void setData(GameObject& owner) override;
 
     //void save(XmlSaver& context) const;
+    //void inspect(InspectContext& context);
 };
 
 /**
@@ -48,5 +50,12 @@ struct Linker<GameObject> : public BaseLinker
     void setData(GameObject& newData) override;
 
     //void save(XmlSaver& context) const;
+    void inspect(InspectContext& context);
 };
 } // namespace GPE
+
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Serialization/Inspect.hpp>
+#include <Engine/Serialization/xml/xmlSaver.hpp>
+
+#include <Engine/Resources/Linker.inl>

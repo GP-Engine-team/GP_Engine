@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <unordered_map>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Linker.hpp>
 
 #include <imgui.h>
 

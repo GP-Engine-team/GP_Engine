@@ -1,13 +1,13 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Linker.hpp>
+#include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/xml/xmlSaver.hpp>
 
 using namespace GPE;
 
-template <typename T>
-void Linker<T>::setData(GameObject& owner)
+void Linker<GameObject>::setData(GameObject& newData)
 {
-    pData = owner.getComponent<T>();
+    pData = &newData;
 }
 
 //template <typename T>
@@ -23,10 +23,6 @@ void Linker<T>::setData(GameObject& owner)
 //    GPE::save(context, str, XmlSaver::SaveInfo{"CLinker", "CLinker", 0});
 //}
 
-void Linker<GameObject>::setData(GameObject& newData)
-{
-    pData = &newData;
-}
 //
 //void Linker<GameObject>::save(XmlSaver& context) const
 //{

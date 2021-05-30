@@ -915,6 +915,9 @@
     <None Include="include\Engine\Serialization\GPELoad.inl">
       <Filter>include\Serialization</Filter>
     </None>
+    <None Include="include\Engine\Resources\Linker.inl">
+      <Filter>include\Resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">

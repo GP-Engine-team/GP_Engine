@@ -39,8 +39,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) std::vector<GPE::Linker<GPE::GameObject>> m_firearmsGO;
         RFKField() std::vector<Firearm*>                                           m_firearms;
 
-        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> m_groundParticleGO;
-        RFKField() GPE::ParticleComponent*                            m_pGroundParticleComponent;
+        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_groundParticleComponent;
 
     public:
         BasePlayer() noexcept = default;

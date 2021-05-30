@@ -2,6 +2,7 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
+#include <Engine/Resources/Linker.hpp>
 
 std::string XmlLoader::getValue(Node* node)
 {

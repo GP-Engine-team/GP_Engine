@@ -1,7 +1,6 @@
 #pragma once
 
 #include "xml/xmlLoader.hpp"
-#include <Engine/Resources/Linker.hpp>
 
 namespace GPE
 {

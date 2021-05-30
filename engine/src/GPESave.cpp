@@ -10,6 +10,7 @@
 #include <Engine/Resources/Color.hpp>
 #include <Engine/Resources/Prefab.hpp>
 #include <Engine/Resources/ResourcesManager.hpp>
+#include <Engine/Resources/Linker.hpp>
 
 namespace GPE
 {
