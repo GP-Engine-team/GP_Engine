@@ -7,7 +7,7 @@
 
 namespace GPE
 {
-template<typename T>
+template <typename T>
 struct Linker;
 
 class GameObject;
@@ -36,26 +36,37 @@ bool DataInspector::inspect(InspectContext& context, AmbiantComponent& inspected
 template <>
 bool DataInspector::inspect(InspectContext& context, AmbiantComponent& inspected, const char* name);
 
-//namespace DataInspector
-//{
-//template <typename T>
-//bool inspect(InspectContext& context, Linker<T>& inspected, const rfk::Field& info);
-//
-//template <typename T>
-//bool inspect(InspectContext& context, Linker<T>& inspected, const char* name);
-//
-//template <typename T>
-//void inspect(InspectContext& context, Linker<T>& inspected);
-//} // namespace DataInspector
+namespace DataInspector
+{
+template <typename T>
+bool inspect(InspectContext& context, Linker<T>& inspected, const rfk::Field& info);
+
+template <typename T>
+bool inspect(InspectContext& context, Linker<T>& inspected, const char* name);
+
+template <typename T>
+void inspect(InspectContext& context, Linker<T>& inspected);
+} // namespace DataInspector
 
 template <>
-bool DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info);
+bool DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Linker<GameObject>& inspected,
+                                                const rfk::Field& info);
 
 template <>
-bool DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected, const char* name);
+bool DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Linker<GameObject>& inspected,
+                                                const char* name);
 
 template <>
-void DataInspector::inspect(InspectContext& context, Linker<GameObject>& inspected);
+void DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Linker<GameObject>& inspected);
+
+template <>
+bool DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info);
+
+template <>
+bool DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected, const char* name);
+
+template <>
+void DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected);
 
 template <>
 bool DataInspector::inspect(InspectContext& context, class Prefab*& inspected, const rfk::Field& info);
@@ -95,4 +106,5 @@ bool DataInspector::inspect(InspectContext& context, class Scene*& inspected, co
 
 } // namespace GPE
 
+#include <imgui/imgui.h>
 #include <Engine/Serialization/GPEDataInspector.inl>
