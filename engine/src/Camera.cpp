@@ -1,5 +1,6 @@
 #include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
@@ -199,6 +200,61 @@ void Camera::updateToSystem() noexcept
         if (getOwner().pOwnerScene)
             getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
     }
+}
+
+void Camera::inspect(InspectContext& context)
+{
+    Component::inspect(context);
+
+    DataInspector::inspect(context, aspect, "Aspect");
+    DataInspector::inspect(context, znear, "Near");
+    DataInspector::inspect(context, znear, "Far");
+    DataInspector::inspect(context, hSide, "H side");
+    DataInspector::inspect(context, vSide, "V side");
+    DataInspector::inspect(context, fovY, "Fov X");
+    DataInspector::inspect(context, fovX, "Fov Y");
+
+    if (ImGui::Checkbox("##isShadowEnable", &m_fogParam.isEnabled))
+    {
+        if (!m_fogParam.isEnabled)
+            ImGui::SetNextItemOpen(false);
+    }
+
+    ImGui::SameLine();
+    ImGui::PushEnabled(m_fogParam.isEnabled);
+    if (ImGui::CollapsingHeader("Fog"))
+    {
+        const char* elems_names[3] = {"LINEAR", "EXP", "EXP2"};
+        const char* elem_name =
+            (m_fogParam.equation >= 0 && m_fogParam.equation < 3) ? elems_names[m_fogParam.equation] : "Unknown";
+        ImGui::TextUnformatted("Equation");
+        ImGui::SameLine();
+        ImGui::SliderInt("##EquationFogSlider", &m_fogParam.equation, 0, 2, elem_name);
+
+        DataInspector::inspect(context, m_fogParam.color, "Color");
+
+        switch (m_fogParam.equation)
+        {
+        case 0:
+            ImGui::Checkbox("##isStartFogEnable", &m_fogParam.isStartFogEnable);
+            ImGui::SameLine();
+            ImGui::PushEnabled(m_fogParam.isStartFogEnable);
+            DataInspector::inspect(context, m_fogParam.linearStart, "Start");
+            ImGui::PopEnabled();
+
+            ImGui::Checkbox("##isEndFogEnable", &m_fogParam.isEndFogEnable);
+            ImGui::SameLine();
+            ImGui::PushEnabled(m_fogParam.isEndFogEnable);
+            DataInspector::inspect(context, m_fogParam.linearEnd, "End");
+            ImGui::PopEnabled();
+
+            break;
+        default:
+            DataInspector::inspect(context, m_fogParam.density, "Density");
+            break;
+        }
+    }
+    ImGui::PopEnabled();
 }
 
 /*

@@ -91,6 +91,7 @@ protected:
 
 public:
     Mesh(CreateIndiceBufferArg& arg) noexcept;
+    Mesh(CreateIndiceBufferArg&& arg) noexcept;
 
     Mesh(const Mesh& other) = delete;
     Mesh(Mesh&& other)      = default;

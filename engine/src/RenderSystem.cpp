@@ -82,7 +82,7 @@ RenderSystem::RenderSystem() noexcept
 {
     Shader* shader = &Engine::getInstance()->resourceManager.add<Shader>(
         "DefaultWithNormalMap", "./resources/shaders/vTextureWithLightAndShadowAndNM.vs",
-        "./resources/shaders/fTextureWithLightAndShadowAndNM.fs", LIGHT_BLIN_PHONG);
+        "./resources/shaders/fTextureWithLightAndShadowAndNMAndFog.fs", LIGHT_BLIN_PHONG | FOG);
 
     shader->use();
     shader->setInt("ourTexture", 0);
@@ -91,7 +91,7 @@ RenderSystem::RenderSystem() noexcept
 
     shader = &Engine::getInstance()->resourceManager.add<Shader>(
         "Default", "./resources/shaders/vTextureWithLightAndShadow.vs",
-        "./resources/shaders/fTextureWithLightAndShadow.fs", LIGHT_BLIN_PHONG);
+        "./resources/shaders/fTextureWithLightAndShadowAndFog.fs", LIGHT_BLIN_PHONG | FOG);
 
     shader->use();
     shader->setInt("ourTexture", 0);
@@ -224,16 +224,44 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
         shader.setMat4("viewMatrix", camToUse.getView().e);
     }
 
-    /*
+    if ((shader.getFeature() & FOG) == FOG)
+    {
+        if (m_mainCamera->getFogParameter().isEnabled)
+        {
+            shader.setBool("fogParams.isEnabled", m_mainCamera->getFogParameter().isEnabled);
+            shader.setVec3("fogParams.color", m_mainCamera->getFogParameter().color.r,
+                           m_mainCamera->getFogParameter().color.g, m_mainCamera->getFogParameter().color.b);
+            shader.setInt("fogParams.equation", m_mainCamera->getFogParameter().equation);
+            switch (m_mainCamera->getFogParameter().equation)
+            {
+            case 0:
+                if (m_mainCamera->getFogParameter().isStartFogEnable)
+                    shader.setFloat("fogParams.linearStart", m_mainCamera->getFogParameter().linearStart);
+                else
+                    shader.setFloat("fogParams.linearStart", m_mainCamera->getNear());
+
+                if (m_mainCamera->getFogParameter().isEndFogEnable)
+                    shader.setFloat("fogParams.linearEnd", m_mainCamera->getFogParameter().linearEnd);
+                else
+                    shader.setFloat("fogParams.linearEnd", m_mainCamera->getFar());
+                break;
+            default:
+                shader.setFloat("fogParams.density", m_mainCamera->getFogParameter().density);
+                break;
+            }
+        }
+    }
+
     if ((shader.getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
     {
-        shader.setFloat("scaledTimeAcc", TimeSystem::getAccumulateTime());
+        shader.setFloat("scaledTimeAcc", static_cast<float>(Engine::getInstance()->timeSystem.getAccumulatedTime()));
     }
 
     if ((shader.getFeature() & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
     {
-        shader.setFloat("unscaledTimeAcc", TimeSystem::getAccumulateUnscaledTime());
-    }*/
+        shader.setFloat("unscaledTimeAcc",
+                        static_cast<float>(Engine::getInstance()->timeSystem.getAccumulatedUnscaledTime()));
+    }
 }
 
 void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const Mat4& modelMatrix)
@@ -245,6 +273,11 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
         shader.setMat4("projectionView", (camToUse.getProjection() * view).e);
+    }
+
+    if ((shader.getFeature() & VIEW_MODEL_MATRIX) == VIEW_MODEL_MATRIX)
+    {
+        shader.setMat4("viewModelMatrix", (camToUse.getView() * modelMatrix).e);
     }
 
     if ((shader.getFeature() & PROJECTION_VIEW_MODEL_MATRIX) == PROJECTION_VIEW_MODEL_MATRIX)

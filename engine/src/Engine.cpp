@@ -29,8 +29,9 @@ void Engine::importConfig()
     XmlLoader   context(doc);
     std::string firstLoadedSceneStr;
     GPE::load(context, firstLoadedSceneStr, XmlLoader::LoadInfo{"firstLoadedScene", "String", 0});
-    std::string str               = docToString(doc);
-    sceneManager.firstLoadedScene = firstLoadedSceneStr;
+
+    if (!firstLoadedSceneStr.empty())
+        sceneManager.firstLoadedScene = firstLoadedSceneStr;
     fclose(pFile);
 }
 

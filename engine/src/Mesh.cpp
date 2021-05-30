@@ -52,6 +52,10 @@ Mesh::CreateIndiceBufferArg Mesh::convert(Mesh::CreateContiguousVerticesArg& arg
     return newArg;
 }
 
+Mesh::Mesh(Mesh::CreateIndiceBufferArg&& arg) noexcept : Mesh(arg)
+{
+}
+
 Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 {
     if (arg.boundingVolumeType != Mesh::EBoundingVolume::NONE)
