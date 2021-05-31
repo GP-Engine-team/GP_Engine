@@ -34,14 +34,6 @@ void load(XmlLoader& context, ColorRGB& data, const XmlLoader::LoadInfo& info)
 }
 
 template <>
-void load(XmlLoader& context, GameObjectLinker& data, const XmlLoader::LoadInfo& info)
-{
-    std::string path;
-    GPE::load(context, path, XmlLoader::LoadInfo{info.name, info.typeName, 0});
-    context.gameObjectLinkers[path] = &data;
-}
-
-template <>
 void load(XmlLoader& context, Prefab*& data, const XmlLoader::LoadInfo& info)
 {
     if (context.goToSubChild(info))

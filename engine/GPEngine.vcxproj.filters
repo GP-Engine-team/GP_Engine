@@ -295,6 +295,9 @@
     <ClCompile Include="src\ShakeEffect.cpp">
       <Filter>src\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="src\Linker.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
@@ -780,6 +783,12 @@
     <ClInclude Include="include\Engine\Core\Tools\Interpolation.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <<<<<<< HEAD
+=======
+    <ClInclude Include="include\Engine\Resources\Linker.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    >>>>>>> debug
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -899,6 +908,18 @@
     </None>
     <None Include="third_party\gpm\include\GPM\Vector4.inl">
       <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\GPESave.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\GPEDataInspector.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\GPELoad.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Linker.inl">
+      <Filter>include\Resources</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

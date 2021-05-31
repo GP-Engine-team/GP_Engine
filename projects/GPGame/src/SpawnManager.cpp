@@ -31,13 +31,13 @@ void SpawnManager::onPostLoad()
 
 void SpawnManager::start()
 {
-    GAME_ASSERT(m_enemiesContainer.pGo, "Missing container ref in SpawnManager");
+    GAME_ASSERT(m_enemiesContainer.pData, "Missing container ref in SpawnManager");
     GAME_ASSERT(m_entitiesToSpawnInfo.size(), "Spawner without info");
     GAME_ASSERT(m_spawners.size(), "SpawnerManager without spawner");
 
     for (auto&& elem : m_spawners)
     {
-        GAME_ASSERT(elem.go.pGo, "null");
+        GAME_ASSERT(elem.go.pData, "null");
     }
 
     sqrTotalRadius = (m_spawnerZoneRadius + m_playerZoneRadius) * (m_spawnerZoneRadius + m_playerZoneRadius);
@@ -52,7 +52,7 @@ void SpawnManager::start()
 
 void SpawnManager::update(double deltaTime)
 {
-    if (m_enemiesContainer.pGo->children.size() > m_difficultyInfo[m_currentDifficulty].m_maxEntity)
+    if (m_enemiesContainer.pData->children.size() > m_difficultyInfo[m_currentDifficulty].m_maxEntity)
         return;
 
     m_delayCount += deltaTime;
@@ -80,7 +80,7 @@ void SpawnManager::update(double deltaTime)
         do
         {
             spawnerIndex    = Random::ranged<int>(m_spawners.size() - 1);
-            spawnerPosition = m_spawners[spawnerIndex].go.pGo->getTransform().getGlobalPosition();
+            spawnerPosition = m_spawners[spawnerIndex].go.pData->getTransform().getGlobalPosition();
         } while ((posPlayer - spawnerPosition).sqrLength() < sqrTotalRadius && ++it < maxIt);
 
         if (m_debug)
@@ -92,7 +92,8 @@ void SpawnManager::update(double deltaTime)
                                   position2D.y + spawnerPosition.z};
 
         /*Spawn this entity*/
-        // GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer.pGo);
+        // GameObject* spawnedEntity =
+        // m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer.pData);
         // spawnedEntity->getTransform().setTranslation(newPosition);
     }
 }
@@ -107,10 +108,10 @@ void SpawnManager::updateEditor(double deltaTime)
 
     for (auto&& elem : m_spawners)
     {
-        GAME_ASSERT(elem.go.pGo, "null");
+        GAME_ASSERT(elem.go.pData, "null");
 
-        if (elem.go.pGo)
-            drawDebugSphere(elem.go.pGo->getTransform().getGlobalPosition(), m_spawnerZoneRadius,
+        if (elem.go.pData)
+            drawDebugSphere(elem.go.pData->getTransform().getGlobalPosition(), m_spawnerZoneRadius,
                             RGBA{RGB::green(), 0.2f}, 0.f, true);
     }
 }

@@ -268,18 +268,6 @@ namespace GPE RFKNamespace()
 
         GameObject_GENERATED
     };
-
-    /**
-     * @brief GameObjectLinker allow user to link local gameObject in editor. Thank's to it, user can associate
-     * gameObject and serialize it. Warning ! : Assocation is local of the base scene. For prefab, the base scene is the
-     * first gameObject. So user cannot link gameObject that is not inside the prefab.
-     *
-     */
-    struct GameObjectLinker
-    {
-        class GameObject* pGo = nullptr;
-    };
-
 } // namespace )
 
 #include "GameObject.inl"

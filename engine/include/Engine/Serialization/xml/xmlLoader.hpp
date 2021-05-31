@@ -19,7 +19,7 @@
 namespace GPE
 {
 class GameObject;
-struct GameObjectLinker;
+struct BaseLinker;
 } // namespace GPE
 
 class XmlLoader
@@ -48,7 +48,7 @@ protected:
     std::map<void*, LoadedPtr> alreadyLoadedPtrs;
 
 public:
-    std::map<std::string, GPE::GameObjectLinker*> gameObjectLinkers;
+    std::map<std::string, GPE::BaseLinker*> linkers;
 
 protected:
     /**
@@ -123,7 +123,7 @@ public:
     void updateLazyPtr(void*& weak);
 
     void updateLazyPtrs();
-    void updateGameObjectLinker(GPE::GameObject& base);
+    void updateLinker(GPE::GameObject& base);
 };
 
 XmlLoader::LoadInfo fieldToLoadInfo(rfk::Field const& field);

@@ -3,6 +3,7 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
+#include <Engine/Resources/Linker.hpp>
 #include <Engine/Resources/Prefab.hpp>
 #include <Engine/Resources/ResourcesManager.hpp>
 #include <Engine/Resources/Scene.hpp>
@@ -71,58 +72,6 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent&
     endProperty();
 
     return hasChanged;
-}
-
-template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObjectLinker& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObjectLinker& inspected, const char* name)
-{
-    startProperty(name);
-    bool hasChanged = false;
-
-    ImGui::Selectable(inspected.pGo == nullptr ? "None" : inspected.pGo->getName().c_str());
-
-    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
-    {
-        ImGui::OpenPopup("GOSelection");
-    }
-
-    if (ImGui::BeginPopup("GOSelection"))
-    {
-        if (ImGui::MenuItem("Remove", NULL, false))
-        {
-            inspected.pGo = nullptr;
-            hasChanged    = true;
-        }
-
-        ImGui::EndPopup();
-    }
-
-    // Drop from scene graph
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(GPE::GameObject*));
-            inspected.pGo = *static_cast<GPE::GameObject**>(payload->Data);
-            hasChanged    = true;
-        }
-        ImGui::EndDragDropTarget();
-    }
-    endProperty();
-
-    return hasChanged;
-}
-
-template <>
-void GPE::DataInspector::inspect(InspectContext& context, GameObjectLinker& inspected)
-{
-    GPE::DataInspector::inspect(context, inspected, "GameObject");
 }
 
 template <>

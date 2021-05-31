@@ -8,6 +8,7 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Color.hpp>
+#include <Engine/Resources/Linker.hpp>
 #include <Engine/Resources/Prefab.hpp>
 #include <Engine/Resources/ResourcesManager.hpp>
 
@@ -70,23 +71,31 @@ void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info
     context.pop();
 }
 
-template <>
-void save(XmlSaver& context, const GameObjectLinker& data, const rfk::Field& info)
-{
-    GPE::save(context, data, fieldToSaveInfo(info));
-}
-
-template <>
-void save(XmlSaver& context, const GameObjectLinker& data, const XmlSaver::SaveInfo& info)
+inline void saveGameObjectLinker(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data,
+                                 const XmlSaver::SaveInfo& info)
 {
     std::string str = "";
-    if (data.pGo)
+    if (data.pData)
     {
-        str = data.pGo->getAbsolutePath();
+        str = data.pData->getAbsolutePath();
         str.erase(0, str.find_first_of('/', 0) + 1); // remove the world
     }
 
     GPE::save(context, str, XmlSaver::SaveInfo{info.name, info.typeName, 0});
+}
+
+template <>
+void GPE::save<GPE::Linker<GPE::GameObject>>(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data,
+                                             const XmlSaver::SaveInfo& info)
+{
+    saveGameObjectLinker(context, data, info);
+}
+
+template <>
+void GPE::save<GPE::GameObject>(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data,
+                                const XmlSaver::SaveInfo& info)
+{
+    saveGameObjectLinker(context, data, info);
 }
 
 template <>
