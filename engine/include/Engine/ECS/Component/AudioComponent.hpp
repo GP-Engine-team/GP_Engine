@@ -18,14 +18,18 @@
 
 namespace GPE RFKNamespace()
 {
-    struct SourceSettings
+    struct RFKStruct(Serialize()) SourceSettings
     {
-        ALfloat   pitch       = 1.f;
-        ALfloat   gain        = 1.f;
-        ALfloat   position[3] = {0, 0, 0};
-        ALfloat   velocity[3] = {0, 0, 0};
-        ALboolean loop        = AL_FALSE;
-        ALboolean relative    = AL_FALSE;
+        RFKField(Serialize(), Inspect()) ALfloat      pitch         = 1.f;
+        RFKField(Serialize(), Inspect()) ALfloat      gain          = 1.f;
+        /*RFKField(Serialize(), Inspect()) */ ALfloat position[3]   = {0, 0, 0};
+        /*RFKField(Serialize(), Inspect()) */ ALfloat velocity[3]   = {0, 0, 0};
+        RFKField(Serialize(), Inspect()) ALboolean    loop          = AL_FALSE;
+        RFKField(Serialize(), Inspect()) ALboolean    relative      = AL_FALSE;
+        RFKField(Serialize(), Inspect()) ALboolean    spatialized   = AL_FALSE;
+        RFKField(Serialize(), Inspect()) ALfloat      rollOffFactor = 1.f;
+
+        SourceSettings_GENERATED
     };
 
     class RFKClass(Inspect(), Serialize()) AudioComponent : public Component
@@ -43,13 +47,15 @@ namespace GPE RFKNamespace()
     public:
         struct RFKStruct(Serialize()) SourceData
         {
-            ALuint    source;
-            ALint     state      = AL_INITIAL;
-            ALboolean isRelative = AL_FALSE;
+            RFKField(Serialize(), Inspect()) ALuint         source;
+            RFKField(Serialize(), Inspect()) ALint          state      = AL_INITIAL;
+            RFKField(Serialize(), Inspect()) ALboolean      isRelative = AL_FALSE;
+            RFKField(Serialize(), Inspect()) SourceSettings settings;
 
             SourceData_GENERATED
         };
-        std::unordered_map<std::string, SourceData> sources;
+
+        /*RFKField(Serialize(), Inspect())*/ std::unordered_map<std::string, SourceData> sources;
 
     protected:
         virtual void updateToSystem() noexcept override;

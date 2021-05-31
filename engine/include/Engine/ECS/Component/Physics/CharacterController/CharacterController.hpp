@@ -37,17 +37,19 @@ namespace GPE RFKNamespace()
         virtual ~CharacterController() noexcept;
 
     private:
-        RFKField(Inspect(), Serialize()) float                m_gravity       = EARTH_GRAVITY;
-        RFKField(Inspect(), Serialize()) float                m_mass          = 90.f;
-        RFKField(Inspect(), Serialize()) float                m_speed         = 1.f;
-        RFKField(Inspect(), Serialize()) float                m_angularSpeed  = 1.f; // in rad by second
-        RFKField(Inspect(), Serialize()) float                m_startJumpTime = 0.f;
-        RFKField(Inspect(), Serialize()) float                m_jumpTimeDelay = 1.f;
-        RFKField(Inspect(), Serialize()) bool                 m_hasGravity    = true;
-        RFKField(Inspect(), Serialize()) bool                 m_canJump       = false;
-        RFKField(Inspect("setHeight"), Serialize()) float     m_height        = 25.f;
-        RFKField(Inspect("setRadius"), Serialize()) float     m_radius        = 10.f;
-        RFKField(Inspect("setCenter"), Serialize()) GPM::Vec3 m_center        = {.0f};
+        RFKField(Inspect(), Serialize()) float                   m_gravity       = EARTH_GRAVITY;
+        RFKField(Inspect(), Serialize()) float                   m_mass          = 90.f;
+        RFKField(Inspect(), Serialize()) float                   m_speed         = 1.f;
+        RFKField(Inspect(), Serialize()) float                   m_angularSpeed  = 1.f; // in rad by second
+        RFKField(Inspect(), Serialize()) float                   m_startJumpTime = 0.f;
+        RFKField(Inspect(), Serialize()) float                   m_jumpTimeDelay = 1.f;
+        RFKField(Inspect(), Serialize()) bool                    m_hasGravity    = true;
+        RFKField(Inspect(), Serialize()) bool                    m_canJump       = false;
+        RFKField(Inspect("setHeight"), Serialize()) float        m_height        = 25.f;
+        RFKField(Inspect("setRadius"), Serialize()) float        m_radius        = 10.f;
+        RFKField(Inspect("setContactOffset"), Serialize()) float m_contactOffset = 0.1f;
+        RFKField(Inspect("setCenter"), Serialize()) GPM::Vec3    m_center        = {.0f};
+        RFKField(Serialize()) GPM::Vec3                          m_parentScale   = {.0f};
 
         GPM::Vec3 m_force        = {.0f};
         bool      m_grounded     = false;
@@ -132,6 +134,23 @@ namespace GPE RFKNamespace()
          * @return
          */
         RFKMethod() void setRadius(float newRadius) noexcept;
+
+        /**
+         * @brief set the new contact offset of the collider;
+         * @param newOffset
+         * @return
+         */
+        RFKMethod() void setContactOffset(float newOffset) noexcept;
+
+        /**
+         * @brief Update the scale of the collider from is owner;
+         * @return
+         */
+        void updateScale() noexcept;
+
+        void updatePosition();
+
+        RFKMethod() void updateTransform();
 
         CharacterController_GENERATED
     };

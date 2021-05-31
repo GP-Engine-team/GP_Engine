@@ -23,16 +23,25 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     Sound::Buffer* buffer = Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName);
 
     source->isRelative = settings.relative;
+    source->settings   = settings;
 
     AL_CALL(alGenSources, 1, &source->source);
-    AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch * 2);
+    if (settings.spatialized == AL_TRUE)
+    {
+        AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch * 2);
+    }
+
+    else
+    {
+        AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
+    }
     AL_CALL(alSourcef, source->source, AL_GAIN, settings.gain);
     AL_CALL(alSource3f, source->source, AL_POSITION, settings.position[0], settings.position[1], settings.position[2]);
     AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity[0], settings.velocity[1], settings.velocity[2]);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, settings.relative);
+    AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, settings.rollOffFactor);
     AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
-    // AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, )
 }
 
 AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept
