@@ -63,15 +63,13 @@ Camera::Camera() noexcept
 {
     if (type == EProjectionType::PERSPECTIVE)
     {
-        fovX  = aspect * fovY;
-        hSide = zfar * tanf(fovX * .5f) * 2.f;
         vSide = zfar * tanf(fovY * .5f) * 2.f;
+        hSide = vSide * aspect;
         Log::getInstance()->log((std::string("Perspective projection added with name \"") + name + "\"").c_str());
     }
     else
     {
         fovY = atanf((vSide * .5f) / zfar) * 180 / PI;
-        fovX = atanf((hSide * .5f) / zfar) * 180.f / PI;
 
         Log::getInstance()->log((std::string("Orthographic projection add with name \"") + name + "\"").c_str());
     }
@@ -87,9 +85,8 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
     znear  = arg.nearVal;
     zfar   = arg.farVal;
     fovY   = arg.fovY * PI / 180.f;
-    fovX   = arg.aspect * fovY;
-    hSide  = arg.farVal * tanf(fovX * .5f) * 2.f;
     vSide  = arg.farVal * tanf(fovY * .5f) * 2.f;
+    hSide  = vSide * aspect;
 
     m_projection = Transform::perspective(fovY, aspect, znear, zfar);
     onPostLoad();
@@ -107,7 +104,6 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
     znear  = arg.nearVal;
     zfar   = arg.farVal;
     fovY   = atanf((arg.vSide * .5f) / arg.farVal) * 180 / PI;
-    fovX   = atanf((arg.hSide * .5f) / arg.farVal) * 180.f / PI;
     hSide  = arg.hSide;
     vSide  = arg.vSide;
 
@@ -123,8 +119,8 @@ void Camera::onPostLoad()
     getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
     if (type == EProjectionType::PERSPECTIVE)
     {
-        hSide = zfar * tanf(fovX * .5f) * 2.f;
         vSide = zfar * tanf(fovY * .5f) * 2.f;
+        hSide = vSide * aspect;
     }
     updateToSystem();
     updateView();
@@ -138,9 +134,8 @@ Camera::~Camera() noexcept
 
 void Camera::updateFovY()
 {
-    fovX  = aspect * fovY;
-    hSide = zfar * tanf(fovX * .5f) * 2.f;
     vSide = zfar * tanf(fovY * .5f) * 2.f;
+    hSide = vSide * aspect;
 
     updateProjection();
     updateView();
@@ -148,10 +143,9 @@ void Camera::updateFovY()
 
 void Camera::updateAspect()
 {
-    if (type != EProjectionType::ORTHOGRAPHIC)
+    if (type == EProjectionType::PERSPECTIVE)
     {
-        fovX  = aspect * fovY;
-        hSide = zfar * tanf(fovX * .5f) * 2.f;
+        hSide = vSide * aspect;
     }
 
     updateProjection();
@@ -160,7 +154,7 @@ void Camera::updateAspect()
 
 void Camera::setFovY(const float newfovY) noexcept
 {
-    fovY = newfovY * PI / 180.f;
+    fovY = newfovY;
     updateFovY();
 }
 
@@ -180,13 +174,15 @@ Frustum Camera::getFrustum() const noexcept
     const Vec3& globalPosition = -getOwner().getTransform().getGlobalPosition();
     const float halfHSide      = hSide * .5f;
     const float halfVSide      = vSide * .5f;
+    // const int   signHSide      = (fovX < PI) * 2.f - 1.f;
+    // const int   signVSide      = (fovY < PI) * 2.f - 1.f;
 
     frustum.nearFace   = {globalPosition + znear * -forward, forward};
     frustum.farFace    = {globalPosition + zfar * -forward, -forward};
-    frustum.rightFace  = {globalPosition, -Vec3::cross(forward * zfar + right * halfHSide, up)};
-    frustum.leftFace   = {globalPosition, Vec3::cross(forward * zfar + right * -halfHSide, up)};
-    frustum.topFace    = {globalPosition, -Vec3::cross(forward * zfar + up * -halfVSide, right)};
-    frustum.bottomFace = {globalPosition, Vec3::cross(forward * zfar + up * halfVSide, right)};
+    frustum.rightFace  = {globalPosition, /*signHSide **/ -Vec3::cross(forward * zfar + right * halfHSide, up)};
+    frustum.leftFace   = {globalPosition, /*signHSide **/ Vec3::cross(forward * zfar + right * -halfHSide, up)};
+    frustum.topFace    = {globalPosition, /*signVSide **/ -Vec3::cross(forward * zfar + up * -halfVSide, right)};
+    frustum.bottomFace = {globalPosition, /*signVSide **/ Vec3::cross(forward * zfar + up * halfVSide, right)};
 
     return frustum;
 }
@@ -207,12 +203,16 @@ void Camera::inspect(InspectContext& context)
     Component::inspect(context);
 
     DataInspector::inspect(context, aspect, "Aspect");
-    DataInspector::inspect(context, znear, "Near");
+    DataInspector::inspect(context, zfar, "Near");
     DataInspector::inspect(context, znear, "Far");
     DataInspector::inspect(context, hSide, "H side");
     DataInspector::inspect(context, vSide, "V side");
-    DataInspector::inspect(context, fovY, "Fov X");
-    DataInspector::inspect(context, fovX, "Fov Y");
+
+    float fovYDeg = fovY * 180 / PI;
+    if (DataInspector::inspect(context, fovYDeg, "Fov Y"))
+    {
+        setFovY(fovYDeg * PI / 180.f);
+    }
 
     if (ImGui::Checkbox("##isShadowEnable", &m_fogParam.isEnabled))
     {
