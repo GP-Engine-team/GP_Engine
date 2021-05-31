@@ -205,9 +205,6 @@ void GameObject::setParent(GameObject* pNewParent) noexcept
                 break;
             }
         }
-        
-        // Undo parent's global translation, rotation and scale on this child
-        m_pTransform->get().apply(m_parent->m_pTransform->get().model.inversed());
     }
 
     if (pNewParent)
