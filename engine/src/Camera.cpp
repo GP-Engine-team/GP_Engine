@@ -1,5 +1,6 @@
 #include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
@@ -62,15 +63,13 @@ Camera::Camera() noexcept
 {
     if (type == EProjectionType::PERSPECTIVE)
     {
-        fovX  = aspect * fovY;
-        hSide = zfar * tanf(fovX * .5f) * 2.f;
         vSide = zfar * tanf(fovY * .5f) * 2.f;
+        hSide = vSide * aspect;
         Log::getInstance()->log((std::string("Perspective projection added with name \"") + name + "\"").c_str());
     }
     else
     {
         fovY = atanf((vSide * .5f) / zfar) * 180 / PI;
-        fovX = atanf((hSide * .5f) / zfar) * 180.f / PI;
 
         Log::getInstance()->log((std::string("Orthographic projection add with name \"") + name + "\"").c_str());
     }
@@ -86,9 +85,8 @@ Camera::Camera(GameObject& owner, const PerspectiveCreateArg& arg) noexcept : Co
     znear  = arg.nearVal;
     zfar   = arg.farVal;
     fovY   = arg.fovY * PI / 180.f;
-    fovX   = arg.aspect * fovY;
-    hSide  = arg.farVal * tanf(fovX * .5f) * 2.f;
     vSide  = arg.farVal * tanf(fovY * .5f) * 2.f;
+    hSide  = vSide * aspect;
 
     m_projection = Transform::perspective(fovY, aspect, znear, zfar);
     onPostLoad();
@@ -106,7 +104,6 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
     znear  = arg.nearVal;
     zfar   = arg.farVal;
     fovY   = atanf((arg.vSide * .5f) / arg.farVal) * 180 / PI;
-    fovX   = atanf((arg.hSide * .5f) / arg.farVal) * 180.f / PI;
     hSide  = arg.hSide;
     vSide  = arg.vSide;
 
@@ -120,6 +117,11 @@ Camera::Camera(GameObject& owner, const OrthographicCreateArg& arg) noexcept : C
 void Camera::onPostLoad()
 {
     getOwner().getTransform().OnUpdate += GPE::Function::make(this, "updateView");
+    if (type == EProjectionType::PERSPECTIVE)
+    {
+        vSide = zfar * tanf(fovY * .5f) * 2.f;
+        hSide = vSide * aspect;
+    }
     updateToSystem();
     updateView();
 }
@@ -132,9 +134,8 @@ Camera::~Camera() noexcept
 
 void Camera::updateFovY()
 {
-    fovX  = aspect * fovY;
-    hSide = zfar * tanf(fovX * .5f) * 2.f;
     vSide = zfar * tanf(fovY * .5f) * 2.f;
+    hSide = vSide * aspect;
 
     updateProjection();
     updateView();
@@ -142,10 +143,9 @@ void Camera::updateFovY()
 
 void Camera::updateAspect()
 {
-    if (type != EProjectionType::ORTHOGRAPHIC)
+    if (type == EProjectionType::PERSPECTIVE)
     {
-        fovX  = aspect * fovY;
-        hSide = zfar * tanf(fovX * .5f) * 2.f;
+        hSide = vSide * aspect;
     }
 
     updateProjection();
@@ -154,7 +154,7 @@ void Camera::updateAspect()
 
 void Camera::setFovY(const float newfovY) noexcept
 {
-    fovY = newfovY * PI / 180.f;
+    fovY = newfovY;
     updateFovY();
 }
 
@@ -194,6 +194,65 @@ void Camera::updateToSystem() noexcept
         if (getOwner().pOwnerScene)
             getOwner().pOwnerScene->sceneRenderer.removeCamera(*this);
     }
+}
+
+void Camera::inspect(InspectContext& context)
+{
+    Component::inspect(context);
+
+    DataInspector::inspect(context, aspect, "Aspect");
+    DataInspector::inspect(context, zfar, "Near");
+    DataInspector::inspect(context, znear, "Far");
+    DataInspector::inspect(context, hSide, "H side");
+    DataInspector::inspect(context, vSide, "V side");
+
+    float fovYDeg = fovY * 180 / PI;
+    if (DataInspector::inspect(context, fovYDeg, "Fov Y"))
+    {
+        setFovY(fovYDeg * PI / 180.f);
+    }
+
+    if (ImGui::Checkbox("##isShadowEnable", &m_fogParam.isEnabled))
+    {
+        if (!m_fogParam.isEnabled)
+            ImGui::SetNextItemOpen(false);
+    }
+
+    ImGui::SameLine();
+    ImGui::PushEnabled(m_fogParam.isEnabled);
+    if (ImGui::CollapsingHeader("Fog"))
+    {
+        const char* elems_names[3] = {"LINEAR", "EXP", "EXP2"};
+        const char* elem_name =
+            (m_fogParam.equation >= 0 && m_fogParam.equation < 3) ? elems_names[m_fogParam.equation] : "Unknown";
+        ImGui::TextUnformatted("Equation");
+        ImGui::SameLine();
+        ImGui::SliderInt("##EquationFogSlider", &m_fogParam.equation, 0, 2, elem_name);
+
+        DataInspector::inspect(context, m_fogParam.color, "Color");
+
+        switch (m_fogParam.equation)
+        {
+        case 0:
+            ImGui::Checkbox("##isStartFogEnable", &m_fogParam.isStartFogEnable);
+            ImGui::SameLine();
+            ImGui::PushEnabled(m_fogParam.isStartFogEnable);
+            DataInspector::inspect(context, m_fogParam.linearStart, "Start");
+            ImGui::PopEnabled();
+
+            ImGui::Checkbox("##isEndFogEnable", &m_fogParam.isEndFogEnable);
+            ImGui::SameLine();
+            ImGui::PushEnabled(m_fogParam.isEndFogEnable);
+            DataInspector::inspect(context, m_fogParam.linearEnd, "End");
+            ImGui::PopEnabled();
+
+            break;
+        default:
+            DataInspector::inspect(context, m_fogParam.density, "Density");
+            break;
+        }
+    }
+    ImGui::PopEnabled();
 }
 
 /*

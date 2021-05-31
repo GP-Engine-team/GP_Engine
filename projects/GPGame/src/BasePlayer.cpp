@@ -59,15 +59,13 @@ void BasePlayer::start()
 
     for (auto&& firearm : m_firearmsGO)
     {
-        GAME_ASSERT(firearm.pGo, "No gameObject");
-        m_firearms.emplace_back(firearm.pGo->getComponent<Firearm>());
+        GAME_ASSERT(firearm.pData, "No gameObject");
+        m_firearms.emplace_back(firearm.pData->getComponent<Firearm>());
         GAME_ASSERT(m_firearms.back(), "No firearm in gameObject");
     }
 
-    GAME_ASSERT(m_groundParticleGO.pGo, "null");
-    m_pGroundParticleComponent = m_groundParticleGO.pGo->getComponent<ParticleComponent>();
-    GAME_ASSERT(m_pGroundParticleComponent, "null");
-    m_pGroundParticleComponent->start();
+    GAME_ASSERT(m_groundParticleComponent.pData, "null");
+    m_groundParticleComponent.pData->start();
 
     // Keys
     input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
@@ -229,10 +227,14 @@ void BasePlayer::onGUI()
 
         if (m_firearms.size())
         {
-            SetNextElementLayout(0.f, 1.f, size, EHAlign::Left, EVAlign::Bottom);
+            size = ImGui::CalcTextSize("30/30");
+            SetNextElementLayout(0.05f, 0.95f, size, EHAlign::Left, EVAlign::Bottom);
             Text("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
                  m_firearms.front()->getMagazine().getCapacity());
         }
+        size = ImGui::CalcTextSize("FPS : 144");
+        SetNextElementLayout(0.95f, 0.f, size, EHAlign::Right, EVAlign::Top);
+        Text("FPS : %0.0f", ImGui::GetIO().Framerate);
     }
 }
 

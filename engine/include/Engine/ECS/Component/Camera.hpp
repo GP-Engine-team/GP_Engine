@@ -10,6 +10,7 @@
 
 #include "Component.hpp"
 
+#include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Serialization/ComponentGen.h>
 #include <Engine/Serialization/DataInspector.hpp>
 #include <Engine/Serialization/Inspect.hpp>
@@ -41,7 +42,7 @@ namespace GPE RFKNamespace()
         GPM::Plane nearFace;
     };
 
-    class RFKClass(Inspect(), ComponentGen, Serialize()) Camera : public Component
+    class RFKClass(Serialize(), ComponentGen) Camera : public Component
     {
     public:
         enum class EProjectionType
@@ -62,7 +63,6 @@ namespace GPE RFKNamespace()
             float hSide  = 1.f;
             float vSide  = 1.f;
             float fovY   = 7.f * PI / 18.f; // 70deg
-            float fovX   = 7. * PI / 18.f;  // 70deg
         };
 
         struct PerspectiveCreateArg
@@ -83,25 +83,40 @@ namespace GPE RFKNamespace()
             float       farVal  = 1000.f;
         };
 
+    public:
+        struct RFKStruct(Serialize()) FogParameter
+        {
+            RFKField(Serialize()) RGB   color       = RGB::white();
+            RFKField(Serialize()) float linearStart = 0.f;
+            RFKField(Serialize()) float linearEnd   = 0.f;
+            RFKField(Serialize()) float density     = 1.f;
+
+            RFKField(Serialize()) int  equation  = 0;
+            RFKField(Serialize()) bool isEnabled = false;
+            ;
+            RFKField(Serialize()) bool isStartFogEnable = false;
+            RFKField(Serialize()) bool isEndFogEnable   = false;
+
+            FogParameter_GENERATED
+        };
+
     protected:
-        RFKField(Inspect(), Serialize()) std::string name = "";
-        RFKField(Serialize()) EProjectionType        type = EProjectionType::PERSPECTIVE;
+        RFKField(Serialize()) std::string     name = "";
+        RFKField(Serialize()) EProjectionType type = EProjectionType::PERSPECTIVE;
 
-        // TODO: Uncomment when inspection function not call each frame
-        RFKField(Inspect(/*"setAspect"*/), Serialize()) float aspect = 16.f / 9.f;
-        RFKField(Inspect(), Serialize()) float                znear  = 0.001f;
-        RFKField(Inspect(), Serialize()) float                zfar   = 1000.f;
-        RFKField(Inspect(), Serialize()) float                hSide  = 1.f;
-        RFKField(Inspect(), Serialize()) float                vSide  = 1.f;
+        RFKField(Serialize()) float aspect = 16.f / 9.f;
+        RFKField(Serialize()) float znear  = 0.001f;
+        RFKField(Serialize()) float zfar   = 1000.f;
+        RFKField(Serialize()) float hSide  = 1.f;
+        RFKField(Serialize()) float vSide  = 1.f;
 
-        // TODO: Uncomment when inspection function not call each frame
-        RFKField(Inspect(/*"setFovY"*/), Serialize()) float fovY = 7.f * PI / 18.f; // 70deg
-        RFKField(Inspect(), Serialize()) float              fovX = 7. * PI / 18.f;  // 70deg
+        RFKField(Serialize()) float fovY = 7.f * PI / 18.f; // 70deg
 
         RFKField(Serialize()) GPM::Mat4 m_projection;
 
-        RFKField(Serialize()) GPM::Mat4 m_viewMatrix;
-        RFKField(Serialize()) GPM::Mat4 m_projectionViewMatrix;
+        RFKField(Serialize()) GPM::Mat4    m_viewMatrix;
+        RFKField(Serialize()) GPM::Mat4    m_projectionViewMatrix;
+        RFKField(Serialize()) FogParameter m_fogParam;
 
         void updateProjection();
 
@@ -192,6 +207,10 @@ namespace GPE RFKNamespace()
          */
         inline const GPM::Mat4& getProjection() const noexcept;
 
+        GETTER_BY_REF(FogParameter, m_fogParam)
+        DEFAULT_GETTER_SETTER_BY_VALUE(Far, zfar)
+        DEFAULT_GETTER_SETTER_BY_VALUE(Near, znear)
+
         /**
          * @brief Return struct with all plane that composed the camera frustum
          * @return
@@ -199,6 +218,8 @@ namespace GPE RFKNamespace()
         Frustum getFrustum() const noexcept;
 
         virtual void onPostLoad() override;
+
+        virtual void inspect(InspectContext & context);
 
         Camera_GENERATED
     };

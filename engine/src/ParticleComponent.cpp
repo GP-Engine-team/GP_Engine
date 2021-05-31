@@ -153,10 +153,17 @@ void ParticleComponent::inspect(InspectContext& context)
 
     // Shader
     DataInspector::inspect(context, m_shader, "Shader");
+    DataInspector::inspect(context, m_diffuseTexture, "Optinal Texture");
 
     if (ImGui::Button("Start"))
     {
         start();
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Stop"))
+    {
+        reset();
     }
 }
 

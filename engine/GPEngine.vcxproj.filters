@@ -236,7 +236,7 @@
       <Filter>third_party\imgui</Filter>
     </ClCompile>
     <ClCompile Include="src\TextureInspectorPanel.cpp">
-        <Filter>src</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\TransformComponent.cpp">
       <Filter>src</Filter>
@@ -291,6 +291,12 @@
     </ClCompile>
     <ClCompile Include="third_party\src\OpenAL_Soft_Debug.cpp">
       <Filter>third_party</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShakeEffect.cpp">
+      <Filter>src\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Linker.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -771,6 +777,18 @@
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp">
       <Filter>third_party</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\ShakeEffect.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Interpolation.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <<<<<<< HEAD
+=======
+    <ClInclude Include="include\Engine\Resources\Linker.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    >>>>>>> debug
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -890,6 +908,18 @@
     </None>
     <None Include="third_party\gpm\include\GPM\Vector4.inl">
       <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\GPESave.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\GPEDataInspector.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\GPELoad.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Linker.inl">
+      <Filter>include\Resources</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

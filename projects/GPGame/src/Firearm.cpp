@@ -10,124 +10,145 @@
 #include <Firearm/Firearm.hpp>
 File_GENERATED
 
-    namespace GPG
+    using namespace GPG;
+using namespace GPE;
+
+Firearm::Firearm(GPE::GameObject& owner) noexcept : GPE::BehaviourComponent(owner)
 {
+    onPostLoad();
+}
 
-    Firearm::Firearm(GPE::GameObject & owner) noexcept : GPE::BehaviourComponent(owner)
+Firearm::Firearm(GPE::GameObject& owner, const GunMagazine& magazineStored, float reloadingDuration,
+                 float rateOfFire) noexcept
+    : GPE::BehaviourComponent(owner), m_magazineStored{magazineStored}, m_rateOfFire{rateOfFire},
+      m_reloadingBulletTimeCount{rateOfFire}, m_reloadingDuration{reloadingDuration}
+{
+    onPostLoad();
+}
+
+void Firearm::onPostLoad()
+{
+    BehaviourComponent::onPostLoad();
+
+    enableUpdate(true);
+
+    m_shootSound  = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
+    m_muzzleFlash = &getOwner().getOrCreateComponent<GPE::ParticleComponent>();
+
+    GPE::Wave           sound("./resources/sounds/Firearm/machinegun.wav", "Shoot");
+    GPE::SourceSettings sourceSettings;
+    sourceSettings.pitch = 1.f;
+    sourceSettings.loop  = AL_FALSE;
+
+    m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
+}
+
+void Firearm::start()
+{
+    m_recoileAnimtationDuration = std::clamp(m_recoileAnimtationDuration, 0.f, m_rateOfFire);
+    // GAME_ASSERT(m_decalePrefab, "Missing prefab");
+}
+
+bool Firearm::isMagazineEmpty() const
+{
+    return m_magazineStored.isEmpty();
+}
+
+void Firearm::triggered()
+{
+    if (!m_isReloadingNextBullet && !m_isReloading)
     {
-        onPostLoad();
-    }
+        m_magazineStored.triggeredBullet();
 
-    Firearm::Firearm(GPE::GameObject & owner, const GunMagazine& magazineStored, float reloadingDuration,
-                     float rateOfFire) noexcept
-        : GPE::BehaviourComponent(owner), m_magazineStored{magazineStored}, m_rateOfFire{rateOfFire},
-          m_reloadingBulletTimeCount{rateOfFire}, m_reloadingDuration{reloadingDuration}
-    {
-        onPostLoad();
-    }
+        GPE::Raycast ray;
+        ray.fire(getOwner().getTransform().getGlobalPosition() + getOwner().getTransform().getVectorForward() * 10.f,
+                 getOwner().getTransform().getVectorForward(), 100000.f);
 
-    void Firearm::onPostLoad()
-    {
-        BehaviourComponent::onPostLoad();
-
-        enableUpdate(true);
-
-        m_shootSound  = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
-        m_muzzleFlash = &getOwner().getOrCreateComponent<GPE::ParticleComponent>();
-
-        GPE::Wave           sound("./resources/sounds/Firearm/machinegun.wav", "Shoot");
-        GPE::SourceSettings sourceSettings;
-        sourceSettings.pitch = 1.f;
-        sourceSettings.loop  = AL_FALSE;
-
-        m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
-    }
-
-    void Firearm::start()
-    {
-        // GAME_ASSERT(m_decalePrefab, "Missing prefab");
-    }
-
-    bool Firearm::isMagazineEmpty() const
-    {
-        return m_magazineStored.isEmpty();
-    }
-
-    void Firearm::triggered()
-    {
-        if (!m_isReloadingNextBullet && !m_isReloading)
+        if (ray.hit.hasBlock)
         {
-            m_magazineStored.triggeredBullet();
-
-            GPE::Raycast ray;
-            ray.fire(getOwner().getTransform().getGlobalPosition() +
-                         getOwner().getTransform().getVectorForward() * 10.f,
-                     getOwner().getTransform().getVectorForward(), 100000.f);
-
-            if (ray.hit.hasBlock)
+            if (GPE::GameObject* pOwner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData))
             {
-                if (GPE::GameObject* pOwner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData))
+                if (m_decalePrefab)
                 {
-                    if (m_decalePrefab)
-                    {
-                        GPE::GameObject& decaleGO = *m_decalePrefab->clone(*pOwner);
-                        decaleGO.getTransform().setTranslation(
-                            GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position));
+                    GPE::GameObject& decaleGO = *m_decalePrefab->clone(*pOwner);
+                    decaleGO.getTransform().setTranslation(GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position));
 
-                        decaleGO.getTransform().setVecForward(
-                            GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal),
-                            (GPM::Vec3::right()
-                                 .cross(GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal))
-                                 .normalized()));
-                    }
-
-                    if (pOwner->getTag() == "Character")
-                    {
-                        BaseCharacter* const bc = pOwner->getComponent<BaseCharacter>();
-
-                        GAME_ASSERT(bc, "null");
-
-                        bc->takeDamage(m_magazineStored.bulletData.getDammage());
-                    }
-
-                    getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(
-                        GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position), 1.f, GPE::ColorRGBA::red(), 3.f);
+                    decaleGO.getTransform().setVecForward(
+                        GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal),
+                        (GPM::Vec3::right()
+                             .cross(GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal))
+                             .normalized()));
                 }
+
+                if (pOwner->getTag() == "Character")
+                {
+                    BaseCharacter* const bc = pOwner->getComponent<BaseCharacter>();
+
+                    GAME_ASSERT(bc, "null");
+
+                    bc->takeDamage(m_magazineStored.bulletData.getDammage());
+                }
+
+                getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(
+                    GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position), 1.f, GPE::ColorRGBA::red(), 3.f);
             }
-
-            m_muzzleFlash->emit(static_cast<unsigned int>(m_muzzleFlash->getCount() / m_magazineStored.getCapacity()));
-
-            m_shootSound->playSound("Shoot", true);
-            m_isReloadingNextBullet    = true;
-            m_reloadingBulletTimeCount = 0.f;
         }
+
+        m_isRecoileAnimate = true;
+        onShoot();
+        m_muzzleFlash->emit(static_cast<unsigned int>(m_muzzleFlash->getCount() / m_magazineStored.getCapacity()));
+
+        m_shootSound->playSound("Shoot", true);
+        m_isReloadingNextBullet    = true;
+        m_reloadingBulletTimeCount = 0.f;
     }
+}
 
-    void Firearm::update(double deltaTime)
+void Firearm::update(double deltaTime)
+{
+    m_isReloadingNextBullet =
+        (m_reloadingBulletTimeCount += (float(deltaTime) * m_isReloadingNextBullet)) < m_rateOfFire;
+
+    if (m_isRecoileAnimate)
     {
-        m_isReloadingNextBullet =
-            (m_reloadingBulletTimeCount += (float(deltaTime) * m_isReloadingNextBullet)) < m_rateOfFire;
+        m_recoileAnimtationDurationCount += float(deltaTime);
 
-        if (m_isReloading)
+        const float t = std::clamp(m_recoileAnimtationDurationCount / m_recoileAnimtationDuration, 0.f, 1.f);
+        animateRecoil(t);
+
+        if (m_recoileAnimtationDurationCount >= m_recoileAnimtationDuration)
         {
-            m_reloadingTimeCount += float(deltaTime) * m_isReloading;
-            if (m_reloadingTimeCount >= m_reloadingDuration)
-            {
-                m_isReloading        = false;
-                m_reloadingTimeCount = 0.f;
-                m_magazineStored.reload();
-            }
+            m_isRecoileAnimate               = false;
+            m_recoileAnimtationDurationCount = 0.f;
         }
     }
 
-    void Firearm::reload()
+    if (m_isReloading)
     {
-        m_isReloading = true;
+        m_reloadingTimeCount += float(deltaTime) * m_isReloading;
+        if (m_reloadingTimeCount >= m_reloadingDuration)
+        {
+            m_isReloading        = false;
+            m_reloadingTimeCount = 0.f;
+            m_magazineStored.reload();
+        }
     }
+}
 
-    const GunMagazine& Firearm::getMagazine() const
-    {
-        return m_magazineStored;
-    }
+void Firearm::onShoot()
+{
+}
 
-} // End of namespace GPG
+void Firearm::animateRecoil(float t)
+{
+}
+
+void Firearm::reload()
+{
+    m_isReloading = true;
+}
+
+const GunMagazine& Firearm::getMagazine() const
+{
+    return m_magazineStored;
+}
