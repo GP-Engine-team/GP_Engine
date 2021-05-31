@@ -197,6 +197,7 @@ namespace GPE RFKNamespace()
             Component * pComponent) noexcept; // TODO: Destroy immediate may be dangerous
 
         inline void setActive(bool newState);
+        inline bool isActivated();
 
         inline std::list<Component*>::iterator destroyComponent(
             const std::list<Component*>::iterator& it) noexcept; // TODO: Destroy immediate may be dangerous

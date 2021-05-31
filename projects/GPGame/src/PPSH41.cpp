@@ -19,23 +19,23 @@ void PPSH41::start()
 {
     Firearm::start();
 
-    if (m_muzzleFlashPlane.pData)
+    if (m_muzzleFlashGO.pData)
     {
-        m_muzzleFlashPlane.pData->setActive(false);
+        m_muzzleFlashGO.pData->setActive(false);
     }
 }
 
 void PPSH41::onShoot()
 {
-    if (m_muzzleFlashPlane.pData)
+    if (m_muzzleFlashGO.pData)
     {
-        m_muzzleFlashPlane.pData->setActive(true);
+        m_muzzleFlashGO.pData->setActive(true);
 
-        m_muzzleFlashPlane.pData->getOwner().getTransform().setRotationZ(Random::ranged(0.f, TWO_PI));
-        m_muzzleFlashPlane.pData->getOwner().getTransform().setScale(
+        m_muzzleFlashGO.pData->getTransform().setRotationZ(Random::ranged(0.f, TWO_PI));
+        m_muzzleFlashGO.pData->getTransform().setScale(
             Vec3{Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale),
-            Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale),
-            Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale)});
+                 Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale),
+                 Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale)});
     }
 
     m_basePosition  = transform().getPosition();
@@ -65,13 +65,13 @@ void PPSH41::update(double deltaTime)
 {
     Firearm::update(deltaTime);
 
-    if (m_muzzleFlashPlane.pData && m_muzzleFlashPlane.pData->isActivated())
+    if (m_muzzleFlashGO.pData && m_muzzleFlashGO.pData->isActivated())
     {
         m_muzzleFlashCount += float(deltaTime);
 
         if (m_muzzleFlashCount >= m_muzzleFlashDuration)
         {
-            m_muzzleFlashPlane.pData->setActive(false);
+            m_muzzleFlashGO.pData->setActive(false);
             m_muzzleFlashCount = 0.f;
         }
     }
