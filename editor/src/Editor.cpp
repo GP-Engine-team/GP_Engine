@@ -410,7 +410,8 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
         }
     }
 
-    if (ImGui::IsKeyPressed(GLFW_KEY_S) &&
+    if (!sceneEditor.view.capturingInputs() &&
+        ImGui::IsKeyPressed(GLFW_KEY_S) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
         saveCurrentScene();
