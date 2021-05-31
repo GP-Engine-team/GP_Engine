@@ -166,7 +166,7 @@ void GameObject::forceUpdate() noexcept
 
     // Force update children
     const Children::const_iterator end{children.cend()};
-    for (auto&& i = children.begin(); i != end; i++)
+    for (auto&& i = children.begin(); i != end;)
     {
         if ((*i)->m_isDead)
         {

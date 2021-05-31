@@ -2,6 +2,7 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
+#include <Engine/Resources/Linker.hpp>
 
 std::string XmlLoader::getValue(Node* node)
 {
@@ -111,11 +112,12 @@ void XmlLoader::updateLazyPtrs()
     lazyPtrs.clear();
 }
 
-void XmlLoader::updateGameObjectLinker(GPE::GameObject& base)
+void XmlLoader::updateLinker(GPE::GameObject& base)
 {
-    for (auto&& [key, value] : gameObjectLinkers)
+    for (auto&& [key, value] : linkers)
     {
-        value->pGo = base.getGameObject(key);
+        if (GPE::GameObject* pGo = base.getGameObject(key))
+            value->setData(*pGo);
     }
 }
 

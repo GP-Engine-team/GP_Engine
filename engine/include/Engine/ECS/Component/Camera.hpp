@@ -63,7 +63,6 @@ namespace GPE RFKNamespace()
             float hSide  = 1.f;
             float vSide  = 1.f;
             float fovY   = 7.f * PI / 18.f; // 70deg
-            float fovX   = 7. * PI / 18.f;  // 70deg
         };
 
         struct PerspectiveCreateArg
@@ -112,7 +111,6 @@ namespace GPE RFKNamespace()
         RFKField(Serialize()) float vSide  = 1.f;
 
         RFKField(Serialize()) float fovY = 7.f * PI / 18.f; // 70deg
-        RFKField(Serialize()) float fovX = 7. * PI / 18.f;  // 70deg
 
         RFKField(Serialize()) GPM::Mat4 m_projection;
 

@@ -8,6 +8,7 @@
 
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Linker.hpp>
 #include <Engine/Resources/Prefab.hpp>
 
 // Generated
@@ -32,7 +33,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) float                          m_spawnDelayInterval{0.f}; /*in sec*/
         RFKField(Inspect(), Serialize()) float                          m_delayCount{0.f};
         RFKField(Inspect(), Serialize()) float                          m_nextDelay{m_spawnDelay};
-        RFKField(Inspect(), Serialize()) GPE::GameObjectLinker          m_container;
+        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject>   m_container;
         // Game::Checkpoint*              m_checkpoint{nullptr};
 
     public:
