@@ -2,6 +2,7 @@
 #include <Engine/ECS/Component/ParticleComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
 #include <Engine/Resources/Wave.hpp>
 
 #include <BaseCharacter.hpp>
@@ -32,8 +33,7 @@ void Firearm::onPostLoad()
 
     enableUpdate(true);
 
-    m_shootSound  = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
-    m_muzzleFlash = &getOwner().getOrCreateComponent<GPE::ParticleComponent>();
+    m_shootSound = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
 
     GPE::Wave           sound("./resources/sounds/Firearm/machinegun.wav", "Shoot");
     GPE::SourceSettings sourceSettings;
@@ -46,7 +46,8 @@ void Firearm::onPostLoad()
 void Firearm::start()
 {
     m_recoileAnimtationDuration = std::clamp(m_recoileAnimtationDuration, 0.f, m_rateOfFire);
-    // GAME_ASSERT(m_decalePrefab, "Missing prefab");
+
+    GAME_ASSERT(m_muzzleFlashEffect.pData, "Missing component");
 }
 
 bool Firearm::isMagazineEmpty() const
@@ -66,18 +67,18 @@ void Firearm::triggered()
 
         if (ray.hit.hasBlock)
         {
+            const GPM::Vec3 rayPos  = GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position);
+            const GPM::Vec3 rayNorm = GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal);
+
             if (GPE::GameObject* pOwner = static_cast<GPE::GameObject*>(ray.hit.block.actor->userData))
             {
+
                 if (m_decalePrefab)
                 {
                     GPE::GameObject& decaleGO = *m_decalePrefab->clone(*pOwner);
-                    decaleGO.getTransform().setTranslation(GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position));
+                    decaleGO.getTransform().setTranslation(rayPos);
 
-                    decaleGO.getTransform().setVecForward(
-                        GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal),
-                        (GPM::Vec3::right()
-                             .cross(GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.normal))
-                             .normalized()));
+                    decaleGO.getTransform().setVecForward(rayNorm, (GPM::Vec3::right().cross(rayNorm).normalized()));
                 }
 
                 if (pOwner->getTag() == "Character")
@@ -87,16 +88,35 @@ void Firearm::triggered()
                     GAME_ASSERT(bc, "null");
 
                     bc->takeDamage(m_magazineStored.bulletData.getDammage());
+                    // Here vvv
                 }
-
-                getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(
-                    GPE::PhysXSystem::PxVec3ToGPMVec3(ray.hit.block.position), 1.f, GPE::ColorRGBA::red(), 3.f);
+                else
+                {
+                    if (m_groundShootEffect.pData)
+                    {
+                        m_groundShootEffect.pData->emitAt(
+                            GPM::Transform::lookAt(rayPos, rayPos + rayNorm),
+                            static_cast<unsigned int>(m_groundShootEffect.pData->getCount() /
+                                                      m_magazineStored.getCapacity()));
+                    }
+                }
             }
+
+            // TODO: place here ^^^
+            if (m_bloodEffect.pData)
+            {
+                m_bloodEffect.pData->emitAt(
+                    GPM::Transform::lookAt(rayPos, rayPos + getOwner().getTransform().getVectorForward()),
+                    static_cast<unsigned int>(m_bloodEffect.pData->getCount() / m_magazineStored.getCapacity()));
+            }
+
+            getOwner().pOwnerScene->sceneRenderer.drawDebugSphere(rayPos, 1.f, GPE::ColorRGBA::red(), 3.f);
         }
 
         m_isRecoileAnimate = true;
         onShoot();
-        m_muzzleFlash->emit(static_cast<unsigned int>(m_muzzleFlash->getCount() / m_magazineStored.getCapacity()));
+        m_muzzleFlashEffect.pData->emit(
+            static_cast<unsigned int>(m_muzzleFlashEffect.pData->getCount() / m_magazineStored.getCapacity()));
 
         m_shootSound->playSound("Shoot", true);
         m_isReloadingNextBullet    = true;

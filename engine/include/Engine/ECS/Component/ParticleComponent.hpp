@@ -17,6 +17,8 @@
 #include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleRenderer.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleUpdater.hpp>
+#include <gpm/Matrix4.hpp>
+#include <gpm/Vector4.hpp>
 
 // Generated
 #include "Generated/ParticleComponent.rfk.h"
@@ -113,6 +115,19 @@ namespace GPE RFKNamespace()
          * @param count
          */
         void emit(unsigned int count);
+
+        /**
+         * @brief Emit particle at position
+         * @param count
+         */
+        void emitAt(const GPM::Vec3& position, unsigned int count);
+
+        /**
+         * @brief Emit particle thank to model matrix (use transform model of gameObject)
+         * @param model
+         * @param count
+         */
+        void emitAt(const GPM::Mat4& model, unsigned int count);
 
         /**
          * @brief Update the particle effect and all it's updater

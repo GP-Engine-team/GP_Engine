@@ -909,16 +909,16 @@ void RenderSystem::removeRenderer(Renderer& renderer) noexcept
 
 void RenderSystem::addSubModel(SubModel& subModel) noexcept
 {
-    if (subModel.pMaterial->isOpaque())
+    if (subModel.isTransparent)
+    {
+        // Will be sorted by distance, not by draw call type
+        m_pTransparenteSubModels.emplace_back(&subModel);
+    }
+    else
     {
         m_pOpaqueSubModels.insert(std::upper_bound(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), &subModel,
                                                    isSubModelHasPriorityOverAnother),
                                   &subModel);
-    }
-    else
-    {
-        // Will be sorted by distance, not by draw call type
-        m_pTransparenteSubModels.emplace_back(&subModel);
     }
 }
 
@@ -939,17 +939,17 @@ void RenderSystem::updateSubModelPointer(SubModel* newPointerSubModel, SubModel*
 
 void RenderSystem::removeSubModel(SubModel& subModel) noexcept
 {
-    if (subModel.pMaterial->isOpaque())
+    if (subModel.isTransparent)
+    {
+        auto it = std::find(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), &subModel);
+        if (it != m_pTransparenteSubModels.end())
+            m_pTransparenteSubModels.erase(it);
+    }
+    else
     {
         auto it = std::find(m_pOpaqueSubModels.begin(), m_pOpaqueSubModels.end(), &subModel);
         if (it != m_pOpaqueSubModels.end())
             m_pOpaqueSubModels.erase(it);
-    }
-    else
-    {
-        auto it = std::find(m_pTransparenteSubModels.begin(), m_pTransparenteSubModels.end(), &subModel);
-        if (it != m_pOpaqueSubModels.end())
-            m_pTransparenteSubModels.erase(it);
     }
 }
 
