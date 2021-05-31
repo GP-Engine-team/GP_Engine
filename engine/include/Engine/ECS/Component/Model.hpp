@@ -109,10 +109,7 @@ namespace GPE RFKNamespace()
 
         std::vector<GPM::Mat4>& getFinalBonesTransforms() const;
 
-        inline bool isAnimated() const
-        {
-            return m_animComponent != nullptr;
-        }
+        bool isAnimated() const;
 
         Model_GENERATED
     };

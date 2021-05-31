@@ -62,6 +62,8 @@ public:
 
     virtual void onPostLoad() override;
 
+    bool isComplete() const;
+
     GETTER_BY_VALUE(TimeScale, m_timeScale);
     GETTER_BY_VALUE(CurrentTime, m_currentTime);
 

@@ -62,6 +62,10 @@ void AnimationComponent::update(float dt)
 
 void AnimationComponent::playAnimation(Animation* pAnimation)
 {
+    GPE_ASSERT(isComplete(), "Animation Component data should be set before playing an animation.");
+    if (!isComplete())
+        return;
+
     m_currentAnimation = pAnimation;
     m_currentTime      = 0.0f;
 }
@@ -189,4 +193,10 @@ void AnimationComponent::onPostLoad()
         m_model->bindSkin(*m_skin);
 
     Component::onPostLoad();
+}
+
+
+bool AnimationComponent::isComplete() const
+{
+    return m_skeleton != nullptr && m_skin != nullptr && m_model != nullptr;
 }

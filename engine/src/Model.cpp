@@ -331,3 +331,8 @@ std::vector<GPM::Mat4>& Model::getFinalBonesTransforms() const
                "It is not possible to get the bone data if there are no animations. Check with isAnimated() first.");
     return m_animComponent->m_finalBoneMatrices;
 }
+
+bool Model::isAnimated() const
+{
+    return m_animComponent != nullptr && m_animComponent->isComplete();
+}
