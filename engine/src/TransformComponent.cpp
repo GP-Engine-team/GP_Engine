@@ -60,10 +60,8 @@ void TransformComponent::onPostLoad()
 {
     Component::onPostLoad();
     setDirty();
-    update();
 }
 
 void TransformComponent::updateToSystem() noexcept
 {
-
 }

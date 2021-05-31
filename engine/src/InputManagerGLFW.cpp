@@ -156,6 +156,12 @@ void InputManager::setCursorMode(int mode) noexcept
     glfwSetInputMode(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR, mode);
 }
 
+void InputManager::setMousePos(GPM::Vec2 pos)
+{
+    glfwSetCursorPos(GPE::Engine::getInstance()->window.getGLFWWindow(), double(pos.x), double(pos.y));
+    m_cursor.position = pos;
+}
+
 void InputManager::processInput() noexcept
 {
     m_cursor.deltaPos.x = .0f;
@@ -170,6 +176,11 @@ void InputManager::processInput() noexcept
             fireInputComponents(i2->second, keyState.first);
         }
     }
+}
+
+bool InputManager::getCursorLockState() const noexcept
+{
+    return m_cursor.locked;
 }
 
 void InputManager::setCursorLockState(bool lockState) noexcept

@@ -10,14 +10,13 @@ File_GENERATED
 #include <Engine/Resources/Wave.hpp>
 #include <algorithm>
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPG;
 using namespace GPM;
 
 SpatializedSoundPlayerScript::SpatializedSoundPlayerScript(GameObject& owner)
     : BehaviourComponent(owner), source{&owner.addComponent<GPE::AudioComponent>()}
 {
-
     GPE::SourceSettings sourceSettings;
     sourceSettings.pitch       = 1.f;
     sourceSettings.loop        = AL_TRUE;

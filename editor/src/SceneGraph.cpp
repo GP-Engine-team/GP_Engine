@@ -1,22 +1,20 @@
 ﻿#include <Editor/SceneGraph.hpp>
 
-#include <filesystem>
-
 #include <Editor/Editor.hpp>
+
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+#include <Engine/Core/HotReload/SingletonsSync.hpp>
 #include <Engine/Core/Tools/Hash.hpp>
 #include <Engine/Engine.hpp>
-
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
+#include <Engine/Resources/Scene.hpp>
 #include <Engine/Serialization/FileExplorer.hpp>
 #include <Engine/Serialization/IInspectable.hpp>
 
-#include "Engine/Core/HotReload/SingletonsSync.hpp"
-#include <Engine/Core/HotReload/ReloadableCpp.hpp>
-
-#include <Engine/Resources/Scene.hpp>
+#include <filesystem>
 #include <imgui/imgui.h>
-
-#include <map>
+//#include <map>
 
 using namespace Editor;
 using namespace GPE;
@@ -72,14 +70,16 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
             std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
-            Scene empty;
-            auto  loadFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), loadSceneFromPath);
-            loadFunc(&empty, path.string().c_str());
-            if (!empty.getWorld().children.empty())
+            GameObject* go = nullptr;
+            if (SharedPrefab* pSPref = Engine::getInstance()->resourceManager.get<SharedPrefab>(path.string().c_str()))
             {
-                GameObject* const go = empty.getWorld().children.front();
-                go->setParent(&gameObject);
-                go->getTransform().setDirty();
+                auto loadFunc = GET_PROCESS((*m_pEditorContext->reloadableCpp), clonePrefab);
+                go            = loadFunc(pSPref->pref, gameObject);
+            }
+            else
+            {
+                auto loadFunc = GET_PROCESS((*m_pEditorContext->reloadableCpp), loadPrefabFromPath);
+                go            = loadFunc(gameObject, path.string().c_str());
             }
         }
         ImGui::EndDragDropTarget();
@@ -105,8 +105,8 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
 
         if (ImGui::BeginMenu("Add component"))
         {
-            auto getComponentClassFunct   = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), getComponentClass);
-            auto createComponentByIDFunct = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), createComponentByID);
+            auto getComponentClassFunct   = GET_PROCESS((*m_pEditorContext->reloadableCpp), getComponentClass);
+            auto createComponentByIDFunct = GET_PROCESS((*m_pEditorContext->reloadableCpp), createComponentByID);
 
             std::map<std::string, const rfk::Struct*> compSortedByName;
 
@@ -190,20 +190,8 @@ void SceneGraph::controlPreviousItem(GPE::GameObject& gameObject, GPE::IInspecta
             const std::filesystem::path path = openFolderExplorerAndGetRelativePath(L"Select folder") /
                                                (gameObject.getName() + ENGINE_PREFAB_EXTENSION);
 
-            Scene             tempScene;
-            GameObject* const pPreviousParent     = gameObject.getParent();
-            Scene* const      pPreviousOwnedScene = gameObject.pOwnerScene;
-
-            tempScene.getWorld().children.emplace_back(&gameObject);
-            gameObject.forceSetParent(tempScene.getWorld());
-            gameObject.pOwnerScene = nullptr;
-
-            auto saveFunc = GET_PROCESS((*m_pEditorContext->m_reloadableCpp), saveSceneToPath);
-            saveFunc(&tempScene, path.string().c_str(), GPE::SavedScene::EType::XML);
-
-            gameObject.pOwnerScene = pPreviousOwnedScene;
-            gameObject.forceSetParent(*pPreviousParent);
-            tempScene.getWorld().children.clear();
+            auto saveFunc = GET_PROCESS((*m_pEditorContext->reloadableCpp), savePrefabToPath);
+            saveFunc(gameObject, path.string().c_str(), GPE::SavedScene::EType::XML);
         }
 
         if (ImGui::MenuItem("Remove", NULL, false))
@@ -247,7 +235,7 @@ void SceneGraph::recursiveSceneGraphNode(GPE::GameObject& gameObject, GPE::IInsp
     }
 
     if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered() && selectedGameObject)
-        m_pEditorContext->m_sceneEditor.view.lookAtObject(*static_cast<GameObject*>(selectedGameObject));
+        m_pEditorContext->sceneEditor.view.lookAtObject(*static_cast<GameObject*>(selectedGameObject));
 }
 
 void SceneGraph::renderAndGetSelected(GPE::GameObject& gameObject, GPE::IInspectable*& selectedGameObject)

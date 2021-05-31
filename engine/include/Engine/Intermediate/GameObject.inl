@@ -8,6 +8,16 @@ inline T& GameObject::addComponent(Args&&... args) noexcept
     return *newComponent;
 }
 
+template <typename T>
+T& GameObject::getOrCreateComponent()
+{
+    if (T* comp = getComponent<T>())
+    {
+        return *comp;
+    }
+    return addComponent<T>();
+}
+
 inline Component* GameObject::addExistingComponent(Component* pExistingComponent) noexcept
 {
     return m_pComponents.emplace_back(pExistingComponent);
@@ -41,6 +51,11 @@ inline const GameObject* GameObject::getParent() const noexcept
 inline GameObject* GameObject::getParent() noexcept
 {
     return m_parent;
+}
+
+inline bool GameObject::isDead()
+{
+    return m_isDead;
 }
 
 inline void GameObject::forceSetParent(GameObject& newParent) noexcept

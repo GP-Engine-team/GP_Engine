@@ -64,14 +64,23 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
 
         // Update old pointers into new ones
         context.updateLazyPtrs();
+        context.updateLinker(scene->getWorld());
 
         // Call onPostLoad on GameObjects
         struct Rec
         {
-            static void rec(GPE::GameObject* g)
+        private:
+            static void recTransform(GPE::GameObject* g)
             {
                 g->getTransform().onPostLoad();
 
+                for (GPE::GameObject* g2 : g->children)
+                {
+                    recTransform(g2);
+                }
+            };
+            static void recComponent(GPE::GameObject* g)
+            {
                 for (GPE::Component* comp : g->getComponents())
                 {
                     comp->onPostLoad();
@@ -79,12 +88,37 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
 
                 for (GPE::GameObject* g2 : g->children)
                 {
-                    rec(g2);
+                    recComponent(g2);
                 }
             };
+
+        public:
+            static void rec(GPE::GameObject* g)
+            {
+                recTransform(g);
+                g->updateSelfAndChildren();
+                recComponent(g);
+            }
         };
         Rec::rec(&scene->getWorld()); // can't do recursives with lambdas, and std::function would be overkill
     }
+}
+
+void GPE::savePrefabToPathImp(GPE::GameObject& prefab, const char* path, GPE::SavedScene::EType saveMode)
+{
+    Scene             tempScene;
+    GameObject* const pPreviousParent     = prefab.getParent();
+    Scene* const      pPreviousOwnedScene = prefab.pOwnerScene;
+
+    tempScene.getWorld().children.emplace_back(&prefab);
+    prefab.forceSetParent(tempScene.getWorld());
+    prefab.pOwnerScene = nullptr;
+
+    saveSceneToPathImp(&tempScene, path, saveMode);
+
+    prefab.pOwnerScene = pPreviousOwnedScene;
+    prefab.forceSetParent(*pPreviousParent);
+    tempScene.getWorld().children.clear();
 }
 
 GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char* path)
@@ -109,6 +143,10 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
 
         // Update old pointers into new ones
         context.updateLazyPtrs();
+
+        GameObject* const go = scene.getWorld().children.front();
+        if (go)
+            context.updateLinker(*go);
     }
 
     // Init the prefab
@@ -121,10 +159,18 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
         // Call onPostLoad on GameObjects
         struct Rec
         {
-            static void rec(GPE::GameObject* const g)
+        private:
+            static void recTransform(GPE::GameObject* g)
             {
                 g->getTransform().onPostLoad();
 
+                for (GPE::GameObject* g2 : g->children)
+                {
+                    recTransform(g2);
+                }
+            };
+            static void recComponent(GPE::GameObject* g)
+            {
                 for (GPE::Component* comp : g->getComponents())
                 {
                     comp->onPostLoad();
@@ -132,9 +178,17 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
 
                 for (GPE::GameObject* g2 : g->children)
                 {
-                    rec(g2);
+                    recComponent(g2);
                 }
             };
+
+        public:
+            static void rec(GPE::GameObject* g)
+            {
+                recTransform(g);
+                g->updateSelfAndChildren();
+                recComponent(g);
+            }
         };
         Rec::rec(go); // can't do recursives with lambdas, and std::function would be overkill
     }
@@ -195,7 +249,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         aiString              path;
         std::filesystem::path fsPath;
         std::filesystem::path fsDstPath;
-        std::filesystem::path fsSrcPath;
 
         for (unsigned int iText = 0;
              iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_AMBIENT); ++iText)
@@ -227,15 +280,36 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
             }
             else
             {
-                fsPath    = path.C_Str();
-                fsSrcPath = srcDirPath / fsPath;
+                fsPath = path.C_Str();
+                // If the path doesn't exist, try in relative path
+                if (!std::filesystem::exists(fsPath))
+                {
+                    std::filesystem::path relativePath = srcPath;
+                    relativePath                       = relativePath.parent_path();
 
-                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-                fsDstPath = dstDirPath / fsPath;
+                    // If the path doesn't exist, try in local with name only
+                    if (!std::filesystem::exists(relativePath / fsPath))
+                    {
+                        // If asset is not found, discard
+                        if (!std::filesystem::exists(relativePath / fsPath.filename()))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            fsPath = relativePath / fsPath.filename();
+                        }
+                    }
+                    else
+                    {
+                        fsPath = relativePath / fsPath;
+                    }
+                }
+                std::string dstPath = (dstDirPath / fsPath.stem()).string() + ENGINE_TEXTURE_EXTENSION;
 
-                materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                materialArg.ambianteTexturePath = dstPath.c_str();
 
-                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
+                importeTextureFile(fsPath.string().c_str(), dstPath.c_str(), textureArg);
             }
         }
 
@@ -269,15 +343,35 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
             }
             else
             {
-                fsPath    = path.C_Str();
-                fsSrcPath = srcDirPath / fsPath;
+                fsPath = path.C_Str();
+                // If the path doesn't exist, try in relative path
+                if (!std::filesystem::exists(fsPath))
+                {
+                    std::filesystem::path relativePath = srcPath;
+                    relativePath                       = relativePath.parent_path();
 
-                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-                fsDstPath = dstDirPath / fsPath;
+                    // If the path doesn't exist, try in local with name only
+                    if (!std::filesystem::exists(relativePath / fsPath))
+                    {
+                        // If asset is not found, discard
+                        if (!std::filesystem::exists(relativePath / fsPath.filename()))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            fsPath = relativePath / fsPath.filename();
+                        }
+                    }
+                    else
+                    {
+                        fsPath = relativePath / fsPath;
+                    }
+                }
+                std::string dstPath = (dstDirPath / fsPath.stem()).string() + ENGINE_TEXTURE_EXTENSION;
 
-                materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
-
-                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
+                materialArg.diffuseTexturePath = dstPath.c_str();
+                importeTextureFile(fsPath.string().c_str(), dstPath.c_str(), textureArg);
             }
         }
 
@@ -312,15 +406,36 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
             }
             else
             {
-                fsPath    = path.C_Str();
-                fsSrcPath = srcDirPath / fsPath;
+                fsPath = path.C_Str();
+                // If the path doesn't exist, try in relative path
+                if (!std::filesystem::exists(fsPath))
+                {
+                    std::filesystem::path relativePath = srcPath;
+                    relativePath                       = relativePath.parent_path();
 
-                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-                fsDstPath = dstDirPath / fsPath;
+                    // If the path doesn't exist, try in local with name only
+                    if (!std::filesystem::exists(relativePath / fsPath))
+                    {
+                        // If asset is not found, discard
+                        if (!std::filesystem::exists(relativePath / fsPath.filename()))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            fsPath = relativePath / fsPath.filename();
+                        }
+                    }
+                    else
+                    {
+                        fsPath = relativePath / fsPath;
+                    }
+                }
 
-                materialArg.normalMapTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                std::string dstPath = (dstDirPath / fsPath.stem()).string() + ENGINE_TEXTURE_EXTENSION;
 
-                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
+                materialArg.normalMapTexturePath = dstPath.c_str();
+                importeTextureFile(fsPath.string().c_str(), dstPath.c_str(), textureArg);
             }
         }
 
@@ -790,7 +905,7 @@ void GPE::writePrefabFile(const char* dst, const SavedScene::CreateArg& arg)
 {
     FILE* pFile = nullptr;
 
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (fopen_s(&pFile, dst, "wb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
         return;
@@ -847,7 +962,7 @@ void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
 {
     FILE* pFile = nullptr;
 
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (fopen_s(&pFile, dst, "wb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
         return;

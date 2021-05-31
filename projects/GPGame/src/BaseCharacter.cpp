@@ -9,8 +9,6 @@ File_GENERATED
 #include <gpm/Vector3.hpp>
 #include <gpm/Vector4.hpp>
 
-#include <gpm/DebugOutput.hpp>
-
     using namespace GPE;
 using namespace GPG;
 using namespace GPM;
@@ -21,19 +19,19 @@ BaseCharacter::BaseCharacter(GameObject& owner) : BehaviourComponent(owner)
 
 void BaseCharacter::onPostLoad()
 {
+    enableFixedUpdate(true);
+    controller = &getOwner().getOrCreateComponent<GPE::CharacterController>();
+
     BehaviourComponent::onPostLoad();
 }
 
 void BaseCharacter::start()
 {
-    enableFixedUpdate(true);
-
-    controller = &getOwner().addComponent<GPE::CharacterController>();
     GAME_ASSERT(controller, "null");
 
     // Setup controller
-    controller->setHasGravity(true);
-    controller->setSpeed(1.f);
+    //controller->setHasGravity(true);
+    //controller->setSpeed(1.f);
     controller->setAngularSpeed(HALF_PI / 8.f);
 }
 

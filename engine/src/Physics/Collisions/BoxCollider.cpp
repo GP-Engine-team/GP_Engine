@@ -28,7 +28,10 @@ BoxCollider::BoxCollider(GameObject& _owner) noexcept : Collider(), m_sizeOffset
         PxBoxGeometry(PhysXSystem::GPMVec3ToPxVec3((_owner.getTransform().getGlobalScale() + m_sizeOffset) * 0.5f)),
         *material, true);
 
-    material->release();
+    if (material)
+    {
+        material->release();
+    }
 }
 
 void BoxCollider::onPostLoad() noexcept

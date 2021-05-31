@@ -2,7 +2,7 @@
 {
 void InputManager::bindInput(int key, const std::string& action) noexcept
 {
-    using const_iterator = std::unordered_multimap<int, std::string>::const_iterator;
+    using const_iterator    = std::unordered_multimap<int, std::string>::const_iterator;
     const const_iterator it = m_actionMap.find(key);
 
     if (it != m_actionMap.end() && it->second == action)
@@ -45,10 +45,14 @@ void InputManager::restorePreviousInputMode() noexcept
     std::swap(m_previousInputMode, m_currentInputMode);
 }
 
-
 void InputManager::setCursorTrackingState(bool trackState) noexcept
 {
     m_cursor.tracked = trackState;
+}
+
+bool InputManager::getCursorTrackingState() const noexcept
+{
+    return m_cursor.tracked;
 }
 
 inline const std::string& InputManager::getInputMode() noexcept

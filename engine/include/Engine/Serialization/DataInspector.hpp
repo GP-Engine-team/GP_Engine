@@ -10,7 +10,7 @@ namespace DataInspector
 void startProperty(const char* name);
 void endProperty();
 
-template <typename T>
+template <class T>
 void inspect(GPE::InspectContext& context, T& inspected);
 /**
  * @brief Shows the content of the inspected object.

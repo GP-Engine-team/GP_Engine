@@ -289,6 +289,15 @@
     <ClCompile Include="src\Serialization\AudioDataInspector.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Linker.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShakeEffect.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\imgui\imguizmo.cpp">
+      <Filter>third_party\imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
@@ -765,6 +774,18 @@
     <ClInclude Include="include\Engine\Serialization\AudioDataInspector.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\ShakeEffect.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\Interpolation.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Linker.hpp">
+      <Filter>include\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\imgui\imguizmo.h">
+      <Filter>third_party\imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
@@ -884,6 +905,18 @@
     </None>
     <None Include="third_party\gpm\include\GPM\Vector4.inl">
       <Filter>third_party\gpm</Filter>
+    </None>
+    <None Include="include\Engine\Resources\Linker.inl">
+      <Filter>include\Resources</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\GPEDataInspector.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\GPESave.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\GPELoad.inl">
+      <Filter>include\Serialization</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

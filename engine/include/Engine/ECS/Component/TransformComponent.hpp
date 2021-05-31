@@ -6,20 +6,19 @@
 
 #pragma once
 
-#include "Engine/Core/Tools/Callback.hpp" //Event
-#include "Engine/ECS/Component/Component.hpp"
-#include "Engine/Serialization/ComponentGen.h"
-#include "GPM/Conversion.hpp"
-#include "GPM/Matrix4.hpp"
-#include "GPM/Quaternion.hpp"
-#include "GPM/Transform.hpp"
-#include "GPM/Vector3.hpp"
+#include "Component.hpp"
+#include <Engine/Core/Tools/Callback.hpp> //Event
+#include <Engine/Serialization/ComponentGen.h>
+#include <GPM/Conversion.hpp>
+#include <GPM/Matrix4.hpp>
+#include <GPM/Quaternion.hpp>
+#include <GPM/Transform.hpp>
+#include <GPM/Vector3.hpp>
 
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Refureku/Refureku.h"
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Refureku/Refureku.h>
 
-// Generated
-#include "Generated/TransformComponent.rfk.h"
+#include <Generated/TransformComponent.rfk.h>
 
 namespace GPE RFKNamespace()
 {
@@ -47,13 +46,13 @@ namespace GPE RFKNamespace()
     public:
         TransformComponent(GameObject & refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
 
-        TransformComponent() noexcept                                = default;
+        TransformComponent() noexcept = default;
         virtual ~TransformComponent() noexcept;
 
         virtual void onPostLoad() override;
 
         [[nodiscard]] constexpr inline bool isDirty() const;
-        constexpr void                      setDirty();
+        constexpr void                      setDirty(bool toggle = true);
 
         constexpr GPM::Vec3 getGlobalPosition() const noexcept;
 
@@ -94,10 +93,12 @@ namespace GPE RFKNamespace()
         void setVecUp(const GPM::Vec3& newUp) noexcept;
 
         GPM::Vec3 getVectorForward() const noexcept;
-
         GPM::Vec3 getVectorRight() const noexcept;
-
         GPM::Vec3 getVectorUp() const noexcept;
+
+        GPM::Vec3 getLocalForward() const noexcept;
+        GPM::Vec3 getLocalRight() const noexcept;
+        GPM::Vec3 getLocalUp() const noexcept;
 
         constexpr GPM::SplitTransform& getSpacialAttribut();
 

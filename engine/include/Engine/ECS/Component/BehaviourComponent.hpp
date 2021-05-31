@@ -23,9 +23,10 @@ namespace GPE RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BehaviourComponent : public Component
     {
     protected:
-        RFKField(Inspect(), Serialize()) bool m_useUpdate      = false;
-        RFKField(Inspect(), Serialize()) bool m_useFixedUpdate = false;
-        RFKField(Inspect(), Serialize()) bool m_useOnGUI       = false;
+        RFKField(Inspect(), Serialize()) bool m_useUpdate       = false;
+        RFKField(Inspect(), Serialize()) bool m_useFixedUpdate  = false;
+        RFKField(Inspect(), Serialize()) bool m_useOnGUI        = false;
+        RFKField(Inspect(), Serialize()) bool m_useUpdateEditor = false;
 
     protected:
         virtual void updateToSystem() noexcept override;
@@ -49,6 +50,10 @@ namespace GPE RFKNamespace()
         {
         }
 
+        virtual void updateEditor(double deltaTime)
+        {
+        }
+
         virtual void onGUI()
         {
         }
@@ -56,10 +61,12 @@ namespace GPE RFKNamespace()
         void enableUpdate(bool flag) noexcept;
         void enableFixedUpdate(bool flag) noexcept;
         void enableOnGUI(bool flag) noexcept;
+        void enableUpdateEditor(bool flag) noexcept;
 
         [[nodiscard]] bool isUpdateEnable() const noexcept;
         [[nodiscard]] bool isFixedUpdateEnable() const noexcept;
         [[nodiscard]] bool isOnGUIEnable() const noexcept;
+        [[nodiscard]] bool isUpdateEditorEnable() const noexcept;
 
         // UTILITY
     public:
@@ -82,12 +89,17 @@ namespace GPE RFKNamespace()
                            const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}, float duration = 0.f,
                            bool enableBackFaceCullling = true) noexcept;
 
-        void drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, float width = 1.f,
-                           const ColorRGBA& color = ColorRGBA{0.5f, 0.f, 0.f, 0.5f}) noexcept;
+        void drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2,
+                           const ColorRGB& color = ColorRGB::black()) noexcept;
 
         void log(const std::string& msg);
         void logWarning(const std::string& msg);
         void logError(const std::string& msg);
+
+        void reloadScene();
+        void loadNewScene(const char* path);
+
+        void closeApplication();
 
         TransformComponent& transform();
 

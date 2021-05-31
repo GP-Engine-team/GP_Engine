@@ -10,15 +10,46 @@ class Mesh;
 class Shader;
 class Material;
 class Texture;
+struct ColorRGBA;
+
+template <typename T>
+struct Linker;
+
+class GameObject;
 
 template <>
 void save(XmlSaver& context, const AmbiantComponent& data, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, const ColorRGBA& data, const rfk::Field& info);
+
+template <>
+void save(XmlSaver& context, const ColorRGBA& data, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, const ColorRGB& data, const rfk::Field& info);
+
+template <>
+void save(XmlSaver& context, const ColorRGB& data, const XmlSaver::SaveInfo& info);
 
 template <>
 void save(XmlSaver& context, Prefab* const& data, const rfk::Field& info);
 
 template <>
 void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info);
+
+// template <typename T>
+// void save(XmlSaver& context, const Linker<T>& data, const rfk::Field& info);
+
+template <typename T>
+void save(XmlSaver& context, const Linker<T>& data, const XmlSaver::SaveInfo& info);
+
+template <>
+void save<GPE::Linker<GPE::GameObject>>(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data,
+                                        const XmlSaver::SaveInfo& info);
+
+template <>
+void save<GPE::GameObject>(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data, const XmlSaver::SaveInfo& info);
 
 template <>
 void save(XmlSaver& context, Shader* const& data, const rfk::Field& info);
@@ -45,3 +76,6 @@ template <>
 void save(XmlSaver& context, Texture* const& data, const XmlSaver::SaveInfo& info);
 
 } // namespace GPE
+
+#include <Engine/Serialization/GPESave.inl>
+#include <string>

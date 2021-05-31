@@ -6,6 +6,9 @@
 #include "Engine/Resources/Shader.hpp"
 #include "Engine/Resources/Type.hpp"
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Color.hpp>
+#include <Engine/Resources/Linker.hpp>
 #include <Engine/Resources/Prefab.hpp>
 #include <Engine/Resources/ResourcesManager.hpp>
 
@@ -16,6 +19,30 @@ template <>
 void save(XmlSaver& context, const AmbiantComponent& data, const XmlSaver::SaveInfo& info)
 {
     GPE::save(context, data.rgbi, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGBA& data, const rfk::Field& info)
+{
+    GPE::save(context, data.v, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGBA& data, const XmlSaver::SaveInfo& info)
+{
+    GPE::save(context, data.v, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGB& data, const rfk::Field& info)
+{
+    GPE::save(context, data.v, info);
+}
+
+template <>
+void save(XmlSaver& context, const ColorRGB& data, const XmlSaver::SaveInfo& info)
+{
+    GPE::save(context, data.v, info);
 }
 
 template <>
@@ -42,6 +69,33 @@ void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info
     }
 
     context.pop();
+}
+
+inline void saveGameObjectLinker(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data,
+                                 const XmlSaver::SaveInfo& info)
+{
+    std::string str = "";
+    if (data.pData)
+    {
+        str = data.pData->getAbsolutePath();
+        str.erase(0, str.find_first_of('/', 0) + 1); // remove the world
+    }
+
+    GPE::save(context, str, XmlSaver::SaveInfo{info.name, info.typeName, 0});
+}
+
+template <>
+void GPE::save<GPE::Linker<GPE::GameObject>>(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data,
+                                             const XmlSaver::SaveInfo& info)
+{
+    saveGameObjectLinker(context, data, info);
+}
+
+template <>
+void GPE::save<GPE::GameObject>(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data,
+                                const XmlSaver::SaveInfo& info)
+{
+    saveGameObjectLinker(context, data, info);
 }
 
 template <>

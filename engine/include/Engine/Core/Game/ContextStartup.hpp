@@ -12,8 +12,6 @@
 class ContextStartup
 {
 public:
-    bool isRunning = true;
-
 public:
     // Loads and initializes libraries
     ContextStartup()
@@ -23,7 +21,7 @@ public:
     // Contains gameloop
     void run()
     {
-        while (isRunning)
+        while (GPE::Engine::getInstance()->isRunning)
         {
             update();
         }

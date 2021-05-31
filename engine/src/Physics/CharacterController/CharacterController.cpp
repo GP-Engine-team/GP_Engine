@@ -21,10 +21,15 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
 {
     PxCapsuleControllerDesc desc;
 
-    desc.height        = m_height;
-    desc.material      = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
-    desc.position      = PhysXSystem::GPMVec3ToPxExtendedVec3(owner.getTransform().getGlobalPosition() + m_center);
-    desc.radius        = m_radius;
+    desc.height   = m_height;
+    desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(owner.getTransform().getGlobalPosition() + m_center);
+    desc.radius   = m_radius;
+
+    if (m_contactOffset <= 0)
+    {
+        m_contactOffset = 0.1f;
+    }
     desc.contactOffset = m_contactOffset;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
@@ -47,11 +52,17 @@ void CharacterController::onPostLoad() noexcept
 
     PxCapsuleControllerDesc desc;
 
-    desc.height        = scale.y + m_height;
-    desc.material      = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    desc.position      = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
-    desc.radius        = std::max(scale.x, scale.z) + m_radius;
+    desc.height   = scale.y + m_height;
+    desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
+    desc.radius   = std::max(scale.x, scale.z) + m_radius;
+    if (m_contactOffset <= 0)
+    {
+        m_contactOffset = 0.1f;
+    }
     desc.contactOffset = m_contactOffset;
+
+    PxControllerManager* manager = Engine::getInstance()->physXSystem.manager;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
 
@@ -74,7 +85,7 @@ void CharacterController::update(double deltaTime) noexcept
     {
         if (m_hasGravity)
         {
-            addForce({.0f, -m_gravity, .0f});
+            addForce({.0f, -m_gravity * m_mass, .0f});
         }
     }
 
@@ -92,8 +103,7 @@ void CharacterController::update(double deltaTime) noexcept
     if (controller == nullptr)
         return;
 
-    physx::PxExtendedVec3 debugvect = controller->getPosition();
-    controller->move(PhysXSystem::GPMVec3ToPxVec3(m_displacement), 0.1f, float(deltaTime), filters);
+    controller->move(PhysXSystem::GPMVec3ToPxVec3(deltaTime * m_displacement), 0.1f, float(deltaTime), filters);
     m_displacement.x = m_displacement.y = m_displacement.z = .0f;
     getOwner().getTransform().setTranslation(PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()) -
                                              m_center);
@@ -122,7 +132,10 @@ void CharacterController::updateForce() noexcept
 void CharacterController::groundCheck() noexcept
 {
     PxControllerState cctState;
-    controller->getState(cctState);
+    if (controller)
+    {
+        controller->getState(cctState);
+    }
     m_grounded = (cctState.collisionFlags & PxControllerCollisionFlag::eCOLLISION_DOWN) != 0;
 }
 
@@ -163,6 +176,12 @@ void CharacterController::updateShape() noexcept
     desc.material      = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
     desc.position      = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
     desc.radius        = std::max(scale.x, scale.z) + m_radius;
+
+    if (m_contactOffset <= 0)
+    {
+        m_contactOffset = 0.1f;
+    }
+
     desc.contactOffset = m_contactOffset;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
@@ -198,7 +217,7 @@ void CharacterController::setRadius(float newRadius) noexcept
 
 void CharacterController::setContactOffset(float newOffset) noexcept
 {
-    if (newOffset == m_contactOffset)
+    if (newOffset == m_contactOffset || newOffset == 0)
         return;
 
     m_contactOffset = newOffset;

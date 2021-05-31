@@ -12,6 +12,7 @@
 
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Linker.hpp>
 #include <memory>
 
 #include "Generated/WorldGenerator.rfk.h"
@@ -21,8 +22,8 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) WorldGenerator : public GPE::BehaviourComponent
     {
     private:
-        RFKField(Inspect()) GPE::Prefab*                  m_treePrefab    = nullptr;
-        RFKField(Inspect(), Serialize()) GPE::GameObject* m_treeContainer = nullptr;
+        RFKField(Inspect()) GPE::Prefab*                              m_treePrefab = nullptr;
+        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> m_treeContainer;
 
     public:
         WorldGenerator(GPE::GameObject & owner) noexcept : GPE::BehaviourComponent(owner)
@@ -50,18 +51,18 @@ namespace GPG RFKNamespace()
         {
             if (ImGui::Button("Generate"))
             {
-                if (!m_treeContainer || !m_treePrefab)
+                if (!m_treeContainer.pData || !m_treePrefab)
                 {
                     GPE::Log::getInstance()->logError("Missing tree container GO or tree prefab");
                     return;
                 }
-                for (auto&& child : m_treeContainer->children)
+                for (auto&& child : m_treeContainer.pData->children)
                 {
                     delete child;
                 }
-                m_treeContainer->children.clear();
+                m_treeContainer.pData->children.clear();
 
-                loadTree(*m_treeContainer, 100);
+                loadTree(*m_treeContainer.pData, 100);
             }
         }
 
