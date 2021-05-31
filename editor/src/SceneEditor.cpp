@@ -12,7 +12,7 @@
 #include <glfw/glfw3.h>
 
 // Don't move up
-#include "Engine/Core/HotReload/SingletonsSync.hpp"
+#include <Engine/Core/HotReload/SingletonsSync.hpp>
 
 namespace Editor
 {
