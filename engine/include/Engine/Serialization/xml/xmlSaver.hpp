@@ -149,27 +149,21 @@ void save(XmlSaver& context, const T& inspected, const rfk::Field& info)
 }
 
 template <typename T>
-void save(XmlSaver& context, T* const& inspected, const rfk::Field& info)
-{
-    context.push(info);
-
-    context.saveAsString(std::to_string(size_t(inspected)), info);
-
-    if (inspected != nullptr)
-        context.savePtrData(inspected, fieldToSaveInfo(info));
-
-    context.pop();
-}
-
-template <typename T>
 void save(XmlSaver& context, T* const & inspected, const XmlSaver::SaveInfo& info)
 {
     context.push(info);
 
     context.saveAsString(std::to_string(size_t(inspected)), info);
-    context.savePtrData(inspected, info);
+    if (inspected != nullptr)
+        context.savePtrData(inspected, info);
 
     context.pop();
+}
+
+template <typename T>
+void save(XmlSaver& context, T* const& inspected, const rfk::Field& info)
+{
+    GPE::save(context, inspected, fieldToSaveInfo(info));
 }
 
 /**

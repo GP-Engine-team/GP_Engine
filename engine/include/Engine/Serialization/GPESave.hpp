@@ -10,38 +10,36 @@ class Mesh;
 class Shader;
 class Material;
 class Texture;
+class Skeleton;
+class Skin;
+class Animation;
 
 template <>
 void save(XmlSaver& context, const AmbiantComponent& data, const XmlSaver::SaveInfo& info);
 
 template <>
-void save(XmlSaver& context, Prefab* const& data, const rfk::Field& info);
-
-template <>
 void save(XmlSaver& context, Prefab* const& data, const XmlSaver::SaveInfo& info);
-
-template <>
-void save(XmlSaver& context, Shader* const& data, const rfk::Field& info);
 
 template <>
 void save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info);
 
 template <>
-void save(XmlSaver& context, Material* const& data, const rfk::Field& info);
-
-template <>
 void save(XmlSaver& context, Material* const& data, const XmlSaver::SaveInfo& info);
-
-template <>
-void save(XmlSaver& context, Mesh* const& data, const rfk::Field& info);
 
 template <>
 void save(XmlSaver& context, Mesh* const& data, const XmlSaver::SaveInfo& info);
 
 template <>
-void save(XmlSaver& context, Texture* const& data, const rfk::Field& info);
-
-template <>
 void save(XmlSaver& context, Texture* const& data, const XmlSaver::SaveInfo& info);
 
+template <>
+void save(XmlSaver& context, Animation* const& data, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, Skeleton* const& data, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, Skin* const& data, const XmlSaver::SaveInfo& info);
+
 } // namespace GPE
+

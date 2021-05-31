@@ -22,12 +22,12 @@ class Animation;
 class RFKClass(Inspect(), ComponentGen(), Serialize()) AnimationComponent : public Component
 {
 private:
-    RFKField(Inspect("setSkeleton")) Skeleton*  m_skeleton         = nullptr;
-    RFKField(Inspect())              Animation* m_currentAnimation = nullptr;
-    class Model*                                m_model            = nullptr;
-    RFKField(Inspect("setSkin"))     Skin*      m_skin             = nullptr;
-    RFKField(Inspect(), Serialize()) float      m_currentTime;
-    RFKField(Inspect(), Serialize()) float      m_timeScale = 30.f;
+    RFKField(Inspect("setSkeleton"), Serialize()) Skeleton*  m_skeleton         = nullptr;
+    RFKField(Inspect(), Serialize())              Animation* m_currentAnimation = nullptr;
+    class Model*                                             m_model            = nullptr;
+    RFKField(Inspect("setSkin"), Serialize()) Skin*          m_skin             = nullptr;
+    RFKField(Inspect(), Serialize()) float                   m_currentTime;
+    RFKField(Inspect(), Serialize()) float                   m_timeScale = 30.f;
 
     RFKField(Inspect("setupAnims")) bool debugAnimUpdateCallback = false;
     void                                 setupAnims(bool);
@@ -59,6 +59,8 @@ public:
     void setSkin(Skin* skin);
 
     void drawDebugSkeleton(const GPM::Vec4& offset = GPM::Vec4{0, -100, 0}) const;
+
+    virtual void onPostLoad() override;
 
     GETTER_BY_VALUE(TimeScale, m_timeScale);
     GETTER_BY_VALUE(CurrentTime, m_currentTime);

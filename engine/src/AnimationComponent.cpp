@@ -175,3 +175,18 @@ void AnimationComponent::setSkin(Skin* skin)
     //    }
     //}
 }
+
+void AnimationComponent::onPostLoad()
+{
+    if (m_skeleton != nullptr)
+    {
+        m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
+        for (int i = 0; i < m_skeleton->getNbBones(); i++)
+            m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
+    }
+
+    if (m_model != nullptr)
+        m_model->bindSkin(*m_skin);
+
+    Component::onPostLoad();
+}
