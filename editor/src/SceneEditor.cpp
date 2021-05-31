@@ -183,17 +183,6 @@ void SceneEditor::renderGizmo(TransformComponent& transfo)
         {
             transfo.translate(delta.translation());
         }
-
-        // Same as transfo.update(), but with one less if
-        transfo.get() = GPM::toTransform(transfo.getSpacialAttribut());
-        transfo.setDirty(false);
-        transfo.OnUpdate();
-
-        // Cascade the changes made on this transform
-        for (GPE::GameObject* child : transfo.getOwner().children)
-        {
-            child->forceUpdate();
-        }
     }
 }
 
