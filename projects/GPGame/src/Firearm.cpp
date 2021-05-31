@@ -45,6 +45,7 @@ void Firearm::onPostLoad()
 
 void Firearm::start()
 {
+    m_recoileAnimtationDuration = std::clamp(m_recoileAnimtationDuration, 0.f, m_rateOfFire);
     // GAME_ASSERT(m_decalePrefab, "Missing prefab");
 }
 
@@ -111,14 +112,15 @@ void Firearm::update(double deltaTime)
     if (m_isRecoileAnimate)
     {
         m_recoileAnimtationDurationCount += float(deltaTime);
+
+        const float t = std::clamp(m_recoileAnimtationDurationCount / m_recoileAnimtationDuration, 0.f, 1.f);
+        animateRecoil(t);
+
         if (m_recoileAnimtationDurationCount >= m_recoileAnimtationDuration)
         {
             m_isRecoileAnimate               = false;
             m_recoileAnimtationDurationCount = 0.f;
         }
-
-        const float t = std::clamp(m_recoileAnimtationDurationCount / m_recoileAnimtationDuration, 0.f, 1.f);
-        animateRecoil(t);
     }
 
     if (m_isReloading)
