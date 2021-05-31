@@ -174,15 +174,13 @@ Frustum Camera::getFrustum() const noexcept
     const Vec3& globalPosition = -getOwner().getTransform().getGlobalPosition();
     const float halfHSide      = hSide * .5f;
     const float halfVSide      = vSide * .5f;
-    // const int   signHSide      = (fovX < PI) * 2.f - 1.f;
-    // const int   signVSide      = (fovY < PI) * 2.f - 1.f;
 
     frustum.nearFace   = {globalPosition + znear * -forward, forward};
     frustum.farFace    = {globalPosition + zfar * -forward, -forward};
-    frustum.rightFace  = {globalPosition, /*signHSide **/ -Vec3::cross(forward * zfar + right * halfHSide, up)};
-    frustum.leftFace   = {globalPosition, /*signHSide **/ Vec3::cross(forward * zfar + right * -halfHSide, up)};
-    frustum.topFace    = {globalPosition, /*signVSide **/ -Vec3::cross(forward * zfar + up * -halfVSide, right)};
-    frustum.bottomFace = {globalPosition, /*signVSide **/ Vec3::cross(forward * zfar + up * halfVSide, right)};
+    frustum.rightFace  = {globalPosition, -Vec3::cross(forward * zfar + right * halfHSide, up)};
+    frustum.leftFace   = {globalPosition, Vec3::cross(forward * zfar + right * -halfHSide, up)};
+    frustum.topFace    = {globalPosition, -Vec3::cross(forward * zfar + up * -halfVSide, right)};
+    frustum.bottomFace = {globalPosition, Vec3::cross(forward * zfar + up * halfVSide, right)};
 
     return frustum;
 }
