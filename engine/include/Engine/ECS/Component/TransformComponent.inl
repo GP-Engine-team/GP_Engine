@@ -54,6 +54,7 @@ inline void TransformComponent::translate(const GPM::Vec3& translation) noexcept
 inline void TransformComponent::rotate(const GPM::Vec3& rotation) noexcept
 {
     m_spaceAttribut.rotation = GPM::Quat::fromEuler(rotation) * m_spaceAttribut.rotation;
+    m_isDirty = true;
 }
 
 
