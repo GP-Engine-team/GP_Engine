@@ -88,7 +88,7 @@ void GameObject::updateSelfAndChildren() noexcept
         }
 
         // Update children
-        for (Children::iterator i = children.begin(); i != end; i++)
+        for (Children::iterator i = children.begin(); i != end;)
         {
             if ((*i)->m_isDead)
             {
