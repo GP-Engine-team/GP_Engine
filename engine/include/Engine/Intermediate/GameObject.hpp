@@ -21,11 +21,11 @@
 #include <Engine/Core/Tools/ClassUtility.hpp>
 
 // in Inl
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Tools/Format.hpp"
-#include "Engine/Intermediate/DataChunk.hpp"
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/Format.hpp>
+#include <Engine/Intermediate/DataChunk.hpp>
 
-#include "Generated/GameObject.rfk.h"
+#include <Generated/GameObject.rfk.h>
 
 namespace GPE RFKNamespace()
 {
