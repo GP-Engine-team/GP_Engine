@@ -8,6 +8,7 @@ namespace GPE
 {
 class Skin;
 class Skeleton;
+class Animation;
 
 template <>
 bool DataInspector::inspect(InspectContext& context, RGB& inspected, const rfk::Field& info);
@@ -57,10 +58,10 @@ bool DataInspector::inspect<Skeleton*>(InspectContext& context, Skeleton*& inspe
 template <>
 bool DataInspector::inspect(InspectContext& context, class Skeleton*& inspected, const char* name);
 
-//template <>
-//bool DataInspector::inspect<Skin>(InspectContext& context, Skin*& inspected, const char* name)
-//{
-//
-//}
+template <>
+bool DataInspector::inspect<Animation*>(InspectContext& context, Animation*& inspected, const rfk::Field& info);
+
+template <>
+bool DataInspector::inspect(InspectContext& context, class Animation*& inspected, const char* name);
 
 } // namespace GPE

@@ -17,16 +17,17 @@
 namespace GPE RFKNamespace()
 {
 class Skin;
+class Animation;
 
 class RFKClass(Inspect(), ComponentGen(), Serialize()) AnimationComponent : public Component
 {
 private:
-    RFKField(Inspect("setSkeleton")) Skeleton* m_skeleton         = nullptr;
-    class Animation*                       m_currentAnimation = nullptr;
-    class Model*                           m_model            = nullptr;
-    RFKField(Inspect())              Skin* m_skin             = nullptr;
-    RFKField(Inspect(), Serialize()) float m_currentTime;
-    RFKField(Inspect(), Serialize()) float m_timeScale = 30.f;
+    RFKField(Inspect("setSkeleton")) Skeleton*  m_skeleton         = nullptr;
+    RFKField(Inspect())              Animation* m_currentAnimation = nullptr;
+    class Model*                                m_model            = nullptr;
+    RFKField(Inspect("setSkin"))     Skin*      m_skin             = nullptr;
+    RFKField(Inspect(), Serialize()) float      m_currentTime;
+    RFKField(Inspect(), Serialize()) float      m_timeScale = 30.f;
 
     RFKField(Inspect("setupAnims")) bool debugAnimUpdateCallback = false;
     void                                 setupAnims(bool);
@@ -55,6 +56,7 @@ public:
 
     void setModel(Model* model);
     void setSkeleton(Skeleton* skeleton);
+    void setSkin(Skin* skin);
 
     void drawDebugSkeleton(const GPM::Vec4& offset = GPM::Vec4{0, -100, 0}) const;
 

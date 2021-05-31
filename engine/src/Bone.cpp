@@ -9,8 +9,8 @@
 using namespace GPE;
 
 /*reads keyframes from aiNodeAnim*/
-Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
-    : m_name(name), m_id(ID), m_localTransform(GPM::Matrix4::identity())
+Bone::Bone(const std::string& name, const aiNodeAnim* channel)
+    : m_name(name), m_localTransform(GPM::Matrix4::identity())
 {
     m_positions.reserve(channel->mNumPositionKeys);
     for (int positionIndex = 0; positionIndex < channel->mNumPositionKeys; ++positionIndex)
@@ -146,4 +146,33 @@ int Bone::getScaleIndex(float animationTime)
             return index;
     }
     assert(0);
+}
+
+template <>
+void GPE::save(BinarySaver& context, const Bone& saved, const BinarySaver::SaveInfo* info)
+{
+    saved.save(context);
+}
+
+template <>
+void GPE::load(BinaryLoader& context, Bone& loaded, const BinaryLoader::LoadInfo* info)
+{
+    loaded.load(context);
+}
+
+void GPE::Bone::save(BinarySaver& saver) const
+{
+    GPE::save(saver, m_positions, nullptr);
+    GPE::save(saver, m_rotations, nullptr);
+    GPE::save(saver, m_scales, nullptr);
+    GPE::save(saver, m_localTransform, nullptr);
+    GPE::save(saver, m_name, nullptr);
+}
+void GPE::Bone::load(BinaryLoader& loader)
+{
+    GPE::load(loader, m_positions, nullptr);
+    GPE::load(loader, m_rotations, nullptr);
+    GPE::load(loader, m_scales, nullptr);
+    GPE::load(loader, m_localTransform, nullptr);
+    GPE::load(loader, m_name, nullptr);
 }

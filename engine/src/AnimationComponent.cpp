@@ -101,47 +101,9 @@ void AnimationComponent::setupAnims(bool newValue)
     {
         debugAnimUpdateCallback = newValue;
 
-        // TODO : To move in Importer.cpp
-        // Load anim data
-        unsigned int postProcessflags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
-                                        aiProcess_SortByPType | aiProcess_GenNormals | aiProcess_GenUVCoords |
-                                        aiProcess_FlipUVs | aiProcess_CalcTangentSpace |
-                                        aiProcess_LimitBoneWeights;
-
-        const char* srcPath = "C:\\Users\\Utilisateur\\Downloads\\GP_Engine - Copy2\\GP_Engine - Copy\\projects\\GPGame\\resources\\Character\\Taunt.fbx";
-
-        Assimp::Importer importer;
-        const aiScene*   scene = importer.ReadFile(srcPath, postProcessflags);
-        if (!scene)
-        {
-            FUNCT_ERROR(importer.GetErrorString());
-            return;
-        }
-
         // subModel
-        m_model = m_gameObject->getComponent<GPE::Model>();
-        m_model->setAnimComponent(this);
+        setModel(m_gameObject->getComponent<GPE::Model>());
 
-        // Mesh
-        for (size_t i = 0; i < scene->mNumMeshes; ++i)
-        {
-            aiMesh* pMesh = scene->mMeshes[i];
-
-            // Skin / Skeleton
-            // TODO : Delete / LEAKS
-            //Skin* tempSkin     = new Skin();
-            //m_skin             = new Skin();
-            //Skeleton* skeleton = new Skeleton();
-            //skeleton->readHierarchyData(scene->mRootNode);
-            //loadSkinAndSkeleton(*tempSkin, *skeleton, pMesh);
-            //setSkeleton(skeleton);
-            if (m_skin != nullptr)
-            m_model->bindSkin(*m_skin);
-        }
-
-        // animation
-        // TODO : Delete / LEAKS
-        m_currentAnimation = new Animation(scene->mAnimations[0], *m_skeleton);
         playAnimation(m_currentAnimation);
 
     }
@@ -149,7 +111,7 @@ void AnimationComponent::setupAnims(bool newValue)
 
 void AnimationComponent::setSkeleton(Skeleton* newSkeleton)
 {
-    if (newSkeleton == nullptr)
+    if (newSkeleton == nullptr || newSkeleton == m_skeleton)
         return;
 
     m_skeleton = newSkeleton;
@@ -173,9 +135,27 @@ void AnimationComponent::setModel(Model* newModel)
     if (newModel != nullptr)
     {
         newModel->setAnimComponent(this);
+        if (m_skin != nullptr)
+            newModel->bindSkin(*m_skin);
     }
 
     m_model = newModel;
+}
+
+void AnimationComponent::setSkin(Skin* skin)
+{
+    if (skin == nullptr)
+    {
+        m_skin = skin;
+        return;
+    }
+
+    if (m_skin != skin)
+    {
+        m_skin = skin;
+        if (m_model != nullptr)
+            m_model->bindSkin(*m_skin);
+    }
 }
 
  void AnimationComponent::drawDebugSkeleton(const GPM::Vec4& offset) const

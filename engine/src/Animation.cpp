@@ -9,32 +9,48 @@
 
 using namespace GPE;
 
-Animation::Animation(const aiAnimation* aiAnim, Skeleton& skeleton)
+Animation::Animation(const aiAnimation* aiAnim)
 {
     m_duration       = aiAnim->mDuration;
     m_ticksPerSecond = aiAnim->mTicksPerSecond;
-    readMissingBones(aiAnim, skeleton);
+    readMissingBones(aiAnim);
 }
 
-void Animation::readMissingBones(const aiAnimation* animation, Skeleton& skeleton)
+Animation::Animation(const CreateArgs& args)
 {
-    int size = animation->mNumChannels;
+    m_bones = args.m_bones;
+    m_duration = args.m_duration;
+    m_ticksPerSecond = args.m_ticksPerSecond;
+}
 
-    auto& boneInfoMap = skeleton.m_boneInfoMap; // getting m_boneInfoMap from Model class
-    int&  boneCount   = skeleton.m_boneCounter; // getting the m_BoneCounter from Model class
+Animation::CreateArgs::CreateArgs(const aiAnimation* aiAnim)
+{
+    m_duration       = aiAnim->mDuration;
+    m_ticksPerSecond = aiAnim->mTicksPerSecond;
+
+    int size = aiAnim->mNumChannels;
 
     // reading channels(bones engaged in an animation and their keyframes)
     for (int i = 0; i < size; i++)
     {
-        auto        channel  = animation->mChannels[i];
+        aiNodeAnim* channel  = aiAnim->mChannels[i];
         std::string boneName = channel->mNodeName.data;
 
-        if (boneInfoMap.find(boneName) == boneInfoMap.end())
-        {
-            boneInfoMap[boneName].id = boneCount;
-            boneCount++;
-        }
-        m_bones.push_back(Bone{std::string(channel->mNodeName.data), boneInfoMap[channel->mNodeName.data].id, channel});
+        m_bones.push_back(Bone{std::string(channel->mNodeName.data), channel});
+    }
+}
+
+void Animation::readMissingBones(const aiAnimation* animation)
+{
+    int size = animation->mNumChannels;
+
+    // reading channels(bones engaged in an animation and their keyframes)
+    for (int i = 0; i < size; i++)
+    {
+        aiNodeAnim* channel  = animation->mChannels[i];
+        std::string boneName = channel->mNodeName.data;
+
+        m_bones.push_back(Bone{std::string(channel->mNodeName.data), channel});
     }
 }
 

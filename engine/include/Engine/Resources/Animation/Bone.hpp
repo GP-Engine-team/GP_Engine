@@ -16,6 +16,8 @@
 #include <string>
 #include <cassert>
 #include <Engine/Resources/Importer/AssimpUtilities.hpp>
+#include <Engine/Serialization/binary/BinaryLoader.hpp>
+#include <Engine/Serialization/binary/BinarySaver.hpp>
 #include <Engine/Core/Tools/ClassUtility.hpp>
 
 #include <assimp/Importer.hpp>  // C++ importer interface
@@ -24,6 +26,12 @@
 
 namespace GPE
 {
+class Bone;
+
+template <>
+void save(BinarySaver& context, const Bone& saved, const BinarySaver::SaveInfo* info);
+template <>
+void load(BinaryLoader& context, Bone& loaded, const BinaryLoader::LoadInfo* info);
 
 struct KeyPosition
 {
@@ -75,7 +83,8 @@ private:
 
 public:
     /*reads keyframes from aiNodeAnim*/
-    Bone(const std::string& name, int ID, const aiNodeAnim* channel);
+    Bone(const std::string& name, const aiNodeAnim* channel);
+    Bone() = default;
 
     /* Interpolates b/w positions,rotations & scaling keys based on the curren time of the
     animation and prepares the local transformation matrix by combining all keys tranformations */
@@ -92,6 +101,9 @@ public:
     /* Gets the current index on mKeyScalings to interpolate to based on the current
     animation time */
     int getScaleIndex(float animationTime);
+
+    void save(BinarySaver& saver) const;
+    void load(BinaryLoader& loader);
 
     GETTER_BY_CONST_REF(LocalTransform, m_localTransform);
     GETTER_BY_CONST_REF(Name, m_name);

@@ -22,6 +22,8 @@ class Animation
 public:
     struct CreateArgs
     {
+        CreateArgs() = default;
+        CreateArgs(const aiAnimation* aiAnim);
         float             m_duration;
         int               m_ticksPerSecond;
         std::vector<Bone> m_bones; 
@@ -33,12 +35,14 @@ private:
     std::vector<Bone>                          m_bones;
 
 public:
-    void readMissingBones(const aiAnimation* animation, class Skeleton& skeleton);
+    void readMissingBones(const aiAnimation* animation);
 
 public:
     Animation() = default;
+    // TODO : constructor by move
+    Animation(const CreateArgs&);
 
-    Animation(const aiAnimation* aiAnim, Skeleton& skeleton);
+    Animation(const aiAnimation* aiAnim);
     Bone* findBone(const std::string& name);
 
 public:

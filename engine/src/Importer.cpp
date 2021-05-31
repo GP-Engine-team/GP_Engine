@@ -396,7 +396,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
 
         std::filesystem::path dstPath = dstDirPath / pMesh->mName.C_Str();
         if (i != 0 &&
-            pMesh->mName == scene->mMeshes[i - 1]->mName) // Add differente name if the FBX containe mesh with same name
+            pMesh->mName == scene->mMeshes[i - 1]->mName) // Add different name if the FBX contains mesh with same name
             dstPath += "0";
 
         std::filesystem::path dstMeshPath = dstPath;
@@ -420,6 +420,18 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         loadSkinAndSkeleton(skinArgs.m_verticesBoneData, skeletonArgs.m_boneInfoMap, pMesh);
         writeSkeletonFile((dstPath.string() + ENGINE_SKELETON_EXTENSION).c_str(), skeletonArgs);
         writeSkinFile((dstPath.string() + ENGINE_SKIN_EXTENSION).c_str(), skinArgs);
+
+        GPE_ASSERT(scene->mNumAnimations <= 1, "If the number of animations is higher");
+    }
+
+    std::filesystem::path dstAnimPath = dstDirPath / fileName;
+    //for (aiAnimation* aiAnim = scene->mAnimations[0]; &aiAnim < scene->mAnimations + scene->mNumAnimations; aiAnim++)
+    for (size_t i = 0; i < scene->mNumAnimations; i++)
+    {
+        aiAnimation*          aiAnim   = scene->mAnimations[i];
+        Animation::CreateArgs animArgs = Animation::CreateArgs(aiAnim);
+        //m_currentAnimation = new Animation(scene->mAnimations[0]);
+        writeAnimationFile((dstAnimPath.string() + aiAnim->mName.C_Str() + ENGINE_ANIMATION_EXTENSION).c_str(), animArgs);
     }
 
     std::filesystem::path dstPrefPath = dstDirPath / fileName;
@@ -999,11 +1011,13 @@ void GPE::writeAnimationFile(const char* dst, const Animation::CreateArgs& arg)
         return;
     }
 
-    // MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
-    //                  static_cast<int>(arg.indices.size())};
-    // fwrite(&header, sizeof(header), 1, pFile);                                         // header
-    // fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLength, pFile); // vertice buffer
-    // fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLength, pFile);    // indice buffer
+    AnimationHeader header{(char)EFileType::ANIMATION};
+    fwrite(&header, sizeof(header), 1, pFile); // header
+    GPE::BinarySaver saver;
+    saver.file = pFile;
+    GPE::save(saver, arg.m_duration, nullptr);
+    GPE::save(saver, arg.m_ticksPerSecond, nullptr);
+    GPE::save(saver, arg.m_bones, nullptr);
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
@@ -1021,21 +1035,15 @@ Animation::CreateArgs GPE::readAnimationFile(const char* src)
         return arg;
     }
 
-    // MeshHeader header;
-    //// copy the file into the buffer:
-    // fread(&header, sizeof(header), 1, pFile);
+     AnimationHeader header;
+    // copy the file into the buffer:
+     fread(&header, sizeof(header), 1, pFile);
+     GPE::BinaryLoader loader;
+     loader.file = pFile;
+     GPE::load(loader, arg.m_duration, nullptr);
+     GPE::load(loader, arg.m_ticksPerSecond, nullptr);
+     GPE::load(loader, arg.m_bones, nullptr);
 
-    // if (header.verticeLength)
-    //{
-    //    arg.vertices.assign(header.verticeLength, Mesh::Vertex{});
-    //    fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLength, pFile); // vertice buffer
-    //}
-
-    // if (header.indiceLength)
-    //{
-    //    arg.indices.assign(header.indiceLength, 0);
-    //    fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLength, pFile); // indice buffer
-    //}
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
@@ -1047,10 +1055,10 @@ Animation* GPE::loadAnimationFile(const char* src)
 {
     std::filesystem::path srcPath(src);
 
-    // if (Animation* const pAnim = Engine::getInstance()->resourceManager.get<Animation>(srcPath.filename().string()))
-    //    return pAnim;
-    // return &Engine::getInstance()->resourceManager.add<Animation>(srcPath.filename().string(), readMeshFile(src));
-    return nullptr;
+    if (Animation* const pAnim = Engine::getInstance()->animResourcesManager.get<Animation>(srcPath.filename().string()))
+        return pAnim;
+    return &Engine::getInstance()->animResourcesManager.add<Animation>(srcPath.filename().string(),
+                                                                       readAnimationFile(src));
 }
 
 

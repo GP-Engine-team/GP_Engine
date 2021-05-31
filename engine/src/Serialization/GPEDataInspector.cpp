@@ -327,3 +327,43 @@ bool GPE::DataInspector::inspect(InspectContext& context, GPE::Skeleton*& inspec
 
     return true;
 }
+
+template <>
+bool GPE::DataInspector::inspect<Animation*>(InspectContext& context, Animation*& inspected, const rfk::Field& info)
+{
+    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+bool GPE::DataInspector::inspect(InspectContext& context, class Animation*& inspected, const char* name)
+{
+    // Ressources should always be inspected from a component.
+    assert(context.lastComponentOwner != nullptr);
+
+    renderAnimResourceExplorer("Animation", inspected);
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_ANIMATION_EXTENSION))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            if (Animation* pAnimation =
+                    Engine::getInstance()->animResourcesManager.get<Animation>(path.string().c_str()))
+            {
+                inspected = pAnimation;
+            }
+            else
+            {
+                if (const std::string* str = Engine::getInstance()->animResourcesManager.getKey(inspected))
+                    context.lastComponentOwner->pOwnerScene->removeLoadedResourcePath(str->c_str());
+
+                inspected = loadAnimationFile(path.string().c_str());
+                context.lastComponentOwner->pOwnerScene->addLoadedResourcePath(path.string().c_str());
+            }
+        }
+    }
+
+    return true;
+}
