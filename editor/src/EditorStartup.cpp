@@ -88,6 +88,8 @@ EditorStartup::EditorStartup()
     ADD_PROCESS(m_reloadableCpp, clonePrefab);
     ADD_PROCESS(m_reloadableCpp, loadFirstScene);
     ADD_PROCESS(m_reloadableCpp, updateSceneManager);
+    ADD_PROCESS(m_reloadableCpp, loadPrefabFromString);
+    ADD_PROCESS(m_reloadableCpp, savePrefabToString);
 
     m_reloadableCpp.onUnload = [&]() { closeGame(); };
 
@@ -126,8 +128,8 @@ void EditorStartup::openGame()
     m_game = a();
 
     Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
-                                                    "./resources/shaders/vGameObjectIdentifier.vs",
-                                                    "./resources/shaders/fGameObjectIdentifier.fs");
+                                                       "./resources/shaders/vGameObjectIdentifier.vs",
+                                                       "./resources/shaders/fGameObjectIdentifier.fs");
 
     auto loadFirstSceneFunct = GET_PROCESS(m_reloadableCpp, loadFirstScene);
     loadFirstSceneFunct();
