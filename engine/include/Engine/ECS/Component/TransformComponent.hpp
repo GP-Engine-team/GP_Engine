@@ -76,6 +76,8 @@ namespace GPE RFKNamespace()
 
         void translate(const GPM::Vec3& translation) noexcept;
 
+        void rotate(const GPM::Vec3& rotation) noexcept;
+
         void scale(const GPM::Vec3& scale) noexcept;
 
         void setTranslation(const GPM::Vec3& translation) noexcept;
