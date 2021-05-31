@@ -153,6 +153,7 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
     GameObject* const go = scene.getWorld().children.front();
     if (go)
     {
+        go->getTransform().update(parent.getTransform().get().model);
         go->setParent(&parent);
         go->getTransform().setDirty();
 

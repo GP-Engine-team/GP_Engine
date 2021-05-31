@@ -7,7 +7,7 @@
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace physx;
 
 Collider::~Collider() noexcept
@@ -32,7 +32,7 @@ void Collider::setLocalRotation(const GPM::Vec3& newLocalRotation) noexcept
 
 void Collider::updateTransform() noexcept
 {
-    PxVec3 newPos  = PhysXSystem::GPMVec3ToPxVec3(center);
-    PxQuat newQuat = PhysXSystem::GPMQuatToPxQuat(GPM::Quat::fromEuler(localRotation));
+    const PxVec3 newPos  = PhysXSystem::GPMVec3ToPxVec3(center);
+    const PxQuat newQuat = PhysXSystem::GPMQuatToPxQuat(GPM::Quat::fromEuler(localRotation));
     shape->setLocalPose(PxTransform(newPos, newQuat));
 }

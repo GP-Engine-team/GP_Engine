@@ -99,6 +99,20 @@ U16BMask BasicVelGen::getRequiereConfig() const
     return ParticleData::EParam::VELOCITY;
 }
 
+void ConeVelGen::generate(ParticleData* p, size_t startId, size_t endId)
+{
+    for (size_t i = startId; i < endId; ++i)
+    {
+        p->m_vel[i].xyz = (m_direction + Random::unitPeripheralSphericalCoordonate()).normalized() * m_velStrength;
+        p->m_vel[i].w   = 1.f;
+    }
+}
+
+U16BMask ConeVelGen::getRequiereConfig() const
+{
+    return ParticleData::EParam::VELOCITY;
+}
+
 void SphereVelGen::generate(ParticleData* p, size_t startId, size_t endId)
 {
     float phi, theta, v, r;

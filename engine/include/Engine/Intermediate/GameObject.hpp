@@ -11,21 +11,21 @@
 #include <string> //std::string
 #include <vector> //std::vector
 
-#include "Engine/ECS/Component/TransformComponent.hpp" //TransformComponent
+#include <Engine/ECS/Component/TransformComponent.hpp> //TransformComponent
 
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/IInspectable.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
-#include "Engine/Serialization/STDReflect.hpp"
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/IInspectable.hpp>
+#include <Engine/Serialization/InspectContext.hpp>
+#include <Engine/Serialization/STDReflect.hpp>
 
 #include <Engine/Core/Tools/ClassUtility.hpp>
 
 // in Inl
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Tools/Format.hpp"
-#include "Engine/Intermediate/DataChunk.hpp"
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/Format.hpp>
+#include <Engine/Intermediate/DataChunk.hpp>
 
-#include "Generated/GameObject.rfk.h"
+#include <Generated/GameObject.rfk.h>
 
 namespace GPE RFKNamespace()
 {

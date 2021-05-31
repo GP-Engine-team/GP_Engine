@@ -8,11 +8,12 @@
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 using namespace physx;
 
-BoxCollider::BoxCollider() noexcept : m_sizeOffset(1.f)
+BoxCollider::BoxCollider() noexcept
+    : m_sizeOffset(1.f)
 {
     material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, 0.f);
     shape    = Engine::getInstance()->physXSystem.physics->createShape(
@@ -21,7 +22,8 @@ BoxCollider::BoxCollider() noexcept : m_sizeOffset(1.f)
     material->release();
 }
 
-BoxCollider::BoxCollider(GameObject& _owner) noexcept : Collider(), m_sizeOffset(1.f)
+BoxCollider::BoxCollider(GameObject& _owner) noexcept
+    : Collider(), m_sizeOffset(1.f)
 {
     material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, 0.f);
     shape    = Engine::getInstance()->physXSystem.physics->createShape(
@@ -49,8 +51,11 @@ void BoxCollider::setSizeOffset(const Vec3& newOffset) noexcept
 
 void BoxCollider::updateShape() noexcept
 {
-    shape->setGeometry(
-        PxBoxGeometry(PhysXSystem::GPMVec3ToPxVec3((owner->getTransform().getGlobalScale() + m_sizeOffset) * 0.5f)));
+    const Vec3          extents{(owner->getTransform().getGlobalScale() + m_sizeOffset) * .5f};
+    const PxVec3        v      {PhysXSystem::GPMVec3ToPxVec3(extents)};
+    const PxBoxGeometry geom   {v};
+
+    shape->setGeometry(geom);
 }
 
 BoxCollider::~BoxCollider()
