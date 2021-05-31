@@ -7,14 +7,13 @@
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 
 // Generated
-#include <Generated/RigidbodyStatic.rfk.h>
+#include "Generated/RigidbodyStatic.rfk.h"
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace physx;
 
-RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept
-    : Component(owner), RigidBodyBase(owner)
+RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner), RigidBodyBase(owner)
 {
     rigidbody = PxGetPhysics().createRigidStatic(
         PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
