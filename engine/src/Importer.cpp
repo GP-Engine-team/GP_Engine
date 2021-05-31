@@ -394,11 +394,12 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         // Generate bounding volume
         arg.boundingVolumeType = boundingVolumeType;
 
-        std::filesystem::path dstMeshPath = dstDirPath / pMesh->mName.C_Str();
+        std::filesystem::path dstPath = dstDirPath / pMesh->mName.C_Str();
         if (i != 0 &&
             pMesh->mName == scene->mMeshes[i - 1]->mName) // Add differente name if the FBX containe mesh with same name
-            dstMeshPath += "0";
+            dstPath += "0";
 
+        std::filesystem::path dstMeshPath = dstPath;
         dstMeshPath += ENGINE_MESH_EXTENSION;
 
         writeMeshFile(dstMeshPath.string().c_str(), arg);
@@ -410,6 +411,15 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         prefModel.addSubModel(SubModel::CreateArg{
             Engine::getInstance()->resourceManager.get<Shader>(idShader), matList[pMesh->mMaterialIndex],
             &Engine::getInstance()->resourceManager.add<Mesh>(dstMeshPath.string().c_str(), arg)});
+
+
+
+        Skin::CreateArgs     skinArgs;
+        Skeleton::CreateArgs skeletonArgs;
+        Skeleton::readHierarchyData(skeletonArgs.m_root, scene->mRootNode);
+        loadSkinAndSkeleton(skinArgs.m_verticesBoneData, skeletonArgs.m_boneInfoMap, pMesh);
+        writeSkeletonFile((dstPath.string() + ENGINE_SKELETON_EXTENSION).c_str(), skeletonArgs);
+        writeSkinFile((dstPath.string() + ENGINE_SKIN_EXTENSION).c_str(), skinArgs);
     }
 
     std::filesystem::path dstPrefPath = dstDirPath / fileName;
@@ -912,7 +922,7 @@ struct SkeletonHeader
     int  nbBones;
 };
 
-void writeSkeletonFile(const char* dst, const Skeleton::CreateArgs& arg)
+void GPE::writeSkeletonFile(const char* dst, const Skeleton::CreateArgs& arg)
 {
     FILE* pFile = nullptr;
 
@@ -923,8 +933,6 @@ void writeSkeletonFile(const char* dst, const Skeleton::CreateArgs& arg)
     }
 
     SkeletonHeader header{(char)EFileType::MESH, arg.m_boneInfoMap.size()};
-
-    GPE::BinarySaver;
 
     fwrite(&header, sizeof(header), 1, pFile); // header
 
@@ -943,13 +951,13 @@ Skeleton::CreateArgs GPE::readSkeletonFile(const char* src)
     std::filesystem::path       srcPath(src);
     Skeleton::CreateArgs        arg;
 
-    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
+    if (srcPath.extension() != ENGINE_SKELETON_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
         return arg;
     }
 
-    MeshHeader header;
+    SkeletonHeader header;
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
@@ -968,11 +976,10 @@ Skeleton* GPE::loadSkeletonFile(const char* src)
 {
     std::filesystem::path srcPath(src);
 
-    // if (Skeleton* const pSkeleton =
-    // Engine::getInstance()->resourceManager.get<Skeleton>(srcPath.filename().string()))
-    //    return pSkeleton;
-    // return &Engine::getInstance()->resourceManager.add<Skeleton>(srcPath.filename().string(), readMeshFile(src));
-    return nullptr;
+     if (Skeleton* const pSkeleton =
+     Engine::getInstance()->animResourcesManager.get<Skeleton>(srcPath.filename().string()))
+        return pSkeleton;
+     return &Engine::getInstance()->animResourcesManager.add<Skeleton>(srcPath.filename().string(), readSkeletonFile(src));
 }
 
 struct AnimationHeader
@@ -1008,7 +1015,7 @@ Animation::CreateArgs GPE::readAnimationFile(const char* src)
     std::filesystem::path       srcPath(src);
     Animation::CreateArgs       arg;
 
-    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
+    if (srcPath.extension() != ENGINE_ANIMATION_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
         return arg;
@@ -1079,7 +1086,7 @@ Skin::CreateArgs GPE::readSkinFile(const char* src)
     std::filesystem::path       srcPath(src);
     Skin::CreateArgs            arg;
 
-    if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
+    if (srcPath.extension() != ENGINE_SKIN_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
         return arg;
@@ -1103,7 +1110,7 @@ Skin* GPE::loadSkinFile(const char* src)
 {
     std::filesystem::path srcPath(src);
 
-     if (Skin* const pSkin = Engine::getInstance()->resourceManager.get<Skin>(srcPath.filename().string()))
+     if (Skin* const pSkin = Engine::getInstance()->animResourcesManager.get<Skin>(srcPath.filename().string()))
         return pSkin;
-     return &Engine::getInstance()->resourceManager.add<Skin>(srcPath.filename().string(), readMeshFile(src));
+     return &Engine::getInstance()->animResourcesManager.add<Skin>(srcPath.filename().string(), readSkinFile(src));
 }

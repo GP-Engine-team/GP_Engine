@@ -30,16 +30,17 @@ protected:
     static Engine* m_instance;
 
 public:
-    Window              window;
-    Renderer            renderer;
-    TimeSystem          timeSystem;
-    InputManager        inputManager;
-    ResourceManagerType resourceManager;
-    SceneManager        sceneManager;
-    PhysXSystem         physXSystem;    
-    SoundSystem         soundSystem;
-    AnimationSystem     animSystem;
-    std::function<void()> exit;
+    Window                       window;
+    Renderer                     renderer;
+    TimeSystem                   timeSystem;
+    InputManager                 inputManager;
+    ResourceManagerType          resourceManager;
+    AnimResourceManagerType animResourcesManager;
+    SceneManager                 sceneManager;
+    PhysXSystem                  physXSystem;    
+    SoundSystem                  soundSystem;
+    AnimationSystem              animSystem;
+    std::function<void()>        exit;
 
 protected:
     Engine()

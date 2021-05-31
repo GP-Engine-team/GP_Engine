@@ -17,6 +17,11 @@
 
 using namespace GPE;
 
+Skin::Skin(const CreateArgs& args) noexcept : m_verticesBoneData(args.m_verticesBoneData)
+{
+    glGenBuffers(1, &m_skinVbo);
+}
+
 Skin::Skin()
 {
     glGenBuffers(1, &m_skinVbo);
@@ -109,6 +114,52 @@ void GPE::loadSkinAndSkeleton(Skin& skin, Skeleton& skeleton, aiMesh* mesh)
                 float weight   = weights[weightIndex].mWeight;
                 GPE_ASSERT(vertexId <= skin.m_verticesBoneData.size(), "Index should be valid.");
                 skin.setVertexBoneData(skin.m_verticesBoneData[vertexId], boneID, weight);
+            }
+        }
+    }
+}
+
+
+void GPE::loadSkinAndSkeleton(std::vector<GPE::Skin::VertexBoneData>& verticesBoneData, std::map<std::string, Skeleton::BoneInfo>& m_boneInfoMap,
+                              aiMesh* mesh)
+{
+    verticesBoneData.resize(mesh->mNumVertices);
+    for (Skin::VertexBoneData& vertexBoneData : verticesBoneData)
+    {
+        Skin::setVertexBoneDataToDefault(vertexBoneData);
+    }
+
+    int boneCounter = 0;
+    for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+    {
+        int         boneID   = -1;
+        std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+        if (m_boneInfoMap.find(boneName) == m_boneInfoMap.end())
+        {
+            Skeleton::BoneInfo newBoneInfo;
+            newBoneInfo.id     = boneCounter;
+            newBoneInfo.offset = GPE::toMat4(mesh->mBones[boneIndex]->mOffsetMatrix);
+
+            m_boneInfoMap[boneName] = newBoneInfo;
+            boneID                  = boneCounter;
+            boneCounter++;
+        }
+        else
+        {
+            boneID = m_boneInfoMap[boneName].id;
+        }
+        GPE_ASSERT(boneID != -1, "Every bone should be used.");
+        auto weights    = mesh->mBones[boneIndex]->mWeights;
+        int  numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+        if (numWeights != 0)
+        {
+            for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+            {
+                int   vertexId = weights[weightIndex].mVertexId;
+                float weight   = weights[weightIndex].mWeight;
+                GPE_ASSERT(vertexId <= verticesBoneData.size(), "Index should be valid.");
+                Skin::setVertexBoneData(verticesBoneData[vertexId], boneID, weight);
             }
         }
     }

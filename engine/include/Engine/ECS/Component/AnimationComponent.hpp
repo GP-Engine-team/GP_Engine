@@ -16,13 +16,15 @@
 
 namespace GPE RFKNamespace()
 {
+class Skin;
+
 class RFKClass(Inspect(), ComponentGen(), Serialize()) AnimationComponent : public Component
 {
 private:
-    class Skeleton*                        m_skeleton         = nullptr;
+    RFKField(Inspect("setSkeleton")) Skeleton* m_skeleton         = nullptr;
     class Animation*                       m_currentAnimation = nullptr;
     class Model*                           m_model            = nullptr;
-    class Skin*                            m_skin             = nullptr;
+    RFKField(Inspect())              Skin* m_skin             = nullptr;
     RFKField(Inspect(), Serialize()) float m_currentTime;
     RFKField(Inspect(), Serialize()) float m_timeScale = 30.f;
 

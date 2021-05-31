@@ -45,7 +45,7 @@ void save(BinarySaver& context, const T& saved, const BinarySaver::SaveInfo* inf
 template <>
 inline void save(BinarySaver& context, const std::string& saved, const BinarySaver::SaveInfo* info)
 {
-    context.saveAsBinary(saved.size() + 1);
+    context.saveAsBinary(size_t(saved.size() + 1));
     context.saveArray(saved.data(), saved.size() + 1);
 }
 

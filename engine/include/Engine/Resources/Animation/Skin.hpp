@@ -16,7 +16,7 @@ class Skeleton;
 
 /**
  * @brief Info that links a skeleton's bones to a mesh's vertices
-*/
+ */
 class Skin
 {
 public:
@@ -40,9 +40,11 @@ public:
     unsigned int                m_skinVbo = 0;
     std::vector<VertexBoneData> m_verticesBoneData; // contains the weights of each vertex
 
+    // TODO : rvalue
+    Skin(const CreateArgs& args) noexcept;
     Skin();
     Skin(const Skin&) = delete;
-    Skin(Skin&&) = delete;
+    Skin(Skin&&)      = delete;
     ~Skin();
     Skin& operator=(const Skin&) = delete;
     Skin& operator=(Skin&&) = delete;
@@ -55,5 +57,7 @@ public:
 };
 
 void loadSkinAndSkeleton(Skin& skin, Skeleton& skeleton, aiMesh* mesh);
+void loadSkinAndSkeleton(std::vector<GPE::Skin::VertexBoneData>&    verticesBoneData,
+                         std::map<std::string, Skeleton::BoneInfo>& m_boneInfoMap, aiMesh* mesh);
 
 } // namespace GPE

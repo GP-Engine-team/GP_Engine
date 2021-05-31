@@ -210,7 +210,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
         importationSetting.reset();
     }
 
-    if (ImGui::Button("Importe"))
+    if (ImGui::Button("Import"))
     {
         const std::filesystem::path srcPath =
             GPE::openFileExplorerAndGetAbsoluePath(L"Select asset to import",

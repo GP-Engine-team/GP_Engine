@@ -71,7 +71,13 @@ public:
     AssimpNodeData m_root;
 
 public:
-    void        readHierarchyData(AssimpNodeData& dest, const aiNode* src);
+    Skeleton() = default;
+    Skeleton(const CreateArgs& args) noexcept : m_boneInfoMap(args.m_boneInfoMap), m_root(args.m_root)
+    {
+    
+    }
+
+    static void        readHierarchyData(AssimpNodeData& dest, const aiNode* src);
     inline void readHierarchyData(const aiNode* src)
     {
         readHierarchyData(m_root, src);

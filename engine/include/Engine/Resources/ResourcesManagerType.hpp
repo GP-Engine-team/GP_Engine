@@ -17,6 +17,9 @@
 #include "Engine/Resources/Sound.hpp"
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/Serialization/SavedScene.hpp"
+#include "Engine/Resources/Animation/Animation.hpp"
+#include "Engine/Resources/Animation/Skeleton.hpp"
+#include "Engine/Resources/Animation/Skin.hpp"
 
 #include <GPM/Shape3D/AABB.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
@@ -28,5 +31,7 @@ namespace GPE
 
 using ResourceManagerType =
     ResourcesManager<std::vector<Mesh>, Model::CreateArg, Mesh, Shader, Texture, RenderBuffer, RenderTexture,
-                     std::vector<Material>, Material, Sound::Buffer, SavedScene, GPM::Sphere, GPM::AABB, SharedPrefab, Animation, Skeleton, Skin>;
+                     std::vector<Material>, Material, Sound::Buffer, SavedScene, GPM::Sphere, GPM::AABB, SharedPrefab>;
+
+using AnimResourceManagerType = ResourcesManager<Animation, Skeleton, Skin>;
 } // namespace GPE
