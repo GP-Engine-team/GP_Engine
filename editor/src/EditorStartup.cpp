@@ -125,6 +125,10 @@ void EditorStartup::openGame()
     auto a = GET_PROCESS(m_reloadableCpp, createGameInstance);
     m_game = a();
 
+    Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
+                                                    "./resources/shaders/vGameObjectIdentifier.vs",
+                                                    "./resources/shaders/fGameObjectIdentifier.fs");
+
     auto loadFirstSceneFunct = GET_PROCESS(m_reloadableCpp, loadFirstScene);
     loadFirstSceneFunct();
     m_editor.setSceneInEdition(loadFirstSceneFunct());
@@ -148,6 +152,10 @@ void EditorStartup::openGame()
 
 void EditorStartup::closeGame()
 {
+    //// TODO: are the scene previously loaded removed by m_game's destructor?
+    // m_editor.setSceneInEdition(m_engine->sceneManager.loadScene("Default scene"));
+    m_editor.unbindCurrentScene();
+
     if (m_game != nullptr)
     {
         stopGame();
@@ -275,6 +283,8 @@ void EditorStartup::update()
 
         auto sync = GET_PROCESS(m_reloadableCpp, setGameEngineInstance);
         (*sync)(*m_engine);
+
+        m_editor.inspectedObject = nullptr;
 
         openGame();
     }

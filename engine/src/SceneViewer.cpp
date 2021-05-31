@@ -126,9 +126,6 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
       FBOIDheight{int(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_}, m_capturingInputs{
                                                                                                      false}
 {
-    Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
-                                                       "./resources/shaders/vGameObjectIdentifier.vs",
-                                                       "./resources/shaders/fGameObjectIdentifier.fs");
     initializeFramebuffer();
     initializePickingFBO();
     initializeInputs();
