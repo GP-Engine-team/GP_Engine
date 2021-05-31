@@ -95,10 +95,12 @@ namespace GPE RFKNamespace()
         void setVecUp(const GPM::Vec3& newUp) noexcept;
 
         GPM::Vec3 getVectorForward() const noexcept;
-
         GPM::Vec3 getVectorRight() const noexcept;
-
         GPM::Vec3 getVectorUp() const noexcept;
+
+        GPM::Vec3 getLocalForward() const noexcept;
+        GPM::Vec3 getLocalRight() const noexcept;
+        GPM::Vec3 getLocalUp() const noexcept;
 
         constexpr GPM::SplitTransform& getSpacialAttribut();
 

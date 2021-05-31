@@ -25,6 +25,11 @@ Shader* ParticleComponent::getShader()
     return m_shader;
 }
 
+Texture* ParticleComponent::getTexture()
+{
+    return m_diffuseTexture;
+}
+
 template <typename T, typename... TArg>
 void ParticleComponent::addUpdater(TArg&&... arg)
 {

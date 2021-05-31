@@ -35,11 +35,14 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) float m_rateOfFire               = 0.f; // In second
         RFKField(Inspect(), Serialize()) float m_reloadingBulletTimeCount = 0.f; // In second
 
-        RFKField(Inspect(), Serialize()) float m_reloadingDuration  = 0.f; // In second
-        RFKField(Inspect(), Serialize()) float m_reloadingTimeCount = 0.f; // In second
+        RFKField(Inspect(), Serialize()) float m_reloadingDuration              = 0.f; // In second
+        RFKField(Inspect(), Serialize()) float m_reloadingTimeCount             = 0.f; // In second
+        RFKField(Serialize()) float            m_recoileAnimtationDurationCount = 0.f; // In second
+        RFKField(Inspect(), Serialize()) float m_recoileAnimtationDuration      = 0.f; // In second
 
         RFKField(Inspect(), Serialize()) bool m_isReloadingNextBullet = false;
         RFKField(Inspect(), Serialize()) bool m_isReloading           = false;
+        RFKField(Serialize()) bool            m_isRecoileAnimate      = false;
 
         RFKField(Inspect()) GPE::Prefab* m_decalePrefab;
 
@@ -62,6 +65,9 @@ namespace GPG RFKNamespace()
         void start() override;
         void reload();
         void update(double deltaTime) override;
+
+        virtual void onShoot();
+        virtual void animateRecoil(float t);
 
         const GunMagazine& getMagazine() const;
 

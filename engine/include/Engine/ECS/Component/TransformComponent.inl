@@ -36,7 +36,6 @@ inline void TransformComponent::update() noexcept
     OnUpdate();
 }
 
-
 inline void TransformComponent::update(const GPM::Mat4& parentMeshMatrix) noexcept
 {
     m_transform       = GPM::toTransform(m_spaceAttribut);
@@ -101,6 +100,21 @@ inline GPM::Vec3 TransformComponent::getVectorRight() const noexcept
 inline GPM::Vec3 TransformComponent::getVectorUp() const noexcept
 {
     return m_transform.up().normalized();
+}
+
+inline GPM::Vec3 TransformComponent::getLocalForward() const noexcept
+{
+    return m_spaceAttribut.rotation * GPM::Vec3::forward();
+}
+
+inline GPM::Vec3 TransformComponent::getLocalRight() const noexcept
+{
+    return m_spaceAttribut.rotation * GPM::Vec3::right();
+}
+
+inline GPM::Vec3 TransformComponent::getLocalUp() const noexcept
+{
+    return m_spaceAttribut.rotation * GPM::Vec3::up();
 }
 
 inline constexpr GPM::SplitTransform& TransformComponent::getSpacialAttribut()

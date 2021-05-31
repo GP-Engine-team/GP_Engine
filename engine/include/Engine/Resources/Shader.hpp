@@ -24,10 +24,12 @@ namespace GPE
 #define AMBIANTE_COLOR_ONLY (1 << 2)
 #define SCALE_TIME_ACC (1 << 3)
 #define UNSCALED_TIME_ACC (1 << 4)
+#define FOG (1 << 5)
 
 #define PROJECTION_VIEW_MODEL_MATRIX (1 << 6)
 #define PROJECTION_MATRIX (1 << 7)
 #define VIEW_MATRIX (1 << 8)
+#define VIEW_MODEL_MATRIX (1 << 9)
 
 // class Shader;
 //

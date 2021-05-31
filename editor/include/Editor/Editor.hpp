@@ -12,6 +12,7 @@
 #include "ProjectContent.hpp"
 #include "SceneEditor.hpp"
 #include "SceneGraph.hpp"
+#include <functional>
 
 struct GLFWwindow;
 

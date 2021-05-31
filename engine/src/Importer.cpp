@@ -99,7 +99,6 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
                 g->updateSelfAndChildren();
                 recComponent(g);
             }
-
         };
         Rec::rec(&scene->getWorld()); // can't do recursives with lambdas, and std::function would be overkill
     }
@@ -250,7 +249,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         aiString              path;
         std::filesystem::path fsPath;
         std::filesystem::path fsDstPath;
-        std::filesystem::path fsSrcPath;
 
         for (unsigned int iText = 0;
              iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_AMBIENT); ++iText)
@@ -282,15 +280,36 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
             }
             else
             {
-                fsPath    = path.C_Str();
-                fsSrcPath = srcDirPath / fsPath;
+                fsPath = path.C_Str();
+                // If the path doesn't exist, try in relative path
+                if (!std::filesystem::exists(fsPath))
+                {
+                    std::filesystem::path relativePath = srcPath;
+                    relativePath                       = relativePath.parent_path();
 
-                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-                fsDstPath = dstDirPath / fsPath;
+                    // If the path doesn't exist, try in local with name only
+                    if (!std::filesystem::exists(relativePath / fsPath))
+                    {
+                        // If asset is not found, discard
+                        if (!std::filesystem::exists(relativePath / fsPath.filename()))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            fsPath = relativePath / fsPath.filename();
+                        }
+                    }
+                    else
+                    {
+                        fsPath = relativePath / fsPath;
+                    }
+                }
+                std::string dstPath = (dstDirPath / fsPath.stem()).string() + ENGINE_TEXTURE_EXTENSION;
 
-                materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                materialArg.ambianteTexturePath = dstPath.c_str();
 
-                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
+                importeTextureFile(fsPath.string().c_str(), dstPath.c_str(), textureArg);
             }
         }
 
@@ -324,15 +343,35 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
             }
             else
             {
-                fsPath    = path.C_Str();
-                fsSrcPath = srcDirPath / fsPath;
+                fsPath = path.C_Str();
+                // If the path doesn't exist, try in relative path
+                if (!std::filesystem::exists(fsPath))
+                {
+                    std::filesystem::path relativePath = srcPath;
+                    relativePath                       = relativePath.parent_path();
 
-                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-                fsDstPath = dstDirPath / fsPath;
+                    // If the path doesn't exist, try in local with name only
+                    if (!std::filesystem::exists(relativePath / fsPath))
+                    {
+                        // If asset is not found, discard
+                        if (!std::filesystem::exists(relativePath / fsPath.filename()))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            fsPath = relativePath / fsPath.filename();
+                        }
+                    }
+                    else
+                    {
+                        fsPath = relativePath / fsPath;
+                    }
+                }
+                std::string dstPath = (dstDirPath / fsPath.stem()).string() + ENGINE_TEXTURE_EXTENSION;
 
-                materialArg.diffuseTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
-
-                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
+                materialArg.diffuseTexturePath = dstPath.c_str();
+                importeTextureFile(fsPath.string().c_str(), dstPath.c_str(), textureArg);
             }
         }
 
@@ -367,15 +406,36 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
             }
             else
             {
-                fsPath    = path.C_Str();
-                fsSrcPath = srcDirPath / fsPath;
+                fsPath = path.C_Str();
+                // If the path doesn't exist, try in relative path
+                if (!std::filesystem::exists(fsPath))
+                {
+                    std::filesystem::path relativePath = srcPath;
+                    relativePath                       = relativePath.parent_path();
 
-                fsPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-                fsDstPath = dstDirPath / fsPath;
+                    // If the path doesn't exist, try in local with name only
+                    if (!std::filesystem::exists(relativePath / fsPath))
+                    {
+                        // If asset is not found, discard
+                        if (!std::filesystem::exists(relativePath / fsPath.filename()))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            fsPath = relativePath / fsPath.filename();
+                        }
+                    }
+                    else
+                    {
+                        fsPath = relativePath / fsPath;
+                    }
+                }
 
-                materialArg.normalMapTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
+                std::string dstPath = (dstDirPath / fsPath.stem()).string() + ENGINE_TEXTURE_EXTENSION;
 
-                importeTextureFile(fsSrcPath.string().c_str(), fsDstPath.string().c_str(), textureArg);
+                materialArg.normalMapTexturePath = dstPath.c_str();
+                importeTextureFile(fsPath.string().c_str(), dstPath.c_str(), textureArg);
             }
         }
 

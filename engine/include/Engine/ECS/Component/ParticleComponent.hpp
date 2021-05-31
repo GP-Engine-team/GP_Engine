@@ -36,13 +36,16 @@ namespace GPE RFKNamespace()
     protected:
         RFKField(Serialize()) Shader* m_shader = nullptr;
 
+        // TODO : Line hardcoded : used material with texture instead
+        RFKField(Serialize()) Texture* m_diffuseTexture = nullptr;
+
         ParticleData                 m_particles;
-        RFKField(Serialize()) size_t m_count              = 0;
-        RFKField(Serialize()) float  m_emitRate           = 0.0;
-        RFKField(Serialize()) float  m_duration           = std::numeric_limits<float>::infinity();
-        RFKField(Serialize()) float  m_durationCount      = 0.f;
-        RFKField(Serialize()) bool   m_canEmit            = false;
-        RFKField(Serialize()) bool   m_useGlobalPosition = true;
+        RFKField(Serialize()) size_t m_count                  = 0;
+        RFKField(Serialize()) float  m_emitRate               = 0.0;
+        RFKField(Serialize()) float  m_duration               = std::numeric_limits<float>::infinity();
+        RFKField(Serialize()) float  m_durationCount          = 0.f;
+        RFKField(Serialize()) bool   m_canEmit                = false;
+        RFKField(Serialize()) bool   m_useGlobalPosition      = true;
         RFKField(Serialize()) bool   m_useGameObjectTransform = false;
 
         /**
@@ -137,7 +140,8 @@ namespace GPE RFKNamespace()
 
         inline unsigned int getMeshID();
 
-        inline Shader* getShader();
+        inline Shader*  getShader();
+        inline Texture* getTexture();
 
         /**
          * @brief Try to add specific updater if its type doesn't exist
