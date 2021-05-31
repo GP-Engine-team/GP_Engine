@@ -13,7 +13,8 @@ void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, void* key)
             size_t            s         = (std::stoull(idStr));
             rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(s));
             assert(archetype != 0);              // Type is not complete. Try adding corresponding include in game.cpp
-            data = archetype->makeInstance<T>(); // TODO : Call custom instantiator
+            data = archetype->makeInstance<T>(); // If this crashes here, try to regenerate files.
+            // TODO : Call custom instantiator ? 
         }
         else
         {

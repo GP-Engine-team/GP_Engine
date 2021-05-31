@@ -80,6 +80,15 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
     ImGui::Checkbox("Cast shadow", &inspected.castShadow);
+    if (ImGui::Checkbox("Is transparent", &inspected.isTransparent) && inspected.isValide())
+    {
+        // update it
+        inspected.isTransparent = !inspected.isTransparent;
+        inspected.pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(inspected);
+        inspected.isTransparent = !inspected.isTransparent;
+
+        inspected.pModel->getOwner().pOwnerScene->sceneRenderer.addSubModel(inspected);
+    }
 
     // This operation check if element must be added or remove from the the scene render system
     if (isPreviousElementVoid != !inspected.isValide())

@@ -10,6 +10,8 @@
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/Serialize.hpp>
 
+#include <Engine/ECS/Component/ParticleComponent.hpp>
+#include <Engine/Resources/Linker.hpp>
 #include <Engine/Resources/Prefab.hpp>
 #include <Firearm/GunMagazine.hpp>
 
@@ -18,7 +20,6 @@
 namespace GPE
 {
 class AudioComponent;
-class ParticleComponent;
 class GameObject;
 } // namespace GPE
 
@@ -29,20 +30,22 @@ namespace GPG RFKNamespace()
     protected:
         RFKField(Inspect(), Serialize()) GunMagazine m_magazineStored;
 
-        RFKField(Serialize()) GPE::AudioComponent*    m_shootSound  = nullptr;
-        RFKField(Serialize()) GPE::ParticleComponent* m_muzzleFlash = nullptr;
+        RFKField(Serialize()) GPE::AudioComponent*                           m_shootSound = nullptr;
+        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_muzzleFlashEffect;
+        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_bloodEffect;
+        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_groundShootEffect;
 
         RFKField(Inspect(), Serialize()) float m_rateOfFire               = 0.f; // In second
-        RFKField(Inspect(), Serialize()) float m_reloadingBulletTimeCount = 0.f; // In second
+        RFKField(Serialize()) float            m_reloadingBulletTimeCount = 0.f; // In second
 
         RFKField(Inspect(), Serialize()) float m_reloadingDuration              = 0.f; // In second
-        RFKField(Inspect(), Serialize()) float m_reloadingTimeCount             = 0.f; // In second
+        RFKField(Serialize()) float            m_reloadingTimeCount             = 0.f; // In second
         RFKField(Serialize()) float            m_recoileAnimtationDurationCount = 0.f; // In second
         RFKField(Inspect(), Serialize()) float m_recoileAnimtationDuration      = 0.f; // In second
 
-        RFKField(Inspect(), Serialize()) bool m_isReloadingNextBullet = false;
-        RFKField(Inspect(), Serialize()) bool m_isReloading           = false;
-        RFKField(Serialize()) bool            m_isRecoileAnimate      = false;
+        RFKField(Serialize()) bool m_isReloadingNextBullet = false;
+        RFKField(Serialize()) bool m_isReloading           = false;
+        RFKField(Serialize()) bool m_isRecoileAnimate      = false;
 
         RFKField(Inspect()) GPE::Prefab* m_decalePrefab;
 

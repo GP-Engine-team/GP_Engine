@@ -1,6 +1,7 @@
 ﻿#include "Generated/PPSH41.rfk.h"
 #include <Engine/ECS/Component/TransformComponent.hpp>
 #include <Firearm/PPSH41.hpp>
+#include <gpm/Random.hpp>
 
 #include <Engine/Core/Tools/Interpolation.hpp>
 
@@ -14,8 +15,29 @@ PPSH41::PPSH41(GPE::GameObject& owner) noexcept : Firearm(owner, GunMagazine(Bul
 {
 }
 
+void PPSH41::start()
+{
+    Firearm::start();
+
+    if (m_muzzleFlashPlane.pData)
+    {
+        m_muzzleFlashPlane.pData->setActive(false);
+    }
+}
+
 void PPSH41::onShoot()
 {
+    if (m_muzzleFlashPlane.pData)
+    {
+        m_muzzleFlashPlane.pData->setActive(true);
+
+        m_muzzleFlashPlane.pData->getOwner().getTransform().setRotationZ(Random::ranged(0.f, TWO_PI));
+        m_muzzleFlashPlane.pData->getOwner().getTransform().setScale(
+            Vec3{Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale),
+            Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale),
+            Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale)});
+    }
+
     m_basePosition  = transform().getPosition();
     m_finalPosition = m_basePosition + transform().getLocalForward() * m_knowbackStrength;
 
@@ -36,5 +58,21 @@ void PPSH41::animateRecoil(float t)
         const float intRatio = easeInBounce((t - m_knowbackDuration) / (1.f - m_knowbackDuration));
         transform().setTranslation(lerp(m_finalPosition, m_basePosition, intRatio));
         transform().setRotation(m_finalRotation.nlerp(m_baseRotation, intRatio));
+    }
+}
+
+void PPSH41::update(double deltaTime)
+{
+    Firearm::update(deltaTime);
+
+    if (m_muzzleFlashPlane.pData && m_muzzleFlashPlane.pData->isActivated())
+    {
+        m_muzzleFlashCount += float(deltaTime);
+
+        if (m_muzzleFlashCount >= m_muzzleFlashDuration)
+        {
+            m_muzzleFlashPlane.pData->setActive(false);
+            m_muzzleFlashCount = 0.f;
+        }
     }
 }

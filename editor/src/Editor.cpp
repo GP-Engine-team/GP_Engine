@@ -318,6 +318,8 @@ void Editor::saveCurrentScene()
 void Editor::reloadCurrentScene()
 {
     GPE::Scene*           currentScene = sceneEditor.view.pScene;
+    if (currentScene == nullptr)
+        return;
     std::filesystem::path path         = saveFolder;
     path /= currentScene->getName() + ".GPScene";
 
@@ -408,7 +410,8 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
         }
     }
 
-    if (ImGui::IsKeyPressed(GLFW_KEY_S) &&
+    if (!sceneEditor.view.capturingInputs() &&
+        ImGui::IsKeyPressed(GLFW_KEY_S) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
         saveCurrentScene();
@@ -428,7 +431,7 @@ void Editor::update(EditorStartup& startup)
 
     ImGui::NewFrame();
 
-    ImGuiContext* gameContext = syncGameUI();
+    ImGuiContext* gameContext = (syncGameUI == nullptr) ? nullptr : syncGameUI();
     syncImGui(ImGui::GetCurrentContext());
 
     // Start drawing

@@ -162,6 +162,30 @@ namespace GPE RFKNamespace()
         BasicVelGen_GENERATED
     };
 
+    //|Generate velocity with more change to obtain vector in the center
+    class RFKClass(Serialize(), Inspect()) ConeVelGen : public ParticleGenerator
+    {
+        // Normalized
+        RFKField(Serialize(), Inspect()) GPM::Vec3 m_direction{0.0};
+
+        // radius after firection
+        RFKField(Serialize(), Inspect()) float m_radiusVel{0.0};
+
+        // velocity factor
+        RFKField(Serialize(), Inspect()) float m_velStrength{0.0};
+
+    public:
+        ConeVelGen()
+        {
+        }
+
+        virtual void generate(ParticleData * p, size_t startId, size_t endId) override;
+
+        U16BMask getRequiereConfig() const override;
+
+        ConeVelGen_GENERATED
+    };
+
     class RFKClass(Serialize(), Inspect()) SphereVelGen : public ParticleGenerator
     {
     public:

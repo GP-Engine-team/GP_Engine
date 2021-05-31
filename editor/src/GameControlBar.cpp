@@ -44,6 +44,8 @@ void GameControlBar::render(EditorStartup& startup)
         ImGui::SetNextWindowClass(&window_class);
     }
 
+    if (&startup.game() == nullptr)
+        return;
     buttonMask = startup.game().state;
 
     // Make an undecorated window for the control buttons
