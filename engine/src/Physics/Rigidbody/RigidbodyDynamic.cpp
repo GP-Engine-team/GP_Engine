@@ -98,6 +98,9 @@ void RigidbodyDynamic::updateShape(physx::PxShape& oldShape)
 
 void RigidbodyDynamic::updateTransform()
 {
+    if(!rigidbody)
+        return;
+
     PxTransform newTransform;
 
     newTransform.p = PhysXSystem::GPMVec3ToPxVec3(owner->getTransform().getGlobalPosition());

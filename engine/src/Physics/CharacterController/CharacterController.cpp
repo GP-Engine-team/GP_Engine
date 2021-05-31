@@ -229,6 +229,9 @@ void CharacterController::updateTransform()
 
 void CharacterController::updatePosition()
 {
+    if (!controller)
+        return;
+
     GPM::Vec3 oldPos;
 
     oldPos = PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition());
