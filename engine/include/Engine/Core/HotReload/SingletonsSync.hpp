@@ -54,6 +54,11 @@ extern "C"
         GPE::saveSceneToPathImp(scene, path, saveMode);
     }
 
+    ENGINE_API inline std::string savePrefabToString(GPE::GameObject& prefab, GPE::SavedScene::EType saveMode)
+    {
+        return GPE::savePrefabToStringImp(prefab, saveMode);
+    }
+
     ENGINE_API inline void savePrefabToPath(GPE::GameObject& prefab, const char* path, GPE::SavedScene::EType saveMode)
     {
         GPE::savePrefabToPathImp(prefab, path, saveMode);
@@ -72,6 +77,12 @@ extern "C"
     ENGINE_API inline GPE::Scene& loadFirstScene()
     {
         return GPE::Engine::getInstance()->sceneManager.loadFirstScene();
+    }
+
+    ENGINE_API inline GPE::GameObject* loadPrefabFromString(GPE::GameObject& parent, std::string str,
+                                                            GPE::SavedScene::EType saveMode)
+    {
+        return GPE::loadPrefabFromStringImp(parent, str, saveMode);
     }
 
     ENGINE_API inline GPE::GameObject* loadPrefabFromPath(GPE::GameObject& parent, const char* path)
