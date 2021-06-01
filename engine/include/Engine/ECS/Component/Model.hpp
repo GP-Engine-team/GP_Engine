@@ -59,6 +59,7 @@ namespace GPE RFKNamespace()
         RFKField(Serialize()) bool enableBackFaceCulling = true;
         RFKField(Serialize()) bool castShadow            = true;
         RFKField(Serialize()) bool isTransparent         = false;
+        RFKField(Serialize()) bool writeInDepth          = true;
 
         SubModel_GENERATED
     };

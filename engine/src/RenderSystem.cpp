@@ -586,6 +586,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             std::map<float, SubModel*>::reverse_iterator rEnd = mapElemSortedByDistance.rend();
             for (std::map<float, SubModel*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != rEnd; ++it)
             {
+                glDepthMask(it->second->writeInDepth);
                 rs.tryToBindShader(*it->second->pShader);
                 rs.tryToBindMaterial(*it->second->pShader, *it->second->pMaterial);
                 rs.tryToBindMesh(it->second->pMesh->getID());
@@ -598,6 +599,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                                          it->second->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*it->second);
             };
+
+            glDepthMask(GL_TRUE);
         }
 
         // Draw particles
@@ -611,6 +614,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 glEnable(GL_PROGRAM_POINT_SIZE);
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glDepthMask(!particle->isTransparente);
 
                 if (particle->getShader())
                 {
@@ -627,6 +631,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 glDrawArrays(GL_POINTS, 0, int(count));
             }
+            glDepthMask(GL_TRUE);
         }
 
         rs.resetCurrentRenderPassKey();

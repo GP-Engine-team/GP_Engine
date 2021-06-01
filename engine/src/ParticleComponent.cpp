@@ -110,6 +110,8 @@ void ParticleComponent::inspect(InspectContext& context)
     DataInspector::inspect(context, m_useGlobalPosition, "Use global position");
     ImGui::PopEnabled();
 
+    DataInspector::inspect(context, isTransparente, "Is transparent");
+
     DataInspector::inspect(context, m_emitRate, "EmitRate");
 
     if (ImGui::Checkbox("##isDurationUsed", &isDurationUsed))
