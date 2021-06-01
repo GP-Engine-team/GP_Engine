@@ -204,7 +204,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Users\Six-J\Desktop\test\GP_Engine\engine\third_party\lib;$(GPEngineDir)\third_party\libRelease\Refureku;$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)third_party\lib;$(GPEngineDir)\third_party\libRelease\Refureku;$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL32.lib;RefurekuRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PreBuildEvent>
