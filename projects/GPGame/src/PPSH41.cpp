@@ -43,6 +43,9 @@ void PPSH41::onShoot()
 
     m_baseRotation  = transform().getRotation();
     m_finalRotation = m_baseRotation * Quaternion::angleAxis(m_knowbackMaxAngle, transform().getLocalRight());
+
+    m_smokeEffect.pData->emit(
+        static_cast<unsigned int>(m_muzzleFlashEffect.pData->getCount() / m_magazineStored.getCapacity()));
 }
 
 void PPSH41::animateRecoil(float t)

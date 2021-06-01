@@ -33,8 +33,9 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) float                       m_knowbackStrength = 1.f;
         RFKField(Inspect(), Serialize(), Slider(0.f, HALF_PI)) float m_knowbackMaxAngle = HALF_PI / 2.f;
 
-        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> m_muzzleFlashGO;
-        RFKField(Serialize()) float                                   m_muzzleFlashCount = 0.f;
+        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject>        m_muzzleFlashGO;
+        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_smokeEffect;
+        RFKField(Serialize()) float                                          m_muzzleFlashCount = 0.f;
 
         RFKField(Inspect(), Serialize()) float m_muzzleFlashDuration = 0.1f;
         RFKField(Inspect(), Serialize()) float m_muzzleFlashMinScale = 1.f;
