@@ -40,9 +40,9 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
     case Mesh::EBoundingVolume::SPHERE: {
         const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
 
-        float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
-                                           pSubModel->pModel->getOwner().getTransform().getScale().y),
-                                  pSubModel->pModel->getOwner().getTransform().getScale().z);
+        float maxScale = std::max(std::max(std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x),
+                                           std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y)),
+                                  std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z));
 
         const Vector4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() *
                                Vector4(pBoudingSphere->getCenter(), 1.f).homogenized();
@@ -57,9 +57,9 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vector3 scale(pSubModel->pModel->getOwner().getTransform().getScale().x * pAABB->extents.x * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->extents.y * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->extents.z * 2.f);
+        const Vector3 scale(std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x) * pAABB->extents.x * 2.f,
+                            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y) * pAABB->extents.y * 2.f,
+                            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z) * pAABB->extents.z * 2.f);
 
         const Vector4 posMat =
             pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
@@ -150,9 +150,9 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
     case Mesh::EBoundingVolume::SPHERE: {
         const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
 
-        float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
-                                           pSubModel->pModel->getOwner().getTransform().getScale().y),
-                                  pSubModel->pModel->getOwner().getTransform().getScale().z);
+        float maxScale = std::max(std::max(std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x),
+                                           std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y)),
+                                  std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z));
 
         const Vector4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() *
                                Vector4(pBoudingSphere->getCenter(), 1.f).homogenized();
@@ -174,9 +174,9 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vector3 scale(pSubModel->pModel->getOwner().getTransform().getScale().x * pAABB->extents.x * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->extents.y * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->extents.z * 2.f);
+        const Vector3 scale(std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x) * pAABB->extents.x * 2.f,
+                            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y) * pAABB->extents.y * 2.f,
+                            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z) * pAABB->extents.z * 2.f);
 
         const Vector4 posMat =
             pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
