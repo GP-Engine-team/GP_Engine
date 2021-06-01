@@ -34,8 +34,6 @@ void RigidbodyStatic::onPostLoad() noexcept
 
     owner = &getOwner();
     {
-        getOwner().getTransform().get() = GPM::toTransform(getOwner().getTransform().getSpacialAttribut());
-
         const Quat        rot      {getOwner().getTransform().getGlobalRotation()};
         const Vec3        pos      {getOwner().getTransform().getGlobalPosition()};
         const PxQuat      pxRot    {PhysXSystem::GPMQuatToPxQuat(rot)};
