@@ -1,9 +1,11 @@
-﻿#include <Engine/Core/Tools/Raycast.hpp>
+﻿#include <Engine/Core/Tools/Interpolation.hpp>
+#include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/ParticleComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
 #include <Engine/Resources/Wave.hpp>
+#include <gpm/Calc.hpp>
 
 #include <BaseCharacter.hpp>
 #include <PhysX/PxRigidActor.h>
@@ -13,6 +15,7 @@ File_GENERATED
 
     using namespace GPG;
 using namespace GPE;
+using namespace GPM;
 
 Firearm::Firearm(GPE::GameObject& owner) noexcept : GPE::BehaviourComponent(owner)
 {
@@ -46,6 +49,9 @@ void Firearm::onPostLoad()
 
 void Firearm::start()
 {
+    m_basePosition = transform().getPosition();
+    m_baseRotation = transform().getRotation();
+
     m_recoileAnimtationDuration = std::clamp(m_recoileAnimtationDuration, 0.f, m_rateOfFire);
 
     GAME_ASSERT(m_muzzleFlashEffect.pData, "Missing component");
@@ -58,7 +64,7 @@ bool Firearm::isMagazineEmpty() const
 
 void Firearm::triggered()
 {
-    if (!m_isReloadingNextBullet && !m_isReloading)
+    if (!m_isReloadingNextBullet && !m_isReloading && !m_isAiming)
     {
         m_magazineStored.triggeredBullet();
 
@@ -154,6 +160,19 @@ void Firearm::update(double deltaTime)
             m_magazineStored.reload();
         }
     }
+
+    if (m_isAiming)
+    {
+        m_aimDuration += float(deltaTime);
+
+        const float t = std::clamp(m_aimDuration / m_aimTimeCount, 0.f, 1.f);
+        animateAim(t);
+
+        if (m_aimDuration >= m_aimTimeCount)
+        {
+            // m_aimDuration = 0.f;
+        }
+    }
 }
 
 void Firearm::onShoot()
@@ -164,6 +183,13 @@ void Firearm::animateRecoil(float t)
 {
 }
 
+void Firearm::animateAim(float t)
+{
+    const float intRatio = easeInBounce(t);
+    transform().setTranslation(lerp(m_aimPosition, m_basePosition, intRatio));
+    transform().setRotation(m_aimRotation.nlerp(m_baseRotation, intRatio));
+}
+
 void Firearm::reload()
 {
     m_isReloading = true;
@@ -172,4 +198,9 @@ void Firearm::reload()
 const GunMagazine& Firearm::getMagazine() const
 {
     return m_magazineStored;
+}
+
+void Firearm::setAim(bool flag)
+{
+    m_isAiming = flag;
 }

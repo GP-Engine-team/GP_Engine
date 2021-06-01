@@ -90,6 +90,11 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
         inspected.pModel->getOwner().pOwnerScene->sceneRenderer.addSubModel(inspected);
     }
 
+    if (inspected.isTransparent)
+    {
+        ImGui::Checkbox("Write in depth", &inspected.writeInDepth);
+    }
+
     // This operation check if element must be added or remove from the the scene render system
     if (isPreviousElementVoid != !inspected.isValide())
     {

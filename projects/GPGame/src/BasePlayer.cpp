@@ -77,6 +77,8 @@ void BasePlayer::start()
     input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
     input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
     input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+    input->bindAction("aim", EKeyMode::KEY_PRESSED, "Game", this, "aimBegin");
+    input->bindAction("aim", EKeyMode::KEY_RELEASED, "Game", this, "aimEnd");
     input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
     input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
@@ -277,6 +279,22 @@ void BasePlayer::shoot()
 
         if (m_firearms.front()->isMagazineEmpty())
             m_firearms.front()->reload();
+    }
+}
+
+void BasePlayer::aimBegin()
+{
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && !isDead() && m_firearms.size())
+    {
+        m_firearms.front()->setAim(true);
+    }
+}
+
+void BasePlayer::aimEnd()
+{
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && !isDead() && m_firearms.size())
+    {
+        m_firearms.front()->setAim(false);
     }
 }
 

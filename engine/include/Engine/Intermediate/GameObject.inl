@@ -162,6 +162,11 @@ inline void GameObject::setActive(bool newState)
     }
 }
 
+inline bool GameObject::isActivated()
+{
+    return m_isActive;
+}
+
 inline std::list<Component*>::iterator GameObject::destroyComponent(const std::list<Component*>::iterator& it) noexcept
 {
     delete *it;

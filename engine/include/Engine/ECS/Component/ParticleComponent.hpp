@@ -50,6 +50,10 @@ namespace GPE RFKNamespace()
         RFKField(Serialize()) bool   m_useGlobalPosition      = true;
         RFKField(Serialize()) bool   m_useGameObjectTransform = false;
 
+    public:
+        RFKField(Serialize()) bool isTransparente = false;
+
+    protected:
         /**
          * @brief Is used to define how the particle must be generated (color ? velocity ? Position ?)
          */
