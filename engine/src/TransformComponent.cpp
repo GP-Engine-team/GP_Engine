@@ -7,13 +7,13 @@
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 TransformComponent::TransformComponent(GameObject& refGameObject, const TransformComponent::CreateArg& arg) noexcept
-    : Component(refGameObject), m_spaceAttribut{GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)),
-                                                arg.position, arg.scale},
-      m_transform{GPM::toTransform(m_spaceAttribut)}
+    : Component(refGameObject),
+      m_spaceAttribut{GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)), arg.position, arg.scale},
+      m_transform    {GPM::toTransform(m_spaceAttribut)}
 {
     updateToSystem();
 }
@@ -58,11 +58,10 @@ void TransformComponent::inspect(GPE::InspectContext& context)
 
 void TransformComponent::onPostLoad()
 {
+    Component::onPostLoad();
     setDirty();
-    update();
 }
 
 void TransformComponent::updateToSystem() noexcept
 {
-
 }

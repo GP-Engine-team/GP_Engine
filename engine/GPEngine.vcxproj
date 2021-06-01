@@ -221,6 +221,12 @@
     <ClInclude Include="include\Engine\Core\HotReload\SingletonsSync.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\BoxCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\CapsuleCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\Collider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\MeshCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\SphereCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\RigidBodyBase.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\BinaryMask.hpp" />
@@ -231,6 +237,7 @@
     <ClInclude Include="include\Engine\Core\Tools\FunctionPtr.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Hash.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\Interpolation.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Raycast.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\UnrolledListAllocator.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\AnimationComponent.hpp" />
@@ -247,13 +254,9 @@
     <ClInclude Include="include\Engine\ECS\Component\Model.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\ParticleComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Physics\CharacterController\CharacterController.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\CapsuleCollider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\Collider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\MeshCollider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\SphereCollider.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyDynamic.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyStatic.hpp" />
+    <ClInclude Include="include\Engine\ECS\Component\ShakeEffect.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\System\AnimationSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\BehaviourSystem.hpp" />
@@ -274,6 +277,7 @@
     <ClInclude Include="include\Engine\Resources\Cursor.hpp" />
     <ClInclude Include="include\Engine\Resources\Importer\AssimpUtilities.hpp" />
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp" />
+    <ClInclude Include="include\Engine\Resources\Linker.hpp" />
     <ClInclude Include="include\Engine\Resources\Material.hpp" />
     <ClInclude Include="include\Engine\Resources\Mesh.hpp" />
     <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleRenderer.hpp" />
@@ -360,6 +364,7 @@
     <ClInclude Include="third_party\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="third_party\imgui\imconfig.h" />
     <ClInclude Include="third_party\imgui\imgui.h" />
+    <ClInclude Include="third_party\imgui\imguizmo.h" />
     <ClInclude Include="third_party\imgui\imgui_internal.h" />
     <ClInclude Include="third_party\imgui\imstb_rectpack.h" />
     <ClInclude Include="third_party\imgui\imstb_textedit.h" />
@@ -387,7 +392,6 @@
     <ClCompile Include="src\BehaviourSystem.cpp" />
     <ClCompile Include="src\Bone.cpp" />
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\Collider.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\Engine.cpp" />
@@ -401,6 +405,7 @@
     <ClCompile Include="src\InputComponent.cpp" />
     <ClCompile Include="src\InputManagerGLFW.cpp" />
     <ClCompile Include="src\Light.cpp" />
+    <ClCompile Include="src\Linker.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\MaterialInspectorPanel.cpp" />
@@ -416,9 +421,11 @@
     <ClCompile Include="src\ParticleSystem\ParticleUpdater.cpp" />
     <ClCompile Include="src\Physics\CharacterController\CharacterController.cpp" />
     <ClCompile Include="src\Physics\Collisions\BoxCollider.cpp" />
+    <ClCompile Include="src\Physics\Collisions\Collider.cpp" />
     <ClCompile Include="src\Physics\Collisions\MeshCollider.cpp" />
     <ClCompile Include="src\Physics\Collisions\SphereCollider.cpp" />
     <ClCompile Include="src\Physics\PhysXSystem.cpp" />
+    <ClCompile Include="src\Physics\Rigidbody\RigidBodyBase.cpp" />
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyDynamic.cpp" />
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyStatic.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
@@ -454,6 +461,7 @@
     <ClCompile Include="src\ShadowMap.cpp" />
     <ClCompile Include="src\Skeleton.cpp" />
     <ClCompile Include="src\Skin.cpp" />
+    <ClCompile Include="src\ShakeEffect.cpp" />
     <ClCompile Include="src\SoundSystem.cpp" />
     <ClCompile Include="src\SpotLight.cpp" />
     <ClCompile Include="src\Texture.cpp" />
@@ -470,6 +478,7 @@
     <ClCompile Include="third_party\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="third_party\imgui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="third_party\imgui\imgui.cpp" />
+    <ClCompile Include="third_party\imgui\imguizmo.cpp" />
     <ClCompile Include="third_party\imgui\imgui_demo.cpp" />
     <ClCompile Include="third_party\imgui\imgui_draw.cpp" />
     <ClCompile Include="third_party\imgui\imgui_tables.cpp" />
@@ -496,6 +505,7 @@
     <None Include="include\Engine\ECS\System\TimeSystem.inl" />
     <None Include="include\Engine\Intermediate\DataChunk.inl" />
     <None Include="include\Engine\Intermediate\GameObject.inl" />
+    <None Include="include\Engine\Resources\Linker.inl" />
     <None Include="include\Engine\Resources\Material.inl" />
     <None Include="include\Engine\Resources\Mesh.inl" />
     <None Include="include\Engine\Resources\ParticleSystem\ParticleComponent.inl" />
@@ -504,6 +514,9 @@
     <None Include="include\Engine\Resources\Shader.inl" />
     <None Include="include\Engine\Resources\Texture.inl" />
     <None Include="include\Engine\Serialization\DataInspector.inl" />
+    <None Include="include\Engine\Serialization\GPEDataInspector.inl" />
+    <None Include="include\Engine\Serialization\GPELoad.inl" />
+    <None Include="include\Engine\Serialization\GPESave.inl" />
     <None Include="include\Engine\Serialization\STDDataInspector.inl" />
     <None Include="include\Engine\Serialization\STDLoad.inl" />
     <None Include="include\Engine\Serialization\STDSave.inl" />

@@ -8,6 +8,7 @@
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/Resources/Type.hpp"
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Prefab.hpp>
 #include <Engine/Resources/ResourcesManager.hpp>
 
@@ -18,6 +19,18 @@ template <>
 void load(XmlLoader& context, AmbiantComponent& data, const XmlLoader::LoadInfo& info)
 {
     GPE::load(context, data.rgbi, info);
+}
+
+template <>
+void load(XmlLoader& context, ColorRGBA& data, const XmlLoader::LoadInfo& info)
+{
+    GPE::load(context, data.v, info);
+}
+
+template <>
+void load(XmlLoader& context, ColorRGB& data, const XmlLoader::LoadInfo& info)
+{
+    GPE::load(context, data.v, info);
 }
 
 template <>

@@ -24,8 +24,14 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
+
+bool SubModel::isValid() const
+{
+    // TODO: remove diffuse texture check
+    return pModel && pMesh && pShader && pMaterial && pMaterial->getDiffuseTexture();
+}
 
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
 {
@@ -70,123 +76,26 @@ void Model::moveTowardScene(class Scene& newOwner)
     }
 }
 
-template <typename T>
-void renderResourceExplorer(const char* name, T*& inRes)
-{
-    auto& resourceContainer = GPE::Engine::getInstance()->resourceManager.getAll<T>();
-
-    std::vector<const char*> items;
-    items.reserve(resourceContainer.size());
-
-    for (auto&& res : resourceContainer)
-    {
-        items.emplace_back(res.first.c_str());
-    }
-
-    // Init position of the combo box cursor
-    int itemCurrent;
-    if (inRes == nullptr)
-    {
-        itemCurrent = -1;
-    }
-    else
-    {
-        itemCurrent = 0;
-        for (auto&& it = resourceContainer.begin(); &it->second != inRes; ++itemCurrent, ++it)
-            ;
-    }
-
-    if (ImGui::Combo(name, &itemCurrent, items.data(), static_cast<int>(items.size())))
-    {
-        auto&& it = resourceContainer.begin();
-        for (int i = 0; i < itemCurrent; ++i, ++it)
-            ;
-
-        inRes = &it->second;
-    }
-}
-
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspected)
 {
     const bool isPreviousElementVoid = !inspected.isValid();
 
-    renderResourceExplorer<Mesh>("Mesh", inspected.pMesh);
-    // Drop
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_MESH_EXTENSION))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-            if (Mesh* pMesh = Engine::getInstance()->resourceManager.get<Mesh>(path.string().c_str()))
-            {
-                inspected.pMesh = pMesh;
-            }
-            else
-            {
-                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pMesh))
-                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
-
-                inspected.pMesh = loadMeshFile(path.string().c_str());
-                inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
-            }
-        }
-    }
-
-    renderResourceExplorer<Shader>("Shader", inspected.pShader);
-
-    // Drop
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_SHADER_EXTENSION))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-            if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(path.string().c_str()))
-            {
-                inspected.pShader = pShader;
-            }
-            else
-            {
-                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pShader))
-                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
-
-                inspected.pShader = loadShaderFile(path.string().c_str());
-                inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
-            }
-        }
-    }
-
-    renderResourceExplorer<Material>("Material", inspected.pMaterial);
-
-    // Drop
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_MATERIAL_EXTENSION))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-            if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(path.string().c_str()))
-            {
-                inspected.pMaterial = pMaterial;
-            }
-            else
-            {
-                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pMaterial))
-                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
-
-                inspected.pMaterial = loadMaterialFile(path.string().c_str());
-                inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
-            }
-        }
-    }
+    inspect(context, inspected.pMesh, "Mesh");
+    inspect(context, inspected.pShader, "Shader");
+    inspect(context, inspected.pMaterial, "Material");
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
     ImGui::Checkbox("Cast shadow", &inspected.castShadow);
+    if (ImGui::Checkbox("Is transparent", &inspected.isTransparent) && inspected.isValid())
+    {
+        // update it
+        inspected.isTransparent = !inspected.isTransparent;
+        inspected.pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(inspected);
+        inspected.isTransparent = !inspected.isTransparent;
+
+        inspected.pModel->getOwner().pOwnerScene->sceneRenderer.addSubModel(inspected);
+    }
 
     // This operation check if element must be added or remove from the the scene render system
     if (isPreviousElementVoid != !inspected.isValid())
@@ -283,10 +192,10 @@ void Model::inspect(InspectContext& context)
 
 void Model::addSubModel(const SubModel::CreateArg& arg)
 {
-    GPE_ASSERT(arg.pMesh && arg.pShader && arg.pMaterial, "Invalid arguments to create submodel")
-
     SubModel& newSsub = m_subModels.emplace_back(*this, arg);
-    getOwner().pOwnerScene->sceneRenderer.addSubModel(newSsub);
+
+    if (newSsub.isValid())
+        getOwner().pOwnerScene->sceneRenderer.addSubModel(newSsub);
 }
 
 void Model::updateToSystem() noexcept
@@ -296,7 +205,8 @@ void Model::updateToSystem() noexcept
         for (SubModel& subMesh : m_subModels)
         {
             subMesh.pModel = this;
-            getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
+            if (subMesh.isValid())
+                getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
         }
     }
     else

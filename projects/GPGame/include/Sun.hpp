@@ -69,8 +69,8 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize())
             GPE::SpecularComponent nightColorSpecular{0.4f, 0.4f, 1.f, 0.f}; // Sun light color at the// night
 
-        GPE::DirectionalLight*                            m_pSunDirectionnalLight;
-        RFKField(Inspect(), Serialize()) GPE::GameObject* m_player = nullptr;
+        RFKField() GPE::DirectionalLight* m_pSunDirectionnalLight;
+        RFKField() GPE::GameObject*       m_player = nullptr;
 
     public:
         Sun(GPE::GameObject & owner);

@@ -1,4 +1,5 @@
-
+﻿
+#include <AL/alc.h>
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Core/Tools/Raycast.hpp>
@@ -25,12 +26,18 @@ File_GENERATED
 using namespace GPM;
 using namespace GPE;
 
-BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept
-    : BaseCharacter(owner), input{&owner.addComponent<GPE::InputComponent>()},
-      source{&owner.addComponent<GPE::AudioComponent>()}, m_fireArme{&owner.addComponent<PPSH41>()}
+BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept : BaseCharacter(owner)
+{
+    onPostLoad();
+}
+
+void BasePlayer::onPostLoad()
 {
     enableUpdate(true);
     enableOnGUI(true);
+
+    input  = &getOwner().getOrCreateComponent<GPE::InputComponent>();
+    source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
 
     GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
@@ -40,11 +47,7 @@ BasePlayer::BasePlayer(GPE::GameObject& owner) noexcept
 
     source->setSound("Western", "Western", sourceSettings);
 
-    { // Cursor
-        GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
-        io.setCursorTrackingState(true);
-        io.setCursorLockState(true);
-    }
+    BaseCharacter::onPostLoad();
 }
 
 void BasePlayer::start()
@@ -53,7 +56,16 @@ void BasePlayer::start()
 
     GAME_ASSERT(input, "null");
     GAME_ASSERT(source, "null");
-    GAME_ASSERT(m_fireArme, "null");
+
+    for (auto&& firearm : m_firearmsGO)
+    {
+        GAME_ASSERT(firearm.pData, "No gameObject");
+        m_firearms.emplace_back(firearm.pData->getComponent<Firearm>());
+        GAME_ASSERT(m_firearms.back(), "No firearm in gameObject");
+    }
+
+    GAME_ASSERT(m_groundParticleComponent.pData, "null");
+    m_groundParticleComponent.pData->start();
 
     // Keys
     input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
@@ -70,19 +82,12 @@ void BasePlayer::start()
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
 
     source->playSound("Western", true);
-}
 
-void BasePlayer::onPostLoad()
-{
-    BaseCharacter::onPostLoad();
-
-    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
-
-    GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch = 1.f;
-    sourceSettings.loop  = AL_TRUE;
-
-    source->setSound("Western", "Western", sourceSettings);
+    { // Cursor
+        GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
+        io.setCursorTrackingState(true);
+        io.setCursorLockState(true);
+    }
 }
 
 void BasePlayer::rotate(const GPM::Vec2& deltaDisplacement)
@@ -196,33 +201,91 @@ void BasePlayer::onGUI()
     using namespace ImGui;
     const float ratio = ImGui::GetWindowSize().y / ImGui::GetWindowSize().x;
 
-    // ImGui::DragFloat("Ratio", &ratio, 0.01f, 0.f, 1.f);
+    if (displayDepthMenu)
+    {
+        ImVec2 size = {GetWindowSize().x / 4.f * ratio, GetWindowSize().y / 6.f * ratio};
 
-    ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
+        SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
+        if (ImGui::Button("Retry", size))
+        {
+            reloadScene();
+            Engine::getInstance()->timeSystem.setTimeScale(1.0);
+        }
 
-    SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
-    displayLifeBar(m_currentLife, m_maxLife, size);
+        SetNextElementLayout(0.5f, 0.6f, size, EHAlign::Middle, EVAlign::Middle);
+        if (ImGui::Button("Quitte", size))
+        {
+            closeApplication();
+        }
+    }
+    else
+    {
+        ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
 
-    SetNextElementLayout(0.f, 1.f, size, EHAlign::Left, EVAlign::Bottom);
-    Text("%d/%d", m_fireArme->getMagazine().getBulletsRemaining(), m_fireArme->getMagazine().getCapacity());
+        SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
+        displayLifeBar(m_currentLife, m_maxLife, size);
+
+        if (m_firearms.size())
+        {
+            size = ImGui::CalcTextSize("30/30");
+            SetNextElementLayout(0.05f, 0.95f, size, EHAlign::Left, EVAlign::Bottom);
+            Text("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
+                 m_firearms.front()->getMagazine().getCapacity());
+        }
+        size = ImGui::CalcTextSize("FPS : 144");
+        SetNextElementLayout(0.95f, 0.f, size, EHAlign::Right, EVAlign::Top);
+        Text("FPS : %0.0f", ImGui::GetIO().Framerate);
+    }
 }
 
 void BasePlayer::update(double deltaTime)
 {
-    // TODO: find a fix to relieve the user from having to check this, or leave it like that?
-    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
+    if (isDead())
     {
-        const GPM::Vec2 deltaPos = GPE::Engine::getInstance()->inputManager.getCursor().deltaPos;
+        if (!displayDepthMenu)
+        {
+            m_animDepthCounter += deltaTime;
 
-        if (deltaPos.x || deltaPos.y)
-            rotate(deltaPos);
+            if (m_animDepthCounter >= m_animDepthCounterMax)
+            {
+                Engine::getInstance()->timeSystem.setTimeScale(0.0);
+                m_animDepthCounter = 0;
+                displayDepthMenu   = true;
+                Engine::getInstance()->inputManager.setCursorTrackingState(false);
+                Engine::getInstance()->inputManager.setCursorLockState(false);
+            }
+        }
+    }
+    else
+    {
+        // TODO: find a fix to relieve the user from having to check this, or leave it like that?
+        if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
+        {
+            const GPM::Vec2 deltaPos = GPE::Engine::getInstance()->inputManager.getCursor().deltaPos;
+
+            if (deltaPos.x || deltaPos.y)
+                rotate(deltaPos);
+        }
     }
 }
 
 void BasePlayer::shoot()
 {
-    m_fireArme->triggered();
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && !isDead() && m_firearms.size())
+    {
+        m_firearms.front()->triggered();
 
-    if (m_fireArme->isMagazineEmpty())
-        m_fireArme->reload();
+        if (m_firearms.front()->isMagazineEmpty())
+            m_firearms.front()->reload();
+    }
+}
+
+void BasePlayer::updateListener()
+{
+    GPM::Vec3 pos                   = transform().getGlobalPosition();
+    GPM::Vec3 forward               = transform().getVectorForward();
+    GPM::Vec3 up                    = transform().getVectorUp();
+    ALfloat   listenerOrientation[] = {forward.x, forward.y, forward.z, up.x, up.y, up.z};
+    alListener3f(AL_POSITION, pos.x, pos.y, pos.z);
+    alListenerfv(AL_ORIENTATION, listenerOrientation);
 }

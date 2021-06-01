@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Engine/Serialization/InspectContext.hpp"
 #include "Refureku/TypeInfo/Variables/Field.h"
@@ -10,7 +10,7 @@ namespace DataInspector
 void startProperty(const char* name);
 void endProperty();
 
-template <typename T>
+template <class T>
 void inspect(GPE::InspectContext& context, T& inspected);
 /**
  * @brief Shows the content of the inspected object.
@@ -39,7 +39,8 @@ bool inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 
 } // namespace GPE
 
+#include "DataInspector.inl"
 #include "GPEDataInspector.hpp"
 #include "GPMDataInspector.hpp"
+#include "PhysXDataInspector.hpp"
 #include "STDDataInspector.hpp"
-#include "DataInspector.inl"

@@ -27,6 +27,7 @@ GameStartup::GameStartup()
 
       // Make all systems update their components
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
+          updateSceneManager();
           m_engine->animSystem.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
@@ -72,6 +73,9 @@ GameStartup::GameStartup()
     m_engine->inputManager.setupCallbacks(m_engine->window.getGLFWWindow());
     m_engine->inputManager.setInputMode("Game");
 
+    // ============= Scene =============
+    loadFirstScene();
+
     m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = [](const char* msg) {
         GPE_ASSERT(false, msg)
     };
@@ -83,7 +87,7 @@ void GameStartup::update()
 {
     m_engine->timeSystem.update(m_fixedUpdate, m_update, m_render);
 
-    isRunning = !glfwWindowShouldClose(m_engine->window.getGLFWWindow());
+    Engine::getInstance()->isRunning = !glfwWindowShouldClose(m_engine->window.getGLFWWindow());
 }
 
 GameStartup::~GameStartup()

@@ -1,4 +1,4 @@
-#include <BaseCharacter.hpp>
+﻿#include <BaseCharacter.hpp>
 
 #include <Generated/BaseCharacter.rfk.h>
 File_GENERATED
@@ -8,8 +8,6 @@ File_GENERATED
 #include <algorithm>
 #include <gpm/Vector3.hpp>
 #include <gpm/Vector4.hpp>
-
-#include <gpm/DebugOutput.hpp>
 
     using namespace GPE;
 using namespace GPG;
@@ -21,21 +19,20 @@ BaseCharacter::BaseCharacter(GameObject& owner) : BehaviourComponent(owner)
 
 void BaseCharacter::onPostLoad()
 {
+    enableFixedUpdate(true);
+    controller = &getOwner().getOrCreateComponent<GPE::CharacterController>();
+
     BehaviourComponent::onPostLoad();
 }
 
 void BaseCharacter::start()
 {
-    enableFixedUpdate(true);
-
-    controller = &getOwner().addComponent<GPE::CharacterController>();
     GAME_ASSERT(controller, "null");
 
     // Setup controller
-    controller->setHasGravity(true);
-    controller->setSpeed(1.f);
+    //controller->setHasGravity(true);
+    //controller->setSpeed(1.f);
     controller->setAngularSpeed(HALF_PI / 8.f);
-    controller->setGravity(.1f);
 }
 
 void BaseCharacter::rotateYToward(const Vec3& target, float deltaTime)
@@ -82,10 +79,10 @@ void BaseCharacter::moveAndRotateToward(const GPM::Vec3& target, float deltaTime
 
 void BaseCharacter::jump()
 {
-    if (controller->getJumping() == false)
+    if (controller->getCanJump() == true)
     {
-        controller->addForce(GPM::Vec3::up() * 3.f);
-        controller->setJumping(true);
+        controller->addForce(GPM::Vec3::up() * 300.f);
+        controller->startJumpTimer();
     }
 }
 

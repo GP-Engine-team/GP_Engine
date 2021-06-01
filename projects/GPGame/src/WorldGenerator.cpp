@@ -20,7 +20,7 @@ void WorldGenerator::loadTree(GameObject& parent, unsigned int number)
     // positions and rotations and add them to the forest
     for (unsigned int i = 0u; i < number; ++i)
     {
-        GameObject* const newGO = m_treePrefab->clone(*m_treeContainer);
+        GameObject* const newGO = m_treePrefab->clone(*m_treeContainer.pData);
 
         newGO->setName(("Tree" + std::to_string(i)).c_str());
         Vec3 pos;

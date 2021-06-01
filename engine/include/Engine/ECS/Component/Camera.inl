@@ -1,10 +1,5 @@
 namespace GPE
 {
-inline const Camera::ProjectionInfo& Camera::getProjectionInfo() const noexcept
-{
-    return m_projInfo;
-}
-
 inline const GPM::Mat4& Camera::getProjectionView() const noexcept
 {
     return m_projectionViewMatrix;

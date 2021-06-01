@@ -59,6 +59,24 @@ void BehaviourSystem::removeOnGUI(BehaviourComponent& functionToRemove) noexcept
     }
 }
 
+void BehaviourSystem::addUpdateEditor(BehaviourComponent& fixedUpdateFunction) noexcept
+{
+    m_updateEditorFunctions.emplace_back(&fixedUpdateFunction);
+}
+
+void BehaviourSystem::removeUpdateEditor(BehaviourComponent& functionToRemove) noexcept
+{
+    for (auto&& function : m_updateEditorFunctions)
+    {
+        if (unlikely(function == &functionToRemove))
+        {
+            std::swap(function, m_updateEditorFunctions.back());
+            m_updateEditorFunctions.pop_back();
+            return;
+        }
+    }
+}
+
 void BehaviourSystem::addBehaviour(BehaviourComponent& behaviour) noexcept
 {
     m_pBehaviours.push_back(&behaviour);
@@ -77,6 +95,9 @@ void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
 
     if (behaviour.isOnGUIEnable())
         removeOnGUI(behaviour);
+
+    if (behaviour.isUpdateEditorEnable())
+        removeUpdateEditor(behaviour);
 
     for (auto&& it = m_pBehaviours.begin(); it != m_pBehaviours.end(); ++it)
     {
@@ -109,12 +130,21 @@ void BehaviourSystem::onGUI() const noexcept
     }
 }
 
-void BehaviourSystem::fixedUpdate(double deltaTime) noexcept
+void BehaviourSystem::fixedUpdate(double deltaTime) const noexcept
 {
     // Use basic loop because user can emplace map into this loop
     for (unsigned int i = 0; i < m_fixedUpdateFunctions.size(); ++i)
     {
         m_fixedUpdateFunctions[i]->fixedUpdate(deltaTime);
+    }
+}
+
+void BehaviourSystem::updateEditor(double deltaTime) const noexcept
+{
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_updateEditorFunctions.size(); ++i)
+    {
+        m_updateEditorFunctions[i]->updateEditor(deltaTime);
     }
 }
 

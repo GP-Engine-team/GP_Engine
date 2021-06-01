@@ -6,9 +6,9 @@ inline constexpr bool TransformComponent::isDirty() const
     return m_isDirty;
 }
 
-inline constexpr void TransformComponent::setDirty()
+inline constexpr void TransformComponent::setDirty(bool toggle)
 {
-    m_isDirty = true;
+    m_isDirty = toggle;
 }
 
 inline constexpr GPM::Vec3 TransformComponent::getGlobalPosition() const noexcept
@@ -50,9 +50,17 @@ inline void TransformComponent::translate(const GPM::Vec3& translation) noexcept
     m_isDirty = true;
 }
 
+
+inline void TransformComponent::rotate(const GPM::Vec3& rotation) noexcept
+{
+    m_spaceAttribut.rotation = GPM::Quat::fromEuler(rotation) * m_spaceAttribut.rotation;
+    m_isDirty = true;
+}
+
+
 inline void TransformComponent::scale(const GPM::Vec3& scale) noexcept
 {
-    m_spaceAttribut.scale += scale;
+    m_spaceAttribut.scale *= scale;
     m_isDirty = true;
 }
 
@@ -93,6 +101,21 @@ inline GPM::Vec3 TransformComponent::getVectorRight() const noexcept
 inline GPM::Vec3 TransformComponent::getVectorUp() const noexcept
 {
     return m_transform.up().normalized();
+}
+
+inline GPM::Vec3 TransformComponent::getLocalForward() const noexcept
+{
+    return m_spaceAttribut.rotation * GPM::Vec3::forward();
+}
+
+inline GPM::Vec3 TransformComponent::getLocalRight() const noexcept
+{
+    return m_spaceAttribut.rotation * GPM::Vec3::right();
+}
+
+inline GPM::Vec3 TransformComponent::getLocalUp() const noexcept
+{
+    return m_spaceAttribut.rotation * GPM::Vec3::up();
 }
 
 inline constexpr GPM::SplitTransform& TransformComponent::getSpacialAttribut()

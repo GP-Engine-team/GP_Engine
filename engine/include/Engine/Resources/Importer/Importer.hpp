@@ -81,6 +81,7 @@ struct ShaderCreateConfig
 void saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode);
 void loadSceneFromPathImp(GPE::Scene* scene, const char* path);
 
+void        savePrefabToPathImp(GPE::GameObject& parent, const char* path, GPE::SavedScene::EType saveMode);
 GameObject* loadPrefabFromPathImp(GPE::GameObject& parent, const char* path);
 
 void importeModel(const char* srcPath, const char* dstPath,

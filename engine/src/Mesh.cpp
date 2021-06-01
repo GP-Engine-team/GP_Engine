@@ -60,6 +60,10 @@ Mesh::CreateIndiceBufferArg Mesh::convert(Mesh::CreateContiguousVerticesArg& arg
     return newArg;
 }
 
+Mesh::Mesh(Mesh::CreateIndiceBufferArg&& arg) noexcept : Mesh(arg)
+{
+}
+
 Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 {
     if (arg.boundingVolumeType != Mesh::EBoundingVolume::NONE)
@@ -191,7 +195,7 @@ void Mesh::generateBoundingVolume(EBoundingVolume boundingVolumeType, const Vect
     {
     case Mesh::EBoundingVolume::SPHERE: {
         m_boundingVolume = &Engine::getInstance()->resourceManager.add<Sphere>(
-            std::to_string((size_t)this), std::max(minAABB.length(), maxAABB.length()), (maxAABB + minAABB) * 0.5);
+            std::to_string((size_t)this), (minAABB - maxAABB).length(), (maxAABB + minAABB) * 0.5);
         break;
     }
 

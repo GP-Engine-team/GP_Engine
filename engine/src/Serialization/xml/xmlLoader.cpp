@@ -1,4 +1,8 @@
 #include "Engine/Serialization/xml/xmlLoader.hpp"
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Scene.hpp>
+#include <Engine/Resources/Linker.hpp>
 
 std::string XmlLoader::getValue(Node* node)
 {
@@ -106,6 +110,15 @@ void XmlLoader::updateLazyPtrs()
     }
 
     lazyPtrs.clear();
+}
+
+void XmlLoader::updateLinker(GPE::GameObject& base)
+{
+    for (auto&& [key, value] : linkers)
+    {
+        if (GPE::GameObject* pGo = base.getGameObject(key))
+            value->setData(*pGo);
+    }
 }
 
 bool XmlLoader::goToSubChild(const LoadInfo& info)

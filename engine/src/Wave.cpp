@@ -14,7 +14,7 @@ Wave::Wave(const char* filepath, const char* name)
     drwav wav;
     if (!drwav_init_file(&wav, filepath, NULL))
     {
-        FUNCT_ERROR("couldn't load wav");
+        FUNCT_ERROR(stringFormat("Couldn't load %s.wav", name));
     }
 
     drwav_int16* pSampleData = (drwav_int16*)malloc(wav.totalPCMFrameCount * wav.channels * sizeof(drwav_int16));

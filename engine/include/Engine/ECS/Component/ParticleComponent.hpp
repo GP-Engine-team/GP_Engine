@@ -17,6 +17,8 @@
 #include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleRenderer.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleUpdater.hpp>
+#include <gpm/Matrix4.hpp>
+#include <gpm/Vector4.hpp>
 
 // Generated
 #include "Generated/ParticleComponent.rfk.h"
@@ -34,26 +36,30 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        Shader* m_shader = nullptr;
+        RFKField(Serialize()) Shader* m_shader = nullptr;
+
+        // TODO : Line hardcoded : used material with texture instead
+        RFKField(Serialize()) Texture* m_diffuseTexture = nullptr;
 
         ParticleData                 m_particles;
-        RFKField(Serialize()) size_t m_count              = 0;
-        RFKField(Serialize()) float  m_emitRate           = 0.0;
-        RFKField(Serialize()) float  m_duration           = std::numeric_limits<float>::infinity();
-        RFKField(Serialize()) float  m_durationCount      = 0.f;
-        RFKField(Serialize()) bool   m_canEmit            = false;
-        RFKField(Serialize()) bool   m_isInGlobalPosition = true;
+        RFKField(Serialize()) size_t m_count                  = 0;
+        RFKField(Serialize()) float  m_emitRate               = 0.0;
+        RFKField(Serialize()) float  m_duration               = std::numeric_limits<float>::infinity();
+        RFKField(Serialize()) float  m_durationCount          = 0.f;
+        RFKField(Serialize()) bool   m_canEmit                = false;
+        RFKField(Serialize()) bool   m_useGlobalPosition      = true;
+        RFKField(Serialize()) bool   m_useGameObjectTransform = false;
 
         /**
          * @brief Is used to define how the particle must be generated (color ? velocity ? Position ?)
          */
-        std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
+        RFKField(Serialize()) std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
 
         /**
          * @brief Us used to define how the particle must be update (life time ? acceleration ? color changement ?)
          */
-        std::vector<std::unique_ptr<ParticleUpdater>> m_updaters;
-        std::unique_ptr<GPE::ParticleRenderer>        m_renderer = nullptr;
+        RFKField(Serialize()) std::vector<std::unique_ptr<ParticleUpdater>> m_updaters;
+        std::unique_ptr<GPE::ParticleRenderer>                              m_renderer = nullptr;
 
     protected:
         /**
@@ -72,7 +78,7 @@ namespace GPE RFKNamespace()
          */
         void emit(double dt);
 
-         /**
+        /**
          * @brief Init render buffer
          */
         void generate();
@@ -111,6 +117,19 @@ namespace GPE RFKNamespace()
         void emit(unsigned int count);
 
         /**
+         * @brief Emit particle at position
+         * @param count
+         */
+        void emitAt(const GPM::Vec3& position, unsigned int count);
+
+        /**
+         * @brief Emit particle thank to model matrix (use transform model of gameObject)
+         * @param model
+         * @param count
+         */
+        void emitAt(const GPM::Mat4& model, unsigned int count);
+
+        /**
          * @brief Update the particle effect and all it's updater
          * @param dt
          */
@@ -136,7 +155,8 @@ namespace GPE RFKNamespace()
 
         inline unsigned int getMeshID();
 
-        inline Shader* getShader();
+        inline Shader*  getShader();
+        inline Texture* getTexture();
 
         /**
          * @brief Try to add specific updater if its type doesn't exist

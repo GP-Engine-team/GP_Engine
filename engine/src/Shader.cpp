@@ -216,7 +216,7 @@ void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3
             if (blockIndex == GL_INVALID_INDEX)
             {
                 FUNCT_ERROR((std::string("blockIndex invalid with name : ") + blockName).c_str());
-                exit(0);
+                //exit(0);
             }
 
             glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, m_lightsUniformBuffer);

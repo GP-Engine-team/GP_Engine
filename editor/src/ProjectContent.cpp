@@ -15,6 +15,9 @@
 #include <Engine/Serialization/TextureImporterSetting.hpp>
 #include <Engine/Serialization/TextureInspectorPanel.hpp>
 
+#include <Engine/Core/HotReload/ReloadableCpp.hpp>
+#include <Engine/Core/HotReload/SingletonsSync.hpp>
+
 // Don't move up
 #include "Engine/Core/HotReload/SingletonsSync.hpp"
 
@@ -128,6 +131,19 @@ void ProjectContent::tryToSetCurrentCirToPreviousLocation(const std::filesystem:
     pCurrentDirectory = pNode;
 }
 
+void createResroucePath(DirectoryInfo& base, std::vector<ResourcesPath>& rp)
+{
+    for (auto&& dir : base.directories)
+    {
+        createResroucePath(dir, rp);
+    }
+
+    for (auto&& file : base.files)
+    {
+        rp.emplace_back(ResourcesPath{file.path});
+    }
+}
+
 void ProjectContent::refreshResourcesList()
 {
     std::filesystem::path path = std::filesystem::current_path() / RESOURCES_DIR;
@@ -168,6 +184,12 @@ void ProjectContent::refreshResourcesList()
         }
     }
 
+    std::vector<ResourcesPath> pathContainer;
+    createResroucePath(resourcesTree, pathContainer);
+
+    GPE::Engine::getInstance()->resourceManager.clear<std::vector<GPE::ResourcesPath>>();
+    GPE::Engine::getInstance()->resourceManager.add<std::vector<GPE::ResourcesPath>>("Path", std::move(pathContainer));
+
     explore(resourcesTree);
     tryToSetCurrentCirToPreviousLocation(previousRelatifPath);
 }
@@ -185,12 +207,12 @@ void ProjectContent::createNewScene()
 
     sceneDir /= sceneName;
 
-    m_editorContext->m_sceneEditor.view.unbindScene();
-    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName.stem().string().c_str());
+    m_editorContext->sceneEditor.view.unbindScene();
+    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName.string());
     m_editorContext->saveScene(&scene, sceneDir.string().c_str());
-    m_editorContext->m_sceneEditor.view.bindScene(scene);
+    m_editorContext->sceneEditor.view.bindScene(scene);
     refreshResourcesList();
-    m_editorContext->m_saveFolder = sceneDir.parent_path().string().c_str();
+    m_editorContext->saveFolder = sceneDir.parent_path().string().c_str();
 }
 
 void ProjectContent::removeFile(const std::filesystem::path& path)
@@ -267,6 +289,10 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
     }
 
     ImGui::TextUnformatted(pCurrentDirectory->path.string().c_str());
+
+    // Drop prefab to save as prefab
+
+    ImGui::BeginChild("DropRegion");
 
     ImVec2                size  = ImVec2(32.0f, 32.0f); // Size of the image we want to make visible
     ImGuiStyle&           style = ImGui::GetStyle();
@@ -468,12 +494,11 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 {
                 case GPE::hash(ENGINE_SCENE_EXTENSION): // compile time
                 {
-                    std::string sceneName = it->filename.stem().string();
-                    m_editorContext->m_sceneEditor.view.unbindScene();
-                    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(sceneName);
+                    m_editorContext->sceneEditor.view.unbindScene();
+                    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(it->path.string());
                     m_editorContext->loadScene(&scene, it->path.string().c_str());
                     scene.setName(it->filename.stem().string().c_str());
-                    m_editorContext->m_saveFolder = it->path.parent_path().string();
+                    m_editorContext->saveFolder = it->path.parent_path().string();
                     break;
                 }
 
@@ -642,7 +667,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 prefabDir /= prefabName;
 
                 Scene prefab;
-                auto  saveFunc = GET_PROCESS((*m_editorContext->m_reloadableCpp), saveSceneToPath);
+                auto  saveFunc = GET_PROCESS((*m_editorContext->reloadableCpp), saveSceneToPath);
                 saveFunc(&prefab, prefabDir.string().c_str(), GPE::SavedScene::EType::XML);
                 refreshResourcesList();
             }
@@ -656,5 +681,27 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
     if (!pathToRemovePath.empty())
     {
         removeFile(pathToRemovePath);
+    }
+
+    // End drop region
+    ImGui::EndChild();
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(GameObject*));
+
+            GameObject&                 gameObject = **static_cast<GPE::GameObject**>(payload->Data);
+            const std::filesystem::path path =
+                pCurrentDirectory->path / (gameObject.getName() + ENGINE_PREFAB_EXTENSION);
+
+            auto saveFunc = GET_PROCESS((*m_editorContext->reloadableCpp), savePrefabToPath);
+            saveFunc(gameObject, path.string().c_str(), GPE::SavedScene::EType::XML);
+
+            refreshResourcesList();
+
+            // deferedSetParent.bind(**static_cast<GPE::GameObject**>(payload->Data), gameObject);
+        }
+        ImGui::EndDragDropTarget();
     }
 }
