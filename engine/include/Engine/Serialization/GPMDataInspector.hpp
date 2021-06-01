@@ -22,8 +22,6 @@ namespace GPE
 {
 
 template <>
-void DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const rfk::Field& info);
-template <>
 void DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const char* name);
 
 template <>
@@ -47,8 +45,6 @@ void DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& inspecte
 template <>
 void DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& inspected);
 
-template <>
-void DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const rfk::Field& info);
 template <>
 void DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const char* name);
 template <>

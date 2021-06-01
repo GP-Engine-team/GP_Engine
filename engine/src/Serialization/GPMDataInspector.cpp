@@ -8,19 +8,11 @@
 #include <windows.h>
 
 template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const char* name)
 {
-    context.startProperty("", 0.f);
     DataInspector::inspect(context, inspected.position, "Position");
     DataInspector::inspect(context, inspected.scale, "Scale");
     DataInspector::inspect(context, inspected.rotation, "Rotation");
-    context.endProperty();
 }
 
 template <>
@@ -108,12 +100,6 @@ template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& inspected)
 {
     ImGui::DragFloat4("", inspected.e);
-}
-
-template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>

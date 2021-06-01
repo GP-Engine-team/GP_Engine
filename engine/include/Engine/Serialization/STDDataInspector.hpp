@@ -40,17 +40,11 @@ void inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected);
 // void  inspect(std::array<T, SIZE>& inspected, const rfk::Field& info);
 
 template <>
-void inspect(GPE::InspectContext& context, size_t& inspected, const rfk::Field& info);
-template <>
 void inspect(GPE::InspectContext& context, size_t& inspected, const char* name);
 
 template <>
-void inspect(GPE::InspectContext& context, unsigned int& inspected, const rfk::Field& info);
-template <>
 void inspect(GPE::InspectContext& context, unsigned int& inspected, const char* name);
 
-template <>
-void inspect(GPE::InspectContext& context, int& inspected, const rfk::Field& info);
 template <>
 void inspect(GPE::InspectContext& context, int& inspected, const char* name);
 
@@ -60,12 +54,8 @@ template <>
 void inspect(GPE::InspectContext& context, float& inspected, const char* name);
 
 template <>
-void inspect(GPE::InspectContext& context, std::string& inspected, const rfk::Field& info);
-template <>
 void inspect(GPE::InspectContext& context, std::string& inspected, const char* name);
 
-template <>
-void inspect(GPE::InspectContext& context, bool& inspected, const rfk::Field& info);
 template <>
 void inspect(GPE::InspectContext& context, bool& inspected, const char* name);
 

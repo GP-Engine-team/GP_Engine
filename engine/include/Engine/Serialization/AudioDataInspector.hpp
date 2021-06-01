@@ -17,10 +17,6 @@ struct SourceData;
 
 template <>
 void DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,
-                            const rfk::Field& info);
-
-template <>
-void DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,
                             const char* name);
 
 } // namespace GPE

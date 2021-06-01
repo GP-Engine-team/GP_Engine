@@ -3,12 +3,6 @@
 #include "Engine/Serialization/Slider.hpp"
 
 template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, size_t& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, size_t& inspected, const char* name)
 {
     context.startProperty(name);
@@ -17,23 +11,11 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, size_t& inspected
 }
 
 template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, unsigned int& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, unsigned int& inspected, const char* name)
 {
     context.startProperty(name);
     context.setDirty(ImGui::InputScalar("", ImGuiDataType_U32, &inspected));
     context.endProperty();
-}
-
-template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, int& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
@@ -69,12 +51,6 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, float& inspected,
 }
 
 template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, std::string& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, std::string& inspected, const char* name)
 {
     context.startProperty(name);
@@ -87,12 +63,6 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::string& insp
     inspected       = buffer;
 
     context.endProperty();
-}
-
-template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, bool& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>

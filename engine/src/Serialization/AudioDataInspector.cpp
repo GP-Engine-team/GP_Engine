@@ -68,12 +68,6 @@ bool DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected,
     return hasChanged;
 }
 */
-template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,
-                                 const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
 
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,

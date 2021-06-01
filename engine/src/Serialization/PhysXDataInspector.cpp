@@ -47,12 +47,6 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, physx::PxShape*& 
 }*/
 
 template <>
-void DataInspector::inspect(GPE::InspectContext& context, Collider& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
 void DataInspector::inspect(GPE::InspectContext& context, Collider& inspected, const char* name)
 {
     ImGui::Indent(16.0f);
@@ -63,12 +57,6 @@ void DataInspector::inspect(GPE::InspectContext& context, Collider& inspected, c
         inspected.inspect(context);
     }
     ImGui::Unindent(16.0f);
-}
-
-template <>
-void DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
