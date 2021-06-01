@@ -41,7 +41,7 @@ namespace GPE RFKNamespace()
         RFKField(Inspect(), Serialize()) float                   m_mass          = 90.f;
         RFKField(Inspect(), Serialize()) float                   m_speed         = 1.f;
         RFKField(Inspect(), Serialize()) float                   m_angularSpeed  = 1.f; // in rad by second
-        RFKField(Inspect(), Serialize()) float                   m_startJumpTime = 0.f;
+        RFKField(Inspect()) float                                m_startJumpTime = 0.f;
         RFKField(Inspect(), Serialize()) float                   m_jumpTimeDelay = 1.f;
         RFKField(Inspect(), Serialize()) bool                    m_hasGravity    = true;
         RFKField(Inspect(), Serialize()) bool                    m_canJump       = false;

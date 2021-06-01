@@ -6,6 +6,8 @@
 
 #pragma once
 
+//#include <Engine/ECS/Component/AudioComponent.hpp>
+
 #include <BaseCharacter.hpp>
 
 #include <Generated/BaseEnemy.rfk.h>
@@ -13,7 +15,8 @@
 namespace GPE
 {
 class GameObject;
-}
+class AudioComponent;
+} // namespace GPE
 
 namespace GPG RFKNamespace()
 {
@@ -26,10 +29,11 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) float            m_animDeapthCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float m_animDeapthCounterMax = 3.f;
 
-        RFKField(Serialize()) float            m_attackCounter    = 0.f;
-        RFKField(Inspect(), Serialize()) float m_attackCounterMax = 3.f;
-        RFKField(Inspect(), Serialize()) float m_radiusAttack     = 3.f;
-        RFKField(Inspect(), Serialize()) float m_dammage          = 3.f;
+        RFKField(Serialize()) float                m_attackCounter    = 0.f;
+        RFKField(Inspect(), Serialize()) float     m_attackCounterMax = 3.f;
+        RFKField(Inspect(), Serialize()) float     m_radiusAttack     = 3.f;
+        RFKField(Inspect(), Serialize()) float     m_dammage          = 3.f;
+        RFKField(Serialize()) GPE::AudioComponent* source             = nullptr;
 
     public:
         BaseEnemy() noexcept = default;

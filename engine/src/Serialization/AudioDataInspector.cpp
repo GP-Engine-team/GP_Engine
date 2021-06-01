@@ -1,3 +1,7 @@
+﻿#include <imgui.h>
+
+#include <Engine/ECS/Component/AudioComponent.hpp>
+
 #include <Engine/Serialization/AudioDataInspector.hpp>
 
 using namespace GPE;
@@ -64,28 +68,28 @@ bool DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected,
     return hasChanged;
 }
 */
-/*template <>
-bool DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,
-                            const rfk::Field& info)
+template <>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,
+                                 const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,
-                            const char* name)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,
+                                 const char* name)
 {
-    return false;
-}*/
+    context.startProperty(name, 0.f);
 
-/*template <>
-bool DataInspector::inspect(GPE::InspectContext& context, ALfloat& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    for (auto& [key, value] : inspected)
+    {
+        // ImGui::Text(value.name.c_str());
+        if (ImGui::TreeNode(value.name.c_str()))
+        {
+            /*value.isDirty = */ value.settings.inspect(context);
+            ImGui::TreePop();
+        }
+    }
+
+    context.endProperty();
 }
-
-template <>
-bool DataInspector::inspect(GPE::InspectContext& context, ALfloat& inspected, const char* name)
-{
-    return false;
-}*/

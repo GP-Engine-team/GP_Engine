@@ -10,26 +10,34 @@ File_GENERATED
 #include <Engine/Resources/Wave.hpp>
 #include <algorithm>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPG;
 using namespace GPM;
 
 SpatializedSoundPlayerScript::SpatializedSoundPlayerScript(GameObject& owner)
     : BehaviourComponent(owner), source{&owner.addComponent<GPE::AudioComponent>()}
 {
-    GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch       = 1.f;
-    sourceSettings.loop        = AL_TRUE;
-    sourceSettings.spatialized = AL_TRUE;
-    sourceSettings.gain *= 10;
-
-    GPE::Wave testSound3("./resources/sounds/BuriedAlive.wav", "BA", sourceSettings.spatialized);
-    source->setSound("BA", "BA", sourceSettings);
+    onPostLoad();
 }
 
 void SpatializedSoundPlayerScript::onPostLoad()
 {
     BehaviourComponent::onPostLoad();
+
+    if (!source)
+    {
+        source = getOwner().getComponent<GPE::AudioComponent>();
+    }
+
+    GPE::SourceSettings sourceSettings;
+    sourceSettings.pitch       = 2.f;
+    sourceSettings.loop        = AL_TRUE;
+    sourceSettings.spatialized = AL_TRUE;
+    sourceSettings.relative    = AL_FALSE;
+    sourceSettings.gain *= 1000;
+
+    GPE::Wave testSound3("./resources/sounds/BuriedAlive.wav", "BA", sourceSettings.spatialized);
+    source->setSound("BA", "BA", sourceSettings);
 }
 
 void SpatializedSoundPlayerScript::start()
