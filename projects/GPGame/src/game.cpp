@@ -217,7 +217,8 @@ Game::Game()
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintEnd");
         io.bindInput(GLFW_MOUSE_BUTTON_LEFT, "RaycastExample");
         io.bindInput(GLFW_MOUSE_BUTTON_LEFT, "shoot");
-        io.bindInput(GLFW_MOUSE_BUTTON_RIGHT, "aim");
+        io.bindInput(GLFW_MOUSE_BUTTON_RIGHT, "aimBegin");
+        io.bindInput(GLFW_MOUSE_BUTTON_RIGHT, "aimEnd");
         io.bindInput(GLFW_KEY_KP_1, "playAmbiantMusic");
         io.bindInput(GLFW_KEY_KP_2, "playAmbiantMusicForce");
         io.bindInput(GLFW_KEY_KP_0, "stopAllMusic");
