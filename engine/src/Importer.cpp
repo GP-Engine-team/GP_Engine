@@ -174,6 +174,7 @@ GPE::GameObject* GPE::loadPrefabFromStringImp(GPE::GameObject& parent, const std
     GameObject* const go = scene.getWorld().children.front();
     if (go)
     {
+        go->getTransform().update(parent.getTransform().get().model);
         go->setParent(&parent);
         go->getTransform().setDirty();
 

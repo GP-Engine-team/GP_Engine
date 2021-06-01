@@ -7,13 +7,14 @@
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyStatic.hpp>
 
 // Generated
-#include "Generated/RigidbodyStatic.rfk.h"
+#include <Generated/RigidbodyStatic.rfk.h>
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace physx;
 
-RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner), RigidBodyBase(owner)
+RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept
+    : Component(owner), RigidBodyBase(owner)
 {
     rigidbody = PxGetPhysics().createRigidStatic(
         PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
@@ -24,17 +25,27 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept : Component(owner),
     setType(type);
 
     updateToSystem();
+    getOwner().getTransform().OnUpdate += Function::make(this, "updateTransform");
 }
 
 void RigidbodyStatic::onPostLoad() noexcept
 {
+    using namespace GPM;
+
     owner = &getOwner();
+    {
+        getOwner().getTransform().get() = GPM::toTransform(getOwner().getTransform().getSpacialAttribut());
 
-    rigidbody = PxGetPhysics().createRigidStatic(
-        PxTransform(PhysXSystem::GPMVec3ToPxVec3(getOwner().getTransform().getGlobalPosition()),
-                    PhysXSystem::GPMQuatToPxQuat(getOwner().getTransform().getGlobalRotation())));
+        const Quat        rot      {getOwner().getTransform().getGlobalRotation()};
+        const Vec3        pos      {getOwner().getTransform().getGlobalPosition()};
+        const PxQuat      pxRot    {PhysXSystem::GPMQuatToPxQuat(rot)};
+        const PxVec3      pxPos    {PhysXSystem::GPMVec3ToPxVec3(pos)};
+        const PxTransform transform{pxPos, pxRot};
 
-    rigidbody->userData = &getOwner();
+        rigidbody = PxGetPhysics().createRigidStatic(transform);
+
+        rigidbody->userData = &getOwner();
+    }
 
     if (!collider)
     {
@@ -46,8 +57,11 @@ void RigidbodyStatic::onPostLoad() noexcept
     }
 
     collider->updateTransform();
+    collider->updateShape();
 
     Component::onPostLoad();
+
+    getOwner().getTransform().OnUpdate += Function::make(this, "updateTransform");
 }
 
 void RigidbodyStatic::updateToSystem() noexcept
@@ -64,15 +78,33 @@ void RigidbodyStatic::updateToSystem() noexcept
 
 void RigidbodyStatic::updateShape(physx::PxShape& oldShape)
 {
-    if (&oldShape)
+    rigidbody->detachShape(oldShape);
+    rigidbody->attachShape(*collider->shape);
+}
+
+void RigidbodyStatic::updateTransform()
+{
+    if (!rigidbody)
+        return;
+
+    PxTransform newTransform;
+
+    newTransform.p = PhysXSystem::GPMVec3ToPxVec3(owner->getTransform().getGlobalPosition());
+    newTransform.q = PhysXSystem::GPMQuatToPxQuat(owner->getTransform().getGlobalRotation());
+
+    PxTransform oldTransform;
+    oldTransform = rigidbody->getGlobalPose();
+
+    if (newTransform.p == oldTransform.p && newTransform.q == oldTransform.q)
     {
-        rigidbody->detachShape(oldShape);
+        return;
     }
 
-    rigidbody->attachShape(*collider->shape);
+    rigidbody->setGlobalPose(newTransform);
 }
 
 RigidbodyStatic::~RigidbodyStatic() noexcept
 {
     setActive(false);
+    getOwner().getTransform().OnUpdate -= Function::make(this, "updateTransform");
 }

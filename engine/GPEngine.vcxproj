@@ -293,6 +293,7 @@
     <ClInclude Include="include\Engine\Resources\Texture.hpp" />
     <ClInclude Include="include\Engine\Resources\Type.hpp" />
     <ClInclude Include="include\Engine\Resources\Wave.hpp" />
+    <ClInclude Include="include\Engine\Serialization\AudioDataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\ComponentGen.h" />
     <ClInclude Include="include\Engine\Serialization\DataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp" />
@@ -426,6 +427,7 @@
     <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\SceneViewer.cpp" />
+    <ClCompile Include="src\Serialization\AudioDataInspector.cpp" />
     <ClCompile Include="src\Serialization\ComponentGen.cpp" />
     <ClCompile Include="src\Serialization\DataInspector.cpp" />
     <ClCompile Include="src\Serialization\GPEDataInspector.cpp" />

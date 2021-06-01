@@ -50,9 +50,17 @@ inline void TransformComponent::translate(const GPM::Vec3& translation) noexcept
     m_isDirty = true;
 }
 
+
+inline void TransformComponent::rotate(const GPM::Vec3& rotation) noexcept
+{
+    m_spaceAttribut.rotation = GPM::Quat::fromEuler(rotation) * m_spaceAttribut.rotation;
+    m_isDirty = true;
+}
+
+
 inline void TransformComponent::scale(const GPM::Vec3& scale) noexcept
 {
-    m_spaceAttribut.scale += scale;
+    m_spaceAttribut.scale *= scale;
     m_isDirty = true;
 }
 

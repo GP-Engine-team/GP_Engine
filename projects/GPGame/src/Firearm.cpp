@@ -42,6 +42,7 @@ void Firearm::onPostLoad()
     GPE::SourceSettings sourceSettings;
     sourceSettings.pitch = 1.f;
     sourceSettings.loop  = AL_FALSE;
+    sourceSettings.relative = AL_TRUE;
 
     m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
 }

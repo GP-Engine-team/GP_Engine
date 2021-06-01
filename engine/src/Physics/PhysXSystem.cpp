@@ -32,7 +32,7 @@ static PxDefaultAllocator gDefaultAllocatorCallback;
 void UserErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file,
                                     int line) noexcept
 {
-    FUNCT_ERROR(message);
+    Log::getInstance()->logError(stringFormat("%s:%i: %s", file, line, message));
 }
 
 PhysXSystem::PhysXSystem()

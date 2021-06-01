@@ -27,6 +27,7 @@ RigidbodyDynamic::RigidbodyDynamic(GameObject& owner) noexcept : Component(owner
     setType(type);
 
     updateToSystem();
+    getOwner().getTransform().OnUpdate += Function::make(this, "updateTransform");
 }
 
 void RigidbodyDynamic::onPostLoad() noexcept
@@ -52,8 +53,11 @@ void RigidbodyDynamic::onPostLoad() noexcept
     }
 
     collider->updateTransform();
+    collider->updateShape();
 
     Component::onPostLoad();
+
+    getOwner().getTransform().OnUpdate += Function::make(this, "updateTransform");
 }
 
 void RigidbodyDynamic::update() noexcept
@@ -68,6 +72,9 @@ void RigidbodyDynamic::updatePosition() noexcept
 
 void RigidbodyDynamic::setKinematic(bool state) noexcept
 {
+    if (m_isKinematic == state)
+        return;
+
     m_isKinematic = state;
     rigidbody->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, state);
 }
@@ -90,7 +97,29 @@ void RigidbodyDynamic::updateShape(physx::PxShape& oldShape)
     rigidbody->attachShape(*collider->shape);
 }
 
+void RigidbodyDynamic::updateTransform()
+{
+    if (!rigidbody)
+        return;
+
+    PxTransform newTransform;
+
+    newTransform.p = PhysXSystem::GPMVec3ToPxVec3(owner->getTransform().getGlobalPosition());
+    newTransform.q = PhysXSystem::GPMQuatToPxQuat(owner->getTransform().getGlobalRotation());
+
+    PxTransform oldTransform;
+    oldTransform = rigidbody->getGlobalPose();
+
+    if (newTransform.p == oldTransform.p && newTransform.q == oldTransform.q)
+    {
+        return;
+    }
+
+    rigidbody->setGlobalPose(newTransform);
+}
+
 RigidbodyDynamic::~RigidbodyDynamic() noexcept
 {
     setActive(false);
+    getOwner().getTransform().OnUpdate -= Function::make(this, "updateTransform");
 }
