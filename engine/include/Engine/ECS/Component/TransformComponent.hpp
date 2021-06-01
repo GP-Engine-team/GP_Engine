@@ -38,7 +38,7 @@ namespace GPE RFKNamespace()
         bool                                                 m_isDirty   = false;
 
     public:
-        RFKField(Serialize()) Event OnUpdate;
+        RFKField() Event OnUpdate;
 
     protected:
         virtual void updateToSystem() noexcept override;

@@ -112,35 +112,35 @@ namespace GPE RFKNamespace()
          * @brief update the shape of the CharacterController;
          * @return
          */
-        RFKMethod() void updateShape() noexcept;
+        void updateShape() noexcept;
 
         /**
          * @brief set the new local center of the collider;
          * @param newCenter
          * @return
          */
-        RFKMethod() void setCenter(const GPM::Vec3& newCenter) noexcept;
+        void setCenter(const GPM::Vec3& newCenter) noexcept;
 
         /**
          * @brief set the new height of the collider;
          * @param newHeight
          * @return
          */
-        RFKMethod() void setHeight(float newHeight) noexcept;
+        void setHeight(float newHeight) noexcept;
 
         /**
          * @brief set the new radius of the collider;
          * @param newRadius
          * @return
          */
-        RFKMethod() void setRadius(float newRadius) noexcept;
+        void setRadius(float newRadius) noexcept;
 
         /**
          * @brief set the new contact offset of the collider;
          * @param newOffset
          * @return
          */
-        RFKMethod() void setContactOffset(float newOffset) noexcept;
+        void setContactOffset(float newOffset) noexcept;
 
         /**
          * @brief Update the scale of the collider from is owner;

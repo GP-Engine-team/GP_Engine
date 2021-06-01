@@ -47,6 +47,7 @@ void RigidbodyStatic::onPostLoad() noexcept
     }
 
     collider->updateTransform();
+    collider->updateShape();
 
     Component::onPostLoad();
 

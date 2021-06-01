@@ -15,7 +15,8 @@ using namespace physx;
 BoxCollider::BoxCollider() noexcept : m_sizeOffset(1.f)
 {
     material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, 0.f);
-    shape    = Engine::getInstance()->physXSystem.physics->createShape(
+
+    shape = Engine::getInstance()->physXSystem.physics->createShape(
         PxBoxGeometry(PhysXSystem::GPMVec3ToPxVec3((GPM::Vec3(1, 1, 1) + m_sizeOffset) * 0.5f)), *material, true);
 
     material->release();

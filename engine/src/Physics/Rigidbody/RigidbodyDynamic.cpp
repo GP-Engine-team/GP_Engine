@@ -53,6 +53,7 @@ void RigidbodyDynamic::onPostLoad() noexcept
     }
 
     collider->updateTransform();
+    collider->updateShape();
 
     Component::onPostLoad();
 
@@ -98,7 +99,7 @@ void RigidbodyDynamic::updateShape(physx::PxShape& oldShape)
 
 void RigidbodyDynamic::updateTransform()
 {
-    if(!rigidbody)
+    if (!rigidbody)
         return;
 
     PxTransform newTransform;

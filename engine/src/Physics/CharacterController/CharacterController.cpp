@@ -172,10 +172,10 @@ void CharacterController::updateShape() noexcept
 
     PxCapsuleControllerDesc desc;
 
-    desc.height        = scale.y + m_height;
-    desc.material      = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
-    desc.position      = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
-    desc.radius        = std::max(scale.x, scale.z) + m_radius;
+    desc.height   = scale.y + m_height;
+    desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
+    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
+    desc.radius   = std::max(scale.x, scale.z) + m_radius;
 
     if (m_contactOffset <= 0)
     {
