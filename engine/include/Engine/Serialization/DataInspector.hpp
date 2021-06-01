@@ -7,9 +7,6 @@ namespace GPE
 {
 namespace DataInspector
 {
-void startProperty(const char* name);
-void endProperty();
-
 template <class T>
 void inspect(GPE::InspectContext& context, T& inspected);
 /**
@@ -20,7 +17,7 @@ void inspect(GPE::InspectContext& context, T& inspected);
  * @return True if the inspected element has been modified, false otherwise.
  */
 template <typename T>
-bool inspect(GPE::InspectContext& context, T& inspected, const char* name);
+void inspect(GPE::InspectContext& context, T& inspected, const char* name);
 
 template <typename T>
 void inspect(GPE::InspectContext& context, T& inspected, const std::string& name);
@@ -33,7 +30,7 @@ void inspect(GPE::InspectContext& context, T& inspected, const std::string& name
  * @return True if the inspected element has been modified, false otherwise.
  */
 template <typename T>
-bool inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info);
+void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info);
 
 }; // namespace DataInspector
 

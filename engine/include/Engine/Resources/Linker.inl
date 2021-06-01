@@ -64,16 +64,15 @@ void Linker<T>::setData(GameObject& owner)
 //}
 
 template <typename T>
-bool DataInspector::inspect(GPE::InspectContext& context, Linker<T>& inspected, const rfk::Field& info)
+void DataInspector::inspect(GPE::InspectContext& context, Linker<T>& inspected, const rfk::Field& info)
 {
-    return DataInspector::inspect(context, inspected, info.name.c_str());
+    DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <typename T>
-bool DataInspector::inspect(GPE::InspectContext& context, Linker<T>& inspected, const char* name)
+void DataInspector::inspect(GPE::InspectContext& context, Linker<T>& inspected, const char* name)
 {
-    startProperty(name);
-    bool hasChanged = false;
+    context.startProperty(name);
 
     ImGui::Selectable(inspected.pData == nullptr ? "None" : inspected.pData->getOwner().getName().c_str());
 
@@ -87,7 +86,7 @@ bool DataInspector::inspect(GPE::InspectContext& context, Linker<T>& inspected, 
         if (ImGui::MenuItem("Remove", NULL, false))
         {
             inspected.pData = nullptr;
-            hasChanged      = true;
+            context.setDirty();
         }
 
         ImGui::EndPopup();
@@ -106,14 +105,13 @@ bool DataInspector::inspect(GPE::InspectContext& context, Linker<T>& inspected, 
             {
                 std::cout << pCom << std::endl;
                 inspected.pData = pCom;
-                hasChanged      = true;
+                context.setDirty();
             }
         }
         ImGui::EndDragDropTarget();
     }
-    endProperty();
-
-    return hasChanged;
+    context.setDirty();
+    context.endProperty();
 }
 
 template <typename T>

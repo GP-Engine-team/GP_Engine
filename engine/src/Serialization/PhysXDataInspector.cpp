@@ -47,16 +47,15 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, physx::PxShape*& 
 }*/
 
 template <>
-bool DataInspector::inspect(GPE::InspectContext& context, Collider& inspected, const rfk::Field& info)
+void DataInspector::inspect(GPE::InspectContext& context, Collider& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool DataInspector::inspect(GPE::InspectContext& context, Collider& inspected, const char* name)
+void DataInspector::inspect(GPE::InspectContext& context, Collider& inspected, const char* name)
 {
     ImGui::Indent(16.0f);
-    const bool hasChanged        = false;
     const bool isCollapsingHOpen = ImGui::CollapsingHeader("Collider");
 
     if (isCollapsingHOpen)
@@ -64,20 +63,18 @@ bool DataInspector::inspect(GPE::InspectContext& context, Collider& inspected, c
         inspected.inspect(context);
     }
     ImGui::Unindent(16.0f);
-    return hasChanged;
 }
 
 template <>
-bool DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected, const rfk::Field& info)
+void DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected, const char* name)
+void DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected, const char* name)
 {
-    bool hasChanged = false;
-    startProperty(name);
+    context.startProperty(name);
 
     const char*        items[]      = {"E_SPHERE", "E_BOX"};
     static const char* item_current = items[static_cast<int>(inspected)]; //"E_SPHERE";
@@ -93,7 +90,7 @@ bool DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected,
             {
                 item_current = items[n];
                 inspected    = static_cast<GPE::EShapeType>(n);
-                hasChanged   = true;
+                context.setDirty();
             }
 
             if (is_selected)
@@ -103,7 +100,5 @@ bool DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected,
         }
         ImGui::EndCombo();
     }
-    endProperty();
-
-    return hasChanged;
+    context.endProperty();
 }

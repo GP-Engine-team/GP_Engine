@@ -42,10 +42,10 @@ struct Linker : public BaseLinker
 namespace DataInspector
 {
 template <typename T>
-bool inspect(InspectContext& context, Linker<T>& inspected, const rfk::Field& info);
+void inspect(InspectContext& context, Linker<T>& inspected, const rfk::Field& info);
 
 template <typename T>
-bool inspect(InspectContext& context, Linker<T>& inspected, const char* name);
+void inspect(InspectContext& context, Linker<T>& inspected, const char* name);
 
 template <typename T>
 void inspect(InspectContext& context, Linker<T>& inspected);
@@ -66,21 +66,21 @@ struct Linker<GameObject> : public BaseLinker
 };
 
 template <>
-bool DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Linker<GameObject>& inspected,
+void DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Linker<GameObject>& inspected,
                                                 const rfk::Field& info);
 
 template <>
-bool DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Linker<GameObject>& inspected,
+void DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Linker<GameObject>& inspected,
                                                 const char* name);
 
 template <>
 void DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Linker<GameObject>& inspected);
 
 template <>
-bool DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info);
+void DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info);
 
 template <>
-bool DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected, const char* name);
+void DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected, const char* name);
 
 template <>
 void DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected);
