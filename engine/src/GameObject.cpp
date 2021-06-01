@@ -5,14 +5,14 @@
 #include <istream>
 #include <sstream>
 
-#include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Resources/Scene.hpp"
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Scene.hpp>
 
 // Generated
-#include "Generated/GameObject.rfk.h"
+#include <Generated/GameObject.rfk.h>
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 unsigned int GameObject::m_currentID = 0;
@@ -196,7 +196,8 @@ void GameObject::setParent(GameObject* pNewParent) noexcept
 {
     if (m_parent != nullptr)
     {
-        for (std::list<GameObject*>::iterator it = m_parent->children.begin(); it != m_parent->children.end(); it++)
+        const Children::const_iterator end{m_parent->children.end()};
+        for (std::list<GameObject*>::iterator it = m_parent->children.begin(); it != end; it++)
         {
             if (*it == this)
             {
@@ -216,7 +217,16 @@ void GameObject::setParent(GameObject* pNewParent) noexcept
             moveTowardScene(*pNewParent->pOwnerScene);
         }
         pNewParent->children.emplace_back(this);
+
+        // Update the local transformation of the object such as it keeps its global transformation
+        const Transform& newParentTransfo{pNewParent->m_pTransform->get()};
+        const Vec3       angles          {m_pTransform->get().eulerAngles() - newParentTransfo.eulerAngles()};
+
+        m_pTransform->setTranslation(m_pTransform->getGlobalPosition() - newParentTransfo.translation());
+        m_pTransform->setRotation(Quat::fromEuler(angles));
+        m_pTransform->setScale(m_pTransform->getGlobalScale() / newParentTransfo.scaling());
     }
+
     else
     {
         Log::getInstance()->log(stringFormat("Remove parent of %s", m_name.c_str()));
@@ -226,6 +236,7 @@ void GameObject::setParent(GameObject* pNewParent) noexcept
     m_parent = pNewParent;
     Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
                                          pNewParent->getName().c_str()));
+
 }
 
 GameObject* GameObject::getChild(const std::string& path) noexcept

@@ -37,11 +37,13 @@ namespace GPE RFKNamespace()
 
             bool enableBackFaceCulling = true;
             bool castShadow            = true;
+            bool isTransparent         = false;
         };
 
         SubModel(Model & model, const CreateArg& arg)
             : pModel{&model}, pShader{arg.pShader}, pMaterial{arg.pMaterial}, pMesh{arg.pMesh},
-              enableBackFaceCulling{arg.enableBackFaceCulling}, castShadow{arg.castShadow}
+              enableBackFaceCulling{arg.enableBackFaceCulling}, castShadow{arg.castShadow},
+              isTransparent{arg.isTransparent}
         {
         }
 
@@ -56,6 +58,7 @@ namespace GPE RFKNamespace()
 
         RFKField(Serialize()) bool enableBackFaceCulling = true;
         RFKField(Serialize()) bool castShadow            = true;
+        RFKField(Serialize()) bool isTransparent         = false;
 
         SubModel_GENERATED
     };

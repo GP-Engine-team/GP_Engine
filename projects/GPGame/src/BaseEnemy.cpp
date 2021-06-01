@@ -40,7 +40,7 @@ void BaseEnemy::update(double deltaTime)
 {
     if (isDead())
     {
-        m_animDeapthCounter += deltaTime;
+        m_animDeapthCounter += float(deltaTime);
 
         if (m_animDeapthCounter >= m_animDeapthCounterMax)
         {
@@ -51,12 +51,12 @@ void BaseEnemy::update(double deltaTime)
     {
         const Vec3 targetPos = m_target->transform().getGlobalPosition();
 
-        moveAndRotateToward(targetPos, deltaTime);
+        moveAndRotateToward(targetPos, float(deltaTime));
 
         if (m_radiusAttack * m_radiusAttack >
             (m_target->transform().getGlobalPosition() - transform().getGlobalPosition()).sqrLength())
         {
-            m_attackCounter += deltaTime;
+            m_attackCounter += float(deltaTime);
 
             if (m_attackCounter >= m_attackCounterMax)
             {

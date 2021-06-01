@@ -12,7 +12,7 @@
 #include <glfw/glfw3.h>
 
 // Don't move up
-#include "Engine/Core/HotReload/SingletonsSync.hpp"
+#include <Engine/Core/HotReload/SingletonsSync.hpp>
 
 namespace Editor
 {
@@ -160,33 +160,28 @@ void SceneEditor::renderGizmo(TransformComponent& transfo)
 
     ImGuizmo::SetRect(topLeft.x, topLeft.y, float(view.width), float(view.height));
 
-    const ImGuizmo::OPERATION operation = ImGuizmo::Manipulate(view.camera.getView().e, view.camera.getProjection().e,
-                                                               activeOperation, activeMode, transfo.get().model.e);
+    GPM::Transform delta;
+    const ImGuizmo::OPERATION operation = ImGuizmo::Manipulate(view.camera.getView().e,
+                                                               view.camera.getProjection().e,
+                                                               activeOperation,
+                                                               activeMode,
+                                                               transfo.get().model.e,
+                                                               delta.model.e);
     if (operation)
     {
         if (operation & ImGuizmo::SCALE)
         {
-            transfo.setScale(transfo.get().scaling());
+            transfo.scale(delta.scaling());
         }
 
         else if (operation & ImGuizmo::ROTATE)
         {
-            transfo.setRotation(GPM::toQuaternion(transfo.get().rotation()));
+            transfo.rotate(delta.eulerAngles());
         }
 
         else if (operation & ImGuizmo::TRANSLATE)
         {
-            transfo.setTranslation(transfo.get().translation());
-        }
-
-        // The update is handled internally to prevent unecessary extraneous computations
-        transfo.setDirty(false);
-        transfo.OnUpdate();
-
-        // Cascade the changes made on this transform
-        for (GPE::GameObject* child : transfo.getOwner().children)
-        {
-            child->forceUpdate();
+            transfo.translate(delta.translation());
         }
     }
 }
@@ -226,8 +221,17 @@ void SceneEditor::checkKeys()
 
 void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
 {
-    if (!ImGui::IsWindowHovered())
-        return;
+    { // The cursor may be on the window's title bar or border, which we do not want to react to
+        ImVec2 topLeft = ImGui::GetWindowPos();
+        topLeft.y += ImGui::GetWindowContentRegionMin().y;
+
+        const ImVec2 bottomRight{topLeft.x + view.width, topLeft.y + view.height};
+
+        if (!ImGui::IsMouseHoveringRect(topLeft, bottomRight))
+        {
+            return;
+        }
+    }
 
     // Actual method content
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
@@ -250,7 +254,6 @@ void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
                     view.pScene->getWorld().getGameObjectCorrespondingToID(idSelectedGameObject))
             {
                 inspectedObject = selectedObject;
-                ImGuizmo::Enable(true);
             }
 
             else
@@ -263,7 +266,6 @@ void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
         else
         {
             inspectedObject = nullptr;
-            ImGuizmo::Enable(false);
         }
     }
 
@@ -311,13 +313,23 @@ void SceneEditor::dragDropLevelEditor(ReloadableCpp* cpp)
 
 // ========================== Public methods ==========================
 SceneEditor::SceneEditor(GPE::Scene& scene)
-    : view(scene), m_operations{{"Scale (5)", ImGuizmo::SCALE},
-                                {"Rotate (4)", ImGuizmo::ROTATE},
-                                {"Translate (3)", ImGuizmo::TRANSLATE}},
-      m_modes{{"World (2)", ImGuizmo::WORLD}, {"Local (1)", ImGuizmo::LOCAL}},
-      activeOperation{ImGuizmo::OPERATION::TRANSLATE}, activeMode{ImGuizmo::MODE::WORLD}
+    : view(scene),
+      m_operations
+      {
+          {"Scale (5)",     ImGuizmo::SCALE},
+          {"Rotate (4)",    ImGuizmo::ROTATE},
+          {"Translate (3)", ImGuizmo::TRANSLATE}
+      },
+      m_modes
+      {
+          {"World (2)", ImGuizmo::WORLD},
+          {"Local (1)", ImGuizmo::LOCAL}
+      },
+      activeOperation{ImGuizmo::OPERATION::TRANSLATE},
+      activeMode     {ImGuizmo::MODE::WORLD}
 {
     ImGuizmo::AllowAxisFlip(false);
+    ImGuizmo::Enable(true);
 }
 
 void SceneEditor::render(Editor& editorContext)

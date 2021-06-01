@@ -110,9 +110,7 @@ void ParticleComponent::inspect(InspectContext& context)
     DataInspector::inspect(context, m_useGlobalPosition, "Use global position");
     ImGui::PopEnabled();
 
-    ImGui::PushEnabled(!isDurationUsed);
     DataInspector::inspect(context, m_emitRate, "EmitRate");
-    ImGui::PopEnabled();
 
     if (ImGui::Checkbox("##isDurationUsed", &isDurationUsed))
     {
@@ -137,6 +135,7 @@ void ParticleComponent::inspect(InspectContext& context)
     PARTICLE_GENERATOR_INSPECT(SizeGen)
     PARTICLE_GENERATOR_INSPECT(BasicColorGen)
     PARTICLE_GENERATOR_INSPECT(BasicVelGen)
+    PARTICLE_GENERATOR_INSPECT(ConeVelGen)
     PARTICLE_GENERATOR_INSPECT(SphereVelGen)
     PARTICLE_GENERATOR_INSPECT(VelFromPosGen)
     PARTICLE_GENERATOR_INSPECT(BasicTimeGen)
@@ -196,6 +195,18 @@ void ParticleComponent::start()
 
 void ParticleComponent::emit(unsigned int count)
 {
+    if (m_useGameObjectTransform)
+    {
+        emitAt(getOwner().getTransform().getModelMatrix(), count);
+    }
+    else if (m_useGlobalPosition)
+    {
+        emitAt(getOwner().getTransform().getGlobalPosition(), count);
+    }
+}
+
+void ParticleComponent::emitAt(const GPM::Vec3& position, unsigned int count)
+{
     if (!m_renderer)
         generate();
 
@@ -205,24 +216,34 @@ void ParticleComponent::emit(unsigned int count)
     for (auto& gen : m_generators) // << gen loop
         gen->generate(&m_particles, startId, endId);
 
-    if (m_useGameObjectTransform)
-    {
-        if (m_particles.m_pos)
-            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
-                m_particles.m_pos[i] = getOwner().getTransform().getModelMatrix() * m_particles.m_pos[i];
+    if (m_particles.m_pos)
+        for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+            m_particles.m_pos[i] = Vec4{position, 0.f} + m_particles.m_pos[i];
 
-        if (m_particles.m_vel)
-        {
-            Mat3 rotScaleMat = toMatrix3(getOwner().getTransform().getModelMatrix());
-            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
-                m_particles.m_vel[i].xyz = rotScaleMat * m_particles.m_vel[i].xyz;
-        }
-    }
-    else if (m_useGlobalPosition)
+    for (size_t i = startId; i < endId; ++i) // << wake loop
+        m_particles.wake(i);
+}
+
+void ParticleComponent::emitAt(const GPM::Mat4& model, unsigned int count)
+{
+    if (!m_renderer)
+        generate();
+
+    const size_t startId = m_particles.m_countAlive;
+    const size_t endId   = std::min(startId + count, m_particles.m_count - 1);
+
+    for (auto& gen : m_generators) // << gen loop
+        gen->generate(&m_particles, startId, endId);
+
+    if (m_particles.m_pos)
+        for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+            m_particles.m_pos[i] = model * m_particles.m_pos[i];
+
+    if (m_particles.m_vel)
     {
-        if (m_particles.m_pos)
-            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
-                m_particles.m_pos[i] = Vec4{getOwner().getTransform().getGlobalPosition(), 0.f} + m_particles.m_pos[i];
+        Mat3 rotScaleMat = toMatrix3(model);
+        for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+            m_particles.m_vel[i].xyz = rotScaleMat * m_particles.m_vel[i].xyz;
     }
 
     for (size_t i = startId; i < endId; ++i) // << wake loop

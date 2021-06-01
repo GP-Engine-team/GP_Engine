@@ -13,7 +13,8 @@
 #include <Engine/ECS/Component/Camera.hpp>
 File_GENERATED
 
-    using namespace GPM;
+using namespace GPM;
+
 namespace GPE
 {
 
@@ -69,7 +70,7 @@ Camera::Camera() noexcept
     }
     else
     {
-        fovY = atanf((vSide * .5f) / zfar) * 180 / PI;
+        fovY = atanf((vSide * .5f) / zfar) * 180.f / PI;
 
         Log::getInstance()->log((std::string("Orthographic projection add with name \"") + name + "\"").c_str());
     }
