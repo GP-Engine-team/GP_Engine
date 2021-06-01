@@ -13,6 +13,7 @@
 #include "Engine/Serialization/ComponentGen.h"
 #include "Engine/Serialization/xml/xmlSaver.hpp"
 #include "GPM/Shape3D/Volume.hpp"
+#include "GPM/Shape3D/AABB.hpp"
 
 // Generated
 #include "Generated/Model.rfk.h"
@@ -94,6 +95,14 @@ namespace GPE RFKNamespace()
         virtual void inspect(InspectContext & context);
 
         void addSubModel(const SubModel::CreateArg& arg);
+
+        /**
+         * @brief Function to return the local AABB (do not considere the position, scale and rotation of transform)
+         * @return
+         */
+        GPM::AABB getLocalAABB();
+        GPM::Vec3 getLocalAABBMin();
+        GPM::Vec3 getLocalAABBMAx();
 
         Model_GENERATED
     };
