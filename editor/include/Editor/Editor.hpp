@@ -37,6 +37,7 @@ private:
     GLFWwindow* m_window;
 
 public:
+    std::string         paperPress;
     SceneEditor         sceneEditor;
     GameViewer          gameViewer;
     LogInspector        logInspector;

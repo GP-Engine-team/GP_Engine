@@ -6,10 +6,10 @@
 
 #pragma once
 
+#include <Engine/Core/Physics/Collisions/SphereCollider.hpp>
 #include <Engine/ECS/Component/AudioComponent.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/ECS/Component/InputComponent.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/SphereCollider.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
 #include <Engine/ECS/System/InputManagerGLFW.hpp>
 #include <Engine/ECS/System/PhysXSystem.hpp>
@@ -49,7 +49,7 @@ public:
         sourceSettings.loop  = AL_TRUE;
 
         source.setSound("Western", "Western", sourceSettings);
-        source.playSound("Western");
+        source.playSound("Western", true);
     }
 
     MyFreeFlyWithCollisionScript() noexcept                                          = delete;
@@ -149,7 +149,7 @@ public:
         }
     }
 
-    void update(float deltaTime) final
+    void update(float deltaTime)
     {
         rotate(GPE::Engine::getInstance()->inputManager.getCursor().deltaPos);
     }

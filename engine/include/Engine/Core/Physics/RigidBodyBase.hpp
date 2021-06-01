@@ -35,7 +35,7 @@ namespace GPE RFKNamespace()
     public:
         RFKField(Serialize()) GameObject*                    owner = nullptr;
         RFKField(Serialize(), Inspect("setType")) EShapeType type  = EShapeType::E_BOX;
-        ;
+
         RFKField(Serialize(), Inspect()) std::unique_ptr<Collider> collider;
 
         virtual void updateShape(physx::PxShape & oldShape) = 0;

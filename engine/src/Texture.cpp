@@ -101,8 +101,8 @@ bool Texture::loadInGPU(int w, int h, unsigned char* pixels, const RenderPropert
     const unsigned int finalAniso = (props.anisotropy > max_anisotropy) ? max_anisotropy : props.anisotropy;
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, finalAniso);
 
-    GLenum glFormat = getGLFormat(m_format);
-    glTexImage2D(GL_TEXTURE_2D, 0, glFormat, w, h, 0, glFormat, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, getGLFormat(m_format), w, h, 0, getGLInternalFormat(m_format), GL_UNSIGNED_BYTE,
+                 pixels);
 
     if (props.generateMipmaps)
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -122,6 +122,23 @@ GLenum Texture::getGLFormat(EFormat format)
     {
     case GPE::Texture::EFormat::R:
         return GL_R32F;
+    case GPE::Texture::EFormat::RG:
+        return GL_RG;
+    case GPE::Texture::EFormat::RGB:
+        return GL_RGB;
+    case GPE::Texture::EFormat::RGBA:
+        return GL_RGBA;
+    default:
+        return 0u;
+    }
+}
+
+GLenum Texture::getGLInternalFormat(EFormat format)
+{
+    switch (format)
+    {
+    case GPE::Texture::EFormat::R:
+        return GL_RED;
     case GPE::Texture::EFormat::RG:
         return GL_RG;
     case GPE::Texture::EFormat::RGB:
@@ -188,6 +205,6 @@ void Texture::resize(int width, int height) noexcept
 {
     glBindTexture(GL_TEXTURE_2D, m_id);
 
-    GLenum glFormat = getGLFormat(m_format);
-    glTexImage2D(GL_TEXTURE_2D, 0, glFormat, width, height, 0, glFormat, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, getGLFormat(m_format), width, height, 0, getGLInternalFormat(m_format),
+                 GL_UNSIGNED_BYTE, nullptr);
 }
