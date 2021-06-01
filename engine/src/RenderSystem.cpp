@@ -25,6 +25,7 @@
 #include <GPM/Shape3D/Volume.hpp>
 #include <GPM/ShapeRelation/AABBPlane.hpp>
 #include <GPM/ShapeRelation/SpherePlane.hpp>
+#include <GPM/conversion.hpp>
 
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
@@ -43,8 +44,9 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
                                            pSubModel->pModel->getOwner().getTransform().getScale().y),
                                   pSubModel->pModel->getOwner().getTransform().getScale().z);
 
-        const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                          pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
+        const Vector4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() *
+                               Vector4(pBoudingSphere->getCenter(), 1.f).homogenized();
+        const Vector3 pos{posMat.x, posMat.y, posMat.z};
 
         drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color, 0.f,
                         RenderSystem::EDebugShapeMode::FILL);
@@ -59,8 +61,9 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
                             pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->extents.y * 2.f,
                             pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->extents.z * 2.f);
 
-        const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                          pAABB->center * pSubModel->pModel->getOwner().getTransform().getScale());
+        const Vector4 posMat =
+            pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
+        const Vector3 pos{posMat.x, posMat.y, posMat.z};
 
         drawDebugCube(pos, Quat::identity(), scale, color, 0.f, RenderSystem::EDebugShapeMode::FILL);
     }
@@ -151,9 +154,11 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
                                            pSubModel->pModel->getOwner().getTransform().getScale().y),
                                   pSubModel->pModel->getOwner().getTransform().getScale().z);
 
-        Sphere globalSphere(pBoudingSphere->getRadius() * (maxScale / 2.f),
-                            pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                                pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
+        const Vector4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() *
+                               Vector4(pBoudingSphere->getCenter(), 1.f).homogenized();
+        const Vector3 pos{posMat.x, posMat.y, posMat.z};
+
+        Sphere globalSphere(pBoudingSphere->getRadius() * (maxScale / 2.f), pos);
 
         return (SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.leftFace) &&
                 SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.rightFace) &&
@@ -173,8 +178,9 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
                             pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->extents.y * 2.f,
                             pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->extents.z * 2.f);
 
-        const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                          pAABB->center * pSubModel->pModel->getOwner().getTransform().getScale());
+        const Vector4 posMat =
+            pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
+        const Vector3 pos{posMat.x, posMat.y, posMat.z};
 
         AABB globalAABB(pos, scale.x / 2.f, scale.y / 2.f, scale.z / 2.f);
 
