@@ -25,9 +25,7 @@ namespace GPG RFKNamespace()
     protected:
         // Recoile info
         RFKField(Serialize()) GPM::Vec3       m_finalPosition;
-        RFKField(Serialize()) GPM::Vec3       m_basePosition;
         RFKField(Serialize()) GPM::Quaternion m_finalRotation;
-        RFKField(Serialize()) GPM::Quaternion m_baseRotation;
 
         RFKField(Inspect(), Serialize(), Slider(0.01f, 0.6f)) float  m_knowbackDuration = 0.f; // [0, 1]
         RFKField(Inspect(), Serialize()) float                       m_knowbackStrength = 1.f;

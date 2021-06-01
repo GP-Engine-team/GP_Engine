@@ -38,10 +38,7 @@ void PPSH41::onShoot()
                  Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale)});
     }
 
-    m_basePosition  = transform().getPosition();
     m_finalPosition = m_basePosition + transform().getLocalForward() * m_knowbackStrength;
-
-    m_baseRotation  = transform().getRotation();
     m_finalRotation = m_baseRotation * Quaternion::angleAxis(m_knowbackMaxAngle, transform().getLocalRight());
 
     m_smokeEffect.pData->emit(
