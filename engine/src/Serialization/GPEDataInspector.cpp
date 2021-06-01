@@ -1,4 +1,8 @@
-#include "Engine/Serialization/GPEDataInspector.hpp"
+﻿
+#include <filesystem>
+#include <unordered_map>
+
+#include <imgui.h>
 
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
@@ -7,10 +11,8 @@
 #include <Engine/Resources/Prefab.hpp>
 #include <Engine/Resources/ResourcesManager.hpp>
 #include <Engine/Resources/Scene.hpp>
-#include <filesystem>
-#include <unordered_map>
 
-#include <imgui.h>
+#include <Engine/Serialization/GPEDataInspector.hpp>
 
 using namespace GPE;
 

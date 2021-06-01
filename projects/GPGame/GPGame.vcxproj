@@ -42,6 +42,7 @@
     <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\CircularEntitiesSpawner.cpp" />
     <ClCompile Include="src\DebugSphere.cpp" />
+    <ClCompile Include="src\SpatializedSoundPlayerScript.cpp" />
     <ClCompile Include="src\SpawnManager.cpp" />
     <ClCompile Include="src\Sun.cpp" />
     <ClCompile Include="src\Firearm.cpp" />

@@ -30,6 +30,9 @@
     <ClInclude Include="include\CircularEntitiesSpawner.hpp">
       <Filter>Header Files\FireArme</Filter>
     </ClInclude>
+    <ClInclude Include="include\DebugSphere.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\Firearm\Bullet.hpp">
       <Filter>Header Files\FireArme</Filter>
     </ClInclude>
@@ -51,6 +54,9 @@
     <ClInclude Include="include\myScript.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\SpawnManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\Sun.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -58,12 +64,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ShadowMap.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SpawnManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DebugSphere.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -83,6 +83,9 @@
     <ClCompile Include="src\CircularEntitiesSpawner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\DebugSphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Firearm.cpp">
       <Filter>Header Files\FireArme</Filter>
     </ClCompile>
@@ -98,16 +101,16 @@
     <ClCompile Include="src\PPSH41.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sun.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\WorldGenerator.cpp">
+    <ClCompile Include="src\SpatializedSoundPlayerScript.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SpawnManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\DebugSphere.cpp">
+    <ClCompile Include="src\Sun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WorldGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
