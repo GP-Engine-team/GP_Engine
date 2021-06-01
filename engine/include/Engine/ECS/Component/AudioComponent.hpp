@@ -54,13 +54,15 @@ namespace GPE RFKNamespace()
         AudioComponent() = default;
 
     private:
-        int m_key = -1;
+        int       m_key     = -1;
+        GPM::Vec3 parentPos = {0.f};
 
     public:
         RFKField(Serialize(), Inspect()) std::unordered_map<std::string, SourceData> sources;
 
     protected:
         virtual void updateToSystem() noexcept override;
+        virtual void onPostLoad() noexcept override;
 
     public:
         /**

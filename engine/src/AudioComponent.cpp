@@ -14,6 +14,16 @@ using namespace std;
 AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
 {
     updateToSystem();
+    parentPos = getOwner().getTransform().getGlobalPosition();
+    getOwner().getTransform().OnUpdate += Function::make(this, "updatePosition");
+}
+
+void AudioComponent::onPostLoad() noexcept
+{
+    Component::onPostLoad();
+
+    updateToSystem();
+    parentPos = getOwner().getTransform().getGlobalPosition();
     getOwner().getTransform().OnUpdate += Function::make(this, "updatePosition");
 }
 
@@ -27,15 +37,7 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     source->name       = sourceName;
 
     AL_CALL(alGenSources, 1, &source->source);
-    if (settings.spatialized == AL_TRUE)
-    {
-        AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch * 2);
-    }
-
-    else
-    {
-        AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
-    }
+    AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
     AL_CALL(alSourcef, source->source, AL_GAIN, settings.gain);
     AL_CALL(alSource3f, source->source, AL_POSITION, settings.position.x, settings.position.y, settings.position.z);
     AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity.x, settings.velocity.y, settings.velocity.z);
@@ -120,6 +122,14 @@ void AudioComponent::updateToSystem() noexcept
 void AudioComponent::updatePosition()
 {
     GPM::Vec3 pos = getOwner().getTransform().getGlobalPosition();
+
+    if (parentPos == pos)
+    {
+        return;
+    }
+
+    parentPos = pos;
+
     for (auto& [key, value] : sources)
     {
         if (value.isRelative == AL_FALSE)

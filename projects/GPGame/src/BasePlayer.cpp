@@ -47,6 +47,8 @@ void BasePlayer::onPostLoad()
 
     source->setSound("Western", "Western", sourceSettings);
 
+    getOwner().getTransform().OnUpdate += Function::make(this, "updateListener");
+
     BaseCharacter::onPostLoad();
 }
 
@@ -288,4 +290,9 @@ void BasePlayer::updateListener()
     ALfloat   listenerOrientation[] = {forward.x, forward.y, forward.z, up.x, up.y, up.z};
     alListener3f(AL_POSITION, pos.x, pos.y, pos.z);
     alListenerfv(AL_ORIENTATION, listenerOrientation);
+}
+
+BasePlayer::~BasePlayer() noexcept
+{
+    getOwner().getTransform().OnUpdate -= Function::make(this, "updateListener");
 }
