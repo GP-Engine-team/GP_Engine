@@ -30,8 +30,8 @@ void BaseCharacter::start()
     GAME_ASSERT(controller, "null");
 
     // Setup controller
-    //controller->setHasGravity(true);
-    //controller->setSpeed(1.f);
+    // controller->setHasGravity(true);
+    // controller->setSpeed(1.f);
     controller->setAngularSpeed(HALF_PI / 8.f);
 }
 
@@ -81,7 +81,7 @@ void BaseCharacter::jump()
 {
     if (controller->getCanJump() == true)
     {
-        controller->addForce(GPM::Vec3::up() * 300.f);
+        controller->addForce(GPM::Vec3::up() * 30000.f);
         controller->startJumpTimer();
     }
 }

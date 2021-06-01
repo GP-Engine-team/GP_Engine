@@ -47,6 +47,21 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) bool m_isReloading           = false;
         RFKField(Serialize()) bool m_isRecoileAnimate      = false;
 
+        /**
+         * @brief Position and rotation without aiming
+         */
+        RFKField() GPM::Vec3       m_basePosition;
+        RFKField() GPM::Quaternion m_baseRotation;
+
+        /**
+         * @brief Position and rotation with aiming
+         */
+        RFKField(Serialize(), Inspect()) GPM::Vec3       m_aimPosition;
+        RFKField(Serialize(), Inspect()) GPM::Quaternion m_aimRotation;
+        RFKField(Inspect(), Serialize()) float           m_aimDuration  = 1.f; // In second
+        RFKField(Serialize()) float                      m_aimTimeCount = 0.f; // In second
+        RFKField(Serialize()) bool                       m_isAiming     = false;
+
         RFKField(Inspect()) GPE::Prefab* m_decalePrefab;
 
     public:
@@ -71,6 +86,8 @@ namespace GPG RFKNamespace()
 
         virtual void onShoot();
         virtual void animateRecoil(float t);
+        virtual void animateAim(float t);
+        virtual void setAim(bool flag);
 
         const GunMagazine& getMagazine() const;
 

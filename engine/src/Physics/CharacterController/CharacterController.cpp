@@ -26,6 +26,12 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
     desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(owner.getTransform().getGlobalPosition() + m_center);
     desc.radius   = m_radius;
 
+    if (m_contactOffset <= 0)
+    {
+        m_contactOffset = 0.1f;
+    }
+    desc.contactOffset = m_contactOffset;
+
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
 
     updateToSystem();
@@ -33,7 +39,9 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
     // controller->setUserData(&getOwner());
     controller->getActor()->userData = &getOwner();
 
-    owner.getTransform().OnUpdate += Function::make(this, "updateShape");
+    owner.getTransform().OnUpdate += Function::make(this, "updateTransform");
+
+    m_parentScale = owner.getTransform().getGlobalScale();
 }
 
 void CharacterController::onPostLoad() noexcept
@@ -48,12 +56,21 @@ void CharacterController::onPostLoad() noexcept
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
     desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
     desc.radius   = std::max(scale.x, scale.z) + m_radius;
+    if (m_contactOffset <= 0)
+    {
+        m_contactOffset = 0.1f;
+    }
+    desc.contactOffset = m_contactOffset;
+
+    PxControllerManager* manager = Engine::getInstance()->physXSystem.manager;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
 
     controller->getActor()->userData = &getOwner();
 
-    getOwner().getTransform().OnUpdate += Function::make(this, "updateShape");
+    getOwner().getTransform().OnUpdate += Function::make(this, "updateTransform");
+
+    m_parentScale = getOwner().getTransform().getGlobalScale();
 }
 
 void CharacterController::update(double deltaTime) noexcept
@@ -115,7 +132,10 @@ void CharacterController::updateForce() noexcept
 void CharacterController::groundCheck() noexcept
 {
     PxControllerState cctState;
-    controller->getState(cctState);
+    if (controller)
+    {
+        controller->getState(cctState);
+    }
     m_grounded = (cctState.collisionFlags & PxControllerCollisionFlag::eCOLLISION_DOWN) != 0;
 }
 
@@ -129,7 +149,7 @@ CharacterController::~CharacterController() noexcept
 {
     setActive(false);
     controller->release();
-    getOwner().getTransform().OnUpdate -= Function::make(this, "updateShape");
+    getOwner().getTransform().OnUpdate -= Function::make(this, "updateTransform");
 }
 
 void CharacterController::updateToSystem() noexcept
@@ -156,6 +176,13 @@ void CharacterController::updateShape() noexcept
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
     desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
     desc.radius   = std::max(scale.x, scale.z) + m_radius;
+
+    if (m_contactOffset <= 0)
+    {
+        m_contactOffset = 0.1f;
+    }
+
+    desc.contactOffset = m_contactOffset;
 
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
 }
@@ -186,4 +213,52 @@ void CharacterController::setRadius(float newRadius) noexcept
 
     m_radius = newRadius;
     updateShape();
+}
+
+void CharacterController::setContactOffset(float newOffset) noexcept
+{
+    if (newOffset == m_contactOffset || newOffset == 0)
+        return;
+
+    m_contactOffset = newOffset;
+
+    controller->setContactOffset(m_contactOffset);
+}
+
+void CharacterController::updateScale() noexcept
+{
+    GPM::Vec3 tempScale = getOwner().getTransform().getGlobalScale();
+    GPM::Vec3 result    = {abs(m_parentScale.x - tempScale.x), abs(m_parentScale.y - tempScale.y),
+                        abs(m_parentScale.z - tempScale.z)};
+    if (result.length() < 0.1f)
+    {
+        return;
+    }
+
+    m_parentScale = getOwner().getTransform().getGlobalScale();
+
+    updateShape();
+}
+
+void CharacterController::updateTransform()
+{
+    updatePosition();
+    updateScale();
+}
+
+void CharacterController::updatePosition()
+{
+    if (!controller)
+        return;
+
+    GPM::Vec3 oldPos;
+
+    oldPos = PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition());
+
+    if (oldPos == getOwner().getTransform().getGlobalPosition())
+    {
+        return;
+    }
+
+    controller->setPosition(PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition()));
 }
