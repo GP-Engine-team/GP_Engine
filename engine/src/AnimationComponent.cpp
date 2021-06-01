@@ -99,20 +99,6 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
     }
 }
 
-void AnimationComponent::setupAnims(bool newValue)
-{
-    if (debugAnimUpdateCallback != newValue)
-    {
-        debugAnimUpdateCallback = newValue;
-
-        // subModel
-        setModel(m_gameObject->getComponent<GPE::Model>());
-
-        playAnimation(m_currentAnimation);
-
-    }
-}
-
 void AnimationComponent::setSkeleton(Skeleton* newSkeleton)
 {
     if (newSkeleton == nullptr || newSkeleton == m_skeleton)
@@ -182,6 +168,8 @@ void AnimationComponent::setSkin(Skin* skin)
 
 void AnimationComponent::onPostLoad()
 {
+    setModel(&m_gameObject->getOrCreateComponent<GPE::Model>());
+
     if (m_skeleton != nullptr)
     {
         m_finalBoneMatrices.reserve(m_skeleton->getNbBones());

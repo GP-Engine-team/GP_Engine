@@ -25,6 +25,7 @@ RigidbodyStatic::RigidbodyStatic(GameObject& owner) noexcept
     setType(type);
 
     updateToSystem();
+    getOwner().getTransform().OnUpdate += Function::make(this, "updateTransform");
 }
 
 void RigidbodyStatic::onPostLoad() noexcept
@@ -56,8 +57,11 @@ void RigidbodyStatic::onPostLoad() noexcept
     }
 
     collider->updateTransform();
+    collider->updateShape();
 
     Component::onPostLoad();
+
+    getOwner().getTransform().OnUpdate += Function::make(this, "updateTransform");
 }
 
 void RigidbodyStatic::updateToSystem() noexcept
@@ -78,7 +82,29 @@ void RigidbodyStatic::updateShape(physx::PxShape& oldShape)
     rigidbody->attachShape(*collider->shape);
 }
 
+void RigidbodyStatic::updateTransform()
+{
+    if (!rigidbody)
+        return;
+
+    PxTransform newTransform;
+
+    newTransform.p = PhysXSystem::GPMVec3ToPxVec3(owner->getTransform().getGlobalPosition());
+    newTransform.q = PhysXSystem::GPMQuatToPxQuat(owner->getTransform().getGlobalRotation());
+
+    PxTransform oldTransform;
+    oldTransform = rigidbody->getGlobalPose();
+
+    if (newTransform.p == oldTransform.p && newTransform.q == oldTransform.q)
+    {
+        return;
+    }
+
+    rigidbody->setGlobalPose(newTransform);
+}
+
 RigidbodyStatic::~RigidbodyStatic() noexcept
 {
     setActive(false);
+    getOwner().getTransform().OnUpdate -= Function::make(this, "updateTransform");
 }

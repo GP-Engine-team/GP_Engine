@@ -43,6 +43,8 @@ namespace GPE RFKNamespace()
          */
         virtual void updateShape(physx::PxShape & oldShape);
 
+        RFKMethod() void updateTransform();
+
         RigidbodyStatic_GENERATED
     };
 } // namespace )

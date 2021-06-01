@@ -29,9 +29,6 @@ private:
     RFKField(Inspect(), Serialize()) float                   m_currentTime;
     RFKField(Inspect(), Serialize()) float                   m_timeScale = 30.f;
 
-    RFKField(Inspect("setupAnims")) bool debugAnimUpdateCallback = false;
-    void                                 setupAnims(bool);
-
 public:
     std::vector<GPM::Mat4> m_finalBoneMatrices;
 

@@ -48,6 +48,8 @@ namespace GPE RFKNamespace()
         {
         }
 
+        virtual void updateShape() = 0;
+
         Collider_GENERATED
     };
 } // namespace )

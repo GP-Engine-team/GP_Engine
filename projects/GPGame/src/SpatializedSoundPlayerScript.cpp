@@ -17,16 +17,14 @@ using namespace GPM;
 SpatializedSoundPlayerScript::SpatializedSoundPlayerScript(GameObject& owner)
     : BehaviourComponent(owner), source{&owner.addComponent<GPE::AudioComponent>()}
 {
-    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "E_Western");
-
     GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch = 1.f;
-    sourceSettings.loop  = AL_TRUE;
-    // sourceSettings.position = ALfloat(0.f);
+    sourceSettings.pitch       = 1.f;
+    sourceSettings.loop        = AL_TRUE;
+    sourceSettings.spatialized = AL_TRUE;
+    sourceSettings.gain *= 10;
 
-    source->setSound("E_Western", "E_Western", sourceSettings);
-    source->stopSound("E_Western");
-    // source->setSound("Western", "Western", sourceSettings);
+    GPE::Wave testSound3("./resources/sounds/BuriedAlive.wav", "BA", sourceSettings.spatialized);
+    source->setSound("BA", "BA", sourceSettings);
 }
 
 void SpatializedSoundPlayerScript::onPostLoad()
@@ -39,5 +37,5 @@ void SpatializedSoundPlayerScript::start()
     enableUpdate(true);
     GAME_ASSERT(source, "null");
 
-    source->playSound("E_Western", true);
+    source->playSound("BA", true);
 }
