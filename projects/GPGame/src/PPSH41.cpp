@@ -37,9 +37,11 @@ void PPSH41::onShoot()
                  Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale),
                  Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale)});
     }
+    const Vec3       basePosition = m_isAiming ? m_aimPosition : m_basePosition;
+    const Quaternion baseRotation = m_isAiming ? m_aimRotation : m_baseRotation;
 
-    m_finalPosition = m_basePosition + transform().getLocalForward() * m_knowbackStrength;
-    m_finalRotation = m_baseRotation * Quaternion::angleAxis(m_knowbackMaxAngle, transform().getLocalRight());
+    m_finalPosition = basePosition + transform().getLocalForward() * m_knowbackStrength;
+    m_finalRotation = baseRotation * Quaternion::angleAxis(m_knowbackMaxAngle, transform().getLocalRight());
 
     m_smokeEffect.pData->emit(
         static_cast<unsigned int>(m_muzzleFlashEffect.pData->getCount() / m_magazineStored.getCapacity()));
@@ -47,17 +49,20 @@ void PPSH41::onShoot()
 
 void PPSH41::animateRecoil(float t)
 {
+    const Vec3       basePosition = m_isAiming ? m_aimPosition : m_basePosition;
+    const Quaternion baseRotation = m_isAiming ? m_aimRotation : m_baseRotation;
+
     if (t < m_knowbackDuration)
     {
         const float intRatio = easeOutElastic(t / m_knowbackDuration);
-        transform().setTranslation(lerp(m_basePosition, m_finalPosition, intRatio));
-        transform().setRotation(m_baseRotation.nlerp(m_finalRotation, intRatio));
+        transform().setTranslation(lerp(basePosition, m_finalPosition, intRatio));
+        transform().setRotation(baseRotation.nlerp(m_finalRotation, intRatio));
     }
     else
     {
         const float intRatio = easeInBounce((t - m_knowbackDuration) / (1.f - m_knowbackDuration));
-        transform().setTranslation(lerp(m_finalPosition, m_basePosition, intRatio));
-        transform().setRotation(m_finalRotation.nlerp(m_baseRotation, intRatio));
+        transform().setTranslation(lerp(m_finalPosition, basePosition, intRatio));
+        transform().setRotation(m_finalRotation.nlerp(baseRotation, intRatio));
     }
 }
 
