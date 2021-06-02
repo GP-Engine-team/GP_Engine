@@ -123,7 +123,7 @@ void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
     // Update self
     if (m_pTransform->isDirty())
     {
-        getTransform().update(m_parent->getTransform().getModelMatrix());
+        getTransform().update(parentModelMatrix);
 
         for (auto&& child : children)
             child->getTransform().setDirty();
@@ -182,7 +182,7 @@ void GameObject::forceUpdate() noexcept
 void GameObject::forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept
 {
     // Force update self
-    getTransform().update(m_parent->getTransform().getModelMatrix());
+    getTransform().update(parentModelMatrix);
 
     // Force update children
     const Children::const_iterator end{children.cend()};
