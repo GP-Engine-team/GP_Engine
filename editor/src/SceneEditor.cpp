@@ -11,6 +11,8 @@
 
 #include <glfw/glfw3.h>
 
+#include <vector>
+
 // Don't move up
 #include <Engine/Core/HotReload/SingletonsSync.hpp>
 
@@ -150,39 +152,103 @@ void SceneEditor::renderGizmoControlBar()
     }
 }
 
-void SceneEditor::renderGizmo(TransformComponent& transfo)
+// Internal
+static GPM::Vec3 findGizmoCenter(GameObject& go, std::vector<GameObject*>& controlled)
 {
-    ImVec2 topLeft = ImGui::GetWindowPos();
-    topLeft.y += ImGui::GetWindowContentRegionMin().y;
+    size_t     size      {go.children.size()};
+    GPM::Vec3  sum       {.0f};
 
+    // Is go a leaf game object in the scene graph?
+    // Does it do more than just holding a group of game objects?
+    if (size == 0u || go.getComponents().size() != 0u)
+    {
+        controlled.push_back(&go);
+        return go.getTransform().getGlobalPosition();
+    }
+
+    // Recursively add go's children positions to the sum
+    for (GameObject* const child : go.children)
+    {
+        sum += findGizmoCenter(*child, controlled);
+    }
+
+    return sum / GPM::f32(size);
+}
+
+
+void SceneEditor::renderGizmo(GameObject& target)
+{
     ImGuizmo::BeginFrame();
     ImGuizmo::SetDrawlist();
 
-    ImGuizmo::SetRect(topLeft.x, topLeft.y, float(view.width), float(view.height));
+    { // Set the viewport rectangle
+        ImVec2 topLeft = ImGui::GetWindowPos();
+        topLeft.y     += ImGui::GetWindowContentRegionMin().y;
 
+        ImGuizmo::SetRect(topLeft.x, topLeft.y, float(view.width), float(view.height));
+    }
+
+    GPM::Mat4      transfoMat{target.getTransform().get().model};
     GPM::Transform delta;
+
+    std::vector<GameObject*> controlled;
+    transfoMat.c[3].xyz = findGizmoCenter(target, controlled);
+    GPM::Mat4 transfoMatCopy{transfoMat};
+
     const ImGuizmo::OPERATION operation = ImGuizmo::Manipulate(view.camera.getView().e,
                                                                view.camera.getProjection().e,
                                                                activeOperation,
                                                                activeMode,
-                                                               transfo.get().model.e,
+                                                               transfoMat.e,
                                                                delta.model.e);
+
+    // Operation and entry parameter to be selected
+    void      (GPE::TransformComponent::*transformation)(const GPM::Vec3& v) noexcept;
+    GPM::Vec3 (GPM::Transform::*component)() const noexcept = nullptr;
+    
     if (operation)
     {
         if (operation & ImGuizmo::SCALE)
         {
-            transfo.scale(delta.scaling());
+            //transfo.scale(delta.scaling());
+            transformation = &GPE::TransformComponent::scale;
+            component      = &GPM::Transform::scaling;
         }
 
         else if (operation & ImGuizmo::ROTATE)
         {
-            transfo.rotate(delta.eulerAngles());
+            //transfo.rotate(delta.eulerAngles());
+            transformation = &GPE::TransformComponent::rotate;
+            component      = &GPM::Transform::eulerAngles;
         }
 
         else if (operation & ImGuizmo::TRANSLATE)
         {
-            transfo.translate(delta.translation());
+            //transfo.translate(delta.translation());
+            transformation = &GPE::TransformComponent::translate;
+            component      = &GPM::Transform::translation;
         }
+
+        for (GameObject* go : controlled)
+        { // Update the local transformation of the object such as it keeps its global
+            GPM::Transform newParentTransfo{transfoMatCopy};
+
+            const GPM::Vec3 angles{go->getTransform().get().eulerAngles() - newParentTransfo.eulerAngles()};
+            GPM::SplitTransform split
+            {
+                GPM::Quat::fromEuler(angles),
+                go->getTransform().get().translation() - newParentTransfo.translation(),
+                go->getTransform().get().scaling() / newParentTransfo.scaling()
+            };
+
+            (go->getTransform().*transformation)((delta.*component)());
+        }
+        
+        //for (GameObject* go : controlled)
+        //{
+        //    //(go->getTransform().*transformation)((delta.*component)());
+        //    go->forceUpdate(transfoMat);
+        //}
     }
 }
 
@@ -356,7 +422,7 @@ void SceneEditor::render(Editor& editorContext)
         if (inspected)
         {
             checkKeys();
-            renderGizmo(inspected->getTransform());
+            renderGizmo(*inspected);
         }
 
         dragDropLevelEditor(editorContext.reloadableCpp);
