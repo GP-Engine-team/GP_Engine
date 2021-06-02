@@ -118,7 +118,7 @@ void save(XmlSaver& context, const std::unique_ptr<T>& saved, const XmlSaver::Sa
 
     if constexpr (std::is_base_of<rfk::Object, T>::value)
     {
-        if (newInfo.typeId == 0)
+        if (saved.get() != nullptr)
         {
             newInfo.typeName = saved->getArchetype().name;
             newInfo.typeId   = saved->getArchetype().id;
