@@ -173,7 +173,8 @@ uniform float unscaledTimeAcc;
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
 {
-    loadAndCompile(vertexPath, fragmentPath, featureMask);
+    m_featureMask = featureMask;
+    m_id          = loadAndCompile(vertexPath, fragmentPath, featureMask);
 }
 
 Shader::~Shader() noexcept
@@ -183,8 +184,19 @@ Shader::~Shader() noexcept
 
 void Shader::reload(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
 {
-    release();
-    loadAndCompile(vertexPath, fragmentPath, featureMask);
+    unsigned int newID = loadAndCompile(vertexPath, fragmentPath, featureMask);
+    if (newID)
+    {
+        use();
+
+        setInt("ourTexture", 0);
+        setInt("shadowMap", 1);
+        setInt("normalMap", 2);
+
+        glDeleteProgram(m_id);
+        m_id          = newID;
+        m_featureMask = featureMask;
+    }
 }
 
 void Shader::use()
@@ -216,7 +228,7 @@ void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3
             if (blockIndex == GL_INVALID_INDEX)
             {
                 FUNCT_ERROR((std::string("blockIndex invalid with name : ") + blockName).c_str());
-                //exit(0);
+                // exit(0);
             }
 
             glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, m_lightsUniformBuffer);
@@ -293,38 +305,49 @@ bool Shader::loadFile(const char* vertexPath, std::string& vertexCode, const cha
     return false;
 }
 
-void Shader::compile(std::string& vertexCode, std::string& fragmentCode)
+unsigned int Shader::compile(std::string& vertexCode, std::string& fragmentCode)
 {
     // compile shaders
-    unsigned int vertex, fragment;
+    unsigned int vertex, fragment, program;
 
     // vertex shader
     const char* vShaderCode = vertexCode.c_str();
     vertex                  = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
-    checkCompileErrors(vertex, EType::VERTEX);
+    if (!checkCompileErrors(vertex, EType::VERTEX))
+    {
+        glDeleteShader(vertex);
+        return 0;
+    }
 
     // fragment Shader
     const char* fShaderCode = fragmentCode.c_str();
     fragment                = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
-    checkCompileErrors(fragment, EType::FRAGMENT);
+    if (!checkCompileErrors(fragment, EType::FRAGMENT))
+    {
+        glDeleteShader(vertex);
+        glDeleteShader(fragment);
+        return 0;
+    }
 
     // shader Program
-    m_id = glCreateProgram();
-    glAttachShader(m_id, vertex);
-    glAttachShader(m_id, fragment);
-    glLinkProgram(m_id);
-    checkCompileErrors(m_id, EType::PROGRAM);
-
-    // delete the shaders as they're linked into our program now and no longer necessary
-    glDeleteShader(vertex);
-    glDeleteShader(fragment);
+    program = glCreateProgram();
+    glAttachShader(program, vertex);
+    glAttachShader(program, fragment);
+    glLinkProgram(program);
+    if (!checkCompileErrors(program, EType::PROGRAM))
+    {
+        glDeleteShader(vertex);
+        glDeleteShader(fragment);
+        return 0;
+    }
+    return program;
 }
 
-void Shader::checkCompileErrors(unsigned int shader, EType type)
+bool Shader::checkCompileErrors(unsigned int shader, EType type)
 {
     int  success;
     char infoLog[1024];
@@ -343,6 +366,7 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
             {
                 Log::getInstance()->logError(std::string("Fragment shader compilation error\n") + infoLog);
             }
+            return false;
         }
     }
     else
@@ -360,20 +384,20 @@ void Shader::checkCompileErrors(unsigned int shader, EType type)
             {
                 Log::getInstance()->logError((std::string("Fragment shader linking error\n") + infoLog).c_str());
             }
+            return false;
         }
     }
+    return true;
 }
 
-void Shader::loadAndCompile(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
+unsigned int Shader::loadAndCompile(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
 {
-    m_featureMask = featureMask;
-
     std::string vertexCode;
     std::string fragmentCode;
 
     if (loadFile(vertexPath, vertexCode, fragmentPath, fragmentCode))
     {
-        return;
+        return 0;
     }
 
     // parse shader : If #include "path" is found, replace by code
@@ -386,17 +410,17 @@ void Shader::loadAndCompile(const char* vertexPath, const char* fragmentPath, ui
     //    fragmentCode.insert(0, lightBlinPhongFragmentShaderStr);
     //}
 
-    if ((m_featureMask & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
+    if ((featureMask & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
     {
         fragmentCode.insert(0, colorFragmentShaderStr);
     }
 
-    if ((m_featureMask & SCALE_TIME_ACC) == SCALE_TIME_ACC)
+    if ((featureMask & SCALE_TIME_ACC) == SCALE_TIME_ACC)
     {
         vertexCode.insert(0, timeScaledAccVertexShaderStr);
     }
 
-    if ((m_featureMask & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
+    if ((featureMask & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
     {
         vertexCode.insert(0, timeUnscaledAccVertexShaderStr);
     }
@@ -404,9 +428,7 @@ void Shader::loadAndCompile(const char* vertexPath, const char* fragmentPath, ui
     vertexCode.insert(0, versionHeaderStr);
     fragmentCode.insert(0, versionHeaderStr);
 
-    compile(vertexCode, fragmentCode);
-
-    Log::getInstance()->log("Load and compile vertex and fragment shader done");
+    return compile(vertexCode, fragmentCode);
 }
 
 void Shader::release()

@@ -22,7 +22,7 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 bool SubModel::isValide()
@@ -239,6 +239,7 @@ GPM::Vec3 Model::getLocalAABBMin()
             minAABB.z    = std::min(minAABB.z, v.z);
         }
     }
+    return minAABB;
 }
 
 GPM::Vec3 Model::getLocalAABBMAx()
@@ -255,4 +256,5 @@ GPM::Vec3 Model::getLocalAABBMAx()
             maxAABB.z    = std::max(maxAABB.z, v.z);
         }
     }
+    return maxAABB;
 }

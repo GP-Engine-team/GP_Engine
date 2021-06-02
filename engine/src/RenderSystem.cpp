@@ -57,9 +57,10 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vector3 scale(std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x) * pAABB->extents.x * 2.f,
-                            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y) * pAABB->extents.y * 2.f,
-                            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z) * pAABB->extents.z * 2.f);
+        const Vector3 scale(
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x) * pAABB->extents.x * 2.f,
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y) * pAABB->extents.y * 2.f,
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z) * pAABB->extents.z * 2.f);
 
         const Vector4 posMat =
             pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
@@ -174,9 +175,10 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vector3 scale(std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x) * pAABB->extents.x * 2.f,
-                            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y) * pAABB->extents.y * 2.f,
-                            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z) * pAABB->extents.z * 2.f);
+        const Vector3 scale(
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x) * pAABB->extents.x * 2.f,
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y) * pAABB->extents.y * 2.f,
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z) * pAABB->extents.z * 2.f);
 
         const Vector4 posMat =
             pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
@@ -297,7 +299,7 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
 
         shader.setMat4("model", modelMatrix.e);
         shader.setMat3("inverseModelMatrix", inverseModelMatrix3.e);
-        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
+        shader.setMat4("projectViewMatrix", camToUse.getProjectionView().e);
 
         if (!m_shadowMaps.empty())
         {
