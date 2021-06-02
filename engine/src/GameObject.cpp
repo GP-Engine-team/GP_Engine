@@ -12,7 +12,7 @@
 #include <Generated/GameObject.rfk.h>
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 unsigned int GameObject::m_currentID = 0;
@@ -118,7 +118,7 @@ void GameObject::updateSelfAndChildren() noexcept
     }
 }
 
-void GameObject::updateSelfAndChildren(const Mat4 parentModelMatrix) noexcept
+void GameObject::updateSelfAndChildren(const Mat4& parentModelMatrix) noexcept
 {
     // Update self
     if (m_pTransform->isDirty())
@@ -179,10 +179,10 @@ void GameObject::forceUpdate() noexcept
     }
 }
 
-void GameObject::forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept
+void GameObject::forceUpdate(const GPM::Mat4& parentModelMatrix) noexcept
 {
     // Force update self
-    getTransform().update(m_parent->getTransform().getModelMatrix());
+    getTransform().update(parentModelMatrix);
 
     // Force update children
     const Children::const_iterator end{children.cend()};
@@ -220,7 +220,7 @@ void GameObject::setParent(GameObject* pNewParent) noexcept
 
         // Update the local transformation of the object such as it keeps its global transformation
         const Transform& newParentTransfo{pNewParent->m_pTransform->get()};
-        const Vec3       angles          {m_pTransform->get().eulerAngles() - newParentTransfo.eulerAngles()};
+        const Vec3       angles{m_pTransform->get().eulerAngles() - newParentTransfo.eulerAngles()};
 
         m_pTransform->setTranslation(m_pTransform->getGlobalPosition() - newParentTransfo.translation());
         m_pTransform->setRotation(Quat::fromEuler(angles));
@@ -236,7 +236,6 @@ void GameObject::setParent(GameObject* pNewParent) noexcept
     m_parent = pNewParent;
     Log::getInstance()->log(stringFormat("Move %s from %s to %s", m_name.c_str(), m_parent->getName().c_str(),
                                          pNewParent->getName().c_str()));
-
 }
 
 GameObject* GameObject::getChild(const std::string& path) noexcept

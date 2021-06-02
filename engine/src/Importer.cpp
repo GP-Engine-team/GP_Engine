@@ -174,7 +174,7 @@ GPE::GameObject* GPE::loadPrefabFromStringImp(GPE::GameObject& parent, const std
     GameObject* const go = scene.getWorld().children.front();
     if (go)
     {
-        go->getTransform().update(parent.getTransform().get().model);
+        go->forceUpdate(parent.getTransform().get().model);
         go->setParent(&parent);
         go->getTransform().setDirty();
 
@@ -182,15 +182,7 @@ GPE::GameObject* GPE::loadPrefabFromStringImp(GPE::GameObject& parent, const std
         struct Rec
         {
         private:
-            static void recTransform(GPE::GameObject* g)
-            {
-                g->getTransform().onPostLoad();
 
-                for (GPE::GameObject* g2 : g->children)
-                {
-                    recTransform(g2);
-                }
-            };
             static void recComponent(GPE::GameObject* g)
             {
                 for (GPE::Component* comp : g->getComponents())
@@ -207,8 +199,6 @@ GPE::GameObject* GPE::loadPrefabFromStringImp(GPE::GameObject& parent, const std
         public:
             static void rec(GPE::GameObject* g)
             {
-                recTransform(g);
-                g->updateSelfAndChildren();
                 recComponent(g);
             }
         };
