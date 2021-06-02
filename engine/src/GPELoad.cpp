@@ -106,7 +106,11 @@ void load(XmlLoader& context, Animation*& data, const XmlLoader::LoadInfo& info)
 {
     std::string animName;
     GPE::load(context, animName, info);
-    if (!(data = Engine::getInstance()->animResourcesManager.get<GPE::Animation>(animName)))
+    if (animName.empty())
+    {
+        data = nullptr;
+    }
+    else if (!(data = Engine::getInstance()->animResourcesManager.get<GPE::Animation>(animName)))
     {
         data = loadAnimationFile(animName.c_str());
     }
@@ -117,7 +121,11 @@ void load(XmlLoader& context, Skeleton*& data, const XmlLoader::LoadInfo& info)
 {
     std::string skeletonName;
     GPE::load(context, skeletonName, info);
-    if (!(data = Engine::getInstance()->animResourcesManager.get<GPE::Skeleton>(skeletonName)))
+    if (skeletonName.empty())
+    {
+        data = nullptr;
+    }
+    else if (!(data = Engine::getInstance()->animResourcesManager.get<GPE::Skeleton>(skeletonName)))
     {
         data = loadSkeletonFile(skeletonName.c_str());
     }
@@ -128,7 +136,11 @@ void load(XmlLoader& context, Skin*& data, const XmlLoader::LoadInfo& info)
 {
     std::string skinName;
     GPE::load(context, skinName, info);
-    if (!(data = Engine::getInstance()->animResourcesManager.get<GPE::Skin>(skinName)))
+    if (skinName.empty())
+    {
+        data = nullptr;
+    }
+    else if (!(data = Engine::getInstance()->animResourcesManager.get<GPE::Skin>(skinName)))
     {
         data = loadSkinFile(skinName.c_str());
     }

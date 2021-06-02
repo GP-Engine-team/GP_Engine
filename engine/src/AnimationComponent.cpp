@@ -27,6 +27,9 @@ AnimationComponent::AnimationComponent(GameObject& owner) noexcept : Component(o
 
 AnimationComponent::~AnimationComponent() noexcept
 {
+    setSkeleton(nullptr);
+    setModel(nullptr);
+    setSkin(nullptr);
     setActive(false);
 }
 
@@ -34,30 +37,40 @@ void AnimationComponent::updateToSystem() noexcept
 {
     if (m_isActivated)
     {
-        if (m_model != nullptr)
-        {
-            m_model->setAnimComponent(this);
-        }
         GPE::Engine::getInstance()->animSystem.addComponent(this);
     }
     else
     {
-        if (m_model != nullptr)
-        {
-            m_model->setAnimComponent(nullptr);
-        }
         GPE::Engine::getInstance()->animSystem.removeComponent(this);
     }
 }
 
 void AnimationComponent::update(float dt)
 {
-    if (m_currentAnimation)
+    if (m_currentAnimation && isComplete())
     {
         m_currentTime += m_currentAnimation->getTicksPerSecond() * dt * m_timeScale;
         m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
         calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
     }
+}
+
+void AnimationComponent::updateAnimData(bool wasComplete)
+{
+    if (!wasComplete && isComplete())
+    {
+        // Skeleton
+        m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
+        for (int i = 0; i < m_skeleton->getNbBones(); i++)
+            m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
+
+        // Model
+        m_model->setAnimComponent(this);
+
+        // Skin
+        m_model->bindSkin(*m_skin);
+    }
+
 }
 
 void AnimationComponent::playAnimation(Animation* pAnimation)
@@ -101,15 +114,12 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
 
 void AnimationComponent::setSkeleton(Skeleton* newSkeleton)
 {
-    if (newSkeleton == nullptr || newSkeleton == m_skeleton)
+    if (newSkeleton == m_skeleton)
         return;
 
+    bool wasComplete = isComplete();
     m_skeleton = newSkeleton;
-
-    m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
-
-    for (int i = 0; i < m_skeleton->getNbBones(); i++)
-        m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
+    updateAnimData(wasComplete);
 }
 
 void AnimationComponent::setModel(Model* newModel)
@@ -117,35 +127,19 @@ void AnimationComponent::setModel(Model* newModel)
     if (m_model == newModel)
         return;
 
-    if (m_model != nullptr)
-    {
-        m_model->setAnimComponent(nullptr);
-    }
-
-    if (newModel != nullptr)
-    {
-        newModel->setAnimComponent(this);
-        if (m_skin != nullptr)
-            newModel->bindSkin(*m_skin);
-    }
-
+    bool wasComplete = isComplete();
     m_model = newModel;
+    updateAnimData(wasComplete);
 }
 
 void AnimationComponent::setSkin(Skin* skin)
 {
-    if (skin == nullptr)
-    {
-        m_skin = skin;
+    if (skin == m_skin)
         return;
-    }
 
-    if (m_skin != skin)
-    {
-        m_skin = skin;
-        if (m_model != nullptr)
-            m_model->bindSkin(*m_skin);
-    }
+    bool wasComplete = isComplete();
+    m_skin = skin;
+    updateAnimData(wasComplete);
 }
 
  void AnimationComponent::drawDebugSkeleton(const GPM::Vec4& offset) const
@@ -168,17 +162,8 @@ void AnimationComponent::setSkin(Skin* skin)
 
 void AnimationComponent::onPostLoad()
 {
-    setModel(&m_gameObject->getOrCreateComponent<GPE::Model>());
-
-    if (m_skeleton != nullptr)
-    {
-        m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
-        for (int i = 0; i < m_skeleton->getNbBones(); i++)
-            m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
-    }
-
-    if (m_model != nullptr)
-        m_model->bindSkin(*m_skin);
+    m_model = &m_gameObject->getOrCreateComponent<GPE::Model>();
+    updateAnimData(false);
 
     Component::onPostLoad();
 }
@@ -186,5 +171,5 @@ void AnimationComponent::onPostLoad()
 
 bool AnimationComponent::isComplete() const
 {
-    return m_skeleton != nullptr && m_skin != nullptr && m_model != nullptr;
+    return m_skeleton != nullptr && m_skin != nullptr && m_model != nullptr && m_skeleton->getNbBones() > 0;
 }

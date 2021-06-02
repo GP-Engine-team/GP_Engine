@@ -38,6 +38,7 @@ public:
     virtual ~AnimationComponent() noexcept;
 
 protected:
+    void         updateAnimData(bool wasComplete);
     virtual void updateToSystem() noexcept override;
 
 public:

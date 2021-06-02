@@ -231,7 +231,11 @@ void Model::bindSkin(Skin& skin)
 {
     for (SubModel& sub : m_subModels)
     {
-        sub.pMesh->bindSkin(skin);
+        // We must verify if the shader implements the animation feature
+        //if (sub.pShader != nullptr && (sub.pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK)
+        //{
+            sub.pMesh->bindSkin(skin);
+        //}
     }
 }
 

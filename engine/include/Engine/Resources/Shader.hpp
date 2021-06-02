@@ -30,6 +30,7 @@ namespace GPE
 #define PROJECTION_MATRIX (1 << 7)
 #define VIEW_MATRIX (1 << 8)
 #define VIEW_MODEL_MATRIX (1 << 9)
+#define ANIMATION_MASK (1 << 10)
 
 // class Shader;
 //
@@ -57,7 +58,7 @@ public:
     };
 
 protected:
-    uint16_t     m_featureMask         = 0; // feature is shader interger into shader like light, blure etc....
+    uint16_t     m_featureMask         = 0; // feature is shader interger into shader like light, blur etc....
     unsigned int m_lightsUniformBuffer = 0; // TODO: no sens to have id of uniform light in any shaders
 
     unsigned int m_id = 0;
