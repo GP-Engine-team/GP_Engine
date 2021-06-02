@@ -111,10 +111,7 @@ void GameViewer::render(EditorStartup& startup)
 
             // Render
             startup.game().render();
-            if (Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.m_shadowMaps.size())
-            {
-                ImGui::Image((void*)(intptr_t)framebuffer.textureID(), size, {.0f, 1.f}, {1.f, .0f});
-            }
+            ImGui::Image((void*)(intptr_t)framebuffer.textureID(), size, {.0f, 1.f}, {1.f, .0f});
         }
         else
         {
