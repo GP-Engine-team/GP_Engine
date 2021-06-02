@@ -165,9 +165,20 @@ GPE::GameObject* GPE::loadPrefabFromStringImp(GPE::GameObject& parent, const std
         // Update old pointers into new ones
         context.updateLazyPtrs();
 
-        GameObject* const go = scene.getWorld().children.front();
-        if (go)
-            context.updateLinker(*go);
+        if (scene.getWorld().children.size())
+        {
+            GameObject* const go = scene.getWorld().children.front();
+            if (go)
+                context.updateLinker(*go);
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+    else
+    {
+        return nullptr;
     }
 
     // Init the prefab
