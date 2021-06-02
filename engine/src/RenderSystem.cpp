@@ -226,7 +226,7 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
     {
         shader.setMat4("projectViewMatrix", camToUse.getProjectionView().e);
 
-        if (!m_shadowMaps.empty())
+        if (m_shadowMaps.size())
         {
             shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
             // shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);

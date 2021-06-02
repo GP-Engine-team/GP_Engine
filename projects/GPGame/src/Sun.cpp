@@ -43,11 +43,9 @@ void Sun::update(double deltaTime)
     }
 
     /*move light and sun*/
-    Vec3 newDirection;
-
-    float rot    = m_currentTime / (m_dayDuration + m_nightDuration) * TWO_PI;
-    newDirection = {0.f, -std::abs(sinf(rot)), cosf(rot)};
-    // newDirection.normalize();
+    float rot          = m_currentTime / (m_dayDuration + m_nightDuration) * TWO_PI;
+    Vec3  newDirection = {0.f, -std::abs(sinf(rot)), cosf(rot)};
+    newDirection.normalize();
 
     getOwner().getTransform().setTranslation(m_player->getTransform().getGlobalPosition() -
                                              newDirection * m_sunDistance);

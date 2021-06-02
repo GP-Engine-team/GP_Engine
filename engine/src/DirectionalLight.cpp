@@ -24,28 +24,15 @@ Mat4 DirectionalLight::getLightSpaceMatrix() noexcept
         Transform::orthographic(m_shadowProperties.size, -m_shadowProperties.size, m_shadowProperties.size,
                                 -m_shadowProperties.size, m_shadowProperties.near, m_shadowProperties.far);
     const Vec3 globalPos = getOwner().getTransform().getGlobalPosition();
-    Vec3       up        = Vec3::up();
-    if (up.dot(m_direction) < 0.2)
-    {
-        up = Vec3::right();
-    }
-    const Mat4 lightView = GPM::Transform::lookAt(globalPos, globalPos + m_direction.normalized(), up);
+    const Mat4 lightView =
+        GPM::Transform::lookAt(globalPos, globalPos + m_direction, getOwner().getTransform().getVectorRight());
     return lightProjection * lightView.inversed();
 }
 
 void DirectionalLight::addToLightToUseBuffer(std::vector<LightData>& lb) noexcept
 {
-    lb.push_back({m_ambientComp,
-                  m_diffuseComp,
-                  m_specularComp,
-                  m_direction.normalized(),
-                  3.f,
-                  0.f,
-                  0.f,
-                  0.f,
-                  0.f,
-                  {0.f, 0.f, 0.f},
-                  0.f});
+    lb.push_back(
+        {m_ambientComp, m_diffuseComp, m_specularComp, m_direction, 3.f, 0.f, 0.f, 0.f, 0.f, {0.f, 0.f, 0.f}, 0.f});
 }
 
 void DirectionalLight::inspect(GPE::InspectContext& context)

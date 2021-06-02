@@ -175,6 +175,11 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, uint16_t featur
 {
     m_featureMask = featureMask;
     m_id          = loadAndCompile(vertexPath, fragmentPath, featureMask);
+
+    glUseProgram(m_id);
+    setInt("ourTexture", 0);
+    setInt("shadowMap", 1);
+    setInt("normalMap", 2);
 }
 
 Shader::~Shader() noexcept
@@ -187,15 +192,14 @@ void Shader::reload(const char* vertexPath, const char* fragmentPath, uint16_t f
     unsigned int newID = loadAndCompile(vertexPath, fragmentPath, featureMask);
     if (newID)
     {
-        use();
-
-        setInt("ourTexture", 0);
-        setInt("shadowMap", 1);
-        setInt("normalMap", 2);
-
         glDeleteProgram(m_id);
         m_id          = newID;
         m_featureMask = featureMask;
+
+        glUseProgram(m_id);
+        setInt("ourTexture", 0);
+        setInt("shadowMap", 1);
+        setInt("normalMap", 2);
     }
 }
 
