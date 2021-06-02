@@ -1,7 +1,9 @@
-#include <Engine/Core/Tools/ImGuiTools.hpp>
+﻿#include <Engine/Core/Tools/ImGuiTools.hpp>
+#include <Engine/ECS/Component/AudioComponent.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Wave.hpp>
 
 #include <BaseEnemy.hpp>
 
@@ -29,11 +31,28 @@ void BaseEnemy::start()
 
     m_target = playerGO->getComponent<BaseCharacter>();
     GAME_ASSERT(m_target, "Player Base character component not found");
+
+    source->playSound("Zombie", true);
 }
 
 void BaseEnemy::onPostLoad()
 {
     BaseCharacter::onPostLoad();
+
+    source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
+
+    GPE::SourceSettings sourceSettings;
+    sourceSettings.pitch = 1.f;
+    sourceSettings.gain *= 100.f;
+    sourceSettings.spatialized   = AL_TRUE;
+    sourceSettings.relative      = AL_FALSE;
+    sourceSettings.loop          = AL_TRUE;
+    sourceSettings.position      = getOwner().getTransform().getGlobalPosition();
+    sourceSettings.rollOffFactor = 7;
+
+    GPE::Wave testSound3("./resources/sounds/zombie.wav", "Zombie", sourceSettings.spatialized);
+
+    source->setSound("Zombie", "Zombie", sourceSettings);
 }
 
 void BaseEnemy::update(double deltaTime)

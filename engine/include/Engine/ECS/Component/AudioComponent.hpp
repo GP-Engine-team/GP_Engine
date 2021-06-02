@@ -18,18 +18,30 @@
 
 namespace GPE RFKNamespace()
 {
-    struct RFKStruct(Serialize()) SourceSettings
+    struct RFKStruct(Serialize(), Inspect()) SourceSettings
     {
-        RFKField(Serialize(), Inspect()) ALfloat      pitch         = 1.f;
-        RFKField(Serialize(), Inspect()) ALfloat      gain          = 1.f;
-        /*RFKField(Serialize(), Inspect()) */ ALfloat position[3]   = {0, 0, 0};
-        /*RFKField(Serialize(), Inspect()) */ ALfloat velocity[3]   = {0, 0, 0};
-        RFKField(Serialize(), Inspect()) ALboolean    loop          = AL_FALSE;
-        RFKField(Serialize(), Inspect()) ALboolean    relative      = AL_FALSE;
-        RFKField(Serialize(), Inspect()) ALboolean    spatialized   = AL_FALSE;
-        RFKField(Serialize(), Inspect()) ALfloat      rollOffFactor = 1.f;
+        RFKField(Serialize(), Inspect()) float     pitch         = 1.f;
+        RFKField(Serialize(), Inspect()) float     gain          = 1.f;
+        RFKField(Serialize(), Inspect()) GPM::Vec3 position      = {0, 0, 0};
+        RFKField(Serialize(), Inspect()) GPM::Vec3 velocity      = {0, 0, 0};
+        RFKField(Serialize(), Inspect()) bool      loop          = AL_FALSE;
+        RFKField(Serialize(), Inspect()) bool      relative      = AL_FALSE;
+        RFKField(Serialize(), Inspect()) bool      spatialized   = AL_FALSE;
+        RFKField(Serialize(), Inspect()) float     rollOffFactor = 1.f;
 
         SourceSettings_GENERATED
+    };
+
+    struct RFKStruct(Serialize(), Inspect()) SourceData
+    {
+        RFKField(Serialize(), Inspect()) ALuint         source;
+        RFKField(Serialize(), Inspect()) ALint          state      = AL_INITIAL;
+        RFKField(Serialize(), Inspect()) bool           isRelative = AL_FALSE;
+        RFKField(Serialize(), Inspect()) SourceSettings settings;
+        RFKField(Serialize(), Inspect()) std::string    name    = "default";
+        bool                                            isDirty = false;
+
+        SourceData_GENERATED
     };
 
     class RFKClass(Inspect(), Serialize()) AudioComponent : public Component
@@ -42,23 +54,15 @@ namespace GPE RFKNamespace()
         AudioComponent() = default;
 
     private:
-        int m_key = -1;
+        int       m_key     = -1;
+        GPM::Vec3 parentPos = {0.f};
 
     public:
-        struct RFKStruct(Serialize()) SourceData
-        {
-            RFKField(Serialize(), Inspect()) ALuint         source;
-            RFKField(Serialize(), Inspect()) ALint          state      = AL_INITIAL;
-            RFKField(Serialize(), Inspect()) ALboolean      isRelative = AL_FALSE;
-            RFKField(Serialize(), Inspect()) SourceSettings settings;
-
-            SourceData_GENERATED
-        };
-
-        /*RFKField(Serialize(), Inspect())*/ std::unordered_map<std::string, SourceData> sources;
+        RFKField(Serialize(), Inspect()) std::unordered_map<std::string, SourceData> sources;
 
     protected:
         virtual void updateToSystem() noexcept override;
+        virtual void onPostLoad() noexcept override;
 
     public:
         /**

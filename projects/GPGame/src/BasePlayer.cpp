@@ -47,6 +47,8 @@ void BasePlayer::onPostLoad()
 
     source->setSound("Western", "Western", sourceSettings);
 
+    getOwner().getTransform().OnUpdate += Function::make(this, "updateListener");
+
     BaseCharacter::onPostLoad();
 }
 
@@ -77,6 +79,8 @@ void BasePlayer::start()
     input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
     input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
     input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+    input->bindAction("aimBegin", EKeyMode::KEY_PRESSED, "Game", this, "aimBegin");
+    input->bindAction("aimEnd", EKeyMode::KEY_RELEASED, "Game", this, "aimEnd");
     input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
     input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
@@ -280,6 +284,22 @@ void BasePlayer::shoot()
     }
 }
 
+void BasePlayer::aimBegin()
+{
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && !isDead() && m_firearms.size())
+    {
+        m_firearms.front()->setAim(true);
+    }
+}
+
+void BasePlayer::aimEnd()
+{
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && !isDead() && m_firearms.size())
+    {
+        m_firearms.front()->setAim(false);
+    }
+}
+
 void BasePlayer::updateListener()
 {
     GPM::Vec3 pos                   = transform().getGlobalPosition();
@@ -288,4 +308,9 @@ void BasePlayer::updateListener()
     ALfloat   listenerOrientation[] = {forward.x, forward.y, forward.z, up.x, up.y, up.z};
     alListener3f(AL_POSITION, pos.x, pos.y, pos.z);
     alListenerfv(AL_ORIENTATION, listenerOrientation);
+}
+
+BasePlayer::~BasePlayer() noexcept
+{
+    getOwner().getTransform().OnUpdate -= Function::make(this, "updateListener");
 }

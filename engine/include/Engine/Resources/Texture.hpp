@@ -109,6 +109,8 @@ protected:
     bool loadInGPU(int w, int h, unsigned char* pixels, const RenderProperties& props) noexcept;
 
     GLenum getGLFormat(EFormat format);
+    GLenum getGLInternalFormat(EFormat format);
+
     GLenum getGLTextureWrap(ETextureWrap format);
     GLenum getGLTextureMagFilter(ETextureMagFilter format);
     GLenum getGLTextureMinFilter(ETextureMinFilter format);

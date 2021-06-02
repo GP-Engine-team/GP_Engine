@@ -46,7 +46,7 @@ namespace GPG RFKNamespace()
         BasePlayer(GPE::GameObject & owner) noexcept;
         BasePlayer(const BasePlayer& other) noexcept = delete;
         BasePlayer(BasePlayer && other) noexcept     = delete;
-        virtual ~BasePlayer() noexcept               = default;
+        virtual ~BasePlayer() noexcept;
 
         BasePlayer& operator=(BasePlayer const& other) noexcept = delete;
         BasePlayer& operator=(BasePlayer&& other) noexcept = delete;
@@ -55,6 +55,8 @@ namespace GPG RFKNamespace()
         RFKMethod() void leave();
         RFKMethod() void raycastExample();
         RFKMethod() void shoot();
+        RFKMethod() void aimBegin();
+        RFKMethod() void aimEnd();
         RFKMethod() void playAmbiantMusic();
         RFKMethod() void playAmbiantMusicForce();
         RFKMethod() void stopAllMusic();

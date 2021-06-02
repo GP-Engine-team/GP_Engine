@@ -110,6 +110,8 @@ void ParticleComponent::inspect(InspectContext& context)
     DataInspector::inspect(context, m_useGlobalPosition, "Use global position");
     ImGui::PopEnabled();
 
+    DataInspector::inspect(context, isTransparente, "Is transparent");
+
     DataInspector::inspect(context, m_emitRate, "EmitRate");
 
     if (ImGui::Checkbox("##isDurationUsed", &isDurationUsed))
@@ -124,7 +126,8 @@ void ParticleComponent::inspect(InspectContext& context)
     DataInspector::inspect(context, m_duration, "Duration");
     ImGui::PopEnabled();
 
-    if (DataInspector::inspect(context, m_count, "Count"))
+    DataInspector::inspect(context, m_count, "Count");
+    if (context.wasLastDirty())
     {
         m_particles.generate(m_count, m_particles.m_maskType);
     }

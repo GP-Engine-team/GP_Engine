@@ -6,7 +6,7 @@
 
 using namespace GPE;
 
-Wave::Wave(const char* filepath, const char* name, const ALboolean spatialized)
+Wave::Wave(const char* filepath, const char* name, const bool spatialized)
 {
     if (Engine::getInstance()->resourceManager.get<Buffer>(name))
         return;

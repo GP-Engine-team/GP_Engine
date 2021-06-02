@@ -14,6 +14,16 @@ using namespace std;
 AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
 {
     updateToSystem();
+    parentPos = getOwner().getTransform().getGlobalPosition();
+    getOwner().getTransform().OnUpdate += Function::make(this, "updatePosition");
+}
+
+void AudioComponent::onPostLoad() noexcept
+{
+    Component::onPostLoad();
+
+    updateToSystem();
+    parentPos = getOwner().getTransform().getGlobalPosition();
     getOwner().getTransform().OnUpdate += Function::make(this, "updatePosition");
 }
 
@@ -24,27 +34,20 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
 
     source->isRelative = settings.relative;
     source->settings   = settings;
+    source->name       = sourceName;
 
     AL_CALL(alGenSources, 1, &source->source);
-    if (settings.spatialized == AL_TRUE)
-    {
-        AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch * 2);
-    }
-
-    else
-    {
-        AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
-    }
+    AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
     AL_CALL(alSourcef, source->source, AL_GAIN, settings.gain);
-    AL_CALL(alSource3f, source->source, AL_POSITION, settings.position[0], settings.position[1], settings.position[2]);
-    AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity[0], settings.velocity[1], settings.velocity[2]);
+    AL_CALL(alSource3f, source->source, AL_POSITION, settings.position.x, settings.position.y, settings.position.z);
+    AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity.x, settings.velocity.y, settings.velocity.z);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, settings.relative);
     AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, settings.rollOffFactor);
     AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
 }
 
-AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept
+SourceData* AudioComponent::getSource(const char* name) noexcept
 {
     auto it = sources.find(name);
     if (it != sources.end())
@@ -71,7 +74,7 @@ void AudioComponent::playSound(const char* name, bool forceStart) noexcept
     }
 }
 
-AudioComponent::SourceData* AudioComponent::findSource(const char* name) noexcept
+SourceData* AudioComponent::findSource(const char* name) noexcept
 {
     auto it = sources.find(name);
     if (it != sources.end())
@@ -119,6 +122,14 @@ void AudioComponent::updateToSystem() noexcept
 void AudioComponent::updatePosition()
 {
     GPM::Vec3 pos = getOwner().getTransform().getGlobalPosition();
+
+    if (parentPos == pos)
+    {
+        return;
+    }
+
+    parentPos = pos;
+
     for (auto& [key, value] : sources)
     {
         if (value.isRelative == AL_FALSE)

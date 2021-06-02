@@ -11,15 +11,11 @@ void inspect(GPE::InspectContext& context, T& inspected)
 }
 
 template <typename T>
-bool inspect(GPE::InspectContext& context, T& inspected, const char* name)
+void inspect(GPE::InspectContext& context, T& inspected, const char* name)
 {
-    startProperty(name);
-    const bool hasBeenModified = GPE::DataInspector::inspect(inspected);
-    endProperty();
-    return hasBeenModified;
-
-    // inspected.inspect(context);
-    // return false;
+    context.startProperty(name);
+    inspected.inspect(context);
+    context.endProperty();
 }
 
 template <typename T>
@@ -29,10 +25,9 @@ void inspect(GPE::InspectContext& context, T& inspected, const std::string& name
 }
 
 template <typename T>
-bool inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
+void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 {
-    inspected.inspect(context);
-    return true;
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 } // namespace DataInspector

@@ -590,6 +590,37 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             }
         }
 
+        // Draw particles
+        {
+            for (auto&& particle : pParticleComponents)
+            {
+                const size_t count = particle->numAliveParticles();
+                if (count == 0u)
+                    continue;
+
+                glEnable(GL_PROGRAM_POINT_SIZE);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glDepthMask(!particle->isTransparente);
+
+                if (particle->getShader())
+                {
+                    rs.tryToBindShader(*particle->getShader());
+                    rs.sendModelDataToShader(*pMainCamera, *particle->getShader(),
+                                             particle->getOwner().getTransform().getModelMatrix());
+
+                    if (particle->getTexture())
+                    {
+                        rs.tryToBindTexture(particle->getTexture()->getID());
+                    }
+                }
+                rs.tryToBindMesh(particle->getMeshID());
+
+                glDrawArrays(GL_POINTS, 0, int(count));
+            }
+            glDepthMask(GL_TRUE);
+        }
+
         /*Display transparent element*/
         {
             glEnable(GL_BLEND);
@@ -611,6 +642,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             std::map<float, SubModel*>::reverse_iterator rEnd = mapElemSortedByDistance.rend();
             for (std::map<float, SubModel*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != rEnd; ++it)
             {
+                glDepthMask(it->second->writeInDepth);
                 rs.tryToBindShader(*it->second->pShader);
                 rs.tryToBindMaterial(*it->second->pShader, *it->second->pMaterial);
                 rs.tryToBindMesh(it->second->pMesh->getID());
@@ -623,35 +655,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                                          it->second->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*it->second);
             };
-        }
 
-        // Draw particles
-        {
-            for (auto&& particle : pParticleComponents)
-            {
-                const size_t count = particle->numAliveParticles();
-                if (count == 0u)
-                    continue;
-
-                glEnable(GL_PROGRAM_POINT_SIZE);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-                if (particle->getShader())
-                {
-                    rs.tryToBindShader(*particle->getShader());
-                    rs.sendModelDataToShader(*pMainCamera, *particle->getShader(),
-                                             particle->getOwner().getTransform().getModelMatrix());
-
-                    if (particle->getTexture())
-                    {
-                        rs.tryToBindTexture(particle->getTexture()->getID());
-                    }
-                }
-                rs.tryToBindMesh(particle->getMeshID());
-
-                glDrawArrays(GL_POINTS, 0, int(count));
-            }
+            glDepthMask(GL_TRUE);
         }
 
         rs.resetCurrentRenderPassKey();

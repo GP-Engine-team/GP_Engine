@@ -78,11 +78,15 @@ struct ShaderCreateConfig
     uint16_t    featureMask        = 0u;
 };
 
-void saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode);
-void loadSceneFromPathImp(GPE::Scene* scene, const char* path);
+std::string saveSceneToStringImp(GPE::Scene* scene, GPE::SavedScene::EType saveMode);
+void        saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode);
+void        loadSceneFromStringImp(GPE::Scene* scene, const std::string& str, GPE::SavedScene::EType type);
+void        loadSceneFromPathImp(GPE::Scene* scene, const char* path);
 
-void        savePrefabToPathImp(GPE::GameObject& parent, const char* path, GPE::SavedScene::EType saveMode);
-GameObject* loadPrefabFromPathImp(GPE::GameObject& parent, const char* path);
+std::string      savePrefabToStringImp(GPE::GameObject& prefab, GPE::SavedScene::EType saveMode);
+void             savePrefabToPathImp(GPE::GameObject& parent, const char* path, GPE::SavedScene::EType saveMode);
+GPE::GameObject* loadPrefabFromStringImp(GPE::GameObject& parent, const std::string& str, GPE::SavedScene::EType type);
+GPE::GameObject* loadPrefabFromPathImp(GPE::GameObject& parent, const char* path);
 
 void importeModel(const char* srcPath, const char* dstPath,
                   Mesh::EBoundingVolume boundingVolumeType = Mesh::EBoundingVolume::SPHERE) noexcept;

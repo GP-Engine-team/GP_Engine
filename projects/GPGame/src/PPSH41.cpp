@@ -19,45 +19,50 @@ void PPSH41::start()
 {
     Firearm::start();
 
-    if (m_muzzleFlashPlane.pData)
+    if (m_muzzleFlashGO.pData)
     {
-        m_muzzleFlashPlane.pData->setActive(false);
+        m_muzzleFlashGO.pData->setActive(false);
     }
 }
 
 void PPSH41::onShoot()
 {
-    if (m_muzzleFlashPlane.pData)
+    if (m_muzzleFlashGO.pData)
     {
-        m_muzzleFlashPlane.pData->setActive(true);
+        m_muzzleFlashGO.pData->setActive(true);
 
-        m_muzzleFlashPlane.pData->getOwner().getTransform().setRotationZ(Random::ranged(0.f, TWO_PI));
-        m_muzzleFlashPlane.pData->getOwner().getTransform().setScale(
+        m_muzzleFlashGO.pData->getTransform().setRotationZ(Random::ranged(0.f, TWO_PI));
+        m_muzzleFlashGO.pData->getTransform().setScale(
             Vec3{Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale),
-            Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale),
-            Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale)});
+                 Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale),
+                 Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale)});
     }
+    const Vec3       basePosition = m_isAiming ? m_aimPosition : m_basePosition;
+    const Quaternion baseRotation = m_isAiming ? m_aimRotation : m_baseRotation;
 
-    m_basePosition  = transform().getPosition();
-    m_finalPosition = m_basePosition + transform().getLocalForward() * m_knowbackStrength;
+    m_finalPosition = basePosition + transform().getLocalForward() * m_knowbackStrength;
+    m_finalRotation = baseRotation * Quaternion::angleAxis(m_knowbackMaxAngle, transform().getLocalRight());
 
-    m_baseRotation  = transform().getRotation();
-    m_finalRotation = m_baseRotation * Quaternion::angleAxis(m_knowbackMaxAngle, transform().getLocalRight());
+    m_smokeEffect.pData->emit(
+        static_cast<unsigned int>(m_muzzleFlashEffect.pData->getCount() / m_magazineStored.getCapacity()));
 }
 
 void PPSH41::animateRecoil(float t)
 {
+    const Vec3       basePosition = m_isAiming ? m_aimPosition : m_basePosition;
+    const Quaternion baseRotation = m_isAiming ? m_aimRotation : m_baseRotation;
+
     if (t < m_knowbackDuration)
     {
         const float intRatio = easeOutElastic(t / m_knowbackDuration);
-        transform().setTranslation(lerp(m_basePosition, m_finalPosition, intRatio));
-        transform().setRotation(m_baseRotation.nlerp(m_finalRotation, intRatio));
+        transform().setTranslation(lerp(basePosition, m_finalPosition, intRatio));
+        transform().setRotation(baseRotation.nlerp(m_finalRotation, intRatio));
     }
     else
     {
         const float intRatio = easeInBounce((t - m_knowbackDuration) / (1.f - m_knowbackDuration));
-        transform().setTranslation(lerp(m_finalPosition, m_basePosition, intRatio));
-        transform().setRotation(m_finalRotation.nlerp(m_baseRotation, intRatio));
+        transform().setTranslation(lerp(m_finalPosition, basePosition, intRatio));
+        transform().setRotation(m_finalRotation.nlerp(baseRotation, intRatio));
     }
 }
 
@@ -65,13 +70,13 @@ void PPSH41::update(double deltaTime)
 {
     Firearm::update(deltaTime);
 
-    if (m_muzzleFlashPlane.pData && m_muzzleFlashPlane.pData->isActivated())
+    if (m_muzzleFlashGO.pData && m_muzzleFlashGO.pData->isActivated())
     {
         m_muzzleFlashCount += float(deltaTime);
 
         if (m_muzzleFlashCount >= m_muzzleFlashDuration)
         {
-            m_muzzleFlashPlane.pData->setActive(false);
+            m_muzzleFlashGO.pData->setActive(false);
             m_muzzleFlashCount = 0.f;
         }
     }

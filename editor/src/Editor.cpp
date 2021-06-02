@@ -166,6 +166,8 @@ void Editor::renderMenuBar()
                 ImGui::Text("WASD : Move");
                 ImGui::Text("Shift : Move fast");
                 ImGui::Separator();
+                ImGui::Text("Ctrl + C : Copy current game object");
+                ImGui::Text("Ctrl + V : Past in selection");
                 ImGui::Text("Ctrl + S : Save");
                 ImGui::Text("Delete : Delete selected game object");
                 ImGui::Separator();
@@ -222,6 +224,7 @@ void Editor::renderInspector()
         if (inspectedObject != nullptr)
         {
             GPE::InspectContext context;
+            context.startingWidth = ImGui::GetWindowSize().x - ImGui::GetStyle().WindowPadding.x;
             GPE::DataInspector::inspect(context, *inspectedObject);
         }
         else
@@ -317,10 +320,10 @@ void Editor::saveCurrentScene()
 
 void Editor::reloadCurrentScene()
 {
-    GPE::Scene*           currentScene = sceneEditor.view.pScene;
+    GPE::Scene* currentScene = sceneEditor.view.pScene;
     if (currentScene == nullptr)
         return;
-    std::filesystem::path path         = saveFolder;
+    std::filesystem::path path = saveFolder;
     path /= currentScene->getName() + ".GPScene";
 
     if (std::filesystem::exists(path))
@@ -410,11 +413,33 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
         }
     }
 
-    if (!sceneEditor.view.capturingInputs() &&
-        ImGui::IsKeyPressed(GLFW_KEY_S) &&
+    if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_S) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
         saveCurrentScene();
+    }
+
+    if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_C) &&
+        (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
+    {
+        if (GameObject* inspectedGo = dynamic_cast<GameObject*>(inspectedObject))
+        {
+            auto savePrefabToPathFunct = GET_PROCESS((*reloadableCpp), savePrefabToString);
+            paperPress                 = savePrefabToPathFunct(*inspectedGo, SavedScene::EType::XML);
+        }
+    }
+
+    if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_V) &&
+        (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
+    {
+        if (paperPress.size())
+        {
+            GameObject* pParent = dynamic_cast<GameObject*>(inspectedObject);
+            if (!pParent)
+                pParent = &Engine::getInstance()->sceneManager.getCurrentScene()->getWorld();
+            auto loadPrefabFromStringFunct = GET_PROCESS((*reloadableCpp), loadPrefabFromString);
+            loadPrefabFromStringFunct(*pParent, paperPress, SavedScene::EType::XML);
+        }
     }
 }
 

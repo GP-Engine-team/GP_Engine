@@ -7,6 +7,7 @@
 #pragma once
 
 #include <GPM/constants.hpp>
+#include <cmath>
 
 /**
  * @see : https://easings.net/

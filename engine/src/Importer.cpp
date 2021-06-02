@@ -29,7 +29,7 @@
 using namespace GPE;
 using namespace GPM;
 
-void GPE::saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
+std::string GPE::saveSceneToStringImp(GPE::Scene* scene, GPE::SavedScene::EType saveMode)
 {
     if (saveMode == GPE::SavedScene::EType::XML)
     {
@@ -38,24 +38,27 @@ void GPE::saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScen
         context.addWeakPtr(scene);
         scene->save(context);
 
-        GPE::SavedScene::CreateArg args;
-        args.data = docToString(doc);
-        args.type = GPE::SavedScene::EType::XML;
-
-        GPE::writeSceneFile(path, args);
+        return docToString(doc);
     }
 }
 
-void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
+void GPE::saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
 {
-    GPE::SavedScene::CreateArg savedScene = GPE::readSceneFile(path);
+    GPE::SavedScene::CreateArg args;
+    args.data = GPE::saveSceneToStringImp(scene, saveMode);
+    args.type = saveMode;
 
-    if (savedScene.type == GPE::SavedScene::EType::XML)
+    GPE::writeSceneFile(path, args);
+}
+
+void GPE::loadSceneFromStringImp(GPE::Scene* scene, const std::string& str, GPE::SavedScene::EType type)
+{
+    if (type == GPE::SavedScene::EType::XML)
     {
         // Load xml doc
         rapidxml::xml_document<> doc;
         std::unique_ptr<char[]>  buffer;
-        GPE::SavedScene::toDoc(doc, buffer, savedScene.data.c_str(), savedScene.data.size());
+        GPE::SavedScene::toDoc(doc, buffer, str.c_str(), str.size());
 
         XmlLoader context(doc);
         // Load each element
@@ -106,35 +109,53 @@ void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
     }
 }
 
-void GPE::savePrefabToPathImp(GPE::GameObject& prefab, const char* path, GPE::SavedScene::EType saveMode)
+void GPE::loadSceneFromPathImp(GPE::Scene* scene, const char* path)
+{
+    GPE::SavedScene::CreateArg savedScene = GPE::readSceneFile(path);
+    loadSceneFromStringImp(scene, savedScene.data, savedScene.type);
+}
+
+std::string GPE::savePrefabToStringImp(GPE::GameObject& prefab, GPE::SavedScene::EType saveMode)
 {
     Scene             tempScene;
     GameObject* const pPreviousParent     = prefab.getParent();
     Scene* const      pPreviousOwnedScene = prefab.pOwnerScene;
+    std::string       data;
 
     tempScene.getWorld().children.emplace_back(&prefab);
     prefab.forceSetParent(tempScene.getWorld());
     prefab.pOwnerScene = nullptr;
 
-    saveSceneToPathImp(&tempScene, path, saveMode);
+    data = saveSceneToStringImp(&tempScene, saveMode);
 
     prefab.pOwnerScene = pPreviousOwnedScene;
     prefab.forceSetParent(*pPreviousParent);
     tempScene.getWorld().children.clear();
+
+    return data;
 }
 
-GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char* path)
+void GPE::savePrefabToPathImp(GPE::GameObject& prefab, const char* path, GPE::SavedScene::EType saveMode)
 {
-    Scene                      scene;
-    GPE::SavedScene::CreateArg savedScene = GPE::readSceneFile(path);
+    GPE::SavedScene::CreateArg args;
+    args.data = savePrefabToStringImp(prefab, saveMode);
+    args.type = saveMode;
+
+    GPE::writeSceneFile(path, args);
+}
+
+GPE::GameObject* GPE::loadPrefabFromStringImp(GPE::GameObject& parent, const std::string& str,
+                                              GPE::SavedScene::EType type)
+{
+    Scene scene;
 
     // Load the file
-    if (savedScene.type == GPE::SavedScene::EType::XML)
+    if (type == GPE::SavedScene::EType::XML)
     {
         // Load xml doc
         rapidxml::xml_document<> doc;
         std::unique_ptr<char[]>  buffer;
-        GPE::SavedScene::toDoc(doc, buffer, savedScene.data.c_str(), savedScene.data.size());
+        GPE::SavedScene::toDoc(doc, buffer, str.c_str(), str.size());
 
         XmlLoader context(doc);
         // Load each element
@@ -198,6 +219,12 @@ GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char*
 
     scene.getWorld().children.clear();
     return go;
+}
+
+GPE::GameObject* GPE::loadPrefabFromPathImp(GPE::GameObject& parent, const char* path)
+{
+    GPE::SavedScene::CreateArg savedScene = GPE::readSceneFile(path);
+    return loadPrefabFromStringImp(parent, savedScene.data, savedScene.type);
 }
 
 void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBoundingVolume boundingVolumeType) noexcept
