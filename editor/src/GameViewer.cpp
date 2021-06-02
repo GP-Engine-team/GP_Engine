@@ -66,10 +66,8 @@ void GameViewer::render(EditorStartup& startup)
     if (ImGui::Begin("Game view") && &startup.game() != nullptr)
     {
         // Decide what to do with inputs
-        if (startup.game().state == EGameState::PLAYING
-            && !m_captureInputs
-            && ImGui::IsWindowHovered()
-            && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+        if (startup.game().state == EGameState::PLAYING && !m_captureInputs && ImGui::IsWindowHovered() &&
+            ImGui::IsMouseClicked(ImGuiMouseButton_Left))
         {
             captureInputs();
         }
@@ -113,16 +111,19 @@ void GameViewer::render(EditorStartup& startup)
 
             // Render
             startup.game().render();
-            ImGui::Image((void*)(intptr_t)framebuffer.textureID(), size, {.0f, 1.f}, {1.f, .0f});
+            if (Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.m_shadowMaps.size())
+            {
+                ImGui::Image((void*)(intptr_t)framebuffer.textureID(), size, {.0f, 1.f}, {1.f, .0f});
+            }
         }
         else
         {
             const char*  text     = "No main camera set";
             const ImVec2 textSize = ImGui::CalcTextSize(text);
-            ImVec2 winSize{ImGui::GetWindowSize()};
+            ImVec2       winSize{ImGui::GetWindowSize()};
             winSize.x = (winSize.x - textSize.x) * .5f;
             winSize.y = (winSize.y - textSize.y) * .5f;
-            
+
             ImGui::SetCursorPos({winSize.x, winSize.y});
             ImGui::Text(text);
         }

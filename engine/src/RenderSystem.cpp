@@ -1075,3 +1075,8 @@ void RenderSystem::removeShadowMap(Light& light) noexcept
         }
     }
 }
+
+const ShadowMap* RenderSystem::getShadowMap()
+{
+    return m_shadowMaps.empty() ? nullptr : &m_shadowMaps.front();
+}

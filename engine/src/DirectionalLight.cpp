@@ -20,12 +20,16 @@ DirectionalLight::DirectionalLight(GameObject& owner, const CreateArg& arg) noex
 
 Mat4 DirectionalLight::getLightSpaceMatrix() noexcept
 {
-    const float near_plane = 0.1f, far_plane = 1000.f;
-    const Mat4  lightProjection =
+    const Mat4 lightProjection =
         Transform::orthographic(m_shadowProperties.size, -m_shadowProperties.size, m_shadowProperties.size,
-                                -m_shadowProperties.size, near_plane, far_plane);
+                                -m_shadowProperties.size, m_shadowProperties.near, m_shadowProperties.far);
     const Vec3 globalPos = getOwner().getTransform().getGlobalPosition();
-    const Mat4 lightView = GPM::Transform::lookAt(globalPos, globalPos + m_direction.normalized(), Vec3::up());
+    Vec3       up        = Vec3::up();
+    if (up.dot(m_direction) < 0.2)
+    {
+        up = Vec3::right();
+    }
+    const Mat4 lightView = GPM::Transform::lookAt(globalPos, globalPos + m_direction.normalized(), up);
     return lightProjection * lightView.inversed();
 }
 
@@ -42,4 +46,14 @@ void DirectionalLight::addToLightToUseBuffer(std::vector<LightData>& lb) noexcep
                   0.f,
                   {0.f, 0.f, 0.f},
                   0.f});
+}
+
+void DirectionalLight::inspect(GPE::InspectContext& context)
+{
+    Light::inspect(context);
+
+    if (DataInspector::inspect(context, m_direction, "Direction"))
+    {
+        m_direction.normalize();
+    }
 }

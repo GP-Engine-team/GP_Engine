@@ -123,6 +123,7 @@ void Editor::renderMenuBar()
                 ImGui::MenuItem("Project browser");
                 ImGui::MenuItem("Inspector");
 
+                ImGui::MenuItem("Shadow map", nullptr, &showShadowMap);
                 ImGui::EndMenu();
             }
 
@@ -286,6 +287,37 @@ void Editor::renderExplorer()
             ImGui::EndTabBar();
         }
     }
+    ImGui::End();
+}
+
+void Editor::renderShadowMap()
+{
+    if (!showShadowMap)
+        return;
+
+    ImGui::Begin("Shadow map viewer", &showShadowMap);
+
+    if (Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.getShadowMap())
+    {
+
+        const ImVec2 size{ImGui::GetContentRegionAvail()};
+        ImGui::Image((void*)(intptr_t)Engine::getInstance()
+                         ->sceneManager.getCurrentScene()
+                         ->sceneRenderer.getShadowMap()->depthMap,
+                     size, {.0f, 1.f}, {1.f, .0f});
+    }
+    else
+    {
+        const char*  text     = "No shadow map active";
+        const ImVec2 textSize = ImGui::CalcTextSize(text);
+        ImVec2       winSize{ImGui::GetWindowSize()};
+        winSize.x = (winSize.x - textSize.x) * .5f;
+        winSize.y = (winSize.y - textSize.y) * .5f;
+
+        ImGui::SetCursorPos({winSize.x, winSize.y});
+        ImGui::Text(text);
+    }
+
     ImGui::End();
 }
 
@@ -476,6 +508,7 @@ void Editor::update(EditorStartup& startup)
     renderSceneGraph();
     renderExplorer();
     renderInspector();
+    renderShadowMap();
 
     if (showImGuiDemoWindows)
     {
