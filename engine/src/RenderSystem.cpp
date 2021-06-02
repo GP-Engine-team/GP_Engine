@@ -222,6 +222,24 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
         }
     }
 
+    if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG && (shader.getFeature() & SKYBOX) != SKYBOX)
+    {
+        shader.setMat4("projectViewMatrix", camToUse.getProjectionView().e);
+
+        if (!m_shadowMaps.empty())
+        {
+            shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
+            // shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
+            shader.setMat4("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix().e);
+        }
+        else
+        {
+            shader.setMat4("lightSpaceMatrix", Mat4::identity().e);
+            shader.setInt("PCF", 1);
+            // shader.setFloat("bias", 0.0f);
+        }
+    }
+
     if ((shader.getFeature() & PROJECTION_MATRIX) == PROJECTION_MATRIX)
     {
         shader.setMat4("projectMatrix", camToUse.getProjection().e);
@@ -299,20 +317,6 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
 
         shader.setMat4("model", modelMatrix.e);
         shader.setMat3("inverseModelMatrix", inverseModelMatrix3.e);
-        shader.setMat4("projectViewMatrix", camToUse.getProjectionView().e);
-
-        if (!m_shadowMaps.empty())
-        {
-            shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
-            // shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
-            shader.setMat4("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix().e);
-        }
-        else
-        {
-            shader.setMat4("lightSpaceMatrix", Mat4::identity().e);
-            shader.setInt("PCF", 1);
-            // shader.setFloat("bias", 0.0f);
-        }
     }
 }
 
