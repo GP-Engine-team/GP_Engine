@@ -89,6 +89,7 @@ public:
     /* Interpolates b/w positions,rotations & scaling keys based on the curren time of the
     animation and prepares the local transformation matrix by combining all keys tranformations */
     void update(float animationTime);
+    void update(float animationTime, GPM::Mat4& transform);
 
     /* Gets the current index on mKeyPositions to interpolate to based on the current
     animation time */

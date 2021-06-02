@@ -23,11 +23,15 @@ class RFKClass(Inspect(), ComponentGen(), Serialize()) AnimationComponent : publ
 {
 private:
     RFKField(Inspect("setSkeleton"), Serialize()) Skeleton*  m_skeleton         = nullptr;
-    RFKField(Inspect(), Serialize())              Animation* m_currentAnimation = nullptr;
+    RFKField(Inspect(), Serialize()) Animation*              m_currentAnimation = nullptr;
+    RFKField(Inspect()) Animation*                           m_nextAnimation    = nullptr;
     class Model*                                             m_model            = nullptr;
     RFKField(Inspect("setSkin"), Serialize()) Skin*          m_skin             = nullptr;
-    RFKField(Inspect(), Serialize()) float                   m_currentTime;
+    RFKField(Inspect(), Serialize()) float                   m_currentTime = 0.f;
+    RFKField(Inspect(), Serialize()) float                   m_nextAnimTime = 0.f;
     RFKField(Inspect(), Serialize()) float                   m_timeScale = 30.f;
+
+    float blendAlpha = 0.f;
 
 public:
     std::vector<GPM::Mat4> m_finalBoneMatrices;

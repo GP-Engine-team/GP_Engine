@@ -51,6 +51,13 @@ void AnimationComponent::update(float dt)
     {
         m_currentTime += m_currentAnimation->getTicksPerSecond() * dt * m_timeScale;
         m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
+
+        if (m_nextAnimation != nullptr)
+        {
+            m_nextAnimTime += m_nextAnimation->getTicksPerSecond() * dt * m_timeScale;
+            m_nextAnimTime = fmod(m_nextAnimTime, m_nextAnimation->getDuration());
+        }
+
         calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
     }
 }
@@ -93,6 +100,17 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
     {
         bone->update(m_currentTime);
         nodeTransform = bone->getLocalTransform();
+    }
+
+    if (m_nextAnimation != nullptr)
+    {
+        Bone* newAnimBone = m_nextAnimation->findBone(node.name);
+
+        if (newAnimBone)
+        {
+            newAnimBone->update(m_currentTime);
+            nodeTransform = newAnimBone->getLocalTransform();
+        }
     }
 
     GPM::Mat4 globalTransformation = parentTransform * nodeTransform;
