@@ -362,7 +362,6 @@ Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
       sceneGraph(*this), gameControlBar{}, saveFolder{}, m_window{window}, inspectedObject{nullptr},
       showAppStyleEditor{false}, showImGuiDemoWindows{false}
 {
-    glfwMaximizeWindow(window);
     setupDearImGui();
 }
 
