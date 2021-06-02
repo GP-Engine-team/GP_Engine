@@ -53,7 +53,7 @@ void TransformComponent::inspect(GPE::InspectContext& context)
     if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
     {
         GPE::DataInspector::inspect(context, m_spaceAttribut, "Transform");
-        if (context.wasLastDirty())
+        if (context.isDirty())
         {
             m_isDirty = true;
         }
