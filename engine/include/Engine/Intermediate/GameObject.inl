@@ -9,7 +9,7 @@ inline T& GameObject::addComponent(Args&&... args) noexcept
 }
 
 template <typename T>
-T& GameObject::getOrCreateComponent()
+inline T& GameObject::getOrCreateComponent()
 {
     if (T* comp = getComponent<T>())
     {
