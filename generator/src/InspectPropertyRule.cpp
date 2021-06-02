@@ -20,8 +20,12 @@ std::string InspectPropertyRule::generateClassFooterCode(kodgen::EntityInfo cons
         // Get Struct / Class info to access its fields
         kodgen::StructClassInfo const& var = static_cast<kodgen::StructClassInfo const&>(entity);
 
-        return "public:" + generateInspectFunction(var, property, "inspect", "GPE::InspectContext",
+        std::string defaultInspect = generateDefaultInspectFunction(var, property, "defaultInspect", "GPE::InspectContext",
                                                              "GPE::DataInspector::inspect");
+        std::string inspect =
+            generateInspectFunction(var, property, "inspect", "GPE::InspectContext", "GPE::DataInspector::inspect");
+
+        return "public :" + defaultInspect + inspect;
     }
     return "";
 }
@@ -31,7 +35,7 @@ std::string InspectPropertyRule::generateFileFooterCode(kodgen::EntityInfo const
                                                         rfk::PropertyCodeGenFileFooterData& data) const noexcept
 {
     //// If entity is a class or a struct :
-    //if ((entity.entityType & (kodgen::EEntityType::Class | kodgen::EEntityType::Struct)) !=
+    // if ((entity.entityType & (kodgen::EEntityType::Class | kodgen::EEntityType::Struct)) !=
     //    kodgen::EEntityType::Undefined)
     //{
     //    // Get Struct / Class info to access its fields
@@ -43,14 +47,9 @@ std::string InspectPropertyRule::generateFileFooterCode(kodgen::EntityInfo const
     return "";
 }
 
-
-
-
-
-std::string InspectPropertyRule::generateInspectFunction(const kodgen::StructClassInfo& entity,
-                                                         kodgen::ComplexProperty const& property, const std::string& functionName,
-                                                         const std::string& argClassName, const std::string& fieldCallingFunction,
-                                                         std::string extraQualifier) const
+std::string InspectPropertyRule::generateInspectFunction(
+    const kodgen::StructClassInfo& entity, kodgen::ComplexProperty const& property, const std::string& functionName,
+    const std::string& argClassName, const std::string& fieldCallingFunction, std::string extraQualifier) const
 {
     std::string serializeInside = "";
 
@@ -65,8 +64,27 @@ std::string InspectPropertyRule::generateInspectFunction(const kodgen::StructCla
         serializeInside += callParents;
     }
 
-    std::string getArchetype = "rfk::Struct const& c = " + entity.name + "::staticGetArchetype();";
-    serializeInside += getArchetype;
+    serializeInside += "defaultInspect(serializer);";
+
+    std::string serializeFunction = "\
+			virtual void " + functionName +
+                                    '(' + argClassName + "& serializer)" + extraQualifier + "{" + serializeInside + "}";
+
+    std::cout << "Generated in " << entity.name << " : " << std::endl;
+    std::cout << serializeFunction << std::endl;
+    return serializeFunction;
+}
+
+std::string InspectPropertyRule::generateDefaultInspectFunction(
+    const kodgen::StructClassInfo& entity, kodgen::ComplexProperty const& property, const std::string& functionName,
+    const std::string& argClassName, const std::string& fieldCallingFunction, std::string extraQualifier) const
+{
+    
+
+    std::string defaultInspectInside = "";
+
+    std::string getArchetype         = "rfk::Struct const& c = " + entity.name + "::staticGetArchetype();";
+    defaultInspectInside += getArchetype;
 
     // For each fields of the Reflected Class :
     for (auto& field : entity.fields)
@@ -85,13 +103,15 @@ std::string InspectPropertyRule::generateInspectFunction(const kodgen::StructCla
             {
                 std::string constructField = "c.getField(\"" + field.name + "\")";
 
-                serializeInside += fieldCallingFunction + "(serializer, " + field.name + ", *" + constructField + ");";
+                defaultInspectInside +=
+                    fieldCallingFunction + "(serializer, " + field.name + ", *" + constructField + ");";
             }
             else
             {
                 // If there is a setter
                 std::string setterFunction = it->subProperties.front();
-                setterFunction.erase(std::remove(setterFunction.begin(), setterFunction.end(), '"'), setterFunction.end());
+                setterFunction.erase(std::remove(setterFunction.begin(), setterFunction.end(), '"'),
+                                     setterFunction.end());
 
                 std::string setterCall = "{";
                 setterCall += "auto temp = " + field.name + ";";
@@ -99,16 +119,12 @@ std::string InspectPropertyRule::generateInspectFunction(const kodgen::StructCla
                 setterCall += setterFunction + "(temp);";
                 setterCall += "}";
 
-                serializeInside += setterCall;
+                defaultInspectInside += setterCall;
             }
         }
     }
 
-    std::string serializeFunction = "\
-			virtual void " + functionName +
-                                    '(' + argClassName + "& serializer)" + extraQualifier + "{" + serializeInside + "}";
+    std::string defaultInspect = "void " + functionName + '(' + argClassName + "& serializer)" + extraQualifier + '{' + defaultInspectInside + '}';
 
-    std::cout << "Generated in " << entity.name << " : " << std::endl;
-    std::cout << serializeFunction << std::endl;
-    return serializeFunction;
+    return defaultInspect;
 }

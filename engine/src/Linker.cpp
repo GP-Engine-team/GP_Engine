@@ -10,10 +10,9 @@ void Linker<GameObject>::setData(GameObject& newData)
     pData = &newData;
 }
 
-inline bool inspectGameObjectLinker(InspectContext& context, Linker<GameObject>& inspected, const char* name)
+inline void inspectGameObjectLinker(InspectContext& context, Linker<GameObject>& inspected, const char* name)
 {
-    GPE::DataInspector::startProperty(name);
-    bool hasChanged = false;
+    context.startProperty(name);
 
     ImGui::Selectable(inspected.pData == nullptr ? "None" : inspected.pData->getName().c_str());
 
@@ -27,7 +26,7 @@ inline bool inspectGameObjectLinker(InspectContext& context, Linker<GameObject>&
         if (ImGui::MenuItem("Remove", NULL, false))
         {
             inspected.pData = nullptr;
-            hasChanged      = true;
+            context.setDirty();
         }
 
         ImGui::EndPopup();
@@ -40,27 +39,25 @@ inline bool inspectGameObjectLinker(InspectContext& context, Linker<GameObject>&
         {
             IM_ASSERT(payload->DataSize == sizeof(GPE::GameObject*));
             inspected.pData = *static_cast<GPE::GameObject**>(payload->Data);
-            hasChanged      = true;
+            context.setDirty();
         }
         ImGui::EndDragDropTarget();
     }
-    GPE::DataInspector::endProperty();
-
-    return hasChanged;
+    context.endProperty();
 }
 
 template <>
-bool GPE::DataInspector::inspect<Linker<GameObject>>(GPE::InspectContext& context, Linker<GameObject>& inspected,
+void GPE::DataInspector::inspect<Linker<GameObject>>(GPE::InspectContext& context, Linker<GameObject>& inspected,
                                                      const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Linker<GameObject>& inspected,
+void GPE::DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Linker<GameObject>& inspected,
                                                      const char* name)
 {
-    return inspectGameObjectLinker(context, inspected, name);
+    inspectGameObjectLinker(context, inspected, name);
 }
 
 template <>
@@ -70,15 +67,15 @@ void GPE::DataInspector::inspect<Linker<GameObject>>(InspectContext& context, Li
 }
 
 template <>
-bool DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info)
+void DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected, const char* name)
+void DataInspector::inspect<GameObject>(InspectContext& context, Linker<GameObject>& inspected, const char* name)
 {
-    return inspectGameObjectLinker(context, inspected, name);
+    inspectGameObjectLinker(context, inspected, name);
 }
 
 template <>

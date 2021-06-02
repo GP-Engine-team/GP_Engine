@@ -68,19 +68,12 @@ bool DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected,
     return hasChanged;
 }
 */
-template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,
-                                 const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, SourceData>& inspected,
                                  const char* name)
 {
-    bool hasChanged = false;
-    // startProperty(name);
+    context.startProperty(name, 0.f);
 
     for (auto& [key, value] : inspected)
     {
@@ -92,7 +85,5 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_ma
         }
     }
 
-    // endProperty();
-
-    return hasChanged;
+    context.endProperty();
 }

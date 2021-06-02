@@ -17,19 +17,17 @@
 using namespace GPE;
 
 template <>
-bool GPE::DataInspector::inspect(InspectContext& context, RGB& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(InspectContext& context, RGB& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(InspectContext& context, RGB& inspected, const char* name)
+void GPE::DataInspector::inspect(InspectContext& context, RGB& inspected, const char* name)
 {
-    startProperty(name);
-    const bool hasChanged = ImGui::ColorEdit3("", &inspected.e[0]);
-    endProperty();
-
-    return hasChanged;
+    context.startProperty(name);
+    context.setDirty(ImGui::ColorEdit3("", &inspected.e[0]));
+    context.endProperty();
 }
 
 template <>
@@ -39,19 +37,17 @@ void GPE::DataInspector::inspect(InspectContext& context, RGB& inspected)
 }
 
 template <>
-bool GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected, const char* name)
+void GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected, const char* name)
 {
-    startProperty(name);
-    const bool hasChanged = ImGui::ColorEdit4("", &inspected.e[0]);
-    endProperty();
-
-    return hasChanged;
+    context.startProperty(name);
+    context.setDirty(ImGui::ColorEdit4("", &inspected.e[0]));
+    context.endProperty();
 }
 
 template <>
@@ -61,32 +57,29 @@ void GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected)
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const char* name)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const char* name)
 {
-    startProperty(name);
-    const bool hasChanged = ImGui::ColorEdit4("", &inspected.e[0]);
-    endProperty();
-
-    return hasChanged;
+    context.startProperty(name);
+    context.setDirty(ImGui::ColorEdit4("", &inspected.e[0]));
+    context.endProperty();
 }
 
 template <>
-bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const char* name)
+void GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const char* name)
 {
-    startProperty(name);
-    bool hasChanged = false;
+    context.startProperty(name);
 
     ImGui::Selectable(inspected ? inspected->getName() : "None");
 
@@ -113,7 +106,7 @@ bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, co
             }
 
             inspected  = nullptr;
-            hasChanged = true;
+            context.setDirty();
         }
 
         ImGui::EndPopup();
@@ -156,20 +149,17 @@ bool GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, co
                 ++sPref.instanceCounter;
             }
 
-            hasChanged = true;
+            context.setDirty();
         }
         ImGui::EndDragDropTarget();
     }
-    endProperty();
-
-    return hasChanged;
+    context.endProperty();
 }
 
 template <typename T>
-bool renderResourceExplorer(const char* name, T*& inRes, const char* acceptedPayload,
+void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes, const char* acceptedPayload,
                             std::function<T*(const char*)> importer)
 {
-    bool  hasChanged        = false;
     auto& resourceContainer = GPE::Engine::getInstance()->resourceManager.getAll<T>();
 
     std::vector<const char*> items;
@@ -213,7 +203,7 @@ bool renderResourceExplorer(const char* name, T*& inRes, const char* acceptedPay
                     if (ImGui::Selectable(path.path.string().c_str()))
                     {
                         inRes      = importer(path.path.string().c_str());
-                        hasChanged = true;
+                        context.setDirty();
                     }
                 }
             }
@@ -232,7 +222,7 @@ bool renderResourceExplorer(const char* name, T*& inRes, const char* acceptedPay
                         ;
 
                     inRes      = &it->second;
-                    hasChanged = true;
+                    context.setDirty();
                 }
 
                 // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -254,63 +244,61 @@ bool renderResourceExplorer(const char* name, T*& inRes, const char* acceptedPay
             if (T* pMesh = Engine::getInstance()->resourceManager.get<T>(path.string().c_str()))
             {
                 inRes      = pMesh;
-                hasChanged = true;
+                context.setDirty();
             }
             else
             {
                 inRes      = importer(path.string().c_str());
-                hasChanged = true;
+                context.setDirty();
             }
         }
     }
-
-    return hasChanged;
 }
 
 template <>
-bool DataInspector::inspect(InspectContext& context, class Material*& inspected, const rfk::Field& info)
+void DataInspector::inspect(InspectContext& context, class Material*& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool DataInspector::inspect(InspectContext& context, class Material*& inspected, const char* name)
+void DataInspector::inspect(InspectContext& context, class Material*& inspected, const char* name)
 {
-    return renderResourceExplorer<Material>("Material", inspected, ENGINE_MATERIAL_EXTENSION, loadMaterialFile);
+    renderResourceExplorer<Material>(context, "Material", inspected, ENGINE_MATERIAL_EXTENSION, loadMaterialFile);
 }
 
 template <>
-bool DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const rfk::Field& info)
+void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const char* name)
+void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const char* name)
 {
-    return renderResourceExplorer<Mesh>("Mesh", inspected, ENGINE_MESH_EXTENSION, loadMeshFile);
+    renderResourceExplorer<Mesh>(context, "Mesh", inspected, ENGINE_MESH_EXTENSION, loadMeshFile);
 }
 
 template <>
-bool DataInspector::inspect(InspectContext& context, class Texture*& inspected, const rfk::Field& info)
+void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool DataInspector::inspect(InspectContext& context, class Texture*& inspected, const char* name)
+void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const char* name)
 {
-    return renderResourceExplorer<Texture>("Texture", inspected, ENGINE_TEXTURE_EXTENSION, loadTextureFile);
+    renderResourceExplorer<Texture>(context, "Texture", inspected, ENGINE_TEXTURE_EXTENSION, loadTextureFile);
 }
 
 template <>
-bool DataInspector::inspect(InspectContext& context, class Shader*& inspected, const rfk::Field& info)
+void DataInspector::inspect(InspectContext& context, class Shader*& inspected, const rfk::Field& info)
 {
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool DataInspector::inspect(InspectContext& context, class Shader*& inspected, const char* name)
+void DataInspector::inspect(InspectContext& context, class Shader*& inspected, const char* name)
 {
-    return renderResourceExplorer<Shader>("Shader", inspected, ENGINE_SHADER_EXTENSION, loadShaderFile);
+    renderResourceExplorer<Shader>(context, "Shader", inspected, ENGINE_SHADER_EXTENSION, loadShaderFile);
 }
