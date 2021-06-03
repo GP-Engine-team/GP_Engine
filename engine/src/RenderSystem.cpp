@@ -229,14 +229,14 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
         if (m_shadowMaps.size())
         {
             shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
-            // shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
+            shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
             shader.setMat4("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix().e);
         }
         else
         {
             shader.setMat4("lightSpaceMatrix", Mat4::identity().e);
             shader.setInt("PCF", 1);
-            // shader.setFloat("bias", 0.0f);
+            shader.setFloat("bias", 0.0f);
         }
     }
 
@@ -727,7 +727,7 @@ void RenderSystem::shadowMapPipeline() noexcept
     Shader& shader = *Engine::getInstance()->resourceManager.get<Shader>("DepthOnly");
     shader.use();
 
-    glCullFace(GL_FRONT);
+    // glCullFace(GL_FRONT);
 
     for (auto&& shadowMap : m_shadowMaps)
     {
@@ -770,7 +770,7 @@ void RenderSystem::shadowMapPipeline() noexcept
             }
         }
     }
-    glCullFace(GL_BACK);
+    // glCullFace(GL_BACK);
 
     // 2. then render scene as normal with shadow mapping (using depth map)
     glBindFramebuffer(GL_FRAMEBUFFER, drawFboId);
