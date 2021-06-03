@@ -78,7 +78,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_ma
     for (auto& [key, value] : inspected)
     {
         // ImGui::Text(value.name.c_str());
-        if (ImGui::TreeNode(value.name.c_str()))
+        if (ImGui::TreeNode(value.sourceName.c_str()))
         {
             value.settings.inspect(context);
             value.isDirty = context.isDirty();
