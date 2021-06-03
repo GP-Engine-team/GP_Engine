@@ -46,9 +46,11 @@ void EditorStartup::initializeDefaultInputs() const
 }
 
 EditorStartup::EditorStartup()
-    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {}},
-      m_update{[&](double unscaledDeltaTime, double deltaTime)
+    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
       {
+          m_engine->physXSystem.advance(fixedDeltaTime);
+      }},
+      m_update{[&](double unscaledDeltaTime, double deltaTime) {
           m_engine->sceneManager.update();
           m_engine->inputManager.processInput();
           m_editor.update(*this);

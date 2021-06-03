@@ -238,7 +238,9 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
             {
 
             case hash(".obj"):
+            case hash(".OBJ"):
             case hash(".fbx"):
+            case hash(".FBX"):
                 importeModel(srcPath.string().c_str(), pCurrentDirectory->path.string().c_str());
                 break;
 

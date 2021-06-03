@@ -232,6 +232,15 @@ Game::Game()
     Mesh* planeMesh = &Engine::getInstance()->resourceManager.add<Mesh>(
         "PlaneGround", Mesh::createQuad(0.5f, 0.5f, 100.f, 0, 0, Mesh::Axis::Y));
 
+    // Shader* shader = &Engine::getInstance()->resourceManager.add<Shader>(
+    //    "Vegetation", "./resources/shaders/vTextureWithLightAndShadowAndNMAndWind.vs",
+    //    "./resources/shaders/fTextureWithLightAndShadowAndNMAndFog.fs", LIGHT_BLIN_PHONG | FOG | SCALE_TIME_ACC);
+
+    // shader->use();
+    // shader->setInt("ourTexture", 0);
+    // shader->setInt("shadowMap", 1);
+    // shader->setInt("normalMap", 2);
+
     //// =========== Scene ===========
     //// world is already initialized
 
