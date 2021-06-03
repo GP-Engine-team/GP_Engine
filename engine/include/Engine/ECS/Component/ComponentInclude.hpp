@@ -3,6 +3,18 @@
 // Register manually component's achtectype to data base because of bug in RFK
 // Update next RFK version to avoid it
 
+#include <Engine/Core/Physics/Collisions/Collider.hpp>
+#include <Generated/Collider.rfk.h>
+__RFK15829655788413352100u_GENERATED
+#include <Engine/Core/Physics/Collisions/BoxCollider.hpp>
+#include <Generated/BoxCollider.rfk.h>
+__RFK15829655788413352100u_GENERATED
+#include <Engine/Core/Physics/Collisions/SphereCollider.hpp>
+#include <Generated/SphereCollider.rfk.h>
+__RFK15829655788413352100u_GENERATED
+#include <Engine/Core/Physics/RigidBodyBase.hpp>
+#include <Generated/RigidBodyBase.rfk.h>
+__RFK15829655788413352100u_GENERATED
 #include <Engine/ECS/Component/AudioComponent.hpp>
 #include <Generated/AudioComponent.rfk.h>
 __RFK15829655788413352100u_GENERATED

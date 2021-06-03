@@ -79,7 +79,7 @@ public:
         hierarchy.push(newNode);
 
         appendAttribute(newNode, "name", name);
-        appendAttribute(newNode, "type", typeName);
+        //appendAttribute(newNode, "type", typeName);
         appendAttribute(newNode, "typeID", std::to_string(typeId));
 
         return newNode;
@@ -136,9 +136,17 @@ void save(XmlSaver& context, T* const & inspected, const XmlSaver::SaveInfo& inf
 {
     context.push(info);
 
-    context.saveAsString(std::to_string(size_t(inspected)), info);
+    XmlSaver::SaveInfo newInfo = info;
+    if constexpr (std::is_base_of<rfk::Object, T>::value)
+    {
+        if (inspected != nullptr)
+        {
+            newInfo.typeId = inspected->getArchetype().id;
+        }
+    }
+    context.saveAsString(std::to_string(size_t(inspected)), newInfo);
     if (inspected != nullptr)
-        context.savePtrData(inspected, info);
+        context.savePtrData(inspected, newInfo);
 
     context.pop();
 }
