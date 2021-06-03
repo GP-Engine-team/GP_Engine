@@ -15,10 +15,9 @@ using namespace GPE;
 void WorldGenerator::loadCircularCoordinate()
 {
     const ResourceManagerType& rm = Engine::getInstance()->resourceManager;
-    GameObject::CreateArg      forestArg{"Forest"};
 
-    // Create trees with random sizes,
-    // positions and rotations and add them to the forest
+    // Create object with random sizes,
+    // positions and rotations and add them to the container
     for (unsigned int i = 0u; i < m_number; ++i)
     {
         GameObject* const newGO = m_prefab->clone(*m_container.pData);

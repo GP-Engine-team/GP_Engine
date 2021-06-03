@@ -260,6 +260,7 @@ bool renderResourceExplorer(const char* name, T*& inRes, const char* acceptedPay
                 hasChanged = true;
             }
         }
+        ImGui::EndDragDropTarget();
     }
 
     return hasChanged;

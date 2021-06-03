@@ -23,7 +23,7 @@ namespace GPG RFKNamespace()
     class RFKClass(ComponentGen, Serialize()) WorldGenerator : public GPE::BehaviourComponent
     {
     private:
-        RFKField() GPE::Prefab*                            m_prefab = nullptr;
+        RFKField(Serialize()) GPE::Prefab*      m_prefab = nullptr;
         RFKField(Serialize()) GPE::Linker<GPE::GameObject> m_container;
 
         RFKField(Serialize()) float     m_radius   = 10.f;
