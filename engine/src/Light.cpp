@@ -34,7 +34,8 @@ void Light::inspect(InspectContext& context)
     ImGui::PushEnabled(m_shadowProperties.isEnable);
     if (ImGui::CollapsingHeader("Shadow"))
     {
-        if (DataInspector::inspect(context, m_shadowProperties.shadowMapSampleScale, "SampleScale"))
+        DataInspector::inspect(context, m_shadowProperties.shadowMapSampleScale, "SampleScale");
+        if (context.wasLastDirty())
         {
             // Remove previouse
             getOwner().pOwnerScene->sceneRenderer.removeShadowMap(*this);

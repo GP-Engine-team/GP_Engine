@@ -41,15 +41,9 @@ template <>
 bool DataInspector::inspect(GPE::InspectContext& context, physx::PxShape*& inspected, const char* name);*/
 
 template <>
-bool DataInspector::inspect(GPE::InspectContext& context, GPE::Collider& inspected, const rfk::Field& info);
+void DataInspector::inspect(GPE::InspectContext& context, GPE::Collider& inspected, const char* name);
 
 template <>
-bool DataInspector::inspect(GPE::InspectContext& context, GPE::Collider& inspected, const char* name);
-
-template <>
-bool DataInspector::inspect(GPE::InspectContext& context, GPE::EShapeType& inspected, const rfk::Field& info);
-
-template <>
-bool DataInspector::inspect(GPE::InspectContext& context, GPE::EShapeType& inspected, const char* name);
+void DataInspector::inspect(GPE::InspectContext& context, GPE::EShapeType& inspected, const char* name);
 
 } // namespace GPE

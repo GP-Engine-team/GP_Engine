@@ -8,43 +8,34 @@
 #include <windows.h>
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const char* name)
 {
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    DataInspector::inspect(context, inspected.position, "Position");
+    DataInspector::inspect(context, inspected.scale, "Scale");
+    DataInspector::inspect(context, inspected.rotation, "Rotation");
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransform& inspected, const char* name)
-{
-    bool b = false;
-    b |= DataInspector::inspect(context, inspected.position, "Position");
-    b |= DataInspector::inspect(context, inspected.scale, "Scale");
-    b |= DataInspector::inspect(context, inspected.rotation, "Rotation");
-    return b;
-}
-
-template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& inspected, const rfk::Field& info)
 {
     Slider const* property = info.getProperty<Slider>();
     if (property)
     {
-        return ImGui::SliderFloat2(info.name.c_str(), inspected.e, property->min, property->max);
+        context.setDirty(ImGui::SliderFloat2(info.name.c_str(), inspected.e, property->min, property->max));
     }
     else
     {
-        return DataInspector::inspect(context, inspected, info.name.c_str());
+        DataInspector::inspect(context, inspected, info.name.c_str());
     }
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& inspected, const char* name)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& inspected, const char* name)
 {
-    startProperty(name);
-    bool hasChanged = ImGui::DragFloat2("", inspected.e, 0.1);
+    context.startProperty(name);
+    context.setDirty(ImGui::DragFloat2("", inspected.e, 0.1));
     // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
-    endProperty();
-    return hasChanged;
+    context.endProperty();
 }
 
 template <>
@@ -54,27 +45,26 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& ins
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const rfk::Field& info)
 {
     Slider const* property = info.getProperty<Slider>();
     if (property)
     {
-        return ImGui::SliderFloat3(info.name.c_str(), inspected.e, property->min, property->max);
+        context.setDirty(ImGui::SliderFloat3(info.name.c_str(), inspected.e, property->min, property->max));
     }
     else
     {
-        return DataInspector::inspect(context, inspected, info.name.c_str());
+        DataInspector::inspect(context, inspected, info.name.c_str());
     }
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const char* name)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const char* name)
 {
-    startProperty(name);
-    bool hasChanged = ImGui::DragFloat3("", inspected.e, 0.1);
+    context.startProperty(name);
+    context.setDirty(ImGui::DragFloat3("", inspected.e, 0.1));
     // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
-    endProperty();
-    return hasChanged;
+    context.endProperty();
 }
 
 template <>
@@ -84,27 +74,26 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& ins
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& inspected, const rfk::Field& info)
 {
     Slider const* property = info.getProperty<Slider>();
     if (property)
     {
-        return ImGui::SliderFloat4(info.name.c_str(), inspected.e, property->min, property->max);
+        context.setDirty(ImGui::SliderFloat4(info.name.c_str(), inspected.e, property->min, property->max));
     }
     else
     {
-        return DataInspector::inspect(context, inspected, info.name.c_str());
+        DataInspector::inspect(context, inspected, info.name.c_str());
     }
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& inspected, const char* name)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& inspected, const char* name)
 {
-    startProperty(name);
-    bool hasChanged = ImGui::DragFloat4("", inspected.e);
+    context.startProperty(name);
+    context.setDirty(ImGui::DragFloat4("", inspected.e));
     // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
-    endProperty();
-    return hasChanged;
+    context.endProperty();
 }
 
 template <>
@@ -114,19 +103,11 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& ins
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const char* name)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Quaternion& inspected, const char* name)
 {
     GPM::Vec3 asRotation = inspected.eulerAngles() * 180.f / PI;                   // to degrees
-    bool      hasChanged = GPE::DataInspector::inspect(context, asRotation, name); // display as euler angles
+    GPE::DataInspector::inspect(context, asRotation, name); // display as euler angles
     inspected            = GPM::Quaternion::fromEuler(asRotation * PI / 180.f);    // to radians
-
-    return hasChanged;
 }
 
 template <>

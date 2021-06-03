@@ -50,9 +50,13 @@ void TransformComponent::setVecUp(const Vec3& newUp) noexcept
 
 void TransformComponent::inspect(GPE::InspectContext& context)
 {
-    if (GPE::DataInspector::inspect(context, m_spaceAttribut, "Transform"))
+    if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
     {
-        m_isDirty = true;
+        GPE::DataInspector::inspect(context, m_spaceAttribut, "Transform");
+        if (context.isDirty())
+        {
+            m_isDirty = true;
+        }
     }
 }
 

@@ -18,6 +18,7 @@ File_GENERATED
 
     void TextureInspectorPanel::inspect(InspectContext & context)
     {
+        context.startProperty("TextureInspectorPanel");
         ImGui::TextUnformatted("Texture setting");
         ImGui::Text("Path : %s", m_path.c_str());
 
@@ -88,8 +89,10 @@ File_GENERATED
             m_config.properties.textureWrapT = (Texture::ETextureWrap)elem;
         }
 
-        m_isDirty |= GPE::DataInspector::inspect(context, m_config.properties.anisotropy, "Anisotropy");
-        m_isDirty |= GPE::DataInspector::inspect(context, m_config.properties.generateMipmaps, "Mipmap");
+        GPE::DataInspector::inspect(context, m_config.properties.anisotropy, "Anisotropy");
+        GPE::DataInspector::inspect(context, m_config.properties.generateMipmaps, "Mipmap");
+
+        m_isDirty |= context.isDirty();
 
         if (m_isDirty)
         {
@@ -110,6 +113,7 @@ File_GENERATED
         }
 
         ImGui::PopEnabled();
+        context.endProperty();
     }
 
 } // End of namespace GPE

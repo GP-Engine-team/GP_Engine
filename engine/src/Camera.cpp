@@ -208,12 +208,14 @@ void Camera::inspect(InspectContext& context)
     DataInspector::inspect(context, vSide, "V side");
 
     float fovYDeg = fovY * 180 / PI;
-    if (DataInspector::inspect(context, fovYDeg, "Fov Y"))
+    DataInspector::inspect(context, fovYDeg, "Fov Y");
+    if (context.wasLastDirty())
     {
         setFovY(fovYDeg * PI / 180.f);
     }
 
-    if (ImGui::Checkbox("##isShadowEnable", &m_fogParam.isEnabled))
+    ImGui::Checkbox("##isShadowEnable", &m_fogParam.isEnabled);
+    if (context.wasLastDirty())
     {
         if (!m_fogParam.isEnabled)
             ImGui::SetNextItemOpen(false);

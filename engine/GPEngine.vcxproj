@@ -435,6 +435,7 @@
     <ClCompile Include="src\Serialization\GPMLoad.cpp" />
     <ClCompile Include="src\Serialization\GPMSave.cpp" />
     <ClCompile Include="src\Serialization\Inspect.cpp" />
+    <ClCompile Include="src\Serialization\InspectContext.cpp" />
     <ClCompile Include="src\Serialization\SavedScene.cpp" />
     <ClCompile Include="src\Serialization\PhysXDataInspector.cpp" />
     <ClCompile Include="src\Serialization\Serialize.cpp" />

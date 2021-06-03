@@ -225,6 +225,7 @@ void Editor::renderInspector()
         if (inspectedObject != nullptr)
         {
             GPE::InspectContext context;
+            context.startingWidth = ImGui::GetWindowSize().x - ImGui::GetStyle().WindowPadding.x;
             GPE::DataInspector::inspect(context, *inspectedObject);
         }
         else
