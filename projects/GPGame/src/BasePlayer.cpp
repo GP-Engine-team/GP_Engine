@@ -207,6 +207,7 @@ void BasePlayer::onGUI()
 
     if (displayDepthMenu)
     {
+        // Game over screen
         ImVec2 size = {GetWindowSize().x / 4.f * ratio, GetWindowSize().y / 6.f * ratio};
 
         SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
@@ -224,11 +225,22 @@ void BasePlayer::onGUI()
     }
     else
     {
+        // in game UI
+
+        // goodies
+        {
+            ImVec2 size = ImGui::CalcTextSize("Goodies : 10/10");
+            SetNextElementLayout(0.0f, 0.f, size, EHAlign::Left, EVAlign::Top);
+            Text("Goodies : %d/%d", 5, 10);
+        }
+
+        // life
         ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
 
         SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
         displayLifeBar(m_currentLife, m_maxLife, size);
 
+        // bullets
         if (m_firearms.size())
         {
             size = ImGui::CalcTextSize("30/30");
@@ -236,6 +248,8 @@ void BasePlayer::onGUI()
             Text("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
                  m_firearms.front()->getMagazine().getCapacity());
         }
+
+        // fps
         size = ImGui::CalcTextSize("FPS : 144");
         SetNextElementLayout(0.95f, 0.f, size, EHAlign::Right, EVAlign::Top);
         Text("FPS : %0.0f", ImGui::GetIO().Framerate);
