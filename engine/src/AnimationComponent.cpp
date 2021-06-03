@@ -54,15 +54,21 @@ void AnimationComponent::update(float deltaTime)
     if (m_currentAnimation && isComplete())
     {
         m_currentTime += deltaTime * m_timeScale;
+        if ((!shouldLoop) && m_currentTime >= m_currentAnimation->getDuration())
+        {
+            // TODO : Keep last anim frame
+            m_currentAnimation = nullptr;
+            return;
+        }
+
         m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
+        calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
 
         //if (m_nextAnimation != nullptr)
         //{
         //    m_nextAnimTime += m_nextAnimation->getTicksPerSecond() * dt * m_timeScale;
         //    m_nextAnimTime = fmod(m_nextAnimTime, m_nextAnimation->getNbTicks());
         //}
-
-        calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
     }
 }
 

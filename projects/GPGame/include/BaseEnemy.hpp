@@ -35,6 +35,9 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) float     m_dammage          = 3.f;
         RFKField(Serialize()) GPE::AudioComponent* source             = nullptr;
 
+        RFKField(Inspect(), Serialize())
+        float disappearanceSpeed = 10.f;
+
     public:
         BaseEnemy() noexcept = default;
         BaseEnemy(GPE::GameObject & owner) noexcept;

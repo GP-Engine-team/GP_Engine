@@ -73,21 +73,24 @@ void BaseEnemy::update(double deltaTime)
                 if (anim)
                 {
                     animComp->playAnimation(anim);
+                    animComp->shouldLoop = false;
                     m_animDeathCounterMax = anim->getDuration();
                 }
+            }
+
+            GPE::CharacterController* controller = m_gameObject->getComponent<GPE::CharacterController>();
+            if (controller != nullptr)
+            {
+                controller->setActive(false);
             }
         }
 
         m_animDeathCounter += float(deltaTime);
 
-        if (m_animDeathCounter >= m_animDeathCounterMax)
+        if (m_animDeathCounter >= m_animDeathCounterMax / 2)
         {
-            //getOwner().destroy();
-            GPE::AnimationComponent* animComp = m_gameObject->getComponent<GPE::AnimationComponent>();
-            if (animComp != nullptr)
-            {
-                animComp->setActive(false);
-            }
+            ////getOwner().destroy();
+            m_gameObject->getTransform().translate(GPM::Vec3(0, -disappearanceSpeed * deltaTime, 0));
         }
     }
     else
