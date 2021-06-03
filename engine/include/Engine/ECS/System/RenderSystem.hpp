@@ -80,9 +80,11 @@ protected:
     std::vector<ParticleComponent*> m_pParticleComponents;
     std::vector<DebugShape>         m_debugShape;
     std::vector<DebugLine::Point>   m_debugLine;
-    std::vector<ShadowMap>          m_shadowMaps;
-    unsigned int                    m_w = 0, m_h = 0;
-    Camera*                         m_mainCamera = nullptr;
+    std::vector<ShadowMap> m_shadowMaps;
+
+protected:
+    unsigned int m_w = 0, m_h = 0;
+    Camera*      m_mainCamera = nullptr;
 
     unsigned int m_currentShaderID                  = 0u;
     unsigned int m_currentTextureID                 = 0u;
@@ -201,6 +203,8 @@ public:
 
     void addShadowMap(Light& light) noexcept;
     void removeShadowMap(Light& light) noexcept;
+
+    const ShadowMap* getShadowMap();
 };
 
 } /*namespace GPE*/

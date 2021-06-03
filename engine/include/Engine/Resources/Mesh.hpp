@@ -86,6 +86,9 @@ protected:
     EBoundingVolume m_boundingVolumeType = EBoundingVolume::NONE;
     GPM::Volume*    m_boundingVolume     = nullptr;
 
+    // Local AABB Attribut
+    GPM::Vec3 m_minAABB, m_maxAABB;
+
 protected:
     void removeBoundingVolume();
 
@@ -183,6 +186,14 @@ public:
      */
     void generateBoundingVolume(EBoundingVolume boundingVolumeType, const GPM::Vec3& minAABB,
                                 const GPM::Vec3& maxAABB) noexcept;
+
+    /**
+     * @brief Function to return the local AABB (do not considere the position, scale and rotation of transform)
+     * @return
+     */
+    GPM::AABB        getAABB();
+    const GPM::Vec3& getAABBMin();
+    const GPM::Vec3& getAABBMAx();
 };
 
 template <>

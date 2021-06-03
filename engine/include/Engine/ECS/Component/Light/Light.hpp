@@ -42,6 +42,8 @@ namespace GPE RFKNamespace()
             RFKField(Serialize()) float        shadowMapSampleScale = 4.f;
             RFKField(Serialize()) unsigned int PCF                  = 3;
             // RFKField(Serialize()) float        bias                 = 0.05f;
+            RFKField(Serialize()) float near = 0.1f;
+            RFKField(Serialize()) float far = 1000.f;
             RFKField(Serialize()) float size = 1000.f;
 
             ShadowProperties_GENERATED

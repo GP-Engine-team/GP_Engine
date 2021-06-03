@@ -58,11 +58,11 @@ Mesh::Mesh(Mesh::CreateIndiceBufferArg&& arg) noexcept : Mesh(arg)
 
 Mesh::Mesh(Mesh::CreateIndiceBufferArg& arg) noexcept
 {
+    generateAABB(arg.vertices, m_minAABB, m_maxAABB);
+
     if (arg.boundingVolumeType != Mesh::EBoundingVolume::NONE)
     {
-        Vec3 minAABB, maxAABB;
-        generateAABB(arg.vertices, minAABB, maxAABB);
-        generateBoundingVolume(arg.boundingVolumeType, minAABB, maxAABB);
+        generateBoundingVolume(arg.boundingVolumeType, m_minAABB, m_maxAABB);
     }
 
     m_verticesCount = static_cast<unsigned int>(arg.indices.size());
@@ -118,12 +118,7 @@ void Mesh::draw() const noexcept
 
 void Mesh::setBoundingVolume(EBoundingVolume boundingVolumeType) noexcept
 {
-    std::vector<Vertex> posBuffer;
-    Vec3                minAABB, maxAABB;
-
-    getData(posBuffer);
-    generateAABB(posBuffer, minAABB, maxAABB);
-    generateBoundingVolume(boundingVolumeType, minAABB, maxAABB);
+    generateBoundingVolume(boundingVolumeType, m_minAABB, m_maxAABB);
 }
 
 void Mesh::getData(std::vector<Vertex>& buffer)
@@ -199,6 +194,21 @@ void Mesh::generateBoundingVolume(EBoundingVolume boundingVolumeType, const Vect
     default:
         break;
     }
+}
+
+AABB Mesh::getAABB()
+{
+    return AABB{m_minAABB, m_maxAABB};
+}
+
+const Vec3& Mesh::getAABBMin()
+{
+    return m_minAABB;
+}
+
+const Vec3& Mesh::getAABBMAx()
+{
+    return m_maxAABB;
 }
 
 Mesh::CreateIndiceBufferArg Mesh::createQuad(float halfWidth, float halfHeight, float textureRepetition,
