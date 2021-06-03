@@ -837,8 +837,8 @@ void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Ve
 
 void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, const ColorRGB& color) noexcept
 {
-    m_debugLine.emplace_back(DebugLine::Point{pt1, color});
-    m_debugLine.emplace_back(DebugLine::Point{pt2, color});
+    m_debugLine.emplace_back(pt1, color);
+    m_debugLine.emplace_back(pt2, color);
 }
 
 void RenderSystem::addParticleComponent(ParticleComponent& particleComponent) noexcept

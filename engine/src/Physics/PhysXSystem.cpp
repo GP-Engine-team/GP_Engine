@@ -131,14 +131,15 @@ void PhysXSystem::advance(double deltaTime) noexcept
 
 void PhysXSystem::drawDebugScene()
 {
-    const PxRenderBuffer& rb = scene->getRenderBuffer();
-    for (PxU32 i = 0; i < rb.getNbLines(); i++)
-    {
-        const PxDebugLine& line = rb.getLines()[i];
+    const PxRenderBuffer& rb        = scene->getRenderBuffer();
+    const PxU32           max       = rb.getNbLines();
+    RenderSystem&         renderSys = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
+    const PxDebugLine*    lineBuf   = rb.getLines();
 
+    for (PxU32 i = 0; i < max; ++i)
+    {
         // Force reinterpret cast
-        Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.drawDebugLine(
-            *(GPM::Vec3*)&line.pos0, *(GPM::Vec3*)&line.pos1, ColorRGB{0.5, 0.5, 0});
+        renderSys.drawDebugLine(*(GPM::Vec3*)&lineBuf[i].pos0, *(GPM::Vec3*)&lineBuf[i].pos1, ColorRGB{0.5, 0.5, 0});
     }
 }
 

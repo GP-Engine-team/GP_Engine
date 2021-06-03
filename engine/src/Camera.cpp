@@ -202,8 +202,8 @@ void Camera::inspect(InspectContext& context)
     Component::inspect(context);
 
     DataInspector::inspect(context, aspect, "Aspect");
-    DataInspector::inspect(context, zfar, "Near");
-    DataInspector::inspect(context, znear, "Far");
+    DataInspector::inspect(context, zfar, "Far");
+    DataInspector::inspect(context, znear, "Near");
     DataInspector::inspect(context, hSide, "H side");
     DataInspector::inspect(context, vSide, "V side");
 
