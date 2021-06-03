@@ -79,33 +79,78 @@ void load(XmlLoader& context, Shader*& data, const XmlLoader::LoadInfo& info)
 template <>
 void load(XmlLoader& context, Mesh*& data, const XmlLoader::LoadInfo& info)
 {
-    std::string MeshName;
-    GPE::load(context, MeshName, XmlLoader::LoadInfo{"pMesh", "Mesh*", 0});
-    if (!(data = Engine::getInstance()->resourceManager.get<GPE::Mesh>(MeshName)))
+    std::string meshName;
+    GPE::load(context, meshName, XmlLoader::LoadInfo{"pMesh", "Mesh*", 0});
+    if (!(data = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName)))
     {
-        data = loadMeshFile(MeshName.c_str());
+        data = loadMeshFile(meshName.c_str());
     }
 }
 
 template <>
 void load(XmlLoader& context, Material*& data, const XmlLoader::LoadInfo& info)
 {
-    std::string MaterialName;
-    GPE::load(context, MaterialName, XmlLoader::LoadInfo{"pMaterial", "Material*", 0});
-    if (!(data = Engine::getInstance()->resourceManager.get<GPE::Material>(MaterialName)))
+    std::string materialName;
+    GPE::load(context, materialName, XmlLoader::LoadInfo{"pMaterial", "Material*", 0});
+    if (!(data = Engine::getInstance()->resourceManager.get<GPE::Material>(materialName)))
     {
-        data = loadMaterialFile(MaterialName.c_str());
+        data = loadMaterialFile(materialName.c_str());
     }
 }
 
 template <>
 void load(XmlLoader& context, Texture*& data, const XmlLoader::LoadInfo& info)
 {
-    std::string TextureName;
-    GPE::load(context, TextureName, XmlLoader::LoadInfo{"pTexture", "Texture*", 0});
-    if (!(data = Engine::getInstance()->resourceManager.get<GPE::Texture>(TextureName)))
+    std::string textureName;
+    GPE::load(context, textureName, XmlLoader::LoadInfo{"pTexture", "Texture*", 0});
+    if (!(data = Engine::getInstance()->resourceManager.get<GPE::Texture>(textureName)))
     {
-        data = loadTextureFile(TextureName.c_str());
+        data = loadTextureFile(textureName.c_str());
+    }
+}
+
+template <>
+void load(XmlLoader& context, Animation*& data, const XmlLoader::LoadInfo& info)
+{
+    std::string animName;
+    GPE::load(context, animName, info);
+    if (animName.empty())
+    {
+        data = nullptr;
+    }
+    else if (!(data = Engine::getInstance()->animResourcesManager.get<GPE::Animation>(animName)))
+    {
+        data = loadAnimationFile(animName.c_str());
+    }
+}
+
+template <>
+void load(XmlLoader& context, Skeleton*& data, const XmlLoader::LoadInfo& info)
+{
+    std::string skeletonName;
+    GPE::load(context, skeletonName, info);
+    if (skeletonName.empty())
+    {
+        data = nullptr;
+    }
+    else if (!(data = Engine::getInstance()->animResourcesManager.get<GPE::Skeleton>(skeletonName)))
+    {
+        data = loadSkeletonFile(skeletonName.c_str());
+    }
+}
+
+template <>
+void load(XmlLoader& context, Skin*& data, const XmlLoader::LoadInfo& info)
+{
+    std::string skinName;
+    GPE::load(context, skinName, info);
+    if (skinName.empty())
+    {
+        data = nullptr;
+    }
+    else if (!(data = Engine::getInstance()->animResourcesManager.get<GPE::Skin>(skinName)))
+    {
+        data = loadSkinFile(skinName.c_str());
     }
 }
 

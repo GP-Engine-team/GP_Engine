@@ -203,7 +203,8 @@ size_t PhysXSystem::addComponent(CharacterController* characterController) noexc
 
 void PhysXSystem::removeComponent(CharacterController* characterController) noexcept
 {
-    scene->removeActor(*characterController->controller->getActor(), false);
+    if (characterController->controller != nullptr)
+        scene->removeActor(*characterController->controller->getActor(), false);
     for (std::vector<CharacterController*>::iterator it = characterControllers.begin();
          it != characterControllers.end(); it++)
     {

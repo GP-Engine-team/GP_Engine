@@ -179,6 +179,7 @@ void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes
     else
     {
         itemCurrent = 0;
+
         for (auto&& it = resourceContainer.begin(); &it->second != inRes; ++itemCurrent, ++it)
             ;
     }
@@ -256,8 +257,143 @@ void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes
     }
 }
 
+
+template <typename T>
+void renderAnimResourceExplorer(InspectContext& context, const char* name, T*& inRes, const char* acceptedPayload,
+                                std::function<T*(const char*)> importer)
+{
+    auto& resourceContainer = GPE::Engine::getInstance()->animResourcesManager.getAll<T>();
+
+    std::vector<const char*> items;
+    items.reserve(resourceContainer.size());
+
+    for (auto&& res : resourceContainer)
+    {
+        items.emplace_back(res.first.c_str());
+    }
+
+    // Init position of the combo box cursor
+    int itemCurrent;
+    if (inRes == nullptr)
+    {
+        itemCurrent = -1;
+    }
+    else
+    {
+        itemCurrent = 0;
+
+        for (auto&& it = resourceContainer.begin(); &it->second != inRes; ++itemCurrent, ++it)
+            ;
+    }
+
+    const char* label = inRes ? items[itemCurrent] : "None";
+    if (ImGui::BeginCombo(name, label, 0))
+    {
+        static int isInContentBrowser = 0;
+        ImGui::RadioButton("Used", &isInContentBrowser, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("All", &isInContentBrowser, 1);
+
+        if (isInContentBrowser)
+        {
+            std::vector<GPE::ResourcesPath>& pathContainer =
+                *GPE::Engine::getInstance()->resourceManager.get<std::vector<GPE::ResourcesPath>>("Path");
+
+            for (auto&& path : pathContainer)
+            {
+                if (path.path.extension().string() == acceptedPayload)
+                {
+                    if (ImGui::Selectable(path.path.string().c_str()))
+                    {
+                        inRes      = importer(path.path.string().c_str());
+                        context.setDirty();
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int n = 0; n < items.size(); n++)
+            {
+                const bool is_selected = (itemCurrent == n);
+                if (ImGui::Selectable(items[n], is_selected))
+                {
+                    itemCurrent = n;
+
+                    auto&& it = resourceContainer.begin();
+                    for (int i = 0; i < itemCurrent; ++i, ++it)
+                        ;
+
+                    inRes      = &it->second;
+                    context.setDirty();
+                }
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(acceptedPayload))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            if (T* pMesh = Engine::getInstance()->animResourcesManager.get<T>(path.string().c_str()))
+            {
+                inRes      = pMesh;
+                context.setDirty();
+            }
+            else
+            {
+                inRes      = importer(path.string().c_str());
+                context.setDirty();
+            }
+        }
+    }
+}
+
+template <>
+void GPE::DataInspector::inspect<Skin*>(InspectContext & context, GPE::Skin * &inspected, const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Skin*& inspected, const char* name)
+{
+    renderAnimResourceExplorer<Skin>(context, "Skin", inspected, ENGINE_SKIN_EXTENSION, loadSkinFile);
+}
+
+template <>
+void GPE::DataInspector::inspect<Skeleton*>(InspectContext & context, GPE::Skeleton*& inspected,
+                                            const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
 template <>
 void DataInspector::inspect(InspectContext& context, class Material*& inspected, const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+void GPE::DataInspector::inspect(InspectContext& context, GPE::Skeleton*& inspected, const char* name)
+{
+    // Ressources should always be inspected from a component.
+    assert(context.lastComponentOwner != nullptr);
+
+    renderAnimResourceExplorer<Skeleton>(context, "Skeleton", inspected, ENGINE_SKELETON_EXTENSION, loadSkeletonFile);
+}
+
+template <>
+void GPE::DataInspector::inspect<Animation*>(InspectContext& context, Animation*& inspected, const rfk::Field& info)
 {
     GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
@@ -272,6 +408,16 @@ template <>
 void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const rfk::Field& info)
 {
     GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+void GPE::DataInspector::inspect(InspectContext & context, class Animation * &inspected, const char* name)
+{
+    // Ressources should always be inspected from a component.
+    assert(context.lastComponentOwner != nullptr);
+
+    renderAnimResourceExplorer<Animation>(context, "Animation", inspected, ENGINE_ANIMATION_EXTENSION,
+                                          loadAnimationFile);
 }
 
 template <>

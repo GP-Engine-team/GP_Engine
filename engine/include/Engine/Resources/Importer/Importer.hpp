@@ -7,6 +7,9 @@
 #pragma once
 
 #include "Engine/ECS/Component/Model.hpp"
+#include "Engine/Resources/Animation/Animation.hpp"
+#include "Engine/Resources/Animation/Skeleton.hpp"
+#include "Engine/Resources/Animation/Skin.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
 #include "Engine/Serialization/SavedScene.hpp"
@@ -17,17 +20,23 @@
 #define ENGINE_SHADER_EXTENSION ".GPShader"
 #define ENGINE_PREFAB_EXTENSION ".GPPrefab"
 #define ENGINE_SCENE_EXTENSION ".GPScene"
+#define ENGINE_SKELETON_EXTENSION ".GPSkeleton"
+#define ENGINE_ANIMATION_EXTENSION ".GPAnimation"
+#define ENGINE_SKIN_EXTENSION ".GPSkin"
 
 namespace GPE
 {
 enum class EFileType
 {
-    MESH     = 0,
-    MATERIAL = 1,
-    TEXTURE  = 2,
-    SHADER   = 3,
-    SCENE    = 4,
-    PREFAB   = 6
+    MESH      = 0,
+    MATERIAL  = 1,
+    TEXTURE   = 2,
+    SHADER    = 3,
+    SCENE     = 4,
+    PREFAB    = 6,
+    SKELETON  = 7,
+    ANIMATION = 8,
+    SKIN      = 9
 };
 
 struct TextureImportConfig
@@ -106,5 +115,17 @@ SavedScene::CreateArg loadPrefabFile(const char* src);
 void                  writeSceneFile(const char* dst, const SavedScene::CreateArg& arg);
 SavedScene::CreateArg readSceneFile(const char* src);
 SavedScene::CreateArg loadSceneFile(const char* src);
+
+void                 writeSkeletonFile(const char* dst, const Skeleton::CreateArgs& arg);
+Skeleton::CreateArgs readSkeletonFile(const char* src);
+Skeleton*            loadSkeletonFile(const char* src);
+
+void                  writeAnimationFile(const char* dst, const Animation::CreateArgs& arg);
+Animation::CreateArgs readAnimationFile(const char* src);
+Animation*            loadAnimationFile(const char* src);
+
+void             writeSkinFile(const char* dst, const Skin::CreateArgs& arg);
+Skin::CreateArgs readSkinFile(const char* src);
+Skin*            loadSkinFile(const char* src);
 
 } // namespace GPE

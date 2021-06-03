@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/Type.hpp>
@@ -18,9 +19,11 @@
 #include <GPM/Shape3D/Volume.hpp>
 #include <GPM/Vector3.hpp>
 
+struct aiScene;
+struct aiMesh;
+
 namespace GPE
 {
-
 class Mesh
 {
 public:
@@ -186,6 +189,8 @@ public:
      */
     void generateBoundingVolume(EBoundingVolume boundingVolumeType, const GPM::Vec3& minAABB,
                                 const GPM::Vec3& maxAABB) noexcept;
+
+    void bindSkin(class Skin& skin);
 
     /**
      * @brief Function to return the local AABB (do not considere the position, scale and rotation of transform)

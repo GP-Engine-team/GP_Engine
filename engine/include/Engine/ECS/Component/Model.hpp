@@ -18,15 +18,22 @@
 // Generated
 #include "Generated/Model.rfk.h"
 
+namespace GPM
+{
+union Matrix4;
+using Mat4 = Matrix4;
+}
+
 namespace GPE RFKNamespace()
 {
-
     class Mesh;
     class Shader;
     class Material;
     class Model;
-
+    class Skeleton;
     struct SubModel;
+
+    class AnimationComponent;
 
     struct RFKStruct(Serialize()) SubModel
     {
@@ -50,7 +57,7 @@ namespace GPE RFKNamespace()
 
         SubModel() = default;
 
-        bool isValide();
+        bool isValid() const;
 
         RFKField(Serialize()) Model*    pModel    = nullptr;
         RFKField(Serialize()) Shader*   pShader   = nullptr;
@@ -81,6 +88,8 @@ namespace GPE RFKNamespace()
     protected:
         RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
 
+        class AnimationComponent* m_animComponent = nullptr;
+
         virtual void updateToSystem() noexcept override;
 
     public:
@@ -95,6 +104,14 @@ namespace GPE RFKNamespace()
         virtual void inspect(InspectContext & context);
 
         void addSubModel(const SubModel::CreateArg& arg);
+
+        void setAnimComponent(AnimationComponent* newAnimComp);
+
+        void bindSkin(class Skin& skin);
+
+        std::vector<GPM::Mat4>& getFinalBonesTransforms() const;
+
+        bool isAnimated() const;
 
         /**
          * @brief Function to return the local AABB (do not considere the position, scale and rotation of transform)

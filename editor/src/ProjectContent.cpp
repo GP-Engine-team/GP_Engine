@@ -52,6 +52,15 @@ ProjectContent::ProjectContent(Editor& editorContext)
       m_prefabIcone{{"..\\..\\editor\\resources\\icone\\prefab.png", Texture::ETextureMinFilter::LINEAR,
                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
                      Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_skeletonIcon{{"..\\..\\editor\\resources\\icone\\skeleton.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                       Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_animationIcon{{"..\\..\\editor\\resources\\icone\\animation.png", Texture::ETextureMinFilter::LINEAR,
+                        Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE, 
+                        Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_skinIcon{{"..\\..\\editor\\resources\\icone\\skin.png", Texture::ETextureMinFilter::LINEAR,
+                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                       Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_unknowIcone{{"..\\..\\editor\\resources\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
                      Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
@@ -223,7 +232,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
         importationSetting.reset();
     }
 
-    if (ImGui::Button("Importe"))
+    if (ImGui::Button("Import"))
     {
         const std::filesystem::path srcPath =
             GPE::openFileExplorerAndGetAbsoluePath(L"Select asset to import",
@@ -388,6 +397,8 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                          2 * ImGui::GetStyle().ItemSpacing.x;
             ImGui::SetCursorPosX(posX);
 
+            // Different strings can have the same hash, 
+            // but since the string is short, we can consider it doesn't happen.
             switch (GPE::hash(it->extention.string().c_str())) // runtime
             {
             case GPE::hash(ENGINE_MESH_EXTENSION): // compile time
@@ -417,6 +428,18 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
             case GPE::hash(ENGINE_PREFAB_EXTENSION): // compile time
                 ImGui::ImageButton((void*)(intptr_t)m_prefabIcone.getID(), size);
+                break;
+
+            case GPE::hash(ENGINE_SKELETON_EXTENSION): // compile time
+                ImGui::ImageButton((void*)(intptr_t)m_skeletonIcon.getID(), size);
+                break;
+
+            case GPE::hash(ENGINE_ANIMATION_EXTENSION): // compile time
+                ImGui::ImageButton((void*)(intptr_t)m_animationIcon.getID(), size);
+                break;
+
+            case GPE::hash(ENGINE_SKIN_EXTENSION): // compile time
+                ImGui::ImageButton((void*)(intptr_t)m_skinIcon.getID(), size);
                 break;
 
             default:
@@ -486,7 +509,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 }
             }
 
-            // On left clic
+            // On left click
             if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
             {
                 switch (GPE::hash(it->extention.string().c_str())) // runtime
@@ -515,6 +538,11 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                     break;
 
                 case GPE::hash(ENGINE_PREFAB_EXTENSION): // compile time
+                    break;
+
+                case GPE::hash(ENGINE_SKELETON_EXTENSION): // compile time
+                case GPE::hash(ENGINE_ANIMATION_EXTENSION): // compile time
+                case GPE::hash(ENGINE_SKIN_EXTENSION): // compile time
                     break;
 
                 default:
