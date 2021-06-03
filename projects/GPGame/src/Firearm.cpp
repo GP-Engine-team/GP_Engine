@@ -56,8 +56,8 @@ void Firearm::start()
 
     GAME_ASSERT(m_muzzleFlashEffect.pData, "Missing component");
 
-    m_aimRotation = GPM::Quaternion::fromEuler(m_aimEulerRotation * PI / 180.f) * m_baseRotation;
-    m_aimPosition += m_basePosition;
+    m_aimRotation = GPM::Quaternion::fromEuler(m_aimEulerRotation * PI / 180.f);
+    // m_aimPosition += m_basePosition;
 }
 
 bool Firearm::isMagazineEmpty() const

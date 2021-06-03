@@ -45,6 +45,8 @@ void PPSH41::onShoot()
 
     m_smokeEffect.pData->emit(
         static_cast<unsigned int>(m_muzzleFlashEffect.pData->getCount() / m_magazineStored.getCapacity()));
+
+    m_muzzleFlashCount = 0.f;
 }
 
 void PPSH41::animateRecoil(float t)
