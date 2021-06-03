@@ -322,6 +322,9 @@
     <ClCompile Include="src\Serialization\ReadOnly.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Serialization\Separator.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
@@ -838,6 +841,9 @@
       <Filter>third_party\imgui</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\ReadOnly.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\Separator.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>

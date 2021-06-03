@@ -27,6 +27,12 @@ void inspect(GPE::InspectContext& context, T& inspected, const std::string& name
 template <typename T>
 void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 {
+    Separator const* separator = info.getProperty<Separator>();
+    if (separator != nullptr && separator->startSeparation)
+    {
+        ImGui::Separator();
+    }
+
     ReadOnly const* property = info.getProperty<ReadOnly>();
     if (property)
     {
@@ -38,6 +44,11 @@ void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
     else
     {
         GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    }
+
+    if (separator != nullptr && separator->endSeparation)
+    {
+        ImGui::Separator();
     }
 }
 

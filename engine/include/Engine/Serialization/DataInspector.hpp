@@ -37,6 +37,7 @@ void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 } // namespace GPE
 
 #include <Engine/Serialization/ReadOnly.hpp>
+#include <Engine/Serialization/Separator.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include "DataInspector.inl"
 //

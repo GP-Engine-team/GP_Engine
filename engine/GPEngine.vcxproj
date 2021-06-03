@@ -322,6 +322,7 @@
     <ClInclude Include="include\Engine\Serialization\ReadOnly.hpp" />
     <ClInclude Include="include\Engine\Serialization\SavedScene.hpp" />
     <ClInclude Include="include\Engine\Serialization\PhysXDataInspector.hpp" />
+    <ClInclude Include="include\Engine\Serialization\Separator.hpp" />
     <ClInclude Include="include\Engine\Serialization\Serialize.hpp" />
     <ClInclude Include="include\Engine\Serialization\ShaderInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\Slider.hpp" />
@@ -453,6 +454,7 @@
     <ClCompile Include="src\Serialization\ReadOnly.cpp" />
     <ClCompile Include="src\Serialization\SavedScene.cpp" />
     <ClCompile Include="src\Serialization\PhysXDataInspector.cpp" />
+    <ClCompile Include="src\Serialization\Separator.cpp" />
     <ClCompile Include="src\Serialization\Serialize.cpp" />
     <ClCompile Include="src\Serialization\Slider.cpp" />
     <ClCompile Include="src\Serialization\STDDataInspector.cpp" />

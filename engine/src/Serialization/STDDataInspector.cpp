@@ -29,6 +29,12 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, int& inspected, c
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, float& inspected, const rfk::Field& info)
 {
+    Separator const* separator = info.getProperty<Separator>();
+    if (separator != nullptr && separator->startSeparation)
+    {
+        ImGui::Separator();
+    }
+
     bool isReadOnly = info.getProperty<ReadOnly>() != nullptr;
     if (isReadOnly)
     {
@@ -50,6 +56,11 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, float& inspected,
     if (isReadOnly)
     {
         ImGui::PopEnabled();
+    }
+
+    if (separator != nullptr && separator->endSeparation)
+    {
+        ImGui::Separator();
     }
 }
 
