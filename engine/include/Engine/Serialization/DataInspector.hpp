@@ -36,6 +36,8 @@ void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 
 } // namespace GPE
 
+#include <Engine/Serialization/ReadOnly.hpp>
+#include <Engine/Core/Tools/ImGuiTools.hpp>
 #include "DataInspector.inl"
 //
 #include "AudioDataInspector.hpp"

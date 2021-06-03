@@ -29,6 +29,12 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, int& inspected, c
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, float& inspected, const rfk::Field& info)
 {
+    bool isReadOnly = info.getProperty<ReadOnly>() != nullptr;
+    if (isReadOnly)
+    {
+        ImGui::PushEnabled(false);
+    }
+
     Slider const* property = info.getProperty<Slider>();
     if (property)
     {
@@ -39,6 +45,11 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, float& inspected,
     else
     {
         GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    }
+
+    if (isReadOnly)
+    {
+        ImGui::PopEnabled();
     }
 }
 

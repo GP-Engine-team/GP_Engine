@@ -28,7 +28,7 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BasePlayer : public BaseCharacter
     {
     protected:
-        RFKField(Serialize()) float            m_animDepthCounter    = 0.f;
+        RFKField(Serialize(), Inspect(), ReadOnly()) float m_animDepthCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float m_animDepthCounterMax = 3.f;
 
         RFKField(Serialize()) bool displayDepthMenu = false;

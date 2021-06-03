@@ -27,7 +27,18 @@ void inspect(GPE::InspectContext& context, T& inspected, const std::string& name
 template <typename T>
 void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 {
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    ReadOnly const* property = info.getProperty<ReadOnly>();
+    if (property)
+    {
+        ImGui::PushEnabled(false);
+        GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+        ImGui::PopEnabled();
+
+    }
+    else
+    {
+        GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    }
 }
 
 } // namespace DataInspector

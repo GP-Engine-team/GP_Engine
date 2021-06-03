@@ -32,7 +32,7 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) float                m_attackCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float     m_attackCounterMax = 3.f;
         RFKField(Inspect(), Serialize()) float     m_radiusAttack     = 3.f;
-        RFKField(Inspect(), Serialize()) float     m_dammage          = 3.f;
+        RFKField(Inspect(), Serialize(), ) float     m_damage          = 3.f;
         RFKField(Serialize()) GPE::AudioComponent* source             = nullptr;
 
         RFKField(Inspect(), Serialize())

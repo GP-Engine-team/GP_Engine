@@ -309,7 +309,7 @@
     </ClCompile>
     <ClCompile Include="src\Skeleton.cpp">
       <Filter>src</Filter>
-	 </ClCompile>
+    </ClCompile>
     <ClCompile Include="src\ShakeEffect.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -317,6 +317,9 @@
       <Filter>third_party\imgui</Filter>
     </ClCompile>
     <ClCompile Include="src\Serialization\InspectContext.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serialization\ReadOnly.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
   </ItemGroup>
@@ -833,6 +836,9 @@
     </ClInclude>
     <ClInclude Include="third_party\imgui\imguizmo.h">
       <Filter>third_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\ReadOnly.hpp">
+      <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

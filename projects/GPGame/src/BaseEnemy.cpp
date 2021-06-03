@@ -107,7 +107,7 @@ void BaseEnemy::update(double deltaTime)
             if (m_attackCounter >= m_attackCounterMax)
             {
                 m_attackCounter = 0.f;
-                m_target->takeDamage(m_dammage);
+                m_target->takeDamage(m_damage);
             }
         }
         else

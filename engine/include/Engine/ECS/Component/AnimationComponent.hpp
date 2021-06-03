@@ -35,7 +35,7 @@ private:
 
 public:
     std::vector<GPM::Mat4> m_finalBoneMatrices;
-    bool                   shouldLoop = true;
+    RFKField(Inspect(), Serialize()) bool shouldLoop = true;
 
 public:
     AnimationComponent(class GameObject & owner) noexcept;
