@@ -28,29 +28,40 @@ File_GENERATED
         GPE::DataInspector::inspect(context, m_config.comp.shininess, "shininess");
         GPE::DataInspector::inspect(context, m_config.comp.opacity, "opacity");
 
-        ImGui::PushID("Ambiante");
-        ImGui::TextUnformatted("Ambiante texture");
-        ImGui::SameLine();
-        if (ImGui::Button(
-                (m_config.ambianteTexturePath.empty() ? "None##Ambiante" : m_config.ambianteTexturePath.c_str())))
-        {
-            m_config.ambianteTexturePath =
-                openFileExplorerAndGetRelativePath(L"Ambiante texture", {{L"Image", L"*.GPTexture"}}).string().c_str();
+        // ImGui::PushID("Ambiante");
+        // ImGui::TextUnformatted("Ambiante texture");
+        // ImGui::SameLine();
+        // if (ImGui::Button(
+        //        (m_config.ambianteTexturePath.empty() ? "None##Ambiante" : m_config.ambianteTexturePath.c_str())))
+        //{
+        //    m_config.ambianteTexturePath =
+        //        openFileExplorerAndGetRelativePath(L"Ambiante texture", {{L"Image",
+        //        L"*.GPTexture"}}).string().c_str();
 
-            m_isDirty = true;
-        }
-        ImGui::PopID();
+        //    m_isDirty = true;
+        //}
+        // ImGui::PopID();
 
         ImGui::PushID("Diffuse");
         ImGui::TextUnformatted("Diffuse texture");
         ImGui::SameLine();
         if (ImGui::Button(
-                (m_config.diffuseTexturePath.empty() ? "None##Diffuse" : m_config.diffuseTexturePath.c_str())))
+                (m_config.diffuseTexturePath.empty() ? "None##DiffuseTexture" : m_config.diffuseTexturePath.c_str())))
         {
             m_config.diffuseTexturePath =
                 openFileExplorerAndGetRelativePath(L"Diffuse texture", {{L"Image", L"*.GPTexture"}}).string().c_str();
 
             m_isDirty = true;
+        }
+        // Drop from content browser
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_TEXTURE_EXTENSION))
+            {
+                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+                m_config.diffuseTexturePath = static_cast<std::filesystem::path*>(payload->Data)->string();
+            }
+            ImGui::EndDragDropTarget();
         }
         ImGui::PopID();
 
@@ -67,6 +78,17 @@ File_GENERATED
 
             m_isDirty = true;
         }
+        // Drop from content browser
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_TEXTURE_EXTENSION))
+            {
+                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+                m_config.normalMapTexturePath = static_cast<std::filesystem::path*>(payload->Data)->string();
+            }
+            ImGui::EndDragDropTarget();
+        }
+
         ImGui::PopID();
 
         if (m_isDirty)

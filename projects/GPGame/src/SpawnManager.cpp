@@ -23,14 +23,14 @@ void SpawnManager::onPostLoad()
     enableUpdate(true);
     enableUpdateEditor(true);
 
-    m_player = Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");
-    GAME_ASSERT(m_player, "Player not found");
-
     BehaviourComponent::onPostLoad();
 }
 
 void SpawnManager::start()
 {
+    m_player = Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");
+    
+    GAME_ASSERT(m_player, "Player not found");
     GAME_ASSERT(m_enemiesContainer.pData, "Missing container ref in SpawnManager");
     GAME_ASSERT(m_entitiesToSpawnInfo.size(), "Spawner without info");
     GAME_ASSERT(m_spawners.size(), "SpawnerManager without spawner");

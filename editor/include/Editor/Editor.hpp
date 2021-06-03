@@ -50,6 +50,7 @@ public:
 
     bool showAppStyleEditor;
     bool showImGuiDemoWindows;
+    bool showShadowMap;
 
     std::function<void(Editor&)> OnUIBeginFrame;
 
@@ -65,6 +66,7 @@ private:
     void renderInspector();
     void renderSceneGraph();
     void renderExplorer();
+    void renderShadowMap();
 
 public:
     Editor(GLFWwindow* window, GPE::Scene& editedScene);

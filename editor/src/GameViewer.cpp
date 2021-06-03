@@ -66,10 +66,8 @@ void GameViewer::render(EditorStartup& startup)
     if (ImGui::Begin("Game view") && &startup.game() != nullptr)
     {
         // Decide what to do with inputs
-        if (startup.game().state == EGameState::PLAYING
-            && !m_captureInputs
-            && ImGui::IsWindowHovered()
-            && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+        if (startup.game().state == EGameState::PLAYING && !m_captureInputs && ImGui::IsWindowHovered() &&
+            ImGui::IsMouseClicked(ImGuiMouseButton_Left))
         {
             captureInputs();
         }
@@ -119,10 +117,10 @@ void GameViewer::render(EditorStartup& startup)
         {
             const char*  text     = "No main camera set";
             const ImVec2 textSize = ImGui::CalcTextSize(text);
-            ImVec2 winSize{ImGui::GetWindowSize()};
+            ImVec2       winSize{ImGui::GetWindowSize()};
             winSize.x = (winSize.x - textSize.x) * .5f;
             winSize.y = (winSize.y - textSize.y) * .5f;
-            
+
             ImGui::SetCursorPos({winSize.x, winSize.y});
             ImGui::Text(text);
         }

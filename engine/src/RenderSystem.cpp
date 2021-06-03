@@ -25,6 +25,7 @@
 #include <GPM/Shape3D/Volume.hpp>
 #include <GPM/ShapeRelation/AABBPlane.hpp>
 #include <GPM/ShapeRelation/SpherePlane.hpp>
+#include <GPM/conversion.hpp>
 
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
@@ -39,12 +40,13 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
     case Mesh::EBoundingVolume::SPHERE: {
         const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
 
-        float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
-                                           pSubModel->pModel->getOwner().getTransform().getScale().y),
-                                  pSubModel->pModel->getOwner().getTransform().getScale().z);
+        float maxScale = std::max(std::max(std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x),
+                                           std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y)),
+                                  std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z));
 
-        const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                          pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
+        const Vector4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() *
+                               Vector4(pBoudingSphere->getCenter(), 1.f).homogenized();
+        const Vector3 pos{posMat.x, posMat.y, posMat.z};
 
         drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color, 0.f,
                         RenderSystem::EDebugShapeMode::FILL);
@@ -55,12 +57,14 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vector3 scale(pSubModel->pModel->getOwner().getTransform().getScale().x * pAABB->extents.x * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->extents.y * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->extents.z * 2.f);
+        const Vector3 scale(
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x) * pAABB->extents.x * 2.f,
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y) * pAABB->extents.y * 2.f,
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z) * pAABB->extents.z * 2.f);
 
-        const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                          pAABB->center * pSubModel->pModel->getOwner().getTransform().getScale());
+        const Vector4 posMat =
+            pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
+        const Vector3 pos{posMat.x, posMat.y, posMat.z};
 
         drawDebugCube(pos, Quat::identity(), scale, color, 0.f, RenderSystem::EDebugShapeMode::FILL);
     }
@@ -147,13 +151,15 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
     case Mesh::EBoundingVolume::SPHERE: {
         const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
 
-        float maxScale = std::max(std::max(pSubModel->pModel->getOwner().getTransform().getScale().x,
-                                           pSubModel->pModel->getOwner().getTransform().getScale().y),
-                                  pSubModel->pModel->getOwner().getTransform().getScale().z);
+        float maxScale = std::max(std::max(std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x),
+                                           std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y)),
+                                  std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z));
 
-        Sphere globalSphere(pBoudingSphere->getRadius() * (maxScale / 2.f),
-                            pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                                pBoudingSphere->getCenter() * pSubModel->pModel->getOwner().getTransform().getScale());
+        const Vector4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() *
+                               Vector4(pBoudingSphere->getCenter(), 1.f).homogenized();
+        const Vector3 pos{posMat.x, posMat.y, posMat.z};
+
+        Sphere globalSphere(pBoudingSphere->getRadius() * (maxScale / 2.f), pos);
 
         return (SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.leftFace) &&
                 SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.rightFace) &&
@@ -169,12 +175,14 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vector3 scale(pSubModel->pModel->getOwner().getTransform().getScale().x * pAABB->extents.x * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().y * pAABB->extents.y * 2.f,
-                            pSubModel->pModel->getOwner().getTransform().getScale().z * pAABB->extents.z * 2.f);
+        const Vector3 scale(
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x) * pAABB->extents.x * 2.f,
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y) * pAABB->extents.y * 2.f,
+            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z) * pAABB->extents.z * 2.f);
 
-        const Vector3 pos(pSubModel->pModel->getOwner().getTransform().getGlobalPosition() +
-                          pAABB->center * pSubModel->pModel->getOwner().getTransform().getScale());
+        const Vector4 posMat =
+            pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
+        const Vector3 pos{posMat.x, posMat.y, posMat.z};
 
         AABB globalAABB(pos, scale.x / 2.f, scale.y / 2.f, scale.z / 2.f);
 
@@ -211,6 +219,24 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
         {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, m_shadowMaps.front().depthMap);
+        }
+    }
+
+    if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG && (shader.getFeature() & SKYBOX) != SKYBOX)
+    {
+        shader.setMat4("projectViewMatrix", camToUse.getProjectionView().e);
+
+        if (m_shadowMaps.size())
+        {
+            shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
+            // shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
+            shader.setMat4("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix().e);
+        }
+        else
+        {
+            shader.setMat4("lightSpaceMatrix", Mat4::identity().e);
+            shader.setInt("PCF", 1);
+            // shader.setFloat("bias", 0.0f);
         }
     }
 
@@ -291,20 +317,6 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
 
         shader.setMat4("model", modelMatrix.e);
         shader.setMat3("inverseModelMatrix", inverseModelMatrix3.e);
-        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
-
-        if (!m_shadowMaps.empty())
-        {
-            shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
-            // shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
-            shader.setMat4("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix().e);
-        }
-        else
-        {
-            shader.setMat4("lightSpaceMatrix", Mat4::identity().e);
-            shader.setInt("PCF", 1);
-            // shader.setFloat("bias", 0.0f);
-        }
     }
 }
 
@@ -1062,4 +1074,9 @@ void RenderSystem::removeShadowMap(Light& light) noexcept
             return;
         }
     }
+}
+
+const ShadowMap* RenderSystem::getShadowMap()
+{
+    return m_shadowMaps.empty() ? nullptr : &m_shadowMaps.front();
 }

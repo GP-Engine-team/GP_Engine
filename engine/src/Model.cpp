@@ -22,7 +22,7 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 bool SubModel::isValide()
@@ -218,4 +218,43 @@ void Model::updateToSystem() noexcept
                 getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
         }
     }
+}
+
+GPM::AABB Model::getLocalAABB()
+{
+    return AABB{getLocalAABBMin(), getLocalAABBMAx()};
+}
+
+GPM::Vec3 Model::getLocalAABBMin()
+{
+    Vec3 minAABB = Vec3(std::numeric_limits<float>::max());
+
+    for (auto&& pSub : m_subModels)
+    {
+        if (pSub.pMesh)
+        {
+            const Vec3 v = pSub.pMesh->getAABBMAx();
+            minAABB.x    = std::min(minAABB.x, v.x);
+            minAABB.y    = std::min(minAABB.y, v.y);
+            minAABB.z    = std::min(minAABB.z, v.z);
+        }
+    }
+    return minAABB;
+}
+
+GPM::Vec3 Model::getLocalAABBMAx()
+{
+    Vec3 maxAABB = Vec3(std::numeric_limits<float>::min());
+
+    for (auto&& pSub : m_subModels)
+    {
+        if (pSub.pMesh)
+        {
+            const Vec3 v = pSub.pMesh->getAABBMAx();
+            maxAABB.x    = std::max(maxAABB.x, v.x);
+            maxAABB.y    = std::max(maxAABB.y, v.y);
+            maxAABB.z    = std::max(maxAABB.z, v.z);
+        }
+    }
+    return maxAABB;
 }
