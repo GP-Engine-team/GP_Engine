@@ -19,6 +19,7 @@ public:
         std::string name   = "";
         int         width  = 0;
         int         height = 0;
+        bool        show   = false;
     };
 
 protected:
@@ -55,7 +56,6 @@ public:
      * @return
      */
     void getSize(int& width, int& height) const noexcept;
-
 };
 
 #include "WindowGLFW.inl"
