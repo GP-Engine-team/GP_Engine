@@ -80,7 +80,8 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_ma
         // ImGui::Text(value.name.c_str());
         if (ImGui::TreeNode(value.name.c_str()))
         {
-            /*value.isDirty = */ value.settings.inspect(context);
+            value.settings.inspect(context);
+            value.isDirty = context.isDirty();
             ImGui::TreePop();
         }
     }
