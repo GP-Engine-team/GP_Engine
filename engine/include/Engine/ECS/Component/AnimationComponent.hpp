@@ -61,6 +61,7 @@ public:
     void setModel(Model* model);
     void setSkeleton(Skeleton* skeleton);
     void setSkin(Skin* skin);
+    void setCurrentAnimDuration(float newDuration);
 
     void drawDebugSkeleton(const GPM::Vec4& offset = GPM::Vec4{0, -100, 0}) const;
 

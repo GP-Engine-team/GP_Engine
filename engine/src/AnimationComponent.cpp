@@ -104,6 +104,7 @@ void AnimationComponent::playAnimation(Animation* pAnimation)
 
     m_currentAnimation = pAnimation;
     m_currentTime      = 0.0f;
+    m_timeScale        = 1.f;
 }
 
 void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, const GPM::mat4& parentTransform)
@@ -189,6 +190,14 @@ void AnimationComponent::setSkin(Skin* skin)
     bool wasComplete = isComplete();
     m_skin = skin;
     updateAnimData(wasComplete);
+}
+
+void AnimationComponent::setCurrentAnimDuration(float newDuration)
+{
+    if (m_currentAnimation != nullptr)
+    {
+        m_timeScale = newDuration / m_currentAnimation->getDuration();
+    }
 }
 
  void AnimationComponent::drawDebugSkeleton(const GPM::Vec4& offset) const
