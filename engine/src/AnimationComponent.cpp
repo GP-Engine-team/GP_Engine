@@ -49,17 +49,17 @@ void AnimationComponent::updateToSystem() noexcept
     }
 }
 
-void AnimationComponent::update(float dt)
+void AnimationComponent::update(float deltaTime)
 {
     if (m_currentAnimation && isComplete())
     {
-        m_currentTime += m_currentAnimation->getTicksPerSecond() * dt * m_timeScale;
+        m_currentTime += deltaTime * m_timeScale;
         m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
 
         //if (m_nextAnimation != nullptr)
         //{
         //    m_nextAnimTime += m_nextAnimation->getTicksPerSecond() * dt * m_timeScale;
-        //    m_nextAnimTime = fmod(m_nextAnimTime, m_nextAnimation->getDuration());
+        //    m_nextAnimTime = fmod(m_nextAnimTime, m_nextAnimation->getNbTicks());
         //}
 
         calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
@@ -108,7 +108,7 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
 
     if (bone)
     {
-        bone->update(m_currentTime);
+        bone->update(m_currentTime * 1000.f /* to milliseconds */);
         nodeTransform = bone->getLocalTransform();
     }
 

@@ -27,14 +27,15 @@ private:
     //RFKField() Animation*                                    m_nextAnimation    = nullptr;
     class Model*                                             m_model            = nullptr;
     RFKField(Inspect("setSkin"), Serialize()) Skin*          m_skin             = nullptr;
-    RFKField(Inspect(), Serialize()) float                   m_currentTime = 0.f;
+    RFKField(Inspect(), Serialize()) float                   m_currentTime = 0.f; // in seconds
     //RFKField(Inspect(), Serialize()) float                   m_nextAnimTime = 0.f;
-    RFKField(Inspect(), Serialize()) float                   m_timeScale = 30.f;
+    RFKField(Inspect(), Serialize()) float                   m_timeScale = 1.f;
 
     //float blendAlpha = 0.f;
 
 public:
     std::vector<GPM::Mat4> m_finalBoneMatrices;
+    bool                   shouldLoop = true;
 
 public:
     AnimationComponent(class GameObject & owner) noexcept;

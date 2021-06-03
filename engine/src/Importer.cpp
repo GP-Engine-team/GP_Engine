@@ -1158,9 +1158,9 @@ void GPE::writeAnimationFile(const char* dst, const Animation::CreateArgs& arg)
     fwrite(&header, sizeof(header), 1, pFile); // header
     GPE::BinarySaver saver;
     saver.file = pFile;
-    GPE::save(saver, arg.m_duration, nullptr);
-    GPE::save(saver, arg.m_ticksPerSecond, nullptr);
-    GPE::save(saver, arg.m_bones, nullptr);
+    GPE::save(saver, arg.duration, nullptr);
+    GPE::save(saver, arg.nbTicksPerSecond, nullptr);
+    GPE::save(saver, arg.bones, nullptr);
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
@@ -1183,9 +1183,9 @@ Animation::CreateArgs GPE::readAnimationFile(const char* src)
      fread(&header, sizeof(header), 1, pFile);
      GPE::BinaryLoader loader;
      loader.file = pFile;
-     GPE::load(loader, arg.m_duration, nullptr);
-     GPE::load(loader, arg.m_ticksPerSecond, nullptr);
-     GPE::load(loader, arg.m_bones, nullptr);
+     GPE::load(loader, arg.duration, nullptr);
+     GPE::load(loader, arg.nbTicksPerSecond, nullptr);
+     GPE::load(loader, arg.bones, nullptr);
 
 
     fclose(pFile);

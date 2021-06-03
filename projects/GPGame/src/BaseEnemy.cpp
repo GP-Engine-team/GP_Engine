@@ -72,7 +72,7 @@ void BaseEnemy::update(double deltaTime)
                 GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
                 if (anim)
                 {
-                     animComp->playAnimation(anim);
+                    animComp->playAnimation(anim);
                     m_animDeathCounterMax = anim->getDuration();
                 }
             }

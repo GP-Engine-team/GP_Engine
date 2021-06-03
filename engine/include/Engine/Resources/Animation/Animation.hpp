@@ -24,13 +24,13 @@ public:
     {
         CreateArgs() = default;
         CreateArgs(const aiAnimation* aiAnim);
-        float             m_duration;
-        int               m_ticksPerSecond;
-        std::vector<Bone> m_bones; 
+        float             duration;
+        int               nbTicksPerSecond;
+        std::vector<Bone> bones; 
     };
 
 private:
-    float                                      m_duration;
+    float                                      m_duration; // in milliseconds
     int                                        m_ticksPerSecond;
     std::vector<Bone>                          m_bones;
 
@@ -47,7 +47,11 @@ public:
 
 public:
     GETTER_BY_VALUE(TicksPerSecond, m_ticksPerSecond);
-    GETTER_BY_VALUE(Duration, m_duration);
+    GETTER_BY_VALUE(DurationInMs, m_duration);
+    inline float getDuration() const
+    {
+        return m_duration / 1000.f;
+    }
 };
 
 } // namespace GPE

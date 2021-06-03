@@ -18,15 +18,15 @@ Animation::Animation(const aiAnimation* aiAnim)
 
 Animation::Animation(const CreateArgs& args)
 {
-    m_bones = args.m_bones;
-    m_duration = args.m_duration;
-    m_ticksPerSecond = args.m_ticksPerSecond;
+    m_bones = args.bones;
+    m_duration       = args.duration;
+    m_ticksPerSecond = args.nbTicksPerSecond;
 }
 
 Animation::CreateArgs::CreateArgs(const aiAnimation* aiAnim)
 {
-    m_duration       = aiAnim->mDuration;
-    m_ticksPerSecond = aiAnim->mTicksPerSecond;
+    duration         = aiAnim->mDuration;
+    nbTicksPerSecond = aiAnim->mTicksPerSecond;
 
     int size = aiAnim->mNumChannels;
 
@@ -36,7 +36,7 @@ Animation::CreateArgs::CreateArgs(const aiAnimation* aiAnim)
         aiNodeAnim* channel  = aiAnim->mChannels[i];
         std::string boneName = channel->mNodeName.data;
 
-        m_bones.push_back(Bone{std::string(channel->mNodeName.data), channel});
+        bones.push_back(Bone{std::string(channel->mNodeName.data), channel});
     }
 }
 
