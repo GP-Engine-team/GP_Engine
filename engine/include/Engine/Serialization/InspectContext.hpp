@@ -29,6 +29,9 @@ public:
     void startProperty(const char* name, float indentLength = 16.f);
     void endProperty();
 
+    void startPropertyGroup(const char* name, float indentLength = 16.f);
+    void endPropertyGroup();
+
     void setDirty();
     void setDirty(bool shouldBecomeDirty);
     bool isDirty() const;

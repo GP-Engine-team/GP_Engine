@@ -13,9 +13,9 @@ void inspect(GPE::InspectContext& context, T& inspected)
 template <typename T>
 void inspect(GPE::InspectContext& context, T& inspected, const char* name)
 {
-    context.startProperty(name);
+    context.startPropertyGroup(name);
     inspected.inspect(context);
-    context.endProperty();
+    context.endPropertyGroup();
 }
 
 template <typename T>

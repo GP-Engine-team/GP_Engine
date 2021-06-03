@@ -325,6 +325,9 @@
     <ClCompile Include="src\Serialization\Separator.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Serialization\DefaultInspect.cpp">
+      <Filter>src\Serialization</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
@@ -844,6 +847,9 @@
       <Filter>include\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Serialization\Separator.hpp">
+      <Filter>include\Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\DefaultInspect.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
   </ItemGroup>
