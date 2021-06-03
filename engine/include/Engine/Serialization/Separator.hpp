@@ -9,10 +9,10 @@
 
 struct RFKStruct(PropertySettings(rfk::EEntityKind::Field)) Separator : public rfk::Property
 {
-    bool startSeparation = true;
-    bool endSeparation   = true;
+    bool startSeparation;
+    bool endSeparation;
 
-    Separator(bool startSeparation, bool endSeparation) : startSeparation(startSeparation), endSeparation(endSeparation)
+    Separator(bool startSeparation = true, bool endSeparation = false) : startSeparation(startSeparation), endSeparation(endSeparation)
     {
     
     }

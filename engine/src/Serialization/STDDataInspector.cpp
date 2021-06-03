@@ -29,39 +29,20 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, int& inspected, c
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, float& inspected, const rfk::Field& info)
 {
-    Separator const* separator = info.getProperty<Separator>();
-    if (separator != nullptr && separator->startSeparation)
+    context.applyProperties(info, [&]() 
     {
-        ImGui::Separator();
-    }
-
-    bool isReadOnly = info.getProperty<ReadOnly>() != nullptr;
-    if (isReadOnly)
-    {
-        ImGui::PushEnabled(false);
-    }
-
-    Slider const* property = info.getProperty<Slider>();
-    if (property)
-    {
-        context.startProperty(info.name.c_str());
-        context.setDirty(ImGui::SliderFloat(info.name.c_str(), &inspected, property->min, property->max));
-        context.endProperty();
-    }
-    else
-    {
-        GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-    }
-
-    if (isReadOnly)
-    {
-        ImGui::PopEnabled();
-    }
-
-    if (separator != nullptr && separator->endSeparation)
-    {
-        ImGui::Separator();
-    }
+        Slider const* property = info.getProperty<Slider>();
+        if (property)
+        {
+            context.startProperty(info.name.c_str());
+            context.setDirty(ImGui::SliderFloat(info.name.c_str(), &inspected, property->min, property->max));
+            context.endProperty();
+        }
+        else
+        {
+            GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+        }
+    });
 }
 
 template <>
@@ -82,7 +63,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::string& insp
     char             buffer[bufferSize];
     strcpy_s(buffer, inspected.c_str());
     context.setDirty(ImGui::InputText("", buffer, bufferSize));
-    inspected       = buffer;
+    inspected = buffer;
 
     context.endProperty();
 }
