@@ -23,8 +23,18 @@ CharacterController::CharacterController(GameObject& owner) noexcept : Component
 
     desc.height   = m_height;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1.f, 1.f, .0f);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(owner.getTransform().getGlobalPosition() + m_center);
-    desc.radius   = m_radius;
+
+    if (isnan(owner.getTransform().getGlobalPosition().length()))
+    {
+        desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(m_center);
+    }
+
+    else
+    {
+        desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(owner.getTransform().getGlobalPosition() + m_center);
+    }
+
+    desc.radius = m_radius;
 
     if (m_contactOffset <= 0)
     {
@@ -50,16 +60,33 @@ void CharacterController::onPostLoad() noexcept
 
     GPM::Vec3 scale = getOwner().getTransform().getGlobalScale();
 
+    if (isnan(scale.length()))
+    {
+        scale = {1, 1, 1};
+    }
+
     PxCapsuleControllerDesc desc;
 
     desc.height   = scale.y + m_height;
     desc.material = Engine::getInstance()->physXSystem.physics->createMaterial(1, 1, 0);
-    desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
-    desc.radius   = std::max(scale.x, scale.z) + m_radius;
+
+    if (isnan(getOwner().getTransform().getGlobalPosition().length()))
+    {
+        desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(m_center);
+    }
+
+    else
+    {
+        desc.position = PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center);
+    }
+
+    desc.radius = std::max(scale.x, scale.z) + m_radius;
+
     if (m_contactOffset <= 0)
     {
         m_contactOffset = 0.1f;
     }
+
     desc.contactOffset = m_contactOffset;
 
     PxControllerManager* manager = Engine::getInstance()->physXSystem.manager;
@@ -75,6 +102,11 @@ void CharacterController::onPostLoad() noexcept
 
 void CharacterController::update(double deltaTime) noexcept
 {
+    if (!m_running)
+    {
+        m_running = true;
+    }
+
     GameObject*         owner = &getOwner();
     PxControllerFilters filters;
     updateForce();
@@ -248,7 +280,7 @@ void CharacterController::updateTransform()
 
 void CharacterController::updatePosition()
 {
-    if (!controller)
+    if (!controller || m_running)
         return;
 
     GPM::Vec3 oldPos;
