@@ -20,6 +20,8 @@ private:
     size_t            indentStartIndex = 2;
 
 public:
+    class GameObject* lastComponentOwner = nullptr;
+
     InspectContext();
     ~InspectContext();
     float startingWidth = 0.f;

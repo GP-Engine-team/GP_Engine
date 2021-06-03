@@ -12,6 +12,7 @@
 #include "ECS/System/PhysXSystem.hpp"
 #include "ECS/System/SoundSystem.hpp"
 #include "ECS/System/TimeSystem.hpp"
+#include "ECS/System/AnimationSystem.hpp"
 #include "Resources/ResourcesManagerType.hpp"
 #include "Resources/SceneManager.hpp"
 
@@ -35,16 +36,18 @@ protected:
     void exportConfig();
 
 public:
-    Window                window;
-    Renderer              renderer;
-    TimeSystem            timeSystem;
-    InputManager          inputManager;
-    ResourceManagerType   resourceManager;
-    SceneManager          sceneManager;
-    PhysXSystem           physXSystem;
-    SoundSystem           soundSystem;
-    std::function<void()> exit;
-    bool                  isRunning = true;
+    Window                  window;
+    Renderer                renderer;
+    TimeSystem              timeSystem;
+    InputManager            inputManager;
+    ResourceManagerType     resourceManager;
+    AnimResourceManagerType animResourcesManager;
+    SceneManager            sceneManager;
+    PhysXSystem             physXSystem;
+    SoundSystem             soundSystem;
+    AnimationSystem         animSystem;
+    std::function<void()>   exit;
+    bool                    isRunning = true;
 
 protected:
     Engine()

@@ -7,10 +7,18 @@
 #include "GPM/Shape3D/AABB.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
 #include <Engine/Engine.hpp>
+#include <Engine/Resources/Animation/Animation.hpp>
+#include <Engine/Resources/Animation/Skin.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 
 #include <glad/glad.h>
 
 #include <limits>
+#include <filesystem>
+
+#include <assimp/Importer.hpp>  // C++ importer interface
+#include <assimp/postprocess.h> // Post processing flags
+#include <assimp/scene.h>       // Output data structure
 
 using namespace GPE;
 using namespace GPM;
@@ -583,6 +591,17 @@ Mesh::CreateIndiceBufferArg Mesh::createCylindre(unsigned int prescision) noexce
     mesh.iBuffer.push_back(Indice{prescision + 1, prescision + 1, prescision + 1});
 
     return convert(mesh);
+}
+
+void Mesh::bindSkin(Skin& skin)
+{
+    glBindVertexArray(m_buffers.vao);
+
+    skin.uploadBufferData();
+
+    skin.setVertexAttribArray(4, 5);
+
+    glBindVertexArray(0);
 }
 
 template <>

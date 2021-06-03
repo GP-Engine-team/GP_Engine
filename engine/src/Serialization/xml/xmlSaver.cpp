@@ -31,76 +31,76 @@ namespace GPE
 {
 
 template <>
-void save(XmlSaver& context, const std::string& inspected, const rfk::Field& info)
+void save(XmlSaver& context, const std::string& saved, const rfk::Field& info)
 {
-    context.saveAsString(inspected, info);
+    context.saveAsString(saved, info);
 }
 
 template <>
-void save(XmlSaver& context, const std::string& inspected, const XmlSaver::SaveInfo& info)
+void save(XmlSaver& context, const std::string& saved, const XmlSaver::SaveInfo& info)
 {
-    context.saveAsString(inspected, info);
+    context.saveAsString(saved, info);
 }
 
 template <>
-void save(XmlSaver& context, const int& inspected, const rfk::Field& info)
+void save(XmlSaver& context, const int& saved, const rfk::Field& info)
 {
-    context.saveAsString(std::to_string(inspected), info);
+    context.saveAsString(std::to_string(saved), info);
 }
 
 template <>
-void save(XmlSaver& context, const int& inspected, const XmlSaver::SaveInfo& info)
+void save(XmlSaver& context, const int& saved, const XmlSaver::SaveInfo& info)
 {
-    context.saveAsString(std::to_string(inspected), info);
+    context.saveAsString(std::to_string(saved), info);
 }
 
 template <>
-void save(XmlSaver& context, const unsigned int& inspected, const rfk::Field& info)
+void save(XmlSaver& context, const unsigned int& saved, const rfk::Field& info)
 {
-    context.saveAsString(std::to_string(inspected), info);
+    context.saveAsString(std::to_string(saved), info);
 }
 
 template <>
-void save(XmlSaver& context, const size_t& inspected, const XmlSaver::SaveInfo& info)
+void save(XmlSaver& context, const size_t& saved, const XmlSaver::SaveInfo& info)
 {
-    context.saveAsString(std::to_string(inspected), info);
+    context.saveAsString(std::to_string(saved), info);
 }
 
 template <>
-void save(XmlSaver& context, const char& inspected, const rfk::Field& info)
+void save(XmlSaver& context, const char& saved, const rfk::Field& info)
 {
-    context.saveAsString(std::string(1, inspected), info);
+    context.saveAsString(std::string(1, saved), info);
 }
 
 template <>
-void save(XmlSaver& context, const float& inspected, const rfk::Field& info)
+void save(XmlSaver& context, const float& saved, const rfk::Field& info)
 {
-    context.saveAsString(std::to_string(inspected), info);
+    context.saveAsString(std::to_string(saved), info);
 }
 
 template <>
-void save(XmlSaver& context, const bool& inspected, const rfk::Field& info)
+void save(XmlSaver& context, const bool& saved, const rfk::Field& info)
 {
-    context.saveAsString(inspected ? "true" : "false", info);
+    context.saveAsString(saved ? "true" : "false", info);
 }
 
 template <>
-void save(XmlSaver& context, const bool& inspected, const XmlSaver::SaveInfo& info)
+void save(XmlSaver& context, const bool& saved, const XmlSaver::SaveInfo& info)
 {
-    context.saveAsString(inspected ? "true" : "false", info);
+    context.saveAsString(saved ? "true" : "false", info);
 }
 
 template <>
-void save(XmlSaver& context, rfk::Object* const & inspected, const rfk::Field& info)
+void save(XmlSaver& context, rfk::Object* const & saved, const rfk::Field& info)
 {
-    auto i = reinterpret_cast<std::uintptr_t>(inspected);
+    auto i = reinterpret_cast<std::uintptr_t>(saved);
     context.saveAsString(std::to_string(i), info);
 }
 
 template <>
-void save(XmlSaver& context, rfk::Object* const& inspected, const XmlSaver::SaveInfo& info)
+void save(XmlSaver& context, rfk::Object* const& saved, const XmlSaver::SaveInfo& info)
 {
-    auto i = reinterpret_cast<std::uintptr_t>(inspected);
+    auto i = reinterpret_cast<std::uintptr_t>(saved);
     context.saveAsString(std::to_string(i), info);
 }
 

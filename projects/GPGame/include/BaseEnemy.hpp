@@ -26,14 +26,17 @@ namespace GPG RFKNamespace()
     {
     protected:
         RFKField() BaseCharacter*              m_target               = nullptr;
-        RFKField(Serialize()) float            m_animDeapthCounter    = 0.f;
-        RFKField(Inspect(), Serialize()) float m_animDeapthCounterMax = 3.f;
+        RFKField(Serialize()) float            m_animDeathCounter    = 0.f;
+        RFKField(Inspect(), Serialize()) float m_animDeathCounterMax = 3.f;
 
         RFKField(Serialize()) float                m_attackCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float     m_attackCounterMax = 3.f;
         RFKField(Inspect(), Serialize()) float     m_radiusAttack     = 3.f;
         RFKField(Inspect(), Serialize()) float     m_dammage          = 3.f;
         RFKField(Serialize()) GPE::AudioComponent* source             = nullptr;
+
+        RFKField(Inspect(), Serialize())
+        float disappearanceSpeed = 10.f;
 
     public:
         BaseEnemy() noexcept = default;

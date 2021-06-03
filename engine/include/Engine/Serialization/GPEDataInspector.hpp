@@ -7,6 +7,9 @@
 
 namespace GPE
 {
+class Skin;
+class Skeleton;
+class Animation;
 template <typename T>
 struct Linker;
 
@@ -84,9 +87,25 @@ void DataInspector::inspect(InspectContext& context, class Scene*& inspected, co
 template <>
 void DataInspector::inspect(InspectContext& context, class Scene*& inspected, const char* name);
 
+template <>
+void DataInspector::inspect<Skin*>(InspectContext& context, Skin*& inspected, const rfk::Field& info);
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Skin*& inspected, const char* name);
+
+template <>
+void DataInspector::inspect<Skeleton*>(InspectContext& context, Skeleton*& inspected, const rfk::Field& info);
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Skeleton*& inspected, const char* name);
+
+template <>
+void DataInspector::inspect<Animation*>(InspectContext& context, Animation*& inspected, const rfk::Field& info);
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Animation*& inspected, const char* name);
+
 } // namespace GPE
 
-//#include <Engine/Intermediate/GameObject.hpp>
-//#include <imgui/imgui.h>
-
 #include <Engine/Serialization/GPEDataInspector.inl>
+

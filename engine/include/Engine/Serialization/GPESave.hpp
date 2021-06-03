@@ -10,6 +10,9 @@ class Mesh;
 class Shader;
 class Material;
 class Texture;
+class Skeleton;
+class Skin;
+class Animation;
 struct ColorRGBA;
 
 template <typename T>
@@ -52,30 +55,28 @@ template <>
 void save<GPE::GameObject>(XmlSaver& context, const GPE::Linker<GPE::GameObject>& data, const XmlSaver::SaveInfo& info);
 
 template <>
-void save(XmlSaver& context, Shader* const& data, const rfk::Field& info);
-
-template <>
 void save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info);
-
-template <>
-void save(XmlSaver& context, Material* const& data, const rfk::Field& info);
 
 template <>
 void save(XmlSaver& context, Material* const& data, const XmlSaver::SaveInfo& info);
 
 template <>
-void save(XmlSaver& context, Mesh* const& data, const rfk::Field& info);
-
-template <>
 void save(XmlSaver& context, Mesh* const& data, const XmlSaver::SaveInfo& info);
-
-template <>
-void save(XmlSaver& context, Texture* const& data, const rfk::Field& info);
 
 template <>
 void save(XmlSaver& context, Texture* const& data, const XmlSaver::SaveInfo& info);
 
+template <>
+void save(XmlSaver& context, Animation* const& data, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, Skeleton* const& data, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, Skin* const& data, const XmlSaver::SaveInfo& info);
+
 } // namespace GPE
 
-#include <Engine/Serialization/GPESave.inl>
 #include <string>
+#include <Engine/Serialization/GPESave.inl>
+
