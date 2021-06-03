@@ -119,7 +119,8 @@ private:
      * @param fragmentCode
      * @return bool true is error happend
      */
-    bool loadFile(const char* vertexPath, std::string& vertexCode, const char* fragmentPath, std::string& fragmentCode);
+    static bool loadFile(const char* vertexPath, std::string& vertexCode, const char* fragmentPath,
+                         std::string& fragmentCode);
 
     /**
      * @brief Compile
@@ -127,9 +128,9 @@ private:
      * @param vertexCode
      * @param fragmentCode
      */
-    void compile(std::string& vertexCode, std::string& fragmentCode);
-    void compileVertex(std::string& vertexCode);
-    void compileFragment(std::string& fragmentCode);
+    static unsigned int compile(std::string& vertexCode, std::string& fragmentCode);
+    static void         compileVertex(std::string& vertexCode);
+    static void         compileFragment(std::string& fragmentCode);
 
     /**
      * @brief Use log function for checking shader compilation/linking errors
@@ -137,10 +138,10 @@ private:
      * @param shader
      * @param type
      */
-    void checkCompileErrors(unsigned int shader, EType type);
+    static bool checkCompileErrors(unsigned int shader, EType type);
 
-    void loadAndCompile(const char* vertexPath, const char* fragmentPath, uint16_t featureMask = 0);
-    void release();
+    static unsigned int loadAndCompile(const char* vertexPath, const char* fragmentPath, uint16_t featureMask = 0);
+    void                release();
 };
 
 #include "Shader.inl"

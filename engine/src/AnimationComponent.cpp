@@ -23,6 +23,10 @@ File_GENERATED
 AnimationComponent::AnimationComponent(GameObject& owner) noexcept : Component(owner)
 {
     updateToSystem();
+
+    m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
+    for (int i = 0; i < m_skeleton->getNbBones(); i++)
+        m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
 }
 
 AnimationComponent::~AnimationComponent() noexcept
@@ -52,14 +56,20 @@ void AnimationComponent::update(float dt)
         m_currentTime += m_currentAnimation->getTicksPerSecond() * dt * m_timeScale;
         m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
 
-        if (m_nextAnimation != nullptr)
-        {
-            m_nextAnimTime += m_nextAnimation->getTicksPerSecond() * dt * m_timeScale;
-            m_nextAnimTime = fmod(m_nextAnimTime, m_nextAnimation->getDuration());
-        }
+        //if (m_nextAnimation != nullptr)
+        //{
+        //    m_nextAnimTime += m_nextAnimation->getTicksPerSecond() * dt * m_timeScale;
+        //    m_nextAnimTime = fmod(m_nextAnimTime, m_nextAnimation->getDuration());
+        //}
 
         calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
     }
+}
+
+void AnimationComponent::removeAnimData()
+{
+    m_model->setAnimComponent(nullptr);
+    //m_finalBoneMatrices.clear();
 }
 
 void AnimationComponent::updateAnimData(bool wasComplete)
@@ -102,16 +112,16 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
         nodeTransform = bone->getLocalTransform();
     }
 
-    if (m_nextAnimation != nullptr)
-    {
-        Bone* newAnimBone = m_nextAnimation->findBone(node.name);
+    //if (m_nextAnimation != nullptr)
+    //{
+    //    Bone* newAnimBone = m_nextAnimation->findBone(node.name);
 
-        if (newAnimBone)
-        {
-            newAnimBone->update(m_currentTime);
-            nodeTransform = newAnimBone->getLocalTransform();
-        }
-    }
+    //    if (newAnimBone)
+    //    {
+    //        newAnimBone->update(m_currentTime);
+    //        nodeTransform = newAnimBone->getLocalTransform();
+    //    }
+    //}
 
     GPM::Mat4 globalTransformation = parentTransform * nodeTransform;
 
@@ -135,6 +145,11 @@ void AnimationComponent::setSkeleton(Skeleton* newSkeleton)
     if (newSkeleton == m_skeleton)
         return;
 
+    if (isComplete() && newSkeleton == nullptr)
+    {
+        removeAnimData();
+    }
+
     bool wasComplete = isComplete();
     m_skeleton = newSkeleton;
     updateAnimData(wasComplete);
@@ -145,6 +160,11 @@ void AnimationComponent::setModel(Model* newModel)
     if (m_model == newModel)
         return;
 
+    if (isComplete() && newModel == nullptr)
+    {
+        removeAnimData();
+    }
+
     bool wasComplete = isComplete();
     m_model = newModel;
     updateAnimData(wasComplete);
@@ -154,6 +174,11 @@ void AnimationComponent::setSkin(Skin* skin)
 {
     if (skin == m_skin)
         return;
+
+    if (isComplete() && m_skin == nullptr)
+    {
+        removeAnimData();
+    }
 
     bool wasComplete = isComplete();
     m_skin = skin;

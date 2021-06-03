@@ -46,7 +46,10 @@ void EditorStartup::initializeDefaultInputs() const
 }
 
 EditorStartup::EditorStartup()
-    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {}},
+    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
+      {
+          m_engine->physXSystem.advance(fixedDeltaTime);
+      }},
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
           m_engine->sceneManager.update();
           m_engine->inputManager.processInput();
@@ -56,13 +59,16 @@ EditorStartup::EditorStartup()
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
       }},
-      m_render{[&]() {
+      m_render{[&]()
+      {
           m_editor.render();
           m_engine->renderer.swapBuffer();
       }},
-      m_editor{initDearImGuiProxy(GPE::Engine::getInstance()->window.getGLFWWindow()),
-               GPE::Engine::getInstance()->sceneManager.setCurrentScene("Default scene")},
-      m_reloadableCpp{gameDllPath}, m_game{nullptr}, m_engine{GPE::Engine::getInstance()}
+      m_editor       {initDearImGuiProxy(GPE::Engine::getInstance()->window.getGLFWWindow()),
+                      GPE::Engine::getInstance()->sceneManager.setCurrentScene("Default scene")},
+      m_reloadableCpp{gameDllPath},
+      m_game         {nullptr},
+      m_engine       {GPE::Engine::getInstance()}
 {
     m_editor.reloadableCpp = &m_reloadableCpp;
 
@@ -150,6 +156,9 @@ void EditorStartup::openGame()
     // Ending the game must not close the whole engine when the editor is opened
     // The editor handles exiting the whole application itself
     m_engine->exit = [&]() { m_editor.releaseGameInputs(); };
+
+    // If the editor was not already shown, show it after the game is fully instanciated
+    glfwMaximizeWindow(GPE::Engine::getInstance()->window.getGLFWWindow());
 }
 
 void EditorStartup::closeGame()

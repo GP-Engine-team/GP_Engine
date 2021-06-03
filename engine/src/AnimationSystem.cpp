@@ -24,6 +24,9 @@ void AnimationSystem::addComponent(class AnimationComponent* animationComponent)
 void AnimationSystem::removeComponent(class AnimationComponent* animationComponent) noexcept
 {
     auto it = std::find(components.begin(), components.end(), animationComponent);
-    std::swap(components.back(), *it);
-    components.pop_back();
+    if (it != components.end())
+    {
+        std::swap(components.back(), *it);
+        components.pop_back();
+    }
 }

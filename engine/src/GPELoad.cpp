@@ -41,17 +41,25 @@ void load(XmlLoader& context, Prefab*& data, const XmlLoader::LoadInfo& info)
         std::string path;
         GPE::load(context, path, XmlLoader::LoadInfo{info.name, info.typeName, 0});
 
-        GameObject* go = nullptr;
-        if (SharedPrefab* pSPref = Engine::getInstance()->resourceManager.get<SharedPrefab>(path.c_str()))
+        if (path.size())
         {
-            data = &pSPref->pref;
-            ++pSPref->instanceCounter;
+            GameObject* go = nullptr;
+            if (SharedPrefab* pSPref = Engine::getInstance()->resourceManager.get<SharedPrefab>(path.c_str()))
+            {
+                data = &pSPref->pref;
+                ++pSPref->instanceCounter;
+            }
+            else
+            {
+                SharedPrefab& sPref =
+                    Engine::getInstance()->resourceManager.add<SharedPrefab>(path.c_str(), path.c_str());
+                data = &sPref.pref;
+                ++sPref.instanceCounter;
+            }
         }
         else
         {
-            SharedPrefab& sPref = Engine::getInstance()->resourceManager.add<SharedPrefab>(path.c_str(), path.c_str());
-            data                = &sPref.pref;
-            ++sPref.instanceCounter;
+            data = nullptr;
         }
         context.pop();
     }

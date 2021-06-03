@@ -75,6 +75,8 @@ void CharacterController::onPostLoad() noexcept
 
 void CharacterController::update(double deltaTime) noexcept
 {
+    return;
+
     GameObject*         owner = &getOwner();
     PxControllerFilters filters;
     updateForce();

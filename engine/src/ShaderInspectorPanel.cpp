@@ -45,16 +45,17 @@ File_GENERATED
             m_isDirty = true;
         }
 
-        uint8_t featureMask        = m_config.featureMask;
-        bool    blinPhongFlag      = m_config.featureMask & LIGHT_BLIN_PHONG;
-        bool    skyboxFlag         = m_config.featureMask & SKYBOX;
-        bool    ambiantOnlyFlag    = m_config.featureMask & AMBIANTE_COLOR_ONLY;
-        bool    scaleTimeAccFlag   = m_config.featureMask & SCALE_TIME_ACC;
-        bool    unscaleTimeAccFlag = m_config.featureMask & UNSCALED_TIME_ACC;
-        bool    projectionMatrix   = m_config.featureMask & PROJECTION_MATRIX;
-        bool    viewMatrix         = m_config.featureMask & VIEW_MATRIX;
-        bool    PVMMatrix          = m_config.featureMask & PROJECTION_VIEW_MODEL_MATRIX;
-        bool    animMask           = m_config.featureMask & ANIMATION_MASK;
+        uint16_t featureMask        = m_config.featureMask;
+        bool     blinPhongFlag      = m_config.featureMask & LIGHT_BLIN_PHONG;
+        bool     skyboxFlag         = m_config.featureMask & SKYBOX;
+        bool     fog                = m_config.featureMask & FOG;
+        bool     ambiantOnlyFlag    = m_config.featureMask & AMBIANTE_COLOR_ONLY;
+        bool     scaleTimeAccFlag   = m_config.featureMask & SCALE_TIME_ACC;
+        bool     unscaleTimeAccFlag = m_config.featureMask & UNSCALED_TIME_ACC;
+        bool     projectionMatrix   = m_config.featureMask & PROJECTION_MATRIX;
+        bool     viewMatrix         = m_config.featureMask & VIEW_MATRIX;
+        bool     PVMMatrix          = m_config.featureMask & PROJECTION_VIEW_MODEL_MATRIX;
+        bool     animMask           = m_config.featureMask & ANIMATION_MASK;
 
         ImGui::PushEnabled(!ambiantOnlyFlag);
         if (ImGui::Checkbox("LIGHT BLIN PHONG", &blinPhongFlag))
@@ -67,6 +68,12 @@ File_GENERATED
         if (ImGui::Checkbox("SKYBOX", &skyboxFlag))
         {
             m_config.featureMask ^= SKYBOX;
+            m_isDirty = true;
+        }
+
+        if (ImGui::Checkbox("FOG", &fog))
+        {
+            m_config.featureMask ^= FOG;
             m_isDirty = true;
         }
 
@@ -120,10 +127,8 @@ File_GENERATED
         {
             writeShaderFile(m_path.c_str(), m_config);
 
-            std::filesystem::path fsPath = m_path;
-
             // Update loaded resource
-            if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(fsPath.filename().string()))
+            if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(m_path))
             {
                 pShader->reload((std::filesystem::current_path() / m_config.vertexShaderPath).string().c_str(),
                                 (std::filesystem::current_path() / m_config.fragmentShaderPath).string().c_str(),
@@ -132,8 +137,18 @@ File_GENERATED
 
             m_isDirty = false;
         }
-
         ImGui::PopEnabled();
+        ImGui::SameLine();
+        if (ImGui::Button("Reload"))
+        {
+            // Update loaded resource
+            if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(m_path))
+            {
+                pShader->reload((std::filesystem::current_path() / m_config.vertexShaderPath).string().c_str(),
+                                (std::filesystem::current_path() / m_config.fragmentShaderPath).string().c_str(),
+                                m_config.featureMask);
+            }
+        }
     }
 
 } // End of namespace GPE

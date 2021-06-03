@@ -253,6 +253,7 @@ void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes
                 context.setDirty();
             }
         }
+        ImGui::EndDragDropTarget();
     }
 }
 

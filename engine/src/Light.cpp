@@ -46,6 +46,8 @@ void Light::inspect(InspectContext& context)
         DataInspector::inspect(context, m_shadowProperties.PCF, "PCF");
         // DataInspector::inspect(context, m_shadowProperties.bias, "Bias");
         DataInspector::inspect(context, m_shadowProperties.size, "Size");
+        DataInspector::inspect(context, m_shadowProperties.near, "Near");
+        DataInspector::inspect(context, m_shadowProperties.far, "Far");
     }
     ImGui::PopEnabled();
 }

@@ -25,5 +25,6 @@ GPM::Quat PhysXSystem::PxQuatToGPMQuat(const physx::PxQuat& quaternion) noexcept
 
 physx::PxQuat PhysXSystem::GPMQuatToPxQuat(const GPM::Quat& quaternion) noexcept
 {
-    return physx::PxQuat{quaternion.x, quaternion.y, quaternion.z, quaternion.w};
+    const GPM::Quat normalizedQuat = quaternion.normalized();
+    return physx::PxQuat{normalizedQuat.x, normalizedQuat.y, normalizedQuat.z, normalizedQuat.w};
 }
