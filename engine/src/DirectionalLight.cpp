@@ -39,7 +39,8 @@ void DirectionalLight::inspect(GPE::InspectContext& context)
 {
     Light::inspect(context);
 
-    if (DataInspector::inspect(context, m_direction, "Direction"))
+    DataInspector::inspect(context, m_direction, "Direction");
+    if (context.isDirty())
     {
         m_direction.normalize();
     }
