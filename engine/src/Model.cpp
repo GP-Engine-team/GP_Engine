@@ -15,6 +15,8 @@ File_GENERATED
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Shader.hpp>
 #include <Engine/Resources/Texture.hpp>
+#include <Engine/Resources/Animation/Skeleton.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <GPM/Matrix3.hpp>
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
@@ -25,7 +27,7 @@ File_GENERATED
     using namespace GPE;
 using namespace GPM;
 
-bool SubModel::isValide()
+bool SubModel::isValid() const
 {
     // TODO: remove diffuse texture check
     return pModel && pMesh && pShader && pMaterial && pMaterial->getDiffuseTexture();
@@ -42,6 +44,11 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
 Model::~Model()
 {
     setActive(false);
+    if (m_animComponent != nullptr)
+    {
+        m_animComponent->setModel(nullptr);
+        m_animComponent = nullptr;
+    }
 }
 
 Model::Model(GameObject& owner) : Model(owner, CreateArg{})
@@ -72,7 +79,7 @@ void Model::moveTowardScene(class Scene& newOwner)
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspected)
 {
-    const bool isPreviousElementVoid = !inspected.isValide();
+    const bool isPreviousElementVoid = !inspected.isValid();
 
     inspect(context, inspected.pMesh, "Mesh");
     inspect(context, inspected.pShader, "Shader");
@@ -80,7 +87,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
     ImGui::Checkbox("Cast shadow", &inspected.castShadow);
-    if (ImGui::Checkbox("Is transparent", &inspected.isTransparent) && inspected.isValide())
+    if (ImGui::Checkbox("Is transparent", &inspected.isTransparent) && inspected.isValid())
     {
         // update it
         inspected.isTransparent = !inspected.isTransparent;
@@ -96,7 +103,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
     }
 
     // This operation check if element must be added or remove from the the scene render system
-    if (isPreviousElementVoid != !inspected.isValide())
+    if (isPreviousElementVoid != !inspected.isValid())
     {
         if (isPreviousElementVoid)
         {
@@ -192,7 +199,7 @@ void Model::addSubModel(const SubModel::CreateArg& arg)
 {
     SubModel& newSsub = m_subModels.emplace_back(*this, arg);
 
-    if (newSsub.isValide())
+    if (newSsub.isValid())
         getOwner().pOwnerScene->sceneRenderer.addSubModel(newSsub);
 }
 
@@ -203,7 +210,7 @@ void Model::updateToSystem() noexcept
         for (SubModel& subMesh : m_subModels)
         {
             subMesh.pModel = this;
-            if (subMesh.isValide())
+            if (subMesh.isValid())
                 getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
         }
     }
@@ -214,10 +221,39 @@ void Model::updateToSystem() noexcept
 
         for (SubModel& subMesh : m_subModels)
         {
-            if (subMesh.isValide())
+            if (subMesh.isValid())
                 getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
         }
     }
+}
+
+void Model::setAnimComponent(AnimationComponent* newAnimComp)
+{
+    m_animComponent = newAnimComp;
+}
+
+void Model::bindSkin(Skin& skin)
+{
+    for (SubModel& sub : m_subModels)
+    {
+        // We must verify if the shader implements the animation feature
+        //if (sub.pShader != nullptr && (sub.pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK)
+        //{
+            sub.pMesh->bindSkin(skin);
+        //}
+    }
+}
+
+std::vector<GPM::Mat4>& Model::getFinalBonesTransforms() const
+{
+    GPE_ASSERT(m_animComponent != nullptr,
+               "It is not possible to get the bone data if there are no animations. Check with isAnimated() first.");
+    return m_animComponent->m_finalBoneMatrices;
+}
+
+bool Model::isAnimated() const
+{
+    return m_animComponent != nullptr && m_animComponent->isComplete();
 }
 
 GPM::AABB Model::getLocalAABB()

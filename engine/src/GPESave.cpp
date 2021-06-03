@@ -99,12 +99,6 @@ void GPE::save<GPE::GameObject>(XmlSaver& context, const GPE::Linker<GPE::GameOb
 }
 
 template <>
-void save(XmlSaver& context, Shader* const& data, const rfk::Field& info)
-{
-    GPE::save(context, data, fieldToSaveInfo(info));
-}
-
-template <>
 void save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info)
 {
     if (data == nullptr)
@@ -114,12 +108,6 @@ void save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info
     {
         GPE::save(context, *name, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
     }
-}
-
-template <>
-void save(XmlSaver& context, Material* const& data, const rfk::Field& info)
-{
-    GPE::save(context, data, fieldToSaveInfo(info));
 }
 
 template <>
@@ -135,12 +123,6 @@ void save(XmlSaver& context, Material* const& data, const XmlSaver::SaveInfo& in
 }
 
 template <>
-void save(XmlSaver& context, Mesh* const& data, const rfk::Field& info)
-{
-    GPE::save(context, data, fieldToSaveInfo(info));
-}
-
-template <>
 void save(XmlSaver& context, Mesh* const& data, const XmlSaver::SaveInfo& info)
 {
     if (data == nullptr)
@@ -153,12 +135,6 @@ void save(XmlSaver& context, Mesh* const& data, const XmlSaver::SaveInfo& info)
 }
 
 template <>
-void save(XmlSaver& context, Texture* const& data, const rfk::Field& info)
-{
-    GPE::save(context, data, fieldToSaveInfo(info));
-}
-
-template <>
 void save(XmlSaver& context, Texture* const& data, const XmlSaver::SaveInfo& info)
 {
     if (data == nullptr)
@@ -167,6 +143,42 @@ void save(XmlSaver& context, Texture* const& data, const XmlSaver::SaveInfo& inf
     if (const std::string* name = GPE::Engine::getInstance()->resourceManager.getKey(data))
     {
         GPE::save(context, *name, XmlSaver::SaveInfo{"pTexture", "Texture*", 0});
+    }
+}
+
+template <>
+void save(XmlSaver& context, Animation* const& data, const XmlSaver::SaveInfo& info)
+{
+    if (data == nullptr)
+        return;
+
+    if (const std::string* name = GPE::Engine::getInstance()->animResourcesManager.getKey(data))
+    {
+        GPE::save(context, *name, info);
+    }
+}
+
+template <>
+void save(XmlSaver& context, Skeleton* const& data, const XmlSaver::SaveInfo& info)
+{
+    if (data == nullptr)
+        return;
+
+    if (const std::string* name = GPE::Engine::getInstance()->animResourcesManager.getKey(data))
+    {
+        GPE::save(context, *name, info);
+    }
+}
+
+template <>
+void save(XmlSaver& context, Skin* const& data, const XmlSaver::SaveInfo& info)
+{
+    if (data == nullptr)
+        return;
+
+    if (const std::string* name = GPE::Engine::getInstance()->animResourcesManager.getKey(data))
+    {
+        GPE::save(context, *name, info);
     }
 }
 

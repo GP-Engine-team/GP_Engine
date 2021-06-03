@@ -1,9 +1,11 @@
 ﻿#include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/ECS/Component/AudioComponent.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
+#include <Engine/Resources/Importer/Importer.hpp>
 
 #include <BaseEnemy.hpp>
 
@@ -59,11 +61,36 @@ void BaseEnemy::update(double deltaTime)
 {
     if (isDead())
     {
-        m_animDeapthCounter += float(deltaTime);
-
-        if (m_animDeapthCounter >= m_animDeapthCounterMax)
+        if (m_animDeathCounter <= 0.0f)
         {
-            getOwner().destroy();
+            GPE::AnimationComponent* animComp = m_gameObject->getComponent<GPE::AnimationComponent>();
+            if (animComp != nullptr)
+            {
+                auto& a = GPE::Engine::getInstance()->animResourcesManager.getAll<GPE::Animation>();
+                const char* src = "resources\\Animations\\ZombieDeath.GPAnimation";
+                Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src));
+                GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
+                if (anim)
+                {
+                    animComp->playAnimation(anim);
+                    animComp->shouldLoop = false;
+                    m_animDeathCounterMax = anim->getDuration();
+                }
+            }
+
+            GPE::CharacterController* controller = m_gameObject->getComponent<GPE::CharacterController>();
+            if (controller != nullptr)
+            {
+                controller->setActive(false);
+            }
+        }
+
+        m_animDeathCounter += float(deltaTime);
+
+        if (m_animDeathCounter >= m_animDeathCounterMax / 2)
+        {
+            ////getOwner().destroy();
+            m_gameObject->getTransform().translate(GPM::Vec3(0, -disappearanceSpeed * deltaTime, 0));
         }
     }
     else

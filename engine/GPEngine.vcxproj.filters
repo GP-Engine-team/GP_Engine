@@ -292,6 +292,24 @@
     <ClCompile Include="src\Linker.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Skin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Animation.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimationComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimationSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bone.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Skeleton.cpp">
+      <Filter>src</Filter>
+	 </ClCompile>
     <ClCompile Include="src\ShakeEffect.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -786,6 +804,33 @@
     <ClInclude Include="include\Engine\Resources\Linker.hpp">
       <Filter>include\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Animation\Bone.hpp">
+      <Filter>include\Resources\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Importer\AssimpUtilities.hpp">
+      <Filter>include\Resources\Importer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Animation\Animation.hpp">
+      <Filter>include\Resources\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\System\AnimationSystem.hpp">
+      <Filter>include\ECS\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\ECS\Component\AnimationComponent.hpp">
+      <Filter>include\ECS\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Animation\Skeleton.hpp">
+      <Filter>include\Resources\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Animation\Skin.hpp">
+      <Filter>include\Resources\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\binary\BinarySaver.hpp">
+      <Filter>include\Serialization\binary</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Serialization\binary\BinaryLoader.hpp">
+      <Filter>include\Serialization\binary</Filter>
+    </ClInclude>
     <ClInclude Include="third_party\imgui\imguizmo.h">
       <Filter>third_party\imgui</Filter>
     </ClInclude>
@@ -1036,6 +1081,12 @@
     </Filter>
     <Filter Include="third_party\imgui">
       <UniqueIdentifier>{6dfd1f98-6fbb-49fc-b799-938084eb316d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Resources\Animation">
+      <UniqueIdentifier>{f881cb2d-1287-4807-a37b-9e420c052d4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Serialization\binary">
+      <UniqueIdentifier>{2e085ac7-60b6-423d-8b02-4834e8b54930}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

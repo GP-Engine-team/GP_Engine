@@ -27,6 +27,7 @@ void SceneEditor::captureInputs(bool toggle)
     io.setCursorLockState(toggle);
     io.setCursorTrackingState(toggle);
     view.captureInputs(toggle);
+    ImGuizmo::Enable(!toggle);
 
     if (toggle)
     {
@@ -160,12 +161,13 @@ void SceneEditor::renderGizmo(TransformComponent& transfo)
 
     ImGuizmo::SetRect(topLeft.x, topLeft.y, float(view.width), float(view.height));
 
+    GPM::Transform dummy{transfo.get()};
     GPM::Transform delta;
     const ImGuizmo::OPERATION operation = ImGuizmo::Manipulate(view.camera.getView().e,
                                                                view.camera.getProjection().e,
                                                                activeOperation,
                                                                activeMode,
-                                                               transfo.get().model.e,
+                                                               dummy.model.e,
                                                                delta.model.e);
     if (operation)
     {
@@ -244,8 +246,9 @@ void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
         captureInputs(false);
     }
 
-    else if (!ImGui::IsMouseDown(ImGuiMouseButton_Right) && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
-             !ImGuizmo::IsOver())
+    else if (!ImGui::IsMouseDown(ImGuiMouseButton_Right)
+             && ImGui::IsMouseClicked(ImGuiMouseButton_Left)
+             && !ImGuizmo::IsOver())
     {
         const unsigned int idSelectedGameObject = view.getHoveredGameObjectID();
         if (idSelectedGameObject)

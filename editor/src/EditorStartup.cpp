@@ -216,6 +216,7 @@ void EditorStartup::playGame()
             updateSceneManagerFunct();
             m_engine->inputManager.processInput();
 
+            m_engine->animSystem.update(deltaTime);
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.updateEditor(deltaTime);

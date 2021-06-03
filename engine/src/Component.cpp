@@ -15,6 +15,7 @@ GPE::Component::~Component() noexcept
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, Component& inspected)
 {
+    context.lastComponentOwner = &inspected.getOwner();
     inspected.inspect(context);
 }
 
