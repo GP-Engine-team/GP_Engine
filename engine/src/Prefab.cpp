@@ -52,27 +52,37 @@ GameObject* Prefab::clone(GameObject& parent)
         return nullptr;
 
     GameObject* const pGo = prefabScene.getWorld().children.front();
-    pGo->setParent(&parent);
 
-    // Awake GameObjects
+    prefab.updateLinker(*pGo);
+
+    pGo->forceUpdate(parent.getTransform().get().model);
+    pGo->setParent(&parent);
+    pGo->getTransform().setDirty();
+
+    // Call onPostLoad on GameObjects
     struct Rec
     {
-        static void rec(GPE::GameObject& g)
+    private:
+        static void recComponent(GPE::GameObject* g)
         {
-            for (GPE::Component* comp : g.getComponents())
+            for (GPE::Component* comp : g->getComponents())
             {
                 comp->onPostLoad();
             }
 
-            g.getTransform().onPostLoad();
-
-            for (GPE::GameObject* g2 : g.children)
+            for (GPE::GameObject* g2 : g->children)
             {
-                rec(*g2);
+                recComponent(g2);
             }
         };
+
+    public:
+        static void rec(GPE::GameObject* g)
+        {
+            recComponent(g);
+        }
     };
-    Rec::rec(*pGo); // can't do recursives with lambdas, and std::function would be overkill
+    Rec::rec(pGo); // can't do recursives with lambdas, and std::function would be overkill
 
     return pGo;
 }

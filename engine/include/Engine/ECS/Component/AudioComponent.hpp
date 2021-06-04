@@ -18,13 +18,31 @@
 
 namespace GPE RFKNamespace()
 {
-    struct SourceSettings
+    struct RFKStruct(Serialize(), Inspect()) SourceSettings
     {
-        ALfloat   pitch       = 1.f;
-        ALfloat   gain        = 1.f;
-        ALfloat   position[3] = {0, 0, 0};
-        ALfloat   velocity[3] = {0, 0, 0};
-        ALboolean loop        = AL_FALSE;
+        RFKField(Serialize(), Inspect()) float     pitch         = 1.f;
+        RFKField(Serialize(), Inspect()) float     gain          = 1.f;
+        RFKField(Serialize(), Inspect()) GPM::Vec3 position      = {0, 0, 0};
+        RFKField(Serialize(), Inspect()) GPM::Vec3 velocity      = {0, 0, 0};
+        RFKField(Serialize(), Inspect()) bool      loop          = AL_FALSE;
+        RFKField(Serialize(), Inspect()) bool      relative      = AL_FALSE;
+        RFKField(Serialize(), Inspect()) bool      spatialized   = AL_FALSE;
+        RFKField(Serialize(), Inspect()) float     rollOffFactor = 1.f;
+
+        SourceSettings_GENERATED
+    };
+
+    struct RFKStruct(Serialize(), Inspect()) SourceData
+    {
+        RFKField(Serialize(), Inspect()) ALuint         source;
+        RFKField(Serialize(), Inspect()) ALint          state      = AL_INITIAL;
+        RFKField(Serialize(), Inspect()) bool           isRelative = AL_FALSE;
+        RFKField(Serialize(), Inspect()) SourceSettings settings;
+        RFKField(Serialize(), Inspect()) std::string    soundName  = "default";
+        RFKField(Serialize(), Inspect()) std::string    sourceName = "default";
+        bool                                            isDirty    = false;
+
+        SourceData_GENERATED
     };
 
     class RFKClass(Inspect(), Serialize()) AudioComponent : public Component
@@ -34,29 +52,20 @@ namespace GPE RFKNamespace()
 
         virtual ~AudioComponent();
 
-        AudioComponent()                            = default;
-        AudioComponent(const AudioComponent& other) = delete;
-        AudioComponent& operator=(AudioComponent const& other) = delete;
-
-        // AudioComponent(AudioComponent&& other) noexcept = default;
-        AudioComponent& operator                         =(AudioComponent&& other);
-        AudioComponent(AudioComponent && other) noexcept = default;
+        AudioComponent() = default;
 
     private:
-        int m_key = -1;
+        int       m_key     = -1;
+        GPM::Vec3 parentPos = {0.f};
 
     public:
-        struct RFKStruct(Serialize()) SourceData
-        {
-            RFKField(Serialize())
-            ALuint source;
-            RFKField(Serialize())
-            ALint  state = AL_INITIAL;
+        RFKField(Serialize(), Inspect()) std::unordered_map<std::string, SourceData> sources;
 
-            SourceData_GENERATED
-        };
-        std::unordered_map<std::string, SourceData> sources;
+    protected:
+        virtual void updateToSystem() noexcept override;
+        virtual void onPostLoad() noexcept override;
 
+    public:
         /**
          * @brief Find and return the corresponding source in the source list
          * @param name of the source
@@ -86,19 +95,15 @@ namespace GPE RFKNamespace()
          */
         void stopAllSound() noexcept;
 
+        RFKMethod() void updatePosition();
+
+        void updateSources();
+        void updateSource(SourceData * source);
+
         [[nodiscard]] int getKey() const noexcept
         {
             return m_key;
         }
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
-
-        virtual void onPostLoad() override;
 
     private:
         [[nodiscard]] SourceData* getSource(const char* name) noexcept;

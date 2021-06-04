@@ -11,27 +11,26 @@
 #include <string> //std::string
 #include <vector> //std::vector
 
-#include "Engine/ECS/Component/TransformComponent.hpp" //TransformComponent
+#include <Engine/ECS/Component/TransformComponent.hpp> //TransformComponent
 
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/IInspectable.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
-#include "Engine/Serialization/STDReflect.hpp"
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Engine/Serialization/IInspectable.hpp>
+#include <Engine/Serialization/InspectContext.hpp>
+#include <Engine/Serialization/STDReflect.hpp>
+
+#include <Engine/Core/Tools/ClassUtility.hpp>
 
 // in Inl
-#include "Engine/Core/Debug/Log.hpp"
-#include "Engine/Core/Tools/Format.hpp"
-#include "Engine/Intermediate/DataChunk.hpp"
+#include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/Format.hpp>
+#include <Engine/Intermediate/DataChunk.hpp>
 
-#include "Generated/GameObject.rfk.h"
+#include <Generated/GameObject.rfk.h>
 
 namespace GPE RFKNamespace()
 {
     template <>
     void DataInspector::inspect(GPE::InspectContext & context, class GameObject & inspected);
-
-    void save(XmlSaver & context, class GameObject & inspected);
-    void load(XmlLoader & context, class GameObject & sinspected);
 
     class Scene;
 
@@ -47,29 +46,29 @@ namespace GPE RFKNamespace()
             GameObject*                   parent = nullptr;
         };
 
-        // TODO: remove this variable for dataChunk localtion when data chunk will be rework
-        static unsigned int m_currentID;
-
     protected:
         RFKField(Inspect(), Serialize()) std::string m_name;
         RFKField(Serialize()) TransformComponent*    m_pTransform;
         RFKField(Serialize()) std::list<Component*>  m_pComponents;
         RFKField(Inspect(), Serialize()) std::string m_tag{"GameObject"};
         RFKField(Serialize()) GameObject*            m_parent = nullptr;
-        RFKField(Serialize()) unsigned int           m_id;
+        RFKField() unsigned int                      m_id;
         RFKField(Serialize()) bool                   m_isDead{
             false}; // Flag that inform it parent that this transform must be destroy on update loop
         RFKField(Serialize()) bool m_isActive = true;
+
+        // ID counter
+        static unsigned int m_currentID;
 
     public:
         RFKField(Serialize()) Scene*                 pOwnerScene = nullptr;
         RFKField(Serialize()) std::list<GameObject*> children    = {};
 
     public:
-        inline GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
+        GameObject(Scene & scene, const CreateArg& arg = GameObject::CreateArg{});
         ~GameObject() noexcept;
 
-        GameObject()                        = default;
+        GameObject();
         GameObject(const GameObject& other) = delete;            // TODO: when transform is available
         GameObject& operator=(GameObject const& other) = delete; // TODO
 
@@ -83,14 +82,14 @@ namespace GPE RFKNamespace()
          *
          */
         void updateSelfAndChildren() noexcept;
-        void updateSelfAndChildren(const GPM::Mat4 parentModelMatrix) noexcept;
+        void updateSelfAndChildren(const GPM::Mat4& parentModelMatrix) noexcept;
 
         /**
          * @brief Force the update of entity without check if entity is dirty
          *
          */
         void forceUpdate() noexcept;
-        void forceUpdate(const GPM::Mat4 parentModelMatrix) noexcept;
+        void forceUpdate(const GPM::Mat4& parentModelMatrix) noexcept;
 
         /**
          * @brief Get the Name object
@@ -121,6 +120,8 @@ namespace GPE RFKNamespace()
          */
         inline void setName(const char* newName) noexcept;
 
+        inline bool isDead() const;
+
         /**
          * @brief Get the Transform object
          * @return const char*
@@ -142,6 +143,9 @@ namespace GPE RFKNamespace()
          */
         template <typename T, typename... Args>
         T& addComponent(Args && ... args) noexcept;
+
+        template <typename T>
+        T& getOrCreateComponent();
 
         inline Component* addExistingComponent(Component * pExistingComponent) noexcept;
 
@@ -193,6 +197,7 @@ namespace GPE RFKNamespace()
             Component * pComponent) noexcept; // TODO: Destroy immediate may be dangerous
 
         inline void setActive(bool newState);
+        inline bool isActivated();
 
         inline std::list<Component*>::iterator destroyComponent(
             const std::list<Component*>::iterator& it) noexcept; // TODO: Destroy immediate may be dangerous
@@ -228,6 +233,14 @@ namespace GPE RFKNamespace()
          * @return
          */
         GameObject* getGameObjectCorrespondingToID(unsigned int ID) noexcept;
+
+        /**
+         * @brief Get the Entity object in function of path in arg
+         *
+         * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3
+         * @return GameObject&
+         */
+        GameObject* getGameObject(const std::string& path) noexcept;
 
         [[nodiscard]] inline constexpr bool operator==(GameObject const& other) noexcept;
 

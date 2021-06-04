@@ -20,13 +20,8 @@ void InputManager::fireInputComponents(const std::string& action, const int& key
     {
         auto stateMapIt     = m_stateMap.find(key);
         auto lastStateMapIt = m_lastStateMap.find(key);
-        for (int i = 0; i < m_inputComponents.size(); i++)
+        for (const auto& [key, ic] : m_inputComponents)
         {
-            InputComponent* ic = m_inputComponents[i];
-
-            if (!ic)
-                continue;
-
             auto inputModeMapIp = ic->inputModeMap.find(action);
             if (inputModeMapIp != ic->inputModeMap.end() && inputModeMapIp->second == m_currentInputMode)
             {
@@ -161,6 +156,12 @@ void InputManager::setCursorMode(int mode) noexcept
     glfwSetInputMode(GPE::Engine::getInstance()->window.getGLFWWindow(), GLFW_CURSOR, mode);
 }
 
+void InputManager::setMousePos(GPM::Vec2 pos)
+{
+    glfwSetCursorPos(GPE::Engine::getInstance()->window.getGLFWWindow(), double(pos.x), double(pos.y));
+    m_cursor.position = pos;
+}
+
 void InputManager::processInput() noexcept
 {
     m_cursor.deltaPos.x = .0f;
@@ -175,6 +176,11 @@ void InputManager::processInput() noexcept
             fireInputComponents(i2->second, keyState.first);
         }
     }
+}
+
+bool InputManager::getCursorLockState() const noexcept
+{
+    return m_cursor.locked;
 }
 
 void InputManager::setCursorLockState(bool lockState) noexcept

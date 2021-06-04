@@ -1,51 +1,69 @@
 ﻿#include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Engine.hpp"
 #include <Engine/ECS/Component/AudioComponent.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 
 // Generated
 #include "Generated/AudioComponent.rfk.h"
 
 File_GENERATED
 
-using namespace GPE;
+    using namespace GPE;
 using namespace std;
 
 AudioComponent::AudioComponent(GameObject& owner) : Component(owner)
 {
-    m_key = Engine::getInstance()->soundSystem.addComponent(this);
+    updateToSystem();
+    parentPos = getOwner().getTransform().getGlobalPosition();
+    getOwner().getTransform().OnUpdate += Function::make(this, "updatePosition");
 }
 
-AudioComponent& AudioComponent::operator=(AudioComponent&& other)
+void AudioComponent::onPostLoad() noexcept
 {
-    m_key   = std::move(other.m_key);
-    sources = std::move(other.sources);
+    Component::onPostLoad();
 
-    Engine::getInstance()->soundSystem.updateComponent(this);
-
-    Component::operator=(std::move(other));
-    return *this;
+    parentPos = getOwner().getTransform().getGlobalPosition();
+    getOwner().getTransform().OnUpdate += Function::make(this, "updatePosition");
 }
 
 void AudioComponent::setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept
 {
+    SourceData*    source = getSource(sourceName);
+    Sound::Buffer* buffer = Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName);
 
-    SourceData* source = getSource(sourceName);
+    source->isRelative = settings.relative;
+    source->settings   = settings;
+    source->sourceName = sourceName;
+    source->soundName  = soundName;
 
     AL_CALL(alGenSources, 1, &source->source);
     AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
     AL_CALL(alSourcef, source->source, AL_GAIN, settings.gain);
-    AL_CALL(alSource3f, source->source, AL_POSITION, settings.position[0], settings.position[1], settings.position[2]);
-    AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity[0], settings.velocity[1], settings.velocity[2]);
+    AL_CALL(alSource3f, source->source, AL_POSITION, settings.position.x, settings.position.y, settings.position.z);
+    AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity.x, settings.velocity.y, settings.velocity.z);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
-    AL_CALL(alSourcei, source->source, AL_BUFFER,
-            Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName)->buffer);
+    AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, settings.relative);
+    AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(settings.rollOffFactor)));
+    AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
 }
 
-AudioComponent::SourceData* AudioComponent::getSource(const char* name) noexcept
+void AudioComponent::updateSource(SourceData* source)
 {
-    if (sources.find(name) != sources.end())
+    AL_CALL(alSourcef, source->source, AL_PITCH, source->settings.pitch);
+    AL_CALL(alSourcef, source->source, AL_GAIN, source->settings.gain);
+    AL_CALL(alSourcei, source->source, AL_LOOPING, source->settings.loop);
+    AL_CALL(alSource3f, source->source, AL_POSITION, parentPos.x + source->settings.position.x,
+            parentPos.y + source->settings.position.y, parentPos.z + +source->settings.position.z);
+    AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, source->settings.relative);
+    AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(source->settings.rollOffFactor)));
+}
+
+SourceData* AudioComponent::getSource(const char* name) noexcept
+{
+    auto it = sources.find(name);
+    if (it != sources.end())
     {
-        return &sources.find(name)->second;
+        return &it->second;
     }
 
     else
@@ -59,7 +77,7 @@ void AudioComponent::playSound(const char* name, bool forceStart) noexcept
     if (m_isActivated)
     {
         SourceData* source = findSource(name);
-        if (source->state != AL_PLAYING || forceStart)
+        if (source && (source->state != AL_PLAYING || forceStart))
         {
             AL_CALL(alSourcePlay, source->source);
             source->state = AL_PLAYING;
@@ -67,9 +85,10 @@ void AudioComponent::playSound(const char* name, bool forceStart) noexcept
     }
 }
 
-AudioComponent::SourceData* AudioComponent::findSource(const char* name) noexcept
+SourceData* AudioComponent::findSource(const char* name) noexcept
 {
-    if (sources.find(name) != sources.end())
+    auto it = sources.find(name);
+    if (it != sources.end())
     {
         return &sources.find(name)->second;
     }
@@ -90,46 +109,67 @@ void AudioComponent::stopSound(const char* name) noexcept
 
 void AudioComponent::stopAllSound() noexcept
 {
-    for (auto& [key, value] : sources)
+    if (!sources.empty())
     {
-        if (value.state == AL_PLAYING)
+        for (auto& [key, value] : sources)
         {
-            AL_CALL(alSourceStop, value.source);
-            value.state = AL_STOPPED;
+            if (value.state == AL_PLAYING)
+            {
+                AL_CALL(alSourceStop, value.source);
+                value.state = AL_STOPPED;
+            }
         }
     }
 }
 
-void AudioComponent::setActive(bool newState) noexcept
+void AudioComponent::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
-        Engine::getInstance()->soundSystem.addComponent(this);
+        m_key = Engine::getInstance()->soundSystem.addComponent(this);
     else
     {
         stopAllSound();
         Engine::getInstance()->soundSystem.removeComponent(m_key);
+    }
+}
+
+void AudioComponent::updatePosition()
+{
+    GPM::Vec3 pos = getOwner().getTransform().getGlobalPosition();
+
+    if (parentPos == pos)
+    {
+        return;
+    }
+
+    parentPos = pos;
+
+    for (auto& [key, value] : sources)
+    {
+        if (value.isRelative == AL_FALSE)
+        {
+            AL_CALL(alSource3f, value.source, AL_POSITION, pos.x + value.settings.position.x,
+                    pos.y + +value.settings.position.y, pos.z + +value.settings.position.z);
+        }
+    }
+}
+
+void AudioComponent::updateSources()
+{
+    if (!sources.empty())
+    {
+        for (auto& [key, value] : sources)
+        {
+            if (value.isDirty == true)
+            {
+                updateSource(&value);
+            }
+        }
     }
 }
 
 AudioComponent::~AudioComponent()
 {
-    stopAllSound();
-    Engine::getInstance()->soundSystem.removeComponent(m_key);
-}
-
-void AudioComponent::onPostLoad()
-{
-    if (m_isActivated)
-    {
-        Engine::getInstance()->soundSystem.addComponent(this);
-    }
-    else
-    {
-        stopAllSound();
-        Engine::getInstance()->soundSystem.removeComponent(m_key);
-    }
+    setActive(false);
+    getOwner().getTransform().OnUpdate -= Function::make(this, "updatePosition");
 }

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU
  * license terms in the LICENSE file
@@ -19,6 +19,8 @@ class PxShape;
 
 namespace GPE
 {
+class Collider;
+enum class EShapeType;
 
 /*template <>
 bool DataInspector::inspect(GPE::InspectContext& context, physx::PxController*& inspected, const rfk::Field& info);
@@ -37,5 +39,11 @@ bool DataInspector::inspect(GPE::InspectContext& context, physx::PxShape*& inspe
 
 template <>
 bool DataInspector::inspect(GPE::InspectContext& context, physx::PxShape*& inspected, const char* name);*/
+
+template <>
+void DataInspector::inspect(GPE::InspectContext& context, GPE::Collider& inspected, const char* name);
+
+template <>
+void DataInspector::inspect(GPE::InspectContext& context, GPE::EShapeType& inspected, const char* name);
 
 } // namespace GPE

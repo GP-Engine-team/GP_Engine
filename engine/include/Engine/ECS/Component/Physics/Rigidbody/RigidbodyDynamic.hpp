@@ -6,9 +6,9 @@
  */
 
 #pragma once
+#include <Engine/Core/Physics/RigidBodyBase.hpp>
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/Component/Component.hpp>
-#include <Engine/ECS/Component/Physics/Collisions/Collider.hpp>
 #include <PxRigidDynamic.h>
 
 // Generated
@@ -17,7 +17,7 @@
 namespace GPE RFKNamespace()
 {
 
-    class RFKClass(ComponentGen(), Inspect()) RigidbodyDynamic : public Component
+    class RFKClass(ComponentGen(), Inspect(), Serialize()) RigidbodyDynamic : public Component, public RigidBodyBase
     {
     public:
         RigidbodyDynamic(GameObject & owner) noexcept;
@@ -32,25 +32,29 @@ namespace GPE RFKNamespace()
 
         void updatePosition() noexcept;
 
-        virtual ~RigidbodyDynamic() noexcept = default;
+        virtual ~RigidbodyDynamic() noexcept;
+
+    private:
+        RFKField(Inspect("setKinematic"), Serialize()) bool m_isKinematic = false;
+        bool                                                m_running     = false;
 
     public:
         physx::PxRigidDynamic* rigidbody;
-        Collider*              collider;
 
-    private:
-        RFKField(Inspect("setKinematic")) bool m_isKinematic = false;
+    protected:
+        virtual void updateToSystem() noexcept override;
+        virtual void onPostLoad() noexcept override;
 
     public:
         void setKinematic(bool state) noexcept;
         GETTER_BY_VALUE(KinematicState, m_isKinematic);
 
         /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
+         * @brief Update the current shape of the rigidbody
          */
-        void setActive(bool newState) noexcept override;
+        virtual void updateShape(physx::PxShape & oldShape);
+
+        RFKMethod() void updateTransform();
 
         RigidbodyDynamic_GENERATED
     };

@@ -4,6 +4,7 @@
 
 using namespace GPE;
 
+#include <algorithm>
 #include <assert.h>
 #include <glad/glad.h>
 
@@ -58,6 +59,7 @@ void ParticleRenderer::update()
     assert(m_bufPos > 0 && m_bufCol > 0);
 
     const size_t count = m_system->numAliveParticles();
+
     if (count > 0)
     {
         glBindBuffer(GL_ARRAY_BUFFER, m_bufPos);

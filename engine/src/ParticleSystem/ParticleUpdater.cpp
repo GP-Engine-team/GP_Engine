@@ -1,17 +1,21 @@
 #include "Engine/Resources/ParticleSystem/ParticleUpdater.hpp"
 
-File_GENERATED
-
 #include <Engine/Resources/Color.hpp>
+#include <GPM/Calc.hpp>
 #include <algorithm>
 #include <assert.h>
 
-using namespace GPE;
+// Generated
+#include <Generated/ParticleUpdater.rfk.h>
+File_GENERATED
+
+    using namespace GPE;
 using namespace GPM;
 
 void EulerUpdater::update(double dt, ParticleData* p)
 {
-    const Vec4  globalA(f32(dt) * m_globalAcceleration.x, f32(dt) * m_globalAcceleration.y, f32(dt) * m_globalAcceleration.z, 0.f);
+    const Vec4  globalA(f32(dt) * m_globalAcceleration.x, f32(dt) * m_globalAcceleration.y,
+                       f32(dt) * m_globalAcceleration.z, 0.f);
     const float localDT = (float)dt;
 
     Vec4* acc = p->m_acc.get();
@@ -30,6 +34,26 @@ void EulerUpdater::update(double dt, ParticleData* p)
 U16BMask EulerUpdater::getRequiereConfig() const
 {
     return ParticleData::EParam::ACCELERATION | ParticleData::EParam::VELOCITY | ParticleData::EParam::POSITION;
+}
+
+void SizeUpdater::update(double dt, ParticleData* p)
+{
+    Vec4*  pos       = p->m_pos.get();
+    float* startSize = p->m_startSize.get();
+    float* endSize   = p->m_endSize.get();
+    Vec4*  t         = p->m_time.get();
+
+    const size_t endId = p->m_countAlive;
+
+    // Use the w channel of the position
+    for (size_t i = 0; i < endId; ++i)
+        pos[i].w = lerpf(startSize[i], endSize[i], t[i].z);
+}
+
+U16BMask SizeUpdater::getRequiereConfig() const
+{
+    return ParticleData::EParam::POSITION | ParticleData::EParam::TIME | ParticleData::EParam::START_SIZE |
+           ParticleData::EParam::END_SIZE;
 }
 
 void FloorUpdater::update(double dt, ParticleData* p)

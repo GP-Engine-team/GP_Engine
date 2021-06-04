@@ -12,6 +12,7 @@
 #include "ECS/System/PhysXSystem.hpp"
 #include "ECS/System/SoundSystem.hpp"
 #include "ECS/System/TimeSystem.hpp"
+#include "ECS/System/AnimationSystem.hpp"
 #include "Resources/ResourcesManagerType.hpp"
 #include "Resources/SceneManager.hpp"
 
@@ -28,26 +29,32 @@ class Engine
 protected:
     static Engine* m_instance;
 
+    // Player pref and engine pref
+    const std::string configName = "EngineConfig.conf";
+
+    void importConfig();
+    void exportConfig();
+
 public:
-    Window              window;
-    Renderer            renderer;
-    TimeSystem          timeSystem;
-    InputManager        inputManager;
-    ResourceManagerType resourceManager;
-    SceneManager        sceneManager;
-    PhysXSystem         physXSystem;    
-    SoundSystem         soundSystem;
-    std::function<void()> exit;
+    Window                  window;
+    Renderer                renderer;
+    TimeSystem              timeSystem;
+    InputManager            inputManager;
+    ResourceManagerType     resourceManager;
+    AnimResourceManagerType animResourcesManager;
+    SceneManager            sceneManager;
+    PhysXSystem             physXSystem;
+    SoundSystem             soundSystem;
+    AnimationSystem         animSystem;
+    std::function<void()>   exit;
+    bool                    isRunning = true;
 
 protected:
     Engine()
-        : window{Window::CreateArg{"Window", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
-          resourceManager{}, sceneManager{}, physXSystem{}, soundSystem{},
-          exit{[&]()
-          {
-              window.close();
-          }}
+        : window{Window::CreateArg{"Green portal", 900, 600}}, renderer{window}, timeSystem{}, inputManager{window},
+          resourceManager{}, sceneManager{}, physXSystem{}, soundSystem{}, exit{[&]() { window.close(); }}
     {
+        importConfig();
     }
 
 public:
@@ -55,6 +62,11 @@ public:
      * Singletons should not be cloneable.
      */
     Engine(Engine& other) = delete;
+
+    ~Engine()
+    {
+        exportConfig();
+    }
 
     /**
      * Singletons should not be assignable.

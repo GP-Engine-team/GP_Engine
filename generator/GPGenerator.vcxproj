@@ -80,11 +80,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\bin</OutDir>
+    <OutDir>$(ProjectDir)\bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)\bin</OutDir>
+    <OutDir>$(ProjectDir)\bin\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -128,17 +128,20 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_HAS_EXCEPTIONS=0</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)third_party\include;$(GPEngineDir)/third_party/include/PhysX/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)third_party\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
+      <DisableSpecificWarnings>4190;4005</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>clang.lib;Kodgen.lib;RefurekuGeneratorLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)\third_party\libs\Debug;$(ProjectDir)\third_party\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,11 +150,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_HAS_EXCEPTIONS=0</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)third_party\include;$(GPEngineDir)/third_party/include/PhysX/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)third_party\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
+      <DisableSpecificWarnings>4190;4005</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,10 +165,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>clang.lib;Kodgen.lib;RefurekuGeneratorLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)\third_party\libs\Release;$(ProjectDir)\third_party\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ComponentGenerator.cpp" />
+    <ClCompile Include="src\DefaultInspectPropertyRule.cpp" />
     <ClCompile Include="src\GenerationUtilities.cpp" />
     <ClCompile Include="src\InspectPropertyRule.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -172,9 +179,173 @@
   <ItemGroup>
     <ClInclude Include="include\ComponentGenerator.h" />
     <ClInclude Include="include\CustomFileParserFactory.hpp" />
+    <ClInclude Include="include\DefaultInspectPropertyRule.h" />
     <ClInclude Include="include\GenerationUtilities.hpp" />
     <ClInclude Include="include\InspectPropertyRule.h" />
     <ClInclude Include="include\SerializePropertyRule.h" />
+    <ClInclude Include="third_party\include\clang-c\BuildSystem.h" />
+    <ClInclude Include="third_party\include\clang-c\CXCompilationDatabase.h" />
+    <ClInclude Include="third_party\include\clang-c\CXErrorCode.h" />
+    <ClInclude Include="third_party\include\clang-c\CXString.h" />
+    <ClInclude Include="third_party\include\clang-c\Documentation.h" />
+    <ClInclude Include="third_party\include\clang-c\ExternC.h" />
+    <ClInclude Include="third_party\include\clang-c\FatalErrorHandler.h" />
+    <ClInclude Include="third_party\include\clang-c\Index.h" />
+    <ClInclude Include="third_party\include\clang-c\Platform.h" />
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\DefaultGeneratedCodeTemplate.h" />
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\FileGenerationError.h" />
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\FileGenerationResult.h" />
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\FileGenerationSettings.h" />
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\FileGenerationUnit.h" />
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\FileGenerator.h" />
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\GeneratedCodeTemplate.h" />
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\GeneratedFile.h" />
+    <ClInclude Include="third_party\include\Kodgen\Config.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\EEntityType.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\EntityInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\EnumInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\EnumValueInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\FieldInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\FunctionInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\FunctionParamInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\MethodInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\NamespaceInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\NestedEnumInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\NestedStructClassInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\StructClassInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\TypeDescriptor.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\TypeInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\VariableInfo.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\CompilerHelpers.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\DefaultLogger.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\DisableWarningMacros.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\EAccessSpecifier.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\Filesystem.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\FundamentalTypes.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\Helpers.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\ILogger.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\Optional.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\System.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\Toml11.h" />
+    <ClInclude Include="third_party\include\Kodgen\Misc\TomlUtility.h" />
+    <ClInclude Include="third_party\include\Kodgen\Object.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ClassParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\EntityParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\EnumParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\EnumValueParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\FieldParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\FileParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\FileParserFactory.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\FileParserFactoryBase.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\FunctionParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\MethodParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\NamespaceParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingContext.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingError.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\ClassParsingResult.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\EnumParsingResult.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\EnumValueParsingResult.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\FieldParsingResult.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\FileParsingResult.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\FunctionParsingResult.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\MethodParsingResult.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\NamespaceParsingResult.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\ParsingResultBase.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\VariableParsingResult.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingSettings.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\PropertyParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Parsing\VariableParser.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\ComplexProperty.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\ComplexPropertyRule.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\ComplexPropertySubProperty.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\DefaultComplexPropertyRule.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\DefaultSimplePropertyRule.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\FixedComplexPropertyRule.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\NativeProperties\GenCodeTemplatePropertyRule.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\NativeProperties\NativeProperties.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\NativeProperties\ParseAllNestedPropertyRule.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\Property.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\PropertyGroup.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\PropertyParsingSettings.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\SimpleProperty.h" />
+    <ClInclude Include="third_party\include\Kodgen\Properties\SimplePropertyRule.h" />
+    <ClInclude Include="third_party\include\Kodgen\Threading\ETerminationMode.h" />
+    <ClInclude Include="third_party\include\Kodgen\Threading\Task.h" />
+    <ClInclude Include="third_party\include\Kodgen\Threading\TaskBase.h" />
+    <ClInclude Include="third_party\include\Kodgen\Threading\TaskHelper.h" />
+    <ClInclude Include="third_party\include\Kodgen\Threading\ThreadPool.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\FileGenerationUnit.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\FileGenerator.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedClassCodeTemplate.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedEntityCodeTemplate.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedEnumCodeTemplate.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedFunctionCodeTemplate.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedNamespaceCodeTemplate.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedVariableCodeTemplate.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Misc\Helpers.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Parsing\FileParser.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Parsing\FileParserFactory.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\ECodeGenLocation.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\PropertyCodeGenClassFooterData.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\PropertyCodeGenData.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\PropertyCodeGenFileFooterData.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\PropertyCodeGenFileHeaderData.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\PropertyCodeGenPropertyAddData.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CustomInstantiatorPropertyRule.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\DefaultComplexPropertyRule.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\DefaultSimplePropertyRule.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\NativeProperties.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\PropertySettingsPropertyRule.h" />
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\TestPropertyRule.h" />
+    <ClInclude Include="third_party\include\toml11\toml.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\color.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\combinator.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\comments.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\datetime.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\exception.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\from.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\get.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\into.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\lexer.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\literal.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\parser.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\region.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\result.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\serializer.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\source_location.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\storage.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\string.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\traits.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\types.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\utility.hpp" />
+    <ClInclude Include="third_party\include\toml11\toml\value.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="third_party\include\Kodgen\CodeGen\FileGenerationError.inl" />
+    <None Include="third_party\include\Kodgen\CodeGen\FileGenerationSettings.inl" />
+    <None Include="third_party\include\Kodgen\CodeGen\FileGenerator.inl" />
+    <None Include="third_party\include\Kodgen\CodeGen\GeneratedFile.inl" />
+    <None Include="third_party\include\Kodgen\Misc\Helpers.inl" />
+    <None Include="third_party\include\Kodgen\Misc\TomlUtility.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\ClassParser.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\EntityParser.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\EnumParser.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\EnumValueParser.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\FieldParser.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\FileParser.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\FileParserFactory.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\FunctionParser.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\MethodParser.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\NamespaceParser.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\ParsingResults\ParsingResultBase.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\ParsingSettings.inl" />
+    <None Include="third_party\include\Kodgen\Parsing\VariableParser.inl" />
+    <None Include="third_party\include\Kodgen\Threading\Task.inl" />
+    <None Include="third_party\include\Kodgen\Threading\TaskHelper.inl" />
+    <None Include="third_party\include\Kodgen\Threading\ThreadPool.inl" />
+    <None Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedEntityCodeTemplate.inl" />
+    <None Include="third_party\include\RefurekuGenerator\Misc\Helpers.inl" />
+    <None Include="third_party\include\RefurekuGenerator\Parsing\FileParserFactory.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

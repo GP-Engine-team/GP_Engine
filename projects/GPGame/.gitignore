@@ -6,7 +6,6 @@ setup_mirror.bat
 
 # Project
 Generated
-resources/*
 
 ### C++ ###
 # Prerequisites
@@ -484,7 +483,9 @@ MigrationBackup/
 x64/
 
 #Resources
-resources/*
+/resources/**/*.*
+!/resources/**/*.GPScene
+!/resources/**/*.GPPrefab
 
 .vscode/*
 .idea/*

@@ -9,7 +9,7 @@ namespace GPE
 {
 class AbstractGame;
 class Engine;
-}
+} // namespace GPE
 
 class GameStartup final : public ContextStartup
 {
@@ -27,4 +27,6 @@ public:
     void update() final;
 
     virtual ~GameStartup() final;
+
+    void startScene();
 };

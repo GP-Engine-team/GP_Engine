@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Amara Sami, Dallard Thomas, Nardone William, Six Jonathan
  * This file is subject to the LGNU license terms in the LICENSE file
  * found in the top-level directory of this distribution.
@@ -6,20 +6,19 @@
 
 #pragma once
 
-#include "Engine/Core/Tools/Callback.hpp" //Event
-#include "Engine/ECS/Component/Component.hpp"
-#include "Engine/Serialization/ComponentGen.h"
-#include "GPM/Conversion.hpp"
-#include "GPM/Matrix4.hpp"
-#include "GPM/Quaternion.hpp"
-#include "GPM/Transform.hpp"
-#include "GPM/Vector3.hpp"
+#include "Component.hpp"
+#include <Engine/Core/Tools/Callback.hpp> //Event
+#include <Engine/Serialization/ComponentGen.h>
+#include <GPM/Conversion.hpp>
+#include <GPM/Matrix4.hpp>
+#include <GPM/Quaternion.hpp>
+#include <GPM/Transform.hpp>
+#include <GPM/Vector3.hpp>
 
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Refureku/Refureku.h"
+#include <Engine/Serialization/DataInspector.hpp>
+#include <Refureku/Refureku.h>
 
-// Generated
-#include "Generated/TransformComponent.rfk.h"
+#include <Generated/TransformComponent.rfk.h>
 
 namespace GPE RFKNamespace()
 {
@@ -34,27 +33,26 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        RFKField(Inspect(), Serialize()) GPM::SplitTransform m_spaceAttribut;
-        GPM::Transform                                       m_transform = GPM::toTransform(m_spaceAttribut);
-        bool                                                 m_isDirty   = false;
+        RFKField(Inspect(), Serialize()) GPM::SplitTransform m_spaceAttribut = {};
+        GPM::Transform                                       m_transform     = GPM::toTransform(m_spaceAttribut);
+        bool                                                 m_isDirty       = false;
 
     public:
-        RFKField(Serialize()) Event OnUpdate;
+        RFKField() Event OnUpdate;
+
+    protected:
+        virtual void updateToSystem() noexcept override;
 
     public:
         TransformComponent(GameObject & refGameObject, const CreateArg& arg = CreateArg{}) noexcept;
 
-        TransformComponent() noexcept                                = default;
-        TransformComponent(const TransformComponent& other) noexcept = delete;
-        TransformComponent(TransformComponent && other) noexcept     = default;
-        virtual ~TransformComponent() noexcept                       = default;
-        TransformComponent& operator=(TransformComponent const& other) noexcept = delete;
-        TransformComponent& operator                                            =(TransformComponent&& other);
+        TransformComponent() noexcept = default;
+        virtual ~TransformComponent() noexcept;
 
         virtual void onPostLoad() override;
 
         [[nodiscard]] constexpr inline bool isDirty() const;
-        constexpr void                      setDirty();
+        constexpr void                      setDirty(bool toggle = true);
 
         constexpr GPM::Vec3 getGlobalPosition() const noexcept;
 
@@ -78,6 +76,8 @@ namespace GPE RFKNamespace()
 
         void translate(const GPM::Vec3& translation) noexcept;
 
+        void rotate(const GPM::Vec3& rotation) noexcept;
+
         void scale(const GPM::Vec3& scale) noexcept;
 
         void setTranslation(const GPM::Vec3& translation) noexcept;
@@ -95,10 +95,12 @@ namespace GPE RFKNamespace()
         void setVecUp(const GPM::Vec3& newUp) noexcept;
 
         GPM::Vec3 getVectorForward() const noexcept;
-
         GPM::Vec3 getVectorRight() const noexcept;
-
         GPM::Vec3 getVectorUp() const noexcept;
+
+        GPM::Vec3 getLocalForward() const noexcept;
+        GPM::Vec3 getLocalRight() const noexcept;
+        GPM::Vec3 getLocalUp() const noexcept;
 
         constexpr GPM::SplitTransform& getSpacialAttribut();
 

@@ -18,6 +18,7 @@ File_GENERATED
     void MaterialInspectorPanel::inspect(InspectContext & context)
     {
         ImGui::TextUnformatted("Material importer");
+        ImGui::Text("Path : %s", m_path.c_str());
 
         m_isDirty = true;
         // TODO: dirty flag must change when inspect will returned bool
@@ -27,62 +28,80 @@ File_GENERATED
         GPE::DataInspector::inspect(context, m_config.comp.shininess, "shininess");
         GPE::DataInspector::inspect(context, m_config.comp.opacity, "opacity");
 
-        ImGui::TextUnformatted("Ambiante texture");
-        ImGui::SameLine();
-        if (ImGui::Button(
-                (m_config.ambianteTexturePath.empty() ? "None##Ambiante" : m_config.ambianteTexturePath.c_str())))
-        {
-            m_config.ambianteTexturePath =
-                openFileExplorerAndGetRelativePath(L"Ambiante texture", {{L"Image", L"*.GPTexture"}}).string().c_str();
+        // ImGui::PushID("Ambiante");
+        // ImGui::TextUnformatted("Ambiante texture");
+        // ImGui::SameLine();
+        // if (ImGui::Button(
+        //        (m_config.ambianteTexturePath.empty() ? "None##Ambiante" : m_config.ambianteTexturePath.c_str())))
+        //{
+        //    m_config.ambianteTexturePath =
+        //        openFileExplorerAndGetRelativePath(L"Ambiante texture", {{L"Image",
+        //        L"*.GPTexture"}}).string().c_str();
 
-            m_isDirty = true;
-        }
+        //    m_isDirty = true;
+        //}
+        // ImGui::PopID();
 
+        ImGui::PushID("Diffuse");
         ImGui::TextUnformatted("Diffuse texture");
         ImGui::SameLine();
         if (ImGui::Button(
-                (m_config.diffuseTexturePath.empty() ? "None##Diffuse" : m_config.diffuseTexturePath.c_str())))
+                (m_config.diffuseTexturePath.empty() ? "None##DiffuseTexture" : m_config.diffuseTexturePath.c_str())))
         {
             m_config.diffuseTexturePath =
                 openFileExplorerAndGetRelativePath(L"Diffuse texture", {{L"Image", L"*.GPTexture"}}).string().c_str();
 
             m_isDirty = true;
         }
+        // Drop from content browser
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_TEXTURE_EXTENSION))
+            {
+                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+                m_config.diffuseTexturePath = static_cast<std::filesystem::path*>(payload->Data)->string();
+            }
+            ImGui::EndDragDropTarget();
+        }
+        ImGui::PopID();
 
-        ImGui::TextUnformatted("Base color texture");
+        ImGui::PushID("Normal");
+        ImGui::TextUnformatted("Normal map texture");
         ImGui::SameLine();
         if (ImGui::Button(
-                (m_config.baseColorTexturePath.empty() ? "None##BaseColor" : m_config.baseColorTexturePath.c_str())))
+                (m_config.normalMapTexturePath.empty() ? "None##NormalMap" : m_config.normalMapTexturePath.c_str())))
         {
-            m_config.baseColorTexturePath =
-                openFileExplorerAndGetRelativePath(L"Base color texture", {{L"Image", L"*.GPTexture"}})
+            m_config.normalMapTexturePath =
+                openFileExplorerAndGetRelativePath(L"Normal map texture", {{L"Image", L"*.GPTexture"}})
                     .string()
                     .c_str();
 
             m_isDirty = true;
         }
-
-        ImGui::PushEnabled(m_isDirty);
-
-        if (ImGui::Button("Apply"))
+        // Drop from content browser
+        if (ImGui::BeginDragDropTarget())
         {
-            writeMaterialFile(m_path.c_str(), m_config);
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_TEXTURE_EXTENSION))
+            {
+                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+                m_config.normalMapTexturePath = static_cast<std::filesystem::path*>(payload->Data)->string();
+            }
+            ImGui::EndDragDropTarget();
+        }
 
-            std::filesystem::path fsPath = m_path;
+        ImGui::PopID();
 
-            // Update loaded resource
-            if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(fsPath.filename().string()))
+        if (m_isDirty)
+        {
+            if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(m_path))
             {
                 pMaterial->setComponent(m_config.comp);
 
-                fsPath = m_config.ambianteTexturePath;
-
-                if (Texture* pTexture = Engine::getInstance()->resourceManager.get<Texture>(fsPath.filename().string()))
+                if (Texture* pTexture =
+                        Engine::getInstance()->resourceManager.get<Texture>(m_config.ambianteTexturePath))
                     pMaterial->setAmbianteTexture(pTexture);
                 else
                     pMaterial->setAmbianteTexture(loadTextureFile(m_config.ambianteTexturePath.c_str()));
-
-                fsPath = m_config.diffuseTexturePath;
 
                 if (Texture* pTexture =
                         Engine::getInstance()->resourceManager.get<Texture>(m_config.diffuseTexturePath.c_str()))
@@ -90,15 +109,21 @@ File_GENERATED
                 else
                     pMaterial->setDiffuseTexture(loadTextureFile(m_config.diffuseTexturePath.c_str()));
 
-                fsPath = m_config.baseColorTexturePath;
-
-                if (Texture* pTexture = Engine::getInstance()->resourceManager.get<Texture>(fsPath.filename().string()))
-                    pMaterial->setBaseColorTexture(pTexture);
+                if (Texture* pTexture =
+                        Engine::getInstance()->resourceManager.get<Texture>(m_config.normalMapTexturePath))
+                    pMaterial->setNormalMapTexture(pTexture);
                 else
-                    pMaterial->setBaseColorTexture(loadTextureFile(m_config.baseColorTexturePath.c_str()));
+                    pMaterial->setNormalMapTexture(loadTextureFile(m_config.normalMapTexturePath.c_str()));
             }
+            m_isDirty           = false;
+            m_canSaveInHardDisk = true;
+        }
 
-            m_isDirty = false;
+        ImGui::PushEnabled(m_canSaveInHardDisk);
+        if (ImGui::Button("Apply"))
+        {
+            writeMaterialFile(m_path.c_str(), m_config);
+            m_canSaveInHardDisk = false;
         }
         ImGui::PopEnabled();
     }

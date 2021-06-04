@@ -1,4 +1,4 @@
-
+﻿
 namespace GPE
 {
 namespace DataInspector
@@ -11,12 +11,11 @@ void inspect(GPE::InspectContext& context, T& inspected)
 }
 
 template <typename T>
-bool inspect(GPE::InspectContext& context, T& inspected, const char* name)
+void inspect(GPE::InspectContext& context, T& inspected, const char* name)
 {
-    startProperty(name);
-    const bool hasBeenModified = GPE::DataInspector::inspect(inspected);
-    endProperty();
-    return hasBeenModified;
+    context.startPropertyGroup(name);
+    inspected.inspect(context);
+    context.endPropertyGroup();
 }
 
 template <typename T>
@@ -26,10 +25,9 @@ void inspect(GPE::InspectContext& context, T& inspected, const std::string& name
 }
 
 template <typename T>
-bool inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
+void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 {
-    inspected.inspect(context);
-    return true;
+    context.applyProperties(info, [&]() { GPE::DataInspector::inspect(context, inspected, info.name.c_str()); });
 }
 
 } // namespace DataInspector

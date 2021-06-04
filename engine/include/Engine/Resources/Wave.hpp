@@ -13,7 +13,7 @@ class Wave : public Sound
 {
 public:
     Wave() = default;
-    Wave(const char* filepath, const char* name);
+    Wave(const char* filepath, const char* name, const bool spatialized = false);
     ~Wave() = default;
 };
 } // namespace GPE

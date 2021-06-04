@@ -28,9 +28,11 @@ Window::Window(const CreateArg& arg) noexcept
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_FALSE);
 #endif
 
+    glfwWindowHint(GLFW_VISIBLE, arg.show);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     m_window = glfwCreateWindow(arg.width, arg.height, arg.name.c_str(), nullptr, nullptr);
 
@@ -41,7 +43,7 @@ Window::Window(const CreateArg& arg) noexcept
     }
 
     glfwMakeContextCurrent(m_window);
-    glfwSwapInterval(1); // enable v-sync
+    glfwSwapInterval(0); // disable v-sync
 
     Log::getInstance()->logInitializationEnd("GLFW window");
 }
@@ -53,14 +55,42 @@ Window::~Window() noexcept
     Log::getInstance()->log("GLFW window release");
 }
 
-
 void Window::close()
 {
     glfwSetWindowShouldClose(m_window, GLFW_TRUE);
 }
 
-
 void Window::getSize(int& width, int& height) const noexcept
 {
     glfwGetWindowSize(m_window, &width, &height);
+}
+
+void Window::setFullscreen()
+{
+    GLFWmonitor* monitor    = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    // switch to full screen
+    glfwSetWindowMonitor(m_window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+}
+
+void Window::maximize()
+{
+    glfwMaximizeWindow(m_window);
+}
+
+void Window::minimize()
+{
+    glfwIconifyWindow(m_window);
+}
+
+
+void Window::show()
+{
+    glfwShowWindow(m_window);
+}
+
+void Window::hide()
+{
+    glfwHideWindow(m_window);
 }

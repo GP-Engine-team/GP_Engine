@@ -11,11 +11,14 @@
 
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Serialization/ComponentGen.h"
+#include "Engine/Serialization/Serialize.hpp"
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleData.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleRenderer.hpp>
 #include <Engine/Resources/ParticleSystem/ParticleUpdater.hpp>
+#include <gpm/Matrix4.hpp>
+#include <gpm/Vector4.hpp>
 
 // Generated
 #include "Generated/ParticleComponent.rfk.h"
@@ -23,8 +26,9 @@
 namespace GPE RFKNamespace()
 {
     class GameObject;
+    class Shader;
 
-    class RFKClass(ComponentGen) ParticleComponent : public Component
+    class RFKClass(ComponentGen, Serialize()) ParticleComponent : public Component
     {
     public:
         struct CreateArg
@@ -32,26 +36,34 @@ namespace GPE RFKNamespace()
         };
 
     protected:
-        class Shader* m_shader = nullptr;
+        RFKField(Serialize()) Shader* m_shader = nullptr;
 
-        ParticleData m_particles;
-        size_t       m_count              = 0;
-        float        m_emitRate           = 0.0;
-        float        m_duration           = std::numeric_limits<float>::infinity();
-        float        m_durationCount      = 0.f;
-        bool         m_canEmit            = false;
-        bool         m_isInGlobalPosition = true;
+        // TODO : Line hardcoded : used material with texture instead
+        RFKField(Serialize()) Texture* m_diffuseTexture = nullptr;
 
+        ParticleData                 m_particles;
+        RFKField(Serialize()) size_t m_count                  = 0;
+        RFKField(Serialize()) float  m_emitRate               = 0.0;
+        RFKField(Serialize()) float  m_duration               = std::numeric_limits<float>::infinity();
+        RFKField(Serialize()) float  m_durationCount          = 0.f;
+        RFKField(Serialize()) bool   m_canEmit                = false;
+        RFKField(Serialize()) bool   m_useGlobalPosition      = true;
+        RFKField(Serialize()) bool   m_useGameObjectTransform = false;
+
+    public:
+        RFKField(Serialize()) bool isTransparente = false;
+
+    protected:
         /**
          * @brief Is used to define how the particle must be generated (color ? velocity ? Position ?)
          */
-        std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
+        RFKField(Serialize()) std::vector<std::unique_ptr<ParticleGenerator>> m_generators;
 
         /**
          * @brief Us used to define how the particle must be update (life time ? acceleration ? color changement ?)
          */
-        std::vector<std::unique_ptr<ParticleUpdater>> m_updaters;
-        std::unique_ptr<GPE::ParticleRenderer>        m_renderer = nullptr;
+        RFKField(Serialize()) std::vector<std::unique_ptr<ParticleUpdater>> m_updaters;
+        std::unique_ptr<GPE::ParticleRenderer>                              m_renderer = nullptr;
 
     protected:
         /**
@@ -70,17 +82,20 @@ namespace GPE RFKNamespace()
          */
         void emit(double dt);
 
+        /**
+         * @brief Init render buffer
+         */
+        void generate();
+
+        virtual void updateToSystem() noexcept override;
+
     public:
         ParticleComponent(GameObject & owner);
         ParticleComponent(GameObject & owner, const CreateArg& arg);
 
-        ParticleComponent(const ParticleComponent& other) noexcept = delete;
-        ParticleComponent(ParticleComponent && other) noexcept     = default;
         virtual ~ParticleComponent();
 
-        ParticleComponent()        = default;
-        ParticleComponent& operator=(ParticleComponent const& other) = delete;
-        ParticleComponent& operator=(ParticleComponent&& other) noexcept = default;
+        ParticleComponent();
 
         void         moveTowardScene(class Scene & newOwner) override;
         virtual void inspect(InspectContext & context);
@@ -95,11 +110,6 @@ namespace GPE RFKNamespace()
         void reset();
 
         /**
-         * @brief Init render buffer
-         */
-        void generate();
-
-        /**
          * @brief Start the particle effect
          */
         void start();
@@ -109,6 +119,19 @@ namespace GPE RFKNamespace()
          * @param count
          */
         void emit(unsigned int count);
+
+        /**
+         * @brief Emit particle at position
+         * @param count
+         */
+        void emitAt(const GPM::Vec3& position, unsigned int count);
+
+        /**
+         * @brief Emit particle thank to model matrix (use transform model of gameObject)
+         * @param model
+         * @param count
+         */
+        void emitAt(const GPM::Mat4& model, unsigned int count);
 
         /**
          * @brief Update the particle effect and all it's updater
@@ -136,7 +159,8 @@ namespace GPE RFKNamespace()
 
         inline unsigned int getMeshID();
 
-        inline Shader* getShader();
+        inline Shader*  getShader();
+        inline Texture* getTexture();
 
         /**
          * @brief Try to add specific updater if its type doesn't exist
@@ -190,13 +214,6 @@ namespace GPE RFKNamespace()
          * @brief Update GPU data with CPU buffer
          */
         void sendDataToShader();
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept final;
 
         ParticleComponent_GENERATED
     };

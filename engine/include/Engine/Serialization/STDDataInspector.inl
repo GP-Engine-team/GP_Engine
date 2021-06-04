@@ -1,14 +1,16 @@
 #include <Engine/Serialization/STDDataInspector.hpp>
 
 template <typename T>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const rfk::Field& info)
 {
-    return inspect(context, inspected, info.name.c_str());
+    inspect(context, inspected, info.name.c_str());
 }
 
 template <typename T>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const char* name)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const char* name)
 {
+    ImGui::PushID(&inspected);
+
     const ImGuiTreeNodeFlags nodeFlag =
         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
@@ -82,23 +84,22 @@ bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
         ImGui::TreePop();
     }
 
-    return false;
+    ImGui::PopID();
 }
 
 template <typename T>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const rfk::Field& info)
 {
     return inspect(context, inspected, info.name.c_str());
 }
 
 template <typename T>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const char* name)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const char* name)
 {
     if (inspected.get())
     {
-        return inspect(context, *inspected.get(), name);
+        inspect(context, *inspected.get(), name);
     }
-    return false;
 }
 
 template <typename T>
@@ -111,19 +112,18 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T
 }
 
 template <typename T>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected, const rfk::Field& info)
 {
-    return inspect(context, inspected, info.name.c_str());
+    inspect(context, inspected, info.name.c_str());
 }
 
 template <typename T>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected, const char* name)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T>& inspected, const char* name)
 {
     if (inspected.get())
     {
         return inspect(context, *inspected.get(), name);
     }
-    return false;
 }
 
 template <typename T>

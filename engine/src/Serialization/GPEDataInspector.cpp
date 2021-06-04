@@ -1,29 +1,33 @@
-#include "Engine/Serialization/GPEDataInspector.hpp"
-
-#include <Engine/Intermediate/GameObject.hpp>
-#include <Engine/Resources/Importer/Importer.hpp>
-#include <Engine/Resources/Prefab.hpp>
-#include <Engine/Resources/Scene.hpp>
+﻿
 #include <filesystem>
+#include <unordered_map>
 
 #include <imgui.h>
+
+#include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Importer/Importer.hpp>
+#include <Engine/Resources/Linker.hpp>
+#include <Engine/Resources/Prefab.hpp>
+#include <Engine/Resources/ResourcesManager.hpp>
+#include <Engine/Resources/Scene.hpp>
+
+#include <Engine/Serialization/GPEDataInspector.hpp>
 
 using namespace GPE;
 
 template <>
-bool GPE::DataInspector::inspect(InspectContext& context, RGB& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(InspectContext& context, RGB& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(InspectContext& context, RGB& inspected, const char* name)
+void GPE::DataInspector::inspect(InspectContext& context, RGB& inspected, const char* name)
 {
-    startProperty(name);
-    const bool hasChanged = ImGui::ColorEdit3("", &inspected.e[0]);
-    endProperty();
-
-    return hasChanged;
+    context.startProperty(name);
+    context.setDirty(ImGui::ColorEdit3("", &inspected.e[0]));
+    context.endProperty();
 }
 
 template <>
@@ -33,19 +37,17 @@ void GPE::DataInspector::inspect(InspectContext& context, RGB& inspected)
 }
 
 template <>
-bool GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected, const char* name)
+void GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected, const char* name)
 {
-    startProperty(name);
-    const bool hasChanged = ImGui::ColorEdit4("", &inspected.e[0]);
-    endProperty();
-
-    return hasChanged;
+    context.startProperty(name);
+    context.setDirty(ImGui::ColorEdit4("", &inspected.e[0]));
+    context.endProperty();
 }
 
 template <>
@@ -55,82 +57,33 @@ void GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected)
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const char* name)
+void GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const char* name)
 {
-    startProperty(name);
-    const bool hasChanged = ImGui::ColorEdit4("", &inspected.e[0]);
-    endProperty();
-
-    return hasChanged;
+    context.startProperty(name);
+    context.setDirty(ImGui::ColorEdit4("", &inspected.e[0]));
+    context.endProperty();
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject*& inspected, const rfk::Field& info)
+void GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const rfk::Field& info)
 {
     return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
-bool GPE::DataInspector::inspect(GPE::InspectContext& context, GameObject*& inspected, const char* name)
+void GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const char* name)
 {
-    startProperty(name);
-    bool hasChanged = false;
+    context.startProperty(name);
 
-    ImGui::Selectable(inspected == nullptr ? "None" : inspected->getName().c_str());
+    ImGui::Selectable(inspected ? inspected->getName() : "None");
 
-    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
-    {
-        ImGui::OpenPopup("GOSelection");
-    }
-
-    if (ImGui::BeginPopup("GOSelection"))
-    {
-        if (ImGui::MenuItem("Remove", NULL, false))
-        {
-            inspected  = nullptr;
-            hasChanged = true;
-        }
-
-        ImGui::EndPopup();
-    }
-
-    // Drop from scene graph
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_GAMEOBJECT"))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(GPE::GameObject*));
-            inspected  = *static_cast<GPE::GameObject**>(payload->Data);
-            hasChanged = true;
-        }
-        ImGui::EndDragDropTarget();
-    }
-    endProperty();
-
-    return hasChanged;
-}
-
-template <>
-bool DataInspector::inspect(InspectContext& context, Prefab& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
-bool DataInspector::inspect(InspectContext& context, Prefab& inspected, const char* name)
-{
-    startProperty(name);
-    bool hasChanged = false;
-
-    ImGui::Selectable(inspected.isEmpty() ? "None" : inspected.getName());
-
-    if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
+    if (inspected && ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
     {
         ImGui::OpenPopup("PrefabSelection");
     }
@@ -139,8 +92,21 @@ bool DataInspector::inspect(InspectContext& context, Prefab& inspected, const ch
     {
         if (ImGui::MenuItem("Remove", NULL, false))
         {
-            inspected.reset();
-            hasChanged = true;
+            std::unordered_map<std::string, SharedPrefab>& pSPref =
+                Engine::getInstance()->resourceManager.getAll<GPE::SharedPrefab>();
+
+            for (auto&& it = pSPref.begin(); it != pSPref.end(); ++it)
+            {
+                if (&it->second.pref == inspected)
+                {
+                    if (--it->second.instanceCounter == 0)
+                        pSPref.erase(it);
+                    break;
+                }
+            }
+
+            inspected  = nullptr;
+            context.setDirty();
         }
 
         ImGui::EndPopup();
@@ -154,12 +120,332 @@ bool DataInspector::inspect(InspectContext& context, Prefab& inspected, const ch
             IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
             std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
-            inspected.loadPrefabFromPath(path.string().c_str());
-            hasChanged = true;
+            // Remove previous reference of prefab
+            if (inspected)
+            {
+                auto&& map = GPE::Engine::getInstance()->resourceManager.getAll<SharedPrefab>();
+                for (auto&& it = map.begin(); it != map.end(); ++it)
+                {
+                    if (&it->second.pref == inspected)
+                    {
+                        if (--it->second.instanceCounter == 0)
+                            map.erase(it);
+                        break;
+                    }
+                }
+            }
+
+            if (SharedPrefab* pSPref = Engine::getInstance()->resourceManager.get<SharedPrefab>(path.string().c_str()))
+            {
+                // Add the new reference
+                inspected = &pSPref->pref;
+                pSPref->instanceCounter++;
+            }
+            else
+            {
+                SharedPrefab& sPref = Engine::getInstance()->resourceManager.add<SharedPrefab>(path.string().c_str(),
+                                                                                               path.string().c_str());
+                inspected           = &sPref.pref;
+                ++sPref.instanceCounter;
+            }
+
+            context.setDirty();
         }
         ImGui::EndDragDropTarget();
     }
-    endProperty();
+    context.endProperty();
+}
 
-    return hasChanged;
+template <typename T>
+void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes, const char* acceptedPayload,
+                            std::function<T*(const char*)> importer)
+{
+    auto& resourceContainer = GPE::Engine::getInstance()->resourceManager.getAll<T>();
+
+    std::vector<const char*> items;
+    items.reserve(resourceContainer.size());
+
+    for (auto&& res : resourceContainer)
+    {
+        items.emplace_back(res.first.c_str());
+    }
+
+    // Init position of the combo box cursor
+    int itemCurrent;
+    if (inRes == nullptr)
+    {
+        itemCurrent = -1;
+    }
+    else
+    {
+        itemCurrent = 0;
+
+        for (auto&& it = resourceContainer.begin(); &it->second != inRes; ++itemCurrent, ++it)
+            ;
+    }
+
+    const char* label = inRes ? items[itemCurrent] : "None";
+    if (ImGui::BeginCombo(name, label, 0))
+    {
+        static int isInContentBrowser = 0;
+        ImGui::RadioButton("Used", &isInContentBrowser, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("All", &isInContentBrowser, 1);
+
+        if (isInContentBrowser)
+        {
+            std::vector<GPE::ResourcesPath>& pathContainer =
+                *GPE::Engine::getInstance()->resourceManager.get<std::vector<GPE::ResourcesPath>>("Path");
+
+            for (auto&& path : pathContainer)
+            {
+                if (path.path.extension().string() == acceptedPayload)
+                {
+                    if (ImGui::Selectable(path.path.string().c_str()))
+                    {
+                        inRes      = importer(path.path.string().c_str());
+                        context.setDirty();
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int n = 0; n < items.size(); n++)
+            {
+                const bool is_selected = (itemCurrent == n);
+                if (ImGui::Selectable(items[n], is_selected))
+                {
+                    itemCurrent = n;
+
+                    auto&& it = resourceContainer.begin();
+                    for (int i = 0; i < itemCurrent; ++i, ++it)
+                        ;
+
+                    inRes      = &it->second;
+                    context.setDirty();
+                }
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(acceptedPayload))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            if (T* pMesh = Engine::getInstance()->resourceManager.get<T>(path.string().c_str()))
+            {
+                inRes      = pMesh;
+                context.setDirty();
+            }
+            else
+            {
+                inRes      = importer(path.string().c_str());
+                context.setDirty();
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+}
+
+
+template <typename T>
+void renderAnimResourceExplorer(InspectContext& context, const char* name, T*& inRes, const char* acceptedPayload,
+                                std::function<T*(const char*)> importer)
+{
+    auto& resourceContainer = GPE::Engine::getInstance()->animResourcesManager.getAll<T>();
+
+    std::vector<const char*> items;
+    items.reserve(resourceContainer.size());
+
+    for (auto&& res : resourceContainer)
+    {
+        items.emplace_back(res.first.c_str());
+    }
+
+    // Init position of the combo box cursor
+    int itemCurrent;
+    if (inRes == nullptr)
+    {
+        itemCurrent = -1;
+    }
+    else
+    {
+        itemCurrent = 0;
+
+        for (auto&& it = resourceContainer.begin(); &it->second != inRes; ++itemCurrent, ++it)
+            ;
+    }
+
+    const char* label = inRes ? items[itemCurrent] : "None";
+    if (ImGui::BeginCombo(name, label, 0))
+    {
+        static int isInContentBrowser = 0;
+        ImGui::RadioButton("Used", &isInContentBrowser, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("All", &isInContentBrowser, 1);
+
+        if (isInContentBrowser)
+        {
+            std::vector<GPE::ResourcesPath>& pathContainer =
+                *GPE::Engine::getInstance()->resourceManager.get<std::vector<GPE::ResourcesPath>>("Path");
+
+            for (auto&& path : pathContainer)
+            {
+                if (path.path.extension().string() == acceptedPayload)
+                {
+                    if (ImGui::Selectable(path.path.string().c_str()))
+                    {
+                        inRes      = importer(path.path.string().c_str());
+                        context.setDirty();
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int n = 0; n < items.size(); n++)
+            {
+                const bool is_selected = (itemCurrent == n);
+                if (ImGui::Selectable(items[n], is_selected))
+                {
+                    itemCurrent = n;
+
+                    auto&& it = resourceContainer.begin();
+                    for (int i = 0; i < itemCurrent; ++i, ++it)
+                        ;
+
+                    inRes      = &it->second;
+                    context.setDirty();
+                }
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(acceptedPayload))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
+
+            if (T* pMesh = Engine::getInstance()->animResourcesManager.get<T>(path.string().c_str()))
+            {
+                inRes      = pMesh;
+                context.setDirty();
+            }
+            else
+            {
+                inRes      = importer(path.string().c_str());
+                context.setDirty();
+            }
+        }
+    }
+}
+
+template <>
+void GPE::DataInspector::inspect<Skin*>(InspectContext & context, GPE::Skin * &inspected, const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Skin*& inspected, const char* name)
+{
+    renderAnimResourceExplorer<Skin>(context, "Skin", inspected, ENGINE_SKIN_EXTENSION, loadSkinFile);
+}
+
+template <>
+void GPE::DataInspector::inspect<Skeleton*>(InspectContext & context, GPE::Skeleton*& inspected,
+                                            const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Material*& inspected, const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+void GPE::DataInspector::inspect(InspectContext& context, GPE::Skeleton*& inspected, const char* name)
+{
+    // Ressources should always be inspected from a component.
+    assert(context.lastComponentOwner != nullptr);
+
+    renderAnimResourceExplorer<Skeleton>(context, "Skeleton", inspected, ENGINE_SKELETON_EXTENSION, loadSkeletonFile);
+}
+
+template <>
+void GPE::DataInspector::inspect<Animation*>(InspectContext& context, Animation*& inspected, const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Material*& inspected, const char* name)
+{
+    renderResourceExplorer<Material>(context, "Material", inspected, ENGINE_MATERIAL_EXTENSION, loadMaterialFile);
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+void GPE::DataInspector::inspect(InspectContext & context, class Animation * &inspected, const char* name)
+{
+    // Ressources should always be inspected from a component.
+    assert(context.lastComponentOwner != nullptr);
+
+    renderAnimResourceExplorer<Animation>(context, "Animation", inspected, ENGINE_ANIMATION_EXTENSION,
+                                          loadAnimationFile);
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const char* name)
+{
+    renderResourceExplorer<Mesh>(context, "Mesh", inspected, ENGINE_MESH_EXTENSION, loadMeshFile);
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const char* name)
+{
+    renderResourceExplorer<Texture>(context, "Texture", inspected, ENGINE_TEXTURE_EXTENSION, loadTextureFile);
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Shader*& inspected, const rfk::Field& info)
+{
+    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, class Shader*& inspected, const char* name)
+{
+    renderResourceExplorer<Shader>(context, "Shader", inspected, ENGINE_SHADER_EXTENSION, loadShaderFile);
 }

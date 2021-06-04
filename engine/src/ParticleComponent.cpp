@@ -13,65 +13,33 @@ File_GENERATED
 #include <filesystem>
 #include <imgui.h>
 
-using namespace GPE;
+    using namespace GPE;
 using namespace GPM;
 
 ParticleComponent::ParticleComponent(GameObject& owner) : Component(owner)
 {
-    owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    updateToSystem();
+    initializeDefaultSetting();
+}
+
+ParticleComponent::ParticleComponent() : Component()
+{
     initializeDefaultSetting();
 }
 
 ParticleComponent::ParticleComponent(GameObject& owner, const CreateArg& arg) : Component(owner)
 {
-    owner.pOwnerScene->sceneRenderer.addParticleComponent(*this);
+    updateToSystem();
     initializeDefaultSetting();
 }
 
 ParticleComponent::~ParticleComponent()
 {
-    if (getOwner().pOwnerScene)
-        getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
+    setActive(false);
 }
 
 void ParticleComponent::moveTowardScene(Scene& newOwner)
 {
-}
-
-template <typename T>
-void renderResourceExplorer(const char* name, T*& inRes)
-{
-    auto& resourceContainer = GPE::Engine::getInstance()->resourceManager.getAll<T>();
-
-    std::vector<const char*> items;
-    items.reserve(resourceContainer.size());
-
-    for (auto&& res : resourceContainer)
-    {
-        items.emplace_back(res.first.c_str());
-    }
-
-    // Init position of the combo box cursor
-    int itemCurrent;
-    if (inRes == nullptr)
-    {
-        itemCurrent = -1;
-    }
-    else
-    {
-        itemCurrent = 0;
-        for (auto&& it = resourceContainer.begin(); &it->second != inRes; ++itemCurrent, ++it)
-            ;
-    }
-
-    if (ImGui::Combo(name, &itemCurrent, items.data(), int(items.size())))
-    {
-        auto&& it = resourceContainer.begin();
-        for (int i = 0; i < itemCurrent; ++i, ++it)
-            ;
-
-        inRes = &it->second;
-    }
 }
 
 #define PARTICLE_GENERATOR_INSPECT(name)                                                                               \
@@ -134,11 +102,17 @@ void ParticleComponent::inspect(InspectContext& context)
 
     bool isDurationUsed = !std::isinf(m_duration);
 
-    DataInspector::inspect(context, m_isInGlobalPosition, "Is in Global Position");
-
-    ImGui::PushEnabled(!isDurationUsed);
-    DataInspector::inspect(context, m_emitRate, "EmitRate");
+    ImGui::PushEnabled(!m_useGlobalPosition);
+    DataInspector::inspect(context, m_useGameObjectTransform, "Use transform");
     ImGui::PopEnabled();
+
+    ImGui::PushEnabled(!m_useGameObjectTransform);
+    DataInspector::inspect(context, m_useGlobalPosition, "Use global position");
+    ImGui::PopEnabled();
+
+    DataInspector::inspect(context, isTransparente, "Is transparent");
+
+    DataInspector::inspect(context, m_emitRate, "EmitRate");
 
     if (ImGui::Checkbox("##isDurationUsed", &isDurationUsed))
     {
@@ -152,7 +126,8 @@ void ParticleComponent::inspect(InspectContext& context)
     DataInspector::inspect(context, m_duration, "Duration");
     ImGui::PopEnabled();
 
-    if (DataInspector::inspect(context, m_count, "Count"))
+    DataInspector::inspect(context, m_count, "Count");
+    if (context.wasLastDirty())
     {
         m_particles.generate(m_count, m_particles.m_maskType);
     }
@@ -160,14 +135,17 @@ void ParticleComponent::inspect(InspectContext& context)
     ImGui::TextUnformatted("Generator");
     PARTICLE_GENERATOR_INSPECT(BoxPosGen)
     PARTICLE_GENERATOR_INSPECT(RoundPosGen)
+    PARTICLE_GENERATOR_INSPECT(SizeGen)
     PARTICLE_GENERATOR_INSPECT(BasicColorGen)
     PARTICLE_GENERATOR_INSPECT(BasicVelGen)
+    PARTICLE_GENERATOR_INSPECT(ConeVelGen)
     PARTICLE_GENERATOR_INSPECT(SphereVelGen)
     PARTICLE_GENERATOR_INSPECT(VelFromPosGen)
     PARTICLE_GENERATOR_INSPECT(BasicTimeGen)
 
     ImGui::TextUnformatted("Updater");
     PARTICLE_UPDATER_INSPECT(EulerUpdater)
+    PARTICLE_UPDATER_INSPECT(SizeUpdater)
     PARTICLE_UPDATER_INSPECT(FloorUpdater)
     PARTICLE_UPDATER_INSPECT(AttractorUpdater)
     PARTICLE_UPDATER_INSPECT(BasicColorUpdater)
@@ -176,37 +154,18 @@ void ParticleComponent::inspect(InspectContext& context)
     PARTICLE_UPDATER_INSPECT(BasicTimeUpdater)
 
     // Shader
-    {
-        renderResourceExplorer<Shader>("Shader", m_shader);
-
-        // Drop
-        if (ImGui::BeginDragDropTarget())
-        {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_SHADER_EXTENSION))
-            {
-                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-                std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-                if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(path.string().c_str()))
-                {
-                    m_shader = pShader;
-                }
-                else
-                {
-                    if (const std::string* str = Engine::getInstance()->resourceManager.getKey(m_shader))
-                        getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
-
-                    m_shader = loadShaderFile(path.string().c_str());
-                    getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
-                }
-            }
-        }
-    }
+    DataInspector::inspect(context, m_shader, "Shader");
+    DataInspector::inspect(context, m_diffuseTexture, "Optinal Texture");
 
     if (ImGui::Button("Start"))
     {
-        generate();
         start();
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Stop"))
+    {
+        reset();
     }
 }
 
@@ -215,7 +174,14 @@ void ParticleComponent::generate()
     if (!std::isinf(m_duration))
         m_emitRate = m_count / m_duration;
 
-    m_particles.generate(m_count, 0);
+    U16BMask mask;
+    for (auto&& updater : m_updaters)
+        mask.add(updater->getRequiereConfig().get());
+
+    for (auto&& generator : m_generators)
+        mask.add(generator->getRequiereConfig().get());
+
+    m_particles.generate(m_count, mask);
 
     initializeRenderer();
 }
@@ -223,29 +189,64 @@ void ParticleComponent::generate()
 void ParticleComponent::start()
 {
     reset();
+
+    if (!m_renderer)
+        generate();
+
     m_canEmit = true;
 }
 
 void ParticleComponent::emit(unsigned int count)
 {
+    if (m_useGameObjectTransform)
+    {
+        emitAt(getOwner().getTransform().getModelMatrix(), count);
+    }
+    else if (m_useGlobalPosition)
+    {
+        emitAt(getOwner().getTransform().getGlobalPosition(), count);
+    }
+}
+
+void ParticleComponent::emitAt(const GPM::Vec3& position, unsigned int count)
+{
+    if (!m_renderer)
+        generate();
+
     const size_t startId = m_particles.m_countAlive;
     const size_t endId   = std::min(startId + count, m_particles.m_count - 1);
 
     for (auto& gen : m_generators) // << gen loop
         gen->generate(&m_particles, startId, endId);
 
-    if (m_isInGlobalPosition)
-    {
-        if (m_particles.m_pos)
-            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
-                m_particles.m_pos[i] = getOwner().getTransform().getModelMatrix() * m_particles.m_pos[i];
+    if (m_particles.m_pos)
+        for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+            m_particles.m_pos[i] = Vec4{position, 0.f} + m_particles.m_pos[i];
 
-        if (m_particles.m_vel)
-        {
-            Mat3 rotScaleMat = toMatrix3(getOwner().getTransform().getModelMatrix());
-            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
-                m_particles.m_vel[i].xyz = rotScaleMat * m_particles.m_vel[i].xyz;
-        }
+    for (size_t i = startId; i < endId; ++i) // << wake loop
+        m_particles.wake(i);
+}
+
+void ParticleComponent::emitAt(const GPM::Mat4& model, unsigned int count)
+{
+    if (!m_renderer)
+        generate();
+
+    const size_t startId = m_particles.m_countAlive;
+    const size_t endId   = std::min(startId + count, m_particles.m_count - 1);
+
+    for (auto& gen : m_generators) // << gen loop
+        gen->generate(&m_particles, startId, endId);
+
+    if (m_particles.m_pos)
+        for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+            m_particles.m_pos[i] = model * m_particles.m_pos[i];
+
+    if (m_particles.m_vel)
+    {
+        Mat3 rotScaleMat = toMatrix3(model);
+        for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+            m_particles.m_vel[i].xyz = rotScaleMat * m_particles.m_vel[i].xyz;
     }
 
     for (size_t i = startId; i < endId; ++i) // << wake loop
@@ -260,8 +261,8 @@ void ParticleComponent::initializeDefaultSetting()
     {
         // pos:
         auto m_posGenerator                 = std::make_unique<BoxPosGen>();
-        m_posGenerator->m_pos               = Vec4{.0f, .0f, .0f, .0f};
-        m_posGenerator->m_maxStartPosOffset = Vec4{.0f, .0f, .0f, .0f};
+        m_posGenerator->m_pos               = Vec3{.0f, .0f, .0f};
+        m_posGenerator->m_maxStartPosOffset = Vec3{.0f, .0f, .0f};
         m_generators.emplace_back(std::move(m_posGenerator));
 
         auto m_colGenerator           = std::make_unique<BasicColorGen>();
@@ -366,7 +367,7 @@ void ParticleComponent::emit(double dt)
     for (auto& gen : m_generators) // << gen loop
         gen->generate(&m_particles, startId, endId);
 
-    if (m_isInGlobalPosition)
+    if (m_useGameObjectTransform)
     {
         if (m_particles.m_pos)
             for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
@@ -379,24 +380,26 @@ void ParticleComponent::emit(double dt)
                 m_particles.m_vel[i].xyz = rotScaleMat * m_particles.m_vel[i].xyz;
         }
     }
+    else if (m_useGlobalPosition)
+    {
+        if (m_particles.m_pos)
+            for (size_t i = startId; i < endId; ++i) // << set GlobalPosition loop
+                m_particles.m_pos[i] = Vec4{getOwner().getTransform().getGlobalPosition(), 0.f} + m_particles.m_pos[i];
+    }
 
     for (size_t i = startId; i < endId; ++i) // << wake loop
         m_particles.wake(i);
 }
 
-void ParticleComponent::setActive(bool newState) noexcept
+void ParticleComponent::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
     {
         getOwner().pOwnerScene->sceneRenderer.addParticleComponent(*this);
     }
     else
     {
-
-        getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
+        if (getOwner().pOwnerScene)
+            getOwner().pOwnerScene->sceneRenderer.removeParticleComponent(*this);
     }
 }

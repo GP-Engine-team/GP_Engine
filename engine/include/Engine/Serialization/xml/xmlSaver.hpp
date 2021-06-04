@@ -79,7 +79,7 @@ public:
         hierarchy.push(newNode);
 
         appendAttribute(newNode, "name", name);
-        appendAttribute(newNode, "type", typeName);
+        //appendAttribute(newNode, "type", typeName);
         appendAttribute(newNode, "typeID", std::to_string(typeId));
 
         return newNode;
@@ -126,50 +126,35 @@ namespace GPE
 {
 
 template <typename T>
-void save(XmlSaver& context, const T& inspected, const XmlSaver::SaveInfo& info)
-{
-    if constexpr (std::is_enum_v<T>)
-    {
-        GPE::save(context, *reinterpret_cast<const std::underlying_type_t<T>*>(&inspected), info);
-    }
-    else
-    {
-        context.push(info);
-
-        inspected.save(context);
-
-        context.pop();
-    }
-}
+void save(XmlSaver& context, const T& inspected, const XmlSaver::SaveInfo& info);
 
 template <typename T>
-void save(XmlSaver& context, const T& inspected, const rfk::Field& info)
-{
-    GPE::save(context, inspected, fieldToSaveInfo(info));
-}
-
-template <typename T>
-void save(XmlSaver& context, T* const& inspected, const rfk::Field& info)
-{
-    context.push(info);
-
-    context.saveAsString(std::to_string(size_t(inspected)), info);
-
-    if (inspected != nullptr)
-        context.savePtrData(inspected, fieldToSaveInfo(info));
-
-    context.pop();
-}
+void save(XmlSaver& context, const T& inspected, const rfk::Field& info);
 
 template <typename T>
 void save(XmlSaver& context, T* const & inspected, const XmlSaver::SaveInfo& info)
 {
     context.push(info);
 
-    context.saveAsString(std::to_string(size_t(inspected)), info);
-    context.savePtrData(inspected, info);
+    XmlSaver::SaveInfo newInfo = info;
+    if constexpr (std::is_base_of<rfk::Object, T>::value)
+    {
+        if (inspected != nullptr)
+        {
+            newInfo.typeId = inspected->getArchetype().id;
+        }
+    }
+    context.saveAsString(std::to_string(size_t(inspected)), newInfo);
+    if (inspected != nullptr)
+        context.savePtrData(inspected, newInfo);
 
     context.pop();
+}
+
+template <typename T>
+void save(XmlSaver& context, T* const& inspected, const rfk::Field& info)
+{
+    GPE::save(context, inspected, fieldToSaveInfo(info));
 }
 
 /**
@@ -253,5 +238,7 @@ bool XmlSaver::savePtrData(T* data, const SaveInfo& info)
 }
 
 #include "Engine/Serialization/STDSave.hpp"
-#include "Engine/Serialization/GPMSave.hpp"
 #include "Engine/Serialization/GPESave.hpp"
+#include "Engine/Serialization/GPMSave.hpp"
+
+#include "Engine/Serialization/xml/xmlSaver.inl"

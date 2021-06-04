@@ -36,8 +36,20 @@ struct DirectoryInfo
     std::filesystem::path    name;
     DirectoryInfo*           pParent = nullptr;
     std::filesystem::path    path;
-    std::list<DirectoryInfo> directories = {};
-    std::list<FileInfo>      files       = {};
+    std::list<DirectoryInfo> directories    = {};
+    std::list<FileInfo>      files          = {};
+    bool                     isInRenameMode = false;
+
+    bool containDirectory(std::filesystem::path name)
+    {
+        bool rst = false;
+
+        for (auto&& it = directories.cbegin(); it != directories.cend() && !rst; ++it)
+        {
+            rst |= it->name.filename() == name;
+        }
+        return rst;
+    }
 
     bool containFile(std::filesystem::path name)
     {
@@ -54,6 +66,7 @@ struct DirectoryInfo
 class ProjectContent
 {
 protected:
+    // TODO : icone -> icon
     GPE::Texture m_folderIcone;
     GPE::Texture m_textureIcone;
     GPE::Texture m_materialIcone;
@@ -63,13 +76,19 @@ protected:
     GPE::Texture m_soundIcone;
     GPE::Texture m_unknowIcone;
     GPE::Texture m_prefabIcone;
+    GPE::Texture m_skeletonIcon;
+    GPE::Texture m_animationIcon;
+    GPE::Texture m_skinIcon;
 
     DirectoryInfo  resourcesTree;
     DirectoryInfo* pCurrentDirectory = nullptr;
 
-    std::unique_ptr<GPE::IInspectable> importationSetting;
+    std::unique_ptr<GPE::IInspectable> importationSetting = nullptr;
 
     class Editor* m_editorContext = nullptr;
+
+protected:
+    void tryToSetCurrentCirToPreviousLocation(const std::filesystem::path& previousPath);
 
 public:
     ProjectContent(Editor& editorContext);

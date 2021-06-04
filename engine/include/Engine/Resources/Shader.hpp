@@ -12,6 +12,8 @@
 #include <vector>
 
 #include <Engine/Resources/ShaderType.hpp>
+#include <Engine/Serialization/xml/xmlLoader.hpp>
+#include <Engine/Serialization/xml/xmlSaver.hpp>
 #include <GPM/Vector3.hpp> //Vec3
 
 namespace GPE
@@ -22,10 +24,27 @@ namespace GPE
 #define AMBIANTE_COLOR_ONLY (1 << 2)
 #define SCALE_TIME_ACC (1 << 3)
 #define UNSCALED_TIME_ACC (1 << 4)
+#define FOG (1 << 5)
 
 #define PROJECTION_VIEW_MODEL_MATRIX (1 << 6)
 #define PROJECTION_MATRIX (1 << 7)
 #define VIEW_MATRIX (1 << 8)
+#define VIEW_MODEL_MATRIX (1 << 9)
+#define ANIMATION_MASK (1 << 10)
+
+// class Shader;
+//
+// template <>
+// void load(XmlLoader& context, Shader*& data, const rfk::Field& info);
+//
+// template <>
+// void load(XmlLoader& context, Shader*& data, const XmlLoader::LoadInfo& info);
+//
+// template <>
+// void save(XmlSaver& context, Shader* const& data, const rfk::Field& info);
+//
+// template <>
+// void save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info);
 
 // Inspiread about code exemple on learn openGl : https://learnopengl.com/Getting-started/Shaders
 class Shader
@@ -39,7 +58,7 @@ public:
     };
 
 protected:
-    uint16_t     m_featureMask         = 0; // feature is shader interger into shader like light, blure etc....
+    uint16_t     m_featureMask         = 0; // feature is shader interger into shader like light, blur etc....
     unsigned int m_lightsUniformBuffer = 0; // TODO: no sens to have id of uniform light in any shaders
 
     unsigned int m_id = 0;
@@ -100,7 +119,8 @@ private:
      * @param fragmentCode
      * @return bool true is error happend
      */
-    bool loadFile(const char* vertexPath, std::string& vertexCode, const char* fragmentPath, std::string& fragmentCode);
+    static bool loadFile(const char* vertexPath, std::string& vertexCode, const char* fragmentPath,
+                         std::string& fragmentCode);
 
     /**
      * @brief Compile
@@ -108,9 +128,9 @@ private:
      * @param vertexCode
      * @param fragmentCode
      */
-    void compile(std::string& vertexCode, std::string& fragmentCode);
-    void compileVertex(std::string& vertexCode);
-    void compileFragment(std::string& fragmentCode);
+    static unsigned int compile(std::string& vertexCode, std::string& fragmentCode);
+    static void         compileVertex(std::string& vertexCode);
+    static void         compileFragment(std::string& fragmentCode);
 
     /**
      * @brief Use log function for checking shader compilation/linking errors
@@ -118,10 +138,10 @@ private:
      * @param shader
      * @param type
      */
-    void checkCompileErrors(unsigned int shader, EType type);
+    static bool checkCompileErrors(unsigned int shader, EType type);
 
-    void loadAndCompile(const char* vertexPath, const char* fragmentPath, uint16_t featureMask = 0);
-    void release();
+    static unsigned int loadAndCompile(const char* vertexPath, const char* fragmentPath, uint16_t featureMask = 0);
+    void                release();
 };
 
 #include "Shader.inl"

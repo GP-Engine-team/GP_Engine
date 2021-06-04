@@ -12,22 +12,35 @@
 
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Linker.hpp>
+#include <Engine/Serialization/DefaultInspect.hpp>
+#include <Engine/Serialization/Inspect.hpp>
 #include <memory>
 
 #include "Generated/WorldGenerator.rfk.h"
 
 namespace GPG RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen, Serialize()) WorldGenerator : public GPE::BehaviourComponent
+    class RFKClass(ComponentGen, Serialize(), DefaultInspect()) WorldGenerator : public GPE::BehaviourComponent
     {
     private:
-        RFKField(Inspect(), Serialize()) GPE::Prefab      m_treePrefab;
-        RFKField(Inspect(), Serialize()) GPE::GameObject* m_treeContainer = nullptr;
+        RFKField(Serialize(), Inspect()) GPE::Prefab*                 m_prefab = nullptr;
+        RFKField(Serialize(), Inspect()) GPE::Linker<GPE::GameObject> m_container;
+
+        RFKField(Serialize(), Inspect(), Separator()) GPM::Vec3 m_minScale = GPM::Vec3::one();
+        RFKField(Serialize(), Inspect()) GPM::Vec3              m_maxScale = GPM::Vec3::one();
+
+        RFKField(Serialize(), Inspect(), Separator()) GPM::Vec3 m_minRot = GPM::Vec3{0.f, 360.f, 0.f};
+        RFKField(Serialize(), Inspect()) GPM::Vec3              m_maxRot = GPM::Vec3{0.f, 360.f, 0.f};
+
+        RFKField(Serialize(), Inspect(), Separator()) int            m_number = 15;
+        RFKField(Serialize(), Inspect()) float                       m_radius = 10.f;
+        RFKField(Serialize(), Inspect(), Separator(true, true)) bool m_debug  = true;
 
     public:
         WorldGenerator(GPE::GameObject & owner) noexcept : GPE::BehaviourComponent(owner)
         {
-            enableOnGUI(true);
+            onPostLoad();
         }
 
         WorldGenerator() noexcept = default;
@@ -40,30 +53,17 @@ namespace GPG RFKNamespace()
         WorldGenerator& operator=(WorldGenerator&& other) noexcept = delete;
 
     public:
-        void loadTree(class GPE::GameObject & parent, unsigned int number);
+        void loadDisk();
+        void loadCircularTowardCenter();
 
         virtual void start()
         {
         }
 
-        void onGUI() final
-        {
-            if (ImGui::Button("Generate"))
-            {
-                if (!m_treeContainer || m_treePrefab.isEmpty())
-                {
-                    GPE::Log::getInstance()->logError("Missing tree container GO or tree prefab");
-                    return;
-                }
-                for (auto&& child : m_treeContainer->children)
-                {
-                    delete child;
-                }
-                m_treeContainer->children.clear();
+        void onPostLoad() final;
+        void updateEditor(double deltaTime) final;
 
-                loadTree(*m_treeContainer, 100);
-            }
-        }
+        void inspect(GPE::InspectContext & context) override;
 
         WorldGenerator_GENERATED
     };

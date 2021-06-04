@@ -22,7 +22,7 @@
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Serialize(), Inspect(), ComponentGen) DirectionalLight : public Light
+    class RFKClass(Serialize(), ComponentGen) DirectionalLight : public Light
     {
     public:
         struct CreateArg
@@ -38,12 +38,10 @@ namespace GPE RFKNamespace()
 
     public:
         DirectionalLight(const DirectionalLight& other) = delete;
-        DirectionalLight(DirectionalLight && other)     = default;
         virtual ~DirectionalLight();
 
         DirectionalLight()        = default;
         DirectionalLight& operator=(DirectionalLight const& other) = delete;
-        DirectionalLight& operator=(DirectionalLight&& other) = default;
 
         DirectionalLight(GameObject & owner) noexcept;
 
@@ -53,6 +51,8 @@ namespace GPE RFKNamespace()
         GPM::Mat4 getLightSpaceMatrix() noexcept final;
 
         DEFAULT_GETTER_SETTER_BY_REF(Direction, m_direction);
+
+        void inspect(GPE::InspectContext & context) override;
 
         DirectionalLight_GENERATED
     };

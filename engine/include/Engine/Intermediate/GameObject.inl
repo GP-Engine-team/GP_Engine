@@ -1,18 +1,21 @@
 ﻿namespace GPE
 {
-
-inline GameObject::GameObject(Scene& scene, const CreateArg& arg)
-    : m_name{arg.name}, m_pTransform{new TransformComponent(*this, arg.transformArg)}, m_pComponents{},
-      pOwnerScene{&scene}, m_parent{arg.parent}, m_id{++m_currentID}
-{
-}
-
 template <typename T, typename... Args>
 inline T& GameObject::addComponent(Args&&... args) noexcept
 {
     T* newComponent = new T(*this, std::forward<Args>(args)...);
     m_pComponents.emplace_back(newComponent);
     return *newComponent;
+}
+
+template <typename T>
+T& GameObject::getOrCreateComponent()
+{
+    if (T* comp = getComponent<T>())
+    {
+        return *comp;
+    }
+    return addComponent<T>();
 }
 
 inline Component* GameObject::addExistingComponent(Component* pExistingComponent) noexcept
@@ -50,6 +53,11 @@ inline GameObject* GameObject::getParent() noexcept
     return m_parent;
 }
 
+inline bool GameObject::isDead() const
+{
+    return m_isDead;
+}
+
 inline void GameObject::forceSetParent(GameObject& newParent) noexcept
 {
     m_parent = &newParent;
@@ -76,7 +84,7 @@ inline GameObject& GameObject::addChild(Args&&... args) noexcept
     GameObject* pChild = children.emplace_back(new GameObject(*pOwnerScene, args...));
 
     pChild->m_parent = this;
-    pChild->getTransform().setDirty();
+    pChild->getTransform().update(getTransform().getModelMatrix());
     return *pChild;
 }
 
@@ -152,6 +160,11 @@ inline void GameObject::setActive(bool newState)
     {
         child->setActive(newState);
     }
+}
+
+inline bool GameObject::isActivated()
+{
+    return m_isActive;
 }
 
 inline std::list<Component*>::iterator GameObject::destroyComponent(const std::list<Component*>::iterator& it) noexcept

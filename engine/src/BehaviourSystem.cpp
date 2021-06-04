@@ -59,32 +59,30 @@ void BehaviourSystem::removeOnGUI(BehaviourComponent& functionToRemove) noexcept
     }
 }
 
-void BehaviourSystem::addBehaviour(BehaviourComponent& behaviour) noexcept
+void BehaviourSystem::addUpdateEditor(BehaviourComponent& fixedUpdateFunction) noexcept
 {
-    if (behaviour.isFixedUpdateEnable())
-        addFixedUpdate(behaviour);
-
-    if (behaviour.isUpdateEnable())
-        addUpdate(behaviour);
-
-    if (behaviour.isOnGUIEnable())
-        addOnGUI(behaviour);
-
-    m_pBehaviours.push_back(&behaviour);
+    m_updateEditorFunctions.emplace_back(&fixedUpdateFunction);
 }
 
-void BehaviourSystem::updateBehaviourPointer(BehaviourComponent*       newPointorBehaviour,
-                                             const BehaviourComponent* exPointorBehaviour) noexcept
+void BehaviourSystem::removeUpdateEditor(BehaviourComponent& functionToRemove) noexcept
 {
-    const std::vector<BehaviourComponent*>::iterator end = m_pBehaviours.end();
-    for (std::vector<BehaviourComponent*>::iterator it = m_pBehaviours.begin(); it != end; ++it)
+    for (auto&& function : m_updateEditorFunctions)
     {
-        if ((*it) == exPointorBehaviour)
+        if (unlikely(function == &functionToRemove))
         {
-            *it = newPointorBehaviour;
+            std::swap(function, m_updateEditorFunctions.back());
+            m_updateEditorFunctions.pop_back();
             return;
         }
     }
+}
+
+void BehaviourSystem::addBehaviour(BehaviourComponent& behaviour) noexcept
+{
+    m_pBehaviours.push_back(&behaviour);
+
+    if (startOnBehaviourAdd)
+        behaviour.start();
 }
 
 void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
@@ -98,6 +96,9 @@ void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
     if (behaviour.isOnGUIEnable())
         removeOnGUI(behaviour);
 
+    if (behaviour.isUpdateEditorEnable())
+        removeUpdateEditor(behaviour);
+
     for (auto&& it = m_pBehaviours.begin(); it != m_pBehaviours.end(); ++it)
     {
         if ((*it) == &behaviour)
@@ -109,34 +110,55 @@ void BehaviourSystem::removeBehaviour(BehaviourComponent& behaviour) noexcept
     }
 }
 
-void BehaviourSystem::start() const noexcept
+void BehaviourSystem::start() noexcept
 {
-    for (auto&& behaviour : m_pBehaviours)
+    startOnBehaviourAdd = true;
+
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_pBehaviours.size(); ++i)
     {
-        behaviour->start();
+        m_pBehaviours[i]->start();
     }
 }
 
 void BehaviourSystem::onGUI() const noexcept
 {
-    for (auto&& behaviour : m_onGUIFunctions)
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_onGUIFunctions.size(); ++i)
     {
-        behaviour->onGUI();
+        m_onGUIFunctions[i]->onGUI();
     }
 }
 
-void BehaviourSystem::fixedUpdate(double deltaTime) noexcept
+void BehaviourSystem::fixedUpdate(double deltaTime) const noexcept
 {
-    for (auto&& behaviour : m_fixedUpdateFunctions)
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_fixedUpdateFunctions.size(); ++i)
     {
-        behaviour->fixedUpdate(deltaTime);
+        m_fixedUpdateFunctions[i]->fixedUpdate(deltaTime);
+    }
+}
+
+void BehaviourSystem::updateEditor(double deltaTime) const noexcept
+{
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_updateEditorFunctions.size(); ++i)
+    {
+        m_updateEditorFunctions[i]->updateEditor(deltaTime);
     }
 }
 
 void BehaviourSystem::update(double deltaTime) const noexcept
 {
-    for (auto&& behaviour : m_updateFunctions)
+    // Use basic loop because user can emplace map into this loop
+    for (unsigned int i = 0; i < m_updateFunctions.size(); ++i)
     {
-        behaviour->update(deltaTime);
+        m_updateFunctions[i]->update(deltaTime);
     }
+}
+
+void BehaviourSystem::gameAssert(bool condition, const char* msg)
+{
+    if (!condition && onGameAssert)
+        onGameAssert(msg);
 }

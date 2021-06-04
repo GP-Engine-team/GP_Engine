@@ -9,6 +9,7 @@
 #include "Engine/ECS/Component/Model.hpp"
 #include "Engine/Resources/Material.hpp"
 #include "Engine/Resources/Mesh.hpp"
+#include "Engine/Resources/Prefab.hpp"
 #include "Engine/Resources/RenderBuffer.hpp"
 #include "Engine/Resources/RenderTexture.hpp"
 #include "Engine/Resources/ResourcesManager.hpp"
@@ -16,12 +17,25 @@
 #include "Engine/Resources/Sound.hpp"
 #include "Engine/Resources/Texture.hpp"
 #include "Engine/Serialization/SavedScene.hpp"
+#include "Engine/Resources/Animation/Animation.hpp"
+#include "Engine/Resources/Animation/Skeleton.hpp"
+#include "Engine/Resources/Animation/Skin.hpp"
 
+#include <GPM/Shape3D/AABB.hpp>
+#include <GPM/Shape3D/Sphere.hpp>
+
+#include <filesystem>
 #include <vector>
 
 namespace GPE
 {
+struct ResourcesPath
+{
+    std::filesystem::path path;
+};
 
 using ResourceManagerType = ResourcesManager<std::vector<Mesh>, Model::CreateArg, Mesh, Shader, Texture, RenderBuffer,
-                                             RenderTexture, std::vector<Material>, Material, Sound::Buffer, SavedScene>;
+                                             RenderTexture, std::vector<Material>, Material, Sound::Buffer, SavedScene,
+                                             GPM::Sphere, GPM::AABB, SharedPrefab, std::vector<ResourcesPath>>;
+using AnimResourceManagerType = ResourcesManager<Animation, Skeleton, Skin>;
 } // namespace GPE

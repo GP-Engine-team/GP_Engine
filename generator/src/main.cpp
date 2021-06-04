@@ -1,5 +1,3 @@
-#define GLFW_INCLUDE_NONE
-#define GLFW_DLL
 #include <Kodgen/Misc/DefaultLogger.h>
 #include <RefurekuGenerator/CodeGen/FileGenerationUnit.h>
 #include <RefurekuGenerator/CodeGen/FileGenerator.h>
@@ -10,7 +8,7 @@
 
 void generateEngineFiles(const std::string& engineDir, bool forceRegenerateAll = false)
 {
-    std::cout << "GENERATE ENGINE" << std::endl;
+    std::cerr << "GENERATE ENGINE" << std::endl;
 
     CustomFileParserFactory fileParserFactory;
     rfk::FileGenerator      fileGenerator;
@@ -30,6 +28,7 @@ void generateEngineFiles(const std::string& engineDir, bool forceRegenerateAll =
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir);
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/PhysX");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/imgui");
@@ -84,6 +83,7 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir,
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/src");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/PhysX");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/gameDir/include");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");

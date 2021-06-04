@@ -15,6 +15,8 @@ File_GENERATED
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Shader.hpp>
 #include <Engine/Resources/Texture.hpp>
+#include <Engine/Resources/Animation/Skeleton.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <GPM/Matrix3.hpp>
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
@@ -25,6 +27,12 @@ File_GENERATED
     using namespace GPE;
 using namespace GPM;
 
+bool SubModel::isValid() const
+{
+    // TODO: remove diffuse texture check
+    return pModel && pMesh && pShader && pMaterial && pMaterial->getDiffuseTexture();
+}
+
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
 {
     return lhs->pShader->getID() < rhs->pShader->getID() || lhs->pMesh->getID() < rhs->pMesh->getID() ||
@@ -33,59 +41,24 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
            (lhs->pMaterial->isOpaque() && !rhs->pMaterial->isOpaque());
 }
 
-Model::Model(Model&& other) noexcept : Component(other.getOwner()), m_subModels{other.m_subModels}
-{
-    auto&& itNew = m_subModels.begin();
-    auto&& itOld = other.m_subModels.begin();
-    for (; itNew != m_subModels.end(); ++itNew, ++itOld)
-    {
-        getOwner().pOwnerScene->sceneRenderer.updateSubModelPointer(&(*itNew), &(*itOld));
-    }
-}
-
 Model::~Model()
 {
-    if (!getOwner().pOwnerScene)
-        return;
-
-    for (SubModel& subMesh : m_subModels)
+    setActive(false);
+    if (m_animComponent != nullptr)
     {
-        if (subMesh.isValide())
-            getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+        m_animComponent->setModel(nullptr);
+        m_animComponent = nullptr;
     }
 }
 
 Model::Model(GameObject& owner) : Model(owner, CreateArg{})
 {
+    updateToSystem();
 }
 
 Model::Model(GameObject& owner, const CreateArg& arg) : Component{owner}, m_subModels{arg.subModels}
 {
-    for (SubModel& subMesh : m_subModels)
-    {
-        subMesh.pModel = this;
-        getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
-    }
-}
-
-Model& Model::operator=(Model&& other) noexcept
-{
-    m_subModels = other.m_subModels;
-
-    auto&& itNew = m_subModels.begin();
-    auto&& itOld = other.m_subModels.begin();
-    for (; itNew != m_subModels.end(); ++itNew, ++itOld)
-    {
-        getOwner().pOwnerScene->sceneRenderer.updateSubModelPointer(&(*itNew), &(*itOld));
-    }
-
-    return static_cast<Model&>(Component::operator=(std::move(other)));
-}
-
-void Model::onPostLoad()
-{
-    setActive(false);
-    setActive(true);
+    updateToSystem();
 }
 
 void Model::moveTowardScene(class Scene& newOwner)
@@ -103,201 +76,34 @@ void Model::moveTowardScene(class Scene& newOwner)
     }
 }
 
-template <typename T>
-void renderResourceExplorer(const char* name, T*& inRes)
-{
-    auto& resourceContainer = GPE::Engine::getInstance()->resourceManager.getAll<T>();
-
-    std::vector<const char*> items;
-    items.reserve(resourceContainer.size());
-
-    for (auto&& res : resourceContainer)
-    {
-        items.emplace_back(res.first.c_str());
-    }
-
-    // Init position of the combo box cursor
-    int itemCurrent;
-    if (inRes == nullptr)
-    {
-        itemCurrent = -1;
-    }
-    else
-    {
-        itemCurrent = 0;
-        for (auto&& it = resourceContainer.begin(); &it->second != inRes; ++itemCurrent, ++it)
-            ;
-    }
-
-    if (ImGui::Combo(name, &itemCurrent, items.data(), static_cast<int>(items.size())))
-    {
-        auto&& it = resourceContainer.begin();
-        for (int i = 0; i < itemCurrent; ++i, ++it)
-            ;
-
-        inRes = &it->second;
-    }
-}
-
-template <>
-void GPE::save(XmlSaver& context, const SubModel& inspected, const XmlSaver::SaveInfo& info)
-{
-    context.push(info);
-
-    GPE::save(context, inspected.pModel, XmlSaver::SaveInfo{"pModel", "Model*", 0});
-
-    if (inspected.pShader != nullptr)
-    {
-        if (const std::string* shaderName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pShader))
-        {
-            GPE::save(context, *shaderName, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
-        }
-    }
-
-    if (inspected.pMaterial != nullptr)
-    {
-        if (const std::string* matName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pMaterial))
-        {
-            GPE::save(context, *matName, XmlSaver::SaveInfo{"pMaterial", "Material*", 0});
-        }
-    }
-
-    if (inspected.pMesh != nullptr)
-    {
-        if (const std::string* meshName = GPE::Engine::getInstance()->resourceManager.getKey(inspected.pMesh))
-        {
-            GPE::save(context, *meshName, XmlSaver::SaveInfo{"pMesh", "Mesh*", 0});
-        }
-    }
-
-    GPE::save(context, inspected.enableBackFaceCulling, XmlSaver::SaveInfo{"enableBackFaceCulling", "bool", 0});
-
-    context.pop();
-}
-
-template <>
-void GPE::load(XmlLoader& context, SubModel& inspected, const XmlLoader::LoadInfo& info)
-{
-    if (context.goToSubChild(info))
-    {
-        GPE::load(context, inspected.pModel, XmlLoader::LoadInfo{"pModel", "Model*", 0});
-
-        {
-            std::string shaderName;
-            GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
-            if (!(inspected.pShader = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
-            {
-                inspected.pShader = loadShaderFile(shaderName.c_str());
-            }
-        }
-
-        {
-            std::string matName;
-            GPE::load(context, matName, XmlLoader::LoadInfo{"pMaterial", "Material*", 0});
-            if (!(inspected.pMaterial = Engine::getInstance()->resourceManager.get<GPE::Material>(matName)))
-            {
-                inspected.pMaterial = loadMaterialFile(matName.c_str());
-            }
-        }
-
-        {
-            std::string meshName;
-            GPE::load(context, meshName, XmlLoader::LoadInfo{"pMesh", "Mesh*", 0});
-            if (!(inspected.pMesh = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName)))
-            {
-                inspected.pMesh = loadMeshFile(meshName.c_str());
-            }
-        }
-
-        GPE::load(context, inspected.enableBackFaceCulling, XmlLoader::LoadInfo{"enableBackFaceCulling", "bool", 0});
-
-        context.pop();
-    }
-}
-
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspected)
 {
-    const bool isPreviousElementVoid = !inspected.isValide();
+    const bool isPreviousElementVoid = !inspected.isValid();
 
-    renderResourceExplorer<Mesh>("Mesh", inspected.pMesh);
-    // Drop
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_MESH_EXTENSION))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-            if (Mesh* pMesh = Engine::getInstance()->resourceManager.get<Mesh>(path.string().c_str()))
-            {
-                inspected.pMesh = pMesh;
-            }
-            else
-            {
-                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pMesh))
-                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
-
-                inspected.pMesh = loadMeshFile(path.string().c_str());
-                inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
-            }
-        }
-    }
-
-    renderResourceExplorer<Shader>("Shader", inspected.pShader);
-
-    // Drop
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_SHADER_EXTENSION))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-            if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(path.string().c_str()))
-            {
-                inspected.pShader = pShader;
-            }
-            else
-            {
-                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pShader))
-                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
-
-                inspected.pShader = loadShaderFile(path.string().c_str());
-                inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
-            }
-        }
-    }
-
-    renderResourceExplorer<Material>("Material", inspected.pMaterial);
-
-    // Drop
-    if (ImGui::BeginDragDropTarget())
-    {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_MATERIAL_EXTENSION))
-        {
-            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-            std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
-
-            if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(path.string().c_str()))
-            {
-                inspected.pMaterial = pMaterial;
-            }
-            else
-            {
-                if (const std::string* str = Engine::getInstance()->resourceManager.getKey(inspected.pMaterial))
-                    inspected.pModel->getOwner().pOwnerScene->removeLoadedResourcePath(str->c_str());
-
-                inspected.pMaterial = loadMaterialFile(path.string().c_str());
-                inspected.pModel->getOwner().pOwnerScene->addLoadedResourcePath(path.string().c_str());
-            }
-        }
-    }
+    inspect(context, inspected.pMesh, "Mesh");
+    inspect(context, inspected.pShader, "Shader");
+    inspect(context, inspected.pMaterial, "Material");
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
+    ImGui::Checkbox("Cast shadow", &inspected.castShadow);
+    if (ImGui::Checkbox("Is transparent", &inspected.isTransparent) && inspected.isValid())
+    {
+        // update it
+        inspected.isTransparent = !inspected.isTransparent;
+        inspected.pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(inspected);
+        inspected.isTransparent = !inspected.isTransparent;
+
+        inspected.pModel->getOwner().pOwnerScene->sceneRenderer.addSubModel(inspected);
+    }
+
+    if (inspected.isTransparent)
+    {
+        ImGui::Checkbox("Write in depth", &inspected.writeInDepth);
+    }
 
     // This operation check if element must be added or remove from the the scene render system
-    if (isPreviousElementVoid != !inspected.isValide())
+    if (isPreviousElementVoid != !inspected.isValid())
     {
         if (isPreviousElementVoid)
         {
@@ -391,30 +197,100 @@ void Model::inspect(InspectContext& context)
 
 void Model::addSubModel(const SubModel::CreateArg& arg)
 {
-    GPE_ASSERT(arg.pMesh && arg.pShader && arg.pMaterial, "Invalid arguments to create submodel")
-
     SubModel& newSsub = m_subModels.emplace_back(*this, arg);
-    getOwner().pOwnerScene->sceneRenderer.addSubModel(newSsub);
+
+    if (newSsub.isValid())
+        getOwner().pOwnerScene->sceneRenderer.addSubModel(newSsub);
 }
 
-void Model::setActive(bool newState) noexcept
+void Model::updateToSystem() noexcept
 {
-    if (m_isActivated == newState)
-        return;
-
-    m_isActivated = newState;
     if (m_isActivated)
     {
         for (SubModel& subMesh : m_subModels)
         {
-            getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
+            subMesh.pModel = this;
+            if (subMesh.isValid())
+                getOwner().pOwnerScene->sceneRenderer.addSubModel(subMesh);
         }
     }
     else
     {
+        if (!getOwner().pOwnerScene)
+            return;
+
         for (SubModel& subMesh : m_subModels)
         {
-            getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
+            if (subMesh.isValid())
+                getOwner().pOwnerScene->sceneRenderer.removeSubModel(subMesh);
         }
     }
+}
+
+void Model::setAnimComponent(AnimationComponent* newAnimComp)
+{
+    m_animComponent = newAnimComp;
+}
+
+void Model::bindSkin(Skin& skin)
+{
+    for (SubModel& sub : m_subModels)
+    {
+        // We must verify if the shader implements the animation feature
+        //if (sub.pShader != nullptr && (sub.pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK)
+        //{
+            sub.pMesh->bindSkin(skin);
+        //}
+    }
+}
+
+std::vector<GPM::Mat4>& Model::getFinalBonesTransforms() const
+{
+    GPE_ASSERT(m_animComponent != nullptr,
+               "It is not possible to get the bone data if there are no animations. Check with isAnimated() first.");
+    return m_animComponent->m_finalBoneMatrices;
+}
+
+bool Model::isAnimated() const
+{
+    return m_animComponent != nullptr && m_animComponent->isComplete();
+}
+
+GPM::AABB Model::getLocalAABB()
+{
+    return AABB{getLocalAABBMin(), getLocalAABBMAx()};
+}
+
+GPM::Vec3 Model::getLocalAABBMin()
+{
+    Vec3 minAABB = Vec3(std::numeric_limits<float>::max());
+
+    for (auto&& pSub : m_subModels)
+    {
+        if (pSub.pMesh)
+        {
+            const Vec3 v = pSub.pMesh->getAABBMAx();
+            minAABB.x    = std::min(minAABB.x, v.x);
+            minAABB.y    = std::min(minAABB.y, v.y);
+            minAABB.z    = std::min(minAABB.z, v.z);
+        }
+    }
+    return minAABB;
+}
+
+GPM::Vec3 Model::getLocalAABBMAx()
+{
+    Vec3 maxAABB = Vec3(std::numeric_limits<float>::min());
+
+    for (auto&& pSub : m_subModels)
+    {
+        if (pSub.pMesh)
+        {
+            const Vec3 v = pSub.pMesh->getAABBMAx();
+            maxAABB.x    = std::max(maxAABB.x, v.x);
+            maxAABB.y    = std::max(maxAABB.y, v.y);
+            maxAABB.z    = std::max(maxAABB.z, v.z);
+        }
+    }
+    return maxAABB;
 }

@@ -11,6 +11,9 @@
 #include <GPM/Vector4.hpp>
 #include <memory>
 
+// Generated
+//#include "Generated/ParticleData.rfk.h"
+
 namespace GPE
 {
 
@@ -30,18 +33,22 @@ public:
         VELOCITY     = (1u << 5),
         ACCELERATION = (1u << 6),
         TIME         = (1u << 7),
+        START_SIZE   = (1u << 8),
+        END_SIZE     = (1u << 9),
     };
 
 public:
     U16BMask                     m_maskType;
-    std::unique_ptr<GPM::Vec4[]> m_pos      = nullptr;
-    std::unique_ptr<RGBA[]>      m_col      = nullptr;
-    std::unique_ptr<RGBA[]>      m_startCol = nullptr;
-    std::unique_ptr<RGBA[]>      m_endCol   = nullptr;
-    std::unique_ptr<GPM::Vec4[]> m_vel      = nullptr;
-    std::unique_ptr<GPM::Vec4[]> m_acc      = nullptr;
-    std::unique_ptr<GPM::Vec4[]> m_time     = nullptr;
-    std::unique_ptr<bool[]>      m_alive    = nullptr;
+    std::unique_ptr<GPM::Vec4[]> m_pos       = nullptr;
+    std::unique_ptr<float[]>     m_startSize = nullptr;
+    std::unique_ptr<float[]>     m_endSize   = nullptr;
+    std::unique_ptr<RGBA[]>      m_col       = nullptr;
+    std::unique_ptr<RGBA[]>      m_startCol  = nullptr;
+    std::unique_ptr<RGBA[]>      m_endCol    = nullptr;
+    std::unique_ptr<GPM::Vec4[]> m_vel       = nullptr;
+    std::unique_ptr<GPM::Vec4[]> m_acc       = nullptr;
+    std::unique_ptr<GPM::Vec4[]> m_time      = nullptr;
+    std::unique_ptr<bool[]>      m_alive     = nullptr;
 
     size_t m_count{0};
     size_t m_countAlive{0};
@@ -73,7 +80,5 @@ public:
      * @param b
      */
     void swapData(size_t a, size_t b);
-
-    static void copyOnlyAlive(const ParticleData* source, ParticleData* destination);
 };
 } // namespace GPE

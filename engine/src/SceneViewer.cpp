@@ -1,13 +1,14 @@
 ﻿#include <Engine/Intermediate/Viewers/SceneViewer.hpp>
-// Engine
 
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/ECS/Component/InputComponent.hpp>
 #include <Engine/ECS/System/InputManagerGLFW.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
+#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Script/FreeFly.hpp>
+#include <GPM/Vector3.hpp>
 
 // Third-party
 #include <glad/glad.h>
@@ -121,27 +122,24 @@ SceneViewer::SceneViewer(GPE::Scene& viewed, int width_, int height_)
           Camera::PerspectiveCreateArg{"Editor camera", Camera::computeAspect(width_, height_), .001f, 1000.f, 90.f})},
       inputs{cameraOwner->addComponent<GPE::InputComponent>()}, pScene{&viewed}, textureID{0u}, depthStencilID{0u},
       framebufferID{0u}, FBOIDtextureID{0u}, FBOIDdepthID{0u}, FBOIDframebufferID{0u},
-      FBOIDwidth{static_cast<int>(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
-      FBOIDheight{static_cast<int>(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_},
-      m_capturingInputs{false}
+      FBOIDwidth{int(ceilf(width_ * INV_DOWN_SAMPLING_COEF))},
+      FBOIDheight{int(ceilf(height_ * INV_DOWN_SAMPLING_COEF))}, width{width_}, height{height_}, m_capturingInputs{
+                                                                                                     false}
 {
-    Engine::getInstance()->resourceManager.add<Shader>("gameObjectIdentifier",
-                                                       "./resources/shaders/vGameObjectIdentifier.vs",
-                                                       "./resources/shaders/fGameObjectIdentifier.fs");
     initializeFramebuffer();
     initializePickingFBO();
     initializeInputs();
 
     // Update the Camera component and cameraOwner scene and parent
     camera.setActive(true);
-    pScene->sceneRenderer.setMainCamera(&camera);
-
-    freeFly.setActive(m_capturingInputs);
-    inputs.setActive(m_capturingInputs);
+    freeFly.setActive(false);
+    // inputs.setActive(true);
 }
 
 SceneViewer::~SceneViewer()
 {
+    // Owner scene is already remove
+    cameraOwner->pOwnerScene = nullptr;
     delete cameraOwner;
 
     glDeleteFramebuffers(1, &framebufferID);
@@ -156,7 +154,7 @@ SceneViewer::~SceneViewer()
 unsigned int SceneViewer::getHoveredGameObjectID() const
 {
     // Set active view
-    pScene->sceneRenderer.setActiveCamera(&camera);
+    pScene->sceneRenderer.setMainCamera(&camera);
 
     { // Select the shader
         Shader& shaderGameObjectIdentifier =
@@ -170,7 +168,7 @@ unsigned int SceneViewer::getHoveredGameObjectID() const
 
     { // Render in the picking framebuffer
         RenderSystem& renderSys = pScene->sceneRenderer;
-        renderSys.render(renderSys.gameObjectIdentifierPipeline());
+        renderSys.render(renderSys.mousePickingPipeline());
     }
 
     // Find the hovered object, if any
@@ -235,25 +233,25 @@ void SceneViewer::bindScene(Scene& scene)
     cameraOwner->pOwnerScene = &scene;
 
     // Update the Camera component and cameraOwner scene and parent
-    inputs.setActive(true);
+    // inputs.setActive(true);
     freeFly.setActive(true);
-    camera.setActive(true);
-    scene.sceneRenderer.setActiveCamera(&camera);
+    // camera.setActive(true);
+    scene.sceneRenderer.setMainCamera(&camera);
     pScene = &scene;
 }
 
 void SceneViewer::unbindScene()
 {
-    inputs.setActive(false);
+    // inputs.setActive(false);
     freeFly.setActive(false);
-    camera.setActive(false);
+    // camera.setActive(false);
     pScene = nullptr;
 }
 
 void SceneViewer::update()
 {
-    // Camera is not set as child of wolrd. So we need to update it.
-    cameraOwner->updateSelfAndChildren();
+    // Camera is not set as child of world. So we need to update it.
+    cameraOwner->getTransform().update();
 
     // When the game is not launched, behaviours are not updated
     // Update FreeFly manually
@@ -274,18 +272,38 @@ void SceneViewer::update()
         }
 
         cameraOwner->getTransform().setTranslation(startPos.lerp(finalPos, lerpT));
-        cameraOwner->getTransform().setRotation(startRotation.slerp(finalRotation, lerpT));
+
+        if (startRotation.angleWith(finalRotation) > .0f)
+        {
+            cameraOwner->getTransform().setRotation(startRotation.slerp(finalRotation, lerpT));
+        }
     }
 }
 
 void SceneViewer::render() const
 {
-    pScene->sceneRenderer.setActiveCamera(&camera);
+    pScene->sceneRenderer.setDefaultMainCamera();
+
+    if (drawDebugPhysic)
+        Engine::getInstance()->physXSystem.drawDebugScene();
+
+    if (drawFrustumScene)
+        pScene->sceneRenderer.renderFrustumCulling();
+
+    // Observe previous camera
+    pScene->sceneRenderer.setMainCamera(&camera);
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
     glViewport(0, 0, width, height);
 
     pScene->sceneRenderer.tryToResize(width, height);
+
     pScene->sceneRenderer.render(pScene->sceneRenderer.defaultRenderPipeline());
+
+    if (drawDebugShape)
+        pScene->sceneRenderer.renderDebugShape(camera);
+
+    if (drawDebugLine)
+        pScene->sceneRenderer.renderDebugLine(camera);
 }
 
 void SceneViewer::captureInputs(bool shouldCapture)
@@ -294,23 +312,62 @@ void SceneViewer::captureInputs(bool shouldCapture)
         return;
 
     m_capturingInputs = shouldCapture;
+}
 
-    inputs.setActive(shouldCapture);
+bool SceneViewer::capturingInputs() const
+{
+    return m_capturingInputs;
 }
 
 // TODO: move to class Camera, or to a new class
 void SceneViewer::lookAtObject(const GameObject& GOToLook)
 {
+    using namespace GPM;
+
+    const TransformComponent &cam   {cameraOwner->getTransform()},
+                             &target{GOToLook.getTransform()};
+
+    // Set defaults
+    startPos      = finalPos = cameraOwner->getTransform().getGlobalPosition();
+    startRotation = finalRotation = cameraOwner->getTransform().getGlobalRotation();
+
+    { // Find the position which must be reached at the end of the transition
+        const Vec3 pos0{cam.getGlobalPosition()};
+        const Vec3 pos1 = [&]() -> const Vec3
+        {
+            Vec3 flatForward{target.getGlobalPosition() - cam.getGlobalPosition()};
+            flatForward.y = .0f;
+            flatForward.safelyNormalize();
+
+            return target.getGlobalPosition() - flatForward * transitionRadius;
+        }();
+
+        // Check whether a transition really is necessary
+        if (pos0.isNotEqualTo(pos1))
+        {
+            startPos = pos0;
+            finalPos = pos1;
+
+            lerpT              = 0.f;
+            isTransitionActive = true;
+        }
+    }
+
+    // Find the orientation which must be reached at the end of the transition
+    const f32 angle = [&]() -> const f32
+    {
+        const Vec3 flatTargetPos{target.getGlobalPosition().x, .0f, target.getGlobalPosition().z};
+        const Vec3 to{flatTargetPos - finalPos};
+
+        // The camera looks toward negative z
+        return (-Vec3::forward()).signedAngleWithUnitary(to.safelyNormalized());
+    }();
+
+    startRotation = cam.getGlobalRotation();
+    finalRotation = Quat::angleAxis(angle, Vec3::up());
+
+    lerpT              = 0.f;
     isTransitionActive = true;
-    startPos           = cameraOwner->getTransform().getGlobalPosition();
-    finalPos           = GOToLook.getTransform().getGlobalPosition();
-    finalPos += (startPos - finalPos).normalized() * transitionRadius;
-
-    const GPM::Transform toGO{GPM::Transform::lookAt(startPos, finalPos, GPM::Vec3::up())};
-
-    startRotation = cameraOwner->getTransform().getGlobalRotation();
-    finalRotation = GPM::toQuaternion(toGO.rotation());
-    lerpT         = 0.f;
 }
 
 } // namespace GPE

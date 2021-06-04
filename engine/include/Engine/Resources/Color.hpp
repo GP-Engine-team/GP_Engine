@@ -28,6 +28,11 @@ struct ColorRGB
         return {1.f, 0.f, 0.f};
     };
 
+    static constexpr ColorRGB yellow() noexcept
+    {
+        return {1.f, 1.f, 0.f};
+    };
+
     static constexpr ColorRGB green() noexcept
     {
         return {0.f, 1.f, 0.f};
@@ -52,9 +57,17 @@ struct ColorRGB
 struct ColorRGBA
 {
     union {
-        struct
-        {
-            float r, g, b, a;
+        union {
+            struct
+            {
+                ColorRGB rgb;
+                float    a;
+            };
+
+            struct
+            {
+                float r, g, b, a;
+            };
         };
         GPM::Vec4 v;
         float     e[4];
@@ -63,6 +76,11 @@ struct ColorRGBA
     static constexpr ColorRGBA red() noexcept
     {
         return {1.f, 0.f, 0.f, 1.f};
+    };
+
+    static constexpr ColorRGBA yellow() noexcept
+    {
+        return {1.f, 1.f, 0.f, 1.f};
     };
 
     static constexpr ColorRGBA green() noexcept

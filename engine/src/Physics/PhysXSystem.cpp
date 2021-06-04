@@ -1,4 +1,4 @@
-#include <Engine/ECS/System/PhysXSystem.hpp>
+﻿#include <Engine/ECS/System/PhysXSystem.hpp>
 
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
@@ -7,20 +7,21 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 
-#include <PhysX/gpu/PxGpu.h>
 #include <PhysX/PxPhysics.h>
 #include <PhysX/PxPhysicsVersion.h>
 #include <PhysX/PxScene.h>
 #include <PhysX/PxSceneDesc.h>
 #include <PhysX/Pxfoundation.h>
-#include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PhysX/characterkinematic/PxController.h>
-#include <PhysX/cooking/PxCooking.h>
+#include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PhysX/common/PxRenderBuffer.h>
 #include <PhysX/common/PxTolerancesScale.h>
+#include <PhysX/cooking/PxCooking.h>
 #include <PhysX/extensions/PxDefaultAllocator.h>
-#include <PhysX/extensions/PxDefaultSimulationFilterShader.h>
 #include <PhysX/extensions/PxExtensionsAPI.h>
+//#include <PhysX/gpu/PxGpu.h>
+#include <PhysX/pvd/PxPvd.h>
+#include <PhysX/pvd/PxPvdTransport.h>
 
 using namespace GPE;
 using namespace physx;
@@ -28,34 +29,31 @@ using namespace physx;
 static UserErrorCallback  gDefaultErrorCallback;
 static PxDefaultAllocator gDefaultAllocatorCallback;
 
-void UserErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file, int line) noexcept
+void UserErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file,
+                                    int line) noexcept
 {
-    FUNCT_ERROR(message);
+    Log::getInstance()->logError(stringFormat("%s:%i: %s", file, line, message));
 }
 
-
 PhysXSystem::PhysXSystem()
-    : foundation          {nullptr},
-      physics             {nullptr},
-      cooking             {nullptr},
-      scene               {nullptr},
-      manager             {nullptr},
-      rigidbodyStatics    {},
-      rigidbodyDynamics   {},
-      characterControllers{}
+    : foundation{nullptr}, physics{nullptr}, cooking{nullptr}, scene{nullptr}, manager{nullptr}, rigidbodyStatics{},
+      rigidbodyDynamics{}, characterControllers{}
 {
     foundation = PxCreateFoundation(PX_PHYSICS_VERSION, gDefaultAllocatorCallback, gDefaultErrorCallback);
     if (!foundation)
         FUNCT_ERROR("PxCreateFoundation failed!");
 
     bool recordMemoryAllocations = true;
-//#ifdef ENABLE_PVD
-//    pvd                       = PxCreatePvd(*foundation);
-//    PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-//    pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
-//#endif
+    pvd                          = PxCreatePvd(*foundation);
+
+    //PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+    //
+    //if (transport == NULL)
+    //    return;
+    //pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+
     PxTolerancesScale scale;
-    physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, recordMemoryAllocations, nullptr);
+    physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, recordMemoryAllocations, pvd);
     if (!physics)
         FUNCT_ERROR("PxCreatePhysics failed!");
 
@@ -77,15 +75,15 @@ PhysXSystem::PhysXSystem()
         FUNCT_ERROR("PxDefaultCpuDispatcherCreate failed!");
     sceneDesc.cpuDispatcher = m_CpuDispatcher;
 
-    PxCudaContextManagerDesc cudaContextManagerDesc;
+    //PxCudaContextManagerDesc cudaContextManagerDesc;
 
-    sceneDesc.cudaContextManager =
-        PxCreateCudaContextManager(*foundation, cudaContextManagerDesc, PxGetProfilerCallback());
+    //sceneDesc.cudaContextManager =
+    //    PxCreateCudaContextManager(*foundation, cudaContextManagerDesc, PxGetProfilerCallback());
 
     sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
     sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
-    sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
-    sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+    //sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+    //sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
 
     scene = physics->createScene(sceneDesc);
 
@@ -106,7 +104,6 @@ PhysXSystem::~PhysXSystem()
     scene->release();
     cooking->release();
     physics->release();
-    // pvd->release();
     foundation->release();
 }
 
@@ -118,9 +115,9 @@ void PhysXSystem::advance(double deltaTime) noexcept
     PxU32     nbActiveActors;
     PxActor** activeActors = scene->getActiveActors(nbActiveActors);
 
-    for (PxU32 i = 0; i < nbActiveActors; ++i)
+    for (PxU32 i = 0u; i < nbActiveActors; ++i)
     {
-        GameObject* owner = static_cast<GameObject*>(activeActors[i]->userData);
+        GameObject* owner = reinterpret_cast<GameObject*>(activeActors[i]->userData);
         if (owner)
         {
             RigidbodyDynamic* rigidbody = owner->getComponent<RigidbodyDynamic>();
@@ -134,25 +131,33 @@ void PhysXSystem::advance(double deltaTime) noexcept
 
 void PhysXSystem::drawDebugScene()
 {
-    const PxRenderBuffer& rb = scene->getRenderBuffer();
-    for (PxU32 i = 0; i < rb.getNbLines(); i++)
+    const PxRenderBuffer& rb        = scene->getRenderBuffer();
+    const PxU32           max       = rb.getNbLines();
+    RenderSystem&         renderSys = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
+    const PxDebugLine*    lineBuf   = rb.getLines();
+
+    for (PxU32 i = 0; i < max; ++i)
     {
-        const PxDebugLine& line = rb.getLines()[i];
-        Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.drawDebugLine(PxVec3ToGPMVec3(line.pos0),
-                                                                                           PxVec3ToGPMVec3(line.pos1));
+        // Force reinterpret cast
+        renderSys.drawDebugLine(*(GPM::Vec3*)&lineBuf[i].pos0, *(GPM::Vec3*)&lineBuf[i].pos1, ColorRGB{0.5, 0.5, 0});
     }
 }
 
 size_t PhysXSystem::addComponent(RigidbodyStatic* rigidbody) noexcept
 {
     rigidbodyStatics.push_back(rigidbody);
-    scene->addActor(*rigidbody->rigidbody);
+    PxScene* debugScene = rigidbody->rigidbody->getScene();
+    if (!debugScene)
+    {
+        scene->addActor(*rigidbody->rigidbody);
+    }
 
     return rigidbodyStatics.size();
 }
 
 void PhysXSystem::removeComponent(RigidbodyStatic* rigidbody) noexcept
 {
+    scene->removeActor(*rigidbody->rigidbody, false);
     for (std::vector<RigidbodyStatic*>::iterator it = rigidbodyStatics.begin(); it != rigidbodyStatics.end(); it++)
     {
         if ((*it) == rigidbody)
@@ -167,13 +172,18 @@ void PhysXSystem::removeComponent(RigidbodyStatic* rigidbody) noexcept
 size_t PhysXSystem::addComponent(RigidbodyDynamic* rigidbody) noexcept
 {
     rigidbodyDynamics.push_back(rigidbody);
-    scene->addActor(*rigidbody->rigidbody);
+    PxScene* debugScene = rigidbody->rigidbody->getScene();
+    if (!debugScene)
+    {
+        scene->addActor(*rigidbody->rigidbody);
+    }
 
     return rigidbodyDynamics.size();
 }
 
 void PhysXSystem::removeComponent(RigidbodyDynamic* rigidbody) noexcept
 {
+    scene->removeActor(*rigidbody->rigidbody, false);
     for (std::vector<RigidbodyDynamic*>::iterator it = rigidbodyDynamics.begin(); it != rigidbodyDynamics.end(); it++)
     {
         if ((*it) == rigidbody)
@@ -188,13 +198,14 @@ void PhysXSystem::removeComponent(RigidbodyDynamic* rigidbody) noexcept
 size_t PhysXSystem::addComponent(CharacterController* characterController) noexcept
 {
     characterControllers.push_back(characterController);
-    scene->addActor(*characterController->controller->getActor());
 
     return characterControllers.size();
 }
 
 void PhysXSystem::removeComponent(CharacterController* characterController) noexcept
 {
+    if (characterController->controller != nullptr)
+        scene->removeActor(*characterController->controller->getActor(), false);
     for (std::vector<CharacterController*>::iterator it = characterControllers.begin();
          it != characterControllers.end(); it++)
     {
@@ -211,14 +222,6 @@ PxTransform PhysXSystem::GPETransformComponentToPxTransform(const TransformCompo
     PxTransform transform;
     transform.p = PhysXSystem::GPMVec3ToPxVec3(_transform.getGlobalPosition());
     transform.q = PhysXSystem::GPMQuatToPxQuat(_transform.getGlobalRotation());
-
-    return transform;
-}
-TransformComponent PhysXSystem::PxTransformToGPETransformComponent(const PxTransform& _transform) noexcept
-{
-    TransformComponent transform;
-    transform.setTranslation(PhysXSystem::PxVec3ToGPMVec3(_transform.p));
-    transform.setRotation(PhysXSystem::PxQuatToGPMQuat(_transform.q));
 
     return transform;
 }

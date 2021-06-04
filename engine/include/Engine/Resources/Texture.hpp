@@ -23,45 +23,40 @@ class Texture
 public:
     enum class ETextureMinFilter
     {
-        NEAREST                = GL_NEAREST,
-        LINEAR                 = GL_LINEAR,
-        NEAREST_MIPMAP_NEAREST = GL_NEAREST_MIPMAP_NEAREST,
-        LINEAR_MIPMAP_NEAREST  = GL_LINEAR_MIPMAP_NEAREST,
-        NEAREST_MIPMAP_LINEAR  = GL_NEAREST_MIPMAP_LINEAR,
-        LINEAR_MIPMAP_LINEAR   = GL_LINEAR_MIPMAP_LINEAR
+        NEAREST,
+        LINEAR,
+        NEAREST_MIPMAP_NEAREST,
+        LINEAR_MIPMAP_NEAREST,
+        NEAREST_MIPMAP_LINEAR,
+        LINEAR_MIPMAP_LINEAR,
+        COUNT
     };
 
     enum class ETextureMagFilter
     {
-        NEAREST = GL_NEAREST,
-        LINEAR  = GL_LINEAR,
+        NEAREST,
+        LINEAR,
+        COUNT
     };
 
-    enum class ETextureWrapS
+    enum class ETextureWrap
     {
-        CLAMP_TO_EDGE        = GL_CLAMP_TO_EDGE,
-        CLAMP_TO_BORDER      = GL_CLAMP_TO_BORDER,
-        MIRRORED_REPEAT      = GL_MIRRORED_REPEAT,
-        REPEAT               = GL_REPEAT,
-        MIRROR_CLAMP_TO_EDGE = GL_MIRRORED_REPEAT
-    };
-
-    enum class ETextureWrapT
-    {
-        CLAMP_TO_EDGE        = GL_CLAMP_TO_EDGE,
-        CLAMP_TO_BORDER      = GL_CLAMP_TO_BORDER,
-        MIRRORED_REPEAT      = GL_MIRRORED_REPEAT,
-        REPEAT               = GL_REPEAT,
-        MIRROR_CLAMP_TO_EDGE = GL_MIRRORED_REPEAT
+        CLAMP_TO_EDGE,
+        CLAMP_TO_BORDER,
+        MIRRORED_REPEAT,
+        REPEAT,
+        MIRROR_CLAMP_TO_EDGE,
+        COUNT
     };
 
     enum class EFormat : GLenum
     {
-        NONE = 0u,
-        R    = GL_R32F,
-        RG   = GL_RG,
-        RGB  = GL_RGB,
-        RGBA = GL_RGBA
+        NONE,
+        R,
+        RG,
+        RGB,
+        RGBA,
+        COUNT
     };
 
     enum class ERenderBufferType
@@ -72,53 +67,53 @@ public:
         STENCIL_INDEX8     = 4
     };
 
-    struct LoadArg
+    struct RenderProperties
     {
-        std::string       path             = "";
         ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
-        ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
-        ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
-        unsigned int      anisotropy       = 8;
-        bool              flipTexture      = true;
+        ETextureWrap      textureWrapS     = ETextureWrap::REPEAT;
+        ETextureWrap      textureWrapT     = ETextureWrap::REPEAT;
+        unsigned int      anisotropy       = 8u;
         bool              generateMipmaps  = true;
+    };
+
+    struct LoadArg
+    {
+        std::string      path = "";
+        RenderProperties properties;
+        bool             flipTexture = false;
     };
 
     struct ImportArg
     {
         int                            w = 0, h = 0, comp = 0, len = 0;
-        std::unique_ptr<unsigned char> pixels           = nullptr;
-        ETextureMinFilter              textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
-        ETextureMagFilter              textureMagFilter = ETextureMagFilter::LINEAR;
-        ETextureWrapS                  textureWrapS     = ETextureWrapS::REPEAT;
-        ETextureWrapT                  textureWrapT     = ETextureWrapT::REPEAT;
-        unsigned int                   anisotropy       = 8;
-        bool                           flipTexture      = true;
-        bool                           generateMipmaps  = true;
+        std::unique_ptr<unsigned char> pixels = nullptr;
+        RenderProperties               properties;
     };
 
     struct CreateArg
     {
-        int               width            = 0;
-        int               height           = 0;
-        EFormat           format           = EFormat::RGBA;
-        ETextureMinFilter textureMinFilter = ETextureMinFilter::NEAREST_MIPMAP_LINEAR;
-        ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
-        ETextureWrapS     textureWrapS     = ETextureWrapS::REPEAT;
-        ETextureWrapT     textureWrapT     = ETextureWrapT::REPEAT;
-        unsigned int      anisotropy       = 8;
+        int              width  = 0;
+        int              height = 0;
+        EFormat          format = EFormat::RGBA;
+        RenderProperties properties;
     };
 
 protected:
-    GLuint  m_id   = 0u;
-    EFormat format = EFormat::NONE;
+    GLuint  m_id     = 0u;
+    EFormat m_format = EFormat::NONE;
 
     void setFormat(int channels);
     bool checkFormatValidity() const;
 
-    bool loadInGPU(int w, int h, unsigned int anisotropy, ETextureMinFilter textureMinFilter,
-                   ETextureMagFilter textureMagFilter, ETextureWrapS textureWrapS, ETextureWrapT textureWrapT,
-                   unsigned char* pixels, bool generateMipmaps = true) noexcept;
+    bool loadInGPU(int w, int h, unsigned char* pixels, const RenderProperties& props) noexcept;
+
+    GLenum getGLFormat(EFormat format);
+    GLenum getGLInternalFormat(EFormat format);
+
+    GLenum getGLTextureWrap(ETextureWrap format);
+    GLenum getGLTextureMagFilter(ETextureMagFilter format);
+    GLenum getGLTextureMinFilter(ETextureMinFilter format);
 
 public:
     Texture()                     = default;
@@ -129,6 +124,8 @@ public:
     Texture(const ImportArg& arg) noexcept;
     Texture(const CreateArg& arg) noexcept;
     ~Texture() noexcept;
+
+    void reload(const Texture::ImportArg& m_config);
 
     inline unsigned int getID() const noexcept;
     /**

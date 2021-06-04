@@ -42,6 +42,8 @@ namespace GPE RFKNamespace()
             RFKField(Serialize()) float        shadowMapSampleScale = 4.f;
             RFKField(Serialize()) unsigned int PCF                  = 3;
             RFKField(Serialize()) float        bias                 = 0.05f;
+            RFKField(Serialize()) float        near                 = 0.1f;
+            RFKField(Serialize()) float        far                  = 1000.f;
             RFKField(Serialize()) float        size                 = 1000.f;
 
             ShadowProperties_GENERATED
@@ -52,24 +54,19 @@ namespace GPE RFKNamespace()
         RFKField(Serialize()) DiffuseComponent  m_diffuseComp;
         RFKField(Serialize()) SpecularComponent m_specularComp;
 
-        RFKField(Serialize()) ShadowProperties m_shadowProterties;
-        
+        RFKField(Serialize()) ShadowProperties m_shadowProperties;
+
+        virtual void updateToSystem() noexcept override;
+
     public:
         inline Light(GameObject & owner, const CreateArg& arg);
 
         inline Light(GameObject & owner, const AmbiantComponent& ambient, const DiffuseComponent& diffuse,
                      const SpecularComponent& specular);
 
-        Light(const Light& other) = delete;
-        Light(Light && other)     = default;
         inline virtual ~Light();
 
-        Light()        = default;
-        Light& operator=(const Light& other) = delete;
-
-        inline Light& operator=(Light&& other) noexcept;
-
-        virtual void onPostLoad();
+        Light() = default;
 
         void moveTowardScene(Scene & newOwner) final
         {
@@ -113,13 +110,6 @@ namespace GPE RFKNamespace()
         virtual void inspect(InspectContext & context);
 
         void setShadowActive(bool newState) noexcept;
-
-        /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
-         * @return
-         */
-        void setActive(bool newState) noexcept override;
 
         Light_GENERATED
     };

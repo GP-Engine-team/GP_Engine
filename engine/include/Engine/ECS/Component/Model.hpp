@@ -13,21 +13,29 @@
 #include "Engine/Serialization/ComponentGen.h"
 #include "Engine/Serialization/xml/xmlSaver.hpp"
 #include "GPM/Shape3D/Volume.hpp"
+#include "GPM/Shape3D/AABB.hpp"
 
 // Generated
 #include "Generated/Model.rfk.h"
 
+namespace GPM
+{
+union Matrix4;
+using Mat4 = Matrix4;
+}
+
 namespace GPE RFKNamespace()
 {
-
     class Mesh;
     class Shader;
     class Material;
     class Model;
-
+    class Skeleton;
     struct SubModel;
 
-    struct SubModel
+    class AnimationComponent;
+
+    struct RFKStruct(Serialize()) SubModel
     {
         struct CreateArg
         {
@@ -36,33 +44,33 @@ namespace GPE RFKNamespace()
             Mesh*     pMesh;
 
             bool enableBackFaceCulling = true;
+            bool castShadow            = true;
+            bool isTransparent         = false;
         };
 
-        SubModel(Model& model, const CreateArg& arg)
+        SubModel(Model & model, const CreateArg& arg)
             : pModel{&model}, pShader{arg.pShader}, pMaterial{arg.pMaterial}, pMesh{arg.pMesh},
-              enableBackFaceCulling{arg.enableBackFaceCulling}
+              enableBackFaceCulling{arg.enableBackFaceCulling}, castShadow{arg.castShadow},
+              isTransparent{arg.isTransparent}
         {
         }
 
         SubModel() = default;
 
-        bool isValide()
-        {
-            return pModel && pMesh && pShader && pMaterial;
-        }
+        bool isValid() const;
 
-        Model*    pModel    = nullptr;
-        Shader*   pShader   = nullptr;
-        Material* pMaterial = nullptr;
-        Mesh*     pMesh     = nullptr;
+        RFKField(Serialize()) Model*    pModel    = nullptr;
+        RFKField(Serialize()) Shader*   pShader   = nullptr;
+        RFKField(Serialize()) Material* pMaterial = nullptr;
+        RFKField(Serialize()) Mesh*     pMesh     = nullptr;
 
-        bool enableBackFaceCulling = true;
+        RFKField(Serialize()) bool enableBackFaceCulling = true;
+        RFKField(Serialize()) bool castShadow            = true;
+        RFKField(Serialize()) bool isTransparent         = false;
+        RFKField(Serialize()) bool writeInDepth          = true;
+
+        SubModel_GENERATED
     };
-
-    template <>
-    void save(XmlSaver & context, const SubModel& inspected, const XmlSaver::SaveInfo& info);
-    template <>
-    void load(XmlLoader & context, SubModel & inspected, const XmlLoader::LoadInfo& info);
 
     template <>
     void DataInspector::inspect(GPE::InspectContext & context, SubModel & inspected);
@@ -80,32 +88,38 @@ namespace GPE RFKNamespace()
     protected:
         RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
 
-    public:
-        Model(GameObject & owner);
+        class AnimationComponent* m_animComponent = nullptr;
 
+        virtual void updateToSystem() noexcept override;
+
+    public:
+        Model() = default;
+        Model(GameObject & owner);
         Model(GameObject & owner, const CreateArg& arg);
 
-        Model(const Model& other) noexcept = delete;
-        Model(Model && other) noexcept;
         virtual ~Model();
-
-        Model()        = default;
-        Model& operator=(Model const& other) = delete;
-        Model& operator                      =(Model&& other) noexcept;
 
         void moveTowardScene(class Scene & newOwner) override;
 
-        virtual void onPostLoad();
         virtual void inspect(InspectContext & context);
 
         void addSubModel(const SubModel::CreateArg& arg);
 
+        void setAnimComponent(AnimationComponent* newAnimComp);
+
+        void bindSkin(class Skin& skin);
+
+        std::vector<GPM::Mat4>& getFinalBonesTransforms() const;
+
+        bool isAnimated() const;
+
         /**
-         * @brief Add or remove current component from it's system which have for effect to enable or disable it
-         * @param newState
+         * @brief Function to return the local AABB (do not considere the position, scale and rotation of transform)
          * @return
          */
-        void setActive(bool newState) noexcept override;
+        GPM::AABB getLocalAABB();
+        GPM::Vec3 getLocalAABBMin();
+        GPM::Vec3 getLocalAABBMAx();
 
         Model_GENERATED
     };

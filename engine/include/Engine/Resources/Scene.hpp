@@ -27,7 +27,6 @@ class Scene
     friend class SceneManager;
 
 protected:
-    std::string                 m_name   = "Scene";
     std::unique_ptr<GameObject> m_pWorld = nullptr;
 
     std::unordered_map<std::string, unsigned int>
@@ -53,14 +52,6 @@ public:
     // TODO: Can scene be moved ? How to manage resource
     constexpr inline Scene& operator=(Scene&& other) noexcept = delete;
 
-    /**
-     * @brief Get the Entity object in function of path in arg
-     *
-     * @param path : example world/car/motor/piston3 or car/motor/piston3 or ./car/motor/piston3
-     * @return GraphEntity&
-     */
-    GameObject* getGameObject(const std::string& path) noexcept;
-
     GameObject& getWorld() noexcept;
 
     void addLoadedResourcePath(const char* path) noexcept;
@@ -69,6 +60,7 @@ public:
     void save(XmlSaver&) const;
     void load(XmlLoader&);
 
-    GETTER_BY_CONST_REF(Name, m_name);
+    const std::string& getName() const;
+    void               setName(const char* newName);
 };
 } /*namespace GPE*/

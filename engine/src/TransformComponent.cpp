@@ -1,28 +1,26 @@
-#include "Engine/ECS/Component/TransformComponent.hpp"
-#include "Engine/Intermediate/GameObject.hpp"
-#include "Engine/Serialization/Inspect.hpp"
+#include <Engine/ECS/Component/TransformComponent.hpp>
 
-#include "Generated/TransformComponent.rfk.h"
+#include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Serialization/Inspect.hpp>
+
+#include <Generated/TransformComponent.rfk.h>
 
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 TransformComponent::TransformComponent(GameObject& refGameObject, const TransformComponent::CreateArg& arg) noexcept
-    : Component(refGameObject), m_spaceAttribut{GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)),
-                                                arg.position, arg.scale},
-      m_transform{GPM::toTransform(m_spaceAttribut)}
+    : Component(refGameObject),
+      m_spaceAttribut{GPM::toQuaternion(GPM::Transform::rotation(arg.eulerRotation)), arg.position, arg.scale},
+      m_transform    {GPM::toTransform(m_spaceAttribut)}
 {
+    updateToSystem();
 }
 
-TransformComponent& TransformComponent::operator=(TransformComponent&& other)
+TransformComponent::~TransformComponent() noexcept
 {
-    m_spaceAttribut = std::move(other.m_spaceAttribut);
-    m_transform     = std::move(other.m_transform);
-    m_isDirty       = std::move(other.m_isDirty);
-
-    return static_cast<TransformComponent&>(Component::operator=(std::move(other)));
+    setActive(false);
 }
 
 void TransformComponent::setVecForward(const Vec3& newForward, const Vec3& up) noexcept
@@ -52,14 +50,22 @@ void TransformComponent::setVecUp(const Vec3& newUp) noexcept
 
 void TransformComponent::inspect(GPE::InspectContext& context)
 {
-    if (GPE::DataInspector::inspect(context, m_spaceAttribut, "Transform"))
+    if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
     {
-        m_isDirty = true;
+        GPE::DataInspector::inspect(context, m_spaceAttribut, "Transform");
+        if (context.isDirty())
+        {
+            m_isDirty = true;
+        }
     }
 }
 
 void TransformComponent::onPostLoad()
 {
+    Component::onPostLoad();
     setDirty();
-    update();
+}
+
+void TransformComponent::updateToSystem() noexcept
+{
 }

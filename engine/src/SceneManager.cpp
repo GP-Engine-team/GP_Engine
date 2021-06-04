@@ -1,20 +1,76 @@
 #include "Engine/Resources/SceneManager.hpp"
 
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Resources/Importer/Importer.hpp>
 
 using namespace GPE;
+
+void SceneManager::removeCurrentScene()
+{
+    for (auto&& it = m_scenes.begin(); it != m_scenes.end(); ++it)
+    {
+        if (&it->second == m_pCurrentScene)
+        {
+            m_scenes.erase(it);
+            return;
+        }
+    }
+}
+
+Scene& SceneManager::loadFirstScene()
+{
+    if (m_pCurrentScene)
+        removeCurrentScene();
+
+    if (std::filesystem::exists(firstLoadedScene))
+    {
+        Scene& scene = m_scenes[firstLoadedScene.string()];
+        scene.setName(firstLoadedScene.stem().string().c_str());
+        m_pCurrentScene = &scene;
+
+        loadSceneFromPathImp(&scene, firstLoadedScene.string().c_str());
+        Log::getInstance()->log("First scene load with path" + firstLoadedScene.string());
+        return scene;
+    }
+    else
+    {
+        Log::getInstance()->logWarning("First scene not set. Use default scene instead.");
+        return setCurrentScene("Default");
+    }
+}
+
+void SceneManager::defferedReloadCurrentScene()
+{
+    for (auto&& [key, value] : m_scenes)
+    {
+        if (&value == m_pCurrentScene)
+        {
+            m_pathNextSceneToLoad = key;
+            return;
+        }
+    }
+}
+
+void SceneManager::defferedLoadNewScene(const char* path)
+{
+    firstLoadedScene = path;
+}
 
 Scene& SceneManager::setCurrentScene(const std::string& sceneName)
 {
     Log::getInstance()->log("New empty scene " + sceneName + " created");
 
     if (m_pCurrentScene)
-        m_scenes.erase(m_pCurrentScene->getName());
+        removeCurrentScene();
 
     Scene& scene = m_scenes[sceneName];
-    scene.m_name = sceneName;
+    scene.setName(std::filesystem::path(sceneName).stem().string().c_str());
 
     m_pCurrentScene = &scene;
+
+    if (OnSceneChange)
+        OnSceneChange();
+
     return scene; // emplace with default constructor of Scene
 }
 
@@ -93,10 +149,38 @@ void SceneManager::removeScene(const std::string& sceneName)
 
 void SceneManager::removeScene(Scene& scene)
 {
-    removeScene(scene.m_name);
+    removeScene(scene.getName());
 }
 
 void SceneManager::removeScenes()
 {
     m_scenes.clear();
+    m_pCurrentScene = nullptr;
+}
+
+void SceneManager::update()
+{
+    if (!m_pathNextSceneToLoad.empty())
+    {
+        loadSceneFromPath(m_pathNextSceneToLoad);
+        m_pathNextSceneToLoad.clear();
+    }
+}
+
+void SceneManager::saveSceneToPath(const std::filesystem::path& path, GPE::SavedScene::EType saveMode)
+{
+    saveSceneToPathImp(m_pCurrentScene, path.string().c_str(), saveMode);
+}
+
+void SceneManager::loadSceneFromPath(const std::filesystem::path& path)
+{
+    if (std::filesystem::exists(path))
+    {
+        loadSceneFromPathImp(&setCurrentScene(path.string()), path.string().c_str());
+    }
+    else
+    {
+        Log::getInstance()->logWarning(
+            stringFormat("Scene with path %s don't exist and don't loaded", path.string().c_str()));
+    }
 }

@@ -11,10 +11,9 @@
 #include <vector>
 
 // Math
-#include <foundation/PxQuat.h>
-#include <PhysX/characterkinematic/PxExtended.h>
 #include <GPM/Quaternion.hpp>
-
+#include <PhysX/characterkinematic/PxExtended.h>
+#include <foundation/PxQuat.h>
 
 namespace physx
 {
@@ -24,7 +23,7 @@ class PxPhysics;
 class PxCooking;
 class PxScene;
 class PxControllerManager;
-}
+} // namespace physx
 
 namespace GPE
 {
@@ -47,6 +46,7 @@ public:
     physx::PxCooking*                 cooking;
     physx::PxScene*                   scene;
     physx::PxControllerManager*       manager;
+    physx::PxPvd*                     pvd;
     std::vector<RigidbodyStatic*>     rigidbodyStatics;
     std::vector<RigidbodyDynamic*>    rigidbodyDynamics;
     std::vector<CharacterController*> characterControllers;
@@ -108,7 +108,6 @@ public:
     static inline GPM::Quat             PxQuatToGPMQuat(const physx::PxQuat& quaternion) noexcept;
     static inline physx::PxQuat         GPMQuatToPxQuat(const GPM::Quat& quaternion) noexcept;
     static physx::PxTransform GPETransformComponentToPxTransform(const TransformComponent& transform) noexcept;
-    static TransformComponent PxTransformToGPETransformComponent(const physx::PxTransform& transform) noexcept;
 };
 
 #include <Engine/ECS/System/PhysXSystem.inl>

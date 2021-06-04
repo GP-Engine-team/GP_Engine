@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Engine/Serialization/InspectContext.hpp"
 #include "Refureku/TypeInfo/Variables/Field.h"
@@ -7,10 +7,7 @@ namespace GPE
 {
 namespace DataInspector
 {
-void startProperty(const char* name);
-void endProperty();
-
-template <typename T>
+template <class T>
 void inspect(GPE::InspectContext& context, T& inspected);
 /**
  * @brief Shows the content of the inspected object.
@@ -20,7 +17,7 @@ void inspect(GPE::InspectContext& context, T& inspected);
  * @return True if the inspected element has been modified, false otherwise.
  */
 template <typename T>
-bool inspect(GPE::InspectContext& context, T& inspected, const char* name);
+void inspect(GPE::InspectContext& context, T& inspected, const char* name);
 
 template <typename T>
 void inspect(GPE::InspectContext& context, T& inspected, const std::string& name);
@@ -33,13 +30,19 @@ void inspect(GPE::InspectContext& context, T& inspected, const std::string& name
  * @return True if the inspected element has been modified, false otherwise.
  */
 template <typename T>
-bool inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info);
+void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info);
 
 }; // namespace DataInspector
 
 } // namespace GPE
 
+#include <Engine/Serialization/ReadOnly.hpp>
+#include <Engine/Serialization/Separator.hpp>
+#include <Engine/Core/Tools/ImGuiTools.hpp>
+#include "DataInspector.inl"
+//
+#include "AudioDataInspector.hpp"
 #include "GPEDataInspector.hpp"
 #include "GPMDataInspector.hpp"
+#include "PhysXDataInspector.hpp"
 #include "STDDataInspector.hpp"
-#include "DataInspector.inl"

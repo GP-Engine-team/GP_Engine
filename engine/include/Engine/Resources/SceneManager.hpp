@@ -6,8 +6,13 @@
 
 #pragma once
 
+#include <filesystem>
+#include <functional>
 #include <string>
 #include <unordered_map>
+
+#include <Engine/Serialization/xml/xmlLoader.hpp>
+#include <Engine/Serialization/xml/xmlSaver.hpp>
 
 #include "Engine/Resources/Scene.hpp"
 
@@ -34,6 +39,19 @@ protected:
     std::unordered_map<std::string, Scene> m_scenes        = {};
     Scene*                                 m_pCurrentScene = nullptr;
 
+    // Path to the next scene to load
+    std::filesystem::path m_pathNextSceneToLoad;
+    bool                  m_isDead = false; // usefull to signal to change th current scene
+
+public:
+    std::function<void(void)> OnSceneChange;
+
+    // This scene will be load in first if possible
+    std::filesystem::path firstLoadedScene;
+
+protected:
+    void removeCurrentScene();
+
 public:
     SceneManager() noexcept = default;
 
@@ -47,12 +65,29 @@ public:
 
     SceneManager& operator=(SceneManager&& other) noexcept = default;
 
+    /**
+     * @brief Defered action. To load new scene or reload the current
+     * @param sceneName
+     */
+    void defferedReloadCurrentScene();
+    void defferedLoadNewScene(const char* path);
+
+    /**
+     * @brief Update deffered action
+     */
+    void update();
+
     Scene* getCurrentScene() noexcept
     {
         return m_pCurrentScene;
     }
 
     Scene& setCurrentScene(const std::string& sceneName);
+
+    /**
+     * @brief Load the first sc3ene register by the user
+     */
+    Scene& loadFirstScene();
 
     // Scene& loadScene(const std::string&    sceneName,
     //                 ESceneGraphManagement sceneGraphloadType = ESceneGraphManagement::REPLACE,
@@ -61,6 +96,9 @@ public:
     void removeScene(const std::string& sceneName);
     void removeScene(Scene& scene);
     void removeScenes();
+
+    void saveSceneToPath(const std::filesystem::path& path, GPE::SavedScene::EType saveMode);
+    void loadSceneFromPath(const std::filesystem::path& path);
 };
 
 } /*namespace GPE*/

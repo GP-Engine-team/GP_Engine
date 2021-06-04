@@ -9,6 +9,7 @@
 #include "Engine/ECS/Component/Component.hpp"
 #include "Engine/Intermediate/GameObject.hpp"
 #include "Engine/Resources/Importer/Importer.hpp"
+#include "Engine/Resources/Prefab.hpp"
 #include "Engine/Serialization/DataInspector.hpp"
 #include "Engine/Serialization/InspectContext.hpp"
 #include "GLFW/glfw3.h"
@@ -50,61 +51,48 @@ extern "C"
 
     ENGINE_API inline void saveSceneToPath(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
     {
-        if (saveMode == GPE::SavedScene::EType::XML)
-        {
-            rapidxml::xml_document<> doc;
-            XmlSaver                 context(doc);
-            context.addWeakPtr(scene);
-            scene->save(context);
-
-            GPE::SavedScene::CreateArg args;
-            args.data = docToString(doc);
-            args.type = GPE::SavedScene::EType::XML;
-
-            GPE::writeSceneFile(path, args);
-        }
+        GPE::saveSceneToPathImp(scene, path, saveMode);
     }
+
+    ENGINE_API inline std::string savePrefabToString(GPE::GameObject& prefab, GPE::SavedScene::EType saveMode)
+    {
+        return GPE::savePrefabToStringImp(prefab, saveMode);
+    }
+
+    ENGINE_API inline void savePrefabToPath(GPE::GameObject& prefab, const char* path, GPE::SavedScene::EType saveMode)
+    {
+        GPE::savePrefabToPathImp(prefab, path, saveMode);
+    }
+
     ENGINE_API inline void loadSceneFromPath(GPE::Scene* scene, const char* path)
     {
-        GPE::SavedScene::CreateArg savedScene = GPE::readSceneFile(path);
+        GPE::loadSceneFromPathImp(scene, path);
+    }
 
-        if (savedScene.type == GPE::SavedScene::EType::XML)
-        {
-            // Load xml doc
-            rapidxml::xml_document<> doc;
-            std::unique_ptr<char[]>  buffer;
-            GPE::SavedScene::toDoc(doc, buffer, savedScene.data.c_str(), savedScene.data.size());
+    ENGINE_API inline GPE::GameObject* clonePrefab(GPE::Prefab& prefab, GPE::GameObject& parent)
+    {
+        return prefab.clone(parent);
+    }
 
-            XmlLoader context(doc);
-            // Load each element
-            scene->load(context);
+    ENGINE_API inline GPE::Scene& loadFirstScene()
+    {
+        return GPE::Engine::getInstance()->sceneManager.loadFirstScene();
+    }
 
-            // Tell that pointers to the old scene should be replaced by pointers to the new scene
-            context.addConvertedPtr(scene->getWorld().pOwnerScene, scene);
+    ENGINE_API inline GPE::GameObject* loadPrefabFromString(GPE::GameObject& parent, std::string str,
+                                                            GPE::SavedScene::EType saveMode)
+    {
+        return GPE::loadPrefabFromStringImp(parent, str, saveMode);
+    }
 
-            // Update old pointers into new ones
-            context.updateLazyPtrs();
+    ENGINE_API inline GPE::GameObject* loadPrefabFromPath(GPE::GameObject& parent, const char* path)
+    {
+        return GPE::loadPrefabFromPathImp(parent, path);
+    }
 
-            // Call onPostLoad on GameObjects
-            struct Rec
-            {
-                static void rec(GPE::GameObject* g)
-                {
-                    for (GPE::Component* comp : g->getComponents())
-                    {
-                        comp->onPostLoad();
-                    }
-
-                    g->getTransform().onPostLoad();
-
-                    for (GPE::GameObject* g2 : g->children)
-                    {
-                        rec(g2);
-                    }
-                };
-            };
-            Rec::rec(&scene->getWorld()); // can't do recursives with lambdas, and std::function would be overkill
-        }
+    ENGINE_API inline void updateSceneManager()
+    {
+        GPE::Engine::getInstance()->sceneManager.update();
     }
 
     ENGINE_API class GPE::AbstractGame* createGameInstance();

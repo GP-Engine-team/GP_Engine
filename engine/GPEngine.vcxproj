@@ -152,15 +152,16 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions);GLFW_DLL;ENGINE_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions);GLFW_DLL;ENGINE_EXPORTS;_HAS_EXCEPTIONS=0</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPEngineDir)third_party;$(GPEngineDir)third_party/imgui;$(GPEngineDir)/third_party/include/PhysX/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>false</ExceptionHandling>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem, map, vector, list, unordered_map, functional</PrecompiledHeaderFile>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <DisableSpecificWarnings>4190;4005</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,6 +173,7 @@
     <Lib>
       <AdditionalLibraryDirectories>$(GP_Engine)third_party\lib;$(GPEngineDir)third_party\libDebug\Refureku;$(GPEngineDir)third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL32.lib;RefurekuDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PreBuildEvent>
       <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)"</Command>
@@ -183,16 +185,17 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions);GLFW_DLL;ENGINE_EXPORTS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions);GLFW_DLL;ENGINE_EXPORTS;_HAS_EXCEPTIONS=0</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(GPEngineDir)third_party\gpm\include;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)/src;$(GPEngineDir)/third_party/include/Refureku;$(GPEngineDir)/third_party/include/;$(GPEngineDir)/include;$(GPEngineDir)third_party;$(GPEngineDir)third_party/imgui;$(GPEngineDir)/third_party/include/PhysX/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>false</ExceptionHandling>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
-      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem, map, vector, list, unordered_map, functional</PrecompiledHeaderFile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <DisableSpecificWarnings>4190;4005;4723</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -204,8 +207,9 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>C:\Users\Six-J\Desktop\test\GP_Engine\engine\third_party\lib;$(GPEngineDir)\third_party\libRelease\Refureku;$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GPEngineDir)third_party\lib;$(GPEngineDir)\third_party\libRelease\Refureku;$(GPEngineDir)\third_party\lib\Refureku;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenAL32.lib;RefurekuRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
     <PreBuildEvent>
       <Command>"$(GPEngineDir)..\generator\bin\GPGenerator.exe" "$(GPEngineDir)"</Command>
@@ -219,9 +223,14 @@
     <ClInclude Include="include\Engine\Core\HotReload\EngineApiMacros.hpp" />
     <ClInclude Include="include\Engine\Core\HotReload\ReloadableCpp.hpp" />
     <ClInclude Include="include\Engine\Core\HotReload\SingletonsSync.hpp" />
-    <ClInclude Include="include\Engine\Core\Parsers\ObjParser.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ParserTool.hpp" />
     <ClInclude Include="include\Engine\Core\Parsers\ShaderParser.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\BoxCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\CapsuleCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\Collider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\MeshCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\Collisions\SphereCollider.hpp" />
+    <ClInclude Include="include\Engine\Core\Physics\RigidBodyBase.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Renderer\RendererGLFW_GL46.hpp" />
     <ClInclude Include="include\Engine\Core\Rendering\Window\WindowGLFW.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\BinaryMask.hpp" />
@@ -232,8 +241,10 @@
     <ClInclude Include="include\Engine\Core\Tools\FunctionPtr.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Hash.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\Interpolation.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Raycast.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\UnrolledListAllocator.hpp" />
+    <ClInclude Include="include\Engine\ECS\Component\AnimationComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\AudioComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\BehaviourComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Camera.hpp" />
@@ -247,14 +258,11 @@
     <ClInclude Include="include\Engine\ECS\Component\Model.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\ParticleComponent.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Physics\CharacterController\CharacterController.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\BoxCollider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\CapsuleCollider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\Collider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\MeshCollider.hpp" />
-    <ClInclude Include="include\Engine\ECS\Component\Physics\Collisions\SphereCollider.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyDynamic.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\Physics\Rigidbody\RigidbodyStatic.hpp" />
+    <ClInclude Include="include\Engine\ECS\Component\ShakeEffect.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\TransformComponent.hpp" />
+    <ClInclude Include="include\Engine\ECS\System\AnimationSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\BehaviourSystem.hpp" />
     <ClInclude Include="include\Engine\ECS\System\InputManagerGLFW.hpp" />
     <ClInclude Include="include\Engine\ECS\System\PhysXSystem.hpp" />
@@ -265,9 +273,15 @@
     <ClInclude Include="include\Engine\Intermediate\DataChunk.hpp" />
     <ClInclude Include="include\Engine\Intermediate\GameObject.hpp" />
     <ClInclude Include="include\Engine\Intermediate\Viewers\SceneViewer.hpp" />
+    <ClInclude Include="include\Engine\Resources\Animation\Animation.hpp" />
+    <ClInclude Include="include\Engine\Resources\Animation\Bone.hpp" />
+    <ClInclude Include="include\Engine\Resources\Animation\Skeleton.hpp" />
+    <ClInclude Include="include\Engine\Resources\Animation\Skin.hpp" />
     <ClInclude Include="include\Engine\Resources\Color.hpp" />
     <ClInclude Include="include\Engine\Resources\Cursor.hpp" />
+    <ClInclude Include="include\Engine\Resources\Importer\AssimpUtilities.hpp" />
     <ClInclude Include="include\Engine\Resources\Importer\Importer.hpp" />
+    <ClInclude Include="include\Engine\Resources\Linker.hpp" />
     <ClInclude Include="include\Engine\Resources\Material.hpp" />
     <ClInclude Include="include\Engine\Resources\Mesh.hpp" />
     <ClInclude Include="include\Engine\Resources\ParticleSystem\ParticleRenderer.hpp" />
@@ -290,8 +304,12 @@
     <ClInclude Include="include\Engine\Resources\Texture.hpp" />
     <ClInclude Include="include\Engine\Resources\Type.hpp" />
     <ClInclude Include="include\Engine\Resources\Wave.hpp" />
+    <ClInclude Include="include\Engine\Serialization\binary\BinaryLoader.hpp" />
+    <ClInclude Include="include\Engine\Serialization\binary\BinarySaver.hpp" />
+    <ClInclude Include="include\Engine\Serialization\AudioDataInspector.hpp" />
     <ClInclude Include="include\Engine\Serialization\ComponentGen.h" />
     <ClInclude Include="include\Engine\Serialization\DataInspector.hpp" />
+    <ClInclude Include="include\Engine\Serialization\DefaultInspect.hpp" />
     <ClInclude Include="include\Engine\Serialization\FieldInfo.hpp" />
     <ClInclude Include="include\Engine\Serialization\FileExplorer.hpp" />
     <ClInclude Include="include\Engine\Serialization\GPEDataInspector.hpp" />
@@ -306,8 +324,10 @@
     <ClInclude Include="include\Engine\Serialization\MaterialInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\MeshInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\ModelImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\ReadOnly.hpp" />
     <ClInclude Include="include\Engine\Serialization\SavedScene.hpp" />
     <ClInclude Include="include\Engine\Serialization\PhysXDataInspector.hpp" />
+    <ClInclude Include="include\Engine\Serialization\Separator.hpp" />
     <ClInclude Include="include\Engine\Serialization\Serialize.hpp" />
     <ClInclude Include="include\Engine\Serialization\ShaderInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\Slider.hpp" />
@@ -316,10 +336,12 @@
     <ClInclude Include="include\Engine\Serialization\STDReflect.hpp" />
     <ClInclude Include="include\Engine\Serialization\STDSave.hpp" />
     <ClInclude Include="include\Engine\Serialization\TextureImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\TextureInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlLoader.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlManager.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlSaver.hpp" />
     <ClInclude Include="include\Engine\Serialization\xml\xmlUtilities.hpp" />
+    <ClInclude Include="third_party\gpm\include\GPM\Calc.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\constants.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\conversion.hpp" />
     <ClInclude Include="third_party\gpm\include\GPM\Matrix3.hpp" />
@@ -351,6 +373,7 @@
     <ClInclude Include="third_party\imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="third_party\imgui\imconfig.h" />
     <ClInclude Include="third_party\imgui\imgui.h" />
+    <ClInclude Include="third_party\imgui\imguizmo.h" />
     <ClInclude Include="third_party\imgui\imgui_internal.h" />
     <ClInclude Include="third_party\imgui\imstb_rectpack.h" />
     <ClInclude Include="third_party\imgui\imstb_textedit.h" />
@@ -370,11 +393,14 @@
     <ClInclude Include="third_party\include\OpenAL_Soft_Debug.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Animation.cpp" />
+    <ClCompile Include="src\AnimationComponent.cpp" />
+    <ClCompile Include="src\AnimationSystem.cpp" />
     <ClCompile Include="src\AudioComponent.cpp" />
     <ClCompile Include="src\BehaviourComponent.cpp" />
     <ClCompile Include="src\BehaviourSystem.cpp" />
+    <ClCompile Include="src\Bone.cpp" />
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\Collider.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\Engine.cpp" />
@@ -388,6 +414,7 @@
     <ClCompile Include="src\InputComponent.cpp" />
     <ClCompile Include="src\InputManagerGLFW.cpp" />
     <ClCompile Include="src\Light.cpp" />
+    <ClCompile Include="src\Linker.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\MaterialInspectorPanel.cpp" />
@@ -395,7 +422,6 @@
     <ClCompile Include="src\MeshInspectorPanel.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\ModelImporterSetting.cpp" />
-    <ClCompile Include="src\ObjParser.cpp" />
     <ClCompile Include="src\ParticleComponent.cpp" />
     <ClCompile Include="src\ParticleSystem\ParticleRenderer.cpp" />
     <ClCompile Include="src\ParticleSystem\ParticleData.cpp" />
@@ -404,9 +430,11 @@
     <ClCompile Include="src\ParticleSystem\ParticleUpdater.cpp" />
     <ClCompile Include="src\Physics\CharacterController\CharacterController.cpp" />
     <ClCompile Include="src\Physics\Collisions\BoxCollider.cpp" />
+    <ClCompile Include="src\Physics\Collisions\Collider.cpp" />
     <ClCompile Include="src\Physics\Collisions\MeshCollider.cpp" />
     <ClCompile Include="src\Physics\Collisions\SphereCollider.cpp" />
     <ClCompile Include="src\Physics\PhysXSystem.cpp" />
+    <ClCompile Include="src\Physics\Rigidbody\RigidBodyBase.cpp" />
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyDynamic.cpp" />
     <ClCompile Include="src\Physics\Rigidbody\RigidbodyStatic.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
@@ -420,15 +448,20 @@
     <ClCompile Include="src\SceneManager.cpp" />
     <ClCompile Include="src\RenderSystem.cpp" />
     <ClCompile Include="src\SceneViewer.cpp" />
+    <ClCompile Include="src\Serialization\AudioDataInspector.cpp" />
     <ClCompile Include="src\Serialization\ComponentGen.cpp" />
     <ClCompile Include="src\Serialization\DataInspector.cpp" />
+    <ClCompile Include="src\Serialization\DefaultInspect.cpp" />
     <ClCompile Include="src\Serialization\GPEDataInspector.cpp" />
     <ClCompile Include="src\Serialization\GPMDataInspector.cpp" />
     <ClCompile Include="src\Serialization\GPMLoad.cpp" />
     <ClCompile Include="src\Serialization\GPMSave.cpp" />
     <ClCompile Include="src\Serialization\Inspect.cpp" />
+    <ClCompile Include="src\Serialization\InspectContext.cpp" />
+    <ClCompile Include="src\Serialization\ReadOnly.cpp" />
     <ClCompile Include="src\Serialization\SavedScene.cpp" />
     <ClCompile Include="src\Serialization\PhysXDataInspector.cpp" />
+    <ClCompile Include="src\Serialization\Separator.cpp" />
     <ClCompile Include="src\Serialization\Serialize.cpp" />
     <ClCompile Include="src\Serialization\Slider.cpp" />
     <ClCompile Include="src\Serialization\STDDataInspector.cpp" />
@@ -440,10 +473,14 @@
     <ClCompile Include="src\ShaderInspectorPanel.cpp" />
     <ClCompile Include="src\ShaderParser.cpp" />
     <ClCompile Include="src\ShadowMap.cpp" />
+    <ClCompile Include="src\Skeleton.cpp" />
+    <ClCompile Include="src\Skin.cpp" />
+    <ClCompile Include="src\ShakeEffect.cpp" />
     <ClCompile Include="src\SoundSystem.cpp" />
     <ClCompile Include="src\SpotLight.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TextureImporterSetting.cpp" />
+    <ClCompile Include="src\TextureInspectorPanel.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\TransformComponent.cpp" />
     <ClCompile Include="src\Wave.cpp" />
@@ -455,6 +492,7 @@
     <ClCompile Include="third_party\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="third_party\imgui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="third_party\imgui\imgui.cpp" />
+    <ClCompile Include="third_party\imgui\imguizmo.cpp" />
     <ClCompile Include="third_party\imgui\imgui_demo.cpp" />
     <ClCompile Include="third_party\imgui\imgui_draw.cpp" />
     <ClCompile Include="third_party\imgui\imgui_tables.cpp" />
@@ -481,6 +519,7 @@
     <None Include="include\Engine\ECS\System\TimeSystem.inl" />
     <None Include="include\Engine\Intermediate\DataChunk.inl" />
     <None Include="include\Engine\Intermediate\GameObject.inl" />
+    <None Include="include\Engine\Resources\Linker.inl" />
     <None Include="include\Engine\Resources\Material.inl" />
     <None Include="include\Engine\Resources\Mesh.inl" />
     <None Include="include\Engine\Resources\ParticleSystem\ParticleComponent.inl" />
@@ -489,6 +528,9 @@
     <None Include="include\Engine\Resources\Shader.inl" />
     <None Include="include\Engine\Resources\Texture.inl" />
     <None Include="include\Engine\Serialization\DataInspector.inl" />
+    <None Include="include\Engine\Serialization\GPEDataInspector.inl" />
+    <None Include="include\Engine\Serialization\GPELoad.inl" />
+    <None Include="include\Engine\Serialization\GPESave.inl" />
     <None Include="include\Engine\Serialization\STDDataInspector.inl" />
     <None Include="include\Engine\Serialization\STDLoad.inl" />
     <None Include="include\Engine\Serialization\STDSave.inl" />

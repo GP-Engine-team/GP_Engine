@@ -6,11 +6,13 @@
 
 #pragma once
 
-#include <Engine/Intermediate/GameObject.hpp>
+#include <GPM/Quaternion.hpp>
+#include <GPM/Vector3.hpp>
 
 namespace GPE
 {
 
+class GameObject;
 class FreeFly;
 class Scene;
 class Camera;
@@ -26,6 +28,10 @@ public:
     InputComponent& inputs;
     Scene*          pScene = nullptr;
     unsigned int    textureID;
+    bool            drawFrustumScene = false;
+    bool            drawDebugShape   = true;
+    bool            drawDebugPhysic  = false;
+    bool            drawDebugLine    = true;
 
 private:
     // TODO: factorize framebuffer and renderbuffer in classes
@@ -76,6 +82,7 @@ public:
     void update();
     void render() const;
     void captureInputs(bool shouldCapture);
+    bool capturingInputs() const;
 
     /**
      * @brief Allow user to move and turn toward indicate GO

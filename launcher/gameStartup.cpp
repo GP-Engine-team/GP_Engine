@@ -1,9 +1,9 @@
 #include "GameStartup.hpp"
 #include "Engine/Core/Debug/Assert.hpp"
 #include "Engine/Core/Game/AbstractGame.hpp"
+#include "Engine/Core/HotReload/SingletonsSync.hpp"
 #include "Engine/Engine.hpp"
 #include "Game.hpp"
-#include "Engine/Core/HotReload/SingletonsSync.hpp"
 #include <Engine/Intermediate/GameObject.hpp>
 
 #include <GLFW/glfw3.h>
@@ -27,6 +27,8 @@ GameStartup::GameStartup()
 
       // Make all systems update their components
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
+          updateSceneManager();
+          m_engine->animSystem.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
@@ -70,13 +72,25 @@ GameStartup::GameStartup()
     // ============= Inputs =============
     m_engine->inputManager.setupCallbacks(m_engine->window.getGLFWWindow());
     m_engine->inputManager.setInputMode("Game");
+
+    // ============= Scene =============
+    loadFirstScene();
+
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = [](const char* msg) {
+        GPE_ASSERT(false, msg)
+    };
+    m_engine->sceneManager.OnSceneChange = std::bind(&GameStartup::startScene, this);
+    startScene();
+
+    // ============ Window ==============
+    m_engine->window.setFullscreen();
 }
 
 void GameStartup::update()
 {
     m_engine->timeSystem.update(m_fixedUpdate, m_update, m_render);
 
-    isRunning = !glfwWindowShouldClose(m_engine->window.getGLFWWindow());
+    Engine::getInstance()->isRunning = !glfwWindowShouldClose(m_engine->window.getGLFWWindow());
 }
 
 GameStartup::~GameStartup()
@@ -85,4 +99,9 @@ GameStartup::~GameStartup()
     m_engine->timeSystem.clearUnscaledTimer();
 
     destroyGameInstance(m_game);
+}
+
+void GameStartup::startScene()
+{
+    GPE::Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.start();
 }

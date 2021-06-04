@@ -58,7 +58,7 @@ public:
      * @return unsigned int
      */
     template <typename... Args>
-    LType& add(std::string key, Args&&... args) noexcept(std::is_nothrow_constructible_v<LType>);
+    LType& add(const std::string& key, Args&&... args) noexcept(std::is_nothrow_constructible_v<LType>);
 
     /**
      * @brief Remove resource with the corresponding key if key is found
@@ -142,6 +142,8 @@ public:
      */
     template <class T>
     inline void clear() noexcept(std::is_nothrow_destructible_v<T>);
+
+    inline void clearAll() noexcept;
 };
 
 #include "ResourcesManager.inl"
