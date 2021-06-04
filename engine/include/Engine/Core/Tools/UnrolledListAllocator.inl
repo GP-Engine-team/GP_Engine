@@ -8,6 +8,7 @@ UnrolledListAllocator<T>::UnrolledListAllocator(UnrolledListAllocator&& rhs) noe
     rhs.m_nextToConstruct = nullptr;
     rhs.m_firstNode       = nullptr;
     rhs.m_lastNode        = nullptr;
+    rhs.m_size            = 0;
 }
 
 template <typename T>
@@ -44,8 +45,12 @@ UnrolledListAllocator<T>::~UnrolledListAllocator()
         m_firstNode = nextNode;
     }
 
-    free(m_firstNode->subNodes);
-    delete m_lastNode;
+    if (m_firstNode != nullptr)
+    {
+        if (m_firstNode->subNodes != nullptr)
+            free(m_firstNode->subNodes);
+        delete m_lastNode;
+    }
 
 #ifndef NDEBUG
     GPE::Log::getInstance()->log("Allocations : " + std::to_string(nbAllocations));
