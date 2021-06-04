@@ -33,9 +33,7 @@ public:
     void render(EditorStartup& startup);
 
     void captureInputs();
-
-    void lockInputToGame();
-    void lockInputToEditor();
+    void releaseInputs();
 };
 
 } // namespace Editor

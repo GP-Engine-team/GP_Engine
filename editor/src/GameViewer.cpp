@@ -16,44 +16,30 @@ namespace Editor
 
 using namespace GPE;
 
-void GameViewer::captureInputs()
+void GameViewer::releaseInputs()
 {
     InputManager& io = Engine::getInstance()->inputManager;
-    io.setCursorLockState(cursorLockStateInGame);
-    io.setCursorTrackingState(cursorTrackingStateInGame);
-
-    // TODO : Clamp mouse in window
-
-    lockInputToGame();
-}
-
-void GameViewer::lockInputToGame()
-{
-    setMouseInWindow = true;
-    Engine::getInstance()->inputManager.setInputMode("Game");
-    m_captureInputs = true;
-
-    // TODO : Clamp mouse in window
-}
-
-void GameViewer::lockInputToEditor()
-{
-    InputManager& io = Engine::getInstance()->inputManager;
-
-    // Memorise the previous state
-    cursorLockStateInGame     = io.getCursorLockState();
-    cursorTrackingStateInGame = io.getCursorTrackingState();
-
-    // Set the previous state
     io.setCursorLockState(false);
     io.setCursorTrackingState(false);
-    io.setInputMode("Editor");
+    io.restorePreviousInputMode();
 
     m_captureInputs = false;
 }
 
+void GameViewer::captureInputs()
+{
+    InputManager& io = Engine::getInstance()->inputManager;
+    io.setCursorLockState(true);
+    io.setCursorTrackingState(true);
+    io.setInputMode("Game");
+
+    m_captureInputs = true;
+}
+
 GameViewer::GameViewer(int width, int height)
-    : framebuffer{width, height}, window{GPE::Engine::getInstance()->window.getGLFWWindow()}, m_captureInputs{false}
+    : framebuffer    {width, height},
+      window         {GPE::Engine::getInstance()->window.getGLFWWindow()},
+      m_captureInputs{false}
 {
 }
 
@@ -66,30 +52,29 @@ void GameViewer::render(EditorStartup& startup)
     if (ImGui::Begin("Game view") && &startup.game() != nullptr)
     {
         // Decide what to do with inputs
-        if (startup.game().state == EGameState::PLAYING && !m_captureInputs && ImGui::IsWindowHovered() &&
-            ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-        {
-            captureInputs();
-        }
+        { // The cursor may be on the window's title bar or border, which we do not want to react to
+            ImVec2 topLeft = ImGui::GetWindowPos();
+            topLeft.y     += ImGui::GetWindowContentRegionMin().y;
 
-        // The input manager is not used here because this class and its methods cannot be serialized,
-        // which prevents the use of InputComponent::bindAction()
-        else if (m_captureInputs && glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        {
-            lockInputToEditor();
+            const ImVec2 bottomRight{topLeft.x + framebuffer.width(), topLeft.y + framebuffer.height()};
+
+            if (!m_captureInputs
+                && startup.game().state == EGameState::PLAYING
+                && ImGui::IsMouseHoveringRect(topLeft, bottomRight)
+                && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+            {
+                captureInputs();
+            }
+
+            // The input manager is not used here because this class and its methods cannot be serialized,
+            // which prevents the use of InputComponent::bindAction()
+            else if (m_captureInputs && glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            {
+                releaseInputs();
+            }
         }
 
         const ImVec2 size{ImGui::GetContentRegionAvail()};
-
-        if (setMouseInWindow)
-        {
-            ImVec2 newMousePos{ImGui::GetWindowPos()};
-            newMousePos.x += size.x * .5f;
-            newMousePos.y += size.y * .5f;
-
-            Engine::getInstance()->inputManager.setMousePos({newMousePos.x, newMousePos.y});
-            setMouseInWindow = false;
-        }
 
         // Set active camera
         RenderSystem& sceneRenderer = Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer;
@@ -101,11 +86,11 @@ void GameViewer::render(EditorStartup& startup)
 
             // Update game viewport
             const ImVec2       winPos{ImGui::GetWindowPos()};
-            const ImGuiWindow* win{ImGui::GetCurrentWindow()};
+            const ImGuiWindow* win   {ImGui::GetCurrentWindow()};
             startup.game().setViewport(winPos.x + win->Viewport->CurrWorkOffsetMin.x,
                                        winPos.y + win->Viewport->CurrWorkOffsetMin.y, size.x, size.y);
 
-            // Update camera's aspect and resizing FBO
+            // Resizing FBO
             framebuffer.resize(int(size.x), int(size.y));
             framebuffer.bind();
 
