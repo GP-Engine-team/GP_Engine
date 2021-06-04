@@ -1,4 +1,4 @@
-#include <LootManager.hpp>
+﻿#include <LootManager.hpp>
 
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
@@ -35,11 +35,11 @@ void LootManager::start()
 
     for (size_t i = 0; i < m_lootNumbers; ++i)
     {
-        GAME_ASSERT(spawnerUnused[i].go.pData, "null");
-
         unsigned int indexLootPoint = Random::ranged<int>(spawnerUnused.size());
+        GAME_ASSERT(spawnerUnused[indexLootPoint].go.pData, "null");
 
         GameObject* spawnedEntity = lootPrefab->clone(*m_lootsContainer.pData);
+
         spawnedEntity->getTransform().setTranslation(
             spawnerUnused[indexLootPoint].go.pData->getTransform().getGlobalPosition());
 
