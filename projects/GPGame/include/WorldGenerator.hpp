@@ -13,8 +13,8 @@
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Linker.hpp>
-#include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/DefaultInspect.hpp>
+#include <Engine/Serialization/Inspect.hpp>
 #include <memory>
 
 #include "Generated/WorldGenerator.rfk.h"
@@ -24,7 +24,7 @@ namespace GPG RFKNamespace()
     class RFKClass(ComponentGen, Serialize(), DefaultInspect()) WorldGenerator : public GPE::BehaviourComponent
     {
     private:
-        RFKField(Serialize(), Inspect()) GPE::Prefab*      m_prefab = nullptr;
+        RFKField(Serialize(), Inspect()) GPE::Prefab*                 m_prefab = nullptr;
         RFKField(Serialize(), Inspect()) GPE::Linker<GPE::GameObject> m_container;
 
         RFKField(Serialize(), Inspect(), Separator()) GPM::Vec3 m_minScale = GPM::Vec3::one();
@@ -33,7 +33,7 @@ namespace GPG RFKNamespace()
         RFKField(Serialize(), Inspect(), Separator()) GPM::Vec3 m_minRot = GPM::Vec3{0.f, 360.f, 0.f};
         RFKField(Serialize(), Inspect()) GPM::Vec3              m_maxRot = GPM::Vec3{0.f, 360.f, 0.f};
 
-        RFKField(Serialize(), Inspect(), Separator()) int m_number = 15;
+        RFKField(Serialize(), Inspect(), Separator()) int            m_number = 15;
         RFKField(Serialize(), Inspect()) float                       m_radius = 10.f;
         RFKField(Serialize(), Inspect(), Separator(true, true)) bool m_debug  = true;
 
@@ -53,7 +53,8 @@ namespace GPG RFKNamespace()
         WorldGenerator& operator=(WorldGenerator&& other) noexcept = delete;
 
     public:
-        void loadCircularCoordinate();
+        void loadDisk();
+        void loadCircularTowardCenter();
 
         virtual void start()
         {

@@ -12,7 +12,7 @@ File_GENERATED
 using namespace GPM;
 using namespace GPE;
 
-void WorldGenerator::loadCircularCoordinate()
+void WorldGenerator::loadDisk()
 {
     const ResourceManagerType& rm = Engine::getInstance()->resourceManager;
 
@@ -40,6 +40,31 @@ void WorldGenerator::loadCircularCoordinate()
     }
 }
 
+void WorldGenerator::loadCircularTowardCenter()
+{
+    const ResourceManagerType& rm = Engine::getInstance()->resourceManager;
+
+    // Create object with random sizes,
+    // positions and rotations and add them to the container
+    float step = TWO_PI / m_number;
+    for (unsigned int i = 0u; i < m_number; ++i)
+    {
+        GameObject* const newGO = m_prefab->clone(*m_container.pData);
+
+        newGO->setName(("Object" + std::to_string(i)).c_str());
+
+        Vec3 pos = Vec3{m_radius * cosf(i * step), 0.f, m_radius * sinf(i * step)};
+        newGO->getTransform().setTranslation(transform().getGlobalPosition() + pos -
+                                             m_container.pData->getTransform().getGlobalPosition());
+
+        newGO->getTransform().setRotation(toQuaternion(Transform::lookAt(pos, transform().getGlobalPosition())));
+
+        newGO->getTransform().setScale({Random::ranged<float>(m_minScale.x, m_maxScale.x),
+                                        Random::ranged<float>(m_minScale.y, m_maxScale.y),
+                                        Random::ranged<float>(m_minScale.z, m_maxScale.z)});
+    }
+}
+
 void WorldGenerator::onPostLoad()
 {
     enableUpdateEditor(true);
@@ -51,30 +76,19 @@ void WorldGenerator::inspect(GPE::InspectContext& context)
 {
     Component::inspect(context);
 
-    //DataInspector::inspect(context, m_prefab, "m_prefab");
-    //DataInspector::inspect(context, m_container, "m_container");
-    //ImGui::Separator();
-    //DataInspector::inspect(context, m_minScale, "m_minScale");
-    //DataInspector::inspect(context, m_maxScale, "m_maxScale");
-    //ImGui::Separator();
-    //DataInspector::inspect(context, m_minRot, "m_minRot");
-    //DataInspector::inspect(context, m_maxRot, "m_maxRot");
-    //ImGui::Separator();
-    //DataInspector::inspect(context, m_number, "m_number");
-    //DataInspector::inspect(context, m_radius, "m_radius");
-    //ImGui::Separator();
-    //DataInspector::inspect(context, m_debug, "m_debug");
-    //ImGui::Separator();
     defaultInspect(context);
 
     ImGui::PushEnabled(m_prefab && m_container.pData);
-    if (ImGui::Button("CircularCoordinate"))
+    if (ImGui::Button("Disk"))
     {
-        loadCircularCoordinate();
+        loadDisk();
+    }
+
+    if (ImGui::Button("Circular toward center"))
+    {
+        loadCircularTowardCenter();
     }
     ImGui::PopEnabled();
-
-    ImGui::SameLine();
 
     ImGui::PushEnabled(m_container.pData);
     if (ImGui::Button("Clear"))
