@@ -185,13 +185,15 @@ void EditorStartup::closeGame()
 
 void EditorStartup::playGame()
 {
-    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = [&](const char* msg) {
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = [&](const char* msg)
+    {
         Log::getInstance()->logError(msg);
         stopGame();
     };
+
     Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&EditorStartup::startScene, this);
 
-    m_editor.gameViewer.lockInputToGame();
+    //m_editor.gameViewer.lockInputToGame();
 
     if (m_game->state == EGameState::STOPPED)
     {
@@ -233,6 +235,15 @@ void EditorStartup::playGame()
 
     m_game->state = EGameState::PLAYING;
     startScene();
+
+    // Although the game simulation started, capture inputs only when the user
+    // requests so. This prevents the cursor from disappearing even when the
+    // game viewer window is not shown, while leaving game untouched so its
+    // inputs still work in launcher mode
+    m_engine->inputManager.setInputMode("Editor");
+    m_engine->inputManager.setCursorLockState(false);
+    m_engine->inputManager.setCursorTrackingState(false);
+    m_engine->inputManager.setCursorMode(GLFW_CURSOR);
 }
 
 void EditorStartup::pauseGame()
