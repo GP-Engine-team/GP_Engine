@@ -64,8 +64,10 @@ void DataInspector::inspect(GPE::InspectContext& context, EShapeType& inspected,
 {
     context.startProperty(name);
 
-    const char*        items[]      = {"E_SPHERE", "E_BOX"};
-    static const char* item_current = items[static_cast<int>(inspected)]; //"E_SPHERE";
+    const char* items[] = {"E_SPHERE", "E_BOX"};
+
+    int         value        = static_cast<int>(inspected);
+    const char* item_current = items[static_cast<int>(inspected)]; //"E_SPHERE";
 
     if (ImGui::BeginCombo("##ComboBoxCollider", item_current,
                           0)) // The second parameter is the label previewed before opening the combo.

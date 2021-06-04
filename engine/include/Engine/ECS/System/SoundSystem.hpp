@@ -45,6 +45,8 @@ public:
      */
     inline void removeComponent(int key) noexcept;
 
+    void update();
+
 public:
     ALboolean   enumeration;
     ALCdevice*  device;

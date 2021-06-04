@@ -46,29 +46,26 @@ void EditorStartup::initializeDefaultInputs() const
 }
 
 EditorStartup::EditorStartup()
-    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime)
-      {
+    : m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
           m_engine->physXSystem.advance(fixedDeltaTime);
       }},
       m_update{[&](double unscaledDeltaTime, double deltaTime) {
           m_engine->sceneManager.update();
           m_engine->inputManager.processInput();
+          m_engine->soundSystem.update();
           m_editor.update(*this);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
           m_engine->sceneManager.getCurrentScene()->behaviourSystem.updateEditor(deltaTime);
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
       }},
-      m_render{[&]()
-      {
+      m_render{[&]() {
           m_editor.render();
           m_engine->renderer.swapBuffer();
       }},
-      m_editor       {initDearImGuiProxy(GPE::Engine::getInstance()->window.getGLFWWindow()),
-                      GPE::Engine::getInstance()->sceneManager.setCurrentScene("Default scene")},
-      m_reloadableCpp{gameDllPath},
-      m_game         {nullptr},
-      m_engine       {GPE::Engine::getInstance()}
+      m_editor{initDearImGuiProxy(GPE::Engine::getInstance()->window.getGLFWWindow()),
+               GPE::Engine::getInstance()->sceneManager.setCurrentScene("Default scene")},
+      m_reloadableCpp{gameDllPath}, m_game{nullptr}, m_engine{GPE::Engine::getInstance()}
 {
     m_editor.reloadableCpp = &m_reloadableCpp;
 
@@ -215,6 +212,7 @@ void EditorStartup::playGame()
             auto updateSceneManagerFunct = GET_PROCESS(m_reloadableCpp, updateSceneManager);
             updateSceneManagerFunct();
             m_engine->inputManager.processInput();
+            m_engine->soundSystem.update();
 
             m_engine->animSystem.update(deltaTime);
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.update(deltaTime);
@@ -245,6 +243,7 @@ void EditorStartup::pauseGame()
             auto updateSceneManagerFunct = GET_PROCESS(m_reloadableCpp, updateSceneManager);
             updateSceneManagerFunct();
             m_engine->inputManager.processInput();
+            m_engine->soundSystem.update();
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.updateEditor(deltaTime);
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
@@ -273,6 +272,7 @@ void EditorStartup::stopGame()
             updateSceneManagerFunct();
 
             m_engine->inputManager.processInput();
+            m_engine->soundSystem.update();
             m_editor.update(*this);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.updateEditor(deltaTime);

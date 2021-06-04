@@ -91,7 +91,6 @@ void BaseCharacter::forward()
     GPM::Vec3 vec = transform().getVectorForward();
     vec.y         = .0f;
     controller->move(vec);
-    // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
 }
 
 void BaseCharacter::backward()
@@ -99,7 +98,6 @@ void BaseCharacter::backward()
     GPM::Vec3 vec = transform().getVectorForward();
     vec.y         = .0f;
     controller->move(-vec);
-    // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
 }
 
 void BaseCharacter::left()
@@ -107,7 +105,6 @@ void BaseCharacter::left()
     GPM::Vec3 vec = transform().getVectorRight();
     vec.y         = .0f;
     controller->move(-vec);
-    // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
 }
 
 void BaseCharacter::right()
@@ -115,7 +112,6 @@ void BaseCharacter::right()
     GPM::Vec3 vec = transform().getVectorRight();
     vec.y         = .0f;
     controller->move(vec);
-    // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
 }
 
 void BaseCharacter::sprintStart()
