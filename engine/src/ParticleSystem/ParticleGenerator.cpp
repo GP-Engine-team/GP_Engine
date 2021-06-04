@@ -11,7 +11,7 @@
 #include <Generated/ParticleGenerator.rfk.h>
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 void BoxPosGen::generate(ParticleData* p, size_t startId, size_t endId)

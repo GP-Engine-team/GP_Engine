@@ -195,7 +195,7 @@
       <PrecompiledHeaderFile>stdafx.h, iostream, string, filesystem, map, vector, list, unordered_map, functional</PrecompiledHeaderFile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
-      <DisableSpecificWarnings>4190;4005</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4190;4005;4723</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
