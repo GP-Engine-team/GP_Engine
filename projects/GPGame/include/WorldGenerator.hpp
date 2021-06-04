@@ -24,17 +24,17 @@ namespace GPG RFKNamespace()
     class RFKClass(ComponentGen, Serialize(), DefaultInspect()) WorldGenerator : public GPE::BehaviourComponent
     {
     private:
-        RFKField(Serialize()) GPE::Prefab*      m_prefab = nullptr;
-        RFKField(Serialize()) GPE::Linker<GPE::GameObject> m_container;
+        RFKField(Serialize(), Inspect()) GPE::Prefab*      m_prefab = nullptr;
+        RFKField(Serialize(), Inspect()) GPE::Linker<GPE::GameObject> m_container;
 
         RFKField(Serialize(), Inspect(), Separator()) GPM::Vec3 m_minScale = GPM::Vec3::one();
-        RFKField(Serialize()) GPM::Vec3 m_maxScale = GPM::Vec3::one();
+        RFKField(Serialize(), Inspect()) GPM::Vec3              m_maxScale = GPM::Vec3::one();
 
         RFKField(Serialize(), Inspect(), Separator()) GPM::Vec3 m_minRot = GPM::Vec3{0.f, 360.f, 0.f};
-        RFKField(Serialize()) GPM::Vec3 m_maxRot = GPM::Vec3{0.f, 360.f, 0.f};
+        RFKField(Serialize(), Inspect()) GPM::Vec3              m_maxRot = GPM::Vec3{0.f, 360.f, 0.f};
 
         RFKField(Serialize(), Inspect(), Separator()) int m_number = 15;
-        RFKField(Serialize()) float m_radius = 10.f;
+        RFKField(Serialize(), Inspect()) float                       m_radius = 10.f;
         RFKField(Serialize(), Inspect(), Separator(true, true)) bool m_debug  = true;
 
     public:
