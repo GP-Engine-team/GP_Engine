@@ -22,7 +22,6 @@ void AudioComponent::onPostLoad() noexcept
 {
     Component::onPostLoad();
 
-    updateToSystem();
     parentPos = getOwner().getTransform().getGlobalPosition();
     getOwner().getTransform().OnUpdate += Function::make(this, "updatePosition");
 }
@@ -110,12 +109,15 @@ void AudioComponent::stopSound(const char* name) noexcept
 
 void AudioComponent::stopAllSound() noexcept
 {
-    for (auto& [key, value] : sources)
+    if (!sources.empty())
     {
-        if (value.state == AL_PLAYING)
+        for (auto& [key, value] : sources)
         {
-            AL_CALL(alSourceStop, value.source);
-            value.state = AL_STOPPED;
+            if (value.state == AL_PLAYING)
+            {
+                AL_CALL(alSourceStop, value.source);
+                value.state = AL_STOPPED;
+            }
         }
     }
 }
@@ -123,7 +125,7 @@ void AudioComponent::stopAllSound() noexcept
 void AudioComponent::updateToSystem() noexcept
 {
     if (m_isActivated)
-        Engine::getInstance()->soundSystem.addComponent(this);
+        m_key = Engine::getInstance()->soundSystem.addComponent(this);
     else
     {
         stopAllSound();
@@ -154,7 +156,7 @@ void AudioComponent::updatePosition()
 
 void AudioComponent::updateSources()
 {
-    if (!sources.empty() && sources.size() <= 100000000)
+    if (!sources.empty())
     {
         for (auto& [key, value] : sources)
         {

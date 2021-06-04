@@ -61,7 +61,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> m_enemiesContainer;
         RFKField() GPE::GameObject*                                   m_player;
 
-        RFKField(Inspect()) bool m_debug = true;
+        RFKField(Inspect(), Serialize()) bool m_debug = true;
 
     public:
         /**

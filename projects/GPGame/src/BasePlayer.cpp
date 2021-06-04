@@ -18,6 +18,7 @@
 
 #include <BasePlayer.hpp>
 #include <Firearm/PPSH41.hpp>
+#include <Loot.hpp>
 
 #include <Generated/BasePlayer.rfk.h>
 File_GENERATED
@@ -313,4 +314,8 @@ void BasePlayer::updateListener()
 BasePlayer::~BasePlayer() noexcept
 {
     getOwner().getTransform().OnUpdate -= Function::make(this, "updateListener");
+}
+
+void BasePlayer::collectLoot(const Loot& loot)
+{
 }

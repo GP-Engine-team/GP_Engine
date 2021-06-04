@@ -24,8 +24,6 @@ namespace GPE RFKNamespace()
         std::string                               m_name             = "";
 
     protected:
-        void loadPrefabFromPath(const char* path);
-
         void reset()
         {
             m_pPrefabBluePrint.reset();
@@ -34,6 +32,8 @@ namespace GPE RFKNamespace()
         }
 
     public:
+        void loadPrefabFromPath(const char* path);
+
         Prefab(const char* path)
         {
             loadPrefabFromPath(path);

@@ -47,6 +47,14 @@ void SoundSystem::update()
     }
 }
 
+void SoundSystem::stopAllComponents()
+{
+    for (auto& [key, value] : m_audioComponents)
+    {
+        value->stopAllSound();
+    }
+}
+
 SoundSystem::~SoundSystem()
 {
     ALC_CALL(alcMakeContextCurrent, contextMadeCurrent, device, nullptr);

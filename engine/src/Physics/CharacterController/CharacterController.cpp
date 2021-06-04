@@ -89,8 +89,6 @@ void CharacterController::onPostLoad() noexcept
 
     desc.contactOffset = m_contactOffset;
 
-    PxControllerManager* manager = Engine::getInstance()->physXSystem.manager;
-
     controller = Engine::getInstance()->physXSystem.manager->createController(desc);
 
     controller->getActor()->userData = &getOwner();
@@ -292,5 +290,6 @@ void CharacterController::updatePosition()
         return;
     }
 
-    controller->setPosition(PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition()));
+    controller->setPosition(
+        PhysXSystem::GPMVec3ToPxExtendedVec3(getOwner().getTransform().getGlobalPosition() + m_center));
 }

@@ -18,6 +18,7 @@ public:
     ~SoundSystem();
 
     std::unordered_map<int, AudioComponent*> m_audioComponents;
+    inline static int                        key = -1;
 
     /**
      * Singletons should not be cloneable.
@@ -46,6 +47,8 @@ public:
     inline void removeComponent(int key) noexcept;
 
     void update();
+
+    void stopAllComponents();
 
 public:
     ALboolean   enumeration;

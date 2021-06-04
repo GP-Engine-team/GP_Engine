@@ -35,6 +35,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_bloodEffect;
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_groundShootEffect;
 
+        RFKField(Inspect(), Serialize()) float m_rayCastForwardOffset               = 3.f; // In second
         RFKField(Inspect(), Serialize()) float m_rateOfFire               = 0.f; // In second
         RFKField(Serialize()) float            m_reloadingBulletTimeCount = 0.f; // In second
 

@@ -72,7 +72,8 @@ void Firearm::triggered()
         m_magazineStored.triggeredBullet();
 
         GPE::Raycast ray;
-        ray.fire(getOwner().getTransform().getGlobalPosition() + getOwner().getTransform().getVectorForward() * 10.f,
+        ray.fire(getOwner().getTransform().getGlobalPosition() +
+                     getOwner().getTransform().getVectorForward() * m_rayCastForwardOffset,
                  getOwner().getTransform().getVectorForward(), 100000.f);
 
         if (ray.hit.hasBlock)

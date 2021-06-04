@@ -23,14 +23,19 @@ class CharacterController;
 
 namespace GPG RFKNamespace()
 {
+    class Loot;
     class Firearm;
 
     class RFKClass(Inspect(), ComponentGen, Serialize()) BasePlayer : public BaseCharacter
     {
     protected:
         RFKField(Serialize(), Inspect(), ReadOnly()) float m_animDepthCounter    = 0.f;
-        RFKField(Inspect(), Serialize()) float m_animDepthCounterMax = 3.f;
+        RFKField(Inspect(), Serialize()) float             m_animDepthCounterMax = 3.f;
 
+    public:
+        RFKField(Inspect(), Serialize()) float radiusLootCollection = 50.f;
+
+    protected:
         RFKField(Serialize()) bool displayDepthMenu = false;
 
         RFKField(Serialize()) GPE::InputComponent* input  = nullptr;
@@ -61,6 +66,7 @@ namespace GPG RFKNamespace()
         RFKMethod() void playAmbiantMusicForce();
         RFKMethod() void stopAllMusic();
         RFKMethod() void updateListener();
+        RFKMethod() void collectLoot(const Loot& loot);
 
         void rotate(const GPM::Vec2& deltaDisplacement);
         void start() final;

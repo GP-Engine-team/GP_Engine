@@ -1,6 +1,6 @@
 ﻿int SoundSystem::addComponent(AudioComponent* input) noexcept
 {
-    int key = static_cast<int>(m_audioComponents.size());
+    key++;
     m_audioComponents.emplace(key, input);
 
     return key;

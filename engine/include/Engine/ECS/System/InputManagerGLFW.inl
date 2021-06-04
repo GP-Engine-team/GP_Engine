@@ -13,10 +13,10 @@ void InputManager::bindInput(int key, const std::string& action) noexcept
 
 int InputManager::addComponent(InputComponent& input) noexcept
 {
-    int key = static_cast<int>(m_inputComponents.size());
-    m_inputComponents.emplace(key, &input);
+    m_key++;
+    m_inputComponents.emplace(m_key, &input);
 
-    return key;
+    return m_key;
 }
 
 void InputManager::updateComponent(InputComponent* newPointerInputComponent, int key) noexcept

@@ -4,6 +4,7 @@
 File_GENERATED
 
 #include <Engine/Core/Debug/assert.hpp>
+#include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <algorithm>
 #include <gpm/Vector3.hpp>
@@ -90,28 +91,28 @@ void BaseCharacter::forward()
 {
     GPM::Vec3 vec = transform().getVectorForward();
     vec.y         = .0f;
-    controller->move(vec);
+    controller->move(vec * Engine::getInstance()->timeSystem.getDeltaTime());
 }
 
 void BaseCharacter::backward()
 {
     GPM::Vec3 vec = transform().getVectorForward();
     vec.y         = .0f;
-    controller->move(-vec);
+    controller->move(-vec * Engine::getInstance()->timeSystem.getDeltaTime());
 }
 
 void BaseCharacter::left()
 {
     GPM::Vec3 vec = transform().getVectorRight();
     vec.y         = .0f;
-    controller->move(-vec);
+    controller->move(-vec * Engine::getInstance()->timeSystem.getDeltaTime());
 }
 
 void BaseCharacter::right()
 {
     GPM::Vec3 vec = transform().getVectorRight();
     vec.y         = .0f;
-    controller->move(vec);
+    controller->move(vec * Engine::getInstance()->timeSystem.getDeltaTime());
 }
 
 void BaseCharacter::sprintStart()

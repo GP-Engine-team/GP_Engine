@@ -161,14 +161,11 @@ void SceneEditor::renderGizmo(TransformComponent& transfo)
 
     ImGuizmo::SetRect(topLeft.x, topLeft.y, float(view.width), float(view.height));
 
-    GPM::Transform dummy{transfo.get()};
-    GPM::Transform delta;
-    const ImGuizmo::OPERATION operation = ImGuizmo::Manipulate(view.camera.getView().e,
-                                                               view.camera.getProjection().e,
-                                                               activeOperation,
-                                                               activeMode,
-                                                               dummy.model.e,
-                                                               delta.model.e);
+    GPM::Transform            dummy{transfo.get()};
+    GPM::Transform            delta;
+    const ImGuizmo::OPERATION operation =
+        ImGuizmo::Manipulate(view.camera.getView().e, view.camera.getProjection().e, activeOperation, activeMode,
+                             dummy.model.e, delta.model.e);
     if (operation)
     {
         if (operation & ImGuizmo::SCALE)
@@ -246,9 +243,8 @@ void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
         captureInputs(false);
     }
 
-    else if (!ImGui::IsMouseDown(ImGuiMouseButton_Right)
-             && ImGui::IsMouseClicked(ImGuiMouseButton_Left)
-             && !ImGuizmo::IsOver())
+    else if (!ImGui::IsMouseDown(ImGuiMouseButton_Right) && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
+             !ImGuizmo::IsOver())
     {
         const unsigned int idSelectedGameObject = view.getHoveredGameObjectID();
         if (idSelectedGameObject)
@@ -316,20 +312,11 @@ void SceneEditor::dragDropLevelEditor(ReloadableCpp* cpp)
 
 // ========================== Public methods ==========================
 SceneEditor::SceneEditor(GPE::Scene& scene)
-    : view(scene),
-      m_operations
-      {
-          {"Scale (5)",     ImGuizmo::SCALE},
-          {"Rotate (4)",    ImGuizmo::ROTATE},
-          {"Translate (3)", ImGuizmo::TRANSLATE}
-      },
-      m_modes
-      {
-          {"World (2)", ImGuizmo::WORLD},
-          {"Local (1)", ImGuizmo::LOCAL}
-      },
-      activeOperation{ImGuizmo::OPERATION::TRANSLATE},
-      activeMode     {ImGuizmo::MODE::WORLD}
+    : view(scene), m_operations{{"Scale (5)", ImGuizmo::SCALE},
+                                {"Rotate (4)", ImGuizmo::ROTATE},
+                                {"Translate (3)", ImGuizmo::TRANSLATE}},
+      m_modes{{"World (2)", ImGuizmo::WORLD}, {"Local (1)", ImGuizmo::LOCAL}},
+      activeOperation{ImGuizmo::OPERATION::TRANSLATE}, activeMode{ImGuizmo::MODE::WORLD}
 {
     ImGuizmo::AllowAxisFlip(false);
     ImGuizmo::Enable(true);
