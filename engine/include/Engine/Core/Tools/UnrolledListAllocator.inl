@@ -8,6 +8,7 @@ UnrolledListAllocator<T>::UnrolledListAllocator(UnrolledListAllocator&& rhs) noe
     rhs.m_nextToConstruct = nullptr;
     rhs.m_firstNode       = nullptr;
     rhs.m_lastNode        = nullptr;
+    rhs.m_size            = 0;
 }
 
 template <typename T>
@@ -39,11 +40,17 @@ UnrolledListAllocator<T>::~UnrolledListAllocator()
     while (m_firstNode != m_lastNode)
     {
         Node* nextNode = m_firstNode->next;
-        free(m_firstNode);
+        free(m_firstNode->subNodes);
+        delete m_firstNode;
         m_firstNode = nextNode;
     }
 
-    free(m_lastNode);
+    if (m_firstNode != nullptr)
+    {
+        if (m_firstNode->subNodes != nullptr)
+            free(m_firstNode->subNodes);
+        delete m_lastNode;
+    }
 
 #ifndef NDEBUG
     GPE::Log::getInstance()->log("Allocations : " + std::to_string(nbAllocations));
@@ -68,20 +75,11 @@ UnrolledListAllocator<T> UnrolledListAllocator<T>::fromNbBytes(size_t nbBytes)
 template <typename T>
 void UnrolledListAllocator<T>::allocateData(Node*& node, SubNode*& subNodes, size_t nbElements)
 {
-    struct Allocated
-    {
-        Node    node;
-        SubNode subNodes; // undefined amount, but a minimum of 1.
+    node = new Node();
+    subNodes = node->subNodes = (SubNode*) malloc(nbElements * sizeof(SubNode));
 
-        ~Allocated() = delete;
-    };
-
-    Allocated* allocated = (Allocated*)malloc(sizeof(Node) + nbElements * sizeof(SubNode));
-    if (allocated == 0)
+    if (node->subNodes == nullptr)
         throw std::bad_alloc();
-
-    node     = &allocated->node;
-    subNodes = &allocated->subNodes;
 }
 
 template <typename T>
@@ -121,7 +119,6 @@ void UnrolledListAllocator<T>::addFirstNode()
     allocateData(newNode, newSubNodes, m_size);
 
     // Set Node
-    new (newNode) Node();
     m_firstNode = newNode;
     m_lastNode  = newNode;
 
@@ -159,11 +156,5 @@ void UnrolledListAllocator<T>::deallocate(T* ptr, std::size_t nbElements)
     SubNode* subNode  = reinterpret_cast<SubNode*>(ptr);
     subNode->next     = m_nextToConstruct;
     m_nextToConstruct = subNode;
-}
-
-template <typename T>
-typename UnrolledListAllocator<T>::SubNode* UnrolledListAllocator<T>::Node::getSubNodes()
-{
-    return reinterpret_cast<SubNode*>(this + 1);
 }
 } // namespace GPE
