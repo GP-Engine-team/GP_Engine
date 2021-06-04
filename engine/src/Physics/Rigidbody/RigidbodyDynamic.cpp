@@ -62,6 +62,10 @@ void RigidbodyDynamic::onPostLoad() noexcept
 
 void RigidbodyDynamic::update() noexcept
 {
+    if (!m_running)
+    {
+        m_running = true;
+    }
     getOwner().getTransform().setTranslation(PhysXSystem::PxVec3ToGPMVec3(rigidbody->getGlobalPose().p));
 }
 
@@ -99,7 +103,7 @@ void RigidbodyDynamic::updateShape(physx::PxShape& oldShape)
 
 void RigidbodyDynamic::updateTransform()
 {
-    if (!rigidbody)
+    if (!rigidbody || m_running)
         return;
 
     PxTransform newTransform;
