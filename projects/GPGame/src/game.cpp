@@ -204,6 +204,10 @@ Game::Game()
     // ============= UI =============
     // TODO: Put in-game UI in a module
     initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
+    if (ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/Roboto-Medium.ttf", 14))
+    {
+        ImGui_ImplOpenGL3_CreateFontsTexture();
+    }
 
     // ============ RNG =============
     initSeed();

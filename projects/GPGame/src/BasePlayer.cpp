@@ -58,6 +58,7 @@ void BasePlayer::start()
 
     GAME_ASSERT(input, "null");
     GAME_ASSERT(source, "null");
+    GAME_ASSERT(m_firearmsGO.size(), "null");
 
     for (auto&& firearm : m_firearmsGO)
     {

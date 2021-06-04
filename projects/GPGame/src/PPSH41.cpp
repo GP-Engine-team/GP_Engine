@@ -23,6 +23,8 @@ void PPSH41::start()
     {
         m_muzzleFlashGO.pData->setActive(false);
     }
+
+     GAME_ASSERT(m_smokeEffect.pData, "Missing component");
 }
 
 void PPSH41::onShoot()
@@ -45,6 +47,8 @@ void PPSH41::onShoot()
 
     m_smokeEffect.pData->emit(
         static_cast<unsigned int>(m_muzzleFlashEffect.pData->getCount() / m_magazineStored.getCapacity()));
+
+    m_muzzleFlashCount = 0.f;
 }
 
 void PPSH41::animateRecoil(float t)

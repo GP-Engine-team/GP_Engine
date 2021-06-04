@@ -81,7 +81,7 @@ void BaseCharacter::jump()
 {
     if (controller->getCanJump() == true)
     {
-        controller->addForce(GPM::Vec3::up() * 1000.f);
+        controller->addForce(GPM::Vec3::up() * m_jumpStrength);
         controller->startJumpTimer();
     }
 }
@@ -116,12 +116,12 @@ void BaseCharacter::right()
 
 void BaseCharacter::sprintStart()
 {
-    controller->setSpeed(controller->getSpeed() * 2.f);
+    controller->setSpeed(controller->getSpeed() * m_sprintAcceleration);
 }
 
 void BaseCharacter::sprintEnd()
 {
-    controller->setSpeed(controller->getSpeed() * .5f);
+    controller->setSpeed(controller->getSpeed() / m_sprintAcceleration);
 }
 
 void BaseCharacter::fixedUpdate(double deltaTime)
