@@ -537,4 +537,17 @@ bool Editor::isRunning()
     return !glfwWindowShouldClose(m_window);
 }
 
+void Editor::checkInspectedObject()
+{
+    if (inspectedObject)
+    {
+        const GameObject* const asGameObject = dynamic_cast<GameObject*>(inspectedObject);
+
+        if (asGameObject && asGameObject->isDead())
+        {
+            inspectedObject = nullptr;
+        }
+    }
+}
+
 } // End of namespace Editor

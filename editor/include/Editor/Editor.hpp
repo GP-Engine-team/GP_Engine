@@ -86,6 +86,8 @@ public:
     void saveCurrentScene();
     void reloadCurrentScene();
     void unbindCurrentScene();
+
+    void checkInspectedObject();
 };
 
 } // End of namespace Editor
