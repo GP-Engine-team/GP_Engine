@@ -33,7 +33,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) std::vector<LootSpawnPoint>  m_lootPoints{};
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> m_lootsContainer;
 
-        RFKField(Inspect()) bool m_debug = true;
+        RFKField(Inspect(), Serialize()) bool m_debug = true;
 
     public:
         /**
