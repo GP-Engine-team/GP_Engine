@@ -39,6 +39,14 @@ SoundSystem::SoundSystem()
     }
 }
 
+void SoundSystem::update()
+{
+    for (auto& [key, value] : m_audioComponents)
+    {
+        value->updateSources();
+    }
+}
+
 SoundSystem::~SoundSystem()
 {
     ALC_CALL(alcMakeContextCurrent, contextMadeCurrent, device, nullptr);
