@@ -9,18 +9,18 @@
 #include <Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp>
 #include <Engine/Core/Rendering/Window/WindowGLFW.hpp>
 #include <Engine/Core/Tools/BranchPrediction.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/ECS/Component/Light/Light.hpp>
 #include <Engine/ECS/Component/Model.hpp>
 #include <Engine/ECS/Component/ParticleComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Animation/Animation.hpp>
 #include <Engine/Resources/Mesh.hpp>
 #include <Engine/Resources/RenderBuffer.hpp>
 #include <Engine/Resources/RenderTexture.hpp>
 #include <Engine/Resources/Shader.hpp>
-#include <Engine/Resources/Animation/Animation.hpp>
-#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/AABB.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
@@ -104,12 +104,21 @@ RenderSystem::RenderSystem() noexcept
     shader->setInt("shadowMap", 1);
 
     shader = &Engine::getInstance()->resourceManager.add<Shader>(
-    "DefaultWithAnims", "./resources/shaders/vTextureWithLightAndShadowAndAnims.vs",
-    "./resources/shaders/fTextureWithLightAndShadowAndAnims.fs", LIGHT_BLIN_PHONG | FOG);
+        "DefaultWithAnims", "./resources/shaders/vTextureWithLightAndShadowAndAnims.vs",
+        "./resources/shaders/fTextureWithLightAndShadowAndFog.fs", LIGHT_BLIN_PHONG | FOG);
 
     shader->use();
     shader->setInt("ourTexture", 0);
     shader->setInt("shadowMap", 1);
+
+    shader = &Engine::getInstance()->resourceManager.add<Shader>(
+        "DefaultWithAnimAndNormalMap", "./resources/shaders/vTextureWithLightAndShadowAndNMAndAnims.vs",
+        "./resources/shaders/fTextureWithLightAndShadowAndNMAndFog.fs", LIGHT_BLIN_PHONG | FOG);
+
+    shader->use();
+    shader->setInt("ourTexture", 0);
+    shader->setInt("shadowMap", 1);
+    shader->setInt("normalMap", 2);
 
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
@@ -588,11 +597,9 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     {
 
                         pSubModel->pShader->setMat4(
-                            std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(),
-                            transforms[i].e);
+                            std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), transforms[i].e);
                     }
                 }
-
 
                 // TODO: To optimize ! Use Draw instanced Array
 
