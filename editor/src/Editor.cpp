@@ -405,7 +405,7 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
 
 void Editor::releaseGameInputs()
 {
-    gameViewer.lockInputToEditor();
+    gameViewer.releaseInputs();
 }
 
 void Editor::updateKeyboardShorthand(EditorStartup& startup)
