@@ -23,6 +23,8 @@
     <ClInclude Include="include\BaseEnemy.hpp" />
     <ClInclude Include="include\CircularEntitiesSpawner.hpp" />
     <ClInclude Include="include\DebugSphere.hpp" />
+    <ClInclude Include="include\Loot.hpp" />
+    <ClInclude Include="include\LootManager.hpp" />
     <ClInclude Include="include\SpawnManager.hpp" />
     <ClInclude Include="include\Sun.hpp" />
     <ClInclude Include="ShadowMap.hpp" />
@@ -42,6 +44,8 @@
     <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\CircularEntitiesSpawner.cpp" />
     <ClCompile Include="src\DebugSphere.cpp" />
+    <ClCompile Include="src\Loot.cpp" />
+    <ClCompile Include="src\LootManager.cpp" />
     <ClCompile Include="src\SpatializedSoundPlayerScript.cpp" />
     <ClCompile Include="src\SpawnManager.cpp" />
     <ClCompile Include="src\Sun.cpp" />

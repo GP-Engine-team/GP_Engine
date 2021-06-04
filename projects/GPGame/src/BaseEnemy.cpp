@@ -30,13 +30,13 @@ void BaseEnemy::start()
     GameObject* playerGO = Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");
     GAME_ASSERT(playerGO, "Player not found");
 
-    m_target = playerGO->getComponent<BaseCharacter>();
+    m_target = &playerGO->getOrCreateComponent<BaseCharacter>();
     GAME_ASSERT(m_target, "Player Base character component not found");
 
-    m_animComp = m_gameObject->getComponent<GPE::AnimationComponent>();
+    m_animComp = &m_gameObject->getOrCreateComponent<GPE::AnimationComponent>();
     GAME_ASSERT(m_animComp, "Null");
 
-    m_controller = m_gameObject->getComponent<GPE::CharacterController>();
+    m_controller = &m_gameObject->getOrCreateComponent<GPE::CharacterController>();
     GAME_ASSERT(m_controller, "Null");
 
     m_source->playSound("Zombie", true);
