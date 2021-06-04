@@ -81,6 +81,9 @@ GameStartup::GameStartup()
     };
     m_engine->sceneManager.OnSceneChange = std::bind(&GameStartup::startScene, this);
     startScene();
+
+    // ============ Window ==============
+    m_engine->window.setFullscreen();
 }
 
 void GameStartup::update()

@@ -88,4 +88,14 @@ GLint WindowFramebuffer::textureID() const
     return m_textureID;
 }
 
+GLint WindowFramebuffer::width() const
+{
+    return m_width;
+}
+
+GLint WindowFramebuffer::height() const
+{
+    return m_height;
+}
+
 }
