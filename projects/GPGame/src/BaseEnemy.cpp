@@ -25,7 +25,6 @@ void BaseEnemy::start()
     BaseCharacter::start();
     enableUpdate(true);
 
-    controller->setSpeed(0.5f);
     controller->setAngularSpeed(PI);
 
     GameObject* playerGO = Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");

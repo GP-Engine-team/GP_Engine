@@ -235,9 +235,13 @@ void EditorStartup::playGame()
 
 void EditorStartup::pauseGame()
 {
+    m_engine->soundSystem.stopAllComponents();
+
     // Do not change the order of instructions inside the lambdas
-    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
-    m_update      = [&](double unscaledDeltaTime, double deltaTime) {
+    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
+        m_engine->physXSystem.advance(fixedDeltaTime);
+    };
+    m_update = [&](double unscaledDeltaTime, double deltaTime) {
         if (m_game->state == EGameState::PAUSED)
         {
             auto updateSceneManagerFunct = GET_PROCESS(m_reloadableCpp, updateSceneManager);
@@ -260,12 +264,15 @@ void EditorStartup::stopGame()
     if (m_game->state == EGameState::STOPPED)
         return;
 
+    m_engine->soundSystem.stopAllComponents();
     m_engine->sceneManager.getCurrentScene()->behaviourSystem.startOnBehaviourAdd = false;
     m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert        = nullptr;
     Engine::getInstance()->sceneManager.OnSceneChange                             = nullptr;
 
-    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {};
-    m_update      = [&](double unscaledDeltaTime, double deltaTime) {
+    m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
+        m_engine->physXSystem.advance(fixedDeltaTime);
+    };
+    m_update = [&](double unscaledDeltaTime, double deltaTime) {
         if (m_game->state == EGameState::STOPPED)
         {
             auto updateSceneManagerFunct = GET_PROCESS(m_reloadableCpp, updateSceneManager);
