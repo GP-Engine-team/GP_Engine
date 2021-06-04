@@ -53,14 +53,14 @@ ProjectContent::ProjectContent(Editor& editorContext)
                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
                      Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_skeletonIcon{{"..\\..\\editor\\resources\\icone\\skeleton.png", Texture::ETextureMinFilter::LINEAR,
-                       Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
-                       Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                      Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_animationIcon{{"..\\..\\editor\\resources\\icone\\animation.png", Texture::ETextureMinFilter::LINEAR,
-                        Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE, 
-                        Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
-      m_skinIcon{{"..\\..\\editor\\resources\\icone\\skin.png", Texture::ETextureMinFilter::LINEAR,
                        Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
                        Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
+      m_skinIcon{{"..\\..\\editor\\resources\\icone\\skin.png", Texture::ETextureMinFilter::LINEAR,
+                  Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
+                  Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
       m_unknowIcone{{"..\\..\\editor\\resources\\icone\\unknow.png", Texture::ETextureMinFilter::LINEAR,
                      Texture::ETextureMagFilter::LINEAR, Texture::ETextureWrap::CLAMP_TO_EDGE,
                      Texture::ETextureWrap::CLAMP_TO_EDGE, false, false}},
@@ -397,7 +397,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                          2 * ImGui::GetStyle().ItemSpacing.x;
             ImGui::SetCursorPosX(posX);
 
-            // Different strings can have the same hash, 
+            // Different strings can have the same hash,
             // but since the string is short, we can consider it doesn't happen.
             switch (GPE::hash(it->extention.string().c_str())) // runtime
             {
@@ -540,9 +540,9 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 case GPE::hash(ENGINE_PREFAB_EXTENSION): // compile time
                     break;
 
-                case GPE::hash(ENGINE_SKELETON_EXTENSION): // compile time
+                case GPE::hash(ENGINE_SKELETON_EXTENSION):  // compile time
                 case GPE::hash(ENGINE_ANIMATION_EXTENSION): // compile time
-                case GPE::hash(ENGINE_SKIN_EXTENSION): // compile time
+                case GPE::hash(ENGINE_SKIN_EXTENSION):      // compile time
                     break;
 
                 default:
@@ -699,6 +699,12 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
 
             auto saveFunc = GET_PROCESS((*m_editorContext->reloadableCpp), savePrefabToPath);
             saveFunc(gameObject, path.string().c_str(), GPE::SavedScene::EType::XML);
+
+            if (SharedPrefab* pref =
+                    Engine::getInstance()->resourceManager.get<SharedPrefab>(std::filesystem::relative(path).string()))
+            {
+                pref->pref.loadPrefabFromPath(path.string().c_str());
+            }
 
             refreshResourcesList();
 

@@ -30,6 +30,7 @@ void generateEngineFiles(const std::string& engineDir, bool forceRegenerateAll =
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir);
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/PhysX");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/imgui");
@@ -84,6 +85,7 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir,
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/src");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/include");
+    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/PhysX");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/gameDir/include");
     fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
