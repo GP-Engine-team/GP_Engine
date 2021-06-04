@@ -18,7 +18,7 @@ void WorldGenerator::loadCircularCoordinate()
 
     // Create object with random sizes,
     // positions and rotations and add them to the container
-    for (unsigned int i = 0u; i < m_number; ++i)
+    for (int i = 0; i < m_number; ++i)
     {
         GameObject* const newGO = m_prefab->clone(*m_container.pData);
 
@@ -28,7 +28,8 @@ void WorldGenerator::loadCircularCoordinate()
         newGO->getTransform().setTranslation(transform().getGlobalPosition() + Vec3{pos2.x, 0.f, pos2.y} -
                                              m_container.pData->getTransform().getGlobalPosition());
 
-        Vec3 rotEuler = {Random::ranged<float>(m_minRot.x, m_maxRot.x), Random::ranged<float>(m_minRot.y, m_maxRot.y),
+        Vec3 rotEuler = {Random::ranged<float>(m_minRot.x, m_maxRot.x),
+                         Random::ranged<float>(m_minRot.y, m_maxRot.y),
                          Random::ranged<float>(m_minRot.z, m_maxRot.z)};
 
         rotEuler *= PI / 180.f;

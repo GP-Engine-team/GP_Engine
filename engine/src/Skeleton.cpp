@@ -20,7 +20,8 @@ void Skeleton::readHierarchyData(AssimpNodeData& dest, const aiNode* src)
     dest.name           = src->mName.data;
     dest.transformation = GPE::toMat4(src->mTransformation);
 
-    for (int i = 0; i < src->mNumChildren; i++)
+    const unsigned int max = src->mNumChildren;
+    for (unsigned int i = 0u; i < max; i++)
     {
         AssimpNodeData newData;
         readHierarchyData(newData, src->mChildren[i]);

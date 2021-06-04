@@ -9,8 +9,8 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Gen">
-      <UniqueIdentifier>{26c7beb5-4d54-4eb9-a567-743aff5d30a8}</UniqueIdentifier>
+    <Filter Include="third_party">
+      <UniqueIdentifier>{35b32ad9-a3f0-4123-9a84-39e5c0371032}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -52,5 +52,490 @@
     <ClInclude Include="include\DefaultInspectPropertyRule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\FileGenerationUnit.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\FileGenerator.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedClassCodeTemplate.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedEntityCodeTemplate.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedEnumCodeTemplate.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedFunctionCodeTemplate.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedNamespaceCodeTemplate.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedVariableCodeTemplate.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Misc\Helpers.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Parsing\FileParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Parsing\FileParserFactory.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\ECodeGenLocation.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\PropertyCodeGenClassFooterData.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\PropertyCodeGenData.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\PropertyCodeGenFileFooterData.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\PropertyCodeGenFileHeaderData.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CodeGenData\PropertyCodeGenPropertyAddData.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\CustomInstantiatorPropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\DefaultComplexPropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\DefaultSimplePropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\NativeProperties.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\PropertySettingsPropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\RefurekuGenerator\Properties\TestPropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\color.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\combinator.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\comments.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\datetime.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\exception.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\from.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\get.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\into.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\lexer.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\literal.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\parser.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\region.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\result.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\serializer.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\source_location.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\storage.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\string.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\traits.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\types.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\utility.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml\value.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\toml11\toml.hpp">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\clang-c\BuildSystem.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\clang-c\CXCompilationDatabase.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\clang-c\CXErrorCode.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\clang-c\CXString.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\clang-c\Documentation.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\clang-c\ExternC.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\clang-c\FatalErrorHandler.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\clang-c\Index.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\clang-c\Platform.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\DefaultGeneratedCodeTemplate.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\FileGenerationError.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\FileGenerationResult.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\FileGenerationSettings.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\FileGenerationUnit.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\FileGenerator.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\GeneratedCodeTemplate.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\CodeGen\GeneratedFile.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Config.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\EEntityType.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\EntityInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\EnumInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\EnumValueInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\FieldInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\FunctionInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\FunctionParamInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\MethodInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\NamespaceInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\NestedEnumInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\NestedStructClassInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\StructClassInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\TypeDescriptor.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\TypeInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\InfoStructures\VariableInfo.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\CompilerHelpers.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\DefaultLogger.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\DisableWarningMacros.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\EAccessSpecifier.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\Filesystem.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\FundamentalTypes.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\Helpers.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\ILogger.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\Optional.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\System.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\Toml11.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Misc\TomlUtility.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Object.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ClassParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\EntityParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\EnumParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\EnumValueParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\FieldParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\FileParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\FileParserFactory.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\FileParserFactoryBase.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\FunctionParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\MethodParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\NamespaceParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingContext.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingError.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\ClassParsingResult.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\EnumParsingResult.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\EnumValueParsingResult.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\FieldParsingResult.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\FileParsingResult.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\FunctionParsingResult.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\MethodParsingResult.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\NamespaceParsingResult.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\ParsingResultBase.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingResults\VariableParsingResult.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\ParsingSettings.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\PropertyParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Parsing\VariableParser.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\ComplexProperty.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\ComplexPropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\ComplexPropertySubProperty.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\DefaultComplexPropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\DefaultSimplePropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\FixedComplexPropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\NativeProperties\GenCodeTemplatePropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\NativeProperties\NativeProperties.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\NativeProperties\ParseAllNestedPropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\Property.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\PropertyGroup.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\PropertyParsingSettings.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\SimpleProperty.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Properties\SimplePropertyRule.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Threading\ETerminationMode.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Threading\Task.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Threading\TaskBase.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Threading\TaskHelper.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\include\Kodgen\Threading\ThreadPool.h">
+      <Filter>third_party</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="third_party\include\RefurekuGenerator\CodeGen\GeneratedEntityCodeTemplate.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\RefurekuGenerator\Misc\Helpers.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\RefurekuGenerator\Parsing\FileParserFactory.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\CodeGen\FileGenerationError.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\CodeGen\FileGenerationSettings.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\CodeGen\FileGenerator.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\CodeGen\GeneratedFile.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Misc\Helpers.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Misc\TomlUtility.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\ClassParser.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\EntityParser.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\EnumParser.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\EnumValueParser.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\FieldParser.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\FileParser.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\FileParserFactory.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\FunctionParser.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\MethodParser.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\NamespaceParser.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\ParsingResults\ParsingResultBase.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\ParsingSettings.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Parsing\VariableParser.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Threading\Task.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Threading\TaskHelper.inl">
+      <Filter>third_party</Filter>
+    </None>
+    <None Include="third_party\include\Kodgen\Threading\ThreadPool.inl">
+      <Filter>third_party</Filter>
+    </None>
   </ItemGroup>
 </Project>

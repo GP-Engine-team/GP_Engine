@@ -1,5 +1,3 @@
-#define GLFW_INCLUDE_NONE
-#define GLFW_DLL
 #include <Kodgen/Misc/DefaultLogger.h>
 #include <RefurekuGenerator/CodeGen/FileGenerationUnit.h>
 #include <RefurekuGenerator/CodeGen/FileGenerator.h>
@@ -10,7 +8,7 @@
 
 void generateEngineFiles(const std::string& engineDir, bool forceRegenerateAll = false)
 {
-    std::cout << "GENERATE ENGINE" << std::endl;
+    std::cerr << "GENERATE ENGINE" << std::endl;
 
     CustomFileParserFactory fileParserFactory;
     rfk::FileGenerator      fileGenerator;

@@ -36,7 +36,7 @@ void CircularEntitiesSpawner::update(double deltaTime)
     if (m_entitiesToSpawnInfo.empty())
         return;
 
-    m_delayCount += deltaTime;
+    m_delayCount += float(deltaTime);
 
     while (m_delayCount >= m_nextDelay)
     {
@@ -49,7 +49,7 @@ void CircularEntitiesSpawner::update(double deltaTime)
         Vec3 newPosition = {position2D.x, m_gameObject->getTransform().getGlobalPosition().y, position2D.y};
 
         /*Choose random entity*/
-        unsigned int indexEntityToSpawn = Random::ranged<int>(m_entitiesToSpawnInfo.size() - 1);
+        unsigned int indexEntityToSpawn = Random::ranged<unsigned int>(unsigned(m_entitiesToSpawnInfo.size()) - 1u);
 
         /*Spawn this entity*/
         GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_container.pData);
@@ -59,7 +59,7 @@ void CircularEntitiesSpawner::update(double deltaTime)
         //    spawnedEntity->getComponent<EnnemyController>()->setCheckpoint(m_checkpoint);
 
         /*Remove this entity. If all the entities of a type were generated, remove this entity's type*/
-        if (--m_entitiesToSpawnInfo[indexEntityToSpawn].numberEntity == 0)
+        if (--m_entitiesToSpawnInfo[indexEntityToSpawn].numberEntity == 0u)
         {
             m_entitiesToSpawnInfo.erase(m_entitiesToSpawnInfo.begin() + indexEntityToSpawn);
         }

@@ -852,6 +852,9 @@
     <ClInclude Include="include\Engine\Serialization\DefaultInspect.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="third_party\gpm\include\GPM\Calc.hpp">
+      <Filter>third_party\gpm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

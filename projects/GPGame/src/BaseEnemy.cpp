@@ -12,7 +12,7 @@
 #include <Generated/BaseEnemy.rfk.h>
 File_GENERATED
 
-    using namespace GPG;
+using namespace GPG;
 using namespace GPM;
 using namespace GPE;
 
@@ -87,9 +87,9 @@ void BaseEnemy::update(double deltaTime)
 
         m_animDeathCounter += float(deltaTime);
 
-        if (m_animDeathCounter >= m_animDeathCounterMax / 2.f)
+        if (m_animDeathCounter >= m_animDeathCounterMax * .5f)
         {
-            m_gameObject->getTransform().translate(GPM::Vec3(0, -m_disappearanceSpeed * deltaTime, 0));
+            m_gameObject->getTransform().translate({.0f, -m_disappearanceSpeed * float(deltaTime), .0f});
 
             if (transform().getGlobalPosition().y < -std::abs(m_maxHeightBeforDestroying))
                 getOwner().destroy();

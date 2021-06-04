@@ -84,7 +84,8 @@ void GPE::loadSkinAndSkeleton(Skin& skin, Skeleton& skeleton, aiMesh* mesh)
         skin.setVertexBoneDataToDefault(vertexBoneData);
     }
 
-    for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+    const unsigned int max = mesh->mNumBones;
+    for (unsigned int boneIndex = 0u; boneIndex < max; ++boneIndex)
     {
         int         boneID   = -1;
         std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
@@ -130,7 +131,8 @@ void GPE::loadSkinAndSkeleton(std::vector<GPE::Skin::VertexBoneData>& verticesBo
     }
 
     int boneCounter = 0;
-    for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+    const unsigned int max = mesh->mNumBones;
+    for (unsigned int boneIndex = 0u; boneIndex < max; ++boneIndex)
     {
         int         boneID   = -1;
         std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
