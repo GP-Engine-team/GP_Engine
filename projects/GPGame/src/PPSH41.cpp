@@ -59,13 +59,13 @@ void PPSH41::animateRecoil(float t)
     if (t < m_knowbackDuration)
     {
         const float intRatio = easeOutElastic(t / m_knowbackDuration);
-        transform().setTranslation(lerp(basePosition, m_finalPosition, intRatio));
+        transform().setTranslation(basePosition.lerp(m_finalPosition, intRatio));
         transform().setRotation(baseRotation.nlerp(m_finalRotation, intRatio));
     }
     else
     {
         const float intRatio = easeInBounce((t - m_knowbackDuration) / (1.f - m_knowbackDuration));
-        transform().setTranslation(lerp(m_finalPosition, basePosition, intRatio));
+        transform().setTranslation(m_finalPosition.lerp(basePosition, intRatio));
         transform().setRotation(m_finalRotation.nlerp(baseRotation, intRatio));
     }
 }

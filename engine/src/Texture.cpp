@@ -25,7 +25,7 @@ Texture::Texture(const ImportArg& arg) noexcept
 
 Texture::Texture(const CreateArg& arg) noexcept : m_format{arg.format}
 {
-    Texture::loadInGPU(arg.width, arg.height, nullptr, arg.properties);
+    loadInGPU(arg.width, arg.height, nullptr, arg.properties);
 
     Log::getInstance()->log(
         (std::to_string(arg.width) + 'x' + std::to_string(arg.height) + " texture loaded in VRAM").c_str());
@@ -98,7 +98,7 @@ bool Texture::loadInGPU(int w, int h, unsigned char* pixels, const RenderPropert
     GLfloat max_anisotropy; /* don't exceed this value...*/
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &max_anisotropy);
 
-    const float finalAniso = (props.anisotropy > max_anisotropy) ? max_anisotropy : props.anisotropy;
+    const float finalAniso = (props.anisotropy > unsigned(max_anisotropy)) ? max_anisotropy : GLfloat(props.anisotropy);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, finalAniso);
 
     glTexImage2D(GL_TEXTURE_2D, 0, getGLFormat(m_format), w, h, 0, getGLInternalFormat(m_format), GL_UNSIGNED_BYTE,

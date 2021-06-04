@@ -135,7 +135,7 @@ void SpawnManager::autoGenerateLinearDifficulty(unsigned int count, const Diffic
     for (unsigned int i = 0u; i < count; ++i)
     {
         const float t = i / ((float)count - 1.f);
-        m_difficultyInfo.emplace_back(GPM::lerp(min.m_spawnfrequency, max.m_spawnfrequency, t),
-                                      GPM::lerp(min.m_maxEntity, max.m_maxEntity, t));
+        m_difficultyInfo.emplace_back(GPM::lerpf(min.m_spawnfrequency, max.m_spawnfrequency, t),
+                                      unsigned(ceilf(GPM::lerpf(float(min.m_maxEntity), float(max.m_maxEntity), t))));
     }
 }

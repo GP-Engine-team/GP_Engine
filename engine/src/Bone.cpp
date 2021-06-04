@@ -69,10 +69,10 @@ GPM::Mat4 Bone::interpolatePosition(float animationTime)
     if (m_positions.size() == 1u)
         return GPM::Transform::translation(m_positions[0].position);
 
-    const int p0Index     = getPositionIndex(animationTime);
-    const int p1Index     = p0Index + 1;
-    const float scaleFactor = getScaleFactor(m_positions[p0Index].timeStamp, m_positions[p1Index].timeStamp, animationTime);
-    GPM::Vec3 finalPosition = GPM::lerp(m_positions[p0Index].position, m_positions[p1Index].position, scaleFactor);
+    const int       p0Index     = getPositionIndex(animationTime);
+    const int       p1Index     = p0Index + 1;
+    const float     scaleFactor = getScaleFactor(m_positions[p0Index].timeStamp, m_positions[p1Index].timeStamp, animationTime);
+    const GPM::Vec3 finalPosition = m_positions[p0Index].position.lerp(m_positions[p1Index].position, scaleFactor);
     return GPM::Transform::translation(finalPosition);
 }
 
@@ -104,7 +104,7 @@ GPM::Mat4 Bone::interpolateScaling(float animationTime)
     const int       p0Index     = getScaleIndex(animationTime);
     const int       p1Index     = p0Index + 1;
     const float     scaleFactor = getScaleFactor(m_scales[p0Index].timeStamp, m_scales[p1Index].timeStamp, animationTime);
-    GPM::Vec3 finalScale  = GPM::lerp(m_scales[p0Index].scale, m_scales[p1Index].scale, scaleFactor);
+    const GPM::Vec3 finalScale  = m_scales[p0Index].scale.lerp(m_scales[p1Index].scale, scaleFactor);
     return GPM::Transform::scaling(finalScale);
 }
 
