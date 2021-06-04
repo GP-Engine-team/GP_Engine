@@ -29,17 +29,20 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, int& inspected, c
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, float& inspected, const rfk::Field& info)
 {
-    Slider const* property = info.getProperty<Slider>();
-    if (property)
+    context.applyProperties(info, [&]() 
     {
-        context.startProperty(info.name.c_str());
-        context.setDirty(ImGui::SliderFloat(info.name.c_str(), &inspected, property->min, property->max));
-        context.endProperty();
-    }
-    else
-    {
-        GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-    }
+        Slider const* property = info.getProperty<Slider>();
+        if (property)
+        {
+            context.startProperty(info.name.c_str());
+            context.setDirty(ImGui::SliderFloat(info.name.c_str(), &inspected, property->min, property->max));
+            context.endProperty();
+        }
+        else
+        {
+            GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+        }
+    });
 }
 
 template <>
@@ -60,7 +63,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::string& insp
     char             buffer[bufferSize];
     strcpy_s(buffer, inspected.c_str());
     context.setDirty(ImGui::InputText("", buffer, bufferSize));
-    inspected       = buffer;
+    inspected = buffer;
 
     context.endProperty();
 }
