@@ -75,7 +75,7 @@ void BaseEnemy::update(double deltaTime)
             GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
             if (anim == nullptr)
             {
-                Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src));
+                anim = &Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src));
             }
 
             m_animComp->playAnimation(anim);
