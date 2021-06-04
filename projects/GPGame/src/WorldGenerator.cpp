@@ -51,20 +51,21 @@ void WorldGenerator::inspect(GPE::InspectContext& context)
 {
     Component::inspect(context);
 
-    DataInspector::inspect(context, m_prefab, "m_prefab");
-    DataInspector::inspect(context, m_container, "m_container");
-    ImGui::Separator();
-    DataInspector::inspect(context, m_minScale, "m_minScale");
-    DataInspector::inspect(context, m_maxScale, "m_maxScale");
-    ImGui::Separator();
-    DataInspector::inspect(context, m_minRot, "m_minRot");
-    DataInspector::inspect(context, m_maxRot, "m_maxRot");
-    ImGui::Separator();
-    DataInspector::inspect(context, m_number, "m_number");
-    DataInspector::inspect(context, m_radius, "m_radius");
-    ImGui::Separator();
-    DataInspector::inspect(context, m_debug, "m_debug");
-    ImGui::Separator();
+    //DataInspector::inspect(context, m_prefab, "m_prefab");
+    //DataInspector::inspect(context, m_container, "m_container");
+    //ImGui::Separator();
+    //DataInspector::inspect(context, m_minScale, "m_minScale");
+    //DataInspector::inspect(context, m_maxScale, "m_maxScale");
+    //ImGui::Separator();
+    //DataInspector::inspect(context, m_minRot, "m_minRot");
+    //DataInspector::inspect(context, m_maxRot, "m_maxRot");
+    //ImGui::Separator();
+    //DataInspector::inspect(context, m_number, "m_number");
+    //DataInspector::inspect(context, m_radius, "m_radius");
+    //ImGui::Separator();
+    //DataInspector::inspect(context, m_debug, "m_debug");
+    //ImGui::Separator();
+    defaultInspect(context);
 
     ImGui::PushEnabled(m_prefab && m_container.pData);
     if (ImGui::Button("CircularCoordinate"))
