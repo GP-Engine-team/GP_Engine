@@ -221,6 +221,8 @@ void EditorStartup::playGame()
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.updateDebug(deltaTime);
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.updateEditor(deltaTime);
             m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
+
+            m_editor.checkInspectedObject();
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
 
             m_game->update(unscaledDeltaTime, deltaTime);

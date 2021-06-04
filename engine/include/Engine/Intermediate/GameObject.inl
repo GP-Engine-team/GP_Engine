@@ -53,7 +53,7 @@ inline GameObject* GameObject::getParent() noexcept
     return m_parent;
 }
 
-inline bool GameObject::isDead()
+inline bool GameObject::isDead() const
 {
     return m_isDead;
 }

@@ -120,7 +120,7 @@ namespace GPE RFKNamespace()
          */
         inline void setName(const char* newName) noexcept;
 
-        inline bool isDead();
+        inline bool isDead() const;
 
         /**
          * @brief Get the Transform object

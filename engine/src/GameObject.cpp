@@ -12,7 +12,7 @@
 #include <Generated/GameObject.rfk.h>
 File_GENERATED
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPM;
 
 unsigned int GameObject::m_currentID = 0;
