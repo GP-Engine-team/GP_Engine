@@ -35,11 +35,8 @@ private:
     struct Node
     {
         Node* next = nullptr;
-
-        SubNode* getSubNodes();
+        SubNode* subNodes = nullptr;
     };
-
-    // std::vector<SubNode*> m_nodes; // Pointers to all chunks to free them later.
 
     Node*    m_firstNode       = nullptr; // Points to the first created node
     Node*    m_lastNode        = nullptr; // Points to the last added node

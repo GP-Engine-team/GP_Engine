@@ -71,20 +71,20 @@ void BasePlayer::start()
     m_groundParticleComponent.pData->start();
 
     // Keys
-    input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
-    input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
-    input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
-    input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
-    input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
-    input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
-    input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
-    input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-    input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
-    input->bindAction("aimBegin", EKeyMode::KEY_PRESSED, "Game", this, "aimBegin");
-    input->bindAction("aimEnd", EKeyMode::KEY_RELEASED, "Game", this, "aimEnd");
-    input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
-    input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
-    input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
+    input->bindAction("forward",               EKeyMode::KEY_DOWN,     "Game", this, "forward");
+    input->bindAction("backward",              EKeyMode::KEY_DOWN,     "Game", this, "backward");
+    input->bindAction("left",                  EKeyMode::KEY_DOWN,     "Game", this, "left");
+    input->bindAction("right",                 EKeyMode::KEY_DOWN,     "Game", this, "right");
+    input->bindAction("jump",                  EKeyMode::KEY_DOWN,     "Game", this, "jump");
+    input->bindAction("exit",                  EKeyMode::KEY_PRESSED,  "Game", this, "leave");
+    input->bindAction("sprintStart",           EKeyMode::KEY_PRESSED,  "Game", this, "sprintStart");
+    input->bindAction("sprintEnd",             EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+    input->bindAction("shoot",                 EKeyMode::KEY_DOWN,     "Game", this, "shoot");
+    input->bindAction("aimBegin",              EKeyMode::KEY_PRESSED,  "Game", this, "aimBegin");
+    input->bindAction("aimEnd",                EKeyMode::KEY_RELEASED, "Game", this, "aimEnd");
+    input->bindAction("playAmbiantMusic",      EKeyMode::KEY_PRESSED,  "Game", this, "playAmbiantMusic");
+    input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED,  "Game", this, "playAmbiantMusicForce");
+    input->bindAction("stopAllMusic",          EKeyMode::KEY_PRESSED,  "Game", this, "stopAllMusic");
 
     source->playSound("Western", true);
 
@@ -110,7 +110,6 @@ void BasePlayer::rotate(const GPM::Vec2& deltaDisplacement)
 // TOOD: Detect whether we are in editor or launcher
 void BasePlayer::leave()
 {
-
     GPE::Engine::getInstance()->exit();
 }
 
