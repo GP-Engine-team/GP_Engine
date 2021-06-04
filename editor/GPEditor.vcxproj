@@ -167,11 +167,13 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_EDITOR;_CONSOLE;%(PreprocessorDefinitions);GLFW_DLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_EDITOR;_CONSOLE;%(PreprocessorDefinitions);GLFW_DLL;_HAS_EXCEPTIONS=0</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(GPEngineDir)third_party\include;$(GPEngineDir)third_party\imgui\backends;$(GPEngineDir)third_party\imgui;$(GPEngineDir)third_party;$(GPEngineDir)third_party\gpm\src;$(GPEngineDir)third_party\gpm\include;$(GPEngineDir);$(GPEngineDir)third_party\include\Refureku;$(GPGameDir)include;$(GPGameDir);$(ProjectDir)include;$(GPEngineDir)include;$(GPEngineDir)src;$(GPEngineDir)/third_party/include/PhysX/</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
+      <DisableSpecificWarnings>4190;4005</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,11 +190,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_DLL;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_DLL;_HAS_EXCEPTIONS=0</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(GPEngineDir)third_party/include;$(GPEngineDir)third_party/gpm/include;$(GPEngineDir)third_party/imgui;$(GPEngineDir)third_party;$(GPEngineDir);$(GPEngineDir)/third_party/include/Refureku;$(GPGameDir)/include;$(GPGameDir);$(ProjectDir)/include;$(GPEngineDir)include;$(GPEngineDir)src;$(GPEngineDir)/third_party/include/PhysX/</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
+      <DisableSpecificWarnings>4190;4005</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

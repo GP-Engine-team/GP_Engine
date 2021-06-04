@@ -106,9 +106,9 @@ void ImGuiSaveStyle(const char* filename, const ImGuiStyle& style, const char* c
     if (strcmp(currentFont, "default") == 0)
         fprintf(f, "[Font]\n%s\n", currentFont);
     else
-        fprintf(f, "[Font]\n%s %i\n", currentFont, ImGui::GetFont()->ConfigData->SizePixels);
+        fprintf(f, "[Font]\n%s %f\n", currentFont, ImGui::GetFont()->ConfigData->SizePixels);
 
-    for (size_t i = 0; i != ImGuiCol_COUNT; i++)
+    for (ImGuiCol i = 0; i != ImGuiCol_COUNT; i++)
     {
         const ImVec4& c = style.Colors[i];
         fprintf(f, "[%s]\n", ImGui::GetStyleColorName(i)); // ImGuiColNames[i]);

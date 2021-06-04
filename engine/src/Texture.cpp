@@ -98,7 +98,7 @@ bool Texture::loadInGPU(int w, int h, unsigned char* pixels, const RenderPropert
     GLfloat max_anisotropy; /* don't exceed this value...*/
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &max_anisotropy);
 
-    const unsigned int finalAniso = (props.anisotropy > max_anisotropy) ? max_anisotropy : props.anisotropy;
+    const float finalAniso = (props.anisotropy > max_anisotropy) ? max_anisotropy : props.anisotropy;
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, finalAniso);
 
     glTexImage2D(GL_TEXTURE_2D, 0, getGLFormat(m_format), w, h, 0, getGLInternalFormat(m_format), GL_UNSIGNED_BYTE,

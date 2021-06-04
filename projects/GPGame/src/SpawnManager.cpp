@@ -58,7 +58,7 @@ void SpawnManager::update(double deltaTime)
     if (m_enemiesContainer.pData->children.size() > m_difficultyInfo[m_currentDifficulty].m_maxEntity)
         return;
 
-    m_delayCount += deltaTime;
+    m_delayCount += float(deltaTime);
 
     while (m_delayCount >= m_nextDelay)
     {
@@ -72,17 +72,17 @@ void SpawnManager::update(double deltaTime)
             m_spawnerZoneRadius);
 
         /*Choose random entity*/
-        unsigned int indexEntityToSpawn = Random::ranged<int>(m_entitiesToSpawnInfo.size());
+        unsigned int indexEntityToSpawn = Random::ranged<unsigned int>(unsigned(m_entitiesToSpawnInfo.size()));
 
         /*Choose spawner*/
         const int    maxIt        = 10;
         int          it           = 0;
-        unsigned int spawnerIndex = 0;
+        unsigned int spawnerIndex = 0u;
         const Vec3   posPlayer    = m_player->getTransform().getGlobalPosition();
         Vec3         spawnerPosition;
         do
         {
-            spawnerIndex    = Random::ranged<int>(m_spawners.size());
+            spawnerIndex    = Random::ranged<unsigned int>(unsigned(m_spawners.size()));
             spawnerPosition = m_spawners[spawnerIndex].go.pData->getTransform().getGlobalPosition();
         } while ((posPlayer - spawnerPosition).sqrLength() < sqrTotalRadius && ++it < maxIt);
 
@@ -132,9 +132,9 @@ void SpawnManager::autoGenerateLinearDifficulty(unsigned int count, const Diffic
 {
     m_difficultyInfo.clear();
 
-    for (unsigned int i = 0; i < count; ++i)
+    for (unsigned int i = 0u; i < count; ++i)
     {
-        float t = i / ((float)count - 1.f);
+        const float t = i / ((float)count - 1.f);
         m_difficultyInfo.emplace_back(GPM::lerp(min.m_spawnfrequency, max.m_spawnfrequency, t),
                                       GPM::lerp(min.m_maxEntity, max.m_maxEntity, t));
     }

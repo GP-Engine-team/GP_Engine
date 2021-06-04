@@ -44,7 +44,7 @@ void ShakeEffect::update(double deltaTime)
     moveStrength.z = 0.f;
     transform().setTranslation(m_basePosition + moveStrength); // Set the local rotation the be the rotation amount.
 
-    m_durationCount -= deltaTime;
+    m_durationCount -= float(deltaTime);
     if (m_durationCount < 0.f)
     {
         stop();
@@ -58,7 +58,7 @@ void ShakeEffect::updateEditor(double deltaTime)
     moveStrength.z = 0.f;
     transform().setTranslation(m_basePosition + moveStrength); // Set the local rotation the be the rotation amount.
 
-    m_durationCount -= deltaTime;
+    m_durationCount -= float(deltaTime);
     if (m_durationCount < 0.f)
     {
         m_isRunning = false;

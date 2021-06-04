@@ -99,7 +99,7 @@ void BasePlayer::rotate(const GPM::Vec2& deltaDisplacement)
 {
     const Quat& orientation{transform().getSpacialAttribut().rotation};
     const Vec2  axis{deltaDisplacement.rotated90()};
-    float       deltaTime = Engine::getInstance()->timeSystem.getDeltaTime();
+    const float deltaTime = float(Engine::getInstance()->timeSystem.getDeltaTime());
     const Quat  rotX{Quat::angleAxis(axis.x * controller->getAngularSpeed() * deltaTime, Vec3::right())};
     const Quat  rotY{Quat::angleAxis(axis.y * controller->getAngularSpeed() * deltaTime, Vec3::up())};
     const Quat  newRot{rotY * orientation * rotX};
@@ -249,7 +249,7 @@ void BasePlayer::update(double deltaTime)
     {
         if (!displayDepthMenu)
         {
-            m_animDepthCounter += deltaTime;
+            m_animDepthCounter += float(deltaTime);
 
             if (m_animDepthCounter >= m_animDepthCounterMax)
             {

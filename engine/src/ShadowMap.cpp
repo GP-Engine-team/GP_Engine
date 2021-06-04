@@ -17,8 +17,8 @@ ShadowMap::~ShadowMap()
 
 void ShadowMap::init(unsigned int w, unsigned int h)
 {
-    width  = w * pOwner->getShadowProperties().shadowMapSampleScale;
-    height = h * pOwner->getShadowProperties().shadowMapSampleScale;
+    width  = unsigned(ceilf(w * pOwner->getShadowProperties().shadowMapSampleScale));
+    height = unsigned(ceilf(h * pOwner->getShadowProperties().shadowMapSampleScale));
 
     glGenFramebuffers(1, &depthMapFBO);
 
@@ -41,8 +41,8 @@ void ShadowMap::init(unsigned int w, unsigned int h)
 
 void ShadowMap::resize(unsigned int w, unsigned int h)
 {
-    width  = w * pOwner->getShadowProperties().shadowMapSampleScale;
-    height = h * pOwner->getShadowProperties().shadowMapSampleScale;
+    width  = unsigned(ceilf(w * pOwner->getShadowProperties().shadowMapSampleScale));
+    height = unsigned(ceilf(h * pOwner->getShadowProperties().shadowMapSampleScale));
 
     glBindTexture(GL_TEXTURE_2D, depthMap);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);

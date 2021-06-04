@@ -109,12 +109,9 @@ namespace GPE RFKNamespace()
  * @brief Stop the game if condition is false in editor mode. In game mode work in debug only with real
  * assertion.
  */
-#ifdef defined(NDEBUG) && !defined(_EDITOR)
-
+#if defined(NDEBUG) && defined(_EDITOR)
 #define GAME_ASSERT(expr, msg)
-
 #else /* Not NDEBUG.  */
-
 #define GAME_ASSERT(expr, msg)                                                                                         \
     if (!expr)                                                                                                         \
     {                                                                                                                  \

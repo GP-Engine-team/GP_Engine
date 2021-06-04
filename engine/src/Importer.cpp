@@ -40,6 +40,9 @@ std::string GPE::saveSceneToStringImp(GPE::Scene* scene, GPE::SavedScene::EType 
 
         return docToString(doc);
     }
+
+    FUNCT_WARNING("Unsupported save type");
+    return "";
 }
 
 void GPE::saveSceneToPathImp(GPE::Scene* scene, const char* path, GPE::SavedScene::EType saveMode)
@@ -1088,7 +1091,7 @@ void GPE::writeSkeletonFile(const char* dst, const Skeleton::CreateArgs& arg)
         return;
     }
 
-    SkeletonHeader header{(char)EFileType::MESH, arg.m_boneInfoMap.size()};
+    SkeletonHeader header{(char)EFileType::MESH, int(arg.m_boneInfoMap.size())};
 
     fwrite(&header, sizeof(header), 1, pFile); // header
 
