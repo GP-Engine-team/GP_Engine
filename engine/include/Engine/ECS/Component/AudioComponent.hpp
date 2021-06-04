@@ -38,8 +38,9 @@ namespace GPE RFKNamespace()
         RFKField(Serialize(), Inspect()) ALint          state      = AL_INITIAL;
         RFKField(Serialize(), Inspect()) bool           isRelative = AL_FALSE;
         RFKField(Serialize(), Inspect()) SourceSettings settings;
-        RFKField(Serialize(), Inspect()) std::string    name    = "default";
-        bool                                            isDirty = false;
+        RFKField(Serialize(), Inspect()) std::string    soundName  = "default";
+        RFKField(Serialize(), Inspect()) std::string    sourceName = "default";
+        bool                                            isDirty    = false;
 
         SourceData_GENERATED
     };
@@ -95,6 +96,9 @@ namespace GPE RFKNamespace()
         void stopAllSound() noexcept;
 
         RFKMethod() void updatePosition();
+
+        void updateSources();
+        void updateSource(SourceData * source);
 
         [[nodiscard]] int getKey() const noexcept
         {

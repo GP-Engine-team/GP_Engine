@@ -81,7 +81,7 @@ void BaseCharacter::jump()
 {
     if (controller->getCanJump() == true)
     {
-        controller->addForce(GPM::Vec3::up() * 30000.f);
+        controller->addForce(GPM::Vec3::up() * m_jumpStrength);
         controller->startJumpTimer();
     }
 }
@@ -91,7 +91,6 @@ void BaseCharacter::forward()
     GPM::Vec3 vec = transform().getVectorForward();
     vec.y         = .0f;
     controller->move(vec);
-    // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
 }
 
 void BaseCharacter::backward()
@@ -99,7 +98,6 @@ void BaseCharacter::backward()
     GPM::Vec3 vec = transform().getVectorForward();
     vec.y         = .0f;
     controller->move(-vec);
-    // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
 }
 
 void BaseCharacter::left()
@@ -107,7 +105,6 @@ void BaseCharacter::left()
     GPM::Vec3 vec = transform().getVectorRight();
     vec.y         = .0f;
     controller->move(-vec);
-    // rigidbody.rigidbody->addForce(vec * -speed, physx::PxForceMode::eFORCE);
 }
 
 void BaseCharacter::right()
@@ -115,17 +112,16 @@ void BaseCharacter::right()
     GPM::Vec3 vec = transform().getVectorRight();
     vec.y         = .0f;
     controller->move(vec);
-    // rigidbody.rigidbody->addForce(vec * speed, physx::PxForceMode::eFORCE);
 }
 
 void BaseCharacter::sprintStart()
 {
-    controller->setSpeed(controller->getSpeed() * 2.f);
+    controller->setSpeed(controller->getSpeed() * m_sprintAcceleration);
 }
 
 void BaseCharacter::sprintEnd()
 {
-    controller->setSpeed(controller->getSpeed() * .5f);
+    controller->setSpeed(controller->getSpeed() / m_sprintAcceleration);
 }
 
 void BaseCharacter::fixedUpdate(double deltaTime)

@@ -61,7 +61,12 @@ public:
         {
             GPM::Vec3 pos;
             ColorRGB  col = ColorRGB::black();
+
+            Point(const GPM::Vec3& in_pos, const ColorRGB& in_col = ColorRGB::black()) : pos{in_pos}, col{in_col}
+            {
+            }
         };
+
         Point pt1;
         Point pt2;
     };
@@ -80,7 +85,7 @@ protected:
     std::vector<ParticleComponent*> m_pParticleComponents;
     std::vector<DebugShape>         m_debugShape;
     std::vector<DebugLine::Point>   m_debugLine;
-    std::vector<ShadowMap> m_shadowMaps;
+    std::vector<ShadowMap>          m_shadowMaps;
 
 protected:
     unsigned int m_w = 0, m_h = 0;

@@ -29,6 +29,8 @@ public:
     void   resize   (int width, int height);
     void   bind     () const;
     GLint  textureID() const;
+    GLint  width    () const;
+    GLint  height   () const;
 };
 
 using WindowFBO = WindowFramebuffer;

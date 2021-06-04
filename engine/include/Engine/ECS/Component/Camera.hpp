@@ -183,8 +183,9 @@ namespace GPE RFKNamespace()
          * @param fovY
          */
         void setFovY(const float fovY) noexcept;
-
         void setAspect(const float newAspect) noexcept;
+        void setNear(const float newNear) noexcept;
+        void setFar(const float newFar) noexcept;
 
         /**
          * @brief Get the view * projection matrix
@@ -208,8 +209,8 @@ namespace GPE RFKNamespace()
         inline const GPM::Mat4& getProjection() const noexcept;
 
         GETTER_BY_REF(FogParameter, m_fogParam)
-        DEFAULT_GETTER_SETTER_BY_VALUE(Far, zfar)
-        DEFAULT_GETTER_SETTER_BY_VALUE(Near, znear)
+        GETTER_BY_VALUE(Far, zfar)
+        GETTER_BY_VALUE(Near, znear)
 
         /**
          * @brief Return struct with all plane that composed the camera frustum

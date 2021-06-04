@@ -159,8 +159,6 @@ void BehaviourSystem::update(double deltaTime) const noexcept
 
 void BehaviourSystem::gameAssert(bool condition, const char* msg)
 {
-#ifdef _DEBUG
     if (!condition && onGameAssert)
         onGameAssert(msg);
-#endif // DEBUG
 }

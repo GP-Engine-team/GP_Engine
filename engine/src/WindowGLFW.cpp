@@ -64,3 +64,33 @@ void Window::getSize(int& width, int& height) const noexcept
 {
     glfwGetWindowSize(m_window, &width, &height);
 }
+
+void Window::setFullscreen()
+{
+    GLFWmonitor* monitor    = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    // switch to full screen
+    glfwSetWindowMonitor(m_window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+}
+
+void Window::maximize()
+{
+    glfwMaximizeWindow(m_window);
+}
+
+void Window::minimize()
+{
+    glfwIconifyWindow(m_window);
+}
+
+
+void Window::show()
+{
+    glfwShowWindow(m_window);
+}
+
+void Window::hide()
+{
+    glfwHideWindow(m_window);
+}

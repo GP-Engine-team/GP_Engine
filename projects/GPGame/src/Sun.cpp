@@ -35,7 +35,7 @@ void Sun::start()
 
 void Sun::update(double deltaTime)
 {
-    m_currentTime += deltaTime * 20.f;
+    m_currentTime += deltaTime;
 
     if (m_currentTime > m_dayDuration + m_nightDuration)
     {

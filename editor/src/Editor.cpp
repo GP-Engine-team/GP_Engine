@@ -405,7 +405,7 @@ void Editor::setSceneInEdition(GPE::Scene& scene)
 
 void Editor::releaseGameInputs()
 {
-    gameViewer.lockInputToEditor();
+    gameViewer.releaseInputs();
 }
 
 void Editor::updateKeyboardShorthand(EditorStartup& startup)
@@ -447,7 +447,11 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
     if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_S) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
-        saveCurrentScene();
+        if (startup.game().state == EGameState::STOPPED
+            || (ImGui::IsKeyDown(GLFW_KEY_RIGHT_SHIFT) || ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT)))
+        {
+            saveCurrentScene();
+        }
     }
 
     if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_C) &&
