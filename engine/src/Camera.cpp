@@ -13,7 +13,7 @@
 #include <Engine/ECS/Component/Camera.hpp>
 File_GENERATED
 
-using namespace GPM;
+    using namespace GPM;
 
 namespace GPE
 {
@@ -165,6 +165,17 @@ void Camera::setAspect(const float newAspect) noexcept
     updateAspect();
 }
 
+void Camera::setNear(const float newNear) noexcept
+{
+    znear = newNear;
+}
+
+void Camera::setFar(const float newFar) noexcept
+{
+    zfar  = newFar;
+    vSide = zfar * tanf(fovY * .5f) * 2.f;
+}
+
 Frustum Camera::getFrustum() const noexcept
 {
     // TODO: Optimization with furstum matrix ??
@@ -203,7 +214,15 @@ void Camera::inspect(InspectContext& context)
 
     DataInspector::inspect(context, aspect, "Aspect");
     DataInspector::inspect(context, zfar, "Far");
+    if (context.wasLastDirty())
+    {
+        setFar(zfar);
+    }
     DataInspector::inspect(context, znear, "Near");
+    if (context.wasLastDirty())
+    {
+        setNear(znear);
+    }
     DataInspector::inspect(context, hSide, "H side");
     DataInspector::inspect(context, vSide, "V side");
 
