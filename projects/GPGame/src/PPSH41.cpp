@@ -23,6 +23,8 @@ void PPSH41::start()
     {
         m_muzzleFlashGO.pData->setActive(false);
     }
+
+     GAME_ASSERT(m_smokeEffect.pData, "Missing component");
 }
 
 void PPSH41::onShoot()

@@ -33,10 +33,12 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) float     m_attackCounterMax = 3.f;
         RFKField(Inspect(), Serialize()) float     m_radiusAttack     = 3.f;
         RFKField(Inspect(), Serialize()) float     m_dammage          = 3.f;
-        RFKField(Serialize()) GPE::AudioComponent* source             = nullptr;
+        RFKField(Serialize()) GPE::AudioComponent* m_source             = nullptr;
+        RFKField() GPE::AnimationComponent* m_animComp    = nullptr;
+        RFKField() GPE::CharacterController* m_controller = nullptr;
 
-        RFKField(Inspect(), Serialize())
-        float disappearanceSpeed = 10.f;
+        RFKField(Inspect(), Serialize()) float m_disappearanceSpeed = 10.f;
+        RFKField(Inspect(), Serialize()) float m_maxHeightBeforDestroying = 50.f;
 
     public:
         BaseEnemy() noexcept = default;
