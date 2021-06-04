@@ -56,6 +56,12 @@ public:
      * @return
      */
     void getSize(int& width, int& height) const noexcept;
+
+    void maximize();
+    void minimize();
+    void setFullscreen();
+    void show();
+    void hide();
 };
 
 #include "WindowGLFW.inl"
