@@ -23,7 +23,7 @@ private:
     std::unordered_map<int, bool>             m_stateMap;
     std::unordered_map<int, bool>             m_lastStateMap;
     std::unordered_map<int, InputComponent*>  m_inputComponents;
-    inline static int                         m_key               = -1;
+    int                                       m_key               = -1;
     std::string                               m_currentInputMode  = "";
     std::string                               m_previousInputMode = "";
     Cursor                                    m_cursor;
