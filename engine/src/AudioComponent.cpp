@@ -34,7 +34,8 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
 
     source->isRelative = settings.relative;
     source->settings   = settings;
-    source->name       = sourceName;
+    source->sourceName = sourceName;
+    source->soundName  = soundName;
 
     AL_CALL(alGenSources, 1, &source->source);
     AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
@@ -45,6 +46,17 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, settings.relative);
     AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, settings.rollOffFactor);
     AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
+}
+
+void AudioComponent::updateSource(SourceData* source)
+{
+    AL_CALL(alSourcef, source->source, AL_PITCH, source->settings.pitch);
+    AL_CALL(alSourcef, source->source, AL_GAIN, source->settings.gain);
+    AL_CALL(alSourcei, source->source, AL_LOOPING, source->settings.loop);
+    AL_CALL(alSource3f, source->source, AL_POSITION, parentPos.x + source->settings.position.x,
+            parentPos.y + source->settings.position.y, parentPos.z + +source->settings.position.z);
+    AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, source->settings.relative);
+    AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, source->settings.rollOffFactor);
 }
 
 SourceData* AudioComponent::getSource(const char* name) noexcept
@@ -134,7 +146,22 @@ void AudioComponent::updatePosition()
     {
         if (value.isRelative == AL_FALSE)
         {
-            AL_CALL(alSource3f, value.source, AL_POSITION, pos.x, pos.y, pos.z);
+            AL_CALL(alSource3f, value.source, AL_POSITION, pos.x + value.settings.position.x,
+                    pos.y + +value.settings.position.y, pos.z + +value.settings.position.z);
+        }
+    }
+}
+
+void AudioComponent::updateSources()
+{
+    if (!sources.empty() && sources.size() <= 100000000)
+    {
+        for (auto& [key, value] : sources)
+        {
+            if (value.isDirty == true)
+            {
+                updateSource(&value);
+            }
         }
     }
 }

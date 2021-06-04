@@ -29,6 +29,9 @@
     <ClCompile Include="src\GenerationUtilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\DefaultInspectPropertyRule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\CustomFileParserFactory.hpp">
@@ -44,6 +47,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\GenerationUtilities.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DefaultInspectPropertyRule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

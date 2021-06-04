@@ -1,11 +1,11 @@
 ﻿#include <Engine/Core/Tools/ImGuiTools.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/ECS/Component/AudioComponent.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
-#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
-#include <Engine/Resources/Wave.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
+#include <Engine/Resources/Wave.hpp>
 
 #include <BaseEnemy.hpp>
 
@@ -34,14 +34,20 @@ void BaseEnemy::start()
     m_target = playerGO->getComponent<BaseCharacter>();
     GAME_ASSERT(m_target, "Player Base character component not found");
 
-    source->playSound("Zombie", true);
+    m_animComp = m_gameObject->getComponent<GPE::AnimationComponent>();
+    GAME_ASSERT(m_animComp, "Null");
+
+    m_controller = m_gameObject->getComponent<GPE::CharacterController>();
+    GAME_ASSERT(m_controller, "Null");
+
+    m_source->playSound("Zombie", true);
 }
 
 void BaseEnemy::onPostLoad()
 {
     BaseCharacter::onPostLoad();
 
-    source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
+    m_source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
 
     GPE::SourceSettings sourceSettings;
     sourceSettings.pitch = 1.f;
@@ -54,7 +60,7 @@ void BaseEnemy::onPostLoad()
 
     GPE::Wave testSound3("./resources/sounds/zombie.wav", "Zombie", sourceSettings.spatialized);
 
-    source->setSound("Zombie", "Zombie", sourceSettings);
+    m_source->setSound("Zombie", "Zombie", sourceSettings);
 }
 
 void BaseEnemy::update(double deltaTime)
@@ -63,34 +69,30 @@ void BaseEnemy::update(double deltaTime)
     {
         if (m_animDeathCounter <= 0.0f)
         {
-            GPE::AnimationComponent* animComp = m_gameObject->getComponent<GPE::AnimationComponent>();
-            if (animComp != nullptr)
+            auto&       a   = GPE::Engine::getInstance()->animResourcesManager.getAll<GPE::Animation>();
+            const char* src = "resources\\Animations\\ZombieDeath.GPAnimation";
+
+            GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
+            if (anim == nullptr)
             {
-                auto& a = GPE::Engine::getInstance()->animResourcesManager.getAll<GPE::Animation>();
-                const char* src = "resources\\Animations\\ZombieDeath.GPAnimation";
                 Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src));
-                GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
-                if (anim)
-                {
-                    animComp->playAnimation(anim);
-                    animComp->shouldLoop = false;
-                    m_animDeathCounterMax = anim->getDuration();
-                }
             }
 
-            GPE::CharacterController* controller = m_gameObject->getComponent<GPE::CharacterController>();
-            if (controller != nullptr)
-            {
-                controller->setActive(false);
-            }
+            m_animComp->playAnimation(anim);
+            m_animComp->shouldLoop = false;
+            m_animDeathCounterMax  = anim->getDuration();
+
+            m_controller->setActive(false);
         }
 
         m_animDeathCounter += float(deltaTime);
 
-        if (m_animDeathCounter >= m_animDeathCounterMax / 2)
+        if (m_animDeathCounter >= m_animDeathCounterMax / 2.f)
         {
-            ////getOwner().destroy();
-            m_gameObject->getTransform().translate(GPM::Vec3(0, -disappearanceSpeed * deltaTime, 0));
+            m_gameObject->getTransform().translate(GPM::Vec3(0, -m_disappearanceSpeed * deltaTime, 0));
+
+            if (transform().getGlobalPosition().y < -std::abs(m_maxHeightBeforDestroying))
+                getOwner().destroy();
         }
     }
     else

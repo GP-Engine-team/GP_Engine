@@ -39,6 +39,28 @@ void InspectContext::endProperty()
     hierarchy.pop_back();
 }
 
+void InspectContext::startPropertyGroup(const char* name, float indentLength)
+{
+    Node node;
+    node.indentLength = indentLength;
+    hierarchy.emplace_back(std::move(node));
+    if (hierarchy.size() > indentStartIndex) // don't indent if first node
+        ImGui::Indent(indentLength);
+    ImGui::PushID(name);
+
+    ImGui::Text(name);
+}
+
+void InspectContext::endPropertyGroup()
+{
+    if (hierarchy.size() > indentStartIndex) // don't unindent if first node
+        ImGui::Unindent(hierarchy.back().indentLength);
+    ImGui::PopID();
+
+    hasLastChanged = hierarchy.back().hasChanged;
+    hierarchy.pop_back();
+}
+
 void InspectContext::setDirty()
 {
     for (auto it = hierarchy.rbegin(); it != hierarchy.rend() && !it->hasChanged; it++)

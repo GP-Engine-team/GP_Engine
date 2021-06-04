@@ -26,7 +26,7 @@ void SpatializedSoundPlayerScript::onPostLoad()
 
     if (!source)
     {
-        source = getOwner().getComponent<GPE::AudioComponent>();
+        source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
     }
 
     GPE::SourceSettings sourceSettings;

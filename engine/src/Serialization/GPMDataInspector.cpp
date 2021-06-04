@@ -18,15 +18,18 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::SplitTransfo
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& inspected, const rfk::Field& info)
 {
-    Slider const* property = info.getProperty<Slider>();
-    if (property)
+    context.applyProperties(info, [&]() 
     {
-        context.setDirty(ImGui::SliderFloat2(info.name.c_str(), inspected.e, property->min, property->max));
-    }
-    else
-    {
-        DataInspector::inspect(context, inspected, info.name.c_str());
-    }
+        Slider const* property = info.getProperty<Slider>();
+        if (property)
+        {
+            context.setDirty(ImGui::SliderFloat2(info.name.c_str(), inspected.e, property->min, property->max));
+        }
+        else
+        {
+            DataInspector::inspect(context, inspected, info.name.c_str());
+        }
+    });
 }
 
 template <>
@@ -47,15 +50,18 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& ins
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const rfk::Field& info)
 {
-    Slider const* property = info.getProperty<Slider>();
-    if (property)
+    context.applyProperties(info, [&]() 
     {
-        context.setDirty(ImGui::SliderFloat3(info.name.c_str(), inspected.e, property->min, property->max));
-    }
-    else
-    {
-        DataInspector::inspect(context, inspected, info.name.c_str());
-    }
+        Slider const* property = info.getProperty<Slider>();
+        if (property)
+        {
+            context.setDirty(ImGui::SliderFloat3(info.name.c_str(), inspected.e, property->min, property->max));
+        }
+        else
+        {
+            DataInspector::inspect(context, inspected, info.name.c_str());
+        }
+    });
 }
 
 template <>
@@ -76,15 +82,18 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& ins
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector4& inspected, const rfk::Field& info)
 {
-    Slider const* property = info.getProperty<Slider>();
-    if (property)
+    context.applyProperties(info, [&]() 
     {
-        context.setDirty(ImGui::SliderFloat4(info.name.c_str(), inspected.e, property->min, property->max));
-    }
-    else
-    {
-        DataInspector::inspect(context, inspected, info.name.c_str());
-    }
+        Slider const* property = info.getProperty<Slider>();
+        if (property)
+        {
+            context.setDirty(ImGui::SliderFloat4(info.name.c_str(), inspected.e, property->min, property->max));
+        }
+        else
+        {
+            DataInspector::inspect(context, inspected, info.name.c_str());
+        }
+    });
 }
 
 template <>

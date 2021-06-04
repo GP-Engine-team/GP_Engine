@@ -23,13 +23,16 @@ void SpawnManager::onPostLoad()
     enableUpdate(true);
     enableUpdateEditor(true);
 
+    m_player = Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");
+
     BehaviourComponent::onPostLoad();
 }
 
 void SpawnManager::start()
 {
-    m_player = Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");
-    
+    if (!m_player)
+        m_player = Engine::getInstance()->sceneManager.getCurrentScene()->getWorld().getGameObject("Player");
+
     GAME_ASSERT(m_player, "Player not found");
     GAME_ASSERT(m_enemiesContainer.pData, "Missing container ref in SpawnManager");
     GAME_ASSERT(m_entitiesToSpawnInfo.size(), "Spawner without info");
@@ -69,7 +72,7 @@ void SpawnManager::update(double deltaTime)
             m_spawnerZoneRadius);
 
         /*Choose random entity*/
-        unsigned int indexEntityToSpawn = Random::ranged<int>(m_entitiesToSpawnInfo.size() - 1);
+        unsigned int indexEntityToSpawn = Random::ranged<int>(m_entitiesToSpawnInfo.size());
 
         /*Choose spawner*/
         const int    maxIt        = 10;
@@ -79,7 +82,7 @@ void SpawnManager::update(double deltaTime)
         Vec3         spawnerPosition;
         do
         {
-            spawnerIndex    = Random::ranged<int>(m_spawners.size() - 1);
+            spawnerIndex    = Random::ranged<int>(m_spawners.size());
             spawnerPosition = m_spawners[spawnerIndex].go.pData->getTransform().getGlobalPosition();
         } while ((posPlayer - spawnerPosition).sqrLength() < sqrTotalRadius && ++it < maxIt);
 
@@ -92,9 +95,8 @@ void SpawnManager::update(double deltaTime)
                                   position2D.y + spawnerPosition.z};
 
         /*Spawn this entity*/
-        // GameObject* spawnedEntity =
-        // m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer.pData);
-        // spawnedEntity->getTransform().setTranslation(newPosition);
+        GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer.pData);
+        spawnedEntity->getTransform().setTranslation(newPosition);
     }
 }
 
@@ -103,8 +105,11 @@ void SpawnManager::updateEditor(double deltaTime)
     if (!m_debug)
         return;
 
-    drawDebugSphere(m_player->getTransform().getGlobalPosition(), m_playerZoneRadius, RGBA{RGB::blue(), 0.6f}, 0.f,
-                    true);
+    if (m_player)
+    {
+        drawDebugSphere(m_player->getTransform().getGlobalPosition(), m_playerZoneRadius, RGBA{RGB::blue(), 0.6f}, 0.f,
+                        true);
+    }
 
     for (auto&& elem : m_spawners)
     {

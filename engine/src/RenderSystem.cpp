@@ -9,18 +9,18 @@
 #include <Engine/Core/Rendering/Renderer/RendererGLFW_GL46.hpp>
 #include <Engine/Core/Rendering/Window/WindowGLFW.hpp>
 #include <Engine/Core/Tools/BranchPrediction.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/ECS/Component/Light/Light.hpp>
 #include <Engine/ECS/Component/Model.hpp>
 #include <Engine/ECS/Component/ParticleComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Animation/Animation.hpp>
 #include <Engine/Resources/Mesh.hpp>
 #include <Engine/Resources/RenderBuffer.hpp>
 #include <Engine/Resources/RenderTexture.hpp>
 #include <Engine/Resources/Shader.hpp>
-#include <Engine/Resources/Animation/Animation.hpp>
-#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/AABB.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
@@ -104,12 +104,21 @@ RenderSystem::RenderSystem() noexcept
     shader->setInt("shadowMap", 1);
 
     shader = &Engine::getInstance()->resourceManager.add<Shader>(
-    "DefaultWithAnims", "./resources/shaders/vTextureWithLightAndShadowAndAnims.vs",
-    "./resources/shaders/fTextureWithLightAndShadowAndAnims.fs", LIGHT_BLIN_PHONG | FOG);
+        "DefaultWithAnims", "./resources/shaders/vTextureWithLightAndShadowAndAnims.vs",
+        "./resources/shaders/fTextureWithLightAndShadowAndFog.fs", LIGHT_BLIN_PHONG | FOG);
 
     shader->use();
     shader->setInt("ourTexture", 0);
     shader->setInt("shadowMap", 1);
+
+    shader = &Engine::getInstance()->resourceManager.add<Shader>(
+        "DefaultWithAnimAndNormalMap", "./resources/shaders/vTextureWithLightAndShadowAndNMAndAnims.vs",
+        "./resources/shaders/fTextureWithLightAndShadowAndNMAndFog.fs", LIGHT_BLIN_PHONG | FOG);
+
+    shader->use();
+    shader->setInt("ourTexture", 0);
+    shader->setInt("shadowMap", 1);
+    shader->setInt("normalMap", 2);
 
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
@@ -239,14 +248,14 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
         if (m_shadowMaps.size())
         {
             shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
-            // shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
+            shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
             shader.setMat4("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix().e);
         }
         else
         {
             shader.setMat4("lightSpaceMatrix", Mat4::identity().e);
             shader.setInt("PCF", 1);
-            // shader.setFloat("bias", 0.0f);
+            shader.setFloat("bias", 0.0f);
         }
     }
 
@@ -588,11 +597,9 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     {
 
                         pSubModel->pShader->setMat4(
-                            std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(),
-                            transforms[i].e);
+                            std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), transforms[i].e);
                     }
                 }
-
 
                 // TODO: To optimize ! Use Draw instanced Array
 
@@ -752,7 +759,7 @@ void RenderSystem::shadowMapPipeline() noexcept
     Shader& shader = *Engine::getInstance()->resourceManager.get<Shader>("DepthOnly");
     shader.use();
 
-    glCullFace(GL_FRONT);
+    // glCullFace(GL_FRONT);
 
     for (auto&& shadowMap : m_shadowMaps)
     {
@@ -795,7 +802,7 @@ void RenderSystem::shadowMapPipeline() noexcept
             }
         }
     }
-    glCullFace(GL_BACK);
+    // glCullFace(GL_BACK);
 
     // 2. then render scene as normal with shadow mapping (using depth map)
     glBindFramebuffer(GL_FRAMEBUFFER, drawFboId);
@@ -862,8 +869,8 @@ void RenderSystem::drawDebugQuad(const Vec3& position, const Vec3& dir, const Ve
 
 void RenderSystem::drawDebugLine(const GPM::Vec3& pt1, const GPM::Vec3& pt2, const ColorRGB& color) noexcept
 {
-    m_debugLine.emplace_back(DebugLine::Point{pt1, color});
-    m_debugLine.emplace_back(DebugLine::Point{pt2, color});
+    m_debugLine.emplace_back(pt1, color);
+    m_debugLine.emplace_back(pt2, color);
 }
 
 void RenderSystem::addParticleComponent(ParticleComponent& particleComponent) noexcept

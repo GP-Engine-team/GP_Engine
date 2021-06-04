@@ -21,6 +21,8 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) GPE::CharacterController* controller    = nullptr;
         RFKField(Inspect(), Serialize()) float          m_maxLife     = 0.f;
         RFKField(Inspect(), Serialize()) float          m_currentLife = 0.f;
+        RFKField(Inspect(), Serialize()) float          m_jumpStrength = 1000.f;
+        RFKField(Inspect(), Serialize()) float          m_sprintAcceleration = 2.f;
 
     public:
         BaseCharacter(GPE::GameObject & owner);
