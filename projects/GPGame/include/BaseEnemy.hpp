@@ -25,14 +25,14 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BaseEnemy : public BaseCharacter
     {
     protected:
-        RFKField() BaseCharacter*              m_target               = nullptr;
+        RFKField() BaseCharacter*              m_target              = nullptr;
         RFKField(Serialize()) float            m_animDeathCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float m_animDeathCounterMax = 3.f;
 
-        RFKField(Serialize()) float                m_attackCounter    = 0.f;
+        RFKField(Serialize(), Inspect(), ReadOnly(), Separator(true, false)) float                m_attackCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float     m_attackCounterMax = 3.f;
         RFKField(Inspect(), Serialize()) float     m_radiusAttack     = 3.f;
-        RFKField(Inspect(), Serialize()) float     m_dammage          = 3.f;
+        RFKField(Inspect(), Serialize(), Separator(false, true)) float     m_dammage          = 3.f;
         RFKField(Serialize()) GPE::AudioComponent* m_source             = nullptr;
         RFKField() GPE::AnimationComponent* m_animComp    = nullptr;
         RFKField() GPE::CharacterController* m_controller = nullptr;

@@ -13,9 +13,9 @@ void inspect(GPE::InspectContext& context, T& inspected)
 template <typename T>
 void inspect(GPE::InspectContext& context, T& inspected, const char* name)
 {
-    context.startProperty(name);
+    context.startPropertyGroup(name);
     inspected.inspect(context);
-    context.endProperty();
+    context.endPropertyGroup();
 }
 
 template <typename T>
@@ -27,7 +27,7 @@ void inspect(GPE::InspectContext& context, T& inspected, const std::string& name
 template <typename T>
 void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 {
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
+    context.applyProperties(info, [&]() { GPE::DataInspector::inspect(context, inspected, info.name.c_str()); });
 }
 
 } // namespace DataInspector
