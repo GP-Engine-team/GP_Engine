@@ -600,6 +600,15 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                             std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), transforms[i].e);
                     }
                 }
+                else if ((pSubModel->pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK) // if shader has animation data but does not play
+                {
+                    for (int i = 0; i < m_maxNbBones; ++i)
+                    {
+
+                        pSubModel->pShader->setMat4(
+                            std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), GPM::Matrix4::identity().e);
+                    }
+                }
 
                 // TODO: To optimize ! Use Draw instanced Array
 
