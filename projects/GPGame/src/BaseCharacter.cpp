@@ -91,28 +91,28 @@ void BaseCharacter::forward()
 {
     GPM::Vec3 vec = transform().getVectorForward();
     vec.y         = .0f;
-    controller->move(vec * Engine::getInstance()->timeSystem.getDeltaTime());
+    controller->move(vec * float(Engine::getInstance()->timeSystem.getDeltaTime()));
 }
 
 void BaseCharacter::backward()
 {
     GPM::Vec3 vec = transform().getVectorForward();
     vec.y         = .0f;
-    controller->move(-vec * Engine::getInstance()->timeSystem.getDeltaTime());
+    controller->move(-vec * float(Engine::getInstance()->timeSystem.getDeltaTime()));
 }
 
 void BaseCharacter::left()
 {
     GPM::Vec3 vec = transform().getVectorRight();
     vec.y         = .0f;
-    controller->move(-vec * Engine::getInstance()->timeSystem.getDeltaTime());
+    controller->move(-vec * float(Engine::getInstance()->timeSystem.getDeltaTime()));
 }
 
 void BaseCharacter::right()
 {
     GPM::Vec3 vec = transform().getVectorRight();
     vec.y         = .0f;
-    controller->move(vec * Engine::getInstance()->timeSystem.getDeltaTime());
+    controller->move(vec * float(Engine::getInstance()->timeSystem.getDeltaTime()));
 }
 
 void BaseCharacter::sprintStart()

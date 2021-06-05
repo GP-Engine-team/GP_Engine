@@ -18,7 +18,7 @@ void WorldGenerator::loadDisk()
 
     // Create object with random sizes,
     // positions and rotations and add them to the container
-    for (int i = 0; i < m_number; ++i)
+    for (unsigned int i = 0u; i < m_number; ++i)
     {
         GameObject* const newGO = m_prefab->clone(*m_container.pData);
 
@@ -47,7 +47,7 @@ void WorldGenerator::loadCircularTowardCenter()
 
     // Create object with random sizes,
     // positions and rotations and add them to the container
-    float step = TWO_PI / m_number;
+    const float step = TWO_PI / m_number;
     for (unsigned int i = 0u; i < m_number; ++i)
     {
         GameObject* const newGO = m_prefab->clone(*m_container.pData);

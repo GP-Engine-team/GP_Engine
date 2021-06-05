@@ -35,7 +35,7 @@ void LootManager::start()
 
     for (size_t i = 0; i < m_lootNumbers; ++i)
     {
-        unsigned int indexLootPoint = Random::ranged<int>(spawnerUnused.size());
+        unsigned int indexLootPoint = Random::ranged<unsigned int>(unsigned(spawnerUnused.size()));
         GAME_ASSERT(spawnerUnused[indexLootPoint].go.pData, "null");
 
         GameObject* spawnedEntity = lootPrefab->clone(*m_lootsContainer.pData);

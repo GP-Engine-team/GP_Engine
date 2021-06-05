@@ -40,7 +40,7 @@ void Loot::start()
 void Loot::update(double deltaTime)
 {
     // Add levitatio effect
-    m_delay += deltaTime;
+    m_delay += float(deltaTime);
 
     if (m_delay > PI * 2.f)
     {

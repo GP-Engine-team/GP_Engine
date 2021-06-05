@@ -33,7 +33,7 @@ namespace GPG RFKNamespace()
         RFKField(Serialize(), Inspect(), Separator()) GPM::Vec3 m_minRot = GPM::Vec3{0.f, 360.f, 0.f};
         RFKField(Serialize(), Inspect()) GPM::Vec3              m_maxRot = GPM::Vec3{0.f, 360.f, 0.f};
 
-        RFKField(Serialize(), Inspect(), Separator()) int            m_number = 15;
+        RFKField(Serialize(), Inspect(), Separator()) unsigned int   m_number = 15;
         RFKField(Serialize(), Inspect()) float                       m_radius = 10.f;
         RFKField(Serialize(), Inspect(), Separator(true, true)) bool m_debug  = true;
 
