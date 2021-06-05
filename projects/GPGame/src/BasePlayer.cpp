@@ -262,6 +262,7 @@ void BasePlayer::update(double deltaTime)
 
             if (m_animDepthCounter >= m_animDepthCounterMax && !displayDepthMenu)
             {
+                Engine::getInstance()->timeSystem.setTimeScale(0.0);
                 Engine::getInstance()->inputManager.setCursorTrackingState(false);
                 Engine::getInstance()->inputManager.setCursorLockState(false);
                 displayDepthMenu   = true;
@@ -336,7 +337,6 @@ void BasePlayer::onDeath()
 {
     BaseCharacter::onDeath();
 
-    Engine::getInstance()->timeSystem.setTimeScale(0.0);
     input->setActive(false);
 }
 
