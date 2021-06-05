@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <gpm/Vector3.hpp>
@@ -24,6 +25,11 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) float          m_jumpStrength       = 1000.f;
         RFKField(Inspect(), Serialize()) float          m_sprintAcceleration = 2.f;
         RFKField(Inspect(), Serialize()) bool           m_isDead             = false;
+
+        RFKField(Inspect(), Serialize(), ReadOnly()) float m_bodyBalancing      = 0.f; //[-1, 1]
+        RFKField(Inspect(), Serialize()) float             m_bodyBalancingSpeed = 1.f;
+
+        RFKField(Serialize()) bool isSprint = false;
 
     public:
         BaseCharacter(GPE::GameObject & owner);
@@ -63,6 +69,7 @@ namespace GPG RFKNamespace()
         RFKMethod() void takeDamage(float damage);
         RFKMethod() bool isDead();
         RFKMethod() void takeLife(float damage);
+        DEFAULT_GETTER_SETTER_BY_VALUE(BodyBalancing, m_bodyBalancing)
 
         RFKMethod() virtual void onDeath();
 

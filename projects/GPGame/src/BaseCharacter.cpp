@@ -115,15 +115,28 @@ void BaseCharacter::right()
 void BaseCharacter::sprintStart()
 {
     controller->setSpeed(controller->getSpeed() * m_sprintAcceleration);
+    isSprint = true;
 }
 
 void BaseCharacter::sprintEnd()
 {
     controller->setSpeed(controller->getSpeed() / m_sprintAcceleration);
+    isSprint = false;
 }
 
 void BaseCharacter::fixedUpdate(double deltaTime)
 {
+    if (controller->isMoving())
+    {
+        m_bodyBalancing =
+            lerpf(m_bodyBalancing,
+                  cosf(Engine::getInstance()->timeSystem.getAccumulatedTime() * (isSprint + 1) * TWO_PI), deltaTime);
+    }
+    else
+    {
+        m_bodyBalancing = lerpf(m_bodyBalancing, 0.f, deltaTime);
+    }
+
     controller->update(deltaTime);
 }
 
