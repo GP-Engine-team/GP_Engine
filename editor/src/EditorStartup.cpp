@@ -182,15 +182,14 @@ void EditorStartup::closeGame()
 
 void EditorStartup::playGame()
 {
-    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = [&](const char* msg)
-    {
+    m_engine->sceneManager.getCurrentScene()->behaviourSystem.onGameAssert = [&](const char* msg) {
         Log::getInstance()->logError(msg);
         stopGame();
     };
 
     Engine::getInstance()->sceneManager.OnSceneChange = std::bind(&EditorStartup::startScene, this);
 
-    //m_editor.gameViewer.lockInputToGame();
+    // m_editor.gameViewer.lockInputToGame();
 
     if (m_game->state == EGameState::STOPPED)
     {
@@ -276,6 +275,9 @@ void EditorStartup::stopGame()
 {
     if (m_game->state == EGameState::STOPPED)
         return;
+
+    // reset time scale
+    m_engine->timeSystem.setTimeScale(1.f);
 
     m_engine->soundSystem.stopAllComponents();
     m_engine->sceneManager.getCurrentScene()->behaviourSystem.startOnBehaviourAdd = false;

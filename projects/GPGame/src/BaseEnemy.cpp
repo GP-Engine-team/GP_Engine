@@ -12,7 +12,7 @@
 #include <Generated/BaseEnemy.rfk.h>
 File_GENERATED
 
-using namespace GPG;
+    using namespace GPG;
 using namespace GPM;
 using namespace GPE;
 
@@ -82,6 +82,7 @@ void BaseEnemy::update(double deltaTime)
             m_animDeathCounterMax  = anim->getDuration();
 
             m_controller->setActive(false);
+            m_source->setActive(false);
         }
 
         m_animDeathCounter += float(deltaTime);
