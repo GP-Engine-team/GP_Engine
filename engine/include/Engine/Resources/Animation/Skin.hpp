@@ -56,7 +56,6 @@ public:
     static void setVertexBoneData(VertexBoneData& vertexBoneData, int boneID, float weight);
 };
 
-void loadSkinAndSkeleton(Skin& skin, Skeleton& skeleton, aiMesh* mesh);
 void loadSkinAndSkeleton(std::vector<GPE::Skin::VertexBoneData>&    verticesBoneData,
                          std::map<std::string, Skeleton::BoneInfo>& m_boneInfoMap, aiMesh* mesh);
 

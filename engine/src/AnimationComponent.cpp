@@ -132,14 +132,20 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
 
     GPM::Mat4 globalTransformation = parentTransform * nodeTransform;
 
-    auto& boneInfoMap = m_skeleton->m_boneInfoMap;
-    auto  it          = boneInfoMap.find(node.name);
-    if (it != boneInfoMap.end())
+    //auto  it          = m_skeleton->m_boneNames.find(node.name);
+    //if (it != m_skeleton->m_boneNames.end())
+    //{
+    //    int       index            = it->second;
+    //    GPM::Mat4 offset           = m_skeleton->m_boneInfo[index].offset;
+    //    if (index < m_finalBoneMatrices.size())
+    //        m_finalBoneMatrices[index] = globalTransformation * offset;
+    //}
+
+    if (node.boneID >= 0 && node.boneID < m_skeleton->m_boneInfo.size())
     {
-        int       index            = it->second.id;
-        GPM::Mat4 offset           = it->second.offset;
-        if (index < m_finalBoneMatrices.size())
-            m_finalBoneMatrices[index] = globalTransformation * offset;
+        GPM::Mat4 offset = m_skeleton->m_boneInfo[node.boneID].offset;
+        if (node.boneID < m_finalBoneMatrices.size())
+            m_finalBoneMatrices[node.boneID] = globalTransformation * offset;
     }
 
     for (const GPE::AssimpNodeData& node : node.children)
