@@ -54,7 +54,7 @@ namespace GPG RFKNamespace()
         void start() final;
         void update(double deltaTime) final;
         void onPostLoad() final;
-        void onDeapth() final;
+        void onDeath() final;
 
         BaseEnemy_GENERATED
     };

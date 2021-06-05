@@ -100,7 +100,7 @@ void BaseEnemy::update(double deltaTime)
     }
 }
 
-void BaseEnemy::onDeapth()
+void BaseEnemy::onDeath()
 {
     auto&       a   = GPE::Engine::getInstance()->animResourcesManager.getAll<GPE::Animation>();
     const char* src = "resources\\Animations\\ZombieDeath.GPAnimation";
