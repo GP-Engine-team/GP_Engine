@@ -76,51 +76,6 @@ void Skin::setVertexBoneData(VertexBoneData& vertexBoneData, int boneID, float w
     }
 }
 
-void GPE::loadSkinAndSkeleton(Skin& skin, Skeleton& skeleton, aiMesh* mesh)
-{
-    skin.m_verticesBoneData.resize(mesh->mNumVertices);
-    for (Skin::VertexBoneData& vertexBoneData : skin.m_verticesBoneData)
-    {
-        skin.setVertexBoneDataToDefault(vertexBoneData);
-    }
-
-    const unsigned int max = mesh->mNumBones;
-    for (unsigned int boneIndex = 0u; boneIndex < max; ++boneIndex)
-    {
-        int         boneID   = -1;
-        std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
-        if (skeleton.m_boneInfoMap.find(boneName) == skeleton.m_boneInfoMap.end())
-        {
-            Skeleton::BoneInfo newBoneInfo;
-            newBoneInfo.id     = skeleton.m_boneCounter;
-            newBoneInfo.offset = GPE::toMat4(mesh->mBones[boneIndex]->mOffsetMatrix);
-
-            skeleton.m_boneInfoMap[boneName] = newBoneInfo;
-            boneID                           = skeleton.m_boneCounter;
-            skeleton.m_boneCounter++;
-        }
-        else
-        {
-            boneID = skeleton.m_boneInfoMap[boneName].id;
-        }
-        GPE_ASSERT(boneID != -1, "Every bone should be used.");
-        auto weights    = mesh->mBones[boneIndex]->mWeights;
-        int  numWeights = mesh->mBones[boneIndex]->mNumWeights;
-
-        if (numWeights != 0)
-        {
-            for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
-            {
-                int   vertexId = weights[weightIndex].mVertexId;
-                float weight   = weights[weightIndex].mWeight;
-                GPE_ASSERT(vertexId <= skin.m_verticesBoneData.size(), "Index should be valid.");
-                skin.setVertexBoneData(skin.m_verticesBoneData[vertexId], boneID, weight);
-            }
-        }
-    }
-}
-
-
 void GPE::loadSkinAndSkeleton(std::vector<GPE::Skin::VertexBoneData>& verticesBoneData, std::map<std::string, Skeleton::BoneInfo>& m_boneInfoMap,
                               aiMesh* mesh)
 {
