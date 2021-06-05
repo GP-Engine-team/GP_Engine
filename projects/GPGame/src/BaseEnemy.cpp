@@ -12,7 +12,7 @@
 #include <Generated/BaseEnemy.rfk.h>
 File_GENERATED
 
-using namespace GPG;
+    using namespace GPG;
 using namespace GPM;
 using namespace GPE;
 
@@ -66,24 +66,6 @@ void BaseEnemy::update(double deltaTime)
 {
     if (isDead())
     {
-        if (m_animDeathCounter <= 0.0f)
-        {
-            auto&       a   = GPE::Engine::getInstance()->animResourcesManager.getAll<GPE::Animation>();
-            const char* src = "resources\\Animations\\ZombieDeath.GPAnimation";
-
-            GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
-            if (anim == nullptr)
-            {
-                anim = &Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src));
-            }
-
-            m_animComp->playAnimation(anim);
-            m_animComp->shouldLoop = false;
-            m_animDeathCounterMax  = anim->getDuration();
-
-            m_controller->setActive(false);
-        }
-
         m_animDeathCounter += float(deltaTime);
 
         if (m_animDeathCounter >= m_animDeathCounterMax * .5f)
@@ -116,4 +98,24 @@ void BaseEnemy::update(double deltaTime)
             m_attackCounter = 0.f;
         }
     }
+}
+
+void BaseEnemy::onDeath()
+{
+    BaseCharacter::onDeath();
+
+    const char* src = "resources\\Animations\\ZombieDeath.GPAnimation";
+
+    GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
+    if (anim == nullptr)
+    {
+        anim = &Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src));
+    }
+
+    m_animComp->playAnimation(anim);
+    m_animComp->shouldLoop = false;
+    m_animDeathCounterMax  = anim->getDuration();
+
+    m_controller->setActive(false);
+    m_source->setActive(false);
 }

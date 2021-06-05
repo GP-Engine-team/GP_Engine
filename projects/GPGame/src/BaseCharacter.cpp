@@ -10,7 +10,7 @@ File_GENERATED
 #include <gpm/Vector3.hpp>
 #include <gpm/Vector4.hpp>
 
-    using namespace GPE;
+using namespace GPE;
 using namespace GPG;
 using namespace GPM;
 
@@ -30,9 +30,6 @@ void BaseCharacter::start()
 {
     GAME_ASSERT(controller, "null");
 
-    // Setup controller
-    // controller->setHasGravity(true);
-    // controller->setSpeed(1.f);
     controller->setAngularSpeed(HALF_PI / 8.f);
 }
 
@@ -118,29 +115,53 @@ void BaseCharacter::right()
 void BaseCharacter::sprintStart()
 {
     controller->setSpeed(controller->getSpeed() * m_sprintAcceleration);
+    isSprint = true;
 }
 
 void BaseCharacter::sprintEnd()
 {
     controller->setSpeed(controller->getSpeed() / m_sprintAcceleration);
+    isSprint = false;
 }
 
 void BaseCharacter::fixedUpdate(double deltaTime)
 {
+    if (controller->isMoving())
+    {
+        const float accTime = float(Engine::getInstance()->timeSystem.getAccumulatedTime());
+        const float target = cosf(accTime * (int(isSprint) + 1) * TWO_PI);
+
+        m_bodyBalancing = lerpf(m_bodyBalancing, target, float(deltaTime));
+    }
+    else
+    {
+        m_bodyBalancing = lerpf(m_bodyBalancing, 0.f, float(deltaTime));
+    }
+
     controller->update(deltaTime);
 }
 
 void BaseCharacter::takeDamage(float damage)
 {
     m_currentLife = std::max(0.f, m_currentLife - damage);
+
+    if (!m_isDead && m_currentLife <= std::numeric_limits<float>::epsilon())
+    {
+        onDeath();
+    }
 }
 
 bool BaseCharacter::isDead()
 {
-    return m_currentLife <= std::numeric_limits<float>::epsilon();
+    return m_isDead;
 }
 
 void BaseCharacter::takeLife(float addedlife)
 {
     m_currentLife = std::max(m_maxLife, m_currentLife + addedlife);
+}
+
+void BaseCharacter::onDeath()
+{
+    m_isDead = true;
 }

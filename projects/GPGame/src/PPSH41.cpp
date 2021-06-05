@@ -24,7 +24,7 @@ void PPSH41::start()
         m_muzzleFlashGO.pData->setActive(false);
     }
 
-     GAME_ASSERT(m_smokeEffect.pData, "Missing component");
+    GAME_ASSERT(m_smokeEffect.pData, "Missing component");
 }
 
 void PPSH41::onShoot()
@@ -39,11 +39,6 @@ void PPSH41::onShoot()
                  Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale),
                  Random::ranged(m_muzzleFlashMinScale, m_muzzleFlashMaxScale)});
     }
-    const Vec3       basePosition = m_isAiming ? m_aimPosition : m_basePosition;
-    const Quaternion baseRotation = m_isAiming ? m_aimRotation : m_baseRotation;
-
-    m_finalPosition = basePosition + transform().getLocalForward() * m_knowbackStrength;
-    m_finalRotation = baseRotation * Quaternion::angleAxis(m_knowbackMaxAngle, transform().getLocalRight());
 
     m_smokeEffect.pData->emit(
         static_cast<unsigned int>(m_muzzleFlashEffect.pData->getCount() / m_magazineStored.getCapacity()));
@@ -53,20 +48,29 @@ void PPSH41::onShoot()
 
 void PPSH41::animateRecoil(float t)
 {
-    const Vec3       basePosition = m_isAiming ? m_aimPosition : m_basePosition;
-    const Quaternion baseRotation = m_isAiming ? m_aimRotation : m_baseRotation;
+    const Vec3       basePosition = m_isAiming ? m_aimPosition : m_dynamicPosition;
+    const Quaternion baseRotation = m_isAiming ? m_aimRotation : m_dynamicRotation;
 
     if (t < m_knowbackDuration)
     {
-        const float intRatio = easeOutElastic(t / m_knowbackDuration);
-        transform().setTranslation(basePosition.lerp(m_finalPosition, intRatio));
-        transform().setRotation(baseRotation.nlerp(m_finalRotation, intRatio));
+        const float newIntRatio = easeOutElastic(t / m_knowbackDuration);
+
+        m_translationMovement += transform().getLocalForward() * m_knowbackStrength * (newIntRatio - recoilT);
+        m_rotationMovement = m_rotationMovement *
+                             Quaternion::angleAxis(m_knowbackMaxAngle, transform().getLocalRight()) *
+                             (newIntRatio - recoilT);
+
+        recoilT = newIntRatio;
     }
     else
     {
-        const float intRatio = easeInBounce((t - m_knowbackDuration) / (1.f - m_knowbackDuration));
-        transform().setTranslation(m_finalPosition.lerp(basePosition, intRatio));
-        transform().setRotation(m_finalRotation.nlerp(baseRotation, intRatio));
+        const float newIntRatio = easeInBounce((t - m_knowbackDuration) / (1.f - m_knowbackDuration));
+        m_translationMovement += transform().getLocalForward() * m_knowbackStrength * (1.f - (newIntRatio - recoilT));
+        m_rotationMovement = m_rotationMovement *
+                             Quaternion::angleAxis(m_knowbackMaxAngle, transform().getLocalRight()) *
+                             (1.f - (newIntRatio - recoilT));
+
+        recoilT = newIntRatio;
     }
 }
 

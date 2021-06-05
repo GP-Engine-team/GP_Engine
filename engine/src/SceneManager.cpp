@@ -68,9 +68,6 @@ Scene& SceneManager::setCurrentScene(const std::string& sceneName)
 
     m_pCurrentScene = &scene;
 
-    if (OnSceneChange)
-        OnSceneChange();
-
     return scene; // emplace with default constructor of Scene
 }
 
@@ -177,6 +174,9 @@ void SceneManager::loadSceneFromPath(const std::filesystem::path& path)
     if (std::filesystem::exists(path))
     {
         loadSceneFromPathImp(&setCurrentScene(path.string()), path.string().c_str());
+
+        if (OnSceneChange)
+            OnSceneChange();
     }
     else
     {

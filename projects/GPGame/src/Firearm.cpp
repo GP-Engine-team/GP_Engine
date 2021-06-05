@@ -49,10 +49,15 @@ void Firearm::onPostLoad()
 
 void Firearm::start()
 {
-    m_basePosition = transform().getPosition();
-    m_baseRotation = transform().getRotation();
+    m_staticPosition = m_dynamicPosition = transform().getPosition();
+    m_staticRotation = m_dynamicRotation = transform().getRotation();
 
     m_recoileAnimtationDuration = std::clamp(m_recoileAnimtationDuration, 0.f, m_rateOfFire);
+
+    GameObject* playerGO = getOwner().getParent();
+    GAME_ASSERT(playerGO, "FireArm must be child of player");
+    m_player = playerGO->getComponent<BaseCharacter>();
+    GAME_ASSERT(m_player, "Missing baseChracter in parent gamObject");
 
     GAME_ASSERT(m_muzzleFlashEffect.pData, "Missing component");
 
@@ -192,6 +197,15 @@ void Firearm::update(double deltaTime)
             m_isAimAnimationDone = true;
         }
     }
+
+    transform().setTranslation(m_dynamicPosition + m_translationMovement);
+    transform().setRotation(m_dynamicRotation * m_rotationMovement);
+
+    const float aimAmplification = (!m_isAiming + 1) / 2.f; //0.5 if aiming else 1
+    m_translationMovement  = m_player->getBodyBalancing() * m_balancingStrength * aimAmplification * Vec3::forward() +
+                            m_player->getBodyBalancing() * m_balancingStrength * aimAmplification * Vec3::right();
+
+    m_rotationMovement = Quaternion::identity();
 }
 
 void Firearm::onShoot()
@@ -205,15 +219,15 @@ void Firearm::animateRecoil(float t)
 void Firearm::animateAimIn(float t)
 {
     const float intRatio = easeOutElastic(t);
-    transform().setTranslation(m_basePosition.lerp(m_aimPosition, intRatio));
-    transform().setRotation(m_baseRotation.nlerp(m_aimRotation, intRatio));
+    m_dynamicPosition    = m_staticPosition.lerp(m_aimPosition, intRatio);
+    m_dynamicRotation    = m_staticRotation.nlerp(m_aimRotation, intRatio);
 }
 
 void Firearm::animateAimOut(float t)
 {
     const float intRatio = easeOutElastic(t);
-    transform().setTranslation(m_aimPosition.lerp(m_basePosition, intRatio));
-    transform().setRotation(m_aimRotation.nlerp(m_baseRotation, intRatio));
+    m_dynamicPosition    = m_aimPosition.lerp(m_staticPosition, intRatio);
+    m_dynamicRotation    = m_aimRotation.nlerp(m_staticRotation, intRatio);
 }
 
 void Firearm::reload()
