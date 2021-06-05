@@ -227,9 +227,11 @@ void BasePlayer::onGUI()
     {
         ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
 
+        //Life bar
         SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
         displayLifeBar(m_currentLife, m_maxLife, size);
 
+        //Fire arm stats
         if (m_firearms.size())
         {
             size = ImGui::CalcTextSize("30/30");
@@ -237,9 +239,16 @@ void BasePlayer::onGUI()
             Text("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
                  m_firearms.front()->getMagazine().getCapacity());
         }
+
+        //FPS
         size = ImGui::CalcTextSize("FPS : 144");
         SetNextElementLayout(0.95f, 0.f, size, EHAlign::Right, EVAlign::Top);
         Text("FPS : %0.0f", ImGui::GetIO().Framerate);
+
+        //Loot count
+        size = ImGui::CalcTextSize("0 / 6");
+        SetNextElementLayout(0.95f, 0.95f, size, EHAlign::Left, EVAlign::Middle);
+        Text("%d / %d", m_lootCount, m_lootCountToWin);
     }
 }
 
@@ -319,4 +328,10 @@ BasePlayer::~BasePlayer() noexcept
 
 void BasePlayer::collectLoot(const Loot& loot)
 {
+    if (++m_lootCount > m_lootCountToWin)
+    {
+        displayWinMenu = true;
+        enableUpdate(false);
+        Engine::getInstance()->timeSystem.setTimeScale(0.0);
+    }
 }

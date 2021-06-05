@@ -32,11 +32,15 @@ namespace GPG RFKNamespace()
         RFKField(Serialize(), Inspect(), ReadOnly()) float m_animDepthCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float             m_animDepthCounterMax = 3.f;
 
+        RFKField(Inspect(), Serialize(), ReadOnly()) unsigned int m_lootCount      = 0u;
+        RFKField(Inspect(), Serialize()) unsigned int             m_lootCountToWin = 6u;
+
     public:
         RFKField(Inspect(), Serialize()) float radiusLootCollection = 50.f;
 
     protected:
         RFKField(Serialize()) bool displayDepthMenu = false;
+        RFKField(Serialize()) bool displayWinMenu   = false;
 
         RFKField(Serialize()) GPE::InputComponent* input  = nullptr;
         RFKField(Serialize()) GPE::AudioComponent* source = nullptr;
