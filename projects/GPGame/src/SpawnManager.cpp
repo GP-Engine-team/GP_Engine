@@ -55,7 +55,7 @@ void SpawnManager::start()
 
 void SpawnManager::update(double deltaTime)
 {
-    if (m_enemiesContainer.pData->children.size() > m_difficultyInfo[m_currentDifficulty].m_maxEntity)
+    if (m_enemiesContainer.pData->children.size() >= m_difficultyInfo[m_currentDifficulty].m_maxEntity)
         return;
 
     m_delayCount += float(deltaTime);

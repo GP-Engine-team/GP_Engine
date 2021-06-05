@@ -30,6 +30,7 @@ void BaseCharacter::start()
 {
     GAME_ASSERT(controller, "null");
 
+    controller->setSpeed(m_baseSpeed);
     controller->setAngularSpeed(HALF_PI / 8.f);
 }
 
@@ -114,13 +115,13 @@ void BaseCharacter::right()
 
 void BaseCharacter::sprintStart()
 {
-    controller->setSpeed(controller->getSpeed() * m_sprintAcceleration);
+    controller->setSpeed(m_baseSpeed * m_sprintAcceleration);
     isSprint = true;
 }
 
 void BaseCharacter::sprintEnd()
 {
-    controller->setSpeed(controller->getSpeed() / m_sprintAcceleration);
+    controller->setSpeed(m_baseSpeed);
     isSprint = false;
 }
 
