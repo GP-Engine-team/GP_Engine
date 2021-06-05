@@ -92,12 +92,17 @@ void AnimationComponent::updateAnimData(bool wasComplete)
 
         // Skin
         m_model->bindSkin(*m_skin);
+
+        playAnimation(m_currentAnimation);
     }
 
 }
 
 void AnimationComponent::playAnimation(Animation* pAnimation)
 {
+    if (pAnimation == nullptr)
+        return;
+
     GPE_ASSERT(isComplete(), "Animation Component data should be set before playing an animation.");
     if (!isComplete())
         return;
@@ -105,13 +110,21 @@ void AnimationComponent::playAnimation(Animation* pAnimation)
     m_currentAnimation = pAnimation;
     m_currentTime      = 0.0f;
     m_timeScale        = 1.f;
+
+    skeletonBoneIDToAnimationBoneID.resize(m_skeleton->getNbBones());
+    for (size_t i = 0; i < pAnimation->m_bones.size(); i++)
+    {
+        auto it = m_skeleton->m_boneNames.find(pAnimation->m_bones[i].getName());
+        skeletonBoneIDToAnimationBoneID[it->second] = i;
+    }
 }
 
 void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, const GPM::mat4& parentTransform)
 {
     GPM::Mat4          nodeTransform = node.transformation;
 
-    Bone* bone = m_currentAnimation->findBone(node.name);
+    //Bone* bone = m_currentAnimation->findBone(node.name);
+    Bone* bone = &m_currentAnimation->m_bones[skeletonBoneIDToAnimationBoneID[node.boneID]];
 
     if (bone)
     {
@@ -132,13 +145,11 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
 
     GPM::Mat4 globalTransformation = parentTransform * nodeTransform;
 
-    auto& boneInfoMap = m_skeleton->m_boneInfoMap;
-    auto  it          = boneInfoMap.find(node.name);
-    if (it != boneInfoMap.end())
+    if (node.boneID >= 0 && node.boneID < m_skeleton->m_boneInfo.size())
     {
-        int       index            = it->second.id;
-        GPM::Mat4 offset           = it->second.offset;
-        m_finalBoneMatrices[index] = globalTransformation * offset;
+        GPM::Mat4 offset = m_skeleton->m_boneInfo[node.boneID].offset;
+        if (node.boneID < m_finalBoneMatrices.size())
+            m_finalBoneMatrices[node.boneID] = globalTransformation * offset;
     }
 
     for (const GPE::AssimpNodeData& node : node.children)
@@ -198,24 +209,6 @@ void AnimationComponent::setCurrentAnimDuration(float newDuration)
     {
         m_timeScale = newDuration / m_currentAnimation->getDuration();
     }
-}
-
- void AnimationComponent::drawDebugSkeleton(const GPM::Vec4& offset) const
-{
-    //// for (int boneIndex = skeleton->firstDrawnBoneIndex; boneIndex <= skeleton->lastDrawnBoneIndex; boneIndex++)
-    //for (size_t boneIndex = 0; boneIndex <= m_skeleton->getNbBones(); boneIndex++)
-    //{
-    //    int parentIndex = m_skeleton->getParentBoneIndex(boneIndex);
-    //    if (parentIndex != -1)
-    //    {
-    //        GPM::Mat4 transform       = worldBonesTransform[boneIndex];
-    //        GPM::Mat4 parentTransform = worldBonesTransform[parentIndex];
-
-    //        GPM::Vec4 p1 = transform * GPM::Vec4{0, 0, 0, 1} + offset;
-    //        GPM::Vec4 p2 = parentTransform * GPM::Vec4{0, 0, 0, 1} + offset;
-    //        GPE::Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.drawDebugLine(p1.xyz, p2.xyz);
-    //    }
-    //}
 }
 
 void AnimationComponent::onPostLoad()

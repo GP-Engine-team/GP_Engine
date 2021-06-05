@@ -201,9 +201,11 @@ void Firearm::update(double deltaTime)
     transform().setTranslation(m_dynamicPosition + m_translationMovement);
     transform().setRotation(m_dynamicRotation * m_rotationMovement);
 
-    const float aimAmplification = (!m_isAiming + 1) / 2.f; //0.5 if aiming else 1
-    m_translationMovement  = m_player->getBodyBalancing() * m_balancingStrength * aimAmplification * Vec3::forward() +
-                            m_player->getBodyBalancing() * m_balancingStrength * aimAmplification * Vec3::right();
+    const float aimAmplification    = (!m_isAiming + 1) / 2.f;           // 0.5 if aiming else 1
+    const float sprintAmplification = m_player->getIsSprint() * 4.f + 1; // 2.f if sprint else 1
+    m_translationMovement =
+        m_player->getBodyBalancing() * sprintAmplification * m_balancingStrength * aimAmplification * Vec3::forward() +
+        m_player->getBodyBalancing() * sprintAmplification * m_balancingStrength * aimAmplification * Vec3::right();
 
     m_rotationMovement = Quaternion::identity();
 }

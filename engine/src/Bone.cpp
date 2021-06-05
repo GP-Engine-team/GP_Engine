@@ -5,6 +5,7 @@
  */
 
 #include <Engine/Resources/Animation/Bone.hpp>
+#include <algorithm>
 
 using namespace GPE;
 
@@ -52,7 +53,7 @@ Bone::Bone(const std::string& name, const aiNodeAnim* channel)
     }
 }
 
-/* Gets normalized value for Lerp & Slerp*/
+/* Gets normalized value for Lerp & Nlerp*/
 float Bone::getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
 {
     float scaleFactor  = 0.0f;
@@ -122,14 +123,13 @@ void Bone::update(float animationTime)
 animation time */
 int Bone::getPositionIndex(float animationTime)
 {
-    const size_t max = m_positions.size() - 1u;
-    for (size_t index = 0u; index < max; ++index)
-    {
-        if (animationTime < m_positions[index + 1ul].timeStamp)
-            return int(index);
-    }
+    auto it = std::upper_bound(m_positions.begin() + 1, m_positions.end(), animationTime,
+                         [&](const float& animTime, const GPE::KeyPosition& pos) { return animTime < pos.timeStamp; });
 
-    assert(0);
+    if (it != m_positions.end())
+        return &(*it) - m_positions.data() - 1;
+
+    assert(false);
     return -1;
 }
 
@@ -137,14 +137,13 @@ int Bone::getPositionIndex(float animationTime)
 animation time */
 int Bone::getRotationIndex(float animationTime)
 {
-    const size_t max = m_rotations.size() - 1ul;
-    for (size_t index = 0u; index < max; ++index)
-    {
-        if (animationTime < m_rotations[index + 1ul].timeStamp)
-            return int(index);
-    }
+    auto it = std::upper_bound(m_rotations.begin() + 1, m_rotations.end(), animationTime,
+                         [&](const float& animTime, const GPE::KeyRotation& rot) { return animTime < rot.timeStamp; });
 
-    assert(0);
+    if (it != m_rotations.end())
+        return &(*it) - m_rotations.data() - 1;
+
+    assert(false);
     return -1;
 }
 
@@ -152,14 +151,13 @@ int Bone::getRotationIndex(float animationTime)
 animation time */
 int Bone::getScaleIndex(float animationTime)
 {
-    const size_t max = m_scales.size() - 1ul;
-    for (size_t index = 0u; index < max; ++index)
-    {
-        if (animationTime < m_scales[index + 1ul].timeStamp)
-            return int(index);
-    }
+    auto it = std::upper_bound(m_scales.begin() + 1, m_scales.end(), animationTime,
+                         [&](const float& animTime, const GPE::KeyScale& scale) { return animTime < scale.timeStamp; });
 
-    assert(0);
+    if (it != m_scales.end())
+        return &(*it) - m_scales.data() - 1;
+
+    assert(false);
     return -1;
 }
 
