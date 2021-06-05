@@ -183,7 +183,7 @@ void AnimationComponent::setSkin(Skin* skin)
     if (skin == m_skin)
         return;
 
-    if (isComplete() && m_skin == nullptr)
+    if (isComplete() && skin == nullptr)
     {
         removeAnimData();
     }

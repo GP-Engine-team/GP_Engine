@@ -105,7 +105,7 @@ RenderSystem::RenderSystem() noexcept
 
     shader = &Engine::getInstance()->resourceManager.add<Shader>(
         "DefaultWithAnims", "./resources/shaders/vTextureWithLightAndShadowAndAnims.vs",
-        "./resources/shaders/fTextureWithLightAndShadowAndFog.fs", LIGHT_BLIN_PHONG | FOG);
+        "./resources/shaders/fTextureWithLightAndShadowAndFog.fs", LIGHT_BLIN_PHONG | FOG | ANIMATION_MASK);
 
     shader->use();
     shader->setInt("ourTexture", 0);
@@ -113,7 +113,7 @@ RenderSystem::RenderSystem() noexcept
 
     shader = &Engine::getInstance()->resourceManager.add<Shader>(
         "DefaultWithAnimAndNormalMap", "./resources/shaders/vTextureWithLightAndShadowAndNMAndAnims.vs",
-        "./resources/shaders/fTextureWithLightAndShadowAndNMAndFog.fs", LIGHT_BLIN_PHONG | FOG);
+        "./resources/shaders/fTextureWithLightAndShadowAndNMAndFog.fs", LIGHT_BLIN_PHONG | FOG | ANIMATION_MASK);
 
     shader->use();
     shader->setInt("ourTexture", 0);
@@ -602,6 +602,15 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     glUniformMatrix4fv(glGetUniformLocation(pSubModel->pShader->getID(), "finalBonesMatrices"), transforms.size(),
                                        GL_FALSE,
                                        (GLfloat*)transforms.data());
+                }
+                else if ((pSubModel->pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK) // if shader has animation data but does not play
+                {
+                    for (int i = 0; i < m_maxNbBones; ++i)
+                    {
+
+                        pSubModel->pShader->setMat4(
+                            std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), GPM::Matrix4::identity().e);
+                    }
                 }
 
                 // TODO: To optimize ! Use Draw instanced Array
