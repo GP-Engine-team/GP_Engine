@@ -30,9 +30,6 @@ void BaseCharacter::start()
 {
     GAME_ASSERT(controller, "null");
 
-    // Setup controller
-    // controller->setHasGravity(true);
-    // controller->setSpeed(1.f);
     controller->setAngularSpeed(HALF_PI / 8.f);
 }
 
@@ -133,14 +130,24 @@ void BaseCharacter::fixedUpdate(double deltaTime)
 void BaseCharacter::takeDamage(float damage)
 {
     m_currentLife = std::max(0.f, m_currentLife - damage);
+
+    if (!m_isDead && m_currentLife <= std::numeric_limits<float>::epsilon())
+    {
+        onDeath();
+    }
 }
 
 bool BaseCharacter::isDead()
 {
-    return m_currentLife <= std::numeric_limits<float>::epsilon();
+    return m_isDead;
 }
 
 void BaseCharacter::takeLife(float addedlife)
 {
     m_currentLife = std::max(m_maxLife, m_currentLife + addedlife);
+}
+
+void BaseCharacter::onDeath()
+{
+    m_isDead = true;
 }

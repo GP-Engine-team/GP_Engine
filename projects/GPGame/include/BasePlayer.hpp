@@ -71,6 +71,8 @@ namespace GPG RFKNamespace()
         RFKMethod() void stopAllMusic();
         RFKMethod() void updateListener();
         RFKMethod() void collectLoot(const Loot& loot);
+        RFKMethod() void onDeath() override;
+        RFKMethod() void onWin();
 
         void rotate(const GPM::Vec2& deltaDisplacement);
         void start() final;

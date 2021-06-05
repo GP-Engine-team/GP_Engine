@@ -29,15 +29,15 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) float            m_animDeathCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float m_animDeathCounterMax = 3.f;
 
-        RFKField(Serialize(), Inspect(), ReadOnly(), Separator(true, false)) float                m_attackCounter    = 0.f;
-        RFKField(Inspect(), Serialize()) float     m_attackCounterMax = 3.f;
-        RFKField(Inspect(), Serialize()) float     m_radiusAttack     = 3.f;
-        RFKField(Inspect(), Serialize(), Separator(false, true)) float     m_dammage          = 3.f;
-        RFKField(Serialize()) GPE::AudioComponent* m_source             = nullptr;
-        RFKField() GPE::AnimationComponent* m_animComp    = nullptr;
-        RFKField() GPE::CharacterController* m_controller = nullptr;
+        RFKField(Serialize(), Inspect(), ReadOnly(), Separator(true, false)) float m_attackCounter    = 0.f;
+        RFKField(Inspect(), Serialize()) float                                     m_attackCounterMax = 3.f;
+        RFKField(Inspect(), Serialize()) float                                     m_radiusAttack     = 3.f;
+        RFKField(Inspect(), Serialize(), Separator(false, true)) float             m_dammage          = 3.f;
+        RFKField(Serialize()) GPE::AudioComponent*                                 m_source           = nullptr;
+        RFKField() GPE::AnimationComponent*                                        m_animComp         = nullptr;
+        RFKField() GPE::CharacterController*                                       m_controller       = nullptr;
 
-        RFKField(Inspect(), Serialize()) float m_disappearanceSpeed = 10.f;
+        RFKField(Inspect(), Serialize()) float m_disappearanceSpeed       = 10.f;
         RFKField(Inspect(), Serialize()) float m_maxHeightBeforDestroying = 50.f;
 
     public:
@@ -54,6 +54,7 @@ namespace GPG RFKNamespace()
         void start() final;
         void update(double deltaTime) final;
         void onPostLoad() final;
+        void onDeapth() final;
 
         BaseEnemy_GENERATED
     };
