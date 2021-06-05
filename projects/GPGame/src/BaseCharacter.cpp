@@ -137,7 +137,7 @@ void BaseCharacter::fixedUpdate(double deltaTime)
         m_bodyBalancing = lerpf(m_bodyBalancing, 0.f, deltaTime);
     }
 
-    controller->update(deltaTime);
+    // controller->update(deltaTime);
 }
 
 void BaseCharacter::takeDamage(float damage)

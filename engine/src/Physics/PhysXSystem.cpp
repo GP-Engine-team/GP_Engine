@@ -19,7 +19,6 @@
 #include <PhysX/cooking/PxCooking.h>
 #include <PhysX/extensions/PxDefaultAllocator.h>
 #include <PhysX/extensions/PxExtensionsAPI.h>
-//#include <PhysX/gpu/PxGpu.h>
 #include <PhysX/pvd/PxPvd.h>
 #include <PhysX/pvd/PxPvdTransport.h>
 
@@ -44,13 +43,18 @@ PhysXSystem::PhysXSystem()
         FUNCT_ERROR("PxCreateFoundation failed!");
 
     bool recordMemoryAllocations = true;
-    pvd                          = PxCreatePvd(*foundation);
 
-    //PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-    //
-    //if (transport == NULL)
-    //    return;
-    //pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+#ifdef _DEBUG
+
+    pvd = PxCreatePvd(*foundation);
+
+    PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+
+    if (transport == NULL)
+        return;
+    pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+
+#endif // _DEBUG
 
     PxTolerancesScale scale;
     physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, recordMemoryAllocations, pvd);
@@ -75,15 +79,15 @@ PhysXSystem::PhysXSystem()
         FUNCT_ERROR("PxDefaultCpuDispatcherCreate failed!");
     sceneDesc.cpuDispatcher = m_CpuDispatcher;
 
-    //PxCudaContextManagerDesc cudaContextManagerDesc;
+    /*PxCudaContextManagerDesc cudaContextManagerDesc;
 
-    //sceneDesc.cudaContextManager =
-    //    PxCreateCudaContextManager(*foundation, cudaContextManagerDesc, PxGetProfilerCallback());
+    sceneDesc.cudaContextManager =
+        PxCreateCudaContextManager(*foundation, cudaContextManagerDesc, PxGetProfilerCallback());*/
 
     sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
     sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
-    //sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
-    //sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+    // sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+    // sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
 
     scene = physics->createScene(sceneDesc);
 
@@ -126,6 +130,11 @@ void PhysXSystem::advance(double deltaTime) noexcept
                 rigidbody->update();
             }
         }
+    }
+
+    for (size_t i = 0; i < characterControllers.size(); i++)
+    {
+        characterControllers[i]->update(deltaTime);
     }
 }
 
@@ -205,7 +214,11 @@ size_t PhysXSystem::addComponent(CharacterController* characterController) noexc
 void PhysXSystem::removeComponent(CharacterController* characterController) noexcept
 {
     if (characterController->controller != nullptr)
+    {
         scene->removeActor(*characterController->controller->getActor(), false);
+        characterController->controller->release();
+        characterController->controller = nullptr;
+    }
     for (std::vector<CharacterController*>::iterator it = characterControllers.begin();
          it != characterControllers.end(); it++)
     {

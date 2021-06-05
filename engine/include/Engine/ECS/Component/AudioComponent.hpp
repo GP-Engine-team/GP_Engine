@@ -28,6 +28,7 @@ namespace GPE RFKNamespace()
         RFKField(Serialize(), Inspect()) bool      relative      = AL_FALSE;
         RFKField(Serialize(), Inspect()) bool      spatialized   = AL_FALSE;
         RFKField(Serialize(), Inspect()) float     rollOffFactor = 1.f;
+        RFKField(Serialize(), Inspect()) float     radius = 10.f;
 
         SourceSettings_GENERATED
     };

@@ -44,8 +44,6 @@ void BaseEnemy::start()
 
 void BaseEnemy::onPostLoad()
 {
-    BaseCharacter::onPostLoad();
-
     m_source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
 
     GPE::SourceSettings sourceSettings;
@@ -55,11 +53,13 @@ void BaseEnemy::onPostLoad()
     sourceSettings.relative      = AL_FALSE;
     sourceSettings.loop          = AL_TRUE;
     sourceSettings.position      = getOwner().getTransform().getGlobalPosition();
-    sourceSettings.rollOffFactor = 7;
+    sourceSettings.rollOffFactor = 70;
 
     GPE::Wave testSound3("./resources/sounds/zombie.wav", "Zombie", sourceSettings.spatialized);
 
     m_source->setSound("Zombie", "Zombie", sourceSettings);
+
+    BaseCharacter::onPostLoad();
 }
 
 void BaseEnemy::update(double deltaTime)
