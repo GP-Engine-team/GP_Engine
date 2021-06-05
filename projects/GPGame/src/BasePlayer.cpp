@@ -282,7 +282,7 @@ void BasePlayer::update(double deltaTime)
     }
     else
     {
-        if (isSprint)
+        if (m_isSprint)
         {
             m_staminaCount -= float(deltaTime) * m_staminaSpeedConsumation;
             if (m_staminaCount <= 0.f)

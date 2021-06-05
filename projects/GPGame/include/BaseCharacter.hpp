@@ -30,7 +30,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize(), ReadOnly()) float m_bodyBalancing      = 0.f; //[-1, 1]
         RFKField(Inspect(), Serialize()) float             m_bodyBalancingSpeed = 1.f;
 
-        RFKField(Serialize()) bool isSprint = false;
+        RFKField(Serialize()) bool m_isSprint = false;
 
     public:
         BaseCharacter(GPE::GameObject & owner);
@@ -71,6 +71,7 @@ namespace GPG RFKNamespace()
         RFKMethod() bool isDead();
         RFKMethod() void takeLife(float damage);
         DEFAULT_GETTER_SETTER_BY_VALUE(BodyBalancing, m_bodyBalancing)
+        DEFAULT_GETTER_SETTER_BY_VALUE(IsSprint, m_isSprint)
 
         RFKMethod() virtual void onDeath();
 
