@@ -40,14 +40,14 @@ void Loot::start()
 void Loot::update(double deltaTime)
 {
     // Add levitatio effect
-    m_delay += deltaTime;
+    m_delay += deltaTime * m_speed;
 
     if (m_delay > PI * 2.f)
     {
         m_delay -= PI * 2.f;
     }
 
-    transform().setTranslation({transform().getPosition().x, m_initialY + cosf(m_delay * m_speed) * m_heightIntensity,
+    transform().setTranslation({transform().getPosition().x, m_initialY + cosf(m_delay) * m_heightIntensity,
                                 transform().getPosition().z});
 
     // Check if loot is collected

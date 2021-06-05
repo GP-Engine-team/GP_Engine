@@ -72,20 +72,20 @@ void BasePlayer::start()
     m_groundParticleComponent.pData->start();
 
     // Keys
-    input->bindAction("forward",               EKeyMode::KEY_DOWN,     "Game", this, "forward");
-    input->bindAction("backward",              EKeyMode::KEY_DOWN,     "Game", this, "backward");
-    input->bindAction("left",                  EKeyMode::KEY_DOWN,     "Game", this, "left");
-    input->bindAction("right",                 EKeyMode::KEY_DOWN,     "Game", this, "right");
-    input->bindAction("jump",                  EKeyMode::KEY_DOWN,     "Game", this, "jump");
-    input->bindAction("exit",                  EKeyMode::KEY_PRESSED,  "Game", this, "leave");
-    input->bindAction("sprintStart",           EKeyMode::KEY_PRESSED,  "Game", this, "sprintStart");
-    input->bindAction("sprintEnd",             EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-    input->bindAction("shoot",                 EKeyMode::KEY_DOWN,     "Game", this, "shoot");
-    input->bindAction("aimBegin",              EKeyMode::KEY_PRESSED,  "Game", this, "aimBegin");
-    input->bindAction("aimEnd",                EKeyMode::KEY_RELEASED, "Game", this, "aimEnd");
-    input->bindAction("playAmbiantMusic",      EKeyMode::KEY_PRESSED,  "Game", this, "playAmbiantMusic");
-    input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED,  "Game", this, "playAmbiantMusicForce");
-    input->bindAction("stopAllMusic",          EKeyMode::KEY_PRESSED,  "Game", this, "stopAllMusic");
+    input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
+    input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
+    input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
+    input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
+    input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
+    input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
+    input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
+    input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+    input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+    input->bindAction("aimBegin", EKeyMode::KEY_PRESSED, "Game", this, "aimBegin");
+    input->bindAction("aimEnd", EKeyMode::KEY_RELEASED, "Game", this, "aimEnd");
+    input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
+    input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
+    input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
 
     source->playSound("Western", true);
 
@@ -227,9 +227,11 @@ void BasePlayer::onGUI()
     {
         ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
 
+        // Life bar
         SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
         displayLifeBar(m_currentLife, m_maxLife, size);
 
+        // Fire arm stats
         if (m_firearms.size())
         {
             size = ImGui::CalcTextSize("30/30");
@@ -237,9 +239,16 @@ void BasePlayer::onGUI()
             Text("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
                  m_firearms.front()->getMagazine().getCapacity());
         }
+
+        // FPS
         size = ImGui::CalcTextSize("FPS : 144");
         SetNextElementLayout(0.95f, 0.f, size, EHAlign::Right, EVAlign::Top);
         Text("FPS : %0.0f", ImGui::GetIO().Framerate);
+
+        // Loot count
+        size = ImGui::CalcTextSize("0 / 6");
+        SetNextElementLayout(0.95f, 0.95f, size, EHAlign::Left, EVAlign::Middle);
+        Text("%d / %d", m_lootCount, m_lootCountToWin);
     }
 }
 
@@ -251,13 +260,13 @@ void BasePlayer::update(double deltaTime)
         {
             m_animDepthCounter += float(deltaTime);
 
-            if (m_animDepthCounter >= m_animDepthCounterMax)
+            if (m_animDepthCounter >= m_animDepthCounterMax && !displayDepthMenu)
             {
                 Engine::getInstance()->timeSystem.setTimeScale(0.0);
-                m_animDepthCounter = 0;
-                displayDepthMenu   = true;
                 Engine::getInstance()->inputManager.setCursorTrackingState(false);
                 Engine::getInstance()->inputManager.setCursorLockState(false);
+                displayDepthMenu   = true;
+                m_animDepthCounter = 0;
             }
         }
     }
@@ -276,7 +285,7 @@ void BasePlayer::update(double deltaTime)
 
 void BasePlayer::shoot()
 {
-    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && !isDead() && m_firearms.size())
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && m_firearms.size())
     {
         m_firearms.front()->triggered();
 
@@ -318,4 +327,22 @@ BasePlayer::~BasePlayer() noexcept
 
 void BasePlayer::collectLoot(const Loot& loot)
 {
+    if (++m_lootCount > m_lootCountToWin)
+    {
+        onWin();
+    }
+}
+
+void BasePlayer::onDeath()
+{
+    BaseCharacter::onDeath();
+
+    input->setActive(false);
+}
+
+void BasePlayer::onWin()
+{
+    displayWinMenu = true;
+    enableUpdate(false);
+    Engine::getInstance()->timeSystem.setTimeScale(0.0);
 }

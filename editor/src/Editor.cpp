@@ -78,6 +78,8 @@ void Editor::renderMenuBar()
             //{
             //    sceneEditor.view.unbindScene();
             //    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(fileName);
+            //     if (Engine::getInstance()->sceneManager.OnSceneChange)
+            //      Engine::getInstance()->sceneManager.OnSceneChange();
             //    loadScene(&scene, path.c_str());
             //}
 
@@ -304,7 +306,8 @@ void Editor::renderShadowMap()
         const ImVec2 size{ImGui::GetContentRegionAvail()};
         ImGui::Image((void*)(intptr_t)Engine::getInstance()
                          ->sceneManager.getCurrentScene()
-                         ->sceneRenderer.getShadowMap()->depthMap,
+                         ->sceneRenderer.getShadowMap()
+                         ->depthMap,
                      size, {.0f, 1.f}, {1.f, .0f});
     }
     else
@@ -447,8 +450,8 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
     if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_S) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
-        if (startup.game().state == EGameState::STOPPED
-            || (ImGui::IsKeyDown(GLFW_KEY_RIGHT_SHIFT) || ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT)))
+        if (startup.game().state == EGameState::STOPPED ||
+            (ImGui::IsKeyDown(GLFW_KEY_RIGHT_SHIFT) || ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT)))
         {
             saveCurrentScene();
         }

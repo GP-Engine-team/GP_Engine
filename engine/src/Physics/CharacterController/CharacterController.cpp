@@ -276,6 +276,12 @@ void CharacterController::updateTransform()
     updateScale();
 }
 
+bool CharacterController::isMoving()
+{
+    // epsilone
+    return m_displacement.sqrLength() > 0.00001;
+}
+
 void CharacterController::updatePosition()
 {
     if (!controller || m_running)

@@ -50,7 +50,7 @@ namespace GPE RFKNamespace()
         RFKField(Inspect("setContactOffset"), Serialize()) float m_contactOffset = 0.1f;
         RFKField(Inspect("setCenter"), Serialize()) GPM::Vec3    m_center        = {.0f};
         RFKField(Serialize()) GPM::Vec3                          m_parentScale   = {.0f};
-        bool m_running = false;
+        bool                                                     m_running       = false;
 
         GPM::Vec3 m_force        = {.0f};
         bool      m_grounded     = false;
@@ -142,6 +142,13 @@ namespace GPE RFKNamespace()
          * @return
          */
         void setContactOffset(float newOffset) noexcept;
+
+        /**
+         * @brief Return true if character will move after update. Use it before update function. Displacement will be
+         * reset
+         * @return
+         */
+        bool isMoving();
 
         /**
          * @brief Update the scale of the collider from is owner;

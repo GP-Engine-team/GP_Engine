@@ -23,10 +23,6 @@ namespace GPG RFKNamespace()
     class RFKClass(ComponentGen(), Serialize(), Inspect()) PPSH41 : public Firearm
     {
     protected:
-        // Recoile info
-        RFKField(Serialize()) GPM::Vec3       m_finalPosition;
-        RFKField(Serialize()) GPM::Quaternion m_finalRotation;
-
         RFKField(Inspect(), Serialize(), Slider(0.01f, 0.6f)) float  m_knowbackDuration = 0.f; // [0, 1]
         RFKField(Inspect(), Serialize()) float                       m_knowbackStrength = 1.f;
         RFKField(Inspect(), Serialize(), Slider(0.f, HALF_PI)) float m_knowbackMaxAngle = HALF_PI / 2.f;
@@ -38,6 +34,8 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) float m_muzzleFlashDuration = 0.1f;
         RFKField(Inspect(), Serialize()) float m_muzzleFlashMinScale = 1.f;
         RFKField(Inspect(), Serialize()) float m_muzzleFlashMaxScale = 4.f;
+
+        RFKField(Serialize()) float recoilT = 0.f; //[0, 1]
 
     public:
         PPSH41(GPE::GameObject & owner) noexcept;
