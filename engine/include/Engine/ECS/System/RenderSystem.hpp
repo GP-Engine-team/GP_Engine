@@ -77,6 +77,7 @@ public:
                            std::vector<DebugShape>&, std::vector<DebugLine::Point>&, std::vector<ShadowMap>&, Camera*)>;
 
 protected:
+    inline static constexpr size_t  m_maxNbBones = 200;
     std::vector<Renderer*>          m_pRenderers;
     std::vector<SubModel*>          m_pOpaqueSubModels;
     std::vector<SubModel*>          m_pTransparenteSubModels;
