@@ -144,11 +144,9 @@ void EditorStartup::openGame()
         m_engine->sceneManager.removeScene("Default scene");
     }
 
-    { // Reset cursor state
-        GPE::InputManager& io = m_engine->inputManager;
-        io.setCursorLockState(false);
-        io.setCursorTrackingState(false);
-    }
+    // Reset cursor state
+    m_engine->inputManager.setCursorLockState(false);
+    m_engine->inputManager.setCursorTrackingState(false);
 
     // Ending the game must not close the whole engine when the editor is opened
     // The editor handles exiting the whole application itself
@@ -243,7 +241,7 @@ void EditorStartup::playGame()
     m_engine->inputManager.setInputMode("Editor");
     m_engine->inputManager.setCursorLockState(false);
     m_engine->inputManager.setCursorTrackingState(false);
-    m_engine->inputManager.setCursorMode(GLFW_CURSOR);
+    m_engine->inputManager.setCursorMode(GLFW_CURSOR_NORMAL);
 }
 
 void EditorStartup::pauseGame()
