@@ -22,19 +22,20 @@ class Animation;
 class RFKClass(Inspect(), ComponentGen(), Serialize()) AnimationComponent : public Component
 {
 private:
-    RFKField(Inspect("setSkeleton"), Serialize()) Skeleton*  m_skeleton         = nullptr;
-    RFKField(Inspect(), Serialize()) Animation*              m_currentAnimation = nullptr;
+    RFKField(Inspect("setSkeleton"), Serialize()) Skeleton*    m_skeleton         = nullptr;
+    RFKField(Inspect("playAnimation"), Serialize()) Animation* m_currentAnimation = nullptr;
     //RFKField() Animation*                                    m_nextAnimation    = nullptr;
-    class Model*                                             m_model            = nullptr;
-    RFKField(Inspect("setSkin"), Serialize()) Skin*          m_skin             = nullptr;
-    RFKField(Inspect(), Serialize()) float                   m_currentTime = 0.f; // in seconds
+    class Model*                                               m_model            = nullptr;
+    RFKField(Inspect("setSkin"), Serialize()) Skin*            m_skin             = nullptr;
+    RFKField(Inspect(), Serialize()) float                     m_currentTime = 0.f; // in seconds
     //RFKField(Inspect(), Serialize()) float                   m_nextAnimTime = 0.f;
-    RFKField(Inspect(), Serialize()) float                   m_timeScale = 1.f;
+    RFKField(Inspect(), Serialize()) float                     m_timeScale = 1.f;
 
     //float blendAlpha = 0.f;
 
 public:
-    std::vector<GPM::Mat4> m_finalBoneMatrices;
+    std::vector<GPM::Mat4>                m_finalBoneMatrices;
+    std::vector<size_t>                   skeletonBoneIDToAnimationBoneID;
     RFKField(Inspect(), Serialize()) bool shouldLoop = true;
 
 public:
