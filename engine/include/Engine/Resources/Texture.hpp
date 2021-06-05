@@ -73,7 +73,7 @@ public:
         ETextureMagFilter textureMagFilter = ETextureMagFilter::LINEAR;
         ETextureWrap      textureWrapS     = ETextureWrap::REPEAT;
         ETextureWrap      textureWrapT     = ETextureWrap::REPEAT;
-        unsigned int      anisotropy       = 8;
+        unsigned int      anisotropy       = 8u;
         bool              generateMipmaps  = true;
     };
 

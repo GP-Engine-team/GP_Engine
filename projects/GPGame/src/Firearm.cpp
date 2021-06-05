@@ -205,14 +205,14 @@ void Firearm::animateRecoil(float t)
 void Firearm::animateAimIn(float t)
 {
     const float intRatio = easeOutElastic(t);
-    transform().setTranslation(lerp(m_basePosition, m_aimPosition, intRatio));
+    transform().setTranslation(m_basePosition.lerp(m_aimPosition, intRatio));
     transform().setRotation(m_baseRotation.nlerp(m_aimRotation, intRatio));
 }
 
 void Firearm::animateAimOut(float t)
 {
     const float intRatio = easeOutElastic(t);
-    transform().setTranslation(lerp(m_aimPosition, m_basePosition, intRatio));
+    transform().setTranslation(m_aimPosition.lerp(m_basePosition, intRatio));
     transform().setRotation(m_aimRotation.nlerp(m_baseRotation, intRatio));
 }
 

@@ -1,12 +1,5 @@
 ﻿#define GLFW_INCLUDE_NONE
-#include "Editor/EditorStartup.hpp"
-
-//#include "imgui/imgui.h"
-/*#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
-
-#include "include/GLFW/glfw3.h"*/
-//#include "include/glad/glad.h"
+#include <Editor/EditorStartup.hpp>
 
 using namespace GPE;
 

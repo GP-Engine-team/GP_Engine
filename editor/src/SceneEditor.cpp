@@ -64,7 +64,7 @@ void SceneEditor::renderControlBar()
         float sliderWidth = (ImGui::GetContentRegionAvailWidth() - getGizmoControlBarWidth()) / 2.f;
         if (sliderWidth > 0)
         {
-            float ts = Engine::getInstance()->timeSystem.getTimeScale();
+            float ts = float(Engine::getInstance()->timeSystem.getTimeScale());
             ImGui::TextUnformatted("Time scale");
             ImGui::SameLine();
             ImGui::SetNextItemWidth(sliderWidth);
@@ -301,7 +301,7 @@ void SceneEditor::dragDropLevelEditor(ReloadableCpp* cpp)
 
             if (go)
             {
-                const TransformComponent& const camTransfo{view.cameraOwner->getTransform()};
+                const TransformComponent& camTransfo{view.cameraOwner->getTransform()};
                 go->getTransform().setTranslation(camTransfo.getGlobalPosition() +
                                                   camTransfo.getVectorForward() * 10.f);
             }

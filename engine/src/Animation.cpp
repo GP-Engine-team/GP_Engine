@@ -11,22 +11,22 @@ using namespace GPE;
 
 Animation::Animation(const aiAnimation* aiAnim)
 {
-    m_duration       = aiAnim->mDuration;
-    m_ticksPerSecond = aiAnim->mTicksPerSecond;
+    m_duration       = float(aiAnim->mDuration);
+    m_ticksPerSecond = int(aiAnim->mTicksPerSecond);
     readMissingBones(aiAnim);
 }
 
 Animation::Animation(const CreateArgs& args)
 {
-    m_bones = args.bones;
+    m_bones          = args.bones;
     m_duration       = args.duration;
     m_ticksPerSecond = args.nbTicksPerSecond;
 }
 
 Animation::CreateArgs::CreateArgs(const aiAnimation* aiAnim)
 {
-    duration         = aiAnim->mDuration;
-    nbTicksPerSecond = aiAnim->mTicksPerSecond;
+    duration         = float(aiAnim->mDuration);
+    nbTicksPerSecond = int(aiAnim->mTicksPerSecond);
 
     int size = aiAnim->mNumChannels;
 

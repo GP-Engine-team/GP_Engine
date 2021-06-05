@@ -232,7 +232,7 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
 
         shader.setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
 
-        shader.setInt("numberShadowUse", m_shadowMaps.size());
+        shader.setInt("numberShadowUse", int(m_shadowMaps.size()));
 
         if (!m_shadowMaps.empty())
         {
@@ -510,7 +510,7 @@ void RenderSystem::renderDebugLine(Camera& observer) noexcept
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(m_debugLine[0]),
                               (GLvoid*)offsetof(DebugLine::Point, col));
 
-        glDrawArrays(GL_LINES, 0, m_debugLine.size() * 2);
+        glDrawArrays(GL_LINES, 0, GLsizei(m_debugLine.size() * 2u));
 
         glDisable(GL_LINE_SMOOTH);
         glDeleteVertexArrays(1, &lineVAO);

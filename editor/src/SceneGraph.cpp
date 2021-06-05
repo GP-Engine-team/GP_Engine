@@ -14,7 +14,6 @@
 
 #include <filesystem>
 #include <imgui/imgui.h>
-//#include <map>
 
 using namespace Editor;
 using namespace GPE;

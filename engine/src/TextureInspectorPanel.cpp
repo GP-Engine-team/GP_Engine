@@ -22,7 +22,7 @@ File_GENERATED
         ImGui::TextUnformatted("Texture setting");
         ImGui::Text("Path : %s", m_path.c_str());
 
-        ImGui::Image((ImTextureID)m_texture.getID(), {ImGui::GetWindowWidth(), ImGui::GetWindowWidth()});
+        ImGui::Image((void*)(intptr_t)m_texture.getID(), {ImGui::GetWindowWidth(), ImGui::GetWindowWidth()});
 
         ImGui::Text("Width : %i ", m_config.w);
         ImGui::Text("Height : %i", m_config.h);

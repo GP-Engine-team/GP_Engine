@@ -60,12 +60,6 @@ void ParticleRenderer::update()
 
     const size_t count = m_system->numAliveParticles();
 
-    struct
-    {
-        GPM::Vec4 pos;
-        GPM::Vec4 col;
-    } Particle;
-
     if (count > 0)
     {
         glBindBuffer(GL_ARRAY_BUFFER, m_bufPos);

@@ -36,15 +36,14 @@ template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& inspected, const char* name)
 {
     context.startProperty(name);
-    context.setDirty(ImGui::DragFloat2("", inspected.e, 0.1));
-    // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
+    context.setDirty(ImGui::DragFloat2("", inspected.e, .1f));
     context.endProperty();
 }
 
 template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector2& inspected)
 {
-    ImGui::DragFloat2("", inspected.e, 0.1);
+    ImGui::DragFloat2("", inspected.e, .1f);
 }
 
 template <>
@@ -68,8 +67,7 @@ template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, GPM::Vector3& inspected, const char* name)
 {
     context.startProperty(name);
-    context.setDirty(ImGui::DragFloat3("", inspected.e, 0.1));
-    // ImGui::InputFloat3(info.name.c_str(), &inspected, 0.1);
+    context.setDirty(ImGui::DragFloat3("", inspected.e, .1f));
     context.endProperty();
 }
 

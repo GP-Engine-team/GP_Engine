@@ -47,7 +47,7 @@ void SizeUpdater::update(double dt, ParticleData* p)
 
     // Use the w channel of the position
     for (size_t i = 0; i < endId; ++i)
-        pos[i].w = lerp(startSize[i], endSize[i], t[i].z);
+        pos[i].w = lerpf(startSize[i], endSize[i], t[i].z);
 }
 
 U16BMask SizeUpdater::getRequiereConfig() const

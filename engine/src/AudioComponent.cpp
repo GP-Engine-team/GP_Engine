@@ -43,7 +43,7 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity.x, settings.velocity.y, settings.velocity.z);
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, settings.relative);
-    AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, settings.rollOffFactor);
+    AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(settings.rollOffFactor)));
     AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
 }
 
@@ -55,7 +55,7 @@ void AudioComponent::updateSource(SourceData* source)
     AL_CALL(alSource3f, source->source, AL_POSITION, parentPos.x + source->settings.position.x,
             parentPos.y + source->settings.position.y, parentPos.z + +source->settings.position.z);
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, source->settings.relative);
-    AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, source->settings.rollOffFactor);
+    AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(source->settings.rollOffFactor)));
 }
 
 SourceData* AudioComponent::getSource(const char* name) noexcept

@@ -118,23 +118,22 @@ FileGenerationResult FileGenerator::generateFiles(FileParserFactoryType<FilePars
 		if (!fs::exists(settings.getOutputDirectory()))
 		{
 			//Try to create them is it doesn't exist
-			try
+			std::error_code error;
+			genResult.completed = fs::create_directories(settings.getOutputDirectory(), error);
+			
+			if (error.value() != 0)
 			{
-				genResult.completed = fs::create_directories(settings.getOutputDirectory());
+				genResult.fileGenerationErrors.emplace_back("", "", "Output directory is invalid: " + error.message());
 				
 				if (logger != nullptr)
 				{
-					logger->log("Specified output directory doesn't exist. Create " + FilesystemHelpers::sanitizePath(settings.getOutputDirectory()).string(), ILogger::ELogSeverity::Info);
+					logger->log("Output directory is invalid: " + error.message(), ILogger::ELogSeverity::Error);
 				}
 			}
-			catch (fs::filesystem_error const& exception)
+
+			else if (logger != nullptr)
 			{
-				genResult.fileGenerationErrors.emplace_back("", "", "Output directory is invalid: " + std::string(exception.what()));
-				
-				if (logger != nullptr)
-				{
-					logger->log("Output directory is invalid: " + std::string(exception.what()), ILogger::ELogSeverity::Error);
-				}
+				logger->log("Specified output directory doesn't exist. Create " + FilesystemHelpers::sanitizePath(settings.getOutputDirectory()).string(), ILogger::ELogSeverity::Info);
 			}
 		}
 

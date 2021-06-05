@@ -13,7 +13,7 @@ void AnimationSystem::update(double deltaTime) noexcept
 {
     for (AnimationComponent* comp : components)
     {
-        comp->update(deltaTime);
+        comp->update(float(deltaTime));
     }
 }
 
