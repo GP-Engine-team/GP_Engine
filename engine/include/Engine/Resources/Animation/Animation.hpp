@@ -32,6 +32,8 @@ public:
 private:
     float                                      m_duration; // in milliseconds
     int                                        m_ticksPerSecond;
+
+public:
     std::vector<Bone>                          m_bones;
 
 public:
