@@ -286,6 +286,8 @@ void renderAnimResourceExplorer(InspectContext& context, const char* name, T*& i
             ;
     }
 
+    items.emplace_back("None");
+
     const char* label = inRes ? items[itemCurrent] : "None";
     if (ImGui::BeginCombo(name, label, 0))
     {
@@ -324,7 +326,11 @@ void renderAnimResourceExplorer(InspectContext& context, const char* name, T*& i
                     for (int i = 0; i < itemCurrent; ++i, ++it)
                         ;
 
-                    inRes      = &it->second;
+                    if (it != resourceContainer.end())
+                        inRes = &it->second;
+                    else
+                        inRes = nullptr;
+
                     context.setDirty();
                 }
 
