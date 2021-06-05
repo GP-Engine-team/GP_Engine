@@ -63,8 +63,6 @@ public:
     void setSkin(Skin* skin);
     void setCurrentAnimDuration(float newDuration);
 
-    void drawDebugSkeleton(const GPM::Vec4& offset = GPM::Vec4{0, -100, 0}) const;
-
     virtual void onPostLoad() override;
 
     bool isComplete() const;

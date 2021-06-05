@@ -26,6 +26,7 @@ struct AssimpNodeData
     GPM::Matrix4                transformation;
     std::string                 name;
     std::vector<AssimpNodeData> children;
+    int                         boneID = 0;
 };
 
 template <>

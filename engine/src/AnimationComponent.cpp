@@ -138,7 +138,8 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
     {
         int       index            = it->second.id;
         GPM::Mat4 offset           = it->second.offset;
-        m_finalBoneMatrices[index] = globalTransformation * offset;
+        if (index < m_finalBoneMatrices.size())
+            m_finalBoneMatrices[index] = globalTransformation * offset;
     }
 
     for (const GPE::AssimpNodeData& node : node.children)
@@ -198,24 +199,6 @@ void AnimationComponent::setCurrentAnimDuration(float newDuration)
     {
         m_timeScale = newDuration / m_currentAnimation->getDuration();
     }
-}
-
- void AnimationComponent::drawDebugSkeleton(const GPM::Vec4& offset) const
-{
-    //// for (int boneIndex = skeleton->firstDrawnBoneIndex; boneIndex <= skeleton->lastDrawnBoneIndex; boneIndex++)
-    //for (size_t boneIndex = 0; boneIndex <= m_skeleton->getNbBones(); boneIndex++)
-    //{
-    //    int parentIndex = m_skeleton->getParentBoneIndex(boneIndex);
-    //    if (parentIndex != -1)
-    //    {
-    //        GPM::Mat4 transform       = worldBonesTransform[boneIndex];
-    //        GPM::Mat4 parentTransform = worldBonesTransform[parentIndex];
-
-    //        GPM::Vec4 p1 = transform * GPM::Vec4{0, 0, 0, 1} + offset;
-    //        GPM::Vec4 p2 = parentTransform * GPM::Vec4{0, 0, 0, 1} + offset;
-    //        GPE::Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.drawDebugLine(p1.xyz, p2.xyz);
-    //    }
-    //}
 }
 
 void AnimationComponent::onPostLoad()
