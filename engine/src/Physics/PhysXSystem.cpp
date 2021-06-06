@@ -131,8 +131,11 @@ void PhysXSystem::advance(double deltaTime) noexcept
             }
         }
     }
+}
 
-    for (size_t i = 0; i < characterControllers.size(); i++)
+void PhysXSystem::updateController(double deltaTime) noexcept
+{
+    for (size_t i = 0; i < characterControllers.size(); ++i)
     {
         characterControllers[i]->update(deltaTime);
     }

@@ -202,7 +202,7 @@ void EditorStartup::playGame()
         {
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
             m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
-
+            m_engine->physXSystem.updateController(fixedDeltaTime);
             m_engine->physXSystem.advance(fixedDeltaTime);
         }
     };
