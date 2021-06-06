@@ -225,7 +225,7 @@ void BasePlayer::onGUI()
 
         size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
         SetNextElementLayout(0.5f, 0.6f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quitte", size))
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quit", size))
         {
             closeApplication();
         }

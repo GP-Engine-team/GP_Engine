@@ -9,14 +9,14 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h> //ImGuiItemFlags_Disabled, PushItemFlag
-
+#include <string>
 // Thank's to : https://github.com/ocornut/imgui/issues/211#issuecomment-812293268
 namespace ImGui
 {
 inline void PushEnabled(bool _enabled)
 {
     PushItemFlag(ImGuiItemFlags_Disabled, !_enabled);
-    PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * (_enabled ? 1.0f : 0.5f));
+    PushStyleVar(ImGuiStyleVar_Alpha, GetStyle().Alpha * (_enabled ? 1.0f : 0.5f));
 }
 
 inline void PopEnabled()
@@ -42,24 +42,21 @@ enum class EVAlign
 inline void SetNextElementLayout(float xWindowSizeRatio, float yWindowSizeRatio, const ImVec2& size,
                                  EHAlign hItemAlign = EHAlign::Middle, EVAlign vItemAlign = EVAlign::Middle)
 {
-    ImGui::SetCursorPosX(ImGui::GetStyle().FramePadding.x + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
-                         (ImGui::GetWindowSize().x - ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) *
-                             xWindowSizeRatio -
-                         size.x * (int)hItemAlign * 0.01f);
+    SetCursorPosX(GetStyle().FramePadding.x + GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+                  (GetWindowSize().x - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * xWindowSizeRatio -
+                  size.x * (int)hItemAlign * 0.01f);
 
-    ImGui::SetCursorPosY(ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y +
-                         (ImGui::GetWindowSize().y - ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y) *
-                             yWindowSizeRatio -
-                         size.y * (int)vItemAlign * 0.01f);
+    SetCursorPosY(GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y +
+                  (GetWindowSize().y - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y) * yWindowSizeRatio -
+                  size.y * (int)vItemAlign * 0.01f);
 }
 
-static inline float ImAcos01(float x)
+inline void SetNextTextLayout(const char* text, float xWindowSizeRatio, float yWindowSizeRatio,
+                              EHAlign hItemAlign = EHAlign::Middle, EVAlign vItemAlign = EVAlign::Middle)
 {
-    if (x <= 0.0f)
-        return IM_PI * 0.5f;
-    if (x >= 1.0f)
-        return 0.0f;
-    return ImAcos(x);
+    const ImVec2 sizeText = CalcTextSize(text);
+    SetCursorPosX(GetWindowSize().x * xWindowSizeRatio - sizeText.x * (int)hItemAlign * 0.01f);
+    SetCursorPosY(GetWindowSize().y * yWindowSizeRatio - sizeText.y * (int)vItemAlign * 0.01f);
 }
 
 inline void RenderRectFilledRangeV(ImDrawList* draw_list, const ImRect& rect, ImU32 col, float y_start_norm,
@@ -147,7 +144,7 @@ inline IMGUI_API bool ImageButtonWithTextRight(ImTextureID texId, const char* la
     ImVec2 size = imageSize;
     if (size.x <= 0 && size.y <= 0)
     {
-        size.x = size.y = ImGui::GetTextLineHeightWithSpacing();
+        size.x = size.y = GetTextLineHeightWithSpacing();
     }
     else
     {
@@ -155,14 +152,14 @@ inline IMGUI_API bool ImageButtonWithTextRight(ImTextureID texId, const char* la
             size.x = size.y;
         else if (size.y <= 0)
             size.y = size.x;
-        size *= window->FontWindowScale * ImGui::GetIO().FontGlobalScale;
+        size *= window->FontWindowScale * GetIO().FontGlobalScale;
     }
 
     ImGuiContext&     g     = *GImGui;
     const ImGuiStyle& style = g.Style;
 
     const ImGuiID id       = window->GetID(label);
-    const ImVec2  textSize = ImGui::CalcTextSize(label, NULL, true);
+    const ImVec2  textSize = CalcTextSize(label, NULL, true);
     const bool    hasText  = textSize.x > 0;
 
     const float innerSpacing =
@@ -198,7 +195,7 @@ inline IMGUI_API bool ImageButtonWithTextRight(ImTextureID texId, const char* la
     window->DrawList->AddImage(texId, image_bb.Min, image_bb.Max, uv0, uv1, GetColorU32(tint_col));
 
     if (textSize.x > 0)
-        ImGui::RenderText(start, label);
+        RenderText(start, label);
     return pressed;
 }
 
@@ -215,7 +212,7 @@ inline IMGUI_API bool imageButtonWithTextCenter(ImTextureID texId, const char* l
     ImVec2 size = imageSize;
     if (size.x <= 0 && size.y <= 0)
     {
-        size.x = size.y = ImGui::GetTextLineHeightWithSpacing();
+        size.x = size.y = GetTextLineHeightWithSpacing();
     }
     else
     {
@@ -223,14 +220,14 @@ inline IMGUI_API bool imageButtonWithTextCenter(ImTextureID texId, const char* l
             size.x = size.y;
         else if (size.y <= 0)
             size.y = size.x;
-        // size *= window->FontWindowScale * ImGui::GetIO().FontGlobalScale;
+        // size *= window->FontWindowScale * GetIO().FontGlobalScale;
     }
 
     ImGuiContext&     g     = *GImGui;
     const ImGuiStyle& style = g.Style;
 
     const ImGuiID id       = window->GetID(label);
-    const ImVec2  textSize = ImGui::CalcTextSize(label, NULL, true);
+    const ImVec2  textSize = CalcTextSize(label, NULL, true);
     const bool    hasText  = textSize.x > 0;
 
     const float innerSpacing =
@@ -266,7 +263,7 @@ inline IMGUI_API bool imageButtonWithTextCenter(ImTextureID texId, const char* l
     window->DrawList->AddImage(texId, image_bb.Min, image_bb.Max, uv0, uv1, GetColorU32(tint_col));
 
     if (textSize.x > 0)
-        ImGui::RenderText(start, label);
+        RenderText(start, label);
     return pressed;
 }
 
