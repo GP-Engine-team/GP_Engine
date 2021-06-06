@@ -57,7 +57,6 @@ namespace GPG RFKNamespace()
         // RFKField(Inspect(), Serialize()) float                 m_spawnDelay{1.f};         /*in sec*/
         // RFKField(Inspect(), Serialize()) float                 m_spawnDelayInterval{0.f}; /*in sec*/
         RFKField(Inspect(), Serialize()) float                        m_delayCount{0.f};
-        RFKField(Inspect(), Serialize()) float                        m_nextDelay{0.f};
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> m_enemiesContainer;
         RFKField() GPE::GameObject*                                   m_player;
 
@@ -83,6 +82,7 @@ namespace GPG RFKNamespace()
         void update(double deltaTime) final;
         void updateEditor(double deltaTime) final;
 
+        void increaseDifficulty();
         void setDifficulty(unsigned int level);
         void autoGenerateLinearDifficulty(unsigned int count, const DifficultyLevel& min, const DifficultyLevel& max);
 

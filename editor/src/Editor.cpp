@@ -485,7 +485,7 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
         }
     }
 
-    if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_C) &&
+    if (!sceneEditor.view.capturingInputs() && !ImGui::IsAnyItemActive() && ImGui::IsKeyPressed(GLFW_KEY_C) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
         if (GameObject* inspectedGo = dynamic_cast<GameObject*>(inspectedObject))
@@ -495,7 +495,7 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
         }
     }
 
-    if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_V) &&
+    if (!sceneEditor.view.capturingInputs() && !ImGui::IsAnyItemActive() && ImGui::IsKeyPressed(GLFW_KEY_V) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
         if (paperPress.size())
