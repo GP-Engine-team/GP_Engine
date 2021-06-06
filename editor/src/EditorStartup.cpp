@@ -336,6 +336,7 @@ void EditorStartup::update()
 
 void EditorStartup::startScene()
 {
+    m_editor.inspectedObject = nullptr;
     m_editor.setSceneInEdition(*GPE::Engine::getInstance()->sceneManager.getCurrentScene());
     GPE::Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.start();
 }
