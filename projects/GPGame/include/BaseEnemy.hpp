@@ -25,6 +25,15 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BaseEnemy : public BaseCharacter
     {
     protected:
+        enum class EState
+        {
+            RUNNING,
+            DEAD,
+            ATTACKING,
+            DAMAGED
+        };
+
+    protected:
         RFKField() BaseCharacter*              m_target              = nullptr;
         RFKField(Serialize()) float            m_animDeathCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float m_animDeathCounterMax = 3.f;
@@ -44,6 +53,11 @@ namespace GPG RFKNamespace()
 
         RFKField(Inspect(), Serialize(), Separator()) float m_disappearanceSpeed       = 10.f;
         RFKField(Inspect(), Serialize())              float m_maxHeightBeforDestroying = 50.f;
+
+        EState m_currentState = EState::RUNNING;
+        RFKField(Inspect(), ReadOnly())  float m_nextAnimTime = -1.f;
+        RFKField(Inspect(), ReadOnly())  float m_nextHitDelay = std::numeric_limits<float>::max();
+        RFKField(Inspect(), Serialize()) float m_hitDelayRelativeToAnimLength = 0.36;
 
     public:
         BaseEnemy() noexcept = default;
