@@ -200,10 +200,10 @@ void EditorStartup::playGame()
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
         if (m_game->state == EGameState::PLAYING)
         {
-            m_engine->physXSystem.advance(fixedDeltaTime);
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
-
             m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+
+            m_engine->physXSystem.advance(fixedDeltaTime);
         }
     };
 

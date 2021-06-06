@@ -44,12 +44,10 @@ using namespace GPM::Random;
 
 void Game::update(double unscaledDeltaTime, double deltaTime)
 {
-    ++unFixedUpdateFrameCount;
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
 {
-    ++fixedUpdateFrameCount;
 }
 
 void Game::render()
