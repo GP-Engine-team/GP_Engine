@@ -7,40 +7,33 @@
 #pragma once
 
 #include <BasePlayer.hpp>
-#include <SpawnManager.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
-#include <Engine/Intermediate/GameObject.hpp>
-#include <Engine/Resources/Linker.hpp>
-#include <Engine/Resources/Prefab.hpp>
 
 // Generated
-#include <Generated/Loot.rfk.h>
+#include <Generated/LevitationMovement.rfk.h>
 
 namespace GPG RFKNamespace()
 {
-    class RFKClass(Inspect(), ComponentGen, Serialize()) Loot : public GPE::BehaviourComponent
+    class RFKClass(Inspect(), ComponentGen, Serialize()) LevitationMovement : public GPE::BehaviourComponent
     {
     private:
-        RFKField() BasePlayer* m_player       = nullptr;
-        RFKField() SpawnManager* m_spawnerManager = nullptr; 
-        float                  sqrTotalRadius = 0;
-
         RFKField(Inspect(), Serialize()) float              m_radius = 0.5f;
+        RFKField(Inspect(), Serialize(), Separator()) float m_rotationSpeed{1.f};
         RFKField(Inspect(), Serialize(), Separator()) float m_speed{1.f};
         RFKField(Inspect(), Serialize()) float              m_heightIntensity{1.f};
         RFKField(Inspect(), Serialize()) float              m_delay{0.f};
         RFKField(Inspect(), Serialize()) float              m_initialY{0.f};
 
     public:
-        Loot(GPE::GameObject & owner);
-        Loot() noexcept = default;
-        virtual ~Loot() = default;
+        LevitationMovement(GPE::GameObject & owner);
+        LevitationMovement() noexcept = default;
+        virtual ~LevitationMovement() = default;
 
         void start() override;
         void update(double deltaTime) override;
         void onPostLoad() override;
 
-        Loot_GENERATED
+        LevitationMovement_GENERATED
     };
 
 } // namespace )

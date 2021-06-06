@@ -56,6 +56,7 @@ public:
     ~PhysXSystem();
 
     void advance(double deltaTime) noexcept;
+    void updateController(double deltaTime) noexcept;
 
     void drawDebugScene();
 

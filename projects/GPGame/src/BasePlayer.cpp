@@ -1,6 +1,8 @@
 ﻿
 #include <AL/alc.h>
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/Interpolation.hpp>
+#include <gpm/Random.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
@@ -58,6 +60,7 @@ void BasePlayer::start()
 {
     BaseCharacter::start();
 
+    GAME_ASSERT(m_buttonTexture, "No button texture selected");
     GAME_ASSERT(input, "null");
     GAME_ASSERT(source, "null");
     GAME_ASSERT(m_firearmsGO.size(), "null");
@@ -210,20 +213,25 @@ void BasePlayer::onGUI()
 
     if (displayDepthMenu)
     {
-        ImVec2 size = {GetWindowSize().x / 4.f * ratio, GetWindowSize().y / 6.f * ratio};
+        ImVec2 size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
+
+        const float previousFontScale = GetFont()->Scale;
+        SetWindowFontScale(2.f * ratio);
 
         SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::Button("Retry", size))
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Retry", size))
         {
             reloadScene();
             Engine::getInstance()->timeSystem.setTimeScale(1.0);
         }
 
+        size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
         SetNextElementLayout(0.5f, 0.6f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::Button("Quitte", size))
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quit", size))
         {
             closeApplication();
         }
+        ImGui::SetWindowFontScale(previousFontScale);
     }
     else
     {
@@ -305,6 +313,21 @@ void BasePlayer::update(double deltaTime)
             if (deltaPos.x || deltaPos.y)
                 rotate(deltaPos);
         }
+
+        if (m_isPlayDamageAnimation)
+        {
+            m_animDamageAnimCounter += float(deltaTime);
+
+            const float t = std::clamp(m_animDamageAnimCounter / m_animDamageAnimCounterMax, 0.f, 1.f);
+            updateDamageAnimation(t);
+
+            if (m_animDamageAnimCounter >= m_animDamageAnimCounterMax)
+            {
+                m_isPlayDamageAnimation = false;
+                m_animDamageAnimCounter = 0.f;
+                m_cameraGO.pData->getTransform().setTranslation(Vec3::zero());
+            }
+        }
     }
 }
 
@@ -370,4 +393,22 @@ void BasePlayer::onWin()
     displayWinMenu = true;
     enableUpdate(false);
     Engine::getInstance()->timeSystem.setTimeScale(0.0);
+}
+
+void BasePlayer::updateDamageAnimation(float t)
+{
+    const float newT = easeInCirc(t);
+ 
+    Vec3 moveStrength = Random::unitPeripheralSphericalCoordonate() * m_damageShakeStrength * (1.f - newT);
+
+    moveStrength.z = 0.f;
+    m_cameraGO.pData->getTransform().setTranslation(moveStrength); // Set the local rotation the be the rotation amount.
+}
+
+void BasePlayer::takeDamage(float damage)
+{
+    BaseCharacter::takeDamage(damage);
+    m_isPlayDamageAnimation = true;
+    m_animDamageAnimCounter = 0.f;
+
 }

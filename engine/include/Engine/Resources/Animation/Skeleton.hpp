@@ -83,7 +83,26 @@ public:
             m_boneNames[boneName]   = boneInfo.id;
         }
 
-        forEachAssimpNodeData(m_root, [&](AssimpNodeData& node) { node.boneID = m_boneNames[node.name]; });
+        size_t nextID = args.m_boneInfoMap.size();
+        forEachAssimpNodeData(m_root, [&](AssimpNodeData& node) {
+            auto it = m_boneNames.lower_bound(node.name);
+
+            if (it != m_boneNames.end() && it->first == node.name)
+            {
+                // key already exists
+                node.boneID = it->second;
+            }
+            else
+            {
+                // in case there is a bone not loaded yet
+                BoneInfo boneInfo;
+                boneInfo.id = nextID;
+                node.boneID = nextID;
+                m_boneNames.emplace_hint(it, node.name, nextID);
+                m_boneInfo.emplace_back(std::move(boneInfo));
+                nextID++;
+            }
+        });
     }
 
     template<typename FUNCTOR>
