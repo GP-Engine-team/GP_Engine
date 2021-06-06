@@ -58,6 +58,7 @@ void BasePlayer::start()
 {
     BaseCharacter::start();
 
+    GAME_ASSERT(m_buttonTexture, "No button texture selected");
     GAME_ASSERT(input, "null");
     GAME_ASSERT(source, "null");
     GAME_ASSERT(m_firearmsGO.size(), "null");
@@ -210,20 +211,25 @@ void BasePlayer::onGUI()
 
     if (displayDepthMenu)
     {
-        ImVec2 size = {GetWindowSize().x / 4.f * ratio, GetWindowSize().y / 6.f * ratio};
+        ImVec2 size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
+
+        const float previousFontScale = GetFont()->Scale;
+        SetWindowFontScale(2.f * ratio);
 
         SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::Button("Retry", size))
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Retry", size))
         {
             reloadScene();
             Engine::getInstance()->timeSystem.setTimeScale(1.0);
         }
 
+        size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
         SetNextElementLayout(0.5f, 0.6f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::Button("Quitte", size))
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quitte", size))
         {
             closeApplication();
         }
+        ImGui::SetWindowFontScale(previousFontScale);
     }
     else
     {

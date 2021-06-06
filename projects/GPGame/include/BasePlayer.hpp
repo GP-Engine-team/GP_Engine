@@ -43,6 +43,8 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize(), ReadOnly()) unsigned int m_lootCount      = 0u;
         RFKField(Inspect(), Serialize()) unsigned int             m_lootCountToWin = 6u;
 
+        RFKField(Inspect(), Serialize()) GPE::Texture* m_buttonTexture;
+
     public:
         RFKField(Inspect(), Serialize()) float radiusLootCollection = 50.f;
 
