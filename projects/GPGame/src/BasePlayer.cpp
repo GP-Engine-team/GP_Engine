@@ -92,6 +92,7 @@ void BasePlayer::start()
     input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
     input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
+    input->bindAction("reload", EKeyMode::KEY_PRESSED, "Game", this, "reload");
 
     source->playSound("Western", true);
 
@@ -370,6 +371,14 @@ void BasePlayer::update(double deltaTime)
                 m_cameraGO.pData->getTransform().setTranslation(Vec3::zero());
             }
         }
+    }
+}
+
+void BasePlayer::reload()
+{
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && m_firearms.size())
+    {
+        m_firearms.front()->reload();
     }
 }
 
