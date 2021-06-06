@@ -40,14 +40,14 @@ void BasePlayer::onPostLoad()
     input  = &getOwner().getOrCreateComponent<GPE::InputComponent>();
     source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
 
-    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+    GPE::Wave testSound3("./resources/sounds/BGM.wav", "BGM");
 
     GPE::SourceSettings sourceSettings;
     sourceSettings.pitch    = 1.f;
     sourceSettings.loop     = AL_TRUE;
     sourceSettings.relative = AL_TRUE;
 
-    source->setSound("Western", "Western", sourceSettings);
+    source->setSound("BGM", "BGM", sourceSettings);
 
     getOwner().getTransform().OnUpdate += Function::make(this, "updateListener");
 
@@ -88,7 +88,7 @@ void BasePlayer::start()
     input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
 
-    source->playSound("Western", true);
+    source->playSound("BGM", true);
 
     { // Cursor
         GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
@@ -133,12 +133,12 @@ void BasePlayer::raycastExample()
 
 void BasePlayer::playAmbiantMusic()
 {
-    source->playSound("Western", false);
+    source->playSound("BGM", false);
 }
 
 void BasePlayer::playAmbiantMusicForce()
 {
-    source->playSound("Western", true);
+    source->playSound("BGM", true);
 }
 
 void BasePlayer::stopAllMusic()
