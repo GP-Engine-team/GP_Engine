@@ -373,7 +373,7 @@ void GPE::DataInspector::inspect<Skin*>(InspectContext & context, GPE::Skin * &i
 template <>
 void DataInspector::inspect(InspectContext& context, class Skin*& inspected, const char* name)
 {
-    renderAnimResourceExplorer<Skin>(context, "Skin", inspected, ENGINE_SKIN_EXTENSION, loadSkinFile);
+    renderAnimResourceExplorer<Skin>(context, name, inspected, ENGINE_SKIN_EXTENSION, loadSkinFile);
 }
 
 template <>
@@ -395,7 +395,7 @@ void GPE::DataInspector::inspect(InspectContext& context, GPE::Skeleton*& inspec
     // Ressources should always be inspected from a component.
     assert(context.lastComponentOwner != nullptr);
 
-    renderAnimResourceExplorer<Skeleton>(context, "Skeleton", inspected, ENGINE_SKELETON_EXTENSION, loadSkeletonFile);
+    renderAnimResourceExplorer<Skeleton>(context, name, inspected, ENGINE_SKELETON_EXTENSION, loadSkeletonFile);
 }
 
 template <>
@@ -407,7 +407,7 @@ void GPE::DataInspector::inspect<Animation*>(InspectContext& context, Animation*
 template <>
 void DataInspector::inspect(InspectContext& context, class Material*& inspected, const char* name)
 {
-    renderResourceExplorer<Material>(context, "Material", inspected, ENGINE_MATERIAL_EXTENSION, loadMaterialFile);
+    renderResourceExplorer<Material>(context, name, inspected, ENGINE_MATERIAL_EXTENSION, loadMaterialFile);
 }
 
 template <>
@@ -422,14 +422,14 @@ void GPE::DataInspector::inspect(InspectContext & context, class Animation * &in
     // Ressources should always be inspected from a component.
     assert(context.lastComponentOwner != nullptr);
 
-    renderAnimResourceExplorer<Animation>(context, "Animation", inspected, ENGINE_ANIMATION_EXTENSION,
+    renderAnimResourceExplorer<Animation>(context, name, inspected, ENGINE_ANIMATION_EXTENSION,
                                           loadAnimationFile);
 }
 
 template <>
 void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const char* name)
 {
-    renderResourceExplorer<Mesh>(context, "Mesh", inspected, ENGINE_MESH_EXTENSION, loadMeshFile);
+    renderResourceExplorer<Mesh>(context, name, inspected, ENGINE_MESH_EXTENSION, loadMeshFile);
 }
 
 template <>
@@ -441,7 +441,7 @@ void DataInspector::inspect(InspectContext& context, class Texture*& inspected, 
 template <>
 void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const char* name)
 {
-    renderResourceExplorer<Texture>(context, "Texture", inspected, ENGINE_TEXTURE_EXTENSION, loadTextureFile);
+    renderResourceExplorer<Texture>(context, name, inspected, ENGINE_TEXTURE_EXTENSION, loadTextureFile);
 }
 
 template <>
@@ -453,5 +453,5 @@ void DataInspector::inspect(InspectContext& context, class Shader*& inspected, c
 template <>
 void DataInspector::inspect(InspectContext& context, class Shader*& inspected, const char* name)
 {
-    renderResourceExplorer<Shader>(context, "Shader", inspected, ENGINE_SHADER_EXTENSION, loadShaderFile);
+    renderResourceExplorer<Shader>(context, name, inspected, ENGINE_SHADER_EXTENSION, loadShaderFile);
 }
