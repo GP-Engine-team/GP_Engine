@@ -599,7 +599,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     //    pSubModel->pShader->setMat4(
                     //        std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), transforms[i].e);
                     //}
-                    glUniformMatrix4fv(glGetUniformLocation(pSubModel->pShader->getID(), "finalBonesMatrices"), transforms.size(),
+                    glUniformMatrix4fv(glGetUniformLocation(pSubModel->pShader->getID(), "finalBonesMatrices"), GLsizei(transforms.size()),
                                        GL_FALSE,
                                        (GLfloat*)transforms.data());
                 }

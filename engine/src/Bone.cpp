@@ -127,7 +127,7 @@ int Bone::getPositionIndex(float animationTime)
                          [&](const float& animTime, const GPE::KeyPosition& pos) { return animTime < pos.timeStamp; });
 
     if (it != m_positions.end())
-        return &(*it) - m_positions.data() - 1;
+        return int(&(*it) - m_positions.data() - 1);
 
     assert(false);
     return -1;
@@ -141,7 +141,7 @@ int Bone::getRotationIndex(float animationTime)
                          [&](const float& animTime, const GPE::KeyRotation& rot) { return animTime < rot.timeStamp; });
 
     if (it != m_rotations.end())
-        return &(*it) - m_rotations.data() - 1;
+        return int(&(*it) - m_rotations.data() - 1);
 
     assert(false);
     return -1;
@@ -155,7 +155,7 @@ int Bone::getScaleIndex(float animationTime)
                          [&](const float& animTime, const GPE::KeyScale& scale) { return animTime < scale.timeStamp; });
 
     if (it != m_scales.end())
-        return &(*it) - m_scales.data() - 1;
+        return int(&(*it) - m_scales.data() - 1);
 
     assert(false);
     return -1;
