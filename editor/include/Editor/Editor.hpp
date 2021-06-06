@@ -37,13 +37,13 @@ private:
     GLFWwindow* m_window;
 
 public:
-    std::string         paperPress;
     SceneEditor         sceneEditor;
     GameViewer          gameViewer;
     LogInspector        logInspector;
     ProjectContent      projectContent;
     SceneGraph          sceneGraph;
     GameControlBar      gameControlBar;
+    std::string         paperPress;
     std::string         saveFolder;
     GPE::IInspectable*  inspectedObject;
     GPE::ReloadableCpp* reloadableCpp;
@@ -56,6 +56,7 @@ public:
 
 private:
     void setupDearImGui();
+    void setupWindowIcon();
 
     void renderLog();
     void renderStyleEditor();
