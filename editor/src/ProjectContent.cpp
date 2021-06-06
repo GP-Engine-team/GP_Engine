@@ -343,11 +343,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::BeginTooltip();
                 ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 
-                size_t dirSize = 0;
-                for (auto&& file : it->files)
-                    dirSize += file.size;
-
-                ImGui::Text("%lu bytes", dirSize);
+                ImGui::Text("%lu bytes", it->computeSize());
                 ImGui::PopTextWrapPos();
                 ImGui::EndTooltip();
             }
