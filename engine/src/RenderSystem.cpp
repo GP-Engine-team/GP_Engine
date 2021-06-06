@@ -1099,6 +1099,7 @@ void RenderSystem::addShadowMap(Light& light) noexcept
     if (m_shadowMaps.empty())
     {
         m_shadowMaps.emplace_back(light);
+        m_shadowMaps.front().resize(m_w, m_h);
     }
     else
     {
