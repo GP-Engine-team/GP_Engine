@@ -26,6 +26,7 @@ struct AssimpNodeData
     GPM::Matrix4                transformation;
     std::string                 name;
     std::vector<AssimpNodeData> children;
+    int                         boneID = 0;
 };
 
 template <>
@@ -65,16 +66,51 @@ public:
     };
 
     // Animation data
-    std::map<std::string, BoneInfo> m_boneInfoMap; 
-    int                             m_boneCounter = 0;
+    std::vector<BoneInfo> m_boneInfo; 
+    std::map<std::string, int> m_boneNames; 
+    int                        m_boneCounter = 0;
 
     AssimpNodeData m_root;
 
 public:
     Skeleton() = default;
-    Skeleton(const CreateArgs& args) noexcept : m_boneInfoMap(args.m_boneInfoMap), m_root(args.m_root)
+    Skeleton(const CreateArgs& args) noexcept : m_root(args.m_root)
     {
-    
+        m_boneInfo.resize(args.m_boneInfoMap.size());
+        for (auto& [boneName, boneInfo] : args.m_boneInfoMap)
+        {
+            m_boneInfo[boneInfo.id] = boneInfo;
+            m_boneNames[boneName]   = boneInfo.id;
+        }
+
+        size_t nextID = args.m_boneInfoMap.size();
+        forEachAssimpNodeData(m_root, [&](AssimpNodeData& node) {
+            auto it = m_boneNames.lower_bound(node.name);
+
+            if (it != m_boneNames.end() && it->first == node.name)
+            {
+                // key already exists
+                node.boneID = it->second;
+            }
+            else
+            {
+                // in case there is a bone not loaded yet
+                BoneInfo boneInfo;
+                boneInfo.id = nextID;
+                node.boneID = nextID;
+                m_boneNames.emplace_hint(it, node.name, nextID);
+                m_boneInfo.emplace_back(std::move(boneInfo));
+                nextID++;
+            }
+        });
+    }
+
+    template<typename FUNCTOR>
+    static void forEachAssimpNodeData(AssimpNodeData& node, FUNCTOR&& functor)
+    {
+        functor(node);
+        for (AssimpNodeData& child : node.children)
+            forEachAssimpNodeData(child, functor);
     }
 
     static void        readHierarchyData(AssimpNodeData& dest, const aiNode* src);
@@ -85,7 +121,7 @@ public:
 
     inline size_t getNbBones() const
     {
-        return m_boneInfoMap.size();
+        return m_boneInfo.size();
     }
 
     GETTER_BY_CONST_REF(Root, m_root);

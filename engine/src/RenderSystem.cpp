@@ -593,12 +593,15 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 if (pSubModel->pModel->isAnimated())
                 {
                     auto& transforms = pSubModel->pModel->getFinalBonesTransforms();
-                    for (int i = 0; i < transforms.size(); ++i)
-                    {
+                    //for (int i = 0; i < transforms.size(); ++i)
+                    //{
 
-                        pSubModel->pShader->setMat4(
-                            std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), transforms[i].e);
-                    }
+                    //    pSubModel->pShader->setMat4(
+                    //        std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), transforms[i].e);
+                    //}
+                    glUniformMatrix4fv(glGetUniformLocation(pSubModel->pShader->getID(), "finalBonesMatrices"), transforms.size(),
+                                       GL_FALSE,
+                                       (GLfloat*)transforms.data());
                 }
                 else if ((pSubModel->pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK) // if shader has animation data but does not play
                 {
