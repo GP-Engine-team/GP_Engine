@@ -6,10 +6,10 @@
 
 #include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/Engine.hpp>
-#include <Engine/Resources/Animation/Skeleton.hpp>
-#include <Engine/Resources/Animation/Animation.hpp>
-#include <Engine/Resources/Animation/Skin.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Animation/Animation.hpp>
+#include <Engine/Resources/Animation/Skeleton.hpp>
+#include <Engine/Resources/Animation/Skin.hpp>
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/postprocess.h> // Post processing flags
 #include <assimp/scene.h>       // Output data structure
@@ -24,9 +24,13 @@ AnimationComponent::AnimationComponent(GameObject& owner) noexcept : Component(o
 {
     updateToSystem();
 
-    m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
-    for (int i = 0; i < m_skeleton->getNbBones(); i++)
-        m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
+    if (m_skeleton != nullptr)
+    {
+        m_finalBoneMatrices.clear();
+        m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
+        for (int i = 0; i < m_skeleton->getNbBones(); i++)
+            m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
+    }
 }
 
 AnimationComponent::~AnimationComponent() noexcept
@@ -49,6 +53,39 @@ void AnimationComponent::updateToSystem() noexcept
     }
 }
 
+void AnimationComponent::setSubModelIndex(int newSubModelIndex)
+{
+    if (m_model == nullptr)
+    {
+        m_subModelIndex = -1;
+        return;
+    }
+
+    if (m_subModelIndex == newSubModelIndex)
+        return;
+
+    if (newSubModelIndex != -1)
+    {
+        if (m_model->canAssignAnimComponent(newSubModelIndex))
+        {
+            if (m_subModelIndex != -1)
+            {
+                removeAnimData();
+            }
+            m_subModelIndex = newSubModelIndex;
+            updateAnimData(false);
+        }
+    }
+    else
+    {
+        if (m_subModelIndex != -1)
+        {
+            removeAnimData();
+        }
+        m_subModelIndex = newSubModelIndex;
+    }
+}
+
 void AnimationComponent::update(float deltaTime)
 {
     if (m_currentAnimation && isComplete())
@@ -64,7 +101,7 @@ void AnimationComponent::update(float deltaTime)
         m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
         calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
 
-        //if (m_nextAnimation != nullptr)
+        // if (m_nextAnimation != nullptr)
         //{
         //    m_nextAnimTime += m_nextAnimation->getTicksPerSecond() * dt * m_timeScale;
         //    m_nextAnimTime = fmod(m_nextAnimTime, m_nextAnimation->getNbTicks());
@@ -74,8 +111,8 @@ void AnimationComponent::update(float deltaTime)
 
 void AnimationComponent::removeAnimData()
 {
-    m_model->setAnimComponent(nullptr);
-    //m_finalBoneMatrices.clear();
+    m_model->setAnimComponent(nullptr, m_subModelIndex);
+    // m_finalBoneMatrices.clear();
 }
 
 void AnimationComponent::updateAnimData(bool wasComplete)
@@ -83,27 +120,34 @@ void AnimationComponent::updateAnimData(bool wasComplete)
     if (!wasComplete && isComplete())
     {
         // Skeleton
+        m_finalBoneMatrices.clear();
         m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
         for (int i = 0; i < m_skeleton->getNbBones(); i++)
             m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
 
         // Model
-        m_model->setAnimComponent(this);
+        m_model->setAnimComponent(this, m_subModelIndex);
 
         // Skin
-        m_model->bindSkin(*m_skin);
+        m_model->bindSkin(*m_skin, m_subModelIndex);
 
-        playAnimation(m_currentAnimation);
+        Animation* anim    = m_currentAnimation;
+        m_currentAnimation = nullptr;
+        playAnimation(anim);
     }
-
 }
 
 void AnimationComponent::playAnimation(Animation* pAnimation)
 {
-    if (pAnimation == nullptr)
+    if (m_currentAnimation == pAnimation)
         return;
 
-    GPE_ASSERT(isComplete(), "Animation Component data should be set before playing an animation.");
+    if (pAnimation == nullptr)
+    {
+        m_currentAnimation = pAnimation;
+        return;
+    }
+
     if (!isComplete())
         return;
 
@@ -112,27 +156,53 @@ void AnimationComponent::playAnimation(Animation* pAnimation)
     m_timeScale        = 1.f;
 
     skeletonBoneIDToAnimationBoneID.resize(m_skeleton->getNbBones());
-    for (size_t i = 0; i < pAnimation->m_bones.size(); i++)
-    {
-        auto it = m_skeleton->m_boneNames.find(pAnimation->m_bones[i].getName());
-        skeletonBoneIDToAnimationBoneID[it->second] = i;
-    }
+
+    auto getBoneName = [](const std::string& fullName) {
+        size_t delimiter = fullName.find(":");
+        if (delimiter == fullName.npos)
+            return fullName;
+        else
+        {
+            return fullName.substr(delimiter + 1);
+        }
+    };
+
+    m_skeleton->forEachAssimpNodeData(m_skeleton->m_root, [&](AssimpNodeData& node) {
+        auto it = std::find_if(pAnimation->m_bones.begin(), pAnimation->m_bones.end(),
+                               [&](const Bone& bone) 
+        { 
+            return getBoneName(bone.getName()) == getBoneName(node.name);
+        });
+        if (it != pAnimation->m_bones.end())
+        {
+            skeletonBoneIDToAnimationBoneID[node.boneID] = it - pAnimation->m_bones.begin();
+        }
+        else
+        {
+            skeletonBoneIDToAnimationBoneID[node.boneID] = m_skeleton->getNbBones(); // These bones won't be animated
+        }
+    });
 }
 
 void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, const GPM::mat4& parentTransform)
 {
-    GPM::Mat4          nodeTransform = node.transformation;
+    GPM::Mat4 nodeTransform = node.transformation;
 
     //Bone* bone = m_currentAnimation->findBone(node.name);
-    Bone* bone = &m_currentAnimation->m_bones[skeletonBoneIDToAnimationBoneID[node.boneID]];
-
-    if (bone)
+    if (node.boneID < skeletonBoneIDToAnimationBoneID.size() &&
+        skeletonBoneIDToAnimationBoneID[node.boneID] < m_currentAnimation->m_bones.size())
     {
-        bone->update(m_currentTime * 1000.f /* to milliseconds */);
-        nodeTransform = bone->getLocalTransform();
+
+        Bone* bone = &m_currentAnimation->m_bones[skeletonBoneIDToAnimationBoneID[node.boneID]];
+
+        if (bone)
+        {
+            bone->update(m_currentTime * 1000.f /* to milliseconds */);
+            nodeTransform = bone->getLocalTransform();
+        }
     }
 
-    //if (m_nextAnimation != nullptr)
+    // if (m_nextAnimation != nullptr)
     //{
     //    Bone* newAnimBone = m_nextAnimation->findBone(node.name);
 
@@ -169,7 +239,7 @@ void AnimationComponent::setSkeleton(Skeleton* newSkeleton)
     }
 
     bool wasComplete = isComplete();
-    m_skeleton = newSkeleton;
+    m_skeleton       = newSkeleton;
     updateAnimData(wasComplete);
 }
 
@@ -184,7 +254,7 @@ void AnimationComponent::setModel(Model* newModel)
     }
 
     bool wasComplete = isComplete();
-    m_model = newModel;
+    m_model          = newModel;
     updateAnimData(wasComplete);
 }
 
@@ -197,10 +267,13 @@ void AnimationComponent::setSkin(Skin* skin)
     {
         removeAnimData();
     }
+    else
+    {
 
-    bool wasComplete = isComplete();
-    m_skin = skin;
-    updateAnimData(wasComplete);
+        bool wasComplete = isComplete();
+        m_skin           = skin;
+        updateAnimData(false);
+    }
 }
 
 void AnimationComponent::setCurrentAnimDuration(float newDuration)
@@ -218,7 +291,6 @@ void AnimationComponent::onPostLoad()
 
     Component::onPostLoad();
 }
-
 
 bool AnimationComponent::isComplete() const
 {
