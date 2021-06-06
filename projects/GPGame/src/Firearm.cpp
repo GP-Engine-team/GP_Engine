@@ -200,12 +200,12 @@ void Firearm::update(double deltaTime)
 
     transform().setTranslation(m_dynamicPosition + m_translationMovement);
 
-    if (!m_isAiming) // The weapon is now held properly, it is shaking when firing!
+    if (!m_isAiming) // The weapon is not held properly, it is shaking when firing!
     {
         transform().setRotation(m_aimRotation * m_rotationMovement);
     }
 
-    else // The weapon is hold steadily. The reticle stays aligned with the line of view
+    else // The weapon is held steadily. The reticle stays aligned with the line of view
     {
         transform().setRotation(m_aimRotation);
     }
