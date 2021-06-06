@@ -113,7 +113,7 @@ void Firearm::triggered()
                                                       m_magazineStored.getCapacity()));
                     }
                 }
-                else
+                else if(pOwner->getTag() == "Ground")
                 {
                     if (m_groundShootEffect.pData)
                     {
