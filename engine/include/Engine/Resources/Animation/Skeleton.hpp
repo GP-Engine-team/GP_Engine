@@ -96,9 +96,9 @@ public:
             {
                 // in case there is a bone not loaded yet
                 BoneInfo boneInfo;
-                boneInfo.id = nextID;
-                node.boneID = nextID;
-                m_boneNames.emplace_hint(it, node.name, nextID);
+                boneInfo.id = int(nextID);
+                node.boneID = int(nextID);
+                m_boneNames.emplace_hint(it, node.name, int(nextID));
                 m_boneInfo.emplace_back(std::move(boneInfo));
                 nextID++;
             }
@@ -113,7 +113,7 @@ public:
             forEachAssimpNodeData(child, functor);
     }
 
-    static void        readHierarchyData(AssimpNodeData& dest, const aiNode* src);
+    static void readHierarchyData(AssimpNodeData& dest, const aiNode* src);
     inline void readHierarchyData(const aiNode* src)
     {
         readHierarchyData(m_root, src);
