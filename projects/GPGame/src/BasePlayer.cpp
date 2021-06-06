@@ -43,8 +43,9 @@ void BasePlayer::onPostLoad()
     GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
     GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch = 1.f;
-    sourceSettings.loop  = AL_TRUE;
+    sourceSettings.pitch    = 1.f;
+    sourceSettings.loop     = AL_TRUE;
+    sourceSettings.relative = AL_TRUE;
 
     source->setSound("Western", "Western", sourceSettings);
 
