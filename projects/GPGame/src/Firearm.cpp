@@ -32,8 +32,6 @@ Firearm::Firearm(GPE::GameObject& owner, const GunMagazine& magazineStored, floa
 
 void Firearm::onPostLoad()
 {
-    BehaviourComponent::onPostLoad();
-
     enableUpdate(true);
 
     m_shootSound = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
@@ -45,6 +43,8 @@ void Firearm::onPostLoad()
     sourceSettings.relative = AL_TRUE;
 
     m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
+
+    BehaviourComponent::onPostLoad();
 }
 
 void Firearm::start()

@@ -44,6 +44,8 @@ using namespace GPM::Random;
 
 void Game::update(double unscaledDeltaTime, double deltaTime)
 {
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::GetIO().MousePos -= {m_x, m_y};
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
@@ -56,10 +58,7 @@ void Game::render()
     // UI code can be easly move in update because it's not real render function. It however her for simplicity
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-
     ImGui::GetIO().DisplaySize = {m_w, m_h};
-    ImGui::GetIO().MousePos -= {m_x, m_y};
 
     ImGui::NewFrame();
 
