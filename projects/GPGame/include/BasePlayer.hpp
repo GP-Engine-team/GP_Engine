@@ -45,6 +45,12 @@ namespace GPG RFKNamespace()
 
         RFKField(Inspect(), Serialize()) GPE::Texture* m_buttonTexture;
 
+        RFKField(Serialize(), Inspect(), ReadOnly()) float m_animDamageAnimCounter    = 0.f;
+        RFKField(Inspect(), Serialize()) float             m_animDamageAnimCounterMax = 0.1f;
+        RFKField(Inspect(), Serialize()) float             m_damageShakeStrength = 1.f;
+        bool                                               m_isPlayDamageAnimation    = false;
+        RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> m_cameraGO;
+
     public:
         RFKField(Inspect(), Serialize()) float radiusLootCollection = 50.f;
 
@@ -59,6 +65,9 @@ namespace GPG RFKNamespace()
         RFKField() std::vector<Firearm*>                                           m_firearms;
 
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_groundParticleComponent;
+
+    protected: 
+    RFKMethod() void updateDamageAnimation(float t);
 
     public:
         BasePlayer() noexcept = default;
@@ -82,6 +91,7 @@ namespace GPG RFKNamespace()
         RFKMethod() void updateListener();
         RFKMethod() void collectLoot(const Loot& loot);
         RFKMethod() void onDeath() override;
+        RFKMethod() void takeDamage(float damage) override;
         RFKMethod() void onWin();
 
         void rotate(const GPM::Vec2& deltaDisplacement);

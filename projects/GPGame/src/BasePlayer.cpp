@@ -1,6 +1,8 @@
 ﻿
 #include <AL/alc.h>
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/Interpolation.hpp>
+#include <gpm/Random.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
@@ -311,6 +313,21 @@ void BasePlayer::update(double deltaTime)
             if (deltaPos.x || deltaPos.y)
                 rotate(deltaPos);
         }
+
+        if (m_isPlayDamageAnimation)
+        {
+            m_animDamageAnimCounter += float(deltaTime);
+
+            const float t = std::clamp(m_animDamageAnimCounter / m_animDamageAnimCounterMax, 0.f, 1.f);
+            updateDamageAnimation(t);
+
+            if (m_animDamageAnimCounter >= m_animDamageAnimCounterMax)
+            {
+                m_isPlayDamageAnimation = false;
+                m_animDamageAnimCounter = 0.f;
+                m_cameraGO.pData->getTransform().setTranslation(Vec3::zero());
+            }
+        }
     }
 }
 
@@ -376,4 +393,22 @@ void BasePlayer::onWin()
     displayWinMenu = true;
     enableUpdate(false);
     Engine::getInstance()->timeSystem.setTimeScale(0.0);
+}
+
+void BasePlayer::updateDamageAnimation(float t)
+{
+    const float newT = easeInCirc(t);
+ 
+    Vec3 moveStrength = Random::unitPeripheralSphericalCoordonate() * m_damageShakeStrength * (1.f - newT);
+
+    moveStrength.z = 0.f;
+    m_cameraGO.pData->getTransform().setTranslation(moveStrength); // Set the local rotation the be the rotation amount.
+}
+
+void BasePlayer::takeDamage(float damage)
+{
+    BaseCharacter::takeDamage(damage);
+    m_isPlayDamageAnimation = true;
+    m_animDamageAnimCounter = 0.f;
+
 }
