@@ -1,6 +1,8 @@
 ﻿
 #include <AL/alc.h>
 #include <Engine/Core/Debug/Log.hpp>
+#include <Engine/Core/Tools/Interpolation.hpp>
+#include <gpm/Random.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
@@ -43,8 +45,9 @@ void BasePlayer::onPostLoad()
     GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
 
     GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch = 1.f;
-    sourceSettings.loop  = AL_TRUE;
+    sourceSettings.pitch    = 1.f;
+    sourceSettings.loop     = AL_TRUE;
+    sourceSettings.relative = AL_TRUE;
 
     source->setSound("Western", "Western", sourceSettings);
 
@@ -57,6 +60,7 @@ void BasePlayer::start()
 {
     BaseCharacter::start();
 
+    GAME_ASSERT(m_buttonTexture, "No button texture selected");
     GAME_ASSERT(input, "null");
     GAME_ASSERT(source, "null");
     GAME_ASSERT(m_firearmsGO.size(), "null");
@@ -146,7 +150,7 @@ void BasePlayer::stopAllMusic()
 }
 
 // size_arg (for each axis) < 0.0f: align to end, 0.0f: auto, > 0.0f: specified size
-void displayLifeBar(float currentLife, float lifeMax, const ImVec2& size_arg)
+void displayStaminaBar(float staminCount, float staminaMax, const ImVec2& size_arg)
 {
     using namespace ImGui;
 
@@ -168,7 +172,7 @@ void displayLifeBar(float currentLife, float lifeMax, const ImVec2& size_arg)
         return;
 
     // Render
-    float fraction = currentLife / lifeMax;
+    float fraction = staminCount / staminaMax;
     fraction       = ImSaturate(fraction);
 
     // Background
@@ -184,13 +188,14 @@ void displayLifeBar(float currentLife, float lifeMax, const ImVec2& size_arg)
 
     bb.Expand(ImVec2(-style.FrameBorderSize, -style.FrameBorderSize));
     const ImVec2 fill_br = ImVec2(ImLerp(bb.Min.x, bb.Max.x, fraction), bb.Max.y);
-    RenderRectFilledRangeH(window->DrawList, bb, ImColor{255, 0, 0, 150}, 0.0f, fraction, 7.f);
+
+    RenderRectFilledRangeH(window->DrawList, bb, ImColor{255, 0, 0, 150}, 0.0f, fraction, rounding);
 
     // Default displaying the fraction as percentage string, but user can override it
     char        overlay_buf[32];
     const char* overlay = nullptr;
 
-    ImFormatString(overlay_buf, IM_ARRAYSIZE(overlay_buf), "%.0f% / %.0f%", currentLife, lifeMax);
+    ImFormatString(overlay_buf, IM_ARRAYSIZE(overlay_buf), "%0.2f% / %0.0f%", fraction, staminaMax);
     overlay = overlay_buf;
 
     ImVec2 overlay_size = CalcTextSize(overlay, NULL);
@@ -208,20 +213,25 @@ void BasePlayer::onGUI()
 
     if (displayDepthMenu)
     {
-        ImVec2 size = {GetWindowSize().x / 4.f * ratio, GetWindowSize().y / 6.f * ratio};
+        ImVec2 size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
+
+        const float previousFontScale = GetFont()->Scale;
+        SetWindowFontScale(2.f * ratio);
 
         SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::Button("Retry", size))
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Retry", size))
         {
             reloadScene();
             Engine::getInstance()->timeSystem.setTimeScale(1.0);
         }
 
+        size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
         SetNextElementLayout(0.5f, 0.6f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::Button("Quitte", size))
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quit", size))
         {
             closeApplication();
         }
+        ImGui::SetWindowFontScale(previousFontScale);
     }
     else
     {
@@ -229,7 +239,16 @@ void BasePlayer::onGUI()
 
         // Life bar
         SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
-        displayLifeBar(m_currentLife, m_maxLife, size);
+        displayBar(m_currentLife, m_maxLife, size, 5.f, 3.f);
+
+        // Stamina bar
+        ImGui::SetCursorPosX(
+            ImGui::GetStyle().FramePadding.x + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+            (ImGui::GetWindowSize().x - ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.5f -
+            size.x * 0.5f);
+        size.y /= 3.f;
+        displayBar(m_staminaCount, m_staminaMax, size, 2.f, 2.f, {255, 255, 0, 255}, {0, 0, 0, 255}, {0, 0, 0, 255},
+                   "%.2f% / %.0f%");
 
         // Fire arm stats
         if (m_firearms.size())
@@ -272,6 +291,20 @@ void BasePlayer::update(double deltaTime)
     }
     else
     {
+        if (m_isSprint)
+        {
+            m_staminaCount -= float(deltaTime) * m_staminaSpeedConsumation;
+            if (m_staminaCount <= 0.f)
+            {
+                m_staminaCount = 0.f;
+                sprintEnd();
+            }
+        }
+        else
+        {
+            m_staminaCount = std::min(m_staminaMax, m_staminaCount + float(deltaTime) * m_staminaSpeedRecharge);
+        }
+
         // TODO: find a fix to relieve the user from having to check this, or leave it like that?
         if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
         {
@@ -279,6 +312,21 @@ void BasePlayer::update(double deltaTime)
 
             if (deltaPos.x || deltaPos.y)
                 rotate(deltaPos);
+        }
+
+        if (m_isPlayDamageAnimation)
+        {
+            m_animDamageAnimCounter += float(deltaTime);
+
+            const float t = std::clamp(m_animDamageAnimCounter / m_animDamageAnimCounterMax, 0.f, 1.f);
+            updateDamageAnimation(t);
+
+            if (m_animDamageAnimCounter >= m_animDamageAnimCounterMax)
+            {
+                m_isPlayDamageAnimation = false;
+                m_animDamageAnimCounter = 0.f;
+                m_cameraGO.pData->getTransform().setTranslation(Vec3::zero());
+            }
         }
     }
 }
@@ -345,4 +393,22 @@ void BasePlayer::onWin()
     displayWinMenu = true;
     enableUpdate(false);
     Engine::getInstance()->timeSystem.setTimeScale(0.0);
+}
+
+void BasePlayer::updateDamageAnimation(float t)
+{
+    const float newT = easeInCirc(t);
+ 
+    Vec3 moveStrength = Random::unitPeripheralSphericalCoordonate() * m_damageShakeStrength * (1.f - newT);
+
+    moveStrength.z = 0.f;
+    m_cameraGO.pData->getTransform().setTranslation(moveStrength); // Set the local rotation the be the rotation amount.
+}
+
+void BasePlayer::takeDamage(float damage)
+{
+    BaseCharacter::takeDamage(damage);
+    m_isPlayDamageAnimation = true;
+    m_animDamageAnimCounter = 0.f;
+
 }

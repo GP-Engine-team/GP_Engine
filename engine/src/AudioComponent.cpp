@@ -44,6 +44,7 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, settings.relative);
     AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(settings.rollOffFactor)));
+    AL_CALL(alSourcei, source->source, AL_MAX_DISTANCE, source->settings.radius);
     AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
 }
 
@@ -56,6 +57,7 @@ void AudioComponent::updateSource(SourceData* source)
             parentPos.y + source->settings.position.y, parentPos.z + +source->settings.position.z);
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, source->settings.relative);
     AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(source->settings.rollOffFactor)));
+    AL_CALL(alSourcei, source->source, AL_MAX_DISTANCE, source->settings.radius);
 }
 
 SourceData* AudioComponent::getSource(const char* name) noexcept
@@ -163,6 +165,7 @@ void AudioComponent::updateSources()
             if (value.isDirty == true)
             {
                 updateSource(&value);
+                value.isDirty = false;
             }
         }
     }
@@ -171,5 +174,16 @@ void AudioComponent::updateSources()
 AudioComponent::~AudioComponent()
 {
     setActive(false);
+
+    if (sources.size() > 0)
+    {
+        for (auto& [key, value] : sources)
+        {
+            AL_CALL(alDeleteSources, 1, &value.source);
+        }
+
+        sources.clear();
+    }
+
     getOwner().getTransform().OnUpdate -= Function::make(this, "updatePosition");
 }

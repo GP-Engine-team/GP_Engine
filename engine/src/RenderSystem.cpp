@@ -42,15 +42,14 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
     case Mesh::EBoundingVolume::SPHERE: {
         const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
 
-        float maxScale = std::max(std::max(std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x),
-                                           std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y)),
-                                  std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z));
+        const Vec3 globalScale = pSubModel->pModel->getOwner().getTransform().getGlobalScale();
+        float maxScale = std::max(std::max(std::abs(globalScale.x), std::abs(globalScale.y)), std::abs(globalScale.z));
 
         const Vector4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() *
                                Vector4(pBoudingSphere->getCenter(), 1.f).homogenized();
         const Vector3 pos{posMat.x, posMat.y, posMat.z};
 
-        drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale / 2.f), color, 0.f,
+        drawDebugSphere(pos, pBoudingSphere->getRadius() * (maxScale * 0.5f), color, 0.f,
                         RenderSystem::EDebugShapeMode::FILL);
     }
     break;
@@ -59,10 +58,10 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vector3 scale(
-            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x) * pAABB->extents.x * 2.f,
-            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y) * pAABB->extents.y * 2.f,
-            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z) * pAABB->extents.z * 2.f);
+        const Vec3    globalScale = pSubModel->pModel->getOwner().getTransform().getGlobalScale();
+        const Vector3 scale(std::abs(globalScale.x) * pAABB->extents.x * 2.f,
+                            std::abs(globalScale.y) * pAABB->extents.y * 2.f,
+                            std::abs(globalScale.z) * pAABB->extents.z * 2.f);
 
         const Vector4 posMat =
             pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
@@ -132,7 +131,7 @@ RenderSystem::RenderSystem() noexcept
     shader->use();
     shader->setInt("depthMap", 0);
 
-    m_sphereMesh = &Engine::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(5, 5));
+    m_sphereMesh = &Engine::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(25, 25));
     m_cubeMesh   = &Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
     m_planeMesh  = &Engine::getInstance()->resourceManager.add<Mesh>(
         "Plane", Mesh::createQuad(1.f, 1.f, 1.f, 0, 0, Mesh::Axis::Z));
@@ -170,15 +169,14 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
     case Mesh::EBoundingVolume::SPHERE: {
         const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
 
-        float maxScale = std::max(std::max(std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x),
-                                           std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y)),
-                                  std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z));
+        const Vec3 globalScale = pSubModel->pModel->getOwner().getTransform().getGlobalScale();
+        float maxScale = std::max(std::max(std::abs(globalScale.x), std::abs(globalScale.y)), std::abs(globalScale.z));
 
         const Vector4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() *
                                Vector4(pBoudingSphere->getCenter(), 1.f).homogenized();
         const Vector3 pos{posMat.x, posMat.y, posMat.z};
 
-        Sphere globalSphere(pBoudingSphere->getRadius() * (maxScale / 2.f), pos);
+        Sphere globalSphere(pBoudingSphere->getRadius() * (maxScale * 0.5f), pos);
 
         return (SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.leftFace) &&
                 SpherePlane::isSphereOnOrForwardPlaneCollided(globalSphere, camFrustum.rightFace) &&
@@ -194,10 +192,10 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vector3 scale(
-            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().x) * pAABB->extents.x * 2.f,
-            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().y) * pAABB->extents.y * 2.f,
-            std::abs(pSubModel->pModel->getOwner().getTransform().getScale().z) * pAABB->extents.z * 2.f);
+        const Vec3    globalScale = pSubModel->pModel->getOwner().getTransform().getGlobalScale();
+        const Vector3 scale(std::abs(globalScale.x) * pAABB->extents.x * 2.f,
+                            std::abs(globalScale.y) * pAABB->extents.y * 2.f,
+                            std::abs(globalScale.z) * pAABB->extents.z * 2.f);
 
         const Vector4 posMat =
             pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
@@ -592,23 +590,18 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 if (pSubModel->isAnimated())
                 {
                     auto& transforms = pSubModel->getFinalBonesTransforms();
-                    //for (int i = 0; i < transforms.size(); ++i)
-                    //{
-
-                    //    pSubModel->pShader->setMat4(
-                    //        std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), transforms[i].e);
-                    //}
-                    glUniformMatrix4fv(glGetUniformLocation(pSubModel->pShader->getID(), "finalBonesMatrices"), transforms.size(),
-                                       GL_FALSE,
-                                       (GLfloat*)transforms.data());
+                    glUniformMatrix4fv(glGetUniformLocation(pSubModel->pShader->getID(), "finalBonesMatrices"),
+                                       transforms.size(), GL_FALSE, (GLfloat*)transforms.data());
                 }
-                else if ((pSubModel->pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK) // if shader has animation data but does not play
+                else if ((pSubModel->pShader->getFeature() & ANIMATION_MASK) ==
+                         ANIMATION_MASK) // if shader has animation data but does not play
                 {
                     for (int i = 0; i < m_maxNbBones; ++i)
                     {
 
                         pSubModel->pShader->setMat4(
-                            std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), GPM::Matrix4::identity().e);
+                            std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(),
+                            GPM::Matrix4::identity().e);
                     }
                 }
 
@@ -1098,6 +1091,7 @@ void RenderSystem::addShadowMap(Light& light) noexcept
     if (m_shadowMaps.empty())
     {
         m_shadowMaps.emplace_back(light);
+        m_shadowMaps.front().resize(m_w, m_h);
     }
     else
     {

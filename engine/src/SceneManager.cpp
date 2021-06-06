@@ -53,7 +53,7 @@ void SceneManager::defferedReloadCurrentScene()
 
 void SceneManager::defferedLoadNewScene(const char* path)
 {
-    firstLoadedScene = path;
+    m_pathNextSceneToLoad = path;
 }
 
 Scene& SceneManager::setCurrentScene(const std::string& sceneName)
