@@ -588,7 +588,6 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 rs.tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
-                // TODO : To Clean
                 // Animations
                 if (pSubModel->isAnimated())
                 {

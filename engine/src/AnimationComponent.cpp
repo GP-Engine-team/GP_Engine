@@ -24,9 +24,13 @@ AnimationComponent::AnimationComponent(GameObject& owner) noexcept : Component(o
 {
     updateToSystem();
 
-    m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
-    for (int i = 0; i < m_skeleton->getNbBones(); i++)
-        m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
+    if (m_skeleton != nullptr)
+    {
+        m_finalBoneMatrices.clear();
+        m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
+        for (int i = 0; i < m_skeleton->getNbBones(); i++)
+            m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
+    }
 }
 
 AnimationComponent::~AnimationComponent() noexcept
@@ -116,6 +120,7 @@ void AnimationComponent::updateAnimData(bool wasComplete)
     if (!wasComplete && isComplete())
     {
         // Skeleton
+        m_finalBoneMatrices.clear();
         m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
         for (int i = 0; i < m_skeleton->getNbBones(); i++)
             m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
@@ -134,8 +139,14 @@ void AnimationComponent::updateAnimData(bool wasComplete)
 
 void AnimationComponent::playAnimation(Animation* pAnimation)
 {
-    if (pAnimation == nullptr || m_currentAnimation == pAnimation)
+    if (m_currentAnimation == pAnimation)
         return;
+
+    if (pAnimation == nullptr)
+    {
+        m_currentAnimation = pAnimation;
+        return;
+    }
 
     if (!isComplete())
         return;
@@ -145,24 +156,22 @@ void AnimationComponent::playAnimation(Animation* pAnimation)
     m_timeScale        = 1.f;
 
     skeletonBoneIDToAnimationBoneID.resize(m_skeleton->getNbBones());
-    //for (size_t i = 0; i < pAnimation->m_bones.size(); i++)
-    //{
-    //    auto it = m_skeleton->m_boneNames.find(pAnimation->m_bones[i].getName());
-    //    if (it != m_skeleton->m_boneNames.end())
-    //    {
-    //        skeletonBoneIDToAnimationBoneID[it->second] = i;
-    //    }
-    //    else
-    //    {
-    //        GPE::Log::getInstance()->log("invalid skeleton");
-    //    }
-    //}
+
+    auto getBoneName = [](const std::string& fullName) {
+        size_t delimiter = fullName.find(":");
+        if (delimiter == fullName.npos)
+            return fullName;
+        else
+        {
+            return fullName.substr(delimiter + 1);
+        }
+    };
 
     m_skeleton->forEachAssimpNodeData(m_skeleton->m_root, [&](AssimpNodeData& node) {
         auto it = std::find_if(pAnimation->m_bones.begin(), pAnimation->m_bones.end(),
                                [&](const Bone& bone) 
         { 
-                return bone.getName() == node.name; 
+            return getBoneName(bone.getName()) == getBoneName(node.name);
         });
         if (it != pAnimation->m_bones.end())
         {

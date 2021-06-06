@@ -93,9 +93,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
 {
     const bool isPreviousElementVoid = !inspected.isValid();
 
-    inspect(context, inspected.pMesh, "Mesh");
-    inspect(context, inspected.pShader, "Shader");
-    inspect(context, inspected.pMaterial, "Material");
+    inspected.defaultInspect(context);
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
     ImGui::Checkbox("Cast shadow", &inspected.castShadow);
@@ -288,6 +286,16 @@ std::vector<GPM::Mat4>& SubModel::getFinalBonesTransforms() const
 bool SubModel::isAnimated() const
 {
     return pAnimComponent != nullptr && pAnimComponent->isComplete();
+}
+
+bool Model::hasAnimationsLinked() const
+{
+    for (const SubModel& subModel : m_subModels)
+    {
+        if (subModel.pAnimComponent != nullptr)
+            return true;
+    }
+    return false;
 }
 
 GPM::AABB Model::getLocalAABB()

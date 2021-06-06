@@ -9,11 +9,12 @@
 #include <memory> //std::shared_ptr
 #include <vector> //std::vector
 
-#include "Engine/ECS/Component/Component.hpp"
-#include "Engine/Serialization/ComponentGen.h"
-#include "Engine/Serialization/xml/xmlSaver.hpp"
-#include "GPM/Shape3D/Volume.hpp"
-#include "GPM/Shape3D/AABB.hpp"
+#include <Engine/ECS/Component/Component.hpp>
+#include <Engine/Serialization/ComponentGen.h>
+#include <Engine/Serialization/DefaultInspect.hpp>
+#include <Engine/Serialization/xml/xmlSaver.hpp>
+#include <GPM/Shape3D/AABB.hpp>
+#include <GPM/Shape3D/Volume.hpp>
 
 // Generated
 #include "Generated/Model.rfk.h"
@@ -22,7 +23,7 @@ namespace GPM
 {
 union Matrix4;
 using Mat4 = Matrix4;
-}
+} // namespace GPM
 
 namespace GPE RFKNamespace()
 {
@@ -35,7 +36,7 @@ namespace GPE RFKNamespace()
 
     class AnimationComponent;
 
-    struct RFKStruct(Serialize()) SubModel
+    struct RFKStruct(Serialize(), DefaultInspect()) SubModel
     {
         struct CreateArg
         {
@@ -58,20 +59,22 @@ namespace GPE RFKNamespace()
         SubModel() = default;
         ~SubModel();
 
-        bool isValid() const;
+        bool                    isValid() const;
         std::vector<GPM::Mat4>& getFinalBonesTransforms() const;
-        bool isAnimated() const;
+        bool                    isAnimated() const;
 
-        RFKField(Serialize()) Model*    pModel    = nullptr;
-        RFKField(Serialize()) Shader*   pShader   = nullptr;
-        RFKField(Serialize()) Material* pMaterial = nullptr;
-        RFKField(Serialize()) Mesh*     pMesh     = nullptr;
-        AnimationComponent*             pAnimComponent = nullptr;
+        RFKField(Serialize()) Model*               pModel         = nullptr;
+        RFKField(Serialize(), Inspect()) Mesh*     pMesh          = nullptr;
+        RFKField(Serialize(), Inspect()) Shader*   pShader        = nullptr;
+        RFKField(Serialize(), Inspect()) Material* pMaterial      = nullptr;
+        AnimationComponent*                        pAnimComponent = nullptr;
 
         RFKField(Serialize()) bool enableBackFaceCulling = true;
         RFKField(Serialize()) bool castShadow            = true;
         RFKField(Serialize()) bool isTransparent         = false;
         RFKField(Serialize()) bool writeInDepth          = true;
+
+        void setShader(Shader* newShader);
 
         SubModel_GENERATED
     };
@@ -107,10 +110,12 @@ namespace GPE RFKNamespace()
 
         void addSubModel(const SubModel::CreateArg& arg);
 
-        void setAnimComponent(AnimationComponent* newAnimComp, int subModelIndex);
+        void setAnimComponent(AnimationComponent * newAnimComp, int subModelIndex);
         bool canAssignAnimComponent(int subModelIndex);
 
-        void bindSkin(class Skin& skin, int subModelIndex);
+        void bindSkin(class Skin & skin, int subModelIndex);
+
+        bool hasAnimationsLinked() const;
 
         /**
          * @brief Function to return the local AABB (do not considere the position, scale and rotation of transform)
