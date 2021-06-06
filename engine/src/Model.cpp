@@ -249,6 +249,16 @@ void Model::setAnimComponent(AnimationComponent* newAnimComp, int subModelIndex)
     }
 }
 
+bool Model::canAssignAnimComponent(int subModelIndex)
+{
+    if (subModelIndex >= m_subModels.size())
+        return false;
+
+    auto it = m_subModels.begin();
+    std::advance(it, subModelIndex);
+    return it->pAnimComponent == nullptr;
+}
+
 void Model::bindSkin(Skin& skin, int subModelIndex)
 {
     if (subModelIndex < m_subModels.size())

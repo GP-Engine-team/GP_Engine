@@ -108,6 +108,7 @@ namespace GPE RFKNamespace()
         void addSubModel(const SubModel::CreateArg& arg);
 
         void setAnimComponent(AnimationComponent* newAnimComp, int subModelIndex);
+        bool canAssignAnimComponent(int subModelIndex);
 
         void bindSkin(class Skin& skin, int subModelIndex);
 

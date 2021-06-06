@@ -49,6 +49,39 @@ void AnimationComponent::updateToSystem() noexcept
     }
 }
 
+void AnimationComponent::setSubModelIndex(int newSubModelIndex)
+{
+    if (m_model == nullptr)
+    {
+        m_subModelIndex = -1;
+        return;
+    }
+
+    if (m_subModelIndex == newSubModelIndex)
+        return;
+
+    if (newSubModelIndex != -1)
+    {
+        if (m_model->canAssignAnimComponent(newSubModelIndex))
+        {
+            if (m_subModelIndex != -1)
+            {
+                removeAnimData();
+            }
+            m_subModelIndex = newSubModelIndex;
+            updateAnimData(false);
+        }
+    }
+    else
+    {
+        if (m_subModelIndex != -1)
+        {
+            removeAnimData();
+        }
+        m_subModelIndex = newSubModelIndex;
+    }
+}
+
 void AnimationComponent::update(float deltaTime)
 {
     if (m_currentAnimation && isComplete())

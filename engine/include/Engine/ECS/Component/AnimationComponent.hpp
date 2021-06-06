@@ -30,7 +30,7 @@ private:
     RFKField(Inspect(), Serialize()) float                     m_currentTime = 0.f; // in seconds
     //RFKField(Inspect(), Serialize()) float                   m_nextAnimTime = 0.f;
     RFKField(Inspect(), Serialize()) float                     m_timeScale = 1.f;
-    RFKField(Inspect(), Serialize()) int                       m_subModelIndex = 0;
+    RFKField(Inspect("setSubModelIndex"), Serialize()) int     m_subModelIndex = -1;
 
     //float blendAlpha = 0.f;
 
@@ -43,6 +43,9 @@ public:
     AnimationComponent(class GameObject & owner) noexcept;
     AnimationComponent() noexcept = default;
     virtual ~AnimationComponent() noexcept;
+
+private:
+    void setSubModelIndex(int newSubModelIndex);
 
 protected:
     void         removeAnimData();
