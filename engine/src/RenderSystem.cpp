@@ -590,9 +590,9 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO : To Clean
                 // Animations
-                if (pSubModel->pModel->isAnimated())
+                if (pSubModel->isAnimated())
                 {
-                    auto& transforms = pSubModel->pModel->getFinalBonesTransforms();
+                    auto& transforms = pSubModel->getFinalBonesTransforms();
                     //for (int i = 0; i < transforms.size(); ++i)
                     //{
 

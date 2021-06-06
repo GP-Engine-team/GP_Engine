@@ -41,14 +41,26 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
            (lhs->pMaterial->isOpaque() && !rhs->pMaterial->isOpaque());
 }
 
+SubModel::~SubModel()
+{
+    if (pAnimComponent != nullptr)
+    {
+        pAnimComponent->setModel(nullptr);
+        pAnimComponent = nullptr;
+    }
+}
+
 Model::~Model()
 {
-    setActive(false);
-    if (m_animComponent != nullptr)
+    for (SubModel& subModel : m_subModels)
     {
-        m_animComponent->setModel(nullptr);
-        m_animComponent = nullptr;
+        if (subModel.pAnimComponent != nullptr)
+        {
+            subModel.pAnimComponent->setModel(nullptr);
+            subModel.pAnimComponent = nullptr;
+        }
     }
+    setActive(false);
 }
 
 Model::Model(GameObject& owner) : Model(owner, CreateArg{})
@@ -227,33 +239,45 @@ void Model::updateToSystem() noexcept
     }
 }
 
-void Model::setAnimComponent(AnimationComponent* newAnimComp)
+void Model::setAnimComponent(AnimationComponent* newAnimComp, int subModelIndex)
 {
-    m_animComponent = newAnimComp;
-}
-
-void Model::bindSkin(Skin& skin)
-{
-    for (SubModel& sub : m_subModels)
+    if (subModelIndex < m_subModels.size())
     {
-        // We must verify if the shader implements the animation feature
-        //if (sub.pShader != nullptr && (sub.pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK)
-        //{
-            sub.pMesh->bindSkin(skin);
-        //}
+        auto it = m_subModels.begin();
+        std::advance(it, subModelIndex);
+        it->pAnimComponent = newAnimComp;
     }
 }
 
-std::vector<GPM::Mat4>& Model::getFinalBonesTransforms() const
+void Model::bindSkin(Skin& skin, int subModelIndex)
 {
-    GPE_ASSERT(m_animComponent != nullptr,
-               "It is not possible to get the bone data if there are no animations. Check with isAnimated() first.");
-    return m_animComponent->m_finalBoneMatrices;
+    if (subModelIndex < m_subModels.size())
+    {
+        auto it = m_subModels.begin();
+        std::advance(it, subModelIndex);
+        it->pMesh->bindSkin(skin);
+    }
+
+    //for (SubModel& sub : m_subModels)
+    //{
+    //    // We must verify if the shader implements the animation feature
+    //    //if (sub.pShader != nullptr && (sub.pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK)
+    //    //{
+    //        sub.pMesh->bindSkin(skin);
+    //    //}
+    //}
 }
 
-bool Model::isAnimated() const
+std::vector<GPM::Mat4>& SubModel::getFinalBonesTransforms() const
 {
-    return m_animComponent != nullptr && m_animComponent->isComplete();
+    GPE_ASSERT(pAnimComponent != nullptr,
+               "It is not possible to get the bone data if there are no animations. Check with isAnimated() first.");
+    return pAnimComponent->m_finalBoneMatrices;
+}
+
+bool SubModel::isAnimated() const
+{
+    return pAnimComponent != nullptr && pAnimComponent->isComplete();
 }
 
 GPM::AABB Model::getLocalAABB()

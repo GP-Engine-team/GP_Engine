@@ -56,13 +56,17 @@ namespace GPE RFKNamespace()
         }
 
         SubModel() = default;
+        ~SubModel();
 
         bool isValid() const;
+        std::vector<GPM::Mat4>& getFinalBonesTransforms() const;
+        bool isAnimated() const;
 
         RFKField(Serialize()) Model*    pModel    = nullptr;
         RFKField(Serialize()) Shader*   pShader   = nullptr;
         RFKField(Serialize()) Material* pMaterial = nullptr;
         RFKField(Serialize()) Mesh*     pMesh     = nullptr;
+        AnimationComponent*             pAnimComponent = nullptr;
 
         RFKField(Serialize()) bool enableBackFaceCulling = true;
         RFKField(Serialize()) bool castShadow            = true;
@@ -88,8 +92,6 @@ namespace GPE RFKNamespace()
     protected:
         RFKField(Inspect(), Serialize()) std::list<SubModel> m_subModels;
 
-        class AnimationComponent* m_animComponent = nullptr;
-
         virtual void updateToSystem() noexcept override;
 
     public:
@@ -105,13 +107,9 @@ namespace GPE RFKNamespace()
 
         void addSubModel(const SubModel::CreateArg& arg);
 
-        void setAnimComponent(AnimationComponent* newAnimComp);
+        void setAnimComponent(AnimationComponent* newAnimComp, int subModelIndex);
 
-        void bindSkin(class Skin& skin);
-
-        std::vector<GPM::Mat4>& getFinalBonesTransforms() const;
-
-        bool isAnimated() const;
+        void bindSkin(class Skin& skin, int subModelIndex);
 
         /**
          * @brief Function to return the local AABB (do not considere the position, scale and rotation of transform)
