@@ -16,6 +16,42 @@ namespace Editor
 
 using namespace GPE;
 
+void GameViewer::checkInputs(EditorStartup& startup)
+{
+    if (!ImGui::IsWindowHovered())
+    {
+        return;
+    }
+
+    // The cursor may be on the window's title bar or border, which we do not want to react to
+    ImVec2 topLeft = ImGui::GetWindowPos();
+    topLeft.y     += ImGui::GetWindowContentRegionMin().y;
+
+    const ImVec2 bottomRight{topLeft.x + framebuffer.width(), topLeft.y + framebuffer.height()};
+
+    if (!m_captureInputs
+        && startup.game().state == EGameState::PLAYING
+        && ImGui::IsMouseHoveringRect(topLeft, bottomRight)
+        && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+    {
+        captureInputs();
+    }
+
+    // The input manager is not used here because this class and its methods cannot be serialized,
+    // which prevents the use of InputComponent::bindAction()
+    else if (m_captureInputs && glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        releaseInputs();
+    }
+}
+
+GameViewer::GameViewer(int width, int height)
+    : framebuffer    {width, height},
+      window         {GPE::Engine::getInstance()->window.getGLFWWindow()},
+      m_captureInputs{false}
+{
+}
+
 void GameViewer::releaseInputs()
 {
     InputManager& io = Engine::getInstance()->inputManager;
@@ -36,13 +72,6 @@ void GameViewer::captureInputs()
     m_captureInputs = true;
 }
 
-GameViewer::GameViewer(int width, int height)
-    : framebuffer    {width, height},
-      window         {GPE::Engine::getInstance()->window.getGLFWWindow()},
-      m_captureInputs{false}
-{
-}
-
 void GameViewer::render(EditorStartup& startup)
 {
     // Use the whole window content
@@ -51,28 +80,7 @@ void GameViewer::render(EditorStartup& startup)
 
     if (ImGui::Begin("Game view") && &startup.game() != nullptr)
     {
-        // Decide what to do with inputs
-        { // The cursor may be on the window's title bar or border, which we do not want to react to
-            ImVec2 topLeft = ImGui::GetWindowPos();
-            topLeft.y     += ImGui::GetWindowContentRegionMin().y;
-
-            const ImVec2 bottomRight{topLeft.x + framebuffer.width(), topLeft.y + framebuffer.height()};
-
-            if (!m_captureInputs
-                && startup.game().state == EGameState::PLAYING
-                && ImGui::IsMouseHoveringRect(topLeft, bottomRight)
-                && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-            {
-                captureInputs();
-            }
-
-            // The input manager is not used here because this class and its methods cannot be serialized,
-            // which prevents the use of InputComponent::bindAction()
-            else if (m_captureInputs && glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            {
-                releaseInputs();
-            }
-        }
+        checkInputs(startup);
 
         const ImVec2 size{ImGui::GetContentRegionAvail()};
 
