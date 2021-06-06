@@ -94,8 +94,11 @@ void SpawnManager::update(double deltaTime)
                                   position2D.y + spawnerPosition.z};
 
         /*Spawn this entity*/
-        GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer.pData);
-        spawnedEntity->getTransform().setTranslation(newPosition);
+        if (m_entitiesToSpawnInfo[indexEntityToSpawn].prefab != nullptr)
+        {
+            GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer.pData);
+            spawnedEntity->getTransform().setTranslation(newPosition);
+        }
     }
 }
 

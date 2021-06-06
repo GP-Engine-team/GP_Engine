@@ -33,13 +33,21 @@ void BaseEnemy::start()
     m_target = &playerGO->getOrCreateComponent<BaseCharacter>();
     GAME_ASSERT(m_target, "Player Base character component not found");
 
-    m_animComp = &m_gameObject->getOrCreateComponent<GPE::AnimationComponent>();
-    GAME_ASSERT(m_animComp, "Null");
+    m_animComps = m_gameObject->getComponents<GPE::AnimationComponent>();
 
     m_controller = &m_gameObject->getOrCreateComponent<GPE::CharacterController>();
     GAME_ASSERT(m_controller, "Null");
 
     m_source->playSound("Zombie", true);
+
+    if (m_walkAnimation != nullptr)
+    {
+        for (GPE::AnimationComponent* animComp : m_animComps)
+        {
+            if (animComp != nullptr)
+                animComp->playAnimation(m_walkAnimation);
+        }
+    }
 }
 
 void BaseEnemy::onPostLoad()
@@ -104,17 +112,27 @@ void BaseEnemy::onDeath()
 {
     BaseCharacter::onDeath();
 
-    const char* src = "resources\\Animations\\ZombieDeath.GPAnimation";
+    //const char* src = "resources\\Animations\\ZombieDeath.GPAnimation";
 
-    GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
-    if (anim == nullptr)
+    //GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
+    //if (anim == nullptr)
+    //{
+    //    anim = &Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src));
+    //}
+
+    if (m_deathAnimation != nullptr)
     {
-        anim = &Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src));
-    }
+        for (GPE::AnimationComponent* animComp : m_animComps)
+        {
+            if (animComp != nullptr)
+            {
+                animComp->playAnimation(m_deathAnimation);
+                animComp->shouldLoop  = false;
+                m_animDeathCounterMax  = m_deathAnimation->getDuration();
 
-    m_animComp->playAnimation(anim);
-    m_animComp->shouldLoop = false;
-    m_animDeathCounterMax  = anim->getDuration();
+            }
+        }
+    }
 
     m_controller->setActive(false);
     m_source->setActive(false);
