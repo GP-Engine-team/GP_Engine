@@ -23,6 +23,7 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
+#include <stb/stb_image.h>
 
 using namespace GPE;
 
@@ -49,6 +50,20 @@ void Editor::setupDearImGui()
     ImGui::StyleColorsDark();
     ImGuiLoadStyle(PATH_UI_STYLE, ImGui::GetStyle());
 }
+
+
+void Editor::setupWindowIcon()
+{
+    GLFWimage icon;
+
+    icon.pixels = stbi_load("..\\..\\editor\\resources\\icone\\green_portal.png",
+                            &icon.width, &icon.height, nullptr, 4);
+
+    glfwSetWindowIcon(m_window, 1, &icon);
+
+    stbi_image_free(icon.pixels);
+}
+
 
 void Editor::renderStyleEditor()
 {
@@ -394,11 +409,24 @@ void Editor::unbindCurrentScene()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : sceneEditor(editedScene), gameViewer{}, logInspector{}, projectContent(*this),
-      sceneGraph(*this), gameControlBar{}, saveFolder{}, m_window{window}, inspectedObject{nullptr},
-      showAppStyleEditor{false}, showImGuiDemoWindows{false}
+    : sceneEditor         (editedScene),
+      gameViewer          {},
+      logInspector        {},
+      projectContent      (*this),
+      sceneGraph          (*this),
+      gameControlBar      {},
+      paperPress          {},
+      saveFolder          {},
+      m_window            {window},
+      inspectedObject     {nullptr},
+      reloadableCpp       {nullptr},
+      showAppStyleEditor  {false},
+      showImGuiDemoWindows{false},
+      showShadowMap       {false},
+      OnUIBeginFrame      {}
 {
     setupDearImGui();
+    setupWindowIcon();
 }
 
 void Editor::setSceneInEdition(GPE::Scene& scene)
