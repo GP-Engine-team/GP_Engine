@@ -28,12 +28,13 @@ private:
     RFKField(Inspect("setSkin"), Serialize()) Skin*            m_skin             = nullptr;
     RFKField(Inspect(), Serialize()) float                     m_currentTime = 0.f; // in seconds
     //RFKField(Inspect(), Serialize()) float                   m_nextAnimTime = 0.f;
-    RFKField(Inspect(), Serialize()) float                     m_timeScale = 1.f;
+    RFKField(Inspect()) float                     m_timeScale = 1.f;
     RFKField(Inspect("setSubModelIndex"), Serialize()) int     m_subModelIndex = -1;
 
     RFKField(Inspect(), Serialize()) float                     m_nextAnimTime     = 0.f; // in seconds
     RFKField() Animation*                                      m_nextAnimation = nullptr;
-    RFKField() float                                           m_blendTime       = 0.3f;
+    RFKField(Inspect()) float                                  m_nextTimeScale    = 1.f;
+    RFKField() float                                           m_blendTime        = 0.3f;
 
     //float blendAlpha = 0.f;
     std::vector<size_t> skeletonBoneIDToAnimationBoneID;
@@ -65,7 +66,7 @@ public:
         */
     void update(float dt);
 
-    void playAnimation(Animation* pAnimation, float startTime = 0.f);
+    void playAnimation(Animation * pAnimation, float startTime = 0.f, float nextTimeScale = 1.f);
     void setCurrentTime(float newTime);
 
     void calculateBoneTransform(const struct AssimpNodeData& node, const GPM::mat4& parentTransform);
@@ -74,7 +75,7 @@ public:
     void setSkeleton(Skeleton* skeleton);
     void setSkin(Skin* skin);
     void setCurrentAnimDuration(float newDuration);
-    void setNextAnim(Animation* nextAnim, float blendTime = 1.f);
+    void setNextAnim(Animation* nextAnim, float blendTime = 1.f, float nextTimeScale = 1.f);
 
     virtual void onPostLoad() override;
 

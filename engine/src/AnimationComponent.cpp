@@ -91,9 +91,11 @@ void AnimationComponent::setNextAnimAsCurrent()
     m_currentAnimation              = m_nextAnimation;
     m_currentTime                   = m_nextAnimTime;
     shouldLoop                      = shouldNextLoop;
+    m_timeScale                     = m_nextTimeScale;
     m_nextAnimTime                  = 0.f;
     m_nextAnimation                 = nullptr;
     shouldNextLoop                  = true;
+    m_nextTimeScale                 = 1.f;
     skeletonBoneIDToAnimationBoneID = std::move(skeletonBoneIDToNextAnimBoneID);
 }
 
@@ -103,7 +105,7 @@ void AnimationComponent::update(float deltaTime)
     {
         if (m_nextAnimation != nullptr)
         {
-            m_nextAnimTime += deltaTime * m_timeScale;
+            m_nextAnimTime += deltaTime * m_nextTimeScale;
             if (m_nextAnimTime >= m_blendTime)
             {
                 setNextAnimAsCurrent();
@@ -136,19 +138,20 @@ void AnimationComponent::update(float deltaTime)
     }
 }
 
-void AnimationComponent::setNextAnim(Animation* nextAnim, float blendTime)
+void AnimationComponent::setNextAnim(Animation* nextAnim, float blendTime, float nextTimeScale)
 {
     if (m_currentAnimation == nextAnim || m_nextAnimation == nextAnim)
         return;
 
     if (m_currentAnimation == nullptr)
     {
-        playAnimation(nextAnim);
+        playAnimation(nextAnim, 0.f, nextTimeScale);
     }
     else if (m_nextAnimation == nullptr)
     {
         m_nextAnimation = nextAnim;
         m_blendTime     = blendTime;
+        m_nextTimeScale = nextTimeScale;
 
         skeletonBoneIDToNextAnimBoneID.resize(m_skeleton->getNbBones());
 
@@ -206,7 +209,7 @@ void AnimationComponent::updateAnimData(bool wasComplete)
     }
 }
 
-void AnimationComponent::playAnimation(Animation* pAnimation, float startTime)
+void AnimationComponent::playAnimation(Animation* pAnimation, float startTime, float nextTimeScale)
 {
     if (m_currentAnimation == pAnimation)
         return;
@@ -222,7 +225,7 @@ void AnimationComponent::playAnimation(Animation* pAnimation, float startTime)
 
     m_currentAnimation = pAnimation;
     m_currentTime      = startTime;
-    m_timeScale        = 1.f;
+    m_timeScale        = nextTimeScale;
 
     skeletonBoneIDToAnimationBoneID.resize(m_skeleton->getNbBones());
 
