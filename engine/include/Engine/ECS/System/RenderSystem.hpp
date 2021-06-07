@@ -76,6 +76,22 @@ public:
                            std::vector<Camera*>&, std::vector<Light*>&, std::vector<ParticleComponent*>&,
                            std::vector<DebugShape>&, std::vector<DebugLine::Point>&, std::vector<ShadowMap>&, Camera*)>;
 
+    struct FrustumRenderStats
+    {
+        size_t totalTriangleRequest = 0u;
+        size_t numberTriangleDraw   = 0u;
+        size_t totalMeshRequest     = 0u;
+        size_t numberMeshDraw       = 0u;
+
+        void reset()
+        {
+            totalTriangleRequest = 0u;
+            numberTriangleDraw   = 0u;
+            totalMeshRequest     = 0u;
+            numberMeshDraw       = 0u;
+        }
+    };
+
 protected:
     inline static constexpr size_t  m_maxNbBones = 200;
     std::vector<Renderer*>          m_pRenderers;
@@ -134,11 +150,12 @@ public:
 
     void renderDebugShape(Camera& observer) noexcept;
     void renderDebugLine(Camera& observer) noexcept;
-    void renderFrustumCulling() noexcept;
+    void renderFrustumCulling(FrustumRenderStats& stats) noexcept;
     void shadowMapPipeline() noexcept;
 
     /**
-     * @brief Render the scene thanks to the call back set in input. This callback will be used as the render pipeline.
+     * @brief Render the scene thanks to the call back set in input. This callback will be used as the render
+     * pipeline.
      * @param renderPipeline
      * @return
      */

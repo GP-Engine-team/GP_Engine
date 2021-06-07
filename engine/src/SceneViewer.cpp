@@ -280,7 +280,7 @@ void SceneViewer::update()
     }
 }
 
-void SceneViewer::render() const
+void SceneViewer::render()
 {
     pScene->sceneRenderer.setDefaultMainCamera();
 
@@ -288,7 +288,10 @@ void SceneViewer::render() const
         Engine::getInstance()->physXSystem.drawDebugScene();
 
     if (drawFrustumScene)
-        pScene->sceneRenderer.renderFrustumCulling();
+    {
+        frustumDrawStats.reset();
+        pScene->sceneRenderer.renderFrustumCulling(frustumDrawStats);
+    }
 
     // Observe previous camera
     pScene->sceneRenderer.setMainCamera(&camera);
@@ -324,17 +327,15 @@ void SceneViewer::lookAtObject(const GameObject& GOToLook)
 {
     using namespace GPM;
 
-    const TransformComponent &cam   {cameraOwner->getTransform()},
-                             &target{GOToLook.getTransform()};
+    const TransformComponent &cam{cameraOwner->getTransform()}, &target{GOToLook.getTransform()};
 
     // Set defaults
-    startPos      = finalPos = cameraOwner->getTransform().getGlobalPosition();
+    startPos = finalPos = cameraOwner->getTransform().getGlobalPosition();
     startRotation = finalRotation = cameraOwner->getTransform().getGlobalRotation();
 
     { // Find the position which must be reached at the end of the transition
         const Vec3 pos0{cam.getGlobalPosition()};
-        const Vec3 pos1 = [&]() -> const Vec3
-        {
+        const Vec3 pos1 = [&]() -> const Vec3 {
             Vec3 flatForward{target.getGlobalPosition() - cam.getGlobalPosition()};
             flatForward.y = .0f;
             flatForward.safelyNormalize();
@@ -354,8 +355,7 @@ void SceneViewer::lookAtObject(const GameObject& GOToLook)
     }
 
     // Find the orientation which must be reached at the end of the transition
-    const f32 angle = [&]() -> const f32
-    {
+    const f32 angle = [&]() -> const f32 {
         const Vec3 flatTargetPos{target.getGlobalPosition().x, .0f, target.getGlobalPosition().z};
         const Vec3 to{flatTargetPos - finalPos};
 

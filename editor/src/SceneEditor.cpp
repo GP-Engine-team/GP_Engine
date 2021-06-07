@@ -346,7 +346,29 @@ void SceneEditor::render(Editor& editorContext)
         view.resize(int(size.x), int(size.y));
         view.render();
 
+        const ImVec2 cursPo = ImGui::GetCursorPos();
         ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
+
+        if (view.drawFrustumScene)
+        {
+            ImGui::SetCursorPos(cursPo);
+
+            ImGui::Text("Triangle draw request : %d", view.frustumDrawStats.totalTriangleRequest);
+            ImGui::Text("Triangle discard : %d",
+                        view.frustumDrawStats.totalTriangleRequest - view.frustumDrawStats.numberTriangleDraw);
+            ImGui::Text("Triangle draw : %d", view.frustumDrawStats.numberTriangleDraw);
+            ImGui::Text("Triangle discard percent : %f",
+                        100.f - (view.frustumDrawStats.numberTriangleDraw /
+                                 double(view.frustumDrawStats.totalTriangleRequest) * 100.f));
+            ImGui::Spacing();
+
+            ImGui::Text("Mesh draw request : %d", view.frustumDrawStats.totalMeshRequest);
+            ImGui::Text("Mesh discard : %d",
+                        view.frustumDrawStats.totalMeshRequest - view.frustumDrawStats.numberMeshDraw);
+            ImGui::Text("Mesh draw : %d", view.frustumDrawStats.numberMeshDraw);
+            ImGui::Text("Mesh discard percent : %f", 100.f - (view.frustumDrawStats.numberMeshDraw /
+                                                              double(view.frustumDrawStats.totalMeshRequest) * 100.f));
+        }
 
         if (inspected)
         {

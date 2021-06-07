@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <Engine/ECS/System/RenderSystem.hpp>
 #include <GPM/Quaternion.hpp>
 #include <GPM/Vector3.hpp>
 
@@ -27,11 +28,14 @@ public:
     Camera&         camera;
     InputComponent& inputs;
     Scene*          pScene = nullptr;
-    unsigned int    textureID;
-    bool            drawFrustumScene = false;
-    bool            drawDebugShape   = true;
-    bool            drawDebugPhysic  = false;
-    bool            drawDebugLine    = true;
+
+    RenderSystem::FrustumRenderStats frustumDrawStats;
+
+    unsigned int textureID;
+    bool         drawFrustumScene = false;
+    bool         drawDebugShape   = true;
+    bool         drawDebugPhysic  = false;
+    bool         drawDebugLine    = true;
 
 private:
     // TODO: factorize framebuffer and renderbuffer in classes
@@ -80,7 +84,7 @@ public:
     void bindScene(Scene& scene);
     void unbindScene();
     void update();
-    void render() const;
+    void render();
     void captureInputs(bool shouldCapture);
     bool capturingInputs() const;
 
