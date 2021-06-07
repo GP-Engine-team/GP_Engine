@@ -140,5 +140,6 @@ void SpawnManager::autoGenerateLinearDifficulty(unsigned int count, const Diffic
 
 void SpawnManager::increaseDifficulty()
 {
+    m_player->getComponent<AudioComponent>()->playSound("difficultyIncreased", true, true);
     m_currentDifficulty = std::min(m_currentDifficulty + 1, (unsigned int)(m_difficultyInfo.size() - 1));
 }

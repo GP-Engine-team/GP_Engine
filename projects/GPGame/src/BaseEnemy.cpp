@@ -39,7 +39,7 @@ void BaseEnemy::start()
     m_controller = &m_gameObject->getOrCreateComponent<GPE::CharacterController>();
     GAME_ASSERT(m_controller, "Null");
 
-    m_source->playSound("Zombie", true);
+    m_source->playSound("Zombie", true, false);
 }
 
 void BaseEnemy::onPostLoad()

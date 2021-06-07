@@ -45,29 +45,29 @@ namespace GPG RFKNamespace()
 
         RFKField(Inspect(), Serialize()) GPE::Texture* m_buttonTexture;
 
-        RFKField(Serialize(), Inspect(), ReadOnly()) float m_animDamageAnimCounter    = 0.f;
-        RFKField(Inspect(), Serialize()) float             m_animDamageAnimCounterMax = 0.1f;
-        RFKField(Inspect(), Serialize()) float             m_damageShakeStrength = 1.f;
-        bool                                               m_isPlayDamageAnimation    = false;
+        RFKField(Serialize(), Inspect(), ReadOnly()) float            m_animDamageAnimCounter    = 0.f;
+        RFKField(Inspect(), Serialize()) float                        m_animDamageAnimCounterMax = 0.1f;
+        RFKField(Inspect(), Serialize()) float                        m_damageShakeStrength      = 1.f;
+        bool                                                          m_isPlayDamageAnimation    = false;
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> m_cameraGO;
 
     public:
-        RFKField(Inspect(), Serialize()) float radiusLootCollection = 50.f;
+        RFKField(Inspect(), Serialize()) float     radiusLootCollection = 50.f;
+        RFKField(Serialize()) GPE::AudioComponent* source               = nullptr;
 
     protected:
         RFKField(Serialize()) bool displayDepthMenu = false;
         RFKField(Serialize()) bool displayWinMenu   = false;
 
-        RFKField(Serialize()) GPE::InputComponent* input  = nullptr;
-        RFKField(Serialize()) GPE::AudioComponent* source = nullptr;
+        RFKField(Serialize()) GPE::InputComponent* input = nullptr;
 
         RFKField(Inspect(), Serialize()) std::vector<GPE::Linker<GPE::GameObject>> m_firearmsGO;
         RFKField() std::vector<Firearm*>                                           m_firearms;
 
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_groundParticleComponent;
 
-    protected: 
-    RFKMethod() void updateDamageAnimation(float t);
+    protected:
+        RFKMethod() void updateDamageAnimation(float t);
 
     public:
         BasePlayer() noexcept = default;

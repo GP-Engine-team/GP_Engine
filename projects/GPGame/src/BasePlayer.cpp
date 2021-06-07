@@ -1,15 +1,15 @@
 ﻿
 #include <AL/alc.h>
 #include <Engine/Core/Debug/Log.hpp>
-#include <Engine/Core/Tools/Interpolation.hpp>
-#include <gpm/Random.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
+#include <Engine/Core/Tools/Interpolation.hpp>
 #include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
+#include <gpm/Random.hpp>
 
 #include <PhysX/PxRigidActor.h>
 
@@ -42,14 +42,38 @@ void BasePlayer::onPostLoad()
     input  = &getOwner().getOrCreateComponent<GPE::InputComponent>();
     source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
 
-    GPE::Wave testSound3("./resources/sounds/BGM.wav", "BGM");
+    GPE::Wave bgm("./resources/sounds/BGM.wav", "BGM");
+    GPE::Wave metalHurted("./resources/sounds/metalHurted.wav", "metalHurted");
+    GPE::Wave reload("./resources/sounds/reload.wav", "reload");
+    GPE::Wave rockHurted("./resources/sounds/rockHurted.wav", "rockHurted");
+    GPE::Wave wallHurted("./resources/sounds/wallHurted.wav", "wallHurted");
+    GPE::Wave woodHurted("./resources/sounds/woodHurted.wav", "woodHurted");
+    GPE::Wave zombieHurted("./resources/sounds/zombieHurted.wav", "zombieHurted");
+    GPE::Wave groundHurted("./resources/sounds/groundHurted.wav", "groundHurted");
+    GPE::Wave difficultyIncreased("./resources/sounds/difficultyIncreased.wav", "difficultyIncreased");
 
-    GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch    = 1.f;
-    sourceSettings.loop     = AL_TRUE;
-    sourceSettings.relative = AL_TRUE;
+    GPE::SourceSettings bgmSourceSettings;
+    bgmSourceSettings.pitch    = 1.f;
+    bgmSourceSettings.loop     = AL_TRUE;
+    bgmSourceSettings.relative = AL_TRUE;
 
-    source->setSound("BGM", "BGM", sourceSettings);
+    GPE::SourceSettings sfxSourceSettings;
+    sfxSourceSettings.pitch       = 1.f;
+    sfxSourceSettings.gain        = 1.f;
+    sfxSourceSettings.loop        = AL_FALSE;
+    sfxSourceSettings.relative    = AL_FALSE;
+    sfxSourceSettings.spatialized = AL_TRUE;
+
+    source->setSound("BGM", "BGM", bgmSourceSettings);
+    source->setSound("metalHurted", "metalHurted", sfxSourceSettings);
+    source->setSound("reload", "reload", sfxSourceSettings);
+    source->setSound("rockHurted", "rockHurted", sfxSourceSettings);
+    source->setSound("wallHurted", "wallHurted", sfxSourceSettings);
+    source->setSound("woodHurted", "woodHurted", sfxSourceSettings);
+    source->setSound("zombieHurted", "zombieHurted", sfxSourceSettings);
+    source->setSound("groundHurted", "groundHurted", sfxSourceSettings);
+    source->setSound("difficultyIncreased", "difficultyIncreased", sfxSourceSettings);
+    source->setSound("reload", "reload", sfxSourceSettings);
 
     getOwner().getTransform().OnUpdate += Function::make(this, "updateListener");
 
@@ -91,7 +115,7 @@ void BasePlayer::start()
     input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
 
-    source->playSound("BGM", true);
+    source->playSound("BGM", true, false);
 
     { // Cursor
         GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
@@ -104,12 +128,18 @@ void BasePlayer::rotate(const GPM::Vec2& deltaDisplacement)
 {
     const Quat& orientation{transform().getSpacialAttribut().rotation};
     const Vec2  axis{deltaDisplacement.rotated90()};
-    const float deltaTime = float(Engine::getInstance()->timeSystem.getDeltaTime());
+    const float deltaTime{float(Engine::getInstance()->timeSystem.getDeltaTime())};
     const Quat  rotX{Quat::angleAxis(axis.x * controller->getAngularSpeed() * deltaTime, Vec3::right())};
     const Quat  rotY{Quat::angleAxis(axis.y * controller->getAngularSpeed() * deltaTime, Vec3::up())};
     const Quat  newRot{rotY * orientation * rotX};
+    Vec3        angles{newRot.eulerAngles()};
 
-    transform().setRotation(newRot);
+    if (fabs(angles.x) >= HALF_PI)
+    {
+        angles.x = .0f;
+    }
+
+    transform().setRotation(Quat::fromEuler(angles));
 }
 
 // TOOD: Detect whether we are in editor or launcher
@@ -136,12 +166,12 @@ void BasePlayer::raycastExample()
 
 void BasePlayer::playAmbiantMusic()
 {
-    source->playSound("BGM", false);
+    source->playSound("BGM", false, false);
 }
 
 void BasePlayer::playAmbiantMusicForce()
 {
-    source->playSound("BGM", true);
+    source->playSound("BGM", true, false);
 }
 
 void BasePlayer::stopAllMusic()
@@ -398,7 +428,7 @@ void BasePlayer::onWin()
 void BasePlayer::updateDamageAnimation(float t)
 {
     const float newT = easeInCirc(t);
- 
+
     Vec3 moveStrength = Random::unitPeripheralSphericalCoordonate() * m_damageShakeStrength * (1.f - newT);
 
     moveStrength.z = 0.f;
@@ -410,5 +440,4 @@ void BasePlayer::takeDamage(float damage)
     BaseCharacter::takeDamage(damage);
     m_isPlayDamageAnimation = true;
     m_animDamageAnimCounter = 0.f;
-
 }

@@ -45,5 +45,5 @@ void SpatializedSoundPlayerScript::start()
     enableUpdate(true);
     GAME_ASSERT(source, "null");
 
-    source->playSound("BA", true);
+    source->playSound("BA", true, false);
 }

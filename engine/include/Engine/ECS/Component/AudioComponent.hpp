@@ -35,7 +35,7 @@ namespace GPE RFKNamespace()
 
     struct RFKStruct(Serialize(), Inspect()) SourceData
     {
-        RFKField(Serialize(), Inspect()) ALuint         source;
+        RFKField(Serialize(), Inspect()) ALuint         source     = 0;
         RFKField(Serialize(), Inspect()) ALint          state      = AL_INITIAL;
         RFKField(Serialize(), Inspect()) bool           isRelative = AL_FALSE;
         RFKField(Serialize(), Inspect()) SourceSettings settings;
@@ -61,6 +61,7 @@ namespace GPE RFKNamespace()
 
     public:
         RFKField(Serialize(), Inspect()) std::unordered_map<std::string, SourceData> sources;
+        std::vector<std::unique_ptr<SourceData>>                                     sfxSources;
 
     protected:
         virtual void updateToSystem() noexcept override;
@@ -81,9 +82,17 @@ namespace GPE RFKNamespace()
         void setSound(const char* soundName, const char* sourceName, const SourceSettings& settings) noexcept;
 
         /**
+         * @brief Create a temporary sfx to be played;
+         * @param soundName
+         * @param settings
+         * @return
+         */
+        SourceData* createSFX(const char* soundName, const SourceSettings& settings) noexcept;
+
+        /**
          * @brief Play the current bound sound
          */
-        void playSound(const char* name, bool forceStart) noexcept;
+        void playSound(const char* name, bool forceStart = false, bool soundEffect = false) noexcept;
 
         /**
          * @brief Stop the current bound sound
@@ -100,6 +109,7 @@ namespace GPE RFKNamespace()
 
         void updateSources();
         void updateSource(SourceData * source);
+        void updateSFX(size_t index);
 
         [[nodiscard]] int getKey() const noexcept
         {
