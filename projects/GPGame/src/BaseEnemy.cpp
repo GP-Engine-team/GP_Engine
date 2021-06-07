@@ -47,7 +47,7 @@ void BaseEnemy::onPostLoad()
 
     GPE::SourceSettings sourceSettings;
     sourceSettings.pitch = 1.f;
-    sourceSettings.gain *= 100.f;
+    sourceSettings.gain = 1000000.f;
     sourceSettings.spatialized   = AL_TRUE;
     sourceSettings.relative      = AL_FALSE;
     sourceSettings.loop          = AL_TRUE;
