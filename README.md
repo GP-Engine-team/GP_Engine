@@ -38,6 +38,7 @@ Here is a [link toward a build](https://drive.google.com/file/d/1dIkGqgNC_5oT-BV
 - [x] Custom resource and resource importation under multiple formats (.fbx, .obj, .wav, .jpeg, ...)
 - [x] Custom prefab exportation and importation
 - [x] Sound (Stereo, mono, spatialized)
+- [x] In-game UI
 - [x] Lights
 - [x] Shadows
 - [x] Scripts
