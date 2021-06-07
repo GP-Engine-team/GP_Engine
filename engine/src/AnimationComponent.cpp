@@ -90,8 +90,10 @@ void AnimationComponent::setNextAnimAsCurrent()
 {
     m_currentAnimation              = m_nextAnimation;
     m_currentTime                   = m_nextAnimTime;
+    shouldLoop                      = shouldNextLoop;
     m_nextAnimTime                  = 0.f;
     m_nextAnimation                 = nullptr;
+    shouldNextLoop                  = true;
     skeletonBoneIDToAnimationBoneID = std::move(skeletonBoneIDToNextAnimBoneID);
 }
 
@@ -102,7 +104,7 @@ void AnimationComponent::update(float deltaTime)
         if (m_nextAnimation != nullptr)
         {
             m_nextAnimTime += deltaTime * m_timeScale;
-            if (m_nextAnimTime > m_blendTime)
+            if (m_nextAnimTime >= m_blendTime)
             {
                 setNextAnimAsCurrent();
             }
@@ -161,17 +163,16 @@ void AnimationComponent::setNextAnim(Animation* nextAnim, float blendTime)
         };
 
         m_skeleton->forEachAssimpNodeData(m_skeleton->m_root, [&](AssimpNodeData& node) {
-            auto it = std::find_if(m_nextAnimation->m_bones.begin(), m_nextAnimation->m_bones.end(), [&](const Bone& bone) {
-                return getBoneName(bone.getName()) == getBoneName(node.name);
-            });
+            auto it =
+                std::find_if(m_nextAnimation->m_bones.begin(), m_nextAnimation->m_bones.end(),
+                             [&](const Bone& bone) { return getBoneName(bone.getName()) == getBoneName(node.name); });
             if (it != m_nextAnimation->m_bones.end())
             {
                 skeletonBoneIDToNextAnimBoneID[node.boneID] = it - m_nextAnimation->m_bones.begin();
             }
             else
             {
-                skeletonBoneIDToNextAnimBoneID[node.boneID] =
-                    m_skeleton->getNbBones(); // These bones won't be animated
+                skeletonBoneIDToNextAnimBoneID[node.boneID] = m_skeleton->getNbBones(); // These bones won't be animated
             }
         });
     }
@@ -237,10 +238,7 @@ void AnimationComponent::playAnimation(Animation* pAnimation, float startTime)
 
     m_skeleton->forEachAssimpNodeData(m_skeleton->m_root, [&](AssimpNodeData& node) {
         auto it = std::find_if(pAnimation->m_bones.begin(), pAnimation->m_bones.end(),
-                               [&](const Bone& bone) 
-        { 
-            return getBoneName(bone.getName()) == getBoneName(node.name);
-        });
+                               [&](const Bone& bone) { return getBoneName(bone.getName()) == getBoneName(node.name); });
         if (it != pAnimation->m_bones.end())
         {
             skeletonBoneIDToAnimationBoneID[node.boneID] = it - pAnimation->m_bones.begin();
@@ -261,7 +259,7 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
 {
     GPM::Mat4 nodeTransform = node.transformation;
 
-    //Bone* bone = m_currentAnimation->findBone(node.name);
+    // Bone* bone = m_currentAnimation->findBone(node.name);
     if (node.boneID < skeletonBoneIDToAnimationBoneID.size() &&
         skeletonBoneIDToAnimationBoneID[node.boneID] < m_currentAnimation->m_bones.size())
     {
@@ -270,8 +268,32 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
 
         if (bone)
         {
-            bone->update(m_currentTime * 1000.f /* to milliseconds */);
-            nodeTransform = bone->getLocalTransform();
+            if (m_nextAnimation == nullptr)
+            {
+                bone->update(m_currentTime * 1000.f /* to milliseconds */);
+                nodeTransform = bone->getLocalTransform();
+            }
+            else
+            {
+                Bone* otherBone = &m_nextAnimation->m_bones[skeletonBoneIDToNextAnimBoneID[node.boneID]];
+
+                float           currentTimeMs = m_currentTime * 1000.f; /* to milliseconds */
+                const GPM::Vec3 translation1  = bone->getInterpolatedPosition(currentTimeMs);
+                const GPM::Quat rotation1     = bone->getInterpolatedRotation(currentTimeMs);
+                const GPM::Vec3 scale1        = bone->getInterpolatedScale(currentTimeMs);
+
+                float           nextAnimTimeMs = fmod(m_nextAnimTime, m_nextAnimation->getDuration()) * 1000.f; /* to milliseconds */
+                const GPM::Vec3 translation2   = otherBone->getInterpolatedPosition(nextAnimTimeMs);
+                const GPM::Quat rotation2      = otherBone->getInterpolatedRotation(nextAnimTimeMs);
+                const GPM::Vec3 scale2         = otherBone->getInterpolatedScale(nextAnimTimeMs);
+
+                float           alpha       = m_nextAnimTime / m_blendTime;
+                const GPM::Mat4 translation = GPM::Transform::translation(translation1.lerp(translation2, alpha));
+                const GPM::Mat4 rotation    = GPM::toMatrix4(rotation1.nlerp(rotation2, alpha));
+                const GPM::Mat4 scale       = GPM::Transform::scaling(scale1.lerp(scale2, alpha));
+
+                nodeTransform = translation * rotation * scale;
+            }
         }
     }
 

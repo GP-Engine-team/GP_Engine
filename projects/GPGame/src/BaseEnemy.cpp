@@ -99,13 +99,13 @@ void BaseEnemy::update(double deltaTime)
                     {
                         if (animComp != nullptr)
                         {
-                            animComp->playAnimation(m_attackAnimation);
-                            animComp->shouldLoop  = false;
+                            animComp->setNextAnim(m_attackAnimation);
+                            animComp->shouldNextLoop  = false;
                             m_animDeathCounterMax = m_attackAnimation->getDuration();
                         }
                     }
                     m_currentState = EState::ATTACKING;
-                    m_nextAnimTime = currentTime + m_attackAnimation->getDuration();
+                    m_nextAnimTime = currentTime + m_attackAnimation->getDuration() - m_animTransitionTime;
                     m_nextHitDelay = currentTime + m_attackAnimation->getDuration() * m_hitDelayRelativeToAnimLength;
                     m_attackCounterMax = m_attackAnimation->getDuration();
                 }
@@ -130,7 +130,7 @@ void BaseEnemy::update(double deltaTime)
                 for (GPE::AnimationComponent* animComp : m_animComps)
                 {
                     if (animComp != nullptr)
-                        animComp->playAnimation(m_walkAnimation);
+                        animComp->setNextAnim(m_walkAnimation, m_animTransitionTime);
                 }
             }
         }
@@ -178,7 +178,7 @@ void BaseEnemy::onDeath()
         {
             if (animComp != nullptr)
             {
-                animComp->playAnimation(m_deathAnimation);
+                animComp->setNextAnim(m_deathAnimation, m_animTransitionTime);
                 animComp->shouldLoop  = false;
                 m_animDeathCounterMax = m_deathAnimation->getDuration();
             }

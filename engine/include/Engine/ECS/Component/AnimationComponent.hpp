@@ -42,6 +42,7 @@ private:
 public:
     std::vector<GPM::Mat4>                m_finalBoneMatrices;
     RFKField(Inspect(), Serialize()) bool shouldLoop = true;
+    RFKField(Inspect(), Serialize()) bool shouldNextLoop = true;
 
 public:
     AnimationComponent(class GameObject & owner) noexcept;
@@ -73,7 +74,7 @@ public:
     void setSkeleton(Skeleton* skeleton);
     void setSkin(Skin* skin);
     void setCurrentAnimDuration(float newDuration);
-    void setNextAnim(Animation* nextAnim, float blendTime = 0.02f);
+    void setNextAnim(Animation* nextAnim, float blendTime = 1.f);
 
     virtual void onPostLoad() override;
 
