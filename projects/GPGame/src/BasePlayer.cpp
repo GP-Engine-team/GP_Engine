@@ -250,7 +250,8 @@ void BasePlayer::onGUI()
         PopFont();
 
         const float previousFontScale = GetFont()->Scale;
-        SetWindowFontScale(2.f * ratio);
+        PushFont(GetIO().Fonts->Fonts[2]);
+        SetWindowFontScale(1.f * ratio);
 
         SetNextElementLayout(0.5f, 0.5f, size, EHAlign::Middle, EVAlign::Middle);
         if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Main menu", size))
@@ -265,13 +266,15 @@ void BasePlayer::onGUI()
         {
             closeApplication();
         }
+        PopFont();
         ImGui::SetWindowFontScale(previousFontScale);
     }
     else
     {
         ImVec2      size              = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
         const float previousFontScale = GetFont()->Scale;
-        SetWindowFontScale(1.5f * ratio);
+        PushFont(GetIO().Fonts->Fonts[2]);
+        SetWindowFontScale(1.f * ratio);
 
         // Life bar
         SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
@@ -297,10 +300,11 @@ void BasePlayer::onGUI()
                        {0, 255, 0, 255}, {0, 0, 0, 255}, {0, 0, 0, 255}, "%.2f% / %.0f%");
         }
 
-        size = {GetWindowSize().x / 12.f * ratio, GetWindowSize().x / 12.f * ratio};
+        size = {GetWindowSize().x / 10.f * ratio, GetWindowSize().x / 10.f * ratio};
         // Fire arm stats
         if (m_firearms.size())
         {
+
             SetCursorPosX(GetStyle().FramePadding.x + GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
                           (GetWindowSize().x - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.05f -
                           size.x * 0.5f);
@@ -329,6 +333,7 @@ void BasePlayer::onGUI()
         SetNextElementLayout(0.95f, 0.f, size, EHAlign::Right, EVAlign::Top);
         Text("FPS : %0.0f", ImGui::GetIO().Framerate);
 
+        PopFont();
         ImGui::SetWindowFontScale(previousFontScale);
     }
 }

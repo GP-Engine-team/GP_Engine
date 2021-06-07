@@ -205,6 +205,7 @@ Game::Game()
     initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
     ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/Roboto-Medium.ttf", 14);
     ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/AovelSansRounded-rdDL.ttf", 60);
+    ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/Roboto-Medium.ttf", 30);
 
     // ============ RNG =============
     initSeed();
