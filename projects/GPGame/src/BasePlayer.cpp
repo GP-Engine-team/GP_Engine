@@ -43,14 +43,48 @@ void BasePlayer::onPostLoad()
     input  = &getOwner().getOrCreateComponent<GPE::InputComponent>();
     source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
 
-    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+    GPE::Wave bgm("./resources/sounds/BGM.wav", "BGM");
+    GPE::Wave metalHurted("./resources/sounds/metalHurted.wav", "metalHurted");
+    GPE::Wave reload("./resources/sounds/reload.wav", "reload");
+    GPE::Wave rockHurted("./resources/sounds/rockHurted.wav", "rockHurted");
+    GPE::Wave wallHurted("./resources/sounds/wallHurted.wav", "wallHurted");
+    GPE::Wave woodHurted("./resources/sounds/woodHurted.wav", "woodHurted");
+    GPE::Wave zombieHurted("./resources/sounds/zombieHurted.wav", "zombieHurted");
+    GPE::Wave groundHurted("./resources/sounds/groundHurted.wav", "groundHurted");
+    GPE::Wave difficultyIncreased("./resources/sounds/difficultyIncreased.wav", "difficultyIncreased");
+    GPE::Wave victory("./resources/sounds/victory.wav", "victory");
+    GPE::Wave defeat("./resources/sounds/defeat.wav", "defeat");
+    GPE::Wave arrival("./resources/sounds/arrival.wav", "arrival");
+    GPE::Wave extraction("./resources/sounds/extraction.wav", "extraction");
+    GPE::Wave playerHurted("./resources/sounds/playerHurted.wav", "playerHurted");
 
-    GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch    = 1.f;
-    sourceSettings.loop     = AL_TRUE;
-    sourceSettings.relative = AL_TRUE;
+    GPE::SourceSettings bgmSourceSettings;
+    bgmSourceSettings.pitch    = 1.f;
+    bgmSourceSettings.loop     = AL_TRUE;
+    bgmSourceSettings.relative = AL_TRUE;
 
-    source->setSound("Western", "Western", sourceSettings);
+    GPE::SourceSettings sfxSourceSettings;
+    sfxSourceSettings.pitch       = 1.f;
+    sfxSourceSettings.gain        = 1.f;
+    sfxSourceSettings.loop        = AL_FALSE;
+    sfxSourceSettings.relative    = AL_FALSE;
+    sfxSourceSettings.spatialized = AL_TRUE;
+
+    source->setSound("BGM", "BGM", bgmSourceSettings);
+    source->setSound("metalHurted", "metalHurted", sfxSourceSettings);
+    source->setSound("reload", "reload", sfxSourceSettings);
+    source->setSound("rockHurted", "rockHurted", sfxSourceSettings);
+    source->setSound("wallHurted", "wallHurted", sfxSourceSettings);
+    source->setSound("woodHurted", "woodHurted", sfxSourceSettings);
+    source->setSound("zombieHurted", "zombieHurted", sfxSourceSettings);
+    source->setSound("groundHurted", "groundHurted", sfxSourceSettings);
+    source->setSound("difficultyIncreased", "difficultyIncreased", sfxSourceSettings);
+    source->setSound("reload", "reload", sfxSourceSettings);
+    source->setSound("victory", "victory", sfxSourceSettings);
+    source->setSound("defeat", "defeat", sfxSourceSettings);
+    source->setSound("arrival", "arrival", sfxSourceSettings);
+    source->setSound("extraction", "extraction", sfxSourceSettings);
+    source->setSound("playerHurted", "playerHurted", sfxSourceSettings);
 
     getOwner().getTransform().OnUpdate += Function::make(this, "updateListener");
 
@@ -63,6 +97,8 @@ void BasePlayer::start()
 
     GAME_ASSERT(m_evacuationPoint.pData, "Missing m_evacuationPoint");
     GAME_ASSERT(m_buttonTexture, "No button texture selected");
+    GAME_ASSERT(m_bulletTexture.pTex, "No texture selected");
+    GAME_ASSERT(m_lootTexture.pTex, "No texture selected");
     GAME_ASSERT(input, "null");
     GAME_ASSERT(source, "null");
     GAME_ASSERT(m_firearmsGO.size(), "null");
@@ -94,7 +130,8 @@ void BasePlayer::start()
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
     input->bindAction("reload", EKeyMode::KEY_PRESSED, "Game", this, "reload");
 
-    source->playSound("Western", true);
+    source->playSound("BGM", true, false);
+    source->playSound("arrival", true, false);
 
     { // Cursor
         GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
@@ -107,12 +144,18 @@ void BasePlayer::rotate(const GPM::Vec2& deltaDisplacement)
 {
     const Quat& orientation{transform().getSpacialAttribut().rotation};
     const Vec2  axis{deltaDisplacement.rotated90()};
-    const float deltaTime = float(Engine::getInstance()->timeSystem.getDeltaTime());
+    const float deltaTime{float(Engine::getInstance()->timeSystem.getDeltaTime())};
     const Quat  rotX{Quat::angleAxis(axis.x * controller->getAngularSpeed() * deltaTime, Vec3::right())};
     const Quat  rotY{Quat::angleAxis(axis.y * controller->getAngularSpeed() * deltaTime, Vec3::up())};
     const Quat  newRot{rotY * orientation * rotX};
+    Vec3        angles{newRot.eulerAngles()};
 
-    transform().setRotation(newRot);
+    if (fabs(angles.x) >= HALF_PI)
+    {
+        return;
+    }
+
+    transform().setRotation(Quat::fromEuler(angles));
 }
 
 // TOOD: Detect whether we are in editor or launcher
@@ -139,12 +182,12 @@ void BasePlayer::raycastExample()
 
 void BasePlayer::playAmbiantMusic()
 {
-    source->playSound("Western", false);
+    source->playSound("BGM", false, false);
 }
 
 void BasePlayer::playAmbiantMusicForce()
 {
-    source->playSound("Western", true);
+    source->playSound("BGM", true, false);
 }
 
 void BasePlayer::stopAllMusic()
@@ -248,7 +291,8 @@ void BasePlayer::onGUI()
         PopFont();
 
         const float previousFontScale = GetFont()->Scale;
-        SetWindowFontScale(2.f * ratio);
+        PushFont(GetIO().Fonts->Fonts[2]);
+        SetWindowFontScale(1.f * ratio);
 
         SetNextElementLayout(0.5f, 0.5f, size, EHAlign::Middle, EVAlign::Middle);
         if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Main menu", size))
@@ -263,15 +307,21 @@ void BasePlayer::onGUI()
         {
             closeApplication();
         }
+        PopFont();
         ImGui::SetWindowFontScale(previousFontScale);
     }
     else
     {
-        ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
+        ImVec2      size              = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
+        const float previousFontScale = GetFont()->Scale;
+        PushFont(GetIO().Fonts->Fonts[2]);
+        SetWindowFontScale(1.f * ratio);
 
         // Life bar
         SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
         displayBar(m_currentLife, m_maxLife, size, 5.f, 3.f);
+
+        PushFont(GetIO().Fonts->Fonts[0]);
 
         // Stamina bar
         ImGui::SetCursorPosX(
@@ -292,14 +342,34 @@ void BasePlayer::onGUI()
             displayBar(m_evacuationPoint.pData->getTimer(), m_evacuationPoint.pData->getTimerDuration(), size, 2.f, 2.f,
                        {0, 255, 0, 255}, {0, 0, 0, 255}, {0, 0, 0, 255}, "%.2f% / %.0f%");
         }
+        PopFont();
 
+        size = {GetWindowSize().x / 10.f * ratio, GetWindowSize().x / 10.f * ratio};
         // Fire arm stats
         if (m_firearms.size())
         {
-            size = ImGui::CalcTextSize("30/30");
-            SetNextElementLayout(0.05f, 0.95f, size, EHAlign::Left, EVAlign::Bottom);
-            Text("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
-                 m_firearms.front()->getMagazine().getCapacity());
+
+            SetCursorPosX(GetStyle().FramePadding.x + GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+                          (GetWindowSize().x - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.05f -
+                          size.x * 0.5f);
+
+            SetCursorPosY(GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y +
+                          (GetWindowSize().y - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y) * 0.80f -
+                          size.y * 0.5f);
+
+            ImageWithTextRight((ImTextureID)m_bulletTexture.pTex->getID(),
+                               stringFormat("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
+                                            m_firearms.front()->getMagazine().getCapacity())
+                                   .c_str(),
+                               size);
+
+            // Loot count
+            SetCursorPosX(GetStyle().FramePadding.x + GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+                          (GetWindowSize().x - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.05f -
+                          size.x * 0.5f);
+
+            ImageWithTextRight((ImTextureID)m_lootTexture.pTex->getID(),
+                               stringFormat("%d / %d", m_lootCount, m_lootCountToWin).c_str(), size);
         }
 
         // FPS
@@ -307,10 +377,8 @@ void BasePlayer::onGUI()
         SetNextElementLayout(0.95f, 0.f, size, EHAlign::Right, EVAlign::Top);
         Text("FPS : %0.0f", ImGui::GetIO().Framerate);
 
-        // Loot count
-        size = ImGui::CalcTextSize("0 / 6");
-        SetNextElementLayout(0.95f, 0.95f, size, EHAlign::Left, EVAlign::Middle);
-        Text("%d / %d", m_lootCount, m_lootCountToWin);
+        PopFont();
+        ImGui::SetWindowFontScale(previousFontScale);
     }
 }
 
@@ -430,6 +498,7 @@ void BasePlayer::collectLoot(const Loot& loot)
     {
         m_evacuationPoint.pData->activeEvacutaitonPoint();
         isInEvacuationMode = true;
+        source->playSound("extraction", true, false);
     }
 }
 
@@ -438,6 +507,7 @@ void BasePlayer::onDeath()
     BaseCharacter::onDeath();
 
     input->setActive(false);
+    source->playSound("defeat", true, false);
 }
 
 void BasePlayer::onWin()
@@ -447,6 +517,7 @@ void BasePlayer::onWin()
     Engine::getInstance()->timeSystem.setTimeScale(0.0);
     Engine::getInstance()->inputManager.setCursorTrackingState(false);
     Engine::getInstance()->inputManager.setCursorLockState(false);
+    source->playSound("victory", true, false);
 }
 
 void BasePlayer::updateDamageAnimation(float t)
@@ -464,6 +535,7 @@ void BasePlayer::takeDamage(float damage)
     BaseCharacter::takeDamage(damage);
     m_isPlayDamageAnimation = true;
     m_animDamageAnimCounter = 0.f;
+    source->playSound("playerHurted", true, true);
 }
 
 void BasePlayer::inspect(GPE::InspectContext& context)

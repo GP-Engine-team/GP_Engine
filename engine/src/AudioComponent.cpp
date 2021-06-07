@@ -31,10 +31,44 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     SourceData*    source = getSource(sourceName);
     Sound::Buffer* buffer = Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName);
 
+    if (source->source == 0)
+    {
+
+        source->isRelative = settings.relative;
+        source->settings   = settings;
+        source->sourceName = sourceName;
+        source->soundName  = soundName;
+
+        AL_CALL(alGenSources, 1, &source->source);
+        AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
+        AL_CALL(alSourcef, source->source, AL_GAIN, settings.gain);
+        AL_CALL(alSource3f, source->source, AL_POSITION, settings.position.x, settings.position.y, settings.position.z);
+        AL_CALL(alSource3f, source->source, AL_VELOCITY, settings.velocity.x, settings.velocity.y, settings.velocity.z);
+        AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
+        AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, settings.relative);
+        AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(settings.rollOffFactor)));
+        AL_CALL(alSourcei, source->source, AL_MAX_DISTANCE, settings.radius);
+        AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
+    }
+
+    else
+    {
+        AL_CALL(alGenSources, 1, &source->source);
+        updateSource(source);
+        AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
+    }
+}
+
+SourceData* AudioComponent::createSFX(const char* soundName, const SourceSettings& settings) noexcept
+{
+    Sound::Buffer* buffer = Engine::getInstance()->resourceManager.get<Sound::Buffer>(soundName);
+
+    sfxSources.emplace_back(make_unique<SourceData>());
+    SourceData* source = sfxSources[sfxSources.size() - 1].get();
     source->isRelative = settings.relative;
     source->settings   = settings;
-    source->sourceName = sourceName;
     source->soundName  = soundName;
+    source->sourceName = soundName;
 
     AL_CALL(alGenSources, 1, &source->source);
     AL_CALL(alSourcef, source->source, AL_PITCH, settings.pitch);
@@ -44,8 +78,10 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, settings.relative);
     AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(settings.rollOffFactor)));
-    AL_CALL(alSourcei, source->source, AL_MAX_DISTANCE, source->settings.radius);
+    AL_CALL(alSourcei, source->source, AL_MAX_DISTANCE, settings.radius);
     AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
+
+    return source;
 }
 
 void AudioComponent::updateSource(SourceData* source)
@@ -58,6 +94,17 @@ void AudioComponent::updateSource(SourceData* source)
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, source->settings.relative);
     AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(source->settings.rollOffFactor)));
     AL_CALL(alSourcei, source->source, AL_MAX_DISTANCE, source->settings.radius);
+}
+
+void AudioComponent::updateSFX(size_t index)
+{
+    AL_CALL(alGetSourcei, sfxSources[index]->source, AL_SOURCE_STATE, &sfxSources[index]->state);
+    if (sfxSources[index]->state == AL_STOPPED)
+    {
+        AL_CALL(alDeleteSources, 1, &sfxSources[index]->source);
+        std::swap<std::unique_ptr<SourceData>>(sfxSources.back(), (sfxSources[index]));
+        sfxSources.pop_back();
+    }
 }
 
 SourceData* AudioComponent::getSource(const char* name) noexcept
@@ -74,11 +121,21 @@ SourceData* AudioComponent::getSource(const char* name) noexcept
     }
 }
 
-void AudioComponent::playSound(const char* name, bool forceStart) noexcept
+void AudioComponent::playSound(const char* name, bool forceStart, bool soundEffect) noexcept
 {
     if (m_isActivated)
     {
         SourceData* source = findSource(name);
+
+        if (soundEffect)
+        {
+            SourceData* newSFX = createSFX(name, source->settings);
+            AL_CALL(alSourcePlay, newSFX->source);
+            newSFX->state = AL_PLAYING;
+            return;
+        }
+
+        AL_CALL(alGetSourcei, source->source, AL_SOURCE_STATE, &source->state);
         if (source && (source->state != AL_PLAYING || forceStart))
         {
             AL_CALL(alSourcePlay, source->source);
@@ -167,6 +224,14 @@ void AudioComponent::updateSources()
                 updateSource(&value);
                 value.isDirty = false;
             }
+        }
+    }
+
+    if (!sfxSources.empty())
+    {
+        for (size_t i = 0; i < sfxSources.size(); i++)
+        {
+            updateSFX(i);
         }
     }
 }

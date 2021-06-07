@@ -56,7 +56,7 @@ void Firearm::start()
 
     GameObject* playerGO = getOwner().getParent();
     GAME_ASSERT(playerGO, "FireArm must be child of player");
-    m_player = playerGO->getComponent<BaseCharacter>();
+    m_player = playerGO->getComponent<BasePlayer>();
     GAME_ASSERT(m_player, "Missing baseChracter in parent gamObject");
 
     GAME_ASSERT(m_muzzleFlashEffect.pData, "Missing component");
@@ -97,7 +97,9 @@ void Firearm::triggered()
                     decaleGO.getTransform().setVecForward(rayNorm, (GPM::Vec3::right().cross(rayNorm).normalized()));
                 }
 
-                if (pOwner->getTag() == "Character")
+                std::string tag = pOwner->getTag();
+
+                if (tag == "Character")
                 {
                     BaseCharacter* const bc = pOwner->getComponent<BaseCharacter>();
 
@@ -112,8 +114,12 @@ void Firearm::triggered()
                             static_cast<unsigned int>(m_bloodEffect.pData->getCount() /
                                                       m_magazineStored.getCapacity()));
                     }
+                    GPE::SourceData* data   = m_player->source->findSource("zombieHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("zombieHurted", true, true);
                 }
-                else if(pOwner->getTag() == "Ground")
+                else if (tag == "Ground")
                 {
                     if (m_groundShootEffect.pData)
                     {
@@ -122,6 +128,43 @@ void Firearm::triggered()
                             static_cast<unsigned int>(m_groundShootEffect.pData->getCount() /
                                                       m_magazineStored.getCapacity()));
                     }
+
+                    GPE::SourceData* data   = m_player->source->findSource("groundHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("groundHurted", true, true);
+                }
+
+                else if (tag == "Metal")
+                {
+                    GPE::SourceData* data   = m_player->source->findSource("metalHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("metalHurted", true, true);
+                }
+
+                else if (tag == "Wall")
+                {
+                    GPE::SourceData* data   = m_player->source->findSource("wallHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("wallHurted", true, true);
+                }
+
+                else if (tag == "Rock")
+                {
+                    GPE::SourceData* data   = m_player->source->findSource("rockHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("rockHurted", true, true);
+                }
+
+                else if (tag == "Wood")
+                {
+                    GPE::SourceData* data   = m_player->source->findSource("woodHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("woodHurted", true, true);
                 }
             }
 
@@ -133,7 +176,7 @@ void Firearm::triggered()
         m_muzzleFlashEffect.pData->emit(
             static_cast<unsigned int>(m_muzzleFlashEffect.pData->getCount() / m_magazineStored.getCapacity()));
 
-        m_shootSound->playSound("Shoot", true);
+        m_shootSound->playSound("Shoot", true, true);
         m_isReloadingNextBullet    = true;
         m_reloadingBulletTimeCount = 0.f;
     }
@@ -243,7 +286,11 @@ void Firearm::animateAimOut(float t)
 
 void Firearm::reload()
 {
-    m_isReloading = true;
+    if (!m_isReloading)
+    {
+        m_isReloading = true;
+        m_player->source->playSound("reload", true, true);
+    }
 }
 
 const GunMagazine& Firearm::getMagazine() const

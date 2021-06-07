@@ -10,7 +10,7 @@
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/Serialize.hpp>
 
-#include <BaseCharacter.hpp>
+#include <BasePlayer.hpp>
 #include <Engine/ECS/Component/ParticleComponent.hpp>
 #include <Engine/Resources/Linker.hpp>
 #include <Engine/Resources/Prefab.hpp>
@@ -81,7 +81,7 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) bool                 m_isAimAnimationDone = true;
 
         RFKField(Inspect()) GPE::Prefab* m_decalePrefab;
-        RFKField() BaseCharacter*        m_player;
+        RFKField() BasePlayer*           m_player;
 
     public:
         Firearm() noexcept = default;

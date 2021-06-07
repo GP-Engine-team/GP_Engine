@@ -81,7 +81,7 @@ void GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, co
                 }
             }
 
-            inspected  = nullptr;
+            inspected = nullptr;
             context.setDirty();
         }
 
@@ -179,7 +179,7 @@ void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes
                 {
                     if (ImGui::Selectable(path.path.string().c_str()))
                     {
-                        inRes      = importer(path.path.string().c_str());
+                        inRes = importer(path.path.string().c_str());
                         context.setDirty();
                     }
                 }
@@ -198,7 +198,7 @@ void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes
                     for (int i = 0; i < itemCurrent; ++i, ++it)
                         ;
 
-                    inRes      = &it->second;
+                    inRes = &it->second;
                     context.setDirty();
                 }
 
@@ -220,19 +220,18 @@ void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes
 
             if (T* pMesh = Engine::getInstance()->resourceManager.get<T>(path.string().c_str()))
             {
-                inRes      = pMesh;
+                inRes = pMesh;
                 context.setDirty();
             }
             else
             {
-                inRes      = importer(path.string().c_str());
+                inRes = importer(path.string().c_str());
                 context.setDirty();
             }
         }
         ImGui::EndDragDropTarget();
     }
 }
-
 
 template <typename T>
 void renderAnimResourceExplorer(InspectContext& context, const char* name, T*& inRes, const char* acceptedPayload,
@@ -283,7 +282,7 @@ void renderAnimResourceExplorer(InspectContext& context, const char* name, T*& i
                 {
                     if (ImGui::Selectable(path.path.string().c_str()))
                     {
-                        inRes      = importer(path.path.string().c_str());
+                        inRes = importer(path.path.string().c_str());
                         context.setDirty();
                     }
                 }
@@ -328,12 +327,12 @@ void renderAnimResourceExplorer(InspectContext& context, const char* name, T*& i
 
             if (T* pMesh = Engine::getInstance()->animResourcesManager.get<T>(path.string().c_str()))
             {
-                inRes      = pMesh;
+                inRes = pMesh;
                 context.setDirty();
             }
             else
             {
-                inRes      = importer(path.string().c_str());
+                inRes = importer(path.string().c_str());
                 context.setDirty();
             }
         }
@@ -343,7 +342,9 @@ void renderAnimResourceExplorer(InspectContext& context, const char* name, T*& i
 template <>
 void DataInspector::inspect(InspectContext& context, class Skin*& inspected, const char* name)
 {
+    context.startProperty(name);
     renderAnimResourceExplorer<Skin>(context, name, inspected, ENGINE_SKIN_EXTENSION, loadSkinFile);
+    context.endProperty();
 }
 
 template <>
@@ -352,39 +353,50 @@ void GPE::DataInspector::inspect(InspectContext& context, GPE::Skeleton*& inspec
     // Ressources should always be inspected from a component.
     assert(context.lastComponentOwner != nullptr);
 
+    context.startProperty(name);
     renderAnimResourceExplorer<Skeleton>(context, name, inspected, ENGINE_SKELETON_EXTENSION, loadSkeletonFile);
+    context.endProperty();
 }
 
 template <>
 void DataInspector::inspect(InspectContext& context, class Material*& inspected, const char* name)
 {
+    context.startProperty(name);
     renderResourceExplorer<Material>(context, name, inspected, ENGINE_MATERIAL_EXTENSION, loadMaterialFile);
+    context.endProperty();
 }
 
 template <>
-void GPE::DataInspector::inspect(InspectContext & context, class Animation * &inspected, const char* name)
+void GPE::DataInspector::inspect(InspectContext& context, class Animation*& inspected, const char* name)
 {
     // Ressources should always be inspected from a component.
     assert(context.lastComponentOwner != nullptr);
 
-    renderAnimResourceExplorer<Animation>(context, name, inspected, ENGINE_ANIMATION_EXTENSION,
-                                          loadAnimationFile);
+    context.startProperty(name);
+    renderAnimResourceExplorer<Animation>(context, name, inspected, ENGINE_ANIMATION_EXTENSION, loadAnimationFile);
+    context.endProperty();
 }
 
 template <>
 void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const char* name)
 {
+    context.startProperty(name);
     renderResourceExplorer<Mesh>(context, name, inspected, ENGINE_MESH_EXTENSION, loadMeshFile);
+    context.endProperty();
 }
 
 template <>
 void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const char* name)
 {
+    context.startProperty(name);
     renderResourceExplorer<Texture>(context, name, inspected, ENGINE_TEXTURE_EXTENSION, loadTextureFile);
+    context.endProperty();
 }
 
 template <>
 void DataInspector::inspect(InspectContext& context, class Shader*& inspected, const char* name)
 {
+    context.startProperty(name);
     renderResourceExplorer<Shader>(context, name, inspected, ENGINE_SHADER_EXTENSION, loadShaderFile);
+    context.endProperty();
 }
