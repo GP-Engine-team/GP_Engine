@@ -107,12 +107,13 @@ void BaseEnemy::update(double deltaTime)
                     m_currentState = EState::ATTACKING;
                     m_nextAnimTime = currentTime + m_attackAnimation->getDuration();
                     m_nextHitDelay = currentTime + m_attackAnimation->getDuration() * m_hitDelayRelativeToAnimLength;
+                    m_attackCounterMax = m_attackAnimation->getDuration();
                 }
             }
         }
         else
         {
-            m_attackCounter = 0.f;
+            m_attackCounter = std::numeric_limits<float>::max();
         }
 
         if (currentTime > m_nextHitDelay)
@@ -133,6 +134,29 @@ void BaseEnemy::update(double deltaTime)
                 }
             }
         }
+    }
+}
+
+void BaseEnemy::takeDamage(float damage)
+{
+    BaseCharacter::takeDamage(damage);
+
+    if (m_currentState == EState::DEAD)
+        return;
+
+    m_currentState = EState::DAMAGED;
+    m_nextHitDelay = std::numeric_limits<float>::max();
+    if (m_onHitAnimation != nullptr)
+    {
+        for (GPE::AnimationComponent* animComp : m_animComps)
+        {
+            if (animComp != nullptr)
+            {
+                animComp->playAnimation(m_onHitAnimation);
+                animComp->setCurrentTime(m_animOnHitStartRatio * m_onHitAnimation->getDuration());
+            }
+        }
+        m_nextAnimTime = GPE::Engine::getInstance()->timeSystem.getAccumulatedTime() + (1.f - m_animOnHitStartRatio) * m_onHitAnimation->getDuration();
     }
 }
 

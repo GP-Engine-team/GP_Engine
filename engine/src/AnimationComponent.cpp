@@ -137,7 +137,7 @@ void AnimationComponent::updateAnimData(bool wasComplete)
     }
 }
 
-void AnimationComponent::playAnimation(Animation* pAnimation)
+void AnimationComponent::playAnimation(Animation* pAnimation, float startTime)
 {
     if (m_currentAnimation == pAnimation)
         return;
@@ -152,7 +152,7 @@ void AnimationComponent::playAnimation(Animation* pAnimation)
         return;
 
     m_currentAnimation = pAnimation;
-    m_currentTime      = 0.0f;
+    m_currentTime      = startTime;
     m_timeScale        = 1.f;
 
     skeletonBoneIDToAnimationBoneID.resize(m_skeleton->getNbBones());
@@ -182,6 +182,11 @@ void AnimationComponent::playAnimation(Animation* pAnimation)
             skeletonBoneIDToAnimationBoneID[node.boneID] = m_skeleton->getNbBones(); // These bones won't be animated
         }
     });
+}
+
+void AnimationComponent::setCurrentTime(float newTime)
+{
+    m_currentTime = fmod(newTime, m_currentAnimation->getDuration());
 }
 
 void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, const GPM::mat4& parentTransform)

@@ -59,7 +59,8 @@ public:
         */
     void update(float dt);
 
-    void playAnimation(Animation * pAnimation);
+    void playAnimation(Animation* pAnimation, float startTime = 0.f);
+    void setCurrentTime(float newTime);
 
     void calculateBoneTransform(const struct AssimpNodeData& node, const GPM::mat4& parentTransform);
 
