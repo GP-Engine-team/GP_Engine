@@ -31,6 +31,7 @@ void GameViewer::checkInputs(EditorStartup& startup)
 
     if (!m_captureInputs
         && startup.game().state == EGameState::PLAYING
+        && ImGui::IsWindowHovered()
         && ImGui::IsMouseHoveringRect(topLeft, bottomRight)
         && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
     {
