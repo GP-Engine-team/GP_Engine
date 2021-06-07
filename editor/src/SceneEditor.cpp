@@ -220,6 +220,11 @@ void SceneEditor::checkKeys()
 
 void SceneEditor::checkCursor(GPE::GameObject*& inspectedObject)
 {
+    if (!ImGui::IsWindowHovered())
+    {
+        return;
+    }
+
     { // The cursor may be on the window's title bar or border, which we do not want to react to
         ImVec2 topLeft = ImGui::GetWindowPos();
         topLeft.y += ImGui::GetWindowContentRegionMin().y;
