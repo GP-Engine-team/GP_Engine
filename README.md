@@ -21,7 +21,7 @@ If you already cloned the repository, you can use:
 git submodule update
 ```
 
-2. Download the assets [from the Drive](https://drive.google.com/drive/folders/1ElLiWl6cP_Z3WOdevMU3CpLjCIND17XD) and extract them from the root of your local copy of this repository
+2. Download the assets [from the Drive](https://drive.google.com/drive/folders/1ElLiWl6cP_Z3WOdevMU3CpLjCIND17XD) (`projects` folder or `project.zip`) and extract them from the root of your local copy of this repository
 3. Open [projects/GPGame/GPGame.sln](projects/GPGame/GPGame.sln) in Visual Studio
 4. **Either set the "GPLauncher" or "GPEditor" project as startup project** to launch the game alone, or with the editor, respectively
 5. Choose either Debug or Release mode, and hit F5 to compile
