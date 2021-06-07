@@ -56,6 +56,7 @@ void BasePlayer::onPostLoad()
     GPE::Wave defeat("./resources/sounds/defeat.wav", "defeat");
     GPE::Wave arrival("./resources/sounds/arrival.wav", "arrival");
     GPE::Wave extraction("./resources/sounds/extraction.wav", "extraction");
+    GPE::Wave playerHurted("./resources/sounds/playerHurted.wav", "playerHurted");
 
     GPE::SourceSettings bgmSourceSettings;
     bgmSourceSettings.pitch    = 1.f;
@@ -83,6 +84,7 @@ void BasePlayer::onPostLoad()
     source->setSound("defeat", "defeat", sfxSourceSettings);
     source->setSound("arrival", "arrival", sfxSourceSettings);
     source->setSound("extraction", "extraction", sfxSourceSettings);
+    source->setSound("playerHurted", "playerHurted", sfxSourceSettings);
 
     getOwner().getTransform().OnUpdate += Function::make(this, "updateListener");
 
@@ -533,6 +535,7 @@ void BasePlayer::takeDamage(float damage)
     BaseCharacter::takeDamage(damage);
     m_isPlayDamageAnimation = true;
     m_animDamageAnimCounter = 0.f;
+    source->playSound("playerHurted", true, true);
 }
 
 void BasePlayer::inspect(GPE::InspectContext& context)
