@@ -26,13 +26,16 @@ public:
         CreateArgs(const aiAnimation* aiAnim);
         float             duration;
         int               nbTicksPerSecond;
-        std::vector<Bone> bones; 
+        std::vector<Bone> bones;
     };
 
 private:
-    float                                      m_duration; // in milliseconds
-    int                                        m_ticksPerSecond;
-    std::vector<Bone>                          m_bones;
+    float m_duration; // in milliseconds
+    int   m_ticksPerSecond;
+
+public:
+    std::vector<Bone> m_bones;
+    std::string       m_path;
 
 public:
     void readMissingBones(const aiAnimation* animation);
@@ -40,7 +43,7 @@ public:
 public:
     Animation() = default;
     // TODO : constructor by move
-    Animation(const CreateArgs&);
+    Animation(const CreateArgs&, const std::string& path);
 
     Animation(const aiAnimation* aiAnim);
     Bone* findBone(const std::string& name);

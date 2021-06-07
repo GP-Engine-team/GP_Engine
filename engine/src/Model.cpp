@@ -41,14 +41,26 @@ bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* 
            (lhs->pMaterial->isOpaque() && !rhs->pMaterial->isOpaque());
 }
 
+SubModel::~SubModel()
+{
+    if (pAnimComponent != nullptr)
+    {
+        pAnimComponent->setModel(nullptr);
+        pAnimComponent = nullptr;
+    }
+}
+
 Model::~Model()
 {
-    setActive(false);
-    if (m_animComponent != nullptr)
+    for (SubModel& subModel : m_subModels)
     {
-        m_animComponent->setModel(nullptr);
-        m_animComponent = nullptr;
+        if (subModel.pAnimComponent != nullptr)
+        {
+            subModel.pAnimComponent->setModel(nullptr);
+            subModel.pAnimComponent = nullptr;
+        }
     }
+    setActive(false);
 }
 
 Model::Model(GameObject& owner) : Model(owner, CreateArg{})
@@ -81,9 +93,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, SubModel& inspect
 {
     const bool isPreviousElementVoid = !inspected.isValid();
 
-    inspect(context, inspected.pMesh, "Mesh");
-    inspect(context, inspected.pShader, "Shader");
-    inspect(context, inspected.pMaterial, "Material");
+    inspected.defaultInspect(context);
 
     ImGui::Checkbox("Enable back face culling", &inspected.enableBackFaceCulling);
     ImGui::Checkbox("Cast shadow", &inspected.castShadow);
@@ -227,33 +237,65 @@ void Model::updateToSystem() noexcept
     }
 }
 
-void Model::setAnimComponent(AnimationComponent* newAnimComp)
+void Model::setAnimComponent(AnimationComponent* newAnimComp, int subModelIndex)
 {
-    m_animComponent = newAnimComp;
-}
-
-void Model::bindSkin(Skin& skin)
-{
-    for (SubModel& sub : m_subModels)
+    if (subModelIndex < m_subModels.size())
     {
-        // We must verify if the shader implements the animation feature
-        //if (sub.pShader != nullptr && (sub.pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK)
-        //{
-            sub.pMesh->bindSkin(skin);
-        //}
+        auto it = m_subModels.begin();
+        std::advance(it, subModelIndex);
+        it->pAnimComponent = newAnimComp;
     }
 }
 
-std::vector<GPM::Mat4>& Model::getFinalBonesTransforms() const
+bool Model::canAssignAnimComponent(int subModelIndex)
 {
-    GPE_ASSERT(m_animComponent != nullptr,
-               "It is not possible to get the bone data if there are no animations. Check with isAnimated() first.");
-    return m_animComponent->m_finalBoneMatrices;
+    if (subModelIndex >= m_subModels.size())
+        return false;
+
+    auto it = m_subModels.begin();
+    std::advance(it, subModelIndex);
+    return it->pAnimComponent == nullptr;
 }
 
-bool Model::isAnimated() const
+void Model::bindSkin(Skin& skin, int subModelIndex)
 {
-    return m_animComponent != nullptr && m_animComponent->isComplete();
+    if (subModelIndex < m_subModels.size())
+    {
+        auto it = m_subModels.begin();
+        std::advance(it, subModelIndex);
+        it->pMesh->bindSkin(skin);
+    }
+
+    //for (SubModel& sub : m_subModels)
+    //{
+    //    // We must verify if the shader implements the animation feature
+    //    //if (sub.pShader != nullptr && (sub.pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK)
+    //    //{
+    //        sub.pMesh->bindSkin(skin);
+    //    //}
+    //}
+}
+
+std::vector<GPM::Mat4>& SubModel::getFinalBonesTransforms() const
+{
+    GPE_ASSERT(pAnimComponent != nullptr,
+               "It is not possible to get the bone data if there are no animations. Check with isAnimated() first.");
+    return pAnimComponent->finalBoneMatrices;
+}
+
+bool SubModel::isAnimated() const
+{
+    return pAnimComponent != nullptr && pAnimComponent->isComplete();
+}
+
+bool Model::hasAnimationsLinked() const
+{
+    for (const SubModel& subModel : m_subModels)
+    {
+        if (subModel.pAnimComponent != nullptr)
+            return true;
+    }
+    return false;
 }
 
 GPM::AABB Model::getLocalAABB()

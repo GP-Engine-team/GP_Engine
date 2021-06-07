@@ -108,10 +108,11 @@ void AttractorUpdater::update(double dt, ParticleData* p)
             off.x = m_attractors[a].x - pos[i].x;
             off.y = m_attractors[a].y - pos[i].y;
             off.z = m_attractors[a].z - pos[i].z;
+            off.w = m_attractors[a].w - pos[i].w;
             dist  = off.dot(off);
 
             // if (fabs(dist) > 0.00001)
-            dist = m_attractors[a].w / dist;
+            dist = m_attractors[a].w;
 
             acc[i] += off * dist;
         }

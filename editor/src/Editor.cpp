@@ -23,6 +23,7 @@
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/imgui.h>
+#include <stb/stb_image.h>
 
 using namespace GPE;
 
@@ -49,6 +50,20 @@ void Editor::setupDearImGui()
     ImGui::StyleColorsDark();
     ImGuiLoadStyle(PATH_UI_STYLE, ImGui::GetStyle());
 }
+
+
+void Editor::setupWindowIcon()
+{
+    GLFWimage icon;
+
+    icon.pixels = stbi_load("..\\..\\editor\\resources\\icone\\green_portal.png",
+                            &icon.width, &icon.height, nullptr, 4);
+
+    glfwSetWindowIcon(m_window, 1, &icon);
+
+    stbi_image_free(icon.pixels);
+}
+
 
 void Editor::renderStyleEditor()
 {
@@ -78,6 +93,8 @@ void Editor::renderMenuBar()
             //{
             //    sceneEditor.view.unbindScene();
             //    Scene& scene = Engine::getInstance()->sceneManager.setCurrentScene(fileName);
+            //     if (Engine::getInstance()->sceneManager.OnSceneChange)
+            //      Engine::getInstance()->sceneManager.OnSceneChange();
             //    loadScene(&scene, path.c_str());
             //}
 
@@ -304,7 +321,8 @@ void Editor::renderShadowMap()
         const ImVec2 size{ImGui::GetContentRegionAvail()};
         ImGui::Image((void*)(intptr_t)Engine::getInstance()
                          ->sceneManager.getCurrentScene()
-                         ->sceneRenderer.getShadowMap()->depthMap,
+                         ->sceneRenderer.getShadowMap()
+                         ->depthMap,
                      size, {.0f, 1.f}, {1.f, .0f});
     }
     else
@@ -391,11 +409,24 @@ void Editor::unbindCurrentScene()
 
 /* ========================== Constructor & destructor ========================== */
 Editor::Editor(GLFWwindow* window, GPE::Scene& editedScene)
-    : sceneEditor(editedScene), gameViewer{}, logInspector{}, projectContent(*this),
-      sceneGraph(*this), gameControlBar{}, saveFolder{}, m_window{window}, inspectedObject{nullptr},
-      showAppStyleEditor{false}, showImGuiDemoWindows{false}
+    : sceneEditor         (editedScene),
+      gameViewer          {},
+      logInspector        {},
+      projectContent      (*this),
+      sceneGraph          (*this),
+      gameControlBar      {},
+      paperPress          {},
+      saveFolder          {},
+      m_window            {window},
+      inspectedObject     {nullptr},
+      reloadableCpp       {nullptr},
+      showAppStyleEditor  {false},
+      showImGuiDemoWindows{false},
+      showShadowMap       {false},
+      OnUIBeginFrame      {}
 {
     setupDearImGui();
+    setupWindowIcon();
 }
 
 void Editor::setSceneInEdition(GPE::Scene& scene)
@@ -447,14 +478,14 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
     if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_S) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
-        if (startup.game().state == EGameState::STOPPED
-            || (ImGui::IsKeyDown(GLFW_KEY_RIGHT_SHIFT) || ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT)))
+        if (startup.game().state == EGameState::STOPPED ||
+            (ImGui::IsKeyDown(GLFW_KEY_RIGHT_SHIFT) || ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT)))
         {
             saveCurrentScene();
         }
     }
 
-    if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_C) &&
+    if (!sceneEditor.view.capturingInputs() && !ImGui::IsAnyItemActive() && ImGui::IsKeyPressed(GLFW_KEY_C) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
         if (GameObject* inspectedGo = dynamic_cast<GameObject*>(inspectedObject))
@@ -464,7 +495,7 @@ void Editor::updateKeyboardShorthand(EditorStartup& startup)
         }
     }
 
-    if (!sceneEditor.view.capturingInputs() && ImGui::IsKeyPressed(GLFW_KEY_V) &&
+    if (!sceneEditor.view.capturingInputs() && !ImGui::IsAnyItemActive() && ImGui::IsKeyPressed(GLFW_KEY_V) &&
         (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) || ImGui::IsKeyDown(GLFW_KEY_RIGHT_CONTROL)))
     {
         if (paperPress.size())

@@ -79,6 +79,19 @@ ProjectContent::ProjectContent(Editor& editorContext)
     pCurrentDirectory = &resourcesTree;
 }
 
+static std::string memorySizeToString(std::uintmax_t size)
+{
+    std::string rst;
+    int         i{};
+    double      mantissa = size;
+    for (; mantissa >= 1024.; mantissa /= 1024., ++i)
+    {
+    }
+    mantissa = std::ceil(mantissa * 10.) / 10.;
+    rst += std::to_string(static_cast<size_t>(mantissa)) + ' ' + "BKMGTPE"[i];
+    return i == 0 ? rst : rst + "B";
+}
+
 static std::string doTab(int num)
 {
     std::string str;
@@ -343,11 +356,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::BeginTooltip();
                 ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 
-                size_t dirSize = 0;
-                for (auto&& file : it->files)
-                    dirSize += file.size;
-
-                ImGui::Text("%lu bytes", dirSize);
+                ImGui::TextUnformatted(memorySizeToString(it->computeSize()).c_str());
                 ImGui::PopTextWrapPos();
                 ImGui::EndTooltip();
             }
@@ -461,7 +470,7 @@ void ProjectContent::renderAndGetSelected(GPE::IInspectable*& selectedGameObject
                 ImGui::BeginTooltip();
                 ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 
-                ImGui::Text("%lu bytes", it->size);
+                ImGui::TextUnformatted(memorySizeToString(it->size).c_str());
                 ImGui::PopTextWrapPos();
                 ImGui::EndTooltip();
             }

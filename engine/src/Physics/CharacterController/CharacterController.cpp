@@ -133,7 +133,7 @@ void CharacterController::update(double deltaTime) noexcept
     if (controller == nullptr)
         return;
 
-    controller->move(PhysXSystem::GPMVec3ToPxVec3(float(deltaTime) * m_displacement), 0.1f, float(deltaTime), filters);
+    controller->move(PhysXSystem::GPMVec3ToPxVec3(float(deltaTime) * m_displacement), 0.01f, float(deltaTime), filters);
     m_displacement.x = m_displacement.y = m_displacement.z = .0f;
     getOwner().getTransform().setTranslation(PhysXSystem::PxExtendedVec3ToGPMVec3(controller->getPosition()) -
                                              m_center);
@@ -178,7 +178,6 @@ void CharacterController::startJumpTimer() noexcept
 CharacterController::~CharacterController() noexcept
 {
     setActive(false);
-    controller->release();
     getOwner().getTransform().OnUpdate -= Function::make(this, "updateTransform");
 }
 
@@ -274,6 +273,12 @@ void CharacterController::updateTransform()
 {
     updatePosition();
     updateScale();
+}
+
+bool CharacterController::isMoving()
+{
+    // epsilone
+    return m_displacement.sqrLength() > 0.00001;
 }
 
 void CharacterController::updatePosition()

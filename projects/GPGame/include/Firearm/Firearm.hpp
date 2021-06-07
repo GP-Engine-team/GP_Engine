@@ -10,6 +10,7 @@
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/Serialize.hpp>
 
+#include <BasePlayer.hpp>
 #include <Engine/ECS/Component/ParticleComponent.hpp>
 #include <Engine/Resources/Linker.hpp>
 #include <Engine/Resources/Prefab.hpp>
@@ -28,6 +29,26 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen(), Serialize()) Firearm : public GPE::BehaviourComponent
     {
     protected:
+        /**
+         * @brief Position and rotation without aiming and mouvement
+         */
+        RFKField() GPM::Vec3       m_staticPosition;
+        RFKField() GPM::Quaternion m_staticRotation;
+
+        /**
+         * @brief Position and rotation in movement
+         */
+        RFKField() GPM::Vec3       m_dynamicPosition;
+        RFKField() GPM::Quaternion m_dynamicRotation;
+
+        /**
+         * @brief Position and rotation in movement
+         */
+        RFKField() GPM::Vec3       m_translationMovement;
+        RFKField() GPM::Quaternion m_rotationMovement;
+
+        RFKField(Inspect(), Serialize()) float m_balancingStrength = 10.f; // In second
+
         RFKField(Inspect(), Serialize()) GunMagazine m_magazineStored;
 
         RFKField(Serialize()) GPE::AudioComponent*                           m_shootSound = nullptr;
@@ -35,7 +56,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_bloodEffect;
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_groundShootEffect;
 
-        RFKField(Inspect(), Serialize()) float m_rayCastForwardOffset               = 3.f; // In second
+        RFKField(Inspect(), Serialize()) float m_rayCastForwardOffset     = 3.f; // In second
         RFKField(Inspect(), Serialize()) float m_rateOfFire               = 0.f; // In second
         RFKField(Serialize()) float            m_reloadingBulletTimeCount = 0.f; // In second
 
@@ -49,12 +70,6 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) bool m_isRecoileAnimate      = false;
 
         /**
-         * @brief Position and rotation without aiming
-         */
-        RFKField() GPM::Vec3       m_basePosition;
-        RFKField() GPM::Quaternion m_baseRotation;
-
-        /**
          * @brief Position and rotation with aiming
          */
         RFKField(Inspect(), Serialize()) GPM::Vec3 m_aimPosition;
@@ -66,6 +81,7 @@ namespace GPG RFKNamespace()
         RFKField(Serialize()) bool                 m_isAimAnimationDone = true;
 
         RFKField(Inspect()) GPE::Prefab* m_decalePrefab;
+        RFKField() BasePlayer*           m_player;
 
     public:
         Firearm() noexcept = default;

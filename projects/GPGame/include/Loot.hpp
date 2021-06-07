@@ -7,6 +7,7 @@
 #pragma once
 
 #include <BasePlayer.hpp>
+#include <SpawnManager.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Linker.hpp>
@@ -21,13 +22,10 @@ namespace GPG RFKNamespace()
     {
     private:
         RFKField() BasePlayer* m_player       = nullptr;
+        RFKField() SpawnManager* m_spawnerManager = nullptr; 
         float                  sqrTotalRadius = 0;
 
         RFKField(Inspect(), Serialize()) float              m_radius = 0.5f;
-        RFKField(Inspect(), Serialize(), Separator()) float m_speed{1.f};
-        RFKField(Inspect(), Serialize()) float              m_heightIntensity{1.f};
-        RFKField(Inspect(), Serialize()) float              m_delay{0.f};
-        RFKField(Inspect(), Serialize()) float              m_initialY{0.f};
 
     public:
         Loot(GPE::GameObject & owner);

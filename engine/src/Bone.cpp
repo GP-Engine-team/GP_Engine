@@ -5,6 +5,7 @@
  */
 
 #include <Engine/Resources/Animation/Bone.hpp>
+#include <algorithm>
 
 using namespace GPE;
 
@@ -52,8 +53,8 @@ Bone::Bone(const std::string& name, const aiNodeAnim* channel)
     }
 }
 
-/* Gets normalized value for Lerp & Slerp*/
-float Bone::getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
+/* Gets normalized value for Lerp & Nlerp*/
+float Bone::getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const
 {
     float scaleFactor  = 0.0f;
     const float midWayLength = animationTime - lastTimeStamp;
@@ -62,50 +63,60 @@ float Bone::getScaleFactor(float lastTimeStamp, float nextTimeStamp, float anima
     return scaleFactor;
 }
 
+
+GPM::Vec3 Bone::getInterpolatedPosition(float time) const
+{
+    if (m_positions.size() == 1u)
+        return m_positions[0].position;
+
+    const int   p0Index = getPositionIndex(time);
+    const int   p1Index = p0Index + 1;
+    const float scaleFactor = getScaleFactor(m_positions[p0Index].timeStamp, m_positions[p1Index].timeStamp, time);
+    return m_positions[p0Index].position.lerp(m_positions[p1Index].position, scaleFactor);
+}
+GPM::Quat Bone::getInterpolatedRotation(float time) const
+{
+    if (m_rotations.size() == 1)
+    {
+        return m_rotations[0].orientation.normalized();
+    }
+
+    const int   p0Index = getRotationIndex(time);
+    const int   p1Index = p0Index + 1;
+    const float scaleFactor = getScaleFactor(m_rotations[p0Index].timeStamp, m_rotations[p1Index].timeStamp, time);
+    GPM::Quat finalRotation = m_rotations[p0Index].orientation.nlerp(m_rotations[p1Index].orientation, scaleFactor);
+    return finalRotation.normalized();
+}
+GPM::Vec3 Bone::getInterpolatedScale(float time) const
+{
+    if (m_scales.size() == 1)
+        return m_scales[0].scale;
+
+    const int   p0Index     = getScaleIndex(time);
+    const int   p1Index     = p0Index + 1;
+    const float scaleFactor = getScaleFactor(m_scales[p0Index].timeStamp, m_scales[p1Index].timeStamp, time);
+    return m_scales[p0Index].scale.lerp(m_scales[p1Index].scale, scaleFactor);
+}
+
 /* figures out which position keys to interpolate b/w and performs the interpolation
 and returns the translation matrix */
 GPM::Mat4 Bone::interpolatePosition(float animationTime)
 {
-    if (m_positions.size() == 1u)
-        return GPM::Transform::translation(m_positions[0].position);
-
-    const int       p0Index     = getPositionIndex(animationTime);
-    const int       p1Index     = p0Index + 1;
-    const float     scaleFactor = getScaleFactor(m_positions[p0Index].timeStamp, m_positions[p1Index].timeStamp, animationTime);
-    const GPM::Vec3 finalPosition = m_positions[p0Index].position.lerp(m_positions[p1Index].position, scaleFactor);
-    return GPM::Transform::translation(finalPosition);
+    return GPM::Transform::translation(getInterpolatedPosition(animationTime));
 }
 
 /* figures out which rotations keys to interpolate b/w and performs the interpolation
 and returns the rotation matrix */
 GPM::Mat4 Bone::interpolateRotation(float animationTime)
 {
-    if (m_rotations.size() == 1)
-    {
-        auto rotation = m_rotations[0].orientation.normalized();
-        return GPM::toMatrix4(rotation);
-    }
-
-    const int   p0Index     = getRotationIndex(animationTime);
-    const int   p1Index     = p0Index + 1;
-    const float scaleFactor = getScaleFactor(m_rotations[p0Index].timeStamp, m_rotations[p1Index].timeStamp, animationTime);
-    GPM::Quat finalRotation = m_rotations[p0Index].orientation.nlerp(m_rotations[p1Index].orientation, scaleFactor);
-    finalRotation           = finalRotation.normalized();
-    return GPM::toMatrix4(finalRotation);
+    return GPM::toMatrix4(getInterpolatedRotation(animationTime));
 }
 
 /* figures out which scaling keys to interpolate b/w and performs the interpolation
 and returns the scale matrix */
 GPM::Mat4 Bone::interpolateScaling(float animationTime)
 {
-    if (m_scales.size() == 1)
-        return GPM::Transform::scaling(m_scales[0].scale);
-
-    const int       p0Index     = getScaleIndex(animationTime);
-    const int       p1Index     = p0Index + 1;
-    const float     scaleFactor = getScaleFactor(m_scales[p0Index].timeStamp, m_scales[p1Index].timeStamp, animationTime);
-    const GPM::Vec3 finalScale  = m_scales[p0Index].scale.lerp(m_scales[p1Index].scale, scaleFactor);
-    return GPM::Transform::scaling(finalScale);
+    return GPM::Transform::scaling(getInterpolatedScale(animationTime));
 }
 
 /* Interpolates b/w positions,rotations & scaling keys based on the curren time of the
@@ -120,46 +131,43 @@ void Bone::update(float animationTime)
 
 /* Gets the current index on mKeyPositions to interpolate to based on the current
 animation time */
-int Bone::getPositionIndex(float animationTime)
+int Bone::getPositionIndex(float animationTime) const
 {
-    const size_t max = m_positions.size() - 1u;
-    for (size_t index = 0u; index < max; ++index)
-    {
-        if (animationTime < m_positions[index + 1ul].timeStamp)
-            return int(index);
-    }
+    auto it = std::upper_bound(m_positions.begin() + 1, m_positions.end(), animationTime,
+                         [&](const float& animTime, const GPE::KeyPosition& pos) { return animTime < pos.timeStamp; });
 
-    assert(0);
+    if (it != m_positions.end())
+        return &(*it) - m_positions.data() - 1;
+
+    assert(false);
     return -1;
 }
 
 /* Gets the current index on mKeyRotations to interpolate to based on the current
 animation time */
-int Bone::getRotationIndex(float animationTime)
+int Bone::getRotationIndex(float animationTime) const
 {
-    const size_t max = m_rotations.size() - 1ul;
-    for (size_t index = 0u; index < max; ++index)
-    {
-        if (animationTime < m_rotations[index + 1ul].timeStamp)
-            return int(index);
-    }
+    auto it = std::upper_bound(m_rotations.begin() + 1, m_rotations.end(), animationTime,
+                         [&](const float& animTime, const GPE::KeyRotation& rot) { return animTime < rot.timeStamp; });
 
-    assert(0);
+    if (it != m_rotations.end())
+        return &(*it) - m_rotations.data() - 1;
+
+    assert(false);
     return -1;
 }
 
 /* Gets the current index on mKeyScalings to interpolate to based on the current
 animation time */
-int Bone::getScaleIndex(float animationTime)
+int Bone::getScaleIndex(float animationTime) const
 {
-    const size_t max = m_scales.size() - 1ul;
-    for (size_t index = 0u; index < max; ++index)
-    {
-        if (animationTime < m_scales[index + 1ul].timeStamp)
-            return int(index);
-    }
+    auto it = std::upper_bound(m_scales.begin() + 1, m_scales.end(), animationTime,
+                         [&](const float& animTime, const GPE::KeyScale& scale) { return animTime < scale.timeStamp; });
 
-    assert(0);
+    if (it != m_scales.end())
+        return &(*it) - m_scales.data() - 1;
+
+    assert(false);
     return -1;
 }
 

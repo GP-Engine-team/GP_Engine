@@ -39,10 +39,11 @@ GameStartup::GameStartup()
 
       // Update physics
       m_fixedUpdate{[&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
-          m_engine->physXSystem.advance(fixedDeltaTime);
           m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
-
           m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+
+          m_engine->physXSystem.updateController(fixedDeltaTime);
+          m_engine->physXSystem.advance(fixedDeltaTime);
       }},
 
       // Rendering

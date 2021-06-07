@@ -25,20 +25,42 @@ namespace GPG RFKNamespace()
     class RFKClass(Inspect(), ComponentGen, Serialize()) BaseEnemy : public BaseCharacter
     {
     protected:
+        enum class EState
+        {
+            RUNNING,
+            DEAD,
+            ATTACKING,
+            DAMAGED
+        };
+
+    protected:
         RFKField() BaseCharacter*              m_target              = nullptr;
         RFKField(Serialize()) float            m_animDeathCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float m_animDeathCounterMax = 3.f;
 
-        RFKField(Serialize(), Inspect(), ReadOnly(), Separator(true, false)) float                m_attackCounter    = 0.f;
-        RFKField(Inspect(), Serialize()) float     m_attackCounterMax = 3.f;
-        RFKField(Inspect(), Serialize()) float     m_radiusAttack     = 3.f;
-        RFKField(Inspect(), Serialize(), Separator(false, true)) float     m_dammage          = 3.f;
-        RFKField(Serialize()) GPE::AudioComponent* m_source             = nullptr;
-        RFKField() GPE::AnimationComponent* m_animComp    = nullptr;
-        RFKField() GPE::CharacterController* m_controller = nullptr;
+        RFKField(Serialize(), Inspect(), ReadOnly(), Separator(true, false)) float m_attackCounter    = 0.f;
+        RFKField(Inspect(), Serialize()) float                                     m_attackCounterMax = 3.f;
+        RFKField(Inspect(), Serialize()) float                                     m_radiusAttack     = 3.f;
+        RFKField(Inspect(), Serialize()) float                                     m_dammage          = 3.f;
+        RFKField(Serialize()) GPE::AudioComponent*                                 m_source           = nullptr;
+        RFKField() std::vector<GPE::AnimationComponent*>                           m_animComps;
+        RFKField() GPE::CharacterController*                                       m_controller       = nullptr;
 
-        RFKField(Inspect(), Serialize()) float m_disappearanceSpeed = 10.f;
-        RFKField(Inspect(), Serialize()) float m_maxHeightBeforDestroying = 50.f;
+        RFKField(Inspect(), Serialize(), Separator()) GPE::Animation* m_walkAnimation   = nullptr;
+        RFKField(Inspect(), Serialize()) GPE::Animation* m_deathAnimation  = nullptr;
+        RFKField(Inspect(), Serialize()) GPE::Animation* m_attackAnimation = nullptr;
+        RFKField(Inspect(), Serialize()) GPE::Animation* m_onHitAnimation  = nullptr;
+
+        RFKField(Inspect(), Serialize(), Separator()) float m_disappearanceSpeed       = 10.f;
+        RFKField(Inspect(), Serialize())              float m_maxHeightBeforDestroying = 50.f;
+
+        EState m_currentState = EState::RUNNING;
+        RFKField(Inspect(), ReadOnly())  float m_nextAnimTime = -1.f;
+        RFKField(Inspect(), ReadOnly())  float m_nextHitDelay = std::numeric_limits<float>::max();
+        RFKField(Inspect(), Serialize()) float m_hitDelayRelativeToAnimLength = 0.36;
+        RFKField(Inspect(), Serialize()) float m_animOnHitStartRatio = 0.3;
+        RFKField(Inspect(), Serialize()) float m_animTransitionTime = 1.f;
+        RFKField(Inspect(), Serialize()) float m_walkScale = 1.f;
 
     public:
         BaseEnemy() noexcept = default;
@@ -54,6 +76,8 @@ namespace GPG RFKNamespace()
         void start() final;
         void update(double deltaTime) final;
         void onPostLoad() final;
+        void onDeath() final;
+        void takeDamage(float damage) final;
 
         BaseEnemy_GENERATED
     };

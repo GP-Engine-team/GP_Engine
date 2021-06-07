@@ -2,12 +2,15 @@
 #include <AL/alc.h>
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
+#include <Engine/Core/Tools/Interpolation.hpp>
 #include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
+#include <gpm/Random.hpp>
 
 #include <PhysX/PxRigidActor.h>
 
@@ -40,13 +43,48 @@ void BasePlayer::onPostLoad()
     input  = &getOwner().getOrCreateComponent<GPE::InputComponent>();
     source = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
 
-    GPE::Wave testSound3("./resources/sounds/E_Western.wav", "Western");
+    GPE::Wave bgm("./resources/sounds/BGM.wav", "BGM");
+    GPE::Wave metalHurted("./resources/sounds/metalHurted.wav", "metalHurted");
+    GPE::Wave reload("./resources/sounds/reload.wav", "reload");
+    GPE::Wave rockHurted("./resources/sounds/rockHurted.wav", "rockHurted");
+    GPE::Wave wallHurted("./resources/sounds/wallHurted.wav", "wallHurted");
+    GPE::Wave woodHurted("./resources/sounds/woodHurted.wav", "woodHurted");
+    GPE::Wave zombieHurted("./resources/sounds/zombieHurted.wav", "zombieHurted");
+    GPE::Wave groundHurted("./resources/sounds/groundHurted.wav", "groundHurted");
+    GPE::Wave difficultyIncreased("./resources/sounds/difficultyIncreased.wav", "difficultyIncreased");
+    GPE::Wave victory("./resources/sounds/victory.wav", "victory");
+    GPE::Wave defeat("./resources/sounds/defeat.wav", "defeat");
+    GPE::Wave arrival("./resources/sounds/arrival.wav", "arrival");
+    GPE::Wave extraction("./resources/sounds/extraction.wav", "extraction");
+    GPE::Wave playerHurted("./resources/sounds/playerHurted.wav", "playerHurted");
 
-    GPE::SourceSettings sourceSettings;
-    sourceSettings.pitch = 1.f;
-    sourceSettings.loop  = AL_TRUE;
+    GPE::SourceSettings bgmSourceSettings;
+    bgmSourceSettings.pitch    = 1.f;
+    bgmSourceSettings.loop     = AL_TRUE;
+    bgmSourceSettings.relative = AL_TRUE;
 
-    source->setSound("Western", "Western", sourceSettings);
+    GPE::SourceSettings sfxSourceSettings;
+    sfxSourceSettings.pitch       = 1.f;
+    sfxSourceSettings.gain        = 1.f;
+    sfxSourceSettings.loop        = AL_FALSE;
+    sfxSourceSettings.relative    = AL_FALSE;
+    sfxSourceSettings.spatialized = AL_TRUE;
+
+    source->setSound("BGM", "BGM", bgmSourceSettings);
+    source->setSound("metalHurted", "metalHurted", sfxSourceSettings);
+    source->setSound("reload", "reload", sfxSourceSettings);
+    source->setSound("rockHurted", "rockHurted", sfxSourceSettings);
+    source->setSound("wallHurted", "wallHurted", sfxSourceSettings);
+    source->setSound("woodHurted", "woodHurted", sfxSourceSettings);
+    source->setSound("zombieHurted", "zombieHurted", sfxSourceSettings);
+    source->setSound("groundHurted", "groundHurted", sfxSourceSettings);
+    source->setSound("difficultyIncreased", "difficultyIncreased", sfxSourceSettings);
+    source->setSound("reload", "reload", sfxSourceSettings);
+    source->setSound("victory", "victory", sfxSourceSettings);
+    source->setSound("defeat", "defeat", sfxSourceSettings);
+    source->setSound("arrival", "arrival", sfxSourceSettings);
+    source->setSound("extraction", "extraction", sfxSourceSettings);
+    source->setSound("playerHurted", "playerHurted", sfxSourceSettings);
 
     getOwner().getTransform().OnUpdate += Function::make(this, "updateListener");
 
@@ -57,6 +95,10 @@ void BasePlayer::start()
 {
     BaseCharacter::start();
 
+    GAME_ASSERT(m_evacuationPoint.pData, "Missing m_evacuationPoint");
+    GAME_ASSERT(m_buttonTexture, "No button texture selected");
+    GAME_ASSERT(m_bulletTexture.pTex, "No texture selected");
+    GAME_ASSERT(m_lootTexture.pTex, "No texture selected");
     GAME_ASSERT(input, "null");
     GAME_ASSERT(source, "null");
     GAME_ASSERT(m_firearmsGO.size(), "null");
@@ -72,22 +114,24 @@ void BasePlayer::start()
     m_groundParticleComponent.pData->start();
 
     // Keys
-    input->bindAction("forward",               EKeyMode::KEY_DOWN,     "Game", this, "forward");
-    input->bindAction("backward",              EKeyMode::KEY_DOWN,     "Game", this, "backward");
-    input->bindAction("left",                  EKeyMode::KEY_DOWN,     "Game", this, "left");
-    input->bindAction("right",                 EKeyMode::KEY_DOWN,     "Game", this, "right");
-    input->bindAction("jump",                  EKeyMode::KEY_DOWN,     "Game", this, "jump");
-    input->bindAction("exit",                  EKeyMode::KEY_PRESSED,  "Game", this, "leave");
-    input->bindAction("sprintStart",           EKeyMode::KEY_PRESSED,  "Game", this, "sprintStart");
-    input->bindAction("sprintEnd",             EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
-    input->bindAction("shoot",                 EKeyMode::KEY_DOWN,     "Game", this, "shoot");
-    input->bindAction("aimBegin",              EKeyMode::KEY_PRESSED,  "Game", this, "aimBegin");
-    input->bindAction("aimEnd",                EKeyMode::KEY_RELEASED, "Game", this, "aimEnd");
-    input->bindAction("playAmbiantMusic",      EKeyMode::KEY_PRESSED,  "Game", this, "playAmbiantMusic");
-    input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED,  "Game", this, "playAmbiantMusicForce");
-    input->bindAction("stopAllMusic",          EKeyMode::KEY_PRESSED,  "Game", this, "stopAllMusic");
+    input->bindAction("forward", EKeyMode::KEY_DOWN, "Game", this, "forward");
+    input->bindAction("backward", EKeyMode::KEY_DOWN, "Game", this, "backward");
+    input->bindAction("left", EKeyMode::KEY_DOWN, "Game", this, "left");
+    input->bindAction("right", EKeyMode::KEY_DOWN, "Game", this, "right");
+    input->bindAction("jump", EKeyMode::KEY_DOWN, "Game", this, "jump");
+    input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
+    input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
+    input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+    input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+    input->bindAction("aimBegin", EKeyMode::KEY_PRESSED, "Game", this, "aimBegin");
+    input->bindAction("aimEnd", EKeyMode::KEY_RELEASED, "Game", this, "aimEnd");
+    input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
+    input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
+    input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
+    input->bindAction("reload", EKeyMode::KEY_PRESSED, "Game", this, "reload");
 
-    source->playSound("Western", true);
+    source->playSound("BGM", true, false);
+    source->playSound("arrival", true, false);
 
     { // Cursor
         GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
@@ -100,12 +144,18 @@ void BasePlayer::rotate(const GPM::Vec2& deltaDisplacement)
 {
     const Quat& orientation{transform().getSpacialAttribut().rotation};
     const Vec2  axis{deltaDisplacement.rotated90()};
-    const float deltaTime = float(Engine::getInstance()->timeSystem.getDeltaTime());
+    const float deltaTime{float(Engine::getInstance()->timeSystem.getDeltaTime())};
     const Quat  rotX{Quat::angleAxis(axis.x * controller->getAngularSpeed() * deltaTime, Vec3::right())};
     const Quat  rotY{Quat::angleAxis(axis.y * controller->getAngularSpeed() * deltaTime, Vec3::up())};
     const Quat  newRot{rotY * orientation * rotX};
+    Vec3        angles{newRot.eulerAngles()};
 
-    transform().setRotation(newRot);
+    if (fabs(angles.x) >= HALF_PI)
+    {
+        return;
+    }
+
+    transform().setRotation(Quat::fromEuler(angles));
 }
 
 // TOOD: Detect whether we are in editor or launcher
@@ -132,12 +182,12 @@ void BasePlayer::raycastExample()
 
 void BasePlayer::playAmbiantMusic()
 {
-    source->playSound("Western", false);
+    source->playSound("BGM", false, false);
 }
 
 void BasePlayer::playAmbiantMusicForce()
 {
-    source->playSound("Western", true);
+    source->playSound("BGM", true, false);
 }
 
 void BasePlayer::stopAllMusic()
@@ -146,7 +196,7 @@ void BasePlayer::stopAllMusic()
 }
 
 // size_arg (for each axis) < 0.0f: align to end, 0.0f: auto, > 0.0f: specified size
-void displayLifeBar(float currentLife, float lifeMax, const ImVec2& size_arg)
+void displayStaminaBar(float staminCount, float staminaMax, const ImVec2& size_arg)
 {
     using namespace ImGui;
 
@@ -168,7 +218,7 @@ void displayLifeBar(float currentLife, float lifeMax, const ImVec2& size_arg)
         return;
 
     // Render
-    float fraction = currentLife / lifeMax;
+    float fraction = staminCount / staminaMax;
     fraction       = ImSaturate(fraction);
 
     // Background
@@ -184,13 +234,14 @@ void displayLifeBar(float currentLife, float lifeMax, const ImVec2& size_arg)
 
     bb.Expand(ImVec2(-style.FrameBorderSize, -style.FrameBorderSize));
     const ImVec2 fill_br = ImVec2(ImLerp(bb.Min.x, bb.Max.x, fraction), bb.Max.y);
-    RenderRectFilledRangeH(window->DrawList, bb, ImColor{255, 0, 0, 150}, 0.0f, fraction, 7.f);
+
+    RenderRectFilledRangeH(window->DrawList, bb, ImColor{255, 0, 0, 150}, 0.0f, fraction, rounding);
 
     // Default displaying the fraction as percentage string, but user can override it
     char        overlay_buf[32];
     const char* overlay = nullptr;
 
-    ImFormatString(overlay_buf, IM_ARRAYSIZE(overlay_buf), "%.0f% / %.0f%", currentLife, lifeMax);
+    ImFormatString(overlay_buf, IM_ARRAYSIZE(overlay_buf), "%0.2f% / %0.0f%", fraction, staminaMax);
     overlay = overlay_buf;
 
     ImVec2 overlay_size = CalcTextSize(overlay, NULL);
@@ -208,38 +259,126 @@ void BasePlayer::onGUI()
 
     if (displayDepthMenu)
     {
-        ImVec2 size = {GetWindowSize().x / 4.f * ratio, GetWindowSize().y / 6.f * ratio};
+        ImVec2 size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
+
+        const float previousFontScale = GetFont()->Scale;
+        SetWindowFontScale(2.f * ratio);
 
         SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::Button("Retry", size))
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Retry", size))
         {
             reloadScene();
             Engine::getInstance()->timeSystem.setTimeScale(1.0);
         }
 
+        size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
         SetNextElementLayout(0.5f, 0.6f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::Button("Quitte", size))
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quit", size))
         {
             closeApplication();
         }
+        ImGui::SetWindowFontScale(previousFontScale);
+    }
+    else if (displayWinMenu)
+    {
+        const float ratio = ImGui::GetWindowSize().y / ImGui::GetWindowSize().x;
+
+        ImVec2 size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
+
+        PushFont(GetIO().Fonts->Fonts[1]);
+        SetNextTextLayout("Evacuation success !", 0.5f, 0.1f);
+        ImGui::TextUnformatted("Evacuation success !");
+        PopFont();
+
+        const float previousFontScale = GetFont()->Scale;
+        PushFont(GetIO().Fonts->Fonts[2]);
+        SetWindowFontScale(1.f * ratio);
+
+        SetNextElementLayout(0.5f, 0.5f, size, EHAlign::Middle, EVAlign::Middle);
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Main menu", size))
+        {
+            Engine::getInstance()->timeSystem.setTimeScale(1.f);
+            loadNewScene(m_mainMenuPath.c_str());
+        }
+
+        size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
+        SetNextElementLayout(0.5f, 0.7f, size, EHAlign::Middle, EVAlign::Middle);
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quit", size))
+        {
+            closeApplication();
+        }
+        PopFont();
+        ImGui::SetWindowFontScale(previousFontScale);
     }
     else
     {
-        ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
+        ImVec2      size              = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
+        const float previousFontScale = GetFont()->Scale;
+        PushFont(GetIO().Fonts->Fonts[2]);
+        SetWindowFontScale(1.f * ratio);
 
+        // Life bar
         SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
-        displayLifeBar(m_currentLife, m_maxLife, size);
+        displayBar(m_currentLife, m_maxLife, size, 5.f, 3.f);
 
+        PushFont(GetIO().Fonts->Fonts[0]);
+
+        // Stamina bar
+        ImGui::SetCursorPosX(
+            ImGui::GetStyle().FramePadding.x + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+            (ImGui::GetWindowSize().x - ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.5f -
+            size.x * 0.5f);
+        size.y /= 3.f;
+        displayBar(m_staminaCount, m_staminaMax, size, 2.f, 2.f, {255, 255, 0, 255}, {0, 0, 0, 255}, {0, 0, 0, 255},
+                   "%.2f% / %.0f%");
+
+        if (isInEvacuationMode)
+        {
+            // Evacuation
+            ImGui::SetCursorPosX(
+                ImGui::GetStyle().FramePadding.x + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+                (ImGui::GetWindowSize().x - ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.5f -
+                size.x * 0.5f);
+            displayBar(m_evacuationPoint.pData->getTimer(), m_evacuationPoint.pData->getTimerDuration(), size, 2.f, 2.f,
+                       {0, 255, 0, 255}, {0, 0, 0, 255}, {0, 0, 0, 255}, "%.2f% / %.0f%");
+        }
+        PopFont();
+
+        size = {GetWindowSize().x / 10.f * ratio, GetWindowSize().x / 10.f * ratio};
+        // Fire arm stats
         if (m_firearms.size())
         {
-            size = ImGui::CalcTextSize("30/30");
-            SetNextElementLayout(0.05f, 0.95f, size, EHAlign::Left, EVAlign::Bottom);
-            Text("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
-                 m_firearms.front()->getMagazine().getCapacity());
+
+            SetCursorPosX(GetStyle().FramePadding.x + GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+                          (GetWindowSize().x - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.05f -
+                          size.x * 0.5f);
+
+            SetCursorPosY(GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y +
+                          (GetWindowSize().y - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y) * 0.80f -
+                          size.y * 0.5f);
+
+            ImageWithTextRight((ImTextureID)m_bulletTexture.pTex->getID(),
+                               stringFormat("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
+                                            m_firearms.front()->getMagazine().getCapacity())
+                                   .c_str(),
+                               size);
+
+            // Loot count
+            SetCursorPosX(GetStyle().FramePadding.x + GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+                          (GetWindowSize().x - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.05f -
+                          size.x * 0.5f);
+
+            ImageWithTextRight((ImTextureID)m_lootTexture.pTex->getID(),
+                               stringFormat("%d / %d", m_lootCount, m_lootCountToWin).c_str(), size);
         }
+
+        // FPS
         size = ImGui::CalcTextSize("FPS : 144");
         SetNextElementLayout(0.95f, 0.f, size, EHAlign::Right, EVAlign::Top);
         Text("FPS : %0.0f", ImGui::GetIO().Framerate);
+
+        PopFont();
+        ImGui::SetWindowFontScale(previousFontScale);
     }
 }
 
@@ -251,18 +390,32 @@ void BasePlayer::update(double deltaTime)
         {
             m_animDepthCounter += float(deltaTime);
 
-            if (m_animDepthCounter >= m_animDepthCounterMax)
+            if (m_animDepthCounter >= m_animDepthCounterMax && !displayDepthMenu)
             {
                 Engine::getInstance()->timeSystem.setTimeScale(0.0);
-                m_animDepthCounter = 0;
-                displayDepthMenu   = true;
                 Engine::getInstance()->inputManager.setCursorTrackingState(false);
                 Engine::getInstance()->inputManager.setCursorLockState(false);
+                displayDepthMenu   = true;
+                m_animDepthCounter = 0;
             }
         }
     }
     else
     {
+        if (m_isSprint)
+        {
+            m_staminaCount -= float(deltaTime) * m_staminaSpeedConsumation;
+            if (m_staminaCount <= 0.f)
+            {
+                m_staminaCount = 0.f;
+                sprintEnd();
+            }
+        }
+        else
+        {
+            m_staminaCount = std::min(m_staminaMax, m_staminaCount + float(deltaTime) * m_staminaSpeedRecharge);
+        }
+
         // TODO: find a fix to relieve the user from having to check this, or leave it like that?
         if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game")
         {
@@ -271,12 +424,35 @@ void BasePlayer::update(double deltaTime)
             if (deltaPos.x || deltaPos.y)
                 rotate(deltaPos);
         }
+
+        if (m_isPlayDamageAnimation)
+        {
+            m_animDamageAnimCounter += float(deltaTime);
+
+            const float t = std::clamp(m_animDamageAnimCounter / m_animDamageAnimCounterMax, 0.f, 1.f);
+            updateDamageAnimation(t);
+
+            if (m_animDamageAnimCounter >= m_animDamageAnimCounterMax)
+            {
+                m_isPlayDamageAnimation = false;
+                m_animDamageAnimCounter = 0.f;
+                m_cameraGO.pData->getTransform().setTranslation(Vec3::zero());
+            }
+        }
+    }
+}
+
+void BasePlayer::reload()
+{
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && m_firearms.size())
+    {
+        m_firearms.front()->reload();
     }
 }
 
 void BasePlayer::shoot()
 {
-    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && !isDead() && m_firearms.size())
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && m_firearms.size())
     {
         m_firearms.front()->triggered();
 
@@ -318,4 +494,60 @@ BasePlayer::~BasePlayer() noexcept
 
 void BasePlayer::collectLoot(const Loot& loot)
 {
+    if (++m_lootCount >= m_lootCountToWin)
+    {
+        m_evacuationPoint.pData->activeEvacutaitonPoint();
+        isInEvacuationMode = true;
+        source->playSound("extraction", true, false);
+    }
+}
+
+void BasePlayer::onDeath()
+{
+    BaseCharacter::onDeath();
+
+    input->setActive(false);
+    source->playSound("defeat", true, false);
+}
+
+void BasePlayer::onWin()
+{
+    displayWinMenu = true;
+    enableUpdate(false);
+    Engine::getInstance()->timeSystem.setTimeScale(0.0);
+    Engine::getInstance()->inputManager.setCursorTrackingState(false);
+    Engine::getInstance()->inputManager.setCursorLockState(false);
+    source->playSound("victory", true, false);
+}
+
+void BasePlayer::updateDamageAnimation(float t)
+{
+    const float newT = easeInCirc(t);
+
+    Vec3 moveStrength = Random::unitPeripheralSphericalCoordonate() * m_damageShakeStrength * (1.f - newT);
+
+    moveStrength.z = 0.f;
+    m_cameraGO.pData->getTransform().setTranslation(moveStrength); // Set the local rotation the be the rotation amount.
+}
+
+void BasePlayer::takeDamage(float damage)
+{
+    BaseCharacter::takeDamage(damage);
+    m_isPlayDamageAnimation = true;
+    m_animDamageAnimCounter = 0.f;
+    source->playSound("playerHurted", true, true);
+}
+
+void BasePlayer::inspect(GPE::InspectContext& context)
+{
+    Component::inspect(context);
+
+    defaultInspect(context);
+
+    ImGui::Text("Main menu to load : ");
+    ImGui::SameLine();
+    if (ImGui::Button(m_mainMenuPath.size() ? m_mainMenuPath.c_str() : "None"))
+    {
+        m_mainMenuPath = GPE::openFileExplorerAndGetRelativePath(L"Select Scene", {{L"Scene", L"*.GPScene"}}).string();
+    }
 }

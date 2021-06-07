@@ -61,6 +61,22 @@ struct DirectoryInfo
         }
         return rst;
     }
+
+    size_t computeSize() const
+    {
+        size_t rst = 0;
+
+        for (auto&& it = files.cbegin(); it != files.cend(); ++it)
+        {
+            rst += it->size;
+        }
+
+        for (auto&& it = directories.cbegin(); it != directories.cend(); ++it)
+        {
+            rst += it->computeSize();
+        }
+        return rst;
+    }
 };
 
 class ProjectContent

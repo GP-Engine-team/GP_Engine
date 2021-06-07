@@ -67,7 +67,7 @@ private:
 
 private:
     /* Gets normalized value for Lerp & Slerp*/
-    float getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime);
+    float getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const;
 
     /* figures out which position keys to interpolate b/w and performs the interpolation
     and returns the translation matrix */
@@ -93,15 +93,19 @@ public:
 
     /* Gets the current index on mKeyPositions to interpolate to based on the current
     animation time */
-    int getPositionIndex(float animationTime);
+    int getPositionIndex(float animationTime) const;
 
     /* Gets the current index on mKeyRotations to interpolate to based on the current
     animation time */
-    int getRotationIndex(float animationTime);
+    int getRotationIndex(float animationTime) const;
 
     /* Gets the current index on mKeyScalings to interpolate to based on the current
     animation time */
-    int getScaleIndex(float animationTime);
+    int getScaleIndex(float animationTime) const;
+
+    GPM::Vec3 getInterpolatedPosition(float time) const;
+    GPM::Quat getInterpolatedRotation(float time) const;
+    GPM::Vec3 getInterpolatedScale(float time) const;
 
     void save(BinarySaver& saver) const;
     void load(BinaryLoader& loader);

@@ -32,8 +32,6 @@ Firearm::Firearm(GPE::GameObject& owner, const GunMagazine& magazineStored, floa
 
 void Firearm::onPostLoad()
 {
-    BehaviourComponent::onPostLoad();
-
     enableUpdate(true);
 
     m_shootSound = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
@@ -45,14 +43,21 @@ void Firearm::onPostLoad()
     sourceSettings.relative = AL_TRUE;
 
     m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
+
+    BehaviourComponent::onPostLoad();
 }
 
 void Firearm::start()
 {
-    m_basePosition = transform().getPosition();
-    m_baseRotation = transform().getRotation();
+    m_staticPosition = m_dynamicPosition = transform().getPosition();
+    m_staticRotation = m_dynamicRotation = transform().getRotation();
 
     m_recoileAnimtationDuration = std::clamp(m_recoileAnimtationDuration, 0.f, m_rateOfFire);
+
+    GameObject* playerGO = getOwner().getParent();
+    GAME_ASSERT(playerGO, "FireArm must be child of player");
+    m_player = playerGO->getComponent<BasePlayer>();
+    GAME_ASSERT(m_player, "Missing baseChracter in parent gamObject");
 
     GAME_ASSERT(m_muzzleFlashEffect.pData, "Missing component");
 
@@ -92,7 +97,9 @@ void Firearm::triggered()
                     decaleGO.getTransform().setVecForward(rayNorm, (GPM::Vec3::right().cross(rayNorm).normalized()));
                 }
 
-                if (pOwner->getTag() == "Character")
+                std::string tag = pOwner->getTag();
+
+                if (tag == "Character")
                 {
                     BaseCharacter* const bc = pOwner->getComponent<BaseCharacter>();
 
@@ -107,8 +114,12 @@ void Firearm::triggered()
                             static_cast<unsigned int>(m_bloodEffect.pData->getCount() /
                                                       m_magazineStored.getCapacity()));
                     }
+                    GPE::SourceData* data   = m_player->source->findSource("zombieHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("zombieHurted", true, true);
                 }
-                else
+                else if (tag == "Ground")
                 {
                     if (m_groundShootEffect.pData)
                     {
@@ -117,6 +128,43 @@ void Firearm::triggered()
                             static_cast<unsigned int>(m_groundShootEffect.pData->getCount() /
                                                       m_magazineStored.getCapacity()));
                     }
+
+                    GPE::SourceData* data   = m_player->source->findSource("groundHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("groundHurted", true, true);
+                }
+
+                else if (tag == "Metal")
+                {
+                    GPE::SourceData* data   = m_player->source->findSource("metalHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("metalHurted", true, true);
+                }
+
+                else if (tag == "Wall")
+                {
+                    GPE::SourceData* data   = m_player->source->findSource("wallHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("wallHurted", true, true);
+                }
+
+                else if (tag == "Rock")
+                {
+                    GPE::SourceData* data   = m_player->source->findSource("rockHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("rockHurted", true, true);
+                }
+
+                else if (tag == "Wood")
+                {
+                    GPE::SourceData* data   = m_player->source->findSource("woodHurted");
+                    data->settings.position = rayPos;
+                    m_player->source->updateSource(data);
+                    m_player->source->playSound("woodHurted", true, true);
                 }
             }
 
@@ -128,7 +176,7 @@ void Firearm::triggered()
         m_muzzleFlashEffect.pData->emit(
             static_cast<unsigned int>(m_muzzleFlashEffect.pData->getCount() / m_magazineStored.getCapacity()));
 
-        m_shootSound->playSound("Shoot", true);
+        m_shootSound->playSound("Shoot", true, true);
         m_isReloadingNextBullet    = true;
         m_reloadingBulletTimeCount = 0.f;
     }
@@ -192,6 +240,26 @@ void Firearm::update(double deltaTime)
             m_isAimAnimationDone = true;
         }
     }
+
+    transform().setTranslation(m_dynamicPosition + m_translationMovement);
+
+    if (!m_isAiming) // The weapon is not held properly, it is shaking when firing!
+    {
+        transform().setRotation(m_aimRotation * m_rotationMovement);
+    }
+
+    else // The weapon is held steadily. The reticle stays aligned with the line of view
+    {
+        transform().setRotation(m_aimRotation);
+    }
+
+    const float aimAmplification    = (!m_isAiming + 1) / 2.f;           // 0.5 if aiming else 1
+    const float sprintAmplification = m_player->getIsSprint() * 4.f + 1; // 2.f if sprint else 1
+    m_translationMovement =
+        m_player->getBodyBalancing() * sprintAmplification * m_balancingStrength * aimAmplification * Vec3::forward() +
+        m_player->getBodyBalancing() * sprintAmplification * m_balancingStrength * aimAmplification * Vec3::right();
+
+    m_rotationMovement = Quaternion::identity();
 }
 
 void Firearm::onShoot()
@@ -205,20 +273,24 @@ void Firearm::animateRecoil(float t)
 void Firearm::animateAimIn(float t)
 {
     const float intRatio = easeOutElastic(t);
-    transform().setTranslation(m_basePosition.lerp(m_aimPosition, intRatio));
-    transform().setRotation(m_baseRotation.nlerp(m_aimRotation, intRatio));
+    m_dynamicPosition    = m_staticPosition.lerp(m_aimPosition, intRatio);
+    m_dynamicRotation    = m_staticRotation.nlerp(m_aimRotation, intRatio);
 }
 
 void Firearm::animateAimOut(float t)
 {
     const float intRatio = easeOutElastic(t);
-    transform().setTranslation(m_aimPosition.lerp(m_basePosition, intRatio));
-    transform().setRotation(m_aimRotation.nlerp(m_baseRotation, intRatio));
+    m_dynamicPosition    = m_aimPosition.lerp(m_staticPosition, intRatio);
+    m_dynamicRotation    = m_aimRotation.nlerp(m_staticRotation, intRatio);
 }
 
 void Firearm::reload()
 {
-    m_isReloading = true;
+    if (!m_isReloading)
+    {
+        m_isReloading = true;
+        m_player->source->playSound("reload", true, true);
+    }
 }
 
 const GunMagazine& Firearm::getMagazine() const
