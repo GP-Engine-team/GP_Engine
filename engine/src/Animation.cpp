@@ -16,11 +16,12 @@ Animation::Animation(const aiAnimation* aiAnim)
     readMissingBones(aiAnim);
 }
 
-Animation::Animation(const CreateArgs& args)
+Animation::Animation(const CreateArgs& args, const std::string& path)
 {
     m_bones          = args.bones;
     m_duration       = args.duration;
     m_ticksPerSecond = args.nbTicksPerSecond;
+    m_path           = path;
 }
 
 Animation::CreateArgs::CreateArgs(const aiAnimation* aiAnim)

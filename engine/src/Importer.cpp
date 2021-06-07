@@ -19,8 +19,8 @@
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/ResourcesManagerType.hpp>
 #include <Engine/Resources/Texture.hpp>
-#include <Engine/Serialization/binary/BinarySaver.hpp>
 #include <Engine/Serialization/binary/BinaryLoader.hpp>
+#include <Engine/Serialization/binary/BinarySaver.hpp>
 #include <GPM/Shape3D/AABB.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
 
@@ -198,7 +198,6 @@ GPE::GameObject* GPE::loadPrefabFromStringImp(GPE::GameObject& parent, const std
         struct Rec
         {
         private:
-
             static void recComponent(GPE::GameObject* g)
             {
                 for (GPE::Component* comp : g->getComponents())
@@ -527,7 +526,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
                                                    Vec3{normal.x, normal.y, normal.z}, Vec2{textCoord.x, textCoord.y},
                                                    Vec3{tangeante.x, tangeante.y, tangeante.z}});
 
-            //GPE::Mesh::setVertexBoneDataToDefault(arg.vertices.back());
+            // GPE::Mesh::setVertexBoneDataToDefault(arg.vertices.back());
         }
 
         // Indices
@@ -559,26 +558,28 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
             Engine::getInstance()->resourceManager.get<Shader>(idShader), matList[pMesh->mMaterialIndex],
             &Engine::getInstance()->resourceManager.add<Mesh>(dstMeshPath.string().c_str(), arg)});
 
-
-
-        Skin::CreateArgs     skinArgs;
-        Skeleton::CreateArgs skeletonArgs;
-        Skeleton::readHierarchyData(skeletonArgs.m_root, scene->mRootNode);
-        loadSkinAndSkeleton(skinArgs.m_verticesBoneData, skeletonArgs.m_boneInfoMap, pMesh);
-        writeSkeletonFile((dstPath.string() + ENGINE_SKELETON_EXTENSION).c_str(), skeletonArgs);
-        writeSkinFile((dstPath.string() + ENGINE_SKIN_EXTENSION).c_str(), skinArgs);
+        if (pMesh->HasBones())
+        {
+            Skin::CreateArgs     skinArgs;
+            Skeleton::CreateArgs skeletonArgs;
+            Skeleton::readHierarchyData(skeletonArgs.m_root, scene->mRootNode);
+            loadSkinAndSkeleton(skinArgs.m_verticesBoneData, skeletonArgs.m_boneInfoMap, pMesh);
+            writeSkeletonFile((dstPath.string() + ENGINE_SKELETON_EXTENSION).c_str(), skeletonArgs);
+            writeSkinFile((dstPath.string() + ENGINE_SKIN_EXTENSION).c_str(), skinArgs);
+        }
 
         GPE_ASSERT(scene->mNumAnimations <= 1, "If the number of animations is higher");
     }
 
     std::filesystem::path dstAnimPath = dstDirPath / fileName;
-    //for (aiAnimation* aiAnim = scene->mAnimations[0]; &aiAnim < scene->mAnimations + scene->mNumAnimations; aiAnim++)
+    // for (aiAnimation* aiAnim = scene->mAnimations[0]; &aiAnim < scene->mAnimations + scene->mNumAnimations; aiAnim++)
     for (size_t i = 0; i < scene->mNumAnimations; i++)
     {
         aiAnimation*          aiAnim   = scene->mAnimations[i];
         Animation::CreateArgs animArgs = Animation::CreateArgs(aiAnim);
-        //m_currentAnimation = new Animation(scene->mAnimations[0]);
-        writeAnimationFile((dstAnimPath.string() + aiAnim->mName.C_Str() + ENGINE_ANIMATION_EXTENSION).c_str(), animArgs);
+        // m_currentAnimation = new Animation(scene->mAnimations[0]);
+        writeAnimationFile((dstAnimPath.string() + aiAnim->mName.C_Str() + ENGINE_ANIMATION_EXTENSION).c_str(),
+                           animArgs);
     }
 
     std::filesystem::path dstPrefPath = dstDirPath / fileName;
@@ -1073,11 +1074,9 @@ SavedScene::CreateArg GPE::loadSceneFile(const char* src)
     return readSceneFile(src);
 }
 
-
-
 struct SkeletonHeader
 {
-    char assetID       = (char)EFileType::SKELETON;
+    char assetID = (char)EFileType::SKELETON;
     int  nbBones;
 };
 
@@ -1106,9 +1105,9 @@ void GPE::writeSkeletonFile(const char* dst, const Skeleton::CreateArgs& arg)
 
 Skeleton::CreateArgs GPE::readSkeletonFile(const char* src)
 {
-    FILE*                       pFile = nullptr;
-    std::filesystem::path       srcPath(src);
-    Skeleton::CreateArgs        arg;
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
+    Skeleton::CreateArgs  arg;
 
     if (srcPath.extension() != ENGINE_SKELETON_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
@@ -1135,9 +1134,9 @@ Skeleton* GPE::loadSkeletonFile(const char* src)
 {
     std::filesystem::path srcPath(src);
 
-     if (Skeleton* const pSkeleton = Engine::getInstance()->animResourcesManager.get<Skeleton>(src))
+    if (Skeleton* const pSkeleton = Engine::getInstance()->animResourcesManager.get<Skeleton>(src))
         return pSkeleton;
-     return &Engine::getInstance()->animResourcesManager.add<Skeleton>(src, readSkeletonFile(src));
+    return &Engine::getInstance()->animResourcesManager.add<Skeleton>(src, readSkeletonFile(src), src);
 }
 
 struct AnimationHeader
@@ -1171,9 +1170,9 @@ void GPE::writeAnimationFile(const char* dst, const Animation::CreateArgs& arg)
 
 Animation::CreateArgs GPE::readAnimationFile(const char* src)
 {
-    FILE*                       pFile = nullptr;
-    std::filesystem::path       srcPath(src);
-    Animation::CreateArgs       arg;
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
+    Animation::CreateArgs arg;
 
     if (srcPath.extension() != ENGINE_ANIMATION_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
@@ -1181,15 +1180,14 @@ Animation::CreateArgs GPE::readAnimationFile(const char* src)
         return arg;
     }
 
-     AnimationHeader header;
+    AnimationHeader header;
     // copy the file into the buffer:
-     fread(&header, sizeof(header), 1, pFile);
-     GPE::BinaryLoader loader;
-     loader.file = pFile;
-     GPE::load(loader, arg.duration, nullptr);
-     GPE::load(loader, arg.nbTicksPerSecond, nullptr);
-     GPE::load(loader, arg.bones, nullptr);
-
+    fread(&header, sizeof(header), 1, pFile);
+    GPE::BinaryLoader loader;
+    loader.file = pFile;
+    GPE::load(loader, arg.duration, nullptr);
+    GPE::load(loader, arg.nbTicksPerSecond, nullptr);
+    GPE::load(loader, arg.bones, nullptr);
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("File read from \"%s\"", src));
@@ -1204,14 +1202,12 @@ Animation* GPE::loadAnimationFile(const char* src)
 
     if (Animation* const pAnim = Engine::getInstance()->animResourcesManager.get<Animation>(src))
         return pAnim;
-    return &Engine::getInstance()->animResourcesManager.add<Animation>(src,
-                                                                       readAnimationFile(src));
+    return &Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src), src);
 }
-
 
 struct SkinHeader
 {
-    char assetID       = (char)EFileType::SKIN;
+    char assetID = (char)EFileType::SKIN;
 };
 
 void GPE::writeSkinFile(const char* dst, const Skin::CreateArgs& arg)
@@ -1237,9 +1233,9 @@ void GPE::writeSkinFile(const char* dst, const Skin::CreateArgs& arg)
 
 Skin::CreateArgs GPE::readSkinFile(const char* src)
 {
-    FILE*                       pFile = nullptr;
-    std::filesystem::path       srcPath(src);
-    Skin::CreateArgs            arg;
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
+    Skin::CreateArgs      arg;
 
     if (srcPath.extension() != ENGINE_SKIN_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
@@ -1265,7 +1261,7 @@ Skin* GPE::loadSkinFile(const char* src)
 {
     std::filesystem::path srcPath(src);
 
-     if (Skin* const pSkin = Engine::getInstance()->animResourcesManager.get<Skin>(src))
+    if (Skin* const pSkin = Engine::getInstance()->animResourcesManager.get<Skin>(src))
         return pSkin;
-     return &Engine::getInstance()->animResourcesManager.add<Skin>(src, readSkinFile(src));
+    return &Engine::getInstance()->animResourcesManager.add<Skin>(src, readSkinFile(src));
 }

@@ -27,6 +27,8 @@ private:
     bool cursorTrackingStateInGame = false;
     bool setMouseInWindow          = false;
 
+    void checkInputs(EditorStartup& startup);
+
 public:
     GameViewer(int width = 1, int height = 1);
 

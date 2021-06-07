@@ -71,10 +71,11 @@ public:
     int                        m_boneCounter = 0;
 
     AssimpNodeData m_root;
+    std::string    m_path;
 
 public:
     Skeleton() = default;
-    Skeleton(const CreateArgs& args) noexcept : m_root(args.m_root)
+    Skeleton(const CreateArgs& args, const std::string& path) noexcept : m_root(args.m_root), m_path(path)
     {
         m_boneInfo.resize(args.m_boneInfoMap.size());
         for (auto& [boneName, boneInfo] : args.m_boneInfoMap)

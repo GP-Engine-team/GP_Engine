@@ -198,10 +198,10 @@ void EditorStartup::playGame()
     m_fixedUpdate = [&](double fixedUnscaledDeltaTime, double fixedDeltaTime) {
         if (m_game->state == EGameState::PLAYING)
         {
-            m_engine->physXSystem.advance(fixedDeltaTime);
             m_engine->sceneManager.getCurrentScene()->behaviourSystem.fixedUpdate(fixedDeltaTime);
-
             m_game->fixedUpdate(fixedUnscaledDeltaTime, fixedDeltaTime);
+            m_engine->physXSystem.updateController(fixedDeltaTime);
+            m_engine->physXSystem.advance(fixedDeltaTime);
         }
     };
 
@@ -334,6 +334,7 @@ void EditorStartup::update()
 
 void EditorStartup::startScene()
 {
+    m_editor.inspectedObject = nullptr;
     m_editor.setSceneInEdition(*GPE::Engine::getInstance()->sceneManager.getCurrentScene());
     GPE::Engine::getInstance()->sceneManager.getCurrentScene()->behaviourSystem.start();
 }

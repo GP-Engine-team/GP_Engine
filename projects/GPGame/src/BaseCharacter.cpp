@@ -30,6 +30,7 @@ void BaseCharacter::start()
 {
     GAME_ASSERT(controller, "null");
 
+    controller->setSpeed(m_baseSpeed);
     controller->setAngularSpeed(HALF_PI / 8.f);
 }
 
@@ -114,14 +115,14 @@ void BaseCharacter::right()
 
 void BaseCharacter::sprintStart()
 {
-    controller->setSpeed(controller->getSpeed() * m_sprintAcceleration);
-    isSprint = true;
+    controller->setSpeed(m_baseSpeed * m_sprintAcceleration);
+    m_isSprint = true;
 }
 
 void BaseCharacter::sprintEnd()
 {
-    controller->setSpeed(controller->getSpeed() / m_sprintAcceleration);
-    isSprint = false;
+    controller->setSpeed(m_baseSpeed);
+    m_isSprint = false;
 }
 
 void BaseCharacter::fixedUpdate(double deltaTime)
@@ -138,7 +139,7 @@ void BaseCharacter::fixedUpdate(double deltaTime)
         m_bodyBalancing = lerpf(m_bodyBalancing, 0.f, float(deltaTime));
     }
 
-    controller->update(deltaTime);
+    // controller->update(deltaTime);
 }
 
 void BaseCharacter::takeDamage(float damage)

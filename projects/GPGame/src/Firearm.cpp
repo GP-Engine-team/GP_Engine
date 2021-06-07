@@ -32,8 +32,6 @@ Firearm::Firearm(GPE::GameObject& owner, const GunMagazine& magazineStored, floa
 
 void Firearm::onPostLoad()
 {
-    BehaviourComponent::onPostLoad();
-
     enableUpdate(true);
 
     m_shootSound = &getOwner().getOrCreateComponent<GPE::AudioComponent>();
@@ -45,6 +43,8 @@ void Firearm::onPostLoad()
     sourceSettings.relative = AL_TRUE;
 
     m_shootSound->setSound("Shoot", "Shoot", sourceSettings);
+
+    BehaviourComponent::onPostLoad();
 }
 
 void Firearm::start()
@@ -113,7 +113,7 @@ void Firearm::triggered()
                                                       m_magazineStored.getCapacity()));
                     }
                 }
-                else
+                else if(pOwner->getTag() == "Ground")
                 {
                     if (m_groundShootEffect.pData)
                     {
@@ -199,11 +199,22 @@ void Firearm::update(double deltaTime)
     }
 
     transform().setTranslation(m_dynamicPosition + m_translationMovement);
-    transform().setRotation(m_dynamicRotation * m_rotationMovement);
 
-    const float aimAmplification = (!m_isAiming + 1) / 2.f; //0.5 if aiming else 1
-    m_translationMovement  = m_player->getBodyBalancing() * m_balancingStrength * aimAmplification * Vec3::forward() +
-                            m_player->getBodyBalancing() * m_balancingStrength * aimAmplification * Vec3::right();
+    if (!m_isAiming) // The weapon is not held properly, it is shaking when firing!
+    {
+        transform().setRotation(m_aimRotation * m_rotationMovement);
+    }
+
+    else // The weapon is held steadily. The reticle stays aligned with the line of view
+    {
+        transform().setRotation(m_aimRotation);
+    }
+
+    const float aimAmplification    = (!m_isAiming + 1) / 2.f;           // 0.5 if aiming else 1
+    const float sprintAmplification = m_player->getIsSprint() * 4.f + 1; // 2.f if sprint else 1
+    m_translationMovement =
+        m_player->getBodyBalancing() * sprintAmplification * m_balancingStrength * aimAmplification * Vec3::forward() +
+        m_player->getBodyBalancing() * sprintAmplification * m_balancingStrength * aimAmplification * Vec3::right();
 
     m_rotationMovement = Quaternion::identity();
 }

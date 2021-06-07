@@ -382,15 +382,20 @@ void GameObject::inspect(GPE::InspectContext& context)
         }
 
         bool isIteratorDestroy = false;
-        if (ImGui::BeginPopup("GameObjectContextePopup"))
+        Model* model           = dynamic_cast<Model*>(*it);
+        if (model == nullptr || !model->hasAnimationsLinked())
         {
-            if (ImGui::MenuItem("Remove component", NULL, false))
+            if (ImGui::BeginPopup("GameObjectContextePopup"))
             {
-                it                = destroyComponent(*it);
-                isIteratorDestroy = true;
-            }
 
-            ImGui::EndPopup();
+                if (ImGui::MenuItem("Remove component", NULL, false))
+                {
+                    it                = destroyComponent(*it);
+                    isIteratorDestroy = true;
+                }
+
+                ImGui::EndPopup();
+            }
         }
 
         if (!isIteratorDestroy && isCollapsingHOpen)

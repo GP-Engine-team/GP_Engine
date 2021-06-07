@@ -16,25 +16,17 @@ struct Linker;
 class GameObject;
 
 template <>
-void DataInspector::inspect(InspectContext& context, RGB& inspected, const rfk::Field& info);
-
-template <>
 void DataInspector::inspect(InspectContext& context, RGB& inspected, const char* name);
 
 template <>
 void DataInspector::inspect(InspectContext& context, RGB& inspected);
 
-template <>
-void DataInspector::inspect(InspectContext& context, RGBA& inspected, const rfk::Field& info);
 
 template <>
 void DataInspector::inspect(InspectContext& context, RGBA& inspected, const char* name);
 
 template <>
 void DataInspector::inspect(InspectContext& context, RGBA& inspected);
-
-template <>
-void DataInspector::inspect(InspectContext& context, AmbiantComponent& inspected, const rfk::Field& info);
 
 template <>
 void DataInspector::inspect(InspectContext& context, AmbiantComponent& inspected, const char* name);
@@ -52,31 +44,16 @@ void DataInspector::inspect(InspectContext& context, AmbiantComponent& inspected
 //} // namespace DataInspector
 
 template <>
-void DataInspector::inspect(InspectContext& context, class Prefab*& inspected, const rfk::Field& info);
-
-template <>
 void DataInspector::inspect(InspectContext& context, class Prefab*& inspected, const char* name);
-
-template <>
-void DataInspector::inspect(InspectContext& context, class Material*& inspected, const rfk::Field& info);
 
 template <>
 void DataInspector::inspect(InspectContext& context, class Material*& inspected, const char* name);
 
 template <>
-void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const rfk::Field& info);
-
-template <>
 void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const char* name);
 
 template <>
-void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const rfk::Field& info);
-
-template <>
 void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const char* name);
-
-template <>
-void DataInspector::inspect(InspectContext& context, class Shader*& inspected, const rfk::Field& info);
 
 template <>
 void DataInspector::inspect(InspectContext& context, class Shader*& inspected, const char* name);
@@ -88,19 +65,10 @@ template <>
 void DataInspector::inspect(InspectContext& context, class Scene*& inspected, const char* name);
 
 template <>
-void DataInspector::inspect<Skin*>(InspectContext& context, Skin*& inspected, const rfk::Field& info);
-
-template <>
 void DataInspector::inspect(InspectContext& context, class Skin*& inspected, const char* name);
 
 template <>
-void DataInspector::inspect<Skeleton*>(InspectContext& context, Skeleton*& inspected, const rfk::Field& info);
-
-template <>
 void DataInspector::inspect(InspectContext& context, class Skeleton*& inspected, const char* name);
-
-template <>
-void DataInspector::inspect<Animation*>(InspectContext& context, Animation*& inspected, const rfk::Field& info);
 
 template <>
 void DataInspector::inspect(InspectContext& context, class Animation*& inspected, const char* name);

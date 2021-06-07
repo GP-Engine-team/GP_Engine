@@ -17,8 +17,6 @@ class Game final : public GPE::AbstractGame
 protected:
     double FPLogDelay = 1.;
     float  m_x = .0f, m_y = .0f, m_w = .0f, m_h = .0f;
-    int    fixedUpdateFrameCount   = 0;
-    int    unFixedUpdateFrameCount = 0;
 
 public:
     Game();

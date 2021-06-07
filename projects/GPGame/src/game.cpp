@@ -44,12 +44,12 @@ using namespace GPM::Random;
 
 void Game::update(double unscaledDeltaTime, double deltaTime)
 {
-    ++unFixedUpdateFrameCount;
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::GetIO().MousePos -= {m_x, m_y};
 }
 
 void Game::fixedUpdate(double fixedUnscaledDeltaTime, double fixedDeltaTime)
 {
-    ++fixedUpdateFrameCount;
 }
 
 void Game::render()
@@ -58,10 +58,7 @@ void Game::render()
     // UI code can be easly move in update because it's not real render function. It however her for simplicity
     // Initialize a new frame
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-
     ImGui::GetIO().DisplaySize = {m_w, m_h};
-    ImGui::GetIO().MousePos -= {m_x, m_y};
 
     ImGui::NewFrame();
 
@@ -100,6 +97,7 @@ extern "C" void destroyGameInstance(GPE::AbstractGame* game)
 {
     GPE_ASSERT(game != nullptr, "m_editor should be valid since we've just ran the editor.");
     delete game;
+    GPE::Engine::getInstance()->animSystem.clearCache();
     GPE::Engine::getInstance()->sceneManager.removeScenes();
     GPE::Engine::getInstance()->resourceManager.clearAll();
 }
@@ -206,10 +204,8 @@ Game::Game()
     // ============= UI =============
     // TODO: Put in-game UI in a module
     initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
-    if (ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/Roboto-Medium.ttf", 14))
-    {
-        ImGui_ImplOpenGL3_CreateFontsTexture();
-    }
+    ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/Roboto-Medium.ttf", 14);
+    ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/AovelSansRounded-rdDL.ttf", 60);
 
     // ============ RNG =============
     initSeed();
@@ -222,6 +218,7 @@ Game::Game()
         io.bindInput(GLFW_KEY_S, "backward");
         io.bindInput(GLFW_KEY_A, "left");
         io.bindInput(GLFW_KEY_D, "right");
+        io.bindInput(GLFW_KEY_R, "reload");
         io.bindInput(GLFW_KEY_SPACE, "jump");
         io.bindInput(GLFW_KEY_ESCAPE, "exit");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");

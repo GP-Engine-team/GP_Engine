@@ -55,17 +55,16 @@ void SpawnManager::start()
 
 void SpawnManager::update(double deltaTime)
 {
-    if (m_enemiesContainer.pData->children.size() > m_difficultyInfo[m_currentDifficulty].m_maxEntity)
+    if (m_enemiesContainer.pData->children.size() >= m_difficultyInfo[m_currentDifficulty].m_maxEntity)
         return;
 
     m_delayCount += float(deltaTime);
 
-    while (m_delayCount >= m_nextDelay)
+    while (m_delayCount >= m_difficultyInfo[m_currentDifficulty].m_spawnfrequency)
     {
 
-        m_delayCount -= m_nextDelay;
+        m_delayCount -= m_difficultyInfo[m_currentDifficulty].m_spawnfrequency;
         // m_nextDelay     = m_spawnDelay + Random::ranged(-m_spawnDelayInterval, m_spawnDelayInterval);
-        m_nextDelay = m_difficultyInfo[m_currentDifficulty].m_spawnfrequency;
 
         Vec2 position2D = Random::circularCoordinate(
             {m_gameObject->getTransform().getGlobalPosition().x, m_gameObject->getTransform().getGlobalPosition().z},
@@ -95,8 +94,11 @@ void SpawnManager::update(double deltaTime)
                                   position2D.y + spawnerPosition.z};
 
         /*Spawn this entity*/
-        GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer.pData);
-        spawnedEntity->getTransform().setTranslation(newPosition);
+        if (m_entitiesToSpawnInfo[indexEntityToSpawn].prefab != nullptr)
+        {
+            GameObject* spawnedEntity = m_entitiesToSpawnInfo[indexEntityToSpawn].prefab->clone(*m_enemiesContainer.pData);
+            spawnedEntity->getTransform().setTranslation(newPosition);
+        }
     }
 }
 
@@ -124,7 +126,6 @@ void SpawnManager::updateEditor(double deltaTime)
 void SpawnManager::setDifficulty(unsigned int level)
 {
     m_currentDifficulty = std::clamp(level, 0u, (unsigned int)(m_difficultyInfo.size() - 1));
-    m_nextDelay         = m_difficultyInfo[m_currentDifficulty].m_spawnfrequency;
 }
 
 void SpawnManager::autoGenerateLinearDifficulty(unsigned int count, const DifficultyLevel& min,
@@ -138,4 +139,9 @@ void SpawnManager::autoGenerateLinearDifficulty(unsigned int count, const Diffic
         m_difficultyInfo.emplace_back(GPM::lerpf(min.m_spawnfrequency, max.m_spawnfrequency, t),
                                       unsigned(ceilf(GPM::lerpf(float(min.m_maxEntity), float(max.m_maxEntity), t))));
     }
+}
+
+void SpawnManager::increaseDifficulty()
+{
+    m_currentDifficulty = std::min(m_currentDifficulty + 1, (unsigned int)(m_difficultyInfo.size() - 1));
 }
