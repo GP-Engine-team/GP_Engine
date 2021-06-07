@@ -1136,7 +1136,7 @@ Skeleton* GPE::loadSkeletonFile(const char* src)
 
     if (Skeleton* const pSkeleton = Engine::getInstance()->animResourcesManager.get<Skeleton>(src))
         return pSkeleton;
-    return &Engine::getInstance()->animResourcesManager.add<Skeleton>(src, readSkeletonFile(src));
+    return &Engine::getInstance()->animResourcesManager.add<Skeleton>(src, readSkeletonFile(src), src);
 }
 
 struct AnimationHeader
@@ -1202,7 +1202,7 @@ Animation* GPE::loadAnimationFile(const char* src)
 
     if (Animation* const pAnim = Engine::getInstance()->animResourcesManager.get<Animation>(src))
         return pAnim;
-    return &Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src));
+    return &Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src), src);
 }
 
 struct SkinHeader
