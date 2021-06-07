@@ -10,6 +10,7 @@
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <GPM/Matrix4.hpp>
 #include <vector>
+#include <Engine/ECS/System/AnimationSystem.hpp>
 
 // Generated
 #include <Generated/AnimationComponent.rfk.h>
@@ -35,9 +36,8 @@ private:
     RFKField() Animation*                                      m_nextAnimation = nullptr;
     RFKField() float                                           m_blendTime       = 0.3f;
 
-    //float blendAlpha = 0.f;
-    std::vector<size_t> skeletonBoneIDToAnimationBoneID;
-    std::vector<size_t> skeletonBoneIDToNextAnimBoneID;
+    GPE::AnimationSystem::CacheKey m_currentAnimCacheKey;
+    GPE::AnimationSystem::CacheKey m_nextAnimCacheKey;
 
 public:
     std::vector<GPM::Mat4>                m_finalBoneMatrices;
