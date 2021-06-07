@@ -38,8 +38,6 @@ void BaseEnemy::start()
     m_controller = &m_gameObject->getOrCreateComponent<GPE::CharacterController>();
     GAME_ASSERT(m_controller, "Null");
 
-    m_radiusAttack = 6.f;
-
     m_source->playSound("Zombie", true, false);
 }
 
@@ -67,7 +65,7 @@ void BaseEnemy::update(double deltaTime)
 {
     if (isDead())
     {
-        //if (m_deathAnimation != nullptr)
+        // if (m_deathAnimation != nullptr)
         //{
         //    for (GPE::AnimationComponent* animComp : m_animComps)
         //    {
@@ -167,7 +165,8 @@ void BaseEnemy::takeDamage(float damage)
                 animComp->setCurrentTime(m_animOnHitStartRatio * m_onHitAnimation->getDuration());
             }
         }
-        m_nextAnimTime = GPE::Engine::getInstance()->timeSystem.getAccumulatedTime() + (1.f - m_animOnHitStartRatio) * m_onHitAnimation->getDuration() - m_animTransitionTime;
+        m_nextAnimTime = GPE::Engine::getInstance()->timeSystem.getAccumulatedTime() +
+                         (1.f - m_animOnHitStartRatio) * m_onHitAnimation->getDuration() - m_animTransitionTime;
     }
 }
 
@@ -175,10 +174,10 @@ void BaseEnemy::onDeath()
 {
     BaseCharacter::onDeath();
 
-    //const char* src = "resources\\Animations\\ZombieDeath.GPAnimation";
+    // const char* src = "resources\\Animations\\ZombieDeath.GPAnimation";
 
-    //GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
-    //if (anim == nullptr)
+    // GPE::Animation* anim = GPE::Engine::getInstance()->animResourcesManager.get<GPE::Animation>(src);
+    // if (anim == nullptr)
     //{
     //    anim = &Engine::getInstance()->animResourcesManager.add<Animation>(src, readAnimationFile(src));
     //}
@@ -191,12 +190,12 @@ void BaseEnemy::onDeath()
             {
                 animComp->setNextAnimAsCurrent();
                 animComp->setNextAnim(m_deathAnimation, m_animTransitionTime);
-                animComp->shouldLoop = false;
+                animComp->shouldLoop     = false;
                 animComp->shouldNextLoop = false;
             }
         }
-        m_currentState = EState::DEAD;
-        m_nextAnimTime = std::numeric_limits<float>::max();
+        m_currentState        = EState::DEAD;
+        m_nextAnimTime        = std::numeric_limits<float>::max();
         m_animDeathCounterMax = m_deathAnimation->getDuration();
     }
 
