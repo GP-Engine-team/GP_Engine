@@ -42,5 +42,12 @@ void LevitationMovement::update(double deltaTime)
     transform().setTranslation(
         {transform().getPosition().x, m_initialY + cosf(m_delay) * m_heightIntensity, transform().getPosition().z});
 
-    transform().setRotation(Quaternion::fromEuler({0.f, m_rotationSpeed * m_delay, 0.f}));
+    m_delayRot += deltaTime * m_rotationSpeed;
+
+    if (m_delayRot > TWO_PI)
+    {
+        m_delayRot -= TWO_PI;
+    }
+
+    transform().setRotation(Quaternion::fromEuler({0.f, m_delayRot, 0.f}));
 }
