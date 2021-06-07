@@ -31,6 +31,7 @@ namespace GPG RFKNamespace()
 
     class RFKClass(ComponentGen, Serialize(), DefaultInspect()) BasePlayer : public BaseCharacter
     {
+        // TODO : remove it. Use for compatibility
         struct RFKStruct(Inspect(), Serialize()) LootTexture
         {
             RFKField(Inspect(), Serialize()) GPE::Texture* pTex = nullptr;
@@ -38,6 +39,7 @@ namespace GPG RFKNamespace()
             LootTexture_GENERATED
         };
 
+        // TODO : remove it. Use for compatibility
         struct RFKStruct(Inspect(), Serialize()) BulletTexture
         {
             RFKField(Inspect(), Serialize()) GPE::Texture* pTex = nullptr;
