@@ -17,12 +17,6 @@
 using namespace GPE;
 
 template <>
-void GPE::DataInspector::inspect(InspectContext& context, RGB& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
 void GPE::DataInspector::inspect(InspectContext& context, RGB& inspected, const char* name)
 {
     context.startProperty(name);
@@ -34,12 +28,6 @@ template <>
 void GPE::DataInspector::inspect(InspectContext& context, RGB& inspected)
 {
     ImGui::ColorEdit3("", &inspected.e[0]);
-}
-
-template <>
-void GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
@@ -57,23 +45,11 @@ void GPE::DataInspector::inspect(InspectContext& context, RGBA& inspected)
 }
 
 template <>
-void GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, AmbiantComponent& inspected, const char* name)
 {
     context.startProperty(name);
     context.setDirty(ImGui::ColorEdit4("", &inspected.e[0]));
     context.endProperty();
-}
-
-template <>
-void GPE::DataInspector::inspect(InspectContext& context, Prefab*& inspected, const rfk::Field& info)
-{
-    return GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
@@ -365,28 +341,9 @@ void renderAnimResourceExplorer(InspectContext& context, const char* name, T*& i
 }
 
 template <>
-void GPE::DataInspector::inspect<Skin*>(InspectContext & context, GPE::Skin * &inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
 void DataInspector::inspect(InspectContext& context, class Skin*& inspected, const char* name)
 {
     renderAnimResourceExplorer<Skin>(context, name, inspected, ENGINE_SKIN_EXTENSION, loadSkinFile);
-}
-
-template <>
-void GPE::DataInspector::inspect<Skeleton*>(InspectContext & context, GPE::Skeleton*& inspected,
-                                            const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
-void DataInspector::inspect(InspectContext& context, class Material*& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
@@ -399,21 +356,9 @@ void GPE::DataInspector::inspect(InspectContext& context, GPE::Skeleton*& inspec
 }
 
 template <>
-void GPE::DataInspector::inspect<Animation*>(InspectContext& context, Animation*& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
 void DataInspector::inspect(InspectContext& context, class Material*& inspected, const char* name)
 {
     renderResourceExplorer<Material>(context, name, inspected, ENGINE_MATERIAL_EXTENSION, loadMaterialFile);
-}
-
-template <>
-void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
@@ -433,21 +378,9 @@ void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, con
 }
 
 template <>
-void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
-}
-
-template <>
 void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const char* name)
 {
     renderResourceExplorer<Texture>(context, name, inspected, ENGINE_TEXTURE_EXTENSION, loadTextureFile);
-}
-
-template <>
-void DataInspector::inspect(InspectContext& context, class Shader*& inspected, const rfk::Field& info)
-{
-    GPE::DataInspector::inspect(context, inspected, info.name.c_str());
 }
 
 template <>
