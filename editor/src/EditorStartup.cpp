@@ -150,10 +150,6 @@ void EditorStartup::openGame()
         io.setCursorTrackingState(false);
     }
 
-    // Ending the game must not close the whole engine when the editor is opened
-    // The editor handles exiting the whole application itself
-    m_engine->exit = [&]() { m_editor.releaseGameInputs(); };
-
     // If the editor was not already shown, show it after the game is fully instanciated
     glfwMaximizeWindow(GPE::Engine::getInstance()->window.getGLFWWindow());
 }
@@ -175,9 +171,6 @@ void EditorStartup::closeGame()
 
     // TODO: are the scenes previously loaded removed by m_game's destructor?
     m_editor.setSceneInEdition(m_engine->sceneManager.setCurrentScene("Default scene"));
-
-    // There is no more active game, replace m_engine->exit to something not dependant on m_game
-    m_engine->exit = [&]() { m_engine->window.close(); };
 }
 
 void EditorStartup::playGame()
@@ -243,6 +236,10 @@ void EditorStartup::playGame()
     m_engine->inputManager.setCursorLockState(false);
     m_engine->inputManager.setCursorTrackingState(false);
     m_engine->inputManager.setCursorMode(GLFW_CURSOR);
+
+    // Ending the game must not close the whole engine when the editor is opened
+    // The editor handles exiting the whole application itself
+    m_engine->exit = [&]() { m_editor.releaseGameInputs(); };
 }
 
 void EditorStartup::pauseGame()
@@ -303,6 +300,9 @@ void EditorStartup::stopGame()
             m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
         }
     };
+
+    // There is no more active game, replace m_engine->exit to something not dependant on m_game
+    m_engine->exit = [&]() { m_engine->window.close(); };
 
     m_editor.reloadCurrentScene();
     m_game->state = EGameState::STOPPED;

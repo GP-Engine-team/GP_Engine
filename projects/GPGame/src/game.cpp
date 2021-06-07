@@ -97,6 +97,7 @@ extern "C" void destroyGameInstance(GPE::AbstractGame* game)
 {
     GPE_ASSERT(game != nullptr, "m_editor should be valid since we've just ran the editor.");
     delete game;
+    GPE::Engine::getInstance()->animSystem.clearCache();
     GPE::Engine::getInstance()->sceneManager.removeScenes();
     GPE::Engine::getInstance()->resourceManager.clearAll();
 }
