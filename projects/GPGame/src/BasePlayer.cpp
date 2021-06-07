@@ -319,6 +319,8 @@ void BasePlayer::onGUI()
         SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
         displayBar(m_currentLife, m_maxLife, size, 5.f, 3.f);
 
+        PushFont(GetIO().Fonts->Fonts[0]);
+
         // Stamina bar
         ImGui::SetCursorPosX(
             ImGui::GetStyle().FramePadding.x + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
@@ -338,6 +340,7 @@ void BasePlayer::onGUI()
             displayBar(m_evacuationPoint.pData->getTimer(), m_evacuationPoint.pData->getTimerDuration(), size, 2.f, 2.f,
                        {0, 255, 0, 255}, {0, 0, 0, 255}, {0, 0, 0, 255}, "%.2f% / %.0f%");
         }
+        PopFont();
 
         size = {GetWindowSize().x / 10.f * ratio, GetWindowSize().x / 10.f * ratio};
         // Fire arm stats
