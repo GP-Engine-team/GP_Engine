@@ -280,7 +280,7 @@ std::vector<GPM::Mat4>& SubModel::getFinalBonesTransforms() const
 {
     GPE_ASSERT(pAnimComponent != nullptr,
                "It is not possible to get the bone data if there are no animations. Check with isAnimated() first.");
-    return pAnimComponent->m_finalBoneMatrices;
+    return pAnimComponent->finalBoneMatrices;
 }
 
 bool SubModel::isAnimated() const
