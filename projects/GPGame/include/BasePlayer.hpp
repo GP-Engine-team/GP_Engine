@@ -31,6 +31,20 @@ namespace GPG RFKNamespace()
 
     class RFKClass(ComponentGen, Serialize(), DefaultInspect()) BasePlayer : public BaseCharacter
     {
+        struct RFKStruct(Inspect(), Serialize()) LootTexture
+        {
+            RFKField(Inspect(), Serialize()) GPE::Texture* pTex = nullptr;
+
+            LootTexture_GENERATED
+        };
+
+        struct RFKStruct(Inspect(), Serialize()) BulletTexture
+        {
+            RFKField(Inspect(), Serialize()) GPE::Texture* pTex = nullptr;
+
+            BulletTexture_GENERATED
+        };
+
     protected:
         RFKField(Serialize(), Inspect(), ReadOnly()) float m_animDepthCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float             m_animDepthCounterMax = 3.f;
@@ -46,6 +60,12 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) unsigned int             m_lootCountToWin = 6u;
 
         RFKField(Inspect(), Serialize()) GPE::Texture* m_buttonTexture;
+
+        // TODO : remove it. Use for compatibility
+        RFKField(Inspect(), Serialize()) BulletTexture m_bulletTexture;
+
+        // TODO : remove it. Use for compatibility
+        RFKField(Inspect(), Serialize()) LootTexture m_lootTexture;
 
         RFKField(Serialize(), Inspect(), ReadOnly()) float            m_animDamageAnimCounter    = 0.f;
         RFKField(Inspect(), Serialize()) float                        m_animDamageAnimCounterMax = 0.1f;

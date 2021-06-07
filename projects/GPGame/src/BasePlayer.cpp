@@ -63,6 +63,8 @@ void BasePlayer::start()
 
     GAME_ASSERT(m_evacuationPoint.pData, "Missing m_evacuationPoint");
     GAME_ASSERT(m_buttonTexture, "No button texture selected");
+    GAME_ASSERT(m_bulletTexture.pTex, "No texture selected");
+    GAME_ASSERT(m_lootTexture.pTex, "No texture selected");
     GAME_ASSERT(input, "null");
     GAME_ASSERT(source, "null");
     GAME_ASSERT(m_firearmsGO.size(), "null");
@@ -267,7 +269,9 @@ void BasePlayer::onGUI()
     }
     else
     {
-        ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
+        ImVec2      size              = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
+        const float previousFontScale = GetFont()->Scale;
+        SetWindowFontScale(1.5f * ratio);
 
         // Life bar
         SetNextElementLayout(0.5f, 0.f, size, EHAlign::Middle, EVAlign::Top);
@@ -293,13 +297,31 @@ void BasePlayer::onGUI()
                        {0, 255, 0, 255}, {0, 0, 0, 255}, {0, 0, 0, 255}, "%.2f% / %.0f%");
         }
 
+        size = {GetWindowSize().x / 12.f * ratio, GetWindowSize().x / 12.f * ratio};
         // Fire arm stats
         if (m_firearms.size())
         {
-            size = ImGui::CalcTextSize("30/30");
-            SetNextElementLayout(0.05f, 0.95f, size, EHAlign::Left, EVAlign::Bottom);
-            Text("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
-                 m_firearms.front()->getMagazine().getCapacity());
+            SetCursorPosX(GetStyle().FramePadding.x + GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+                          (GetWindowSize().x - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.05f -
+                          size.x * 0.5f);
+
+            SetCursorPosY(GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y +
+                          (GetWindowSize().y - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.y) * 0.80f -
+                          size.y * 0.5f);
+
+            ImageWithTextRight((ImTextureID)m_bulletTexture.pTex->getID(),
+                               stringFormat("%d/%d", m_firearms.front()->getMagazine().getBulletsRemaining(),
+                                            m_firearms.front()->getMagazine().getCapacity())
+                                   .c_str(),
+                               size);
+
+            // Loot count
+            SetCursorPosX(GetStyle().FramePadding.x + GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+                          (GetWindowSize().x - GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.05f -
+                          size.x * 0.5f);
+
+            ImageWithTextRight((ImTextureID)m_lootTexture.pTex->getID(),
+                               stringFormat("%d / %d", m_lootCount, m_lootCountToWin).c_str(), size);
         }
 
         // FPS
@@ -307,10 +329,7 @@ void BasePlayer::onGUI()
         SetNextElementLayout(0.95f, 0.f, size, EHAlign::Right, EVAlign::Top);
         Text("FPS : %0.0f", ImGui::GetIO().Framerate);
 
-        // Loot count
-        size = ImGui::CalcTextSize("0 / 6");
-        SetNextElementLayout(0.95f, 0.95f, size, EHAlign::Left, EVAlign::Middle);
-        Text("%d / %d", m_lootCount, m_lootCountToWin);
+        ImGui::SetWindowFontScale(previousFontScale);
     }
 }
 
