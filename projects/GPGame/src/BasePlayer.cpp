@@ -52,6 +52,10 @@ void BasePlayer::onPostLoad()
     GPE::Wave zombieHurted("./resources/sounds/zombieHurted.wav", "zombieHurted");
     GPE::Wave groundHurted("./resources/sounds/groundHurted.wav", "groundHurted");
     GPE::Wave difficultyIncreased("./resources/sounds/difficultyIncreased.wav", "difficultyIncreased");
+    GPE::Wave victory("./resources/sounds/victory.wav", "victory");
+    GPE::Wave defeat("./resources/sounds/defeat.wav", "defeat");
+    GPE::Wave arrival("./resources/sounds/arrival.wav", "arrival");
+    GPE::Wave extraction("./resources/sounds/extraction.wav", "extraction");
 
     GPE::SourceSettings bgmSourceSettings;
     bgmSourceSettings.pitch    = 1.f;
@@ -75,6 +79,10 @@ void BasePlayer::onPostLoad()
     source->setSound("groundHurted", "groundHurted", sfxSourceSettings);
     source->setSound("difficultyIncreased", "difficultyIncreased", sfxSourceSettings);
     source->setSound("reload", "reload", sfxSourceSettings);
+    source->setSound("victory", "victory", sfxSourceSettings);
+    source->setSound("defeat", "defeat", sfxSourceSettings);
+    source->setSound("arrival", "arrival", sfxSourceSettings);
+    source->setSound("extraction", "extraction", sfxSourceSettings);
 
     getOwner().getTransform().OnUpdate += Function::make(this, "updateListener");
 
@@ -121,6 +129,7 @@ void BasePlayer::start()
     input->bindAction("reload", EKeyMode::KEY_PRESSED, "Game", this, "reload");
 
     source->playSound("BGM", true, false);
+    source->playSound("arrival", true, false);
 
     { // Cursor
         GPE::InputManager& io = GPE::Engine::getInstance()->inputManager;
@@ -141,7 +150,7 @@ void BasePlayer::rotate(const GPM::Vec2& deltaDisplacement)
 
     if (fabs(angles.x) >= HALF_PI)
     {
-        angles.x = .0f;
+        return;
     }
 
     transform().setRotation(Quat::fromEuler(angles));
@@ -484,6 +493,7 @@ void BasePlayer::collectLoot(const Loot& loot)
     {
         m_evacuationPoint.pData->activeEvacutaitonPoint();
         isInEvacuationMode = true;
+        source->playSound("extraction", true, false);
     }
 }
 
@@ -492,6 +502,7 @@ void BasePlayer::onDeath()
     BaseCharacter::onDeath();
 
     input->setActive(false);
+    source->playSound("defeat", true, false);
 }
 
 void BasePlayer::onWin()
@@ -501,6 +512,7 @@ void BasePlayer::onWin()
     Engine::getInstance()->timeSystem.setTimeScale(0.0);
     Engine::getInstance()->inputManager.setCursorTrackingState(false);
     Engine::getInstance()->inputManager.setCursorLockState(false);
+    source->playSound("victory", true, false);
 }
 
 void BasePlayer::updateDamageAnimation(float t)
