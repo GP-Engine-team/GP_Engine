@@ -8,6 +8,7 @@
 
 #include <Engine/ECS/Component/TransformComponent.hpp>
 #include <foundation/PxErrorCallback.h>
+#include <map>
 #include <vector>
 
 namespace GPE
@@ -15,13 +16,17 @@ namespace GPE
 class AnimationSystem
 {
 private:
-    std::vector<class AnimationComponent*> components;
+    std::vector<class AnimationComponent*>                             components;
+    std::map<std::pair<std::string, std::string>, std::vector<size_t>> skeletonBoneIDToAnimationBoneID;
+
+public:
+    using CacheKey = std::map<std::pair<std::string, std::string>, std::vector<size_t>>::iterator;
 
 public:
     /**
      * @brief Update the animation of used components
      * @param deltaTime The time elapsed during the last frame
-    */
+     */
     void update(double deltaTime) noexcept;
 
     /**
@@ -35,6 +40,11 @@ public:
      * @param animationComponent The component you want to disable
      */
     void removeComponent(class AnimationComponent* animationComponent) noexcept;
+
+    AnimationSystem::CacheKey getOrCreateSkeletonBoneIDToAnimationBoneID(const class Animation& anim,
+                                                                         class Skeleton&        skeleton);
+
+    void clearCache();
 };
 
 } // namespace GPE

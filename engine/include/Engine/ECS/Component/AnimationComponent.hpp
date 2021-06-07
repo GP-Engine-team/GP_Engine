@@ -10,6 +10,7 @@
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <GPM/Matrix4.hpp>
 #include <vector>
+#include <Engine/ECS/System/AnimationSystem.hpp>
 
 // Generated
 #include <Generated/AnimationComponent.rfk.h>
@@ -28,7 +29,7 @@ private:
     RFKField(Inspect("setSkin"), Serialize()) Skin*            m_skin             = nullptr;
     RFKField(Inspect(), Serialize()) float                     m_currentTime = 0.f; // in seconds
     //RFKField(Inspect(), Serialize()) float                   m_nextAnimTime = 0.f;
-    RFKField(Inspect()) float                     m_timeScale = 1.f;
+    RFKField(Inspect()) float                                  m_timeScale = 1.f;
     RFKField(Inspect("setSubModelIndex"), Serialize()) int     m_subModelIndex = -1;
 
     RFKField(Inspect(), Serialize()) float                     m_nextAnimTime     = 0.f; // in seconds
@@ -36,12 +37,11 @@ private:
     RFKField(Inspect()) float                                  m_nextTimeScale    = 1.f;
     RFKField() float                                           m_blendTime        = 0.3f;
 
-    //float blendAlpha = 0.f;
-    std::vector<size_t> skeletonBoneIDToAnimationBoneID;
-    std::vector<size_t> skeletonBoneIDToNextAnimBoneID;
+    GPE::AnimationSystem::CacheKey m_currentAnimCacheKey;
+    GPE::AnimationSystem::CacheKey m_nextAnimCacheKey;
 
 public:
-    std::vector<GPM::Mat4>                m_finalBoneMatrices;
+    std::vector<GPM::Mat4>                finalBoneMatrices;
     RFKField(Inspect(), Serialize()) bool shouldLoop = true;
     RFKField(Inspect(), Serialize()) bool shouldNextLoop = true;
 
@@ -52,7 +52,6 @@ public:
 
 private:
     void setSubModelIndex(int newSubModelIndex);
-    void setNextAnimAsCurrent();
 
 protected:
     void         removeAnimData();
@@ -68,6 +67,7 @@ public:
 
     void playAnimation(Animation * pAnimation, float startTime = 0.f, float nextTimeScale = 1.f);
     void setCurrentTime(float newTime);
+    void setNextAnimAsCurrent();
 
     void calculateBoneTransform(const struct AssimpNodeData& node, const GPM::mat4& parentTransform);
 

@@ -10,7 +10,7 @@ File_GENERATED
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
 
-    using namespace GPE;
+using namespace GPE;
 
 BehaviourComponent::BehaviourComponent(GameObject& owner) noexcept : Component(owner)
 {
@@ -182,5 +182,5 @@ void BehaviourComponent::loadNewScene(const char* path)
 
 void BehaviourComponent::closeApplication()
 {
-    Engine::getInstance()->isRunning = false;
+    Engine::getInstance()->exit();
 }
