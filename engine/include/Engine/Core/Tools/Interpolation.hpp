@@ -113,7 +113,7 @@ inline constexpr T easeInOut(T x)
 template <typename T>
 inline constexpr T easeInCirc(T x)
 {
-    return one<T> - std::sqrt(one<T> - std::pow(x, 2));
+    return one<T> - std::sqrtf(one<T> - std::powf(x, 2.f));
 }
 
 /**

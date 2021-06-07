@@ -33,7 +33,7 @@ void CameraOscilation::start()
 void CameraOscilation::update(double deltaTime)
 {
     // Add levitatio effect
-    m_delay += deltaTime * m_speed;
+    m_delay += float(deltaTime) * m_speed;
 
     if (m_delay > TWO_PI)
     {

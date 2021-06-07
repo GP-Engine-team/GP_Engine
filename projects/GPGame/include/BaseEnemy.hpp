@@ -57,8 +57,8 @@ namespace GPG RFKNamespace()
         EState m_currentState = EState::RUNNING;
         RFKField(Inspect(), ReadOnly())  float m_nextAnimTime = -1.f;
         RFKField(Inspect(), ReadOnly())  float m_nextHitDelay = std::numeric_limits<float>::max();
-        RFKField(Inspect(), Serialize()) float m_hitDelayRelativeToAnimLength = 0.36;
-        RFKField(Inspect(), Serialize()) float m_animOnHitStartRatio = 0.3;
+        RFKField(Inspect(), Serialize()) float m_hitDelayRelativeToAnimLength = 0.36f;
+        RFKField(Inspect(), Serialize()) float m_animOnHitStartRatio = 0.3f;
         RFKField(Inspect(), Serialize()) float m_animTransitionTime = 1.f;
 
     public:

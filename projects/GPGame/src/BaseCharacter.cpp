@@ -130,7 +130,7 @@ void BaseCharacter::fixedUpdate(double deltaTime)
     if (controller->isMoving())
     {
         const float accTime = float(Engine::getInstance()->timeSystem.getAccumulatedTime());
-        const float target = cosf(accTime * (int(isSprint) + 1) * TWO_PI);
+        const float target = cosf(accTime * (int(m_isSprint) + 1) * TWO_PI);
 
         m_bodyBalancing = lerpf(m_bodyBalancing, target, float(deltaTime));
     }

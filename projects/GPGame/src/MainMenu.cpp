@@ -58,14 +58,14 @@ void MainMenu::onGUI()
     SetWindowFontScale(2.f * ratio);
 
     SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
-    if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Play", size))
+    if (ImGui::imageButtonWithTextCenter((void*)(intptr_t)m_buttonTexture->getID(), "Play", size))
     {
         loadNewScene(m_scenePath.c_str());
     }
 
     size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
     SetNextElementLayout(0.5f, 0.8f, size, EHAlign::Middle, EVAlign::Middle);
-    if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quit", size))
+    if (ImGui::imageButtonWithTextCenter((void*)(intptr_t)m_buttonTexture->getID(), "Quit", size))
     {
         closeApplication();
     }

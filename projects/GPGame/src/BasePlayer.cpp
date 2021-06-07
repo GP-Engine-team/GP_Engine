@@ -222,7 +222,7 @@ void BasePlayer::onGUI()
         SetWindowFontScale(2.f * ratio);
 
         SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Retry", size))
+        if (ImGui::imageButtonWithTextCenter((void*)(intptr_t)m_buttonTexture->getID(), "Retry", size))
         {
             reloadScene();
             Engine::getInstance()->timeSystem.setTimeScale(1.0);
@@ -230,7 +230,7 @@ void BasePlayer::onGUI()
 
         size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
         SetNextElementLayout(0.5f, 0.6f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quit", size))
+        if (ImGui::imageButtonWithTextCenter((void*)(intptr_t)m_buttonTexture->getID(), "Quit", size))
         {
             closeApplication();
         }
@@ -251,7 +251,7 @@ void BasePlayer::onGUI()
         SetWindowFontScale(2.f * ratio);
 
         SetNextElementLayout(0.5f, 0.5f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Main menu", size))
+        if (ImGui::imageButtonWithTextCenter((void*)(intptr_t)m_buttonTexture->getID(), "Main menu", size))
         {
             Engine::getInstance()->timeSystem.setTimeScale(1.f);
             loadNewScene(m_mainMenuPath.c_str());
@@ -259,7 +259,7 @@ void BasePlayer::onGUI()
 
         size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
         SetNextElementLayout(0.5f, 0.7f, size, EHAlign::Middle, EVAlign::Middle);
-        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quit", size))
+        if (ImGui::imageButtonWithTextCenter((void*)(intptr_t)m_buttonTexture->getID(), "Quit", size))
         {
             closeApplication();
         }

@@ -90,7 +90,7 @@ void BaseEnemy::update(double deltaTime)
     }
     else
     {
-        const float currentTime = GPE::Engine::getInstance()->timeSystem.getAccumulatedTime();
+        const float currentTime = float(GPE::Engine::getInstance()->timeSystem.getAccumulatedTime());
 
         const Vec3 targetPos = m_target->transform().getGlobalPosition();
 
@@ -165,7 +165,7 @@ void BaseEnemy::takeDamage(float damage)
                 animComp->setCurrentTime(m_animOnHitStartRatio * m_onHitAnimation->getDuration());
             }
         }
-        m_nextAnimTime = GPE::Engine::getInstance()->timeSystem.getAccumulatedTime() + (1.f - m_animOnHitStartRatio) * m_onHitAnimation->getDuration() - m_animTransitionTime;
+        m_nextAnimTime = float(GPE::Engine::getInstance()->timeSystem.getAccumulatedTime()) + (1.f - m_animOnHitStartRatio) * m_onHitAnimation->getDuration() - m_animTransitionTime;
     }
 }
 

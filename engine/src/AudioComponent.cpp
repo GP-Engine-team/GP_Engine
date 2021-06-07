@@ -44,7 +44,7 @@ void AudioComponent::setSound(const char* soundName, const char* sourceName, con
     AL_CALL(alSourcei, source->source, AL_LOOPING, settings.loop);
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, settings.relative);
     AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(settings.rollOffFactor)));
-    AL_CALL(alSourcei, source->source, AL_MAX_DISTANCE, source->settings.radius);
+    AL_CALL(alSourcei, source->source, AL_MAX_DISTANCE, ALint(source->settings.radius));
     AL_CALL(alSourcei, source->source, AL_BUFFER, buffer->buffer);
 }
 
@@ -57,7 +57,7 @@ void AudioComponent::updateSource(SourceData* source)
             parentPos.y + source->settings.position.y, parentPos.z + +source->settings.position.z);
     AL_CALL(alSourcei, source->source, AL_SOURCE_RELATIVE, source->settings.relative);
     AL_CALL(alSourcei, source->source, AL_ROLLOFF_FACTOR, ALint(roundf(source->settings.rollOffFactor)));
-    AL_CALL(alSourcei, source->source, AL_MAX_DISTANCE, source->settings.radius);
+    AL_CALL(alSourcei, source->source, AL_MAX_DISTANCE, ALint(source->settings.radius));
 }
 
 SourceData* AudioComponent::getSource(const char* name) noexcept
