@@ -203,8 +203,20 @@ Game::Game()
     // ============= UI =============
     // TODO: Put in-game UI in a module
     initDearImGui(GPE::Engine::getInstance()->window.getGLFWWindow());
-    ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/Roboto-Medium.ttf", 14);
-    ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/AovelSansRounded-rdDL.ttf", 60);
+    if (ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/Roboto-Medium.ttf", 14))
+    {
+        ImGui_ImplOpenGL3_CreateFontsTexture();
+    }
+
+    if (ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/AovelSansRounded-rdDL.ttf", 60))
+    {
+        ImGui_ImplOpenGL3_CreateFontsTexture();
+    }
+
+    if (ImGui::GetIO().Fonts->AddFontFromFileTTF("./resources/fonts/Roboto-Medium.ttf", 30))
+    {
+        ImGui_ImplOpenGL3_CreateFontsTexture();
+    }
 
     // ============ RNG =============
     initSeed();
@@ -217,6 +229,7 @@ Game::Game()
         io.bindInput(GLFW_KEY_S, "backward");
         io.bindInput(GLFW_KEY_A, "left");
         io.bindInput(GLFW_KEY_D, "right");
+        io.bindInput(GLFW_KEY_R, "reload");
         io.bindInput(GLFW_KEY_SPACE, "jump");
         io.bindInput(GLFW_KEY_ESCAPE, "exit");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");

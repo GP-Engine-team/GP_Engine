@@ -188,10 +188,19 @@ void ParticleComponent::generate()
 
 void ParticleComponent::start()
 {
-    reset();
+    m_durationCount          = 0.f;
+    m_particles.m_countAlive = 0;
+    m_canEmit                = false;
 
     if (!m_renderer)
+    {
         generate();
+    }
+    else
+    {
+        for (size_t i = 0; i < m_count; ++i)
+            m_particles.m_alive[i] = false;
+    }
 
     m_canEmit = true;
 }

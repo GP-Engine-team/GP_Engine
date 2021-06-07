@@ -242,7 +242,16 @@ void Firearm::update(double deltaTime)
     }
 
     transform().setTranslation(m_dynamicPosition + m_translationMovement);
-    transform().setRotation(m_dynamicRotation * m_rotationMovement);
+
+    if (!m_isAiming) // The weapon is not held properly, it is shaking when firing!
+    {
+        transform().setRotation(m_aimRotation * m_rotationMovement);
+    }
+
+    else // The weapon is held steadily. The reticle stays aligned with the line of view
+    {
+        transform().setRotation(m_aimRotation);
+    }
 
     const float aimAmplification    = (!m_isAiming + 1) / 2.f;           // 0.5 if aiming else 1
     const float sprintAmplification = m_player->getIsSprint() * 4.f + 1; // 2.f if sprint else 1

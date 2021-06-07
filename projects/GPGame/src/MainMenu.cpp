@@ -55,7 +55,8 @@ void MainMenu::onGUI()
     PopFont();
 
     const float previousFontScale = GetFont()->Scale;
-    SetWindowFontScale(2.f * ratio);
+    PushFont(GetIO().Fonts->Fonts[2]);
+    SetWindowFontScale(1.f * ratio);
 
     SetNextElementLayout(0.5f, 0.3f, size, EHAlign::Middle, EVAlign::Middle);
     if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Play", size))
@@ -69,6 +70,7 @@ void MainMenu::onGUI()
     {
         closeApplication();
     }
+    PopFont();
     ImGui::SetWindowFontScale(previousFontScale);
 }
 

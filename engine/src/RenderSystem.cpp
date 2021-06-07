@@ -586,17 +586,10 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 rs.tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
-                // TODO : To Clean
                 // Animations
-                if (pSubModel->pModel->isAnimated())
+                if (pSubModel->isAnimated())
                 {
-                    auto& transforms = pSubModel->pModel->getFinalBonesTransforms();
-                    // for (int i = 0; i < transforms.size(); ++i)
-                    //{
-
-                    //    pSubModel->pShader->setMat4(
-                    //        std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(), transforms[i].e);
-                    //}
+                    auto& transforms = pSubModel->getFinalBonesTransforms();
                     glUniformMatrix4fv(glGetUniformLocation(pSubModel->pShader->getID(), "finalBonesMatrices"),
                                        transforms.size(), GL_FALSE, (GLfloat*)transforms.data());
                 }
