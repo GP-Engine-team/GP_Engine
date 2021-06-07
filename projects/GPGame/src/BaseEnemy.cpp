@@ -140,7 +140,7 @@ void BaseEnemy::update(double deltaTime)
                 {
                     if (animComp != nullptr)
                     {
-                        animComp->setNextAnim(m_walkAnimation, m_animTransitionTime);
+                        animComp->setNextAnim(m_walkAnimation, m_animTransitionTime, m_walkScale);
                     }
                 }
             }

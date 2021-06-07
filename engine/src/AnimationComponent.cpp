@@ -26,10 +26,10 @@ AnimationComponent::AnimationComponent(GameObject& owner) noexcept : Component(o
 
     if (m_skeleton != nullptr)
     {
-        m_finalBoneMatrices.clear();
-        m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
+        finalBoneMatrices.clear();
+        finalBoneMatrices.reserve(m_skeleton->getNbBones());
         for (int i = 0; i < m_skeleton->getNbBones(); i++)
-            m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
+            finalBoneMatrices.emplace_back(GPM::Mat4::identity());
     }
 }
 
@@ -91,10 +91,11 @@ void AnimationComponent::setNextAnimAsCurrent()
     m_currentAnimation    = m_nextAnimation;
     m_currentTime         = m_nextAnimTime;
     shouldLoop            = shouldNextLoop;
+    m_timeScale           = m_nextTimeScale;
     m_nextAnimTime        = 0.f;
     m_nextAnimation       = nullptr;
     shouldNextLoop        = true;
-    //skeletonBoneIDToAnimationBoneID = std::move(skeletonBoneIDToNextAnimBoneID);
+    m_nextTimeScale       = 1.f;
     m_currentAnimCacheKey = m_nextAnimCacheKey;
 }
 
@@ -104,7 +105,7 @@ void AnimationComponent::update(float deltaTime)
     {
         if (m_nextAnimation != nullptr)
         {
-            m_nextAnimTime += deltaTime * m_timeScale;
+            m_nextAnimTime += deltaTime * m_nextTimeScale;
             if (m_nextAnimTime >= m_blendTime)
             {
                 setNextAnimAsCurrent();
@@ -128,62 +129,31 @@ void AnimationComponent::update(float deltaTime)
 
         m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
         calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
-
-        // if (m_nextAnimation != nullptr)
-        //{
-        //    m_nextAnimTime += m_nextAnimation->getTicksPerSecond() * dt * m_timeScale;
-        //    m_nextAnimTime = fmod(m_nextAnimTime, m_nextAnimation->getNbTicks());
-        //}
     }
 }
 
-void AnimationComponent::setNextAnim(Animation* nextAnim, float blendTime)
+void AnimationComponent::setNextAnim(Animation* nextAnim, float blendTime, float nextTimeScale)
 {
     if (m_currentAnimation == nextAnim || m_nextAnimation == nextAnim)
         return;
 
     if (m_currentAnimation == nullptr)
     {
-        playAnimation(nextAnim);
+        playAnimation(nextAnim, 0.f, nextTimeScale);
     }
     else if (m_nextAnimation == nullptr)
     {
-        m_nextAnimation = nextAnim;
-        m_blendTime     = blendTime;
-
-        //skeletonBoneIDToNextAnimBoneID.resize(m_skeleton->getNbBones());
-
-        //auto getBoneName = [](const std::string& fullName) {
-        //    size_t delimiter = fullName.find(":");
-        //    if (delimiter == fullName.npos)
-        //        return fullName;
-        //    else
-        //    {
-        //        return fullName.substr(delimiter + 1);
-        //    }
-        //};
-
-        //m_skeleton->forEachAssimpNodeData(m_skeleton->m_root, [&](AssimpNodeData& node) {
-        //    auto it =
-        //        std::find_if(m_nextAnimation->m_bones.begin(), m_nextAnimation->m_bones.end(),
-        //                     [&](const Bone& bone) { return getBoneName(bone.getName()) == getBoneName(node.name); });
-        //    if (it != m_nextAnimation->m_bones.end())
-        //    {
-        //        skeletonBoneIDToNextAnimBoneID[node.boneID] = it - m_nextAnimation->m_bones.begin();
-        //    }
-        //    else
-        //    {
-        //        skeletonBoneIDToNextAnimBoneID[node.boneID] = m_skeleton->getNbBones(); // These bones won't be animated
-        //    }
-        //});
-        m_nextAnimCacheKey = GPE::Engine::getInstance()->animSystem.getOrCreateSkeletonBoneIDToAnimationBoneID(*m_currentAnimation, *m_skeleton);
+        m_nextAnimation    = nextAnim;
+        m_blendTime        = blendTime;
+        m_nextTimeScale    = nextTimeScale;
+        m_nextAnimCacheKey = GPE::Engine::getInstance()->animSystem.getOrCreateSkeletonBoneIDToAnimationBoneID(
+            *m_currentAnimation, *m_skeleton);
     }
 }
 
 void AnimationComponent::removeAnimData()
 {
     m_model->setAnimComponent(nullptr, m_subModelIndex);
-    // m_finalBoneMatrices.clear();
 }
 
 void AnimationComponent::updateAnimData(bool wasComplete)
@@ -191,10 +161,10 @@ void AnimationComponent::updateAnimData(bool wasComplete)
     if (!wasComplete && isComplete())
     {
         // Skeleton
-        m_finalBoneMatrices.clear();
-        m_finalBoneMatrices.reserve(m_skeleton->getNbBones());
+        finalBoneMatrices.clear();
+        finalBoneMatrices.reserve(m_skeleton->getNbBones());
         for (int i = 0; i < m_skeleton->getNbBones(); i++)
-            m_finalBoneMatrices.emplace_back(GPM::Mat4::identity());
+            finalBoneMatrices.emplace_back(GPM::Mat4::identity());
 
         // Model
         m_model->setAnimComponent(this, m_subModelIndex);
@@ -208,7 +178,7 @@ void AnimationComponent::updateAnimData(bool wasComplete)
     }
 }
 
-void AnimationComponent::playAnimation(Animation* pAnimation, float startTime)
+void AnimationComponent::playAnimation(Animation* pAnimation, float startTime, float nextTimeScale)
 {
     if (m_currentAnimation == pAnimation)
         return;
@@ -224,33 +194,10 @@ void AnimationComponent::playAnimation(Animation* pAnimation, float startTime)
 
     m_currentAnimation = pAnimation;
     m_currentTime      = startTime;
-    m_timeScale        = 1.f;
+    m_timeScale        = nextTimeScale;
 
-    //skeletonBoneIDToAnimationBoneID.resize(m_skeleton->getNbBones());
-
-    //auto getBoneName = [](const std::string& fullName) {
-    //    size_t delimiter = fullName.find(":");
-    //    if (delimiter == fullName.npos)
-    //        return fullName;
-    //    else
-    //    {
-    //        return fullName.substr(delimiter + 1);
-    //    }
-    //};
-
-    //m_skeleton->forEachAssimpNodeData(m_skeleton->m_root, [&](AssimpNodeData& node) {
-    //    auto it = std::find_if(pAnimation->m_bones.begin(), pAnimation->m_bones.end(),
-    //                           [&](const Bone& bone) { return getBoneName(bone.getName()) == getBoneName(node.name); });
-    //    if (it != pAnimation->m_bones.end())
-    //    {
-    //        skeletonBoneIDToAnimationBoneID[node.boneID] = it - pAnimation->m_bones.begin();
-    //    }
-    //    else
-    //    {
-    //        skeletonBoneIDToAnimationBoneID[node.boneID] = m_skeleton->getNbBones(); // These bones won't be animated
-    //    }
-    //});
-    m_currentAnimCacheKey = GPE::Engine::getInstance()->animSystem.getOrCreateSkeletonBoneIDToAnimationBoneID(*m_currentAnimation, *m_skeleton);
+    m_currentAnimCacheKey = GPE::Engine::getInstance()->animSystem.getOrCreateSkeletonBoneIDToAnimationBoneID(
+        *m_currentAnimation, *m_skeleton);
 }
 
 void AnimationComponent::setCurrentTime(float newTime)
@@ -285,10 +232,11 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
                 const GPM::Quat rotation1     = bone->getInterpolatedRotation(currentTimeMs);
                 const GPM::Vec3 scale1        = bone->getInterpolatedScale(currentTimeMs);
 
-                float           nextAnimTimeMs = fmod(m_nextAnimTime, m_nextAnimation->getDuration()) * 1000.f; /* to milliseconds */
-                const GPM::Vec3 translation2   = otherBone->getInterpolatedPosition(nextAnimTimeMs);
-                const GPM::Quat rotation2      = otherBone->getInterpolatedRotation(nextAnimTimeMs);
-                const GPM::Vec3 scale2         = otherBone->getInterpolatedScale(nextAnimTimeMs);
+                float nextAnimTimeMs =
+                    fmod(m_nextAnimTime, m_nextAnimation->getDuration()) * 1000.f; /* to milliseconds */
+                const GPM::Vec3 translation2 = otherBone->getInterpolatedPosition(nextAnimTimeMs);
+                const GPM::Quat rotation2    = otherBone->getInterpolatedRotation(nextAnimTimeMs);
+                const GPM::Vec3 scale2       = otherBone->getInterpolatedScale(nextAnimTimeMs);
 
                 float           alpha       = m_nextAnimTime / m_blendTime;
                 const GPM::Mat4 translation = GPM::Transform::translation(translation1.lerp(translation2, alpha));
@@ -300,24 +248,13 @@ void AnimationComponent::calculateBoneTransform(const AssimpNodeData& node, cons
         }
     }
 
-    // if (m_nextAnimation != nullptr)
-    //{
-    //    Bone* newAnimBone = m_nextAnimation->findBone(node.name);
-
-    //    if (newAnimBone)
-    //    {
-    //        newAnimBone->update(m_currentTime);
-    //        nodeTransform = newAnimBone->getLocalTransform();
-    //    }
-    //}
-
     GPM::Mat4 globalTransformation = parentTransform * nodeTransform;
 
     if (node.boneID >= 0 && node.boneID < m_skeleton->m_boneInfo.size())
     {
         GPM::Mat4 offset = m_skeleton->m_boneInfo[node.boneID].offset;
-        if (node.boneID < m_finalBoneMatrices.size())
-            m_finalBoneMatrices[node.boneID] = globalTransformation * offset;
+        if (node.boneID < finalBoneMatrices.size())
+            finalBoneMatrices[node.boneID] = globalTransformation * offset;
     }
 
     for (const GPE::AssimpNodeData& node : node.children)

@@ -60,6 +60,7 @@ namespace GPG RFKNamespace()
         RFKField(Inspect(), Serialize()) float m_hitDelayRelativeToAnimLength = 0.36;
         RFKField(Inspect(), Serialize()) float m_animOnHitStartRatio = 0.3;
         RFKField(Inspect(), Serialize()) float m_animTransitionTime = 1.f;
+        RFKField(Inspect(), Serialize()) float m_walkScale = 1.f;
 
     public:
         BaseEnemy() noexcept = default;
