@@ -51,7 +51,6 @@ public:
 
 private:
     void setSubModelIndex(int newSubModelIndex);
-    void setNextAnimAsCurrent();
 
 protected:
     void         removeAnimData();
@@ -67,6 +66,7 @@ public:
 
     void playAnimation(Animation* pAnimation, float startTime = 0.f);
     void setCurrentTime(float newTime);
+    void setNextAnimAsCurrent();
 
     void calculateBoneTransform(const struct AssimpNodeData& node, const GPM::mat4& parentTransform);
 
