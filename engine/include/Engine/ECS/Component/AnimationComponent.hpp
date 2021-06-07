@@ -24,7 +24,6 @@ class RFKClass(Inspect(), ComponentGen(), Serialize()) AnimationComponent : publ
 private:
     RFKField(Inspect("setSkeleton"), Serialize()) Skeleton*    m_skeleton         = nullptr;
     RFKField(Inspect("playAnimation"), Serialize()) Animation* m_currentAnimation = nullptr;
-    //RFKField() Animation*                                    m_nextAnimation    = nullptr;
     class Model*                                               m_model            = nullptr;
     RFKField(Inspect("setSkin"), Serialize()) Skin*            m_skin             = nullptr;
     RFKField(Inspect(), Serialize()) float                     m_currentTime = 0.f; // in seconds
@@ -32,11 +31,16 @@ private:
     RFKField(Inspect(), Serialize()) float                     m_timeScale = 1.f;
     RFKField(Inspect("setSubModelIndex"), Serialize()) int     m_subModelIndex = -1;
 
+    RFKField(Inspect(), Serialize()) float                     m_nextAnimTime     = 0.f; // in seconds
+    RFKField() Animation*                                      m_nextAnimation = nullptr;
+    RFKField() float                                           m_blendTime       = 0.3f;
+
     //float blendAlpha = 0.f;
+    std::vector<size_t> skeletonBoneIDToAnimationBoneID;
+    std::vector<size_t> skeletonBoneIDToNextAnimBoneID;
 
 public:
     std::vector<GPM::Mat4>                m_finalBoneMatrices;
-    std::vector<size_t>                   skeletonBoneIDToAnimationBoneID;
     RFKField(Inspect(), Serialize()) bool shouldLoop = true;
 
 public:
@@ -46,6 +50,7 @@ public:
 
 private:
     void setSubModelIndex(int newSubModelIndex);
+    void setNextAnimAsCurrent();
 
 protected:
     void         removeAnimData();
@@ -68,6 +73,7 @@ public:
     void setSkeleton(Skeleton* skeleton);
     void setSkin(Skin* skin);
     void setCurrentAnimDuration(float newDuration);
+    void setNextAnim(Animation* nextAnim, float blendTime = 0.02f);
 
     virtual void onPostLoad() override;
 
