@@ -82,6 +82,7 @@ public:
 
     GETTER_BY_VALUE(TimeScale, m_timeScale);
     GETTER_BY_VALUE(CurrentTime, m_currentTime);
+    GETTER_BY_VALUE(CurrentAnimation, m_currentAnimation);
 
     AnimationComponent_GENERATED
 };

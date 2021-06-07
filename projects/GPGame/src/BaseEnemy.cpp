@@ -67,7 +67,7 @@ void BaseEnemy::update(double deltaTime)
     {
         m_animDeathCounter += float(deltaTime);
 
-        if (m_animDeathCounter >= m_animDeathCounterMax * .5f)
+        if (m_animDeathCounter >= m_animDeathCounterMax)
         {
             m_gameObject->getTransform().translate({.0f, -m_disappearanceSpeed * float(deltaTime), .0f});
 
@@ -84,11 +84,10 @@ void BaseEnemy::update(double deltaTime)
         if (m_currentState == EState::RUNNING)
             moveAndRotateToward(targetPos, float(deltaTime));
 
+        m_attackCounter += float(deltaTime);
         if (m_radiusAttack * m_radiusAttack >
             (m_target->transform().getGlobalPosition() - transform().getGlobalPosition()).sqrLength())
         {
-            m_attackCounter += float(deltaTime);
-
             if (m_attackCounter >= m_attackCounterMax)
             {
                 m_attackCounter = 0.f;
@@ -100,8 +99,7 @@ void BaseEnemy::update(double deltaTime)
                         if (animComp != nullptr)
                         {
                             animComp->setNextAnim(m_attackAnimation);
-                            animComp->shouldNextLoop  = false;
-                            m_animDeathCounterMax = m_attackAnimation->getDuration();
+                            animComp->shouldNextLoop = false;
                         }
                     }
                     m_currentState = EState::ATTACKING;
@@ -110,10 +108,6 @@ void BaseEnemy::update(double deltaTime)
                     m_attackCounterMax = m_attackAnimation->getDuration();
                 }
             }
-        }
-        else
-        {
-            m_attackCounter = std::numeric_limits<float>::max();
         }
 
         if (currentTime > m_nextHitDelay)
@@ -130,7 +124,9 @@ void BaseEnemy::update(double deltaTime)
                 for (GPE::AnimationComponent* animComp : m_animComps)
                 {
                     if (animComp != nullptr)
+                    {
                         animComp->setNextAnim(m_walkAnimation, m_animTransitionTime);
+                    }
                 }
             }
         }
@@ -156,7 +152,7 @@ void BaseEnemy::takeDamage(float damage)
                 animComp->setCurrentTime(m_animOnHitStartRatio * m_onHitAnimation->getDuration());
             }
         }
-        m_nextAnimTime = GPE::Engine::getInstance()->timeSystem.getAccumulatedTime() + (1.f - m_animOnHitStartRatio) * m_onHitAnimation->getDuration();
+        m_nextAnimTime = GPE::Engine::getInstance()->timeSystem.getAccumulatedTime() + (1.f - m_animOnHitStartRatio) * m_onHitAnimation->getDuration() - m_animTransitionTime;
     }
 }
 
@@ -179,12 +175,13 @@ void BaseEnemy::onDeath()
             if (animComp != nullptr)
             {
                 animComp->setNextAnim(m_deathAnimation, m_animTransitionTime);
-                animComp->shouldLoop  = false;
-                m_animDeathCounterMax = m_deathAnimation->getDuration();
+                animComp->shouldLoop = false;
+                animComp->shouldNextLoop = false;
             }
         }
         m_currentState = EState::DEAD;
         m_nextAnimTime = std::numeric_limits<float>::max();
+        m_animDeathCounterMax = m_deathAnimation->getDuration();
     }
 
     m_controller->setActive(false);
