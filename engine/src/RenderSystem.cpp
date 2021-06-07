@@ -1051,6 +1051,11 @@ void RenderSystem::tryToResize(unsigned int w, unsigned int h)
     {
         shadowMap.resize(w, h);
     }
+
+    for (auto&& camera : m_pCameras)
+    {
+        camera->setAspect(Camera::computeAspect(w, h));
+    }
 }
 
 void RenderSystem::addLight(Light& light) noexcept
