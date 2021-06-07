@@ -217,6 +217,7 @@ Game::Game()
         io.bindInput(GLFW_KEY_S, "backward");
         io.bindInput(GLFW_KEY_A, "left");
         io.bindInput(GLFW_KEY_D, "right");
+        io.bindInput(GLFW_KEY_R, "reload");
         io.bindInput(GLFW_KEY_SPACE, "jump");
         io.bindInput(GLFW_KEY_ESCAPE, "exit");
         io.bindInput(GLFW_KEY_LEFT_SHIFT, "sprintStart");

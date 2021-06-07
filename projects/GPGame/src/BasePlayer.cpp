@@ -1,15 +1,16 @@
 ﻿
 #include <AL/alc.h>
 #include <Engine/Core/Debug/Log.hpp>
-#include <Engine/Core/Tools/Interpolation.hpp>
-#include <gpm/Random.hpp>
 #include <Engine/Core/Tools/ImGuiTools.hpp>
+#include <Engine/Core/Tools/Interpolation.hpp>
 #include <Engine/Core/Tools/Raycast.hpp>
 #include <Engine/ECS/Component/BehaviourComponent.hpp>
 #include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
+#include <Engine/Serialization/FileExplorer.hpp>
+#include <gpm/Random.hpp>
 
 #include <PhysX/PxRigidActor.h>
 
@@ -60,6 +61,7 @@ void BasePlayer::start()
 {
     BaseCharacter::start();
 
+    GAME_ASSERT(m_evacuationPoint.pData, "Missing m_evacuationPoint");
     GAME_ASSERT(m_buttonTexture, "No button texture selected");
     GAME_ASSERT(input, "null");
     GAME_ASSERT(source, "null");
@@ -90,6 +92,7 @@ void BasePlayer::start()
     input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
     input->bindAction("playAmbiantMusicForce", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusicForce");
     input->bindAction("stopAllMusic", EKeyMode::KEY_PRESSED, "Game", this, "stopAllMusic");
+    input->bindAction("reload", EKeyMode::KEY_PRESSED, "Game", this, "reload");
 
     source->playSound("Western", true);
 
@@ -233,6 +236,35 @@ void BasePlayer::onGUI()
         }
         ImGui::SetWindowFontScale(previousFontScale);
     }
+    else if (displayWinMenu)
+    {
+        const float ratio = ImGui::GetWindowSize().y / ImGui::GetWindowSize().x;
+
+        ImVec2 size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
+
+        PushFont(GetIO().Fonts->Fonts[1]);
+        SetNextTextLayout("Evacuation success !", 0.5f, 0.1f);
+        ImGui::TextUnformatted("Evacuation success !");
+        PopFont();
+
+        const float previousFontScale = GetFont()->Scale;
+        SetWindowFontScale(2.f * ratio);
+
+        SetNextElementLayout(0.5f, 0.5f, size, EHAlign::Middle, EVAlign::Middle);
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Main menu", size))
+        {
+            Engine::getInstance()->timeSystem.setTimeScale(1.f);
+            loadNewScene(m_mainMenuPath.c_str());
+        }
+
+        size = {GetWindowSize().x / 2.f * ratio, GetWindowSize().y / 6.f * ratio};
+        SetNextElementLayout(0.5f, 0.7f, size, EHAlign::Middle, EVAlign::Middle);
+        if (ImGui::imageButtonWithTextCenter((ImTextureID)m_buttonTexture->getID(), "Quit", size))
+        {
+            closeApplication();
+        }
+        ImGui::SetWindowFontScale(previousFontScale);
+    }
     else
     {
         ImVec2 size = {GetWindowSize().x / 1.2f * ratio, GetWindowSize().y / 15.f * ratio};
@@ -249,6 +281,17 @@ void BasePlayer::onGUI()
         size.y /= 3.f;
         displayBar(m_staminaCount, m_staminaMax, size, 2.f, 2.f, {255, 255, 0, 255}, {0, 0, 0, 255}, {0, 0, 0, 255},
                    "%.2f% / %.0f%");
+
+        if (isInEvacuationMode)
+        {
+            // Evacuation
+            ImGui::SetCursorPosX(
+                ImGui::GetStyle().FramePadding.x + ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x +
+                (ImGui::GetWindowSize().x - ImGui::GetCurrentWindow()->Viewport->CurrWorkOffsetMin.x) * 0.5f -
+                size.x * 0.5f);
+            displayBar(m_evacuationPoint.pData->getTimer(), m_evacuationPoint.pData->getTimerDuration(), size, 2.f, 2.f,
+                       {0, 255, 0, 255}, {0, 0, 0, 255}, {0, 0, 0, 255}, "%.2f% / %.0f%");
+        }
 
         // Fire arm stats
         if (m_firearms.size())
@@ -331,6 +374,14 @@ void BasePlayer::update(double deltaTime)
     }
 }
 
+void BasePlayer::reload()
+{
+    if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && m_firearms.size())
+    {
+        m_firearms.front()->reload();
+    }
+}
+
 void BasePlayer::shoot()
 {
     if (GPE::Engine::getInstance()->inputManager.getInputMode() == "Game" && m_firearms.size())
@@ -375,9 +426,10 @@ BasePlayer::~BasePlayer() noexcept
 
 void BasePlayer::collectLoot(const Loot& loot)
 {
-    if (++m_lootCount > m_lootCountToWin)
+    if (++m_lootCount >= m_lootCountToWin)
     {
-        onWin();
+        m_evacuationPoint.pData->activeEvacutaitonPoint();
+        isInEvacuationMode = true;
     }
 }
 
@@ -393,12 +445,14 @@ void BasePlayer::onWin()
     displayWinMenu = true;
     enableUpdate(false);
     Engine::getInstance()->timeSystem.setTimeScale(0.0);
+    Engine::getInstance()->inputManager.setCursorTrackingState(false);
+    Engine::getInstance()->inputManager.setCursorLockState(false);
 }
 
 void BasePlayer::updateDamageAnimation(float t)
 {
     const float newT = easeInCirc(t);
- 
+
     Vec3 moveStrength = Random::unitPeripheralSphericalCoordonate() * m_damageShakeStrength * (1.f - newT);
 
     moveStrength.z = 0.f;
@@ -410,5 +464,18 @@ void BasePlayer::takeDamage(float damage)
     BaseCharacter::takeDamage(damage);
     m_isPlayDamageAnimation = true;
     m_animDamageAnimCounter = 0.f;
+}
 
+void BasePlayer::inspect(GPE::InspectContext& context)
+{
+    Component::inspect(context);
+
+    defaultInspect(context);
+
+    ImGui::Text("Main menu to load : ");
+    ImGui::SameLine();
+    if (ImGui::Button(m_mainMenuPath.size() ? m_mainMenuPath.c_str() : "None"))
+    {
+        m_mainMenuPath = GPE::openFileExplorerAndGetRelativePath(L"Select Scene", {{L"Scene", L"*.GPScene"}}).string();
+    }
 }
