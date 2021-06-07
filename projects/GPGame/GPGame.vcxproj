@@ -24,6 +24,7 @@
     <ClInclude Include="include\CameraOscilation.hpp" />
     <ClInclude Include="include\CircularEntitiesSpawner.hpp" />
     <ClInclude Include="include\DebugSphere.hpp" />
+    <ClInclude Include="include\EvacuationPoint.hpp" />
     <ClInclude Include="include\LevitationMovement.hpp" />
     <ClInclude Include="include\Loot.hpp" />
     <ClInclude Include="include\LootManager.hpp" />
@@ -45,6 +46,7 @@
     <ClCompile Include="src\BaseCharacter.cpp" />
     <ClCompile Include="src\BaseEnemy.cpp" />
     <ClCompile Include="src\CameraOscilation.cpp" />
+    <ClCompile Include="src\EvacuationPoint.cpp" />
     <ClCompile Include="src\LevitationMovement.cpp" />
     <ClCompile Include="src\MainMenu.cpp" />
     <ClCompile Include="src\Bullet.cpp" />

@@ -11,7 +11,9 @@
 #include <Engine/ECS/Component/ParticleComponent.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Linker.hpp>
+#include <Engine/Serialization/DefaultInspect.hpp>
 #include <Engine/Serialization/Separator.hpp>
+#include <EvacuationPoint.hpp>
 #include <Generated/BasePlayer.rfk.h>
 
 namespace GPE
@@ -27,7 +29,7 @@ namespace GPG RFKNamespace()
     class Loot;
     class Firearm;
 
-    class RFKClass(Inspect(), ComponentGen, Serialize()) BasePlayer : public BaseCharacter
+    class RFKClass(ComponentGen, Serialize(), DefaultInspect()) BasePlayer : public BaseCharacter
     {
     protected:
         RFKField(Serialize(), Inspect(), ReadOnly()) float m_animDepthCounter    = 0.f;
@@ -45,18 +47,19 @@ namespace GPG RFKNamespace()
 
         RFKField(Inspect(), Serialize()) GPE::Texture* m_buttonTexture;
 
-        RFKField(Serialize(), Inspect(), ReadOnly()) float m_animDamageAnimCounter    = 0.f;
-        RFKField(Inspect(), Serialize()) float             m_animDamageAnimCounterMax = 0.1f;
-        RFKField(Inspect(), Serialize()) float             m_damageShakeStrength = 1.f;
-        bool                                               m_isPlayDamageAnimation    = false;
+        RFKField(Serialize(), Inspect(), ReadOnly()) float            m_animDamageAnimCounter    = 0.f;
+        RFKField(Inspect(), Serialize()) float                        m_animDamageAnimCounterMax = 0.1f;
+        RFKField(Inspect(), Serialize()) float                        m_damageShakeStrength      = 1.f;
+        bool                                                          m_isPlayDamageAnimation    = false;
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::GameObject> m_cameraGO;
 
     public:
         RFKField(Inspect(), Serialize()) float radiusLootCollection = 50.f;
 
     protected:
-        RFKField(Serialize()) bool displayDepthMenu = false;
-        RFKField(Serialize()) bool displayWinMenu   = false;
+        RFKField(Serialize()) bool isInEvacuationMode = false;
+        RFKField(Serialize()) bool displayDepthMenu   = false;
+        RFKField(Serialize()) bool displayWinMenu     = false;
 
         RFKField(Serialize()) GPE::InputComponent* input  = nullptr;
         RFKField(Serialize()) GPE::AudioComponent* source = nullptr;
@@ -65,9 +68,12 @@ namespace GPG RFKNamespace()
         RFKField() std::vector<Firearm*>                                           m_firearms;
 
         RFKField(Inspect(), Serialize()) GPE::Linker<GPE::ParticleComponent> m_groundParticleComponent;
+        RFKField(Inspect(), Serialize()) GPE::Linker<EvacuationPoint>        m_evacuationPoint;
 
-    protected: 
-    RFKMethod() void updateDamageAnimation(float t);
+        RFKField(Serialize()) std::string m_mainMenuPath;
+
+    protected:
+        RFKMethod() void updateDamageAnimation(float t);
 
     public:
         BasePlayer() noexcept = default;
@@ -83,6 +89,7 @@ namespace GPG RFKNamespace()
         RFKMethod() void leave();
         RFKMethod() void raycastExample();
         RFKMethod() void shoot();
+        RFKMethod() void reload();
         RFKMethod() void aimBegin();
         RFKMethod() void aimEnd();
         RFKMethod() void playAmbiantMusic();
@@ -99,6 +106,8 @@ namespace GPG RFKNamespace()
         void onGUI() final;
         void update(double deltaTime) final;
         void onPostLoad() final;
+
+        void inspect(GPE::InspectContext & context) override;
 
         BasePlayer_GENERATED
     };
