@@ -49,14 +49,19 @@ GameStartup::GameStartup()
 
       // Rendering
       m_render{[&]() {
+          if (m_engine == nullptr)
+              return;
+
           int h, w;
           m_engine->window.getSize(w, h);
-          m_game->setViewport(.0f, .0f, float(w), float(h));
+          if (m_game != nullptr)
+          {
+              m_game->setViewport(.0f, .0f, float(w), float(h));
 
-          glBindFramebuffer(GL_FRAMEBUFFER, 0);
-          glViewport(0, 0, w, h);
-          m_game->render();
-
+              glBindFramebuffer(GL_FRAMEBUFFER, 0);
+              glViewport(0, 0, w, h);
+              m_game->render();
+          }
           m_engine->renderer.swapBuffer();
       }}
 {
