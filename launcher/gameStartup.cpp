@@ -33,6 +33,7 @@ GameStartup::GameStartup()
           m_engine->sceneManager.getCurrentScene()->sceneRenderer.update(deltaTime);
           m_engine->sceneManager.getCurrentScene()->getWorld().updateSelfAndChildren();
           m_engine->inputManager.processInput();
+          m_engine->soundSystem.update();
 
           m_game->update(unscaledDeltaTime, deltaTime);
       }},
