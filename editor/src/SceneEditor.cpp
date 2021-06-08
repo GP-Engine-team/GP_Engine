@@ -346,7 +346,29 @@ void SceneEditor::render(Editor& editorContext)
         view.resize(int(size.x), int(size.y));
         view.render();
 
+        const ImVec2 cursPo = ImGui::GetCursorPos();
         ImGui::Image((void*)(intptr_t)view.textureID, size, {.0f, 1.f}, {1.f, .0f});
+
+        if (view.drawFrustumScene)
+        {
+            ImGui::SetCursorPos(cursPo);
+
+            ImGui::Text("Triangle draw requests: %d", view.frustumDrawStats.totalTriangleRequest);
+            ImGui::Text("Triangles discarded: %d",
+                        view.frustumDrawStats.totalTriangleRequest - view.frustumDrawStats.numberTriangleDraw);
+            ImGui::Text("Triangles drawn: %d", view.frustumDrawStats.numberTriangleDraw);
+            ImGui::Text("Percent of triangles discarded: %.2f%%",
+                        100.f - (view.frustumDrawStats.numberTriangleDraw /
+                                 double(view.frustumDrawStats.totalTriangleRequest) * 100.f));
+            ImGui::Spacing();
+
+            ImGui::Text("Mesh draw requests : %d", view.frustumDrawStats.totalMeshRequest);
+            ImGui::Text("Meshes discarded: %d",
+                        view.frustumDrawStats.totalMeshRequest - view.frustumDrawStats.numberMeshDraw);
+            ImGui::Text("Meshes drawn: %d", view.frustumDrawStats.numberMeshDraw);
+            ImGui::Text("Percent of meshes discarded: %.2f%%", 100.f - (view.frustumDrawStats.numberMeshDraw /
+                                                              double(view.frustumDrawStats.totalMeshRequest) * 100.f));
+        }
 
         if (inspected)
         {
@@ -356,7 +378,7 @@ void SceneEditor::render(Editor& editorContext)
 
         dragDropLevelEditor(editorContext.reloadableCpp);
     }
-
+     
     ImGui::End();
     ImGui::PopStyleVar(2);
 

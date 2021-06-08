@@ -517,7 +517,7 @@ void RenderSystem::renderDebugLine(Camera& observer) noexcept
     resetCurrentRenderPassKey();
 }
 
-void RenderSystem::renderFrustumCulling() noexcept
+void RenderSystem::renderFrustumCulling(FrustumRenderStats& stats) noexcept
 {
     if (!m_mainCamera)
         return;
@@ -527,11 +527,16 @@ void RenderSystem::renderFrustumCulling() noexcept
     // DEBUG
     for (auto&& pSubModel : m_pOpaqueSubModels)
     {
+        stats.totalTriangleRequest += pSubModel->pMesh->getVerticesCount();
+        stats.totalMeshRequest++;
         if (!isOnFrustum(camFrustum, pSubModel))
         {
             displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
             continue;
         }
+
+        stats.numberTriangleDraw += pSubModel->pMesh->getVerticesCount();
+        stats.numberMeshDraw++;
         displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
     }
 
@@ -539,11 +544,16 @@ void RenderSystem::renderFrustumCulling() noexcept
 
     for (auto&& pSubModel : m_pTransparenteSubModels)
     {
+        stats.totalTriangleRequest += pSubModel->pMesh->getVerticesCount();
+        stats.totalMeshRequest++;
         if (!isOnFrustum(camFrustum, pSubModel))
         {
             displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
             continue;
         }
+
+        stats.numberTriangleDraw += pSubModel->pMesh->getVerticesCount();
+        stats.numberMeshDraw++;
         displayBoundingVolume(pSubModel, ColorRGBA{1.f, 1.f, 0.f, 0.2f});
     }
 }
