@@ -353,20 +353,20 @@ void SceneEditor::render(Editor& editorContext)
         {
             ImGui::SetCursorPos(cursPo);
 
-            ImGui::Text("Triangle draw request : %d", view.frustumDrawStats.totalTriangleRequest);
-            ImGui::Text("Triangle discard : %d",
+            ImGui::Text("Triangle draw requests: %d", view.frustumDrawStats.totalTriangleRequest);
+            ImGui::Text("Triangles discarded: %d",
                         view.frustumDrawStats.totalTriangleRequest - view.frustumDrawStats.numberTriangleDraw);
-            ImGui::Text("Triangle draw : %d", view.frustumDrawStats.numberTriangleDraw);
-            ImGui::Text("Triangle discard percent : %f",
+            ImGui::Text("Triangles drawn: %d", view.frustumDrawStats.numberTriangleDraw);
+            ImGui::Text("Percent of triangles discarded: %.2f%%",
                         100.f - (view.frustumDrawStats.numberTriangleDraw /
                                  double(view.frustumDrawStats.totalTriangleRequest) * 100.f));
             ImGui::Spacing();
 
-            ImGui::Text("Mesh draw request : %d", view.frustumDrawStats.totalMeshRequest);
-            ImGui::Text("Mesh discard : %d",
+            ImGui::Text("Mesh draw requests : %d", view.frustumDrawStats.totalMeshRequest);
+            ImGui::Text("Meshes discarded: %d",
                         view.frustumDrawStats.totalMeshRequest - view.frustumDrawStats.numberMeshDraw);
-            ImGui::Text("Mesh draw : %d", view.frustumDrawStats.numberMeshDraw);
-            ImGui::Text("Mesh discard percent : %f", 100.f - (view.frustumDrawStats.numberMeshDraw /
+            ImGui::Text("Meshes drawn: %d", view.frustumDrawStats.numberMeshDraw);
+            ImGui::Text("Percent of meshes discarded: %.2f%%", 100.f - (view.frustumDrawStats.numberMeshDraw /
                                                               double(view.frustumDrawStats.totalMeshRequest) * 100.f));
         }
 
@@ -378,7 +378,7 @@ void SceneEditor::render(Editor& editorContext)
 
         dragDropLevelEditor(editorContext.reloadableCpp);
     }
-
+     
     ImGui::End();
     ImGui::PopStyleVar(2);
 
