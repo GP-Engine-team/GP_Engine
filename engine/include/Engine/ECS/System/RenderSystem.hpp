@@ -140,7 +140,7 @@ public:
     void resetCurrentRenderPassKey();
 
     void renderFurstum(const Frustum& frustum, float size);
-    bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept;
+    static bool isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) noexcept;
     void drawModelPart(const SubModel& subModel);
     void sendModelDataToShader(Camera& camToUse, Shader& shader, const GPM::Mat4& modelMatrix);
     void sendDataToInitShader(Camera& camToUse, Shader& shader);

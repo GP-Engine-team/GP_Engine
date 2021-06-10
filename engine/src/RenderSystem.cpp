@@ -161,7 +161,7 @@ void RenderSystem::renderFurstum(const Frustum& frustum, float size)
     drawDebugQuad(pos, frustum.bottomFace.getNormal(), Vec3::one() * size, ColorRGBA{0.5f, 1.0f, 0.5f, 0.8f});
 }
 
-bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) const noexcept
+bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) noexcept
 {
     switch (pSubModel->pMesh->getBoundingVolumeType())
     {

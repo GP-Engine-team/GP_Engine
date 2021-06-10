@@ -65,19 +65,6 @@ void BaseEnemy::update(double deltaTime)
 {
     if (isDead())
     {
-        // if (m_deathAnimation != nullptr)
-        //{
-        //    for (GPE::AnimationComponent* animComp : m_animComps)
-        //    {
-        //        if (animComp != nullptr)
-        //        {
-        //            animComp->setNextAnim(m_deathAnimation, m_animTransitionTime);
-        //            animComp->shouldLoop     = false;
-        //            animComp->shouldNextLoop = false;
-        //        }
-        //    }
-        //}
-
         m_animDeathCounter += float(deltaTime);
 
         if (m_animDeathCounter >= m_animDeathCounterMax)
