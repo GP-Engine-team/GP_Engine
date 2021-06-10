@@ -72,6 +72,20 @@ void Window::setFullscreen()
 
     // switch to full screen
     glfwSetWindowMonitor(m_window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+
+    isFullscreen = true;
+}
+
+void Window::setWindowed()
+{
+    GLFWmonitor*       monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode    = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    // switch to full screen
+    glfwSetWindowMonitor(m_window, NULL, 0, 0, mode->width, mode->height, mode->refreshRate);
+
+    glfwShowWindow(m_window);
+    isFullscreen = false;
 }
 
 void Window::maximize()
@@ -93,4 +107,16 @@ void Window::show()
 void Window::hide()
 {
     glfwHideWindow(m_window);
+}
+
+void Window::switchFullscreenOrWindowed()
+{
+    if (isFullscreen)
+    {
+        setWindowed();
+    }
+    else
+    {
+        setFullscreen();
+    }
 }

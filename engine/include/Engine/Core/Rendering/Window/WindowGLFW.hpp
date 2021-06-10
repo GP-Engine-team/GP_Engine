@@ -23,7 +23,8 @@ public:
     };
 
 protected:
-    GLFWwindow* m_window = nullptr;
+    GLFWwindow* m_window     = nullptr;
+    bool        isFullscreen = true;
 
 public:
     Window(const CreateArg& arg) noexcept;
@@ -46,7 +47,7 @@ public:
      */
     [[nodiscard]] constexpr inline const GLFWwindow* getGLFWWindow() const noexcept;
     [[nodiscard]] constexpr inline GLFWwindow*       getGLFWWindow() noexcept;
-    
+
     void close();
 
     /**
@@ -60,8 +61,10 @@ public:
     void maximize();
     void minimize();
     void setFullscreen();
+    void setWindowed();
     void show();
     void hide();
+    void switchFullscreenOrWindowed();
 };
 
 #include "WindowGLFW.inl"
