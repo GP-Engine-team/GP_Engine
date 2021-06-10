@@ -135,11 +135,6 @@ void AnimationComponent::update(float deltaTime)
 
             calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
         }
-        else
-        {
-            int i = 0;
-            i += 1;
-        }
     }
 }
 
