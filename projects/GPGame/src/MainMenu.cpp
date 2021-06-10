@@ -72,6 +72,12 @@ void MainMenu::onGUI()
     }
     PopFont();
     ImGui::SetWindowFontScale(previousFontScale);
+
+    std::string creditsText     = "Credits : \n - Jonathan Six \n - Sami Amara \n - Thomas Dallard \n - William Nardone"; 
+    ImVec2      creditsTextSize = ImGui::CalcTextSize(creditsText.c_str());
+    SetCursorPosX(GetWindowSize().x - creditsTextSize.x - 30);
+    SetCursorPosY(GetWindowSize().y - creditsTextSize.y - 20);
+    ImGui::Text(creditsText.c_str(), creditsTextSize);
 }
 
 MainMenu::~MainMenu() noexcept

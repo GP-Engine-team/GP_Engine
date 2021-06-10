@@ -298,6 +298,16 @@ bool Model::hasAnimationsLinked() const
     return false;
 }
 
+const SubModel& Model::getSubModel(size_t index) const
+{
+    if (index < m_subModels.size())
+    {
+        auto it = m_subModels.begin();
+        std::advance(it, index);
+        return *it;
+    }
+}
+
 GPM::AABB Model::getLocalAABB()
 {
     return AABB{getLocalAABBMin(), getLocalAABBMAx()};

@@ -39,6 +39,19 @@ void BaseEnemy::start()
     GAME_ASSERT(m_controller, "Null");
 
     m_source->playSound("Zombie", true, false);
+
+    m_currentState = EState::RUNNING;
+    if (m_walkAnimation != nullptr)
+    {
+        for (GPE::AnimationComponent* animComp : m_animComps)
+        {
+            if (animComp != nullptr)
+            {
+                animComp->playAnimation(nullptr);
+                animComp->playAnimation(m_walkAnimation, m_animTransitionTime, m_walkScale);
+            }
+        }
+    }
 }
 
 void BaseEnemy::onPostLoad()
@@ -65,19 +78,6 @@ void BaseEnemy::update(double deltaTime)
 {
     if (isDead())
     {
-        // if (m_deathAnimation != nullptr)
-        //{
-        //    for (GPE::AnimationComponent* animComp : m_animComps)
-        //    {
-        //        if (animComp != nullptr)
-        //        {
-        //            animComp->setNextAnim(m_deathAnimation, m_animTransitionTime);
-        //            animComp->shouldLoop     = false;
-        //            animComp->shouldNextLoop = false;
-        //        }
-        //    }
-        //}
-
         m_animDeathCounter += float(deltaTime);
 
         if (m_animDeathCounter >= m_animDeathCounterMax)

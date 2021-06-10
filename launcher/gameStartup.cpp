@@ -97,6 +97,20 @@ void GameStartup::update()
 {
     m_engine->timeSystem.update(m_fixedUpdate, m_update, m_render);
 
+    static bool wasKeyPRessed = false;
+    if (glfwGetKey(m_engine->window.getGLFWWindow(), GLFW_KEY_F11) == GLFW_PRESS)
+    {
+        if (!wasKeyPRessed)
+        {
+            m_engine->window.switchFullscreenOrWindowed();
+            wasKeyPRessed = true;
+        }
+    }
+    else
+    {
+        wasKeyPRessed = false;
+    }
+
     Engine::getInstance()->isRunning = !glfwWindowShouldClose(m_engine->window.getGLFWWindow());
 }
 

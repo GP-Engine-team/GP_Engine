@@ -10,6 +10,7 @@
 #include <Engine/Resources/Animation/Animation.hpp>
 #include <Engine/Resources/Animation/Skeleton.hpp>
 #include <Engine/Resources/Animation/Skin.hpp>
+#include <Engine/ECS/Component/Camera.hpp>
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/postprocess.h> // Post processing flags
 #include <assimp/scene.h>       // Output data structure
@@ -128,7 +129,12 @@ void AnimationComponent::update(float deltaTime)
         }
 
         m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
-        calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
+
+        if (RenderSystem::isOnFrustum(GPE::Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.getMainCamera()->getFrustum(), &m_model->getSubModel(m_subModelIndex)))
+        {
+
+            calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
+        }
     }
 }
 
