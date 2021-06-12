@@ -57,11 +57,26 @@ public:
         PROGRAM
     };
 
+    struct Attribute
+    {
+        GLenum type;
+    };
+
+    struct Uniform
+    {
+        GLenum type;
+        GLuint location;
+        GLuint size;
+    };
+
 protected:
     uint16_t     m_featureMask         = 0; // feature is shader interger into shader like light, blur etc....
     unsigned int m_lightsUniformBuffer = 0; // TODO: no sens to have id of uniform light in any shaders
 
     unsigned int m_id = 0;
+
+    std::map<std::string, Attribute> m_attributes;
+    std::map<std::string, Uniform>   m_uniforms;
 
 public:
     /**
@@ -131,6 +146,11 @@ private:
     static unsigned int compile(std::string& vertexCode, std::string& fragmentCode);
     static void         compileVertex(std::string& vertexCode);
     static void         compileFragment(std::string& fragmentCode);
+
+    /**
+     * @brief Get all uniform and store it in m_uniforms
+     */
+    void updateUniformList();
 
     /**
      * @brief Use log function for checking shader compilation/linking errors

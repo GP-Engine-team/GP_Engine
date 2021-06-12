@@ -180,6 +180,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, uint16_t featur
     setInt("ourTexture", 0);
     setInt("shadowMap", 1);
     setInt("normalMap", 2);
+
+    updateUniformList();
 }
 
 Shader::~Shader() noexcept
@@ -200,6 +202,8 @@ void Shader::reload(const char* vertexPath, const char* fragmentPath, uint16_t f
         setInt("ourTexture", 0);
         setInt("shadowMap", 1);
         setInt("normalMap", 2);
+
+        updateUniformList();
     }
 }
 
@@ -226,7 +230,7 @@ void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3
 
         { // try to get uniform block index
             GLuint      blockIndex;
-            const char* blockName = "lightBlock";
+            const char* blockName = "lightBuffer";
             blockIndex            = glGetUniformBlockIndex(m_id, blockName);
 
             if (blockIndex == GL_INVALID_INDEX)
@@ -392,6 +396,46 @@ bool Shader::checkCompileErrors(unsigned int shader, EType type)
         }
     }
     return true;
+}
+
+void Shader::updateUniformList()
+{
+    printf("Test 2 :\n");
+    GLint numActiveAttribs  = 0;
+    GLint numActiveUniforms = 0;
+    glGetProgramInterfaceiv(m_id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numActiveAttribs);
+    glGetProgramInterfaceiv(m_id, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numActiveUniforms);
+
+    std::vector<GLchar> nameData(256);
+    std::vector<GLenum> properties;
+    properties.push_back(GL_NAME_LENGTH);
+    properties.push_back(GL_TYPE);
+    properties.push_back(GL_ARRAY_SIZE);
+    properties.push_back(GL_LOCATION);
+
+    std::vector<GLint> values(properties.size());
+    for (int attrib = 0; attrib < numActiveAttribs; ++attrib)
+    {
+        glGetProgramResourceiv(m_id, GL_PROGRAM_INPUT, attrib, properties.size(), &properties[0], values.size(), NULL,
+                               &values[0]);
+
+        nameData.resize(values[0]); // The length of the name.
+
+        glGetProgramResourceName(m_id, GL_PROGRAM_INPUT, attrib, nameData.size(), NULL, &nameData[0]);
+        std::string name((char*)&nameData[0], nameData.size() - 1);
+        m_attributes.emplace(name, values[1]);
+    }
+
+    for (int unif = 0; unif < numActiveUniforms; ++unif)
+    {
+        glGetProgramResourceiv(m_id, GL_UNIFORM, unif, properties.size(), &properties[0], values.size(), NULL,
+                               &values[0]);
+
+        nameData.resize(values[0]); // The length of the name.
+        glGetProgramResourceName(m_id, GL_UNIFORM, unif, nameData.size(), NULL, &nameData[0]);
+        std::string name((char*)&nameData[0], nameData.size() - 1);
+        m_uniforms.emplace(name, values[1], values[2], values[3]);
+    }
 }
 
 unsigned int Shader::loadAndCompile(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
