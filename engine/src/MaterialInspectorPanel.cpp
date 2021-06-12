@@ -91,6 +91,29 @@ File_GENERATED
 
         ImGui::PopID();
 
+        ImGui::PushID("Shader");
+        ImGui::TextUnformatted("Shader");
+        ImGui::SameLine();
+        if (ImGui::Button((m_config.shaderPath.empty() ? "None##Shader" : m_config.shaderPath.c_str())))
+        {
+            m_config.shaderPath =
+                openFileExplorerAndGetRelativePath(L"Select shader", {{L"Shader", L"*.GPShader"}}).string().c_str();
+
+            m_isDirty = true;
+        }
+        // Drop from content browser
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_SHADER_EXTENSION))
+            {
+                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+                m_config.shaderPath = static_cast<std::filesystem::path*>(payload->Data)->string();
+            }
+            ImGui::EndDragDropTarget();
+        }
+
+        ImGui::PopID();
+
         if (m_isDirty)
         {
             if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(m_path))
@@ -114,6 +137,11 @@ File_GENERATED
                     pMaterial->setNormalMapTexture(pTexture);
                 else
                     pMaterial->setNormalMapTexture(loadTextureFile(m_config.normalMapTexturePath.c_str()));
+
+                if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(m_config.shaderPath))
+                    pMaterial->setShader(pShader);
+                else
+                    pMaterial->setShader(loadShaderFile(m_config.shaderPath.c_str()));
             }
             m_isDirty           = false;
             m_canSaveInHardDisk = true;

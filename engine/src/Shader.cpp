@@ -423,7 +423,7 @@ void Shader::updateUniformList()
 
         glGetProgramResourceName(m_id, GL_PROGRAM_INPUT, attrib, nameData.size(), NULL, &nameData[0]);
         std::string name((char*)&nameData[0], nameData.size() - 1);
-        m_attributes.emplace(name, values[1]);
+        m_attributes.emplace(name, Attribute{static_cast<GLenum>(values[1])});
     }
 
     for (int unif = 0; unif < numActiveUniforms; ++unif)
@@ -434,7 +434,7 @@ void Shader::updateUniformList()
         nameData.resize(values[0]); // The length of the name.
         glGetProgramResourceName(m_id, GL_UNIFORM, unif, nameData.size(), NULL, &nameData[0]);
         std::string name((char*)&nameData[0], nameData.size() - 1);
-        m_uniforms.emplace(name, values[1], values[2], values[3]);
+        m_uniforms.emplace(name, Uniform{static_cast<GLenum>(values[1]), values[2], values[3]});
     }
 }
 

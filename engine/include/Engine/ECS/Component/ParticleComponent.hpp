@@ -100,9 +100,9 @@ namespace GPE RFKNamespace()
         void         moveTowardScene(class Scene & newOwner) override;
         virtual void inspect(InspectContext & context);
 
-        DEFAULT_GETTER_SETTER_BY_VALUE(Duration, m_duration)
-        DEFAULT_GETTER_SETTER_BY_VALUE(Count, m_count)
-        DEFAULT_GETTER_SETTER_BY_VALUE(EmitRate, m_emitRate)
+        GETTER_SETTER_BY_VALUE(Duration, m_duration)
+        GETTER_SETTER_BY_VALUE(Count, m_count)
+        GETTER_SETTER_BY_VALUE(EmitRate, m_emitRate)
 
         /**
          * @brief Kill all alive particle

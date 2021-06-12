@@ -62,11 +62,11 @@ namespace GPE RFKNamespace()
 
     public:
         physx::PxController* controller = nullptr;
-        DEFAULT_GETTER_SETTER_BY_VALUE(Speed, m_speed);
-        DEFAULT_GETTER_SETTER_BY_VALUE(AngularSpeed, m_angularSpeed);
-        DEFAULT_GETTER_SETTER_BY_VALUE(HasGravity, m_hasGravity);
-        DEFAULT_GETTER_SETTER_BY_VALUE(Gravity, m_gravity);
-        DEFAULT_GETTER_SETTER_BY_VALUE(Mass, m_mass);
+        GETTER_SETTER_BY_VALUE(Speed, m_speed);
+        GETTER_SETTER_BY_VALUE(AngularSpeed, m_angularSpeed);
+        GETTER_SETTER_BY_VALUE(HasGravity, m_hasGravity);
+        GETTER_SETTER_BY_VALUE(Gravity, m_gravity);
+        GETTER_SETTER_BY_VALUE(Mass, m_mass);
         GETTER_BY_VALUE(CanJump, m_canJump);
 
         /**

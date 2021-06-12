@@ -17,6 +17,8 @@
 
 namespace GPE
 {
+class Shader;
+
 class Material
 {
 public:
@@ -26,6 +28,7 @@ public:
         std::string       ambianteTexturePath  = "";
         std::string       diffuseTexturePath   = "";
         std::string       normalMapTexturePath = "";
+        std::string       shaderPath           = "";
     };
 
     struct CreateArg
@@ -34,6 +37,7 @@ public:
         Texture*          pAmbianteTexture{nullptr};
         Texture*          pDiffuseTexture{nullptr};
         Texture*          pNormalMapTexture{nullptr};
+        Shader*           pShader{nullptr};
     };
 
 protected:
@@ -46,6 +50,8 @@ protected:
     Texture*          m_pNormalMapTexture{nullptr};
     unsigned int      m_ID = 0;
 
+    Shader* m_shader{nullptr};
+
 public:
     inline Material(const CreateArg& arg);
 
@@ -56,10 +62,11 @@ public:
     Material& operator=(Material const& other) = default;
     Material& operator=(Material&& other) = default;
 
-    DEFAULT_GETTER_SETTER_BY_REF(Component, m_comp);
-    DEFAULT_GETTER_SETTER_BY_REF(AmbianteTexture, m_pAmbianteTexture);
-    DEFAULT_GETTER_SETTER_BY_REF(DiffuseTexture, m_pDiffuseTexture);
-    DEFAULT_GETTER_SETTER_BY_REF(NormalMapTexture, m_pNormalMapTexture);
+    GETTER_SETTER_BY_REF(Component, m_comp);
+    GETTER_SETTER_BY_REF(AmbianteTexture, m_pAmbianteTexture);
+    GETTER_SETTER_BY_REF(DiffuseTexture, m_pDiffuseTexture);
+    GETTER_SETTER_BY_REF(NormalMapTexture, m_pNormalMapTexture);
+    GETTER_SETTER_BY_VALUE(Shader, m_shader);
 
     inline bool isOpaque() const noexcept;
 

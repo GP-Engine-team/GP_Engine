@@ -54,9 +54,9 @@ namespace GPE RFKNamespace()
 
         void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept override;
 
-        DEFAULT_GETTER_SETTER_BY_REF(Constant, m_constant);
-        DEFAULT_GETTER_SETTER_BY_REF(Linear, m_linear);
-        DEFAULT_GETTER_SETTER_BY_REF(Quadratic, m_quadratic);
+        GETTER_SETTER_BY_REF(Constant, m_constant);
+        GETTER_SETTER_BY_REF(Linear, m_linear);
+        GETTER_SETTER_BY_REF(Quadratic, m_quadratic);
 
         PointLight_GENERATED
     };

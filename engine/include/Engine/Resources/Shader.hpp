@@ -65,8 +65,8 @@ public:
     struct Uniform
     {
         GLenum type;
-        GLuint location;
-        GLuint size;
+        GLint  location;
+        GLint  size;
     };
 
 protected:

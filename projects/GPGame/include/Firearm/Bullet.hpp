@@ -40,7 +40,7 @@ namespace GPG RFKNamespace()
 
         void triggered() override;
 
-        DEFAULT_GETTER_SETTER_BY_VALUE(Dammage, m_dammage);
+        GETTER_SETTER_BY_VALUE(Dammage, m_dammage);
 
         Bullet_GENERATED
     };

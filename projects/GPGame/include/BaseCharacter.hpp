@@ -68,10 +68,10 @@ namespace GPG RFKNamespace()
         RFKMethod() void sprintEnd();
 
         RFKMethod() virtual void takeDamage(float damage);
-        RFKMethod() bool isDead();
-        RFKMethod() void takeLife(float damage);
-        DEFAULT_GETTER_SETTER_BY_VALUE(BodyBalancing, m_bodyBalancing)
-        DEFAULT_GETTER_SETTER_BY_VALUE(IsSprint, m_isSprint)
+        RFKMethod() bool         isDead();
+        RFKMethod() void         takeLife(float damage);
+        GETTER_SETTER_BY_VALUE(BodyBalancing, m_bodyBalancing)
+        GETTER_SETTER_BY_VALUE(IsSprint, m_isSprint)
 
         RFKMethod() virtual void onDeath();
 
