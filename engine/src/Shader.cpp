@@ -230,7 +230,7 @@ void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3
 
         { // try to get uniform block index
             GLuint      blockIndex;
-            const char* blockName = "lightBuffer";
+            const char* blockName = "lightBlock";
             blockIndex            = glGetUniformBlockIndex(m_id, blockName);
 
             if (blockIndex == GL_INVALID_INDEX)
@@ -400,7 +400,6 @@ bool Shader::checkCompileErrors(unsigned int shader, EType type)
 
 void Shader::updateUniformList()
 {
-    printf("Test 2 :\n");
     GLint numActiveAttribs  = 0;
     GLint numActiveUniforms = 0;
     glGetProgramInterfaceiv(m_id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numActiveAttribs);

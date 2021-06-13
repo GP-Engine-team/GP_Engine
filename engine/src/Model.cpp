@@ -5,9 +5,11 @@ File_GENERATED
 #include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/Tools/Hash.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
+#include <Engine/Resources/Animation/Skeleton.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Material.hpp>
 #include <Engine/Resources/Mesh.hpp>
@@ -15,8 +17,6 @@ File_GENERATED
 #include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Shader.hpp>
 #include <Engine/Resources/Texture.hpp>
-#include <Engine/Resources/Animation/Skeleton.hpp>
-#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <GPM/Matrix3.hpp>
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
@@ -30,13 +30,12 @@ using namespace GPM;
 bool SubModel::isValid() const
 {
     // TODO: remove diffuse texture check
-    return pModel && pMesh && pShader && pMaterial && pMaterial->getDiffuseTexture();
+    return pModel && pMesh && pMaterial && pMaterial->getDiffuseTexture();
 }
 
 bool GPE::isSubModelHasPriorityOverAnother(const SubModel* lhs, const SubModel* rhs) noexcept
 {
-    return lhs->pShader->getID() < rhs->pShader->getID() || lhs->pMesh->getID() < rhs->pMesh->getID() ||
-           lhs->pMaterial->getID() < rhs->pMaterial->getID() ||
+    return lhs->pMesh->getID() < rhs->pMesh->getID() || lhs->pMaterial->getID() < rhs->pMaterial->getID() ||
            lhs->pMaterial->getDiffuseTexture()->getID() < rhs->pMaterial->getDiffuseTexture()->getID() ||
            (lhs->pMaterial->isOpaque() && !rhs->pMaterial->isOpaque());
 }
@@ -178,7 +177,7 @@ void Model::inspect(InspectContext& context)
             {
                 if (ImGui::MenuItem("Remove"))
                 {
-                    if ((size_t)it->pMesh & (size_t)it->pShader & (size_t)it->pMaterial) // If not nullptr detectedhh
+                    if (it->isValid()) // If not nullptr detectedhh
                         it->pModel->getOwner().pOwnerScene->sceneRenderer.removeSubModel(*it);
 
                     it        = m_subModels.erase(it);
@@ -266,7 +265,7 @@ void Model::bindSkin(Skin& skin, int subModelIndex)
         it->pMesh->bindSkin(skin);
     }
 
-    //for (SubModel& sub : m_subModels)
+    // for (SubModel& sub : m_subModels)
     //{
     //    // We must verify if the shader implements the animation feature
     //    //if (sub.pShader != nullptr && (sub.pShader->getFeature() & ANIMATION_MASK) == ANIMATION_MASK)

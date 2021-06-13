@@ -121,12 +121,6 @@ File_GENERATED
                 pMaterial->setComponent(m_config.comp);
 
                 if (Texture* pTexture =
-                        Engine::getInstance()->resourceManager.get<Texture>(m_config.ambianteTexturePath))
-                    pMaterial->setAmbianteTexture(pTexture);
-                else
-                    pMaterial->setAmbianteTexture(loadTextureFile(m_config.ambianteTexturePath.c_str()));
-
-                if (Texture* pTexture =
                         Engine::getInstance()->resourceManager.get<Texture>(m_config.diffuseTexturePath.c_str()))
                     pMaterial->setDiffuseTexture(pTexture);
                 else

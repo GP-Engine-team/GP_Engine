@@ -40,7 +40,6 @@ namespace GPE RFKNamespace()
     {
         struct CreateArg
         {
-            Shader*   pShader;
             Material* pMaterial;
             Mesh*     pMesh;
 
@@ -50,7 +49,7 @@ namespace GPE RFKNamespace()
         };
 
         SubModel(Model & model, const CreateArg& arg)
-            : pModel{&model}, pShader{arg.pShader}, pMaterial{arg.pMaterial}, pMesh{arg.pMesh},
+            : pModel{&model}, pMaterial{arg.pMaterial}, pMesh{arg.pMesh},
               enableBackFaceCulling{arg.enableBackFaceCulling}, castShadow{arg.castShadow},
               isTransparent{arg.isTransparent}
         {
@@ -65,7 +64,6 @@ namespace GPE RFKNamespace()
 
         RFKField(Serialize()) Model*               pModel         = nullptr;
         RFKField(Serialize(), Inspect()) Mesh*     pMesh          = nullptr;
-        RFKField(Serialize(), Inspect()) Shader*   pShader        = nullptr;
         RFKField(Serialize(), Inspect()) Material* pMaterial      = nullptr;
         AnimationComponent*                        pAnimComponent = nullptr;
 
@@ -73,8 +71,6 @@ namespace GPE RFKNamespace()
         RFKField(Serialize()) bool castShadow            = true;
         RFKField(Serialize()) bool isTransparent         = false;
         RFKField(Serialize()) bool writeInDepth          = true;
-
-        void setShader(Shader* newShader);
 
         SubModel_GENERATED
     };

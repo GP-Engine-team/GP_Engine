@@ -590,8 +590,8 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     continue;
                 }
 
-                rs.tryToBindShader(*pSubModel->pShader);
-                rs.tryToBindMaterial(*pSubModel->pShader, *pSubModel->pMaterial);
+                rs.tryToBindShader(*pSubModel->pMaterial->getShader());
+                rs.tryToBindMaterial(*pSubModel->pMaterial->getShader(), *pSubModel->pMaterial);
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToBindTexture(pSubModel->pMaterial->getDiffuseTexture()->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
@@ -600,16 +600,17 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                 if (pSubModel->isAnimated())
                 {
                     auto& transforms = pSubModel->getFinalBonesTransforms();
-                    glUniformMatrix4fv(glGetUniformLocation(pSubModel->pShader->getID(), "finalBonesMatrices"),
-                                       transforms.size(), GL_FALSE, (GLfloat*)transforms.data());
+                    glUniformMatrix4fv(
+                        glGetUniformLocation(pSubModel->pMaterial->getShader()->getID(), "finalBonesMatrices"),
+                        transforms.size(), GL_FALSE, (GLfloat*)transforms.data());
                 }
-                else if ((pSubModel->pShader->getFeature() & ANIMATION_MASK) ==
+                else if ((pSubModel->pMaterial->getShader()->getFeature() & ANIMATION_MASK) ==
                          ANIMATION_MASK) // if shader has animation data but does not play
                 {
                     for (int i = 0; i < m_maxNbBones; ++i)
                     {
 
-                        pSubModel->pShader->setMat4(
+                        pSubModel->pMaterial->getShader()->setMat4(
                             std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(),
                             GPM::Matrix4::identity().e);
                     }
@@ -617,7 +618,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pMainCamera, *pSubModel->pShader,
+                rs.sendModelDataToShader(*pMainCamera, *pSubModel->pMaterial->getShader(),
                                          pSubModel->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*pSubModel);
             }
@@ -675,18 +676,19 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
             std::map<float, SubModel*>::reverse_iterator rEnd = mapElemSortedByDistance.rend();
             for (std::map<float, SubModel*>::reverse_iterator it = mapElemSortedByDistance.rbegin(); it != rEnd; ++it)
             {
-                glDepthMask(it->second->writeInDepth);
-                rs.tryToBindShader(*it->second->pShader);
-                rs.tryToBindMaterial(*it->second->pShader, *it->second->pMaterial);
-                rs.tryToBindMesh(it->second->pMesh->getID());
-                rs.tryToBindTexture(it->second->pMaterial->getDiffuseTexture()->getID());
-                rs.tryToSetBackFaceCulling(it->second->enableBackFaceCulling);
+                SubModel* const sub = it->second;
+                glDepthMask(sub->writeInDepth);
+                rs.tryToBindShader(*sub->pMaterial->getShader());
+                rs.tryToBindMaterial(*sub->pMaterial->getShader(), *sub->pMaterial);
+                rs.tryToBindMesh(sub->pMesh->getID());
+                rs.tryToBindTexture(sub->pMaterial->getDiffuseTexture()->getID());
+                rs.tryToSetBackFaceCulling(sub->enableBackFaceCulling);
 
                 // TODO: To optimize ! Use Draw instanced Array
 
-                rs.sendModelDataToShader(*pMainCamera, *it->second->pShader,
-                                         it->second->pModel->getOwner().getTransform().getModelMatrix());
-                rs.drawModelPart(*it->second);
+                rs.sendModelDataToShader(*pMainCamera, *sub->pMaterial->getShader(),
+                                         sub->pModel->getOwner().getTransform().getModelMatrix());
+                rs.drawModelPart(*sub);
             };
 
             glDepthMask(GL_TRUE);
@@ -725,7 +727,8 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
 
             for (auto&& pSubModel : pOpaqueSubModels)
             {
-                if ((pSubModel->pShader->getFeature() & SKYBOX) == SKYBOX || !rs.isOnFrustum(camFrustum, pSubModel))
+                if ((pSubModel->pMaterial->getShader()->getFeature() & SKYBOX) == SKYBOX ||
+                    !rs.isOnFrustum(camFrustum, pSubModel))
                     continue;
 
                 glUniform1ui(idLocation, pSubModel->pModel->getOwner().getID());
@@ -742,7 +745,8 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
 
             for (auto&& pSubModel : pTransparenteSubModels)
             {
-                if ((pSubModel->pShader->getFeature() & SKYBOX) == SKYBOX || !rs.isOnFrustum(camFrustum, pSubModel))
+                if ((pSubModel->pMaterial->getShader()->getFeature() & SKYBOX) == SKYBOX ||
+                    !rs.isOnFrustum(camFrustum, pSubModel))
                     continue;
 
                 glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"),

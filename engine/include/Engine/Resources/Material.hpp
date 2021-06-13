@@ -9,11 +9,11 @@
 #include <memory> //std::unique_ptr, std::shared_ptr
 #include <string> //std::string
 
-#include "Engine/Resources/ShaderType.hpp"
-#include "Engine/Resources/Texture.hpp"
-#include "Engine/Resources/Type.hpp"
+#include <Engine/Resources/ShaderType.hpp>
+#include <Engine/Resources/Texture.hpp>
+#include <Engine/Resources/Type.hpp>
 
-#include "Engine/Core/Tools/ClassUtility.hpp"
+#include <Engine/Core/Tools/ClassUtility.hpp>
 
 namespace GPE
 {
@@ -25,7 +25,6 @@ public:
     struct ImporteArg
     {
         MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
-        std::string       ambianteTexturePath  = "";
         std::string       diffuseTexturePath   = "";
         std::string       normalMapTexturePath = "";
         std::string       shaderPath           = "";
@@ -34,7 +33,6 @@ public:
     struct CreateArg
     {
         MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
-        Texture*          pAmbianteTexture{nullptr};
         Texture*          pDiffuseTexture{nullptr};
         Texture*          pNormalMapTexture{nullptr};
         Shader*           pShader{nullptr};
@@ -45,12 +43,10 @@ protected:
 
 protected:
     MaterialComponent m_comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
-    Texture*          m_pAmbianteTexture{nullptr};
     Texture*          m_pDiffuseTexture{nullptr};
     Texture*          m_pNormalMapTexture{nullptr};
+    Shader*           m_pShader{nullptr};
     unsigned int      m_ID = 0;
-
-    Shader* m_shader{nullptr};
 
 public:
     inline Material(const CreateArg& arg);
@@ -63,10 +59,9 @@ public:
     Material& operator=(Material&& other) = default;
 
     GETTER_SETTER_BY_REF(Component, m_comp);
-    GETTER_SETTER_BY_REF(AmbianteTexture, m_pAmbianteTexture);
     GETTER_SETTER_BY_REF(DiffuseTexture, m_pDiffuseTexture);
     GETTER_SETTER_BY_REF(NormalMapTexture, m_pNormalMapTexture);
-    GETTER_SETTER_BY_VALUE(Shader, m_shader);
+    GETTER_SETTER_BY_VALUE(Shader, m_pShader);
 
     inline bool isOpaque() const noexcept;
 
