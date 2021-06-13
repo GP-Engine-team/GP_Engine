@@ -1,8 +1,14 @@
-# Green Portal Engine
-
-![](https://i.postimg.cc/PqK3mQgT/engine.png)
-![](https://i.postimg.cc/xdtknXz6/game.png)
-
+<div align="center"><img src="https://i.postimg.cc/rpbtDt5q/GPE.png" /></div>
+<p></p>
+<div align="center">
+  <img src="https://i.postimg.cc/PqK3mQgT/engine.png" />
+  <p>Editor graphical user interface</p>
+  <img src="https://i.postimg.cc/xdtknXz6/game.png" />
+  <p style="text-decoration: underline;">Game made entirely with the engine</p>
+</div>
+<div align="center">
+  <a href="progz.itch.io/green-portal">itch.io</a> | <a href="https://youtu.be/GrtPbnP4KDw">Video showcase</a> | <a href="https://youtu.be/JSAnqk2sR-0?t=5756">Live presentation</a>
+</div>
 
 ## Documents
 [Production Pipeline document](https://docs.google.com/document/d/16_K5LYEYgaHoLp3JxO0UqVd54PJbOMVTss-FqXLqL3I/)  
@@ -21,7 +27,7 @@ If you already cloned the repository, you can use:
 git submodule update
 ```
 
-2. Download the assets [from the Drive](https://drive.google.com/drive/folders/1ElLiWl6cP_Z3WOdevMU3CpLjCIND17XD) (`projects` folder or `project.zip`) and extract them from the root of your local copy of this repository
+2. Download the assets [from the Drive](https://drive.google.com/drive/folders/1ElLiWl6cP_Z3WOdevMU3CpLjCIND17XD) (`projects` folder or `project.zip`) and extract them from the root of your local copy of this repository. For now, they are only accessible by someone with an ISART email address
 3. Open [projects/GPGame/GPGame.sln](projects/GPGame/GPGame.sln) in Visual Studio
 4. **Either set the "GPLauncher" or "GPEditor" project as startup project** to launch the game alone, or with the editor, respectively
 5. Choose either Debug or Release mode, and hit F5 to compile
