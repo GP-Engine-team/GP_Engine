@@ -8,8 +8,9 @@ struct Transform;
 struct SplitTransform;
 union alignas(16) Matrix4;
 union Vector3;
+union Vector4;
 union Quaternion;
-}
+} // namespace GPM
 
 namespace GPE
 {

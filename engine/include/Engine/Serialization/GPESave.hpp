@@ -14,6 +14,7 @@ class Skeleton;
 class Skin;
 class Animation;
 struct ColorRGBA;
+struct ColorRGB;
 
 template <typename T>
 struct Linker;
@@ -77,6 +78,5 @@ void save(XmlSaver& context, Skin* const& data, const XmlSaver::SaveInfo& info);
 
 } // namespace GPE
 
-#include <string>
 #include <Engine/Serialization/GPESave.inl>
-
+#include <string>

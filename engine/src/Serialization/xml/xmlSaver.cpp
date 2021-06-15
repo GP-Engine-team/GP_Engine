@@ -61,6 +61,18 @@ void save(XmlSaver& context, const unsigned int& saved, const rfk::Field& info)
 }
 
 template <>
+void save(XmlSaver& context, const unsigned int& saved, const XmlSaver::SaveInfo& info)
+{
+    context.saveAsString(std::to_string(saved), info);
+}
+
+template <>
+void save(XmlSaver& context, const size_t& saved, const rfk::Field& info)
+{
+    context.saveAsString(std::to_string(saved), info);
+}
+
+template <>
 void save(XmlSaver& context, const size_t& saved, const XmlSaver::SaveInfo& info)
 {
     context.saveAsString(std::to_string(saved), info);
@@ -73,7 +85,31 @@ void save(XmlSaver& context, const char& saved, const rfk::Field& info)
 }
 
 template <>
+void save(XmlSaver& context, const char& saved, const XmlSaver::SaveInfo& info)
+{
+    context.saveAsString(std::to_string(saved), info);
+}
+
+template <>
 void save(XmlSaver& context, const float& saved, const rfk::Field& info)
+{
+    context.saveAsString(std::to_string(saved), info);
+}
+
+template <>
+void save(XmlSaver& context, const float& saved, const XmlSaver::SaveInfo& info)
+{
+    context.saveAsString(std::to_string(saved), info);
+}
+
+template <>
+void save(XmlSaver& context, const double& saved, const rfk::Field& info)
+{
+    context.saveAsString(std::to_string(saved), info);
+}
+
+template <>
+void save(XmlSaver& context, const double& saved, const XmlSaver::SaveInfo& info)
 {
     context.saveAsString(std::to_string(saved), info);
 }
@@ -91,7 +127,7 @@ void save(XmlSaver& context, const bool& saved, const XmlSaver::SaveInfo& info)
 }
 
 template <>
-void save(XmlSaver& context, rfk::Object* const & saved, const rfk::Field& info)
+void save(XmlSaver& context, rfk::Object* const& saved, const rfk::Field& info)
 {
     auto i = reinterpret_cast<std::uintptr_t>(saved);
     context.saveAsString(std::to_string(i), info);

@@ -8,10 +8,10 @@
 
 #include "Engine/Serialization/xml/xmlUtilities.hpp"
 #include "RapidXML/rapidxml.hpp"
-#include <Refureku/Refureku.h>
 #include "Refureku/TypeInfo/Variables/Field.h"
-#include <stack>
+#include <Refureku/Refureku.h>
 #include <set>
+#include <stack>
 
 class XmlSaver
 {
@@ -25,7 +25,6 @@ public:
         size_t      typeId;
     };
 
-
 protected:
     rapidxml::xml_document<>& doc;
 
@@ -34,7 +33,7 @@ protected:
     struct LoadedPtr
     {
         SaveInfo info;
-        void* data;
+        void*    data;
 
         bool operator<(const LoadedPtr& rhs) const
         {
@@ -49,7 +48,6 @@ protected:
     std::set<LoadedPtr> alreadySavedPtrs;
 
 public:
-
     XmlSaver(rapidxml::xml_document<>& d) : doc(d)
     {
         hierarchy.push(&d);
@@ -79,7 +77,7 @@ public:
         hierarchy.push(newNode);
 
         appendAttribute(newNode, "name", name);
-        //appendAttribute(newNode, "type", typeName);
+        // appendAttribute(newNode, "type", typeName);
         appendAttribute(newNode, "typeID", std::to_string(typeId));
 
         return newNode;
@@ -94,7 +92,7 @@ public:
     {
         if (info.type.archetype == nullptr)
             return push(info.name, "unknown", 0);
-        else 
+        else
             return push(info.name, info.type.archetype->name, info.type.archetype->id);
     }
 
@@ -105,7 +103,7 @@ public:
 
     void print();
 
-    template<typename T>
+    template <typename T>
     bool savePtrData(T* data, const SaveInfo& info);
 
     void addWeakPtr(void* ptr)
@@ -132,7 +130,7 @@ template <typename T>
 void save(XmlSaver& context, const T& inspected, const rfk::Field& info);
 
 template <typename T>
-void save(XmlSaver& context, T* const & inspected, const XmlSaver::SaveInfo& info)
+void save(XmlSaver& context, T* const& inspected, const XmlSaver::SaveInfo& info)
 {
     context.push(info);
 
@@ -175,10 +173,14 @@ void save(XmlSaver& context, const int& inspected, const XmlSaver::SaveInfo& inf
 
 template <>
 void save(XmlSaver& context, const unsigned int& inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, const unsigned int& inspected, const XmlSaver::SaveInfo& info);
 
 /**
  * @brief Specialization for size_t data. See the original function for more comments.
  */
+template <>
+void save(XmlSaver& context, const size_t& inspected, const rfk::Field& info);
 template <>
 void save(XmlSaver& context, const size_t& inspected, const XmlSaver::SaveInfo& info);
 
@@ -187,12 +189,21 @@ void save(XmlSaver& context, const size_t& inspected, const XmlSaver::SaveInfo& 
  */
 template <>
 void save(XmlSaver& context, const char& inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, const char& inspected, const XmlSaver::SaveInfo& info);
 
 /**
  * @brief Specialization for float data. See the original function for more comments.
  */
 template <>
 void save(XmlSaver& context, const float& inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, const float& inspected, const XmlSaver::SaveInfo& info);
+
+template <>
+void save(XmlSaver& context, const double& inspected, const rfk::Field& info);
+template <>
+void save(XmlSaver& context, const double& inspected, const XmlSaver::SaveInfo& info);
 
 /**
  * @brief Specialization for bool data. See the original function for more comments.
@@ -203,7 +214,7 @@ template <>
 void save(XmlSaver& context, const bool& inspected, const XmlSaver::SaveInfo& info);
 
 template <>
-void save(XmlSaver& context, rfk::Object* const & inspected, const rfk::Field& info);
+void save(XmlSaver& context, rfk::Object* const& inspected, const rfk::Field& info);
 template <>
 void save(XmlSaver& context, rfk::Object* const& inspected, const XmlSaver::SaveInfo& info);
 
@@ -237,8 +248,8 @@ bool XmlSaver::savePtrData(T* data, const SaveInfo& info)
     return false;
 }
 
-#include "Engine/Serialization/STDSave.hpp"
 #include "Engine/Serialization/GPESave.hpp"
 #include "Engine/Serialization/GPMSave.hpp"
+#include "Engine/Serialization/STDSave.hpp"
 
 #include "Engine/Serialization/xml/xmlSaver.inl"

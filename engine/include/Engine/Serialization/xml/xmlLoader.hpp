@@ -150,10 +150,14 @@ void load(XmlLoader& context, int& data, const XmlLoader::LoadInfo& info);
 
 template <>
 void load(XmlLoader& context, unsigned int& data, const rfk::Field& info);
+template <>
+void load(XmlLoader& context, unsigned int& data, const XmlLoader::LoadInfo& info);
 
 /**
  * @brief Specialization for size_t data. See the original function for more comments.
  */
+template <>
+void load(XmlLoader& context, size_t& data, const rfk::Field& info);
 template <>
 void load(XmlLoader& context, size_t& data, const XmlLoader::LoadInfo& info);
 
@@ -162,6 +166,8 @@ void load(XmlLoader& context, size_t& data, const XmlLoader::LoadInfo& info);
  */
 template <>
 void load(XmlLoader& context, char& data, const rfk::Field& info);
+template <>
+void load(XmlLoader& context, char& data, const XmlLoader::LoadInfo& info);
 
 /**
  * @brief Specialization for std::string data. See the original function for more comments.
@@ -177,6 +183,13 @@ void load(XmlLoader& context, std::string& data, const XmlLoader::LoadInfo& info
  */
 template <>
 void load(XmlLoader& context, float& data, const rfk::Field& info);
+template <>
+void load(XmlLoader& context, float& data, const XmlLoader::LoadInfo& info);
+
+template <>
+void load(XmlLoader& context, double& data, const rfk::Field& info);
+template <>
+void load(XmlLoader& context, double& data, const XmlLoader::LoadInfo& info);
 
 /**
  * @brief Specialization for bool data. See the original function for more comments.

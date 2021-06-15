@@ -1,8 +1,8 @@
 #include "Engine/Serialization/xml/xmlLoader.hpp"
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
-#include <Engine/Resources/Scene.hpp>
 #include <Engine/Resources/Linker.hpp>
+#include <Engine/Resources/Scene.hpp>
 
 std::string XmlLoader::getValue(Node* node)
 {
@@ -181,6 +181,20 @@ void load(XmlLoader& context, unsigned int& data, const rfk::Field& info)
 }
 
 template <>
+void load(XmlLoader& context, unsigned int& data, const XmlLoader::LoadInfo& info)
+{
+    std::string value;
+    data = context.loadFromStr(value, info) ? std::stoi(value) : 0;
+}
+
+template <>
+void load(XmlLoader& context, size_t& data, const rfk::Field& info)
+{
+    std::string value;
+    data = context.loadFromStr(value, info) ? std::stoull(value) : 0;
+}
+
+template <>
 void load(XmlLoader& context, size_t& data, const XmlLoader::LoadInfo& info)
 {
     std::string value;
@@ -211,6 +225,27 @@ void load(XmlLoader& context, float& data, const rfk::Field& info)
 {
     std::string value;
     data = context.loadFromStr(value, info) ? std::stof(value) : 0.f;
+}
+
+template <>
+void load(XmlLoader& context, float& data, const XmlLoader::LoadInfo& info)
+{
+    std::string value;
+    data = context.loadFromStr(value, info) ? std::stof(value) : 0.f;
+}
+
+template <>
+void load(XmlLoader& context, double& data, const rfk::Field& info)
+{
+    std::string value;
+    data = context.loadFromStr(value, info) ? std::stod(value) : 0.0;
+}
+
+template <>
+void load(XmlLoader& context, double& data, const XmlLoader::LoadInfo& info)
+{
+    std::string value;
+    data = context.loadFromStr(value, info) ? std::stod(value) : 0.0;
 }
 
 template <>
