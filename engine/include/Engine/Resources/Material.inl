@@ -1,9 +1,10 @@
-﻿#include "Engine/Resources/Material.hpp"
-
+﻿namespace GPE
+{
 inline Material::Material(const CreateArg& arg)
     : m_comp(arg.comp), m_pDiffuseTexture(arg.pDiffuseTexture), m_pNormalMapTexture(arg.pNormalMapTexture),
       m_pShader(arg.pShader), m_ID{++materialCount}
 {
+    updateUniform();
 }
 
 inline bool Material::isOpaque() const noexcept
@@ -20,3 +21,4 @@ inline void Material::generateNewMaterial()
 {
     m_ID = ++materialCount;
 }
+} // namespace GPE

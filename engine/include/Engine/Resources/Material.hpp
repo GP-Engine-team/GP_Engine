@@ -28,6 +28,8 @@ public:
         std::string       diffuseTexturePath   = "";
         std::string       normalMapTexturePath = "";
         std::string       shaderPath           = "";
+        std::unordered_map<std::string, float> floatUniform;
+        std::unordered_map<std::string, int>   intUniform;
     };
 
     struct CreateArg
@@ -47,6 +49,20 @@ protected:
     Texture*          m_pNormalMapTexture{nullptr};
     Shader*           m_pShader{nullptr};
     unsigned int      m_ID = 0;
+
+    /**
+     * @brief Supported uniform
+     */
+    std::unordered_map<std::string, float> floatUniforms;
+    std::unordered_map<std::string, int>   intUniforms;
+    // std::unordered_map<std::string, Vec2>  vec2Uniforms;
+    // std::unordered_map<std::string, Vec3>  vec3Uniforms;
+
+protected:
+    /**
+     * @brief Update the uniform buffers with default value thank's to the shader's uniform
+     */
+    void updateUniform();
 
 public:
     inline Material(const CreateArg& arg);
@@ -69,7 +85,6 @@ public:
 
     inline void generateNewMaterial();
 };
+} /*namespace GPE*/
 
 #include "Material.inl"
-
-} /*namespace GPE*/

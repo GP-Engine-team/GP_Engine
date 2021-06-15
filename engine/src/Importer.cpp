@@ -284,69 +284,6 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         std::filesystem::path fsDstPath;
 
         for (unsigned int iText = 0;
-             iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_AMBIENT); ++iText)
-        {
-            scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_AMBIENT, iText, &path);
-
-            if (const aiTexture* texture = scene->GetEmbeddedTexture(path.C_Str()))
-            {
-                Texture::ImportArg arg;
-
-                if (texture->mHeight)
-                {
-                    arg.len = texture->mHeight * texture->mWidth * sizeof(texture->pcData);
-                }
-                else
-                {
-                    arg.len = texture->mWidth;
-                }
-                arg.pixels.reset((unsigned char*)texture->pcData);
-
-                fsDstPath = dstDirPath / std::filesystem::path(texture->mFilename.C_Str()).stem();
-                fsDstPath.replace_extension(ENGINE_TEXTURE_EXTENSION);
-                materialArg.ambianteTexturePath = std::filesystem::relative(fsDstPath).string().c_str();
-
-                stbi_uc* pix = stbi_load_from_memory(arg.pixels.get(), arg.len, &arg.w, &arg.h, &arg.comp, 0);
-                arg.pixels.release(); // Assimp manage it's mamory
-                arg.pixels.reset(pix);
-                writeTextureFile(fsDstPath.string().c_str(), arg);
-            }
-            else
-            {
-                fsPath = path.C_Str();
-                // If the path doesn't exist, try in relative path
-                if (!std::filesystem::exists(fsPath))
-                {
-                    std::filesystem::path relativePath = srcPath;
-                    relativePath                       = relativePath.parent_path();
-
-                    // If the path doesn't exist, try in local with name only
-                    if (!std::filesystem::exists(relativePath / fsPath))
-                    {
-                        // If asset is not found, discard
-                        if (!std::filesystem::exists(relativePath / fsPath.filename()))
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            fsPath = relativePath / fsPath.filename();
-                        }
-                    }
-                    else
-                    {
-                        fsPath = relativePath / fsPath;
-                    }
-                }
-                std::string dstPath = (dstDirPath / fsPath.stem()).string() + ENGINE_TEXTURE_EXTENSION;
-
-                materialArg.ambianteTexturePath = dstPath.c_str();
-
-                importeTextureFile(fsPath.string().c_str(), dstPath.c_str(), textureArg);
-            }
-        }
-
-        for (unsigned int iText = 0;
              iText < scene->mMaterials[i]->GetTextureCount(aiTextureType::aiTextureType_DIFFUSE); ++iText)
         {
             scene->mMaterials[i]->GetTexture(aiTextureType::aiTextureType_DIFFUSE, iText, &path);
@@ -479,6 +416,10 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
 
         // TODO: Not efficient to pass from HD -> RAM -> HD -> RAM
         matList.emplace_back(loadMaterialFile(dstMaterialPath.string().c_str()));
+
+        // Set shader
+        const char* idShader = matList.back()->getNormalMapTexture() ? "DefaultWithNormalMap" : "Default";
+        matList.back()->setShader(Engine::getInstance()->resourceManager.get<Shader>(idShader));
     }
 
     // Mesh
@@ -550,13 +491,9 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
 
         writeMeshFile(dstMeshPath.string().c_str(), arg);
 
-        // DefaultNormalMap
-        const char* idShader =
-            matList[pMesh->mMaterialIndex]->getNormalMapTexture() ? "DefaultWithNormalMap" : "Default";
-
-        prefModel.addSubModel(SubModel::CreateArg{
-            Engine::getInstance()->resourceManager.get<Shader>(idShader), matList[pMesh->mMaterialIndex],
-            &Engine::getInstance()->resourceManager.add<Mesh>(dstMeshPath.string().c_str(), arg)});
+        prefModel.addSubModel(
+            SubModel::CreateArg{matList[pMesh->mMaterialIndex],
+                                &Engine::getInstance()->resourceManager.add<Mesh>(dstMeshPath.string().c_str(), arg)});
 
         if (pMesh->HasBones())
         {
@@ -594,6 +531,15 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
     }
 
     Log::getInstance()->logInitializationEnd("Model importion");
+}
+
+static size_t getSizeFromCursorToEOF(FILE& file)
+{
+    int cursor = ftell(&file);
+    fseek(&file, 0, SEEK_END);
+    int end = ftell(&file);
+    fseek(&file, cursor, SEEK_SET);
+    return end - cursor;
 }
 
 struct TextureHeader
@@ -709,9 +655,11 @@ struct MaterialHeader
 {
     char              assetID                    = (char)EFileType::MATERIAL;
     MaterialComponent component                  = {};
-    int               pathAmbianteTextureLenght  = 0;
+    int               pathShaderLenght           = 0;
     int               pathDiffuseTextureLenght   = 0;
     int               pathBaseColorTextureLenght = 0;
+    size_t            floatUniformLenght         = 0;
+    size_t            intUniformLenght           = 0;
 };
 
 void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
@@ -722,16 +670,36 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
         return;
     }
+    std::string floatUniformStr = "";
+    std::string intUniformStr   = "";
 
-    MaterialHeader header{(char)EFileType::MATERIAL, arg.comp, static_cast<int>(arg.ambianteTexturePath.size()),
+    { // Save the uniforms buffers
+        rapidxml::xml_document<> doc;
+        XmlSaver                 context(doc);
+
+        save(context, arg.floatUniform, XmlSaver::SaveInfo{"floatUniform", "String", 0});
+        floatUniformStr = docToString(doc);
+        doc.clear();
+
+        save(context, arg.intUniform, XmlSaver::SaveInfo{"intUniform", "String", 0});
+        intUniformStr = docToString(doc);
+    }
+
+    MaterialHeader header{(char)EFileType::MATERIAL,
+                          arg.comp,
+                          static_cast<int>(arg.shaderPath.size()),
                           static_cast<int>(arg.diffuseTexturePath.size()),
-                          static_cast<int>(arg.normalMapTexturePath.size())};
+                          static_cast<int>(arg.normalMapTexturePath.size()),
+                          floatUniformStr.size(),
+                          intUniformStr.size()};
+
     fwrite(&header, sizeof(header), 1, pFile); // header
 
-    fwrite(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght, pFile); // string buffer
-    fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);   // string buffer
-    fwrite(arg.normalMapTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
-           pFile); // string buffer
+    fwrite(arg.shaderPath.data(), sizeof(char), header.pathShaderLenght, pFile);                     // string buffer
+    fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);     // string buffer
+    fwrite(arg.normalMapTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght, pFile); // string buffer
+    fwrite(floatUniformStr.data(), sizeof(char), floatUniformStr.size(), pFile);                     // string buffer
+    fwrite(intUniformStr.data(), sizeof(char), intUniformStr.size(), pFile);                         // string buffer
 
     fclose(pFile);
 
@@ -755,24 +723,47 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
     fread(&header, sizeof(header), 1, pFile);
     arg.comp = header.component;
 
-    if (header.pathAmbianteTextureLenght) // If ambiante texture existe
+    if (header.pathShaderLenght)
     {
-        arg.ambianteTexturePath.assign(header.pathAmbianteTextureLenght, '\0');
-        fread(arg.ambianteTexturePath.data(), sizeof(char), header.pathAmbianteTextureLenght,
+        arg.shaderPath.assign(header.pathShaderLenght, '\0');
+        fread(arg.shaderPath.data(), sizeof(char), header.pathShaderLenght,
               pFile); // string buffer
     }
 
-    if (header.pathDiffuseTextureLenght) // If diffuse texture existe
+    if (header.pathDiffuseTextureLenght)
     {
         arg.diffuseTexturePath.assign(header.pathDiffuseTextureLenght, '\0');
         fread(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile); // string buffer
     }
 
-    if (header.pathBaseColorTextureLenght) // If base color texture existe
+    if (header.pathBaseColorTextureLenght)
     {
         arg.normalMapTexturePath.assign(header.pathBaseColorTextureLenght, '\0');
         fread(arg.normalMapTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
               pFile); // string buffer
+    }
+
+    rapidxml::xml_document<> doc;
+    XmlLoader                context(doc);
+
+    if (header.floatUniformLenght)
+    {
+        std::string str;
+        str.assign(header.floatUniformLenght, '\0');
+
+        fread(str.data(), sizeof(char), header.floatUniformLenght, pFile); // string buffer
+        load(context, arg.floatUniform, XmlLoader::LoadInfo{"floatUniform", "String", 0});
+        doc.clear();
+    }
+
+    if (header.intUniformLenght)
+    {
+        std::string str;
+        str.assign(header.floatUniformLenght, '\0');
+
+        fread(str.data(), sizeof(char), header.intUniformLenght, pFile); // string buffer
+        load(context, arg.intUniform, XmlLoader::LoadInfo{"intUniform", "String", 0});
+        doc.clear();
     }
 
     fclose(pFile);
@@ -782,12 +773,15 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
 
 Material* GPE::loadMaterialFile(const char* src)
 {
+    if (Material* const pMat = Engine::getInstance()->resourceManager.get<Material>(src))
+        return pMat;
+
     Material::ImporteArg importeArg = readMaterialFile(src);
     Material::CreateArg  arg;
     arg.comp = importeArg.comp;
 
-    if (!importeArg.ambianteTexturePath.empty())
-        arg.pAmbianteTexture = loadTextureFile(importeArg.ambianteTexturePath.c_str());
+    if (!importeArg.shaderPath.empty())
+        arg.pShader = loadShaderFile(importeArg.shaderPath.c_str());
 
     if (!importeArg.diffuseTexturePath.empty())
         arg.pDiffuseTexture = loadTextureFile(importeArg.diffuseTexturePath.c_str());
@@ -795,8 +789,6 @@ Material* GPE::loadMaterialFile(const char* src)
     if (!importeArg.normalMapTexturePath.empty())
         arg.pNormalMapTexture = loadTextureFile(importeArg.normalMapTexturePath.c_str());
 
-    if (Material* const pMat = Engine::getInstance()->resourceManager.get<Material>(src))
-        return pMat;
     return &Engine::getInstance()->resourceManager.add<Material>(src, arg);
 }
 
@@ -995,13 +987,9 @@ SavedScene::CreateArg GPE::readPrefabFile(const char* src)
 
     // copy the file into the buffer. Read from head to EOF
     fread(&header, sizeof(header), 1, pFile);
-    int cursor = ftell(pFile);
-    fseek(pFile, 0, SEEK_END);
-    int end = ftell(pFile);
-    fseek(pFile, cursor, SEEK_SET);
-    int sizeRemainig = end - cursor;
-
     arg.type = (SavedScene::EType)header.type;
+
+    size_t sizeRemainig = getSizeFromCursorToEOF(*pFile);
     arg.data.assign(sizeRemainig, '\0');
     fread(arg.data.data(), sizeof(char), sizeRemainig, pFile); // string buffer
 
@@ -1053,13 +1041,10 @@ SavedScene::CreateArg GPE::readSceneFile(const char* src)
 
     // copy the file into the buffer. Read from head to EOF
     fread(&header, sizeof(header), 1, pFile);
-    int cursor = ftell(pFile);
-    fseek(pFile, 0, SEEK_END);
-    int end = ftell(pFile);
-    fseek(pFile, cursor, SEEK_SET);
-    int sizeRemainig = end - cursor;
-
     arg.type = (SavedScene::EType)header.type;
+
+    size_t sizeRemainig = getSizeFromCursorToEOF(*pFile);
+
     arg.data.assign(sizeRemainig, '\0');
     fread(arg.data.data(), sizeof(char), sizeRemainig, pFile); // string buffer
 

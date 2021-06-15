@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/ShaderType.hpp>
 #include <Engine/Serialization/xml/xmlLoader.hpp>
 #include <Engine/Serialization/xml/xmlSaver.hpp>
@@ -123,6 +124,9 @@ public:
 
     inline unsigned int getID() const noexcept;
     inline uint16_t     getFeature() const noexcept;
+
+    GETTER_BY_REF(Attribute, m_attributes)
+    GETTER_BY_REF(Uniforms, m_uniforms)
 
 private:
     /**
