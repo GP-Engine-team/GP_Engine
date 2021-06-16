@@ -12,6 +12,12 @@
 namespace GPE::DataInspector
 {
 
+template <typename TValue>
+void inspect(GPE::InspectContext& context, std::unordered_map<std::string, TValue>& inspected, const char* name);
+
+template <typename TKey, typename TValue>
+void inspect(GPE::InspectContext& context, std::unordered_map<TKey, TValue>& inspected, const char* name);
+
 template <typename T>
 void inspect(GPE::InspectContext& context, std::vector<T>& inspected, const rfk::Field& info);
 

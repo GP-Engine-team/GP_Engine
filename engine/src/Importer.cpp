@@ -702,7 +702,6 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
     fwrite(intUniformStr.data(), sizeof(char), intUniformStr.size(), pFile);                         // string buffer
 
     fclose(pFile);
-
     Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
 }
 

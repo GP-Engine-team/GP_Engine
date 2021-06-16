@@ -90,7 +90,7 @@ File_GENERATED
         }
 
         ImGui::PopID();
-
+        ImGui::Separator();
         ImGui::PushID("Shader");
         ImGui::TextUnformatted("Shader");
         ImGui::SameLine();
@@ -113,6 +113,13 @@ File_GENERATED
         }
 
         ImGui::PopID();
+
+        if (m_config.floatUniform.size())
+            GPE::DataInspector::inspect(context, m_config.floatUniform, "Float uniform");
+
+        if (m_config.intUniform.size())
+            GPE::DataInspector::inspect(context, m_config.intUniform, "Int uniform");
+        ImGui::Separator();
 
         if (m_isDirty)
         {

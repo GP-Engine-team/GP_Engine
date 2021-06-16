@@ -6,8 +6,9 @@
 
 #pragma once
 
-#include <memory> //std::unique_ptr, std::shared_ptr
-#include <string> //std::string
+#include <memory>        //std::unique_ptr, std::shared_ptr
+#include <string>        //std::string
+#include <unordered_map> //std::unordered_map
 
 #include <Engine/Resources/ShaderType.hpp>
 #include <Engine/Resources/Texture.hpp>
@@ -57,12 +58,11 @@ protected:
     std::unordered_map<std::string, int>   intUniforms;
     // std::unordered_map<std::string, Vec2>  vec2Uniforms;
     // std::unordered_map<std::string, Vec3>  vec3Uniforms;
-
 protected:
     /**
-     * @brief Update the uniform buffers with default value thank's to the shader's uniform
+     * @brief Clear previous uniforms and init it with default value thank's to the shader's uniform
      */
-    void updateUniform();
+    void resetUniform();
 
 public:
     inline Material(const CreateArg& arg);
@@ -77,7 +77,9 @@ public:
     GETTER_SETTER_BY_REF(Component, m_comp);
     GETTER_SETTER_BY_REF(DiffuseTexture, m_pDiffuseTexture);
     GETTER_SETTER_BY_REF(NormalMapTexture, m_pNormalMapTexture);
-    GETTER_SETTER_BY_VALUE(Shader, m_pShader);
+    GETTER_BY_VALUE(Shader, m_pShader);
+
+    void setShader(Shader* newShader);
 
     inline bool isOpaque() const noexcept;
 

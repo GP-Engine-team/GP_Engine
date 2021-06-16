@@ -1,5 +1,81 @@
 #include <Engine/Serialization/STDDataInspector.hpp>
 
+template <typename TValue>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, TValue>& inspected,
+                                 const char* name)
+{
+    ImGui::PushID(&inspected);
+
+    const ImGuiTreeNodeFlags nodeFlag =
+        ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+    const bool arrayIsOpen = ImGui::TreeNodeEx((void*)name, nodeFlag, name);
+
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+    {
+        ImGui::OpenPopup(std::string("UMapOption").c_str());
+    }
+
+    if (ImGui::BeginPopup(std::string("UMapOption").c_str()))
+    {
+        ImGui::EndPopup();
+    }
+
+    if (arrayIsOpen)
+    {
+        for (auto& [key, value] : inspected)
+        {
+            if (ImGui::TreeNode(key.c_str()))
+            {
+                inspect(context, value, "");
+                ImGui::TreePop();
+            }
+        }
+    }
+    if (arrayIsOpen)
+        ImGui::TreePop();
+    ImGui::PopID();
+}
+
+template <typename TKey, typename TValue>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<TKey, TValue>& inspected,
+                                 const char* name)
+{
+    ImGui::PushID(&inspected);
+
+    const ImGuiTreeNodeFlags nodeFlag =
+        ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+    const bool arrayIsOpen = ImGui::TreeNodeEx((void*)name, nodeFlag, name);
+
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+    {
+        ImGui::OpenPopup(std::string("UMapOption").c_str());
+    }
+
+    if (ImGui::BeginPopup(std::string("UMapOption").c_str()))
+    {
+        ImGui::EndPopup();
+    }
+
+    if (arrayIsOpen)
+    {
+        size_t id = 0;
+        for (auto& [key, value] : inspected)
+        {
+            if (ImGui::TreeNode(stringFormat("Element %zu", id).c_str()))
+            {
+                inspect(context, value, "");
+                ImGui::TreePop();
+            }
+            ++id;
+        }
+    }
+    if (arrayIsOpen)
+        ImGui::TreePop();
+    ImGui::PopID();
+}
+
 template <typename T>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& inspected, const rfk::Field& info)
 {
@@ -71,7 +147,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
                 // Check if user inspect the current element
                 if (treeIsOpen)
                 {
-                    inspect(context, *it);
+                    inspect(context, *it, "");
                 }
                 ++it;
             }

@@ -1,11 +1,12 @@
 #include "Engine/Resources/Material.hpp"
+#include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Resources/Shader.hpp>
 
 using namespace GPE;
 
 unsigned int Material::materialCount = 0;
 
-void Material::updateUniform()
+void Material::resetUniform()
 {
     for (auto&& [key, value] : m_pShader->getUniforms())
     {

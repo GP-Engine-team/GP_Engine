@@ -17,6 +17,7 @@ namespace GPE RFKNamespace()
     // Allow user to modify shader importation setting
     class RFKClass() MaterialInspectorPanel : public IInspectable
     {
+
     protected:
         Material::ImporteArg m_config;
         std::string          m_path;

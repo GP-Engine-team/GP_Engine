@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-#include "Engine/Serialization/InspectContext.hpp"
-#include "Refureku/TypeInfo/Variables/Field.h"
+#include <Engine/Core/Tools/Format.hpp> //stringFormat
+#include <Engine/Serialization/InspectContext.hpp>
+#include <Refureku/TypeInfo/Variables/Field.h>
 
 namespace GPE
 {
@@ -36,10 +37,10 @@ void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info)
 
 } // namespace GPE
 
+#include "DataInspector.inl"
+#include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Serialization/ReadOnly.hpp>
 #include <Engine/Serialization/Separator.hpp>
-#include <Engine/Core/Tools/ImGuiTools.hpp>
-#include "DataInspector.inl"
 //
 #include "AudioDataInspector.hpp"
 #include "GPEDataInspector.hpp"
