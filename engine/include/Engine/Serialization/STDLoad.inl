@@ -52,7 +52,7 @@ void load(XmlLoader& context, std::list<T*>& loaded, const XmlLoader::LoadInfo& 
             // T* elem = new T(); // TODO : Share with context
             // GPE::load(context, *elem, XmlSaver::SaveInfo{std::to_string(i), "T", 0});
 
-            T* elem;
+            T* elem = nullptr;
             GPE::load(context, elem, XmlLoader::LoadInfo{std::to_string(i), "T", info.typeId});
             loaded.emplace_back(elem);
         }
@@ -112,17 +112,17 @@ void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& loaded, const XmlL
         for (size_t i = 0; i < size; i++)
         {
             std::pair<KEY, VALUE> pair;
-            // GPE::load(context, pair, XmlLoader::LoadInfo{std::to_string(i), "std::pair", info.typeId});
+
             // Load Key
             GPE::load(context, pair.first, XmlLoader::LoadInfo{"key" + std::to_string(i), "unknown", 0});
-            auto insertReturned = loaded.insert(pair);
-            GPE::load(context, insertReturned.first->second,
-                      XmlLoader::LoadInfo{"value" + std::to_string(i), "unknown", 0});
+            GPE::load(context, pair.second, XmlLoader::LoadInfo{"value" + std::to_string(i), "unknown", 0});
+            loaded.emplace(std::move(pair));
         }
 
         context.pop();
     }
 }
+
 template <typename KEY, typename VALUE>
 void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& loaded, const rfk::Field& info)
 {
@@ -132,7 +132,7 @@ void load(XmlLoader& context, std::unordered_map<KEY, VALUE>& loaded, const rfk:
 template <typename T>
 void load(XmlLoader& context, std::unique_ptr<T>& loaded, const XmlLoader::LoadInfo& info)
 {
-    T* ptr;
+    T* ptr = nullptr;
     GPE::load(context, ptr, info);
     loaded.reset(ptr);
 }
