@@ -168,6 +168,6 @@ private:
     void                release();
 };
 
-#include "Shader.inl"
-
 } /*namespace GPE*/
+
+#include "Shader.inl"

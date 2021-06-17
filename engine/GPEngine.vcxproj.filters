@@ -328,6 +328,9 @@
     <ClCompile Include="src\Serialization\DefaultInspect.cpp">
       <Filter>src\Serialization</Filter>
     </ClCompile>
+    <ClCompile Include="src\Uniform.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Engine\Core\Debug\Assert.hpp">
@@ -854,6 +857,9 @@
     </ClInclude>
     <ClInclude Include="third_party\gpm\include\GPM\Calc.hpp">
       <Filter>third_party\gpm</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Resources\Uniform.hpp">
+      <Filter>include\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

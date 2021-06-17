@@ -13,11 +13,11 @@ void Material::resetUniform()
         switch (value.type)
         {
         case GL_FLOAT:
-            floatUniforms[key] = 0.f;
+            uniforms.try_emplace(key, std::make_unique<floatUniform>(0.f));
             break;
 
         case GL_INT:
-            intUniforms[key] = 0;
+            uniforms.try_emplace(key, std::make_unique<intUniform>(0));
             break;
 
         default:

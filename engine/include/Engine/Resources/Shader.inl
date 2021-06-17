@@ -1,5 +1,5 @@
-#include "Engine/Resources/Shader.hpp"
-
+namespace GPE
+{
 unsigned int Shader::getID() const noexcept
 {
     return m_id;
@@ -54,3 +54,4 @@ void Shader::setpVec4(const char* name, unsigned int count, const float* pV) con
 {
     glUniform4fv(glGetUniformLocation(m_id, name), count, pV);
 }
+} // namespace GPE

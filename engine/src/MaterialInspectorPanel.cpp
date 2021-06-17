@@ -90,6 +90,7 @@ File_GENERATED
         }
 
         ImGui::PopID();
+
         ImGui::Separator();
         ImGui::PushID("Shader");
         ImGui::TextUnformatted("Shader");
@@ -98,7 +99,6 @@ File_GENERATED
         {
             m_config.shaderPath =
                 openFileExplorerAndGetRelativePath(L"Select shader", {{L"Shader", L"*.GPShader"}}).string().c_str();
-
             m_isDirty = true;
         }
         // Drop from content browser
@@ -113,12 +113,8 @@ File_GENERATED
         }
 
         ImGui::PopID();
-
-        if (m_config.floatUniform.size())
-            GPE::DataInspector::inspect(context, m_config.floatUniform, "Float uniform");
-
-        if (m_config.intUniform.size())
-            GPE::DataInspector::inspect(context, m_config.intUniform, "Int uniform");
+        if (m_config.uniforms.size())
+            GPE::DataInspector::inspect(context, m_config.uniforms, "Uniform");
         ImGui::Separator();
 
         if (m_isDirty)

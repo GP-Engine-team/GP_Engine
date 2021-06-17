@@ -13,6 +13,7 @@
 #include <Engine/Resources/ShaderType.hpp>
 #include <Engine/Resources/Texture.hpp>
 #include <Engine/Resources/Type.hpp>
+#include <Engine/Resources/Uniform.hpp>
 
 #include <Engine/Core/Tools/ClassUtility.hpp>
 
@@ -29,8 +30,7 @@ public:
         std::string       diffuseTexturePath   = "";
         std::string       normalMapTexturePath = "";
         std::string       shaderPath           = "";
-        std::unordered_map<std::string, float> floatUniform;
-        std::unordered_map<std::string, int>   intUniform;
+        std::unordered_map<std::string, std::unique_ptr<IUniform>> uniforms;
     };
 
     struct CreateArg
@@ -54,10 +54,8 @@ protected:
     /**
      * @brief Supported uniform
      */
-    std::unordered_map<std::string, float> floatUniforms;
-    std::unordered_map<std::string, int>   intUniforms;
-    // std::unordered_map<std::string, Vec2>  vec2Uniforms;
-    // std::unordered_map<std::string, Vec3>  vec3Uniforms;
+    std::unordered_map<std::string, std::unique_ptr<IUniform>> uniforms;
+
 protected:
     /**
      * @brief Clear previous uniforms and init it with default value thank's to the shader's uniform

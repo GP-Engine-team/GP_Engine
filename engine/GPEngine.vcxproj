@@ -303,6 +303,7 @@
     <ClInclude Include="include\Engine\Resources\Sound.hpp" />
     <ClInclude Include="include\Engine\Resources\Texture.hpp" />
     <ClInclude Include="include\Engine\Resources\Type.hpp" />
+    <ClInclude Include="include\Engine\Resources\Uniform.hpp" />
     <ClInclude Include="include\Engine\Resources\Wave.hpp" />
     <ClInclude Include="include\Engine\Serialization\binary\BinaryLoader.hpp" />
     <ClInclude Include="include\Engine\Serialization\binary\BinarySaver.hpp" />
@@ -483,6 +484,7 @@
     <ClCompile Include="src\TextureInspectorPanel.cpp" />
     <ClCompile Include="src\TimeSystem.cpp" />
     <ClCompile Include="src\TransformComponent.cpp" />
+    <ClCompile Include="src\Uniform.cpp" />
     <ClCompile Include="src\Wave.cpp" />
     <ClCompile Include="src\WindowGLFW.cpp" />
     <ClCompile Include="third_party\gpm\src\Intersection.cpp" />

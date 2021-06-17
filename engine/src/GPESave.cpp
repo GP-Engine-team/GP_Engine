@@ -106,7 +106,7 @@ void save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info
 
     if (const std::string* name = GPE::Engine::getInstance()->resourceManager.getKey(data))
     {
-        GPE::save(context, *name, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
+        GPE::save(context, *name, info);
     }
 }
 
@@ -118,7 +118,7 @@ void save(XmlSaver& context, Material* const& data, const XmlSaver::SaveInfo& in
 
     if (const std::string* name = GPE::Engine::getInstance()->resourceManager.getKey(data))
     {
-        GPE::save(context, *name, XmlSaver::SaveInfo{"pMaterial", "Material*", 0});
+        GPE::save(context, *name, info);
     }
 }
 
@@ -130,7 +130,7 @@ void save(XmlSaver& context, Mesh* const& data, const XmlSaver::SaveInfo& info)
 
     if (const std::string* name = GPE::Engine::getInstance()->resourceManager.getKey(data))
     {
-        GPE::save(context, *name, XmlSaver::SaveInfo{"pMesh", "Mesh*", 0});
+        GPE::save(context, *name, info);
     }
 }
 
@@ -142,7 +142,7 @@ void save(XmlSaver& context, Texture* const& data, const XmlSaver::SaveInfo& inf
 
     if (const std::string* name = GPE::Engine::getInstance()->resourceManager.getKey(data))
     {
-        GPE::save(context, *name, XmlSaver::SaveInfo{"pTexture", "Texture*", 0});
+        GPE::save(context, *name, info);
     }
 }
 

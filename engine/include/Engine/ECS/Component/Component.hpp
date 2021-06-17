@@ -6,14 +6,10 @@
 
 #pragma once
 
-#include "Engine/Serialization/ComponentGen.h"
-#include "Engine/Serialization/DataInspector.hpp"
-#include "Engine/Serialization/Inspect.hpp"
-#include "Engine/Serialization/InspectContext.hpp"
-#include "Engine/Serialization/Serialize.hpp"
-#include "Engine/Serialization/xml/xmlLoader.hpp"
-#include "Engine/Serialization/xml/xmlSaver.hpp"
-#include "Refureku/Object.h"
+#include <Engine/Serialization/ComponentGen.h>
+#include <Engine/Serialization/Inspect.hpp>
+#include <Engine/Serialization/Serialize.hpp>
+#include <Refureku/Object.h>
 
 // Generated
 #include "Generated/Component.rfk.h"

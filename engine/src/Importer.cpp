@@ -412,14 +412,16 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         std::filesystem::path dstMaterialPath = dstDirPath / scene->mMaterials[i]->GetName().C_Str();
         dstMaterialPath += ENGINE_MATERIAL_EXTENSION;
 
+        const char* shaderPath = matList.back()->getNormalMapTexture() ? "DefaultWithNormalMap" : "Default";
+        materialArg.shaderPath = shaderPath;
+
         writeMaterialFile(std::filesystem::relative(dstMaterialPath).string().c_str(), materialArg);
 
         // TODO: Not efficient to pass from HD -> RAM -> HD -> RAM
         matList.emplace_back(loadMaterialFile(dstMaterialPath.string().c_str()));
 
         // Set shader
-        const char* idShader = matList.back()->getNormalMapTexture() ? "DefaultWithNormalMap" : "Default";
-        matList.back()->setShader(Engine::getInstance()->resourceManager.get<Shader>(idShader));
+        matList.back()->setShader(Engine::getInstance()->resourceManager.get<Shader>(shaderPath));
     }
 
     // Mesh
@@ -653,13 +655,12 @@ Texture* GPE::loadTextureFile(const char* src)
 
 struct MaterialHeader
 {
-    char              assetID                    = (char)EFileType::MATERIAL;
-    MaterialComponent component                  = {};
-    int               pathShaderLenght           = 0;
-    int               pathDiffuseTextureLenght   = 0;
-    int               pathBaseColorTextureLenght = 0;
-    size_t            floatUniformLenght         = 0;
-    size_t            intUniformLenght           = 0;
+    char              assetID                  = (char)EFileType::MATERIAL;
+    MaterialComponent component                = {};
+    int               pathShaderLenght         = 0;
+    int               pathDiffuseTextureLenght = 0;
+    int               pathNormapTextureLenght  = 0;
+    size_t            uniformLenght            = 0;
 };
 
 void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
@@ -670,19 +671,15 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
         return;
     }
-    std::string floatUniformStr = "";
-    std::string intUniformStr   = "";
+
+    std::string uniformStr = "";
 
     { // Save the uniforms buffers
         rapidxml::xml_document<> doc;
         XmlSaver                 context(doc);
 
-        save(context, arg.floatUniform, XmlSaver::SaveInfo{"floatUniform", "String", 0});
-        floatUniformStr = docToString(doc);
-        doc.clear();
-
-        save(context, arg.intUniform, XmlSaver::SaveInfo{"intUniform", "String", 0});
-        intUniformStr = docToString(doc);
+        save(context, arg.uniforms, XmlSaver::SaveInfo{"uniforms", "Unordered_map", 0});
+        uniformStr = docToString(doc);
     }
 
     MaterialHeader header{(char)EFileType::MATERIAL,
@@ -690,16 +687,14 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
                           static_cast<int>(arg.shaderPath.size()),
                           static_cast<int>(arg.diffuseTexturePath.size()),
                           static_cast<int>(arg.normalMapTexturePath.size()),
-                          floatUniformStr.size(),
-                          intUniformStr.size()};
+                          uniformStr.size()};
 
     fwrite(&header, sizeof(header), 1, pFile); // header
 
-    fwrite(arg.shaderPath.data(), sizeof(char), header.pathShaderLenght, pFile);                     // string buffer
-    fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);     // string buffer
-    fwrite(arg.normalMapTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght, pFile); // string buffer
-    fwrite(floatUniformStr.data(), sizeof(char), floatUniformStr.size(), pFile);                     // string buffer
-    fwrite(intUniformStr.data(), sizeof(char), intUniformStr.size(), pFile);                         // string buffer
+    fwrite(arg.shaderPath.data(), sizeof(char), header.pathShaderLenght, pFile);                  // string buffer
+    fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);  // string buffer
+    fwrite(arg.normalMapTexturePath.data(), sizeof(char), header.pathNormapTextureLenght, pFile); // string buffer
+    fwrite(uniformStr.data(), sizeof(char), uniformStr.size(), pFile);                            // string buffer
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
@@ -735,33 +730,23 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
         fread(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile); // string buffer
     }
 
-    if (header.pathBaseColorTextureLenght)
+    if (header.pathNormapTextureLenght)
     {
-        arg.normalMapTexturePath.assign(header.pathBaseColorTextureLenght, '\0');
-        fread(arg.normalMapTexturePath.data(), sizeof(char), header.pathBaseColorTextureLenght,
+        arg.normalMapTexturePath.assign(header.pathNormapTextureLenght, '\0');
+        fread(arg.normalMapTexturePath.data(), sizeof(char), header.pathNormapTextureLenght,
               pFile); // string buffer
     }
 
     rapidxml::xml_document<> doc;
     XmlLoader                context(doc);
 
-    if (header.floatUniformLenght)
+    if (header.uniformLenght)
     {
         std::string str;
-        str.assign(header.floatUniformLenght, '\0');
+        str.assign(header.uniformLenght, '\0');
 
-        fread(str.data(), sizeof(char), header.floatUniformLenght, pFile); // string buffer
-        load(context, arg.floatUniform, XmlLoader::LoadInfo{"floatUniform", "String", 0});
-        doc.clear();
-    }
-
-    if (header.intUniformLenght)
-    {
-        std::string str;
-        str.assign(header.floatUniformLenght, '\0');
-
-        fread(str.data(), sizeof(char), header.intUniformLenght, pFile); // string buffer
-        load(context, arg.intUniform, XmlLoader::LoadInfo{"intUniform", "String", 0});
+        fread(str.data(), sizeof(char), header.uniformLenght, pFile); // string buffer
+        load(context, arg.uniforms, XmlLoader::LoadInfo{"uniforms", "Unordered_map", 0});
         doc.clear();
     }
 
