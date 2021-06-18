@@ -36,8 +36,13 @@ void loadFloatArray(XmlLoader& context, float* arr, size_t size, const XmlLoader
         {
             arr[i] = 0.f;
         }
-
     }
+}
+
+template <>
+void load(XmlLoader& context, GPM::Vector2& data, const XmlLoader::LoadInfo& info)
+{
+    loadFloatArray(context, data.e, 2, info);
 }
 
 template <>
@@ -50,12 +55,6 @@ template <>
 void load(XmlLoader& context, GPM::Vector4& data, const XmlLoader::LoadInfo& info)
 {
     loadFloatArray(context, data.e, 4, info);
-}
-
-template <>
-void load(XmlLoader& context, GPM::Vector3& data, const rfk::Field& info)
-{
-    load(context, data, fieldToLoadInfo(info));
 }
 
 template <>
@@ -75,6 +74,5 @@ void load(XmlLoader& context, GPM::Matrix4& data, const rfk::Field& info)
 {
     GPE::load(context, data, fieldToLoadInfo(info));
 }
-
 
 } // namespace GPE
