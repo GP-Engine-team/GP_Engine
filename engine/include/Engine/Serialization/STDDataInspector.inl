@@ -166,7 +166,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::vector<T>& i
 template <typename T>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T>& inspected, const rfk::Field& info)
 {
-    return inspect(context, inspected, info.name.c_str());
+    inspect(context, inspected, info.name.c_str());
 }
 
 template <typename T>
@@ -174,7 +174,8 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T
 {
     if (inspected.get())
     {
-        inspect(context, *inspected.get(), name);
+        T* pInspected = inspected.get(); // usefull because get do not return the good type without this line
+        inspect(context, pInspected, name);
     }
 }
 
@@ -183,7 +184,8 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unique_ptr<T
 {
     if (inspected.get())
     {
-        inspect(context, *inspected.get());
+        T* pInspected = inspected.get(); // usefull because get do not return the good type without this line
+        inspect(context, pInspected);
     }
 }
 
@@ -198,7 +200,8 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T
 {
     if (inspected.get())
     {
-        return inspect(context, *inspected.get(), name);
+        T* pInspected = inspected.get(); // usefull because get do not return the good type without this line
+        inspect(context, pInspected, name);
     }
 }
 
@@ -207,6 +210,7 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::shared_ptr<T
 {
     if (inspected.get())
     {
-        inspect(context, *inspected.get());
+        T* pInspected = inspected.get(); // usefull because get do not return the good type without this line
+        inspect(context, pInspected);
     }
 }

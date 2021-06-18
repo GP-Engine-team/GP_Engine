@@ -4,19 +4,29 @@
 #include <Engine/Serialization/InspectContext.hpp>
 #include <Refureku/TypeInfo/Variables/Field.h>
 
-namespace GPE
+namespace GPE::DataInspector
 {
-namespace DataInspector
-{
+// Usefull for the polymorphisme
+template <class T>
+void inspect(GPE::InspectContext& context, T*& inspected);
+
 template <class T>
 void inspect(GPE::InspectContext& context, T& inspected);
+
 /**
  * @brief Shows the content of the inspected object.
  * @tparam T The type of the inspected element.
  * @param inspected The inspected element.
  * @param name The displayed name of the inspected element.
- * @return True if the inspected element has been modified, false otherwise.
  */
+// Usefull for the polymorphisme
+template <typename T>
+void inspect(GPE::InspectContext& context, T*& inspected, const char* name);
+
+// Usefull for the polymorphisme
+template <typename T>
+void inspect(GPE::InspectContext& context, T*& inspected, const std::string& name);
+
 template <typename T>
 void inspect(GPE::InspectContext& context, T& inspected, const char* name);
 
@@ -28,14 +38,17 @@ void inspect(GPE::InspectContext& context, T& inspected, const std::string& name
  * @tparam T The type of the inspected element.
  * @param inspected The inspected element.
  * @param info The information about the inspected element (its name, its properties, etc).
- * @return True if the inspected element has been modified, false otherwise.
  */
+
+// Usefull for the polymorphisme
+
+template <typename T>
+void inspect(GPE::InspectContext& context, T*& inspected, const rfk::Field& info);
+
 template <typename T>
 void inspect(GPE::InspectContext& context, T& inspected, const rfk::Field& info);
 
-}; // namespace DataInspector
-
-} // namespace GPE
+} // namespace GPE::DataInspector
 
 #include "DataInspector.inl"
 #include <Engine/Core/Tools/ImGuiTools.hpp>

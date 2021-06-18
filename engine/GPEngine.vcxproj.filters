@@ -936,9 +936,6 @@
     <None Include="include\Engine\Serialization\STDDataInspector.inl">
       <Filter>include\Serialization</Filter>
     </None>
-    <None Include="include\Engine\Serialization\STDDataInspector.inl">
-      <Filter>include\Serialization</Filter>
-    </None>
     <None Include="include\Engine\Serialization\STDLoad.inl">
       <Filter>include\Serialization</Filter>
     </None>
@@ -991,6 +988,9 @@
       <Filter>include\Serialization</Filter>
     </None>
     <None Include="include\Engine\Serialization\GPELoad.inl">
+      <Filter>include\Serialization</Filter>
+    </None>
+    <None Include="include\Engine\Serialization\STDDataInspector.inl">
       <Filter>include\Serialization</Filter>
     </None>
   </ItemGroup>

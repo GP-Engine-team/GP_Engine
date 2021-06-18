@@ -9,28 +9,40 @@
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/Serialize.hpp>
 #include <Refureku/Object.h>
+#include <gpm/Vector2.hpp>
+#include <gpm/Vector3.hpp>
 
 // Generated
 #include "Generated/Uniform.rfk.h"
 
-#define UNIFORM_CLASS(type)                                                                                            \
-    class RFKClass(Serialize(), Inspect()) type##Uniform : public IUniform                                             \
+#define UNIFORM_CLASS(type, name)                                                                                      \
+    class RFKClass(Serialize(), Inspect()) name##Uniform : public IUniform                                             \
     {                                                                                                                  \
                                                                                                                        \
     public:                                                                                                            \
-        type##Uniform(type newData) : data{data}                                                                       \
+        RFKField(Serialize(), Inspect()) type data;                                                                    \
+                                                                                                                       \
+        name##Uniform() = default;                                                                                     \
+                                                                                                                       \
+        name##Uniform(type newData) : data{data}                                                                       \
         {                                                                                                              \
         }                                                                                                              \
                                                                                                                        \
-        RFKField(Serialize(), Inspect()) type data;                                                                    \
-        type##Uniform_GENERATED                                                                                        \
+        name##Uniform_GENERATED                                                                                        \
     };
 
 namespace GPE RFKNamespace()
 {
-    class RFKClass(Serialize(false), Inspect(false)) IUniform{public : IUniform_GENERATED};
+    class RFKClass(Serialize(false), Inspect(false)) IUniform : public rfk::Object
+    {
+    public:
+        IUniform() = default;
+        IUniform_GENERATED
+    };
 
-    UNIFORM_CLASS(float)
-    UNIFORM_CLASS(int)
+    UNIFORM_CLASS(float, float)
+    UNIFORM_CLASS(int, int)
+    UNIFORM_CLASS(GPM::vec2, vec2)
+    UNIFORM_CLASS(GPM::vec3, vec3)
 
 } // namespace )

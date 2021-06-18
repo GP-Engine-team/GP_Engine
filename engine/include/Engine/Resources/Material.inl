@@ -21,9 +21,9 @@ inline void Material::generateNewMaterial()
     m_ID = ++materialCount;
 }
 
-inline void Material::setShader(Shader* newShader)
+inline void Material::setShader(Shader& newShader)
 {
-    m_pShader = newShader;
+    m_pShader = &newShader;
     resetUniform();
 }
 } // namespace GPE

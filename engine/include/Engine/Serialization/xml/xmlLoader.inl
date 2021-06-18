@@ -12,9 +12,12 @@ void XmlLoader::loadPtrData(T*& data, const LoadInfo& info, void* key)
             std::string       idStr     = findAttribValue(top(), "typeID");
             size_t            s         = (std::stoull(idStr));
             rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(s));
-            assert(archetype != 0);              // Type is not complete. Try adding corresponding include in game.cpp
+            assert(archetype != 0); // Type is not complete. Try adding corresponding include in game.cpp.
+                                    // Value can also set 0 if you save it and add inheritance of rfk::Object after.
+                                    // Check Value of typeID in save file
             data = archetype->makeInstance<T>(); // If this crashes here, try to regenerate files.
-            // TODO : Call custom instantiator ? 
+            assert(data != 0); // Default constructor dosn't not exist. try to add it in the corresponding class
+            // TODO : Call custom instantiator ?
         }
         else
         {
@@ -74,7 +77,6 @@ void load(XmlLoader& context, T*& inspected, const XmlLoader::LoadInfo& info)
         if (context.loadFromStr(str, info))
         {
             std::size_t p = std::stoull(str);
-            
 
             context.loadPtrData(inspected, info, (void*)p);
         }

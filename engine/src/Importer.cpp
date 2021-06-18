@@ -412,16 +412,17 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         std::filesystem::path dstMaterialPath = dstDirPath / scene->mMaterials[i]->GetName().C_Str();
         dstMaterialPath += ENGINE_MATERIAL_EXTENSION;
 
-        const char* shaderPath = matList.back()->getNormalMapTexture() ? "DefaultWithNormalMap" : "Default";
-        materialArg.shaderPath = shaderPath;
-
         writeMaterialFile(std::filesystem::relative(dstMaterialPath).string().c_str(), materialArg);
 
         // TODO: Not efficient to pass from HD -> RAM -> HD -> RAM
         matList.emplace_back(loadMaterialFile(dstMaterialPath.string().c_str()));
 
         // Set shader
-        matList.back()->setShader(Engine::getInstance()->resourceManager.get<Shader>(shaderPath));
+        const char* shaderPath   = materialArg.normalMapTexturePath.size() ? "DefaultWithNormalMap" : "Default";
+        Shader&     shaderToUser = *Engine::getInstance()->resourceManager.get<Shader>(shaderPath);
+        matList.back()->setShader(shaderToUser);
+
+        writeMaterialFile(std::filesystem::relative(dstMaterialPath).string().c_str(), *matList.back());
     }
 
     // Mesh
@@ -663,6 +664,47 @@ struct MaterialHeader
     size_t            uniformLenght            = 0;
 };
 
+void GPE::writeMaterialFile(const char* dst, const Material& mat)
+{
+    FILE* pFile = nullptr;
+    if (fopen_s(&pFile, dst, "w+b"))
+    {
+        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
+        return;
+    }
+
+    std::string uniformStr = "";
+
+    { // Save the uniforms buffers
+        rapidxml::xml_document<> doc;
+        XmlSaver                 context(doc);
+
+        save(context, mat.getUniforms(), XmlSaver::SaveInfo{"uniforms", "Unordered_map", 0});
+        uniformStr = docToString(doc);
+    }
+
+    std::string shaderPath           = *Engine::getInstance()->resourceManager.getKey(mat.getShader());
+    std::string diffuseTexturePath   = *Engine::getInstance()->resourceManager.getKey(mat.getDiffuseTexture());
+    std::string normalMapTexturePath = *Engine::getInstance()->resourceManager.getKey(mat.getNormalMapTexture());
+
+    MaterialHeader header{(char)EFileType::MATERIAL,
+                          mat.getComponent(),
+                          static_cast<int>(shaderPath.size()),
+                          static_cast<int>(diffuseTexturePath.size()),
+                          static_cast<int>(normalMapTexturePath.size()),
+                          uniformStr.size()};
+
+    fwrite(&header, sizeof(header), 1, pFile); // header
+
+    fwrite(shaderPath.data(), sizeof(char), header.pathShaderLenght, pFile);                  // string buffer
+    fwrite(diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);  // string buffer
+    fwrite(normalMapTexturePath.data(), sizeof(char), header.pathNormapTextureLenght, pFile); // string buffer
+    fwrite(uniformStr.data(), sizeof(char), uniformStr.size(), pFile);                        // string buffer
+
+    fclose(pFile);
+    Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
+}
+
 void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
 {
     FILE* pFile = nullptr;
@@ -746,6 +788,7 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
         str.assign(header.uniformLenght, '\0');
 
         fread(str.data(), sizeof(char), header.uniformLenght, pFile); // string buffer
+        doc.parse<0>(str.data());
         load(context, arg.uniforms, XmlLoader::LoadInfo{"uniforms", "Unordered_map", 0});
         doc.clear();
     }

@@ -8,16 +8,25 @@ unsigned int Material::materialCount = 0;
 
 void Material::resetUniform()
 {
+    uniforms.clear();
     for (auto&& [key, value] : m_pShader->getUniforms())
     {
         switch (value.type)
         {
         case GL_FLOAT:
-            uniforms.try_emplace(key, std::make_unique<floatUniform>(0.f));
+            uniforms.try_emplace(key, std::make_unique<floatUniform>());
             break;
 
         case GL_INT:
-            uniforms.try_emplace(key, std::make_unique<intUniform>(0));
+            uniforms.try_emplace(key, std::make_unique<intUniform>());
+            break;
+
+        case GL_FLOAT_VEC2:
+            uniforms.try_emplace(key, std::make_unique<vec2Uniform>());
+            break;
+
+        case GL_FLOAT_VEC3:
+            uniforms.try_emplace(key, std::make_unique<vec3Uniform>());
             break;
 
         default:

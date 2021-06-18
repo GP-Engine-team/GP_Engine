@@ -96,6 +96,7 @@ void writeTextureFile(const char* dst, const Texture::ImportArg& arg, const Text
 Texture::ImportArg readTextureFile(const char* src);
 Texture*           loadTextureFile(const char* src);
 
+void                 writeMaterialFile(const char* dst, const Material& mat);
 void                 writeMaterialFile(const char* dst, const Material::ImporteArg& arg = Material::ImporteArg{});
 Material::ImporteArg readMaterialFile(const char* src);
 Material*            loadMaterialFile(const char* src);

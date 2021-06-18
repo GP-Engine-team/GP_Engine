@@ -20,13 +20,22 @@ File_GENERATED
         ImGui::TextUnformatted("Material importer");
         ImGui::Text("Path : %s", m_path.c_str());
 
-        m_isDirty = true;
+        m_isDirty = false;
         // TODO: dirty flag must change when inspect will returned bool
         GPE::DataInspector::inspect(context, m_config.comp.ambient, "ambient");
+        m_isDirty |= context.wasLastDirty();
+
         GPE::DataInspector::inspect(context, m_config.comp.diffuse, "diffuse");
+        m_isDirty |= context.wasLastDirty();
+
         GPE::DataInspector::inspect(context, m_config.comp.specular, "specular");
+        m_isDirty |= context.wasLastDirty();
+
         GPE::DataInspector::inspect(context, m_config.comp.shininess, "shininess");
+        m_isDirty |= context.wasLastDirty();
+
         GPE::DataInspector::inspect(context, m_config.comp.opacity, "opacity");
+        m_isDirty |= context.wasLastDirty();
 
         // ImGui::PushID("Ambiante");
         // ImGui::TextUnformatted("Ambiante texture");
@@ -60,6 +69,7 @@ File_GENERATED
             {
                 IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
                 m_config.diffuseTexturePath = static_cast<std::filesystem::path*>(payload->Data)->string();
+                m_isDirty                   = true;
             }
             ImGui::EndDragDropTarget();
         }
@@ -85,6 +95,7 @@ File_GENERATED
             {
                 IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
                 m_config.normalMapTexturePath = static_cast<std::filesystem::path*>(payload->Data)->string();
+                m_isDirty                     = true;
             }
             ImGui::EndDragDropTarget();
         }
@@ -108,13 +119,19 @@ File_GENERATED
             {
                 IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
                 m_config.shaderPath = static_cast<std::filesystem::path*>(payload->Data)->string();
+                m_isDirty           = true;
             }
             ImGui::EndDragDropTarget();
         }
 
         ImGui::PopID();
+
         if (m_config.uniforms.size())
+        {
             GPE::DataInspector::inspect(context, m_config.uniforms, "Uniform");
+            m_isDirty |= context.wasLastDirty();
+        }
+
         ImGui::Separator();
 
         if (m_isDirty)
@@ -136,9 +153,9 @@ File_GENERATED
                     pMaterial->setNormalMapTexture(loadTextureFile(m_config.normalMapTexturePath.c_str()));
 
                 if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(m_config.shaderPath))
-                    pMaterial->setShader(pShader);
+                    pMaterial->setShader(*pShader);
                 else
-                    pMaterial->setShader(loadShaderFile(m_config.shaderPath.c_str()));
+                    pMaterial->setShader(*loadShaderFile(m_config.shaderPath.c_str()));
             }
             m_isDirty           = false;
             m_canSaveInHardDisk = true;
