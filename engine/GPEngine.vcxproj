@@ -325,6 +325,7 @@
     <ClInclude Include="include\Engine\Serialization\MaterialInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\MeshInspectorPanel.hpp" />
     <ClInclude Include="include\Engine\Serialization\ModelImporterSetting.hpp" />
+    <ClInclude Include="include\Engine\Serialization\PathTo.hpp" />
     <ClInclude Include="include\Engine\Serialization\ReadOnly.hpp" />
     <ClInclude Include="include\Engine\Serialization\SavedScene.hpp" />
     <ClInclude Include="include\Engine\Serialization\PhysXDataInspector.hpp" />

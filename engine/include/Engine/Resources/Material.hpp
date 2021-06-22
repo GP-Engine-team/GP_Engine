@@ -14,6 +14,7 @@
 #include <Engine/Resources/Texture.hpp>
 #include <Engine/Resources/Type.hpp>
 #include <Engine/Resources/Uniform.hpp>
+#include <Engine/Serialization/PathTo.hpp>
 
 #include <Engine/Core/Tools/ClassUtility.hpp>
 
@@ -27,9 +28,9 @@ public:
     struct ImporteArg
     {
         MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
-        std::string       diffuseTexturePath   = "";
-        std::string       normalMapTexturePath = "";
-        std::string       shaderPath           = "";
+        PathTo<Texture>   diffuseTexturePath   = {""};
+        PathTo<Texture>   normalMapTexturePath = {""};
+        PathTo<Shader>    shaderPath           = {"Default"};
         std::unordered_map<std::string, std::unique_ptr<IUniform>> uniforms;
     };
 

@@ -37,94 +37,20 @@ File_GENERATED
         GPE::DataInspector::inspect(context, m_config.comp.opacity, "opacity");
         m_isDirty |= context.wasLastDirty();
 
-        // ImGui::PushID("Ambiante");
-        // ImGui::TextUnformatted("Ambiante texture");
-        // ImGui::SameLine();
-        // if (ImGui::Button(
-        //        (m_config.ambianteTexturePath.empty() ? "None##Ambiante" : m_config.ambianteTexturePath.c_str())))
-        //{
-        //    m_config.ambianteTexturePath =
-        //        openFileExplorerAndGetRelativePath(L"Ambiante texture", {{L"Image",
-        //        L"*.GPTexture"}}).string().c_str();
-
-        //    m_isDirty = true;
-        //}
-        // ImGui::PopID();
-
-        ImGui::PushID("Diffuse");
-        ImGui::TextUnformatted("Diffuse texture");
-        ImGui::SameLine();
-        if (ImGui::Button(
-                (m_config.diffuseTexturePath.empty() ? "None##DiffuseTexture" : m_config.diffuseTexturePath.c_str())))
-        {
-            m_config.diffuseTexturePath =
-                openFileExplorerAndGetRelativePath(L"Diffuse texture", {{L"Image", L"*.GPTexture"}}).string().c_str();
-
-            m_isDirty = true;
-        }
-        // Drop from content browser
-        if (ImGui::BeginDragDropTarget())
-        {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_TEXTURE_EXTENSION))
-            {
-                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-                m_config.diffuseTexturePath = static_cast<std::filesystem::path*>(payload->Data)->string();
-                m_isDirty                   = true;
-            }
-            ImGui::EndDragDropTarget();
-        }
-        ImGui::PopID();
-
-        ImGui::PushID("Normal");
-        ImGui::TextUnformatted("Normal map texture");
-        ImGui::SameLine();
-        if (ImGui::Button(
-                (m_config.normalMapTexturePath.empty() ? "None##NormalMap" : m_config.normalMapTexturePath.c_str())))
-        {
-            m_config.normalMapTexturePath =
-                openFileExplorerAndGetRelativePath(L"Normal map texture", {{L"Image", L"*.GPTexture"}})
-                    .string()
-                    .c_str();
-
-            m_isDirty = true;
-        }
-        // Drop from content browser
-        if (ImGui::BeginDragDropTarget())
-        {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_TEXTURE_EXTENSION))
-            {
-                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-                m_config.normalMapTexturePath = static_cast<std::filesystem::path*>(payload->Data)->string();
-                m_isDirty                     = true;
-            }
-            ImGui::EndDragDropTarget();
-        }
-
-        ImGui::PopID();
+        GPE::DataInspector::inspect(context, m_config.comp.opacity, "opacity");
 
         ImGui::Separator();
-        ImGui::PushID("Shader");
-        ImGui::TextUnformatted("Shader");
-        ImGui::SameLine();
-        if (ImGui::Button((m_config.shaderPath.empty() ? "None##Shader" : m_config.shaderPath.c_str())))
-        {
-            m_config.shaderPath =
-                openFileExplorerAndGetRelativePath(L"Select shader", {{L"Shader", L"*.GPShader"}}).string().c_str();
-            m_isDirty = true;
-        }
-        // Drop from content browser
-        if (ImGui::BeginDragDropTarget())
-        {
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(ENGINE_SHADER_EXTENSION))
-            {
-                IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
-                m_config.shaderPath = static_cast<std::filesystem::path*>(payload->Data)->string();
-                m_isDirty           = true;
-            }
-            ImGui::EndDragDropTarget();
-        }
 
-        ImGui::PopID();
+        GPE::DataInspector::inspect(context, m_config.diffuseTexturePath, "Diffuse");
+        m_isDirty |= context.wasLastDirty();
+
+        GPE::DataInspector::inspect(context, m_config.normalMapTexturePath, "Normal");
+        m_isDirty |= context.wasLastDirty();
+
+        ImGui::Separator();
+
+        GPE::DataInspector::inspect(context, m_config.shaderPath, "Shader");
+        m_isDirty |= context.wasLastDirty();
 
         if (m_config.uniforms.size())
         {
@@ -141,21 +67,21 @@ File_GENERATED
                 pMaterial->setComponent(m_config.comp);
 
                 if (Texture* pTexture =
-                        Engine::getInstance()->resourceManager.get<Texture>(m_config.diffuseTexturePath.c_str()))
+                        Engine::getInstance()->resourceManager.get<Texture>(m_config.diffuseTexturePath.path.c_str()))
                     pMaterial->setDiffuseTexture(pTexture);
                 else
-                    pMaterial->setDiffuseTexture(loadTextureFile(m_config.diffuseTexturePath.c_str()));
+                    pMaterial->setDiffuseTexture(loadTextureFile(m_config.diffuseTexturePath.path.c_str()));
 
                 if (Texture* pTexture =
                         Engine::getInstance()->resourceManager.get<Texture>(m_config.normalMapTexturePath))
                     pMaterial->setNormalMapTexture(pTexture);
                 else
-                    pMaterial->setNormalMapTexture(loadTextureFile(m_config.normalMapTexturePath.c_str()));
+                    pMaterial->setNormalMapTexture(loadTextureFile(m_config.normalMapTexturePath.path.c_str()));
 
                 if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(m_config.shaderPath))
                     pMaterial->setShader(*pShader);
                 else
-                    pMaterial->setShader(*loadShaderFile(m_config.shaderPath.c_str()));
+                    pMaterial->setShader(*loadShaderFile(m_config.shaderPath.path.c_str()));
             }
             m_isDirty           = false;
             m_canSaveInHardDisk = true;

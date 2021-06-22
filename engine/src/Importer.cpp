@@ -418,7 +418,7 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         matList.emplace_back(loadMaterialFile(dstMaterialPath.string().c_str()));
 
         // Set shader
-        const char* shaderPath   = materialArg.normalMapTexturePath.size() ? "DefaultWithNormalMap" : "Default";
+        const char* shaderPath   = materialArg.normalMapTexturePath.path.size() ? "DefaultWithNormalMap" : "Default";
         Shader&     shaderToUser = *Engine::getInstance()->resourceManager.get<Shader>(shaderPath);
         matList.back()->setShader(shaderToUser);
 
@@ -726,17 +726,17 @@ void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
 
     MaterialHeader header{(char)EFileType::MATERIAL,
                           arg.comp,
-                          static_cast<int>(arg.shaderPath.size()),
-                          static_cast<int>(arg.diffuseTexturePath.size()),
-                          static_cast<int>(arg.normalMapTexturePath.size()),
+                          static_cast<int>(arg.shaderPath.path.size()),
+                          static_cast<int>(arg.diffuseTexturePath.path.size()),
+                          static_cast<int>(arg.normalMapTexturePath.path.size()),
                           uniformStr.size()};
 
     fwrite(&header, sizeof(header), 1, pFile); // header
 
-    fwrite(arg.shaderPath.data(), sizeof(char), header.pathShaderLenght, pFile);                  // string buffer
-    fwrite(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);  // string buffer
-    fwrite(arg.normalMapTexturePath.data(), sizeof(char), header.pathNormapTextureLenght, pFile); // string buffer
-    fwrite(uniformStr.data(), sizeof(char), uniformStr.size(), pFile);                            // string buffer
+    fwrite(arg.shaderPath.path.data(), sizeof(char), header.pathShaderLenght, pFile);                  // string buffer
+    fwrite(arg.diffuseTexturePath.path.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);  // string buffer
+    fwrite(arg.normalMapTexturePath.path.data(), sizeof(char), header.pathNormapTextureLenght, pFile); // string buffer
+    fwrite(uniformStr.data(), sizeof(char), uniformStr.size(), pFile);                                 // string buffer
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
@@ -761,21 +761,22 @@ Material::ImporteArg GPE::readMaterialFile(const char* src)
 
     if (header.pathShaderLenght)
     {
-        arg.shaderPath.assign(header.pathShaderLenght, '\0');
-        fread(arg.shaderPath.data(), sizeof(char), header.pathShaderLenght,
+        arg.shaderPath.path.assign(header.pathShaderLenght, '\0');
+        fread(arg.shaderPath.path.data(), sizeof(char), header.pathShaderLenght,
               pFile); // string buffer
     }
 
     if (header.pathDiffuseTextureLenght)
     {
-        arg.diffuseTexturePath.assign(header.pathDiffuseTextureLenght, '\0');
-        fread(arg.diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile); // string buffer
+        arg.diffuseTexturePath.path.assign(header.pathDiffuseTextureLenght, '\0');
+        fread(arg.diffuseTexturePath.path.data(), sizeof(char), header.pathDiffuseTextureLenght,
+              pFile); // string buffer
     }
 
     if (header.pathNormapTextureLenght)
     {
-        arg.normalMapTexturePath.assign(header.pathNormapTextureLenght, '\0');
-        fread(arg.normalMapTexturePath.data(), sizeof(char), header.pathNormapTextureLenght,
+        arg.normalMapTexturePath.path.assign(header.pathNormapTextureLenght, '\0');
+        fread(arg.normalMapTexturePath.path.data(), sizeof(char), header.pathNormapTextureLenght,
               pFile); // string buffer
     }
 
@@ -807,14 +808,14 @@ Material* GPE::loadMaterialFile(const char* src)
     Material::CreateArg  arg;
     arg.comp = importeArg.comp;
 
-    if (!importeArg.shaderPath.empty())
-        arg.pShader = loadShaderFile(importeArg.shaderPath.c_str());
+    if (!importeArg.shaderPath.path.empty())
+        arg.pShader = loadShaderFile(importeArg.shaderPath.path.c_str());
 
-    if (!importeArg.diffuseTexturePath.empty())
-        arg.pDiffuseTexture = loadTextureFile(importeArg.diffuseTexturePath.c_str());
+    if (!importeArg.diffuseTexturePath.path.empty())
+        arg.pDiffuseTexture = loadTextureFile(importeArg.diffuseTexturePath.path.c_str());
 
-    if (!importeArg.normalMapTexturePath.empty())
-        arg.pNormalMapTexture = loadTextureFile(importeArg.normalMapTexturePath.c_str());
+    if (!importeArg.normalMapTexturePath.path.empty())
+        arg.pNormalMapTexture = loadTextureFile(importeArg.normalMapTexturePath.path.c_str());
 
     return &Engine::getInstance()->resourceManager.add<Material>(src, arg);
 }

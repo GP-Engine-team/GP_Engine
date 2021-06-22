@@ -11,6 +11,7 @@
 #include <Engine/Resources/Prefab.hpp>
 #include <Engine/Resources/ResourcesManager.hpp>
 #include <Engine/Resources/Scene.hpp>
+#include <Engine/Serialization/PathTo.hpp>
 
 #include <Engine/Serialization/GPEDataInspector.hpp>
 
@@ -156,7 +157,8 @@ void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes
     {
         itemCurrent = 0;
 
-        for (auto&& it = resourceContainer.begin(); &it->second != inRes; ++itemCurrent, ++it)
+        for (auto&& it = resourceContainer.begin(); it != resourceContainer.end() && &it->second != inRes;
+             ++itemCurrent, ++it)
             ;
     }
 
@@ -218,9 +220,9 @@ void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes
             IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
             std::filesystem::path& path = *static_cast<std::filesystem::path*>(payload->Data);
 
-            if (T* pMesh = Engine::getInstance()->resourceManager.get<T>(path.string().c_str()))
+            if (T* pRes = Engine::getInstance()->resourceManager.get<T>(path.string().c_str()))
             {
-                inRes = pMesh;
+                inRes = pRes;
                 context.setDirty();
             }
             else
@@ -228,6 +230,98 @@ void renderResourceExplorer(InspectContext& context, const char* name, T*& inRes
                 inRes = importer(path.string().c_str());
                 context.setDirty();
             }
+        }
+        ImGui::EndDragDropTarget();
+    }
+}
+
+template <typename T>
+void renderResourcePathExplorer(InspectContext& context, const char* name, PathTo<T>& inPath,
+                                const char* acceptedPayload)
+{
+    auto& resourceContainer = GPE::Engine::getInstance()->resourceManager.getAll<T>();
+
+    std::vector<const char*> items;
+    items.reserve(resourceContainer.size());
+
+    for (auto&& res : resourceContainer)
+    {
+        items.emplace_back(res.first.c_str());
+    }
+
+    // Init position of the combo box cursor
+    int itemCurrent;
+    if (inPath.path.empty())
+    {
+        itemCurrent = -1;
+    }
+    else
+    {
+        itemCurrent = 0;
+
+        for (auto&& it = resourceContainer.begin(); it != resourceContainer.end() && it->first != inPath.path;
+             ++itemCurrent, ++it)
+            ;
+    }
+
+    const char* label = inPath.path.size() ? items[itemCurrent] : "None";
+    if (ImGui::BeginCombo(name, label, 0))
+    {
+        static int isInContentBrowser = 0;
+        ImGui::RadioButton("Used", &isInContentBrowser, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("All", &isInContentBrowser, 1);
+
+        if (isInContentBrowser)
+        {
+            std::vector<GPE::ResourcesPath>& pathContainer =
+                *GPE::Engine::getInstance()->resourceManager.get<std::vector<GPE::ResourcesPath>>("Path");
+
+            for (auto&& path : pathContainer)
+            {
+                if (path.path.extension().string() == acceptedPayload)
+                {
+                    if (ImGui::Selectable(path.path.string().c_str()))
+                    {
+                        inPath.path = path.path.string();
+                        context.setDirty();
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int n = 0; n < items.size(); n++)
+            {
+                const bool is_selected = (itemCurrent == n);
+                if (ImGui::Selectable(items[n], is_selected))
+                {
+                    itemCurrent = n;
+
+                    auto&& it = resourceContainer.begin();
+                    for (int i = 0; i < itemCurrent; ++i, ++it)
+                        ;
+
+                    inPath.path = it->first;
+                    context.setDirty();
+                }
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    // Drop
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(acceptedPayload))
+        {
+            IM_ASSERT(payload->DataSize == sizeof(std::filesystem::path));
+            inPath.path = static_cast<std::filesystem::path*>(payload->Data)->string();
+            context.setDirty();
         }
         ImGui::EndDragDropTarget();
     }
@@ -367,6 +461,14 @@ void DataInspector::inspect(InspectContext& context, class Material*& inspected,
 }
 
 template <>
+void DataInspector::inspect(InspectContext& context, PathTo<Material>& inspected, const char* name)
+{
+    context.startProperty(name);
+    renderResourcePathExplorer(context, name, inspected, ENGINE_MATERIAL_EXTENSION);
+    context.endProperty();
+}
+
+template <>
 void GPE::DataInspector::inspect(InspectContext& context, class Animation*& inspected, const char* name)
 {
     // Ressources should always be inspected from a component.
@@ -386,6 +488,14 @@ void DataInspector::inspect(InspectContext& context, class Mesh*& inspected, con
 }
 
 template <>
+void DataInspector::inspect(InspectContext& context, PathTo<Mesh>& inspected, const char* name)
+{
+    context.startProperty(name);
+    renderResourcePathExplorer(context, name, inspected, ENGINE_MESH_EXTENSION);
+    context.endProperty();
+}
+
+template <>
 void DataInspector::inspect(InspectContext& context, class Texture*& inspected, const char* name)
 {
     context.startProperty(name);
@@ -394,9 +504,25 @@ void DataInspector::inspect(InspectContext& context, class Texture*& inspected, 
 }
 
 template <>
+void DataInspector::inspect(InspectContext& context, PathTo<Texture>& inspected, const char* name)
+{
+    context.startProperty(name);
+    renderResourcePathExplorer(context, name, inspected, ENGINE_TEXTURE_EXTENSION);
+    context.endProperty();
+}
+
+template <>
 void DataInspector::inspect(InspectContext& context, class Shader*& inspected, const char* name)
 {
     context.startProperty(name);
     renderResourceExplorer<Shader>(context, name, inspected, ENGINE_SHADER_EXTENSION, loadShaderFile);
+    context.endProperty();
+}
+
+template <>
+void DataInspector::inspect(InspectContext& context, PathTo<Shader>& inspected, const char* name)
+{
+    context.startProperty(name);
+    renderResourcePathExplorer(context, name, inspected, ENGINE_SHADER_EXTENSION);
     context.endProperty();
 }
