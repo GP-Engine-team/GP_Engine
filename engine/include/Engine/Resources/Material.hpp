@@ -28,10 +28,10 @@ public:
     struct ImporteArg
     {
         MaterialComponent comp{{1.f, 1.f, 1.f, 0.f}, {1.f, 1.f, 1.f, 1.f}, {1.f, 1.f, 1.f, 1.f}, 1.f, 1.f};
-        PathTo<Texture>   diffuseTexturePath   = {""};
-        PathTo<Texture>   normalMapTexturePath = {""};
-        PathTo<Shader>    shaderPath           = {"Default"};
-        std::unordered_map<std::string, std::unique_ptr<IUniform>> uniforms;
+        PathTo<Texture>   diffuseTexturePath{""};
+        PathTo<Texture>   normalMapTexturePath{""};
+        PathTo<Shader>    shaderPath{"Default"};
+        std::unordered_map<std::string, std::unique_ptr<IUniform>> uniforms{};
     };
 
     struct CreateArg
@@ -63,10 +63,19 @@ protected:
      */
     void resetUniform();
 
+    /**
+     * @brief Remove and add uniform thank to it's shader. Keep the common uniforms
+     */
+    void updateUniform();
+
 public:
     inline Material(const CreateArg& arg);
 
-    Material()                      = default;
+    Material()
+    {
+        updateUniform();
+    }
+
     Material(const Material& other) = default;
     Material(Material&& other)      = default;
     ~Material()                     = default;

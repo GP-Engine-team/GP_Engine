@@ -264,7 +264,7 @@ void renderResourcePathExplorer(InspectContext& context, const char* name, PathT
             ;
     }
 
-    const char* label = inPath.path.size() ? items[itemCurrent] : "None";
+    const char* label = inPath.path.size() ? inPath.path.c_str() : "None";
     if (ImGui::BeginCombo(name, label, 0))
     {
         static int isInContentBrowser = 0;
