@@ -71,8 +71,8 @@ namespace GPE RFKNamespace()
 
         void addToLightToUseBuffer(std::vector<LightData> & lb) noexcept final;
 
-        GETTER_SETTER_BY_REF(CutOff, m_cutOff);
-        GETTER_SETTER_BY_REF(CutOffExponent, m_cutOffExponent);
+        GETTER_SETTER_BY_CONST_REF(CutOff, m_cutOff);
+        GETTER_SETTER_BY_CONST_REF(CutOffExponent, m_cutOffExponent);
 
         SpotLight_GENERATED
     };

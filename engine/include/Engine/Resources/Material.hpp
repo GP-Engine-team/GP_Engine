@@ -83,10 +83,10 @@ public:
     Material& operator=(Material&& other) = default;
 
     GETTER_SETTER_BY_REF(Component, m_comp)
-    GETTER_SETTER_BY_REF(DiffuseTexture, m_pDiffuseTexture)
-    GETTER_SETTER_BY_REF(NormalMapTexture, m_pNormalMapTexture)
+    GETTER_SETTER_BY_CONST_REF(DiffuseTexture, m_pDiffuseTexture)
+    GETTER_SETTER_BY_CONST_REF(NormalMapTexture, m_pNormalMapTexture)
     GETTER_BY_VALUE(Shader, m_pShader)
-    GETTER_BY_CONST_REF(Uniforms, uniforms)
+    GETTER_BY_REF(Uniforms, uniforms)
 
     void setShader(Shader& newShader);
 

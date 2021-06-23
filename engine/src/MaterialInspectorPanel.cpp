@@ -11,86 +11,87 @@ File_GENERATED
 {
 
     MaterialInspectorPanel::MaterialInspectorPanel(const std::string& inPath)
-        : IInspectable(), m_config(readMaterialFile(inPath.c_str())), m_path(inPath), m_isDirty(false)
+        : IInspectable(), pMat{loadMaterialFile(inPath.c_str())}, m_canSaveInHardDisk{false}
     {
     }
 
     void MaterialInspectorPanel::inspect(InspectContext & context)
     {
         ImGui::TextUnformatted("Material importer");
-        ImGui::Text("Path : %s", m_path.c_str());
+        ImGui::Text("Path : %s", Engine::getInstance()->resourceManager.getKey(pMat)->c_str());
 
-        m_isDirty = false;
+        m_canSaveInHardDisk = false;
         // TODO: dirty flag must change when inspect will returned bool
-        GPE::DataInspector::inspect(context, m_config.comp.ambient, "ambient");
-        m_isDirty |= context.wasLastDirty();
 
-        GPE::DataInspector::inspect(context, m_config.comp.diffuse, "diffuse");
-        m_isDirty |= context.wasLastDirty();
+        GPE::DataInspector::inspect(context, pMat->getComponent().ambient, "ambient");
+        m_canSaveInHardDisk |= context.wasLastDirty();
 
-        GPE::DataInspector::inspect(context, m_config.comp.specular, "specular");
-        m_isDirty |= context.wasLastDirty();
+        GPE::DataInspector::inspect(context, pMat->getComponent().diffuse, "diffuse");
+        m_canSaveInHardDisk |= context.wasLastDirty();
 
-        GPE::DataInspector::inspect(context, m_config.comp.shininess, "shininess");
-        m_isDirty |= context.wasLastDirty();
+        GPE::DataInspector::inspect(context, pMat->getComponent().specular, "specular");
+        m_canSaveInHardDisk |= context.wasLastDirty();
 
-        GPE::DataInspector::inspect(context, m_config.comp.opacity, "opacity");
-        m_isDirty |= context.wasLastDirty();
+        GPE::DataInspector::inspect(context, pMat->getComponent().shininess, "shininess");
+        m_canSaveInHardDisk |= context.wasLastDirty();
 
-        GPE::DataInspector::inspect(context, m_config.comp.opacity, "opacity");
+        GPE::DataInspector::inspect(context, pMat->getComponent().opacity, "opacity");
+        m_canSaveInHardDisk |= context.wasLastDirty();
 
-        ImGui::Separator();
-
-        GPE::DataInspector::inspect(context, m_config.diffuseTexturePath, "Diffuse");
-        m_isDirty |= context.wasLastDirty();
-
-        GPE::DataInspector::inspect(context, m_config.normalMapTexturePath, "Normal");
-        m_isDirty |= context.wasLastDirty();
+        GPE::DataInspector::inspect(context, pMat->getComponent().opacity, "opacity");
 
         ImGui::Separator();
 
-        GPE::DataInspector::inspect(context, m_config.shaderPath, "Shader");
-        m_isDirty |= context.wasLastDirty();
-
-        if (m_config.uniforms.size())
         {
-            GPE::DataInspector::inspect(context, m_config.uniforms, "Uniform");
-            m_isDirty |= context.wasLastDirty();
-        }
+            const std::string* const pStr = Engine::getInstance()->resourceManager.getKey(pMat->getDiffuseTexture());
+            PathTo<Texture>          path{pStr ? *pStr : "None"};
+            GPE::DataInspector::inspect(context, path, "Diffuse");
+            m_canSaveInHardDisk |= context.wasLastDirty();
 
-        ImGui::Separator();
-
-        if (m_isDirty)
-        {
-            if (Material* pMaterial = Engine::getInstance()->resourceManager.get<Material>(m_path))
+            if (context.wasLastDirty())
             {
-                pMaterial->setComponent(m_config.comp);
-
-                if (Texture* pTexture =
-                        Engine::getInstance()->resourceManager.get<Texture>(m_config.diffuseTexturePath.path.c_str()))
-                    pMaterial->setDiffuseTexture(pTexture);
-                else
-                    pMaterial->setDiffuseTexture(loadTextureFile(m_config.diffuseTexturePath.path.c_str()));
-
-                if (Texture* pTexture =
-                        Engine::getInstance()->resourceManager.get<Texture>(m_config.normalMapTexturePath))
-                    pMaterial->setNormalMapTexture(pTexture);
-                else
-                    pMaterial->setNormalMapTexture(loadTextureFile(m_config.normalMapTexturePath.path.c_str()));
-
-                if (Shader* pShader = Engine::getInstance()->resourceManager.get<Shader>(m_config.shaderPath))
-                    pMaterial->setShader(*pShader);
-                else
-                    pMaterial->setShader(*loadShaderFile(m_config.shaderPath.path.c_str()));
+                pMat->setDiffuseTexture(loadTextureFile(path.path.c_str()));
             }
-            m_isDirty           = false;
-            m_canSaveInHardDisk = true;
         }
+
+        {
+            const std::string* const pStr = Engine::getInstance()->resourceManager.getKey(pMat->getNormalMapTexture());
+            PathTo<Texture>          path{pStr ? *pStr : "None"};
+            GPE::DataInspector::inspect(context, path, "Normal");
+            m_canSaveInHardDisk |= context.wasLastDirty();
+
+            if (context.wasLastDirty())
+            {
+                pMat->setNormalMapTexture(loadTextureFile(path.path.c_str()));
+            }
+        }
+
+        ImGui::Separator();
+
+        {
+            const std::string* const pStr = Engine::getInstance()->resourceManager.getKey(pMat->getShader());
+            PathTo<Texture>          path{pStr ? *pStr : "None"};
+            GPE::DataInspector::inspect(context, path, "Normal");
+            m_canSaveInHardDisk |= context.wasLastDirty();
+
+            if (context.wasLastDirty())
+            {
+                pMat->setShader(*loadShaderFile(path.path.c_str()));
+            }
+        }
+
+        if (pMat->getUniforms().size())
+        {
+            GPE::DataInspector::inspect(context, pMat->getUniforms(), "Uniform");
+            m_canSaveInHardDisk |= context.wasLastDirty();
+        }
+
+        ImGui::Separator();
 
         ImGui::PushEnabled(m_canSaveInHardDisk);
         if (ImGui::Button("Apply"))
         {
-            writeMaterialFile(m_path.c_str(), m_config);
+            writeMaterialFile(Engine::getInstance()->resourceManager.getKey(pMat)->c_str(), *pMat);
             m_canSaveInHardDisk = false;
         }
         ImGui::PopEnabled();
