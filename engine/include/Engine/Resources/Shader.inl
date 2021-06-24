@@ -10,48 +10,58 @@ uint16_t Shader::getFeature() const noexcept
     return m_featureMask;
 }
 
-void Shader::setBool(const char* name, bool value) const noexcept
+inline void Shader::sendData(const char* name, bool data) const noexcept
 {
-    glUniform1i(glGetUniformLocation(m_id, name), (int)value);
+    glUniform1i(glGetUniformLocation(m_id, name), (int)data);
 }
 
-void Shader::setInt(const char* name, int value) const noexcept
+inline void Shader::sendData(const char* name, int data) const noexcept
 {
-    glUniform1i(glGetUniformLocation(m_id, name), value);
+    glUniform1i(glGetUniformLocation(m_id, name), data);
 }
 
-void Shader::setFloat(const char* name, float value) const noexcept
+inline void Shader::sendData(const char* name, float data) const noexcept
 {
-    glUniform1f(glGetUniformLocation(m_id, name), value);
+    glUniform1f(glGetUniformLocation(m_id, name), data);
 }
 
-void Shader::setVec3(const char* name, float v1, float v2, float v3) const noexcept
+inline void Shader::sendData(const char* name, const GPM::Vec3& data) const noexcept
 {
-    glUniform3f(glGetUniformLocation(m_id, name), v1, v2, v3);
+    glUniform3f(glGetUniformLocation(m_id, name), data.x, data.y, data.z);
 }
 
-void Shader::setVec4(const char* name, float v1, float v2, float v3, float v4) const noexcept
+inline void Shader::sendData(const char* name, const GPM::Vec4& data) const noexcept
 {
-    glUniform4f(glGetUniformLocation(m_id, name), v1, v2, v3, v4);
+    glUniform4f(glGetUniformLocation(m_id, name), data.x, data.y, data.z, data.w);
 }
 
-void Shader::setMat3(const char* name, const float* value) const noexcept
+inline void Shader::sendData(const char* name, const GPM::Mat3& data) const noexcept
 {
-    glUniformMatrix3fv(glGetUniformLocation(m_id, name), 1, GL_FALSE, value);
+    glUniformMatrix3fv(glGetUniformLocation(m_id, name), 1, GL_FALSE, data.e);
 }
 
-void Shader::setMat4(const char* name, const float* value) const noexcept
+inline void Shader::sendData(const char* name, const GPM::Mat4& data) const noexcept
 {
-    glUniformMatrix4fv(glGetUniformLocation(m_id, name), 1, GL_FALSE, value);
+    glUniformMatrix4fv(glGetUniformLocation(m_id, name), 1, GL_FALSE, data.e);
 }
 
-void Shader::setpVec3(const char* name, unsigned int count, const float* pV) const noexcept
+inline void Shader::sendData(const char* name, const GPM::Vec3* data, size_t count) const noexcept
 {
-    glUniform3fv(glGetUniformLocation(m_id, name), count, pV);
+    glUniform3fv(glGetUniformLocation(m_id, name), count, data->e);
 }
 
-void Shader::setpVec4(const char* name, unsigned int count, const float* pV) const noexcept
+inline void Shader::sendData(const char* name, const GPM::Vec4* data, size_t count) const noexcept
 {
-    glUniform4fv(glGetUniformLocation(m_id, name), count, pV);
+    glUniform4fv(glGetUniformLocation(m_id, name), count, data->e);
+}
+
+inline void Shader::sendData(const char* name, const GPM::Mat3* data, size_t count) const noexcept
+{
+    glUniformMatrix3fv(glGetUniformLocation(m_id, name), count, GL_FALSE, data->e);
+}
+
+inline void Shader::sendData(const char* name, const GPM::Mat4* data, size_t count) const noexcept
+{
+    glUniformMatrix4fv(glGetUniformLocation(m_id, name), count, GL_FALSE, data->e);
 }
 } // namespace GPE

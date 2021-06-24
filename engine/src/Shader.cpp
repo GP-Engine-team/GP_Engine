@@ -177,9 +177,9 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, uint16_t featur
     m_id          = loadAndCompile(vertexPath, fragmentPath, featureMask);
 
     glUseProgram(m_id);
-    setInt("ourTexture", 0);
-    setInt("shadowMap", 1);
-    setInt("normalMap", 2);
+    sendData("ourTexture", 0);
+    sendData("shadowMap", 1);
+    sendData("normalMap", 2);
 
     updateUniformList();
 }
@@ -199,9 +199,9 @@ void Shader::reload(const char* vertexPath, const char* fragmentPath, uint16_t f
         m_featureMask = featureMask;
 
         glUseProgram(m_id);
-        setInt("ourTexture", 0);
-        setInt("shadowMap", 1);
-        setInt("normalMap", 2);
+        sendData("ourTexture", 0);
+        sendData("shadowMap", 1);
+        sendData("normalMap", 2);
 
         updateUniformList();
     }
@@ -242,8 +242,8 @@ void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3
             glBindBufferBase(GL_UNIFORM_BUFFER, blockIndex, m_lightsUniformBuffer);
         }
 
-        setInt("numberLightUse", static_cast<int>(lightBuffer.size()));
-        setVec3("viewPos", viewPos.x, viewPos.y, viewPos.z);
+        sendData("numberLightUse", static_cast<int>(lightBuffer.size()));
+        sendData("viewPos", viewPos);
     }
     else
     {
@@ -255,14 +255,11 @@ void Shader::setMaterialBlock(const MaterialComponent& material) const noexcept
 {
     if ((m_featureMask & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG)
     {
-        setVec4("material.ambient", material.ambient.rgbi.x, material.ambient.rgbi.y, material.ambient.rgbi.z,
-                material.ambient.rgbi.w);
-        setVec4("material.diffuse", material.diffuse.rgbi.x, material.diffuse.rgbi.y, material.diffuse.rgbi.z,
-                material.diffuse.rgbi.w);
-        setVec4("material.specular", material.specular.rgbi.x, material.specular.rgbi.y, material.specular.rgbi.z,
-                material.specular.rgbi.w);
-        setFloat("material.shininess", material.shininess);
-        setFloat("material.opacity", material.opacity);
+        sendData("material.ambient", material.ambient.rgbi);
+        sendData("material.diffuse", material.diffuse.rgbi);
+        sendData("material.specular", material.specular.rgbi);
+        sendData("material.shininess", material.shininess);
+        sendData("material.opacity", material.opacity);
     }
     else
     {
@@ -485,35 +482,3 @@ void Shader::release()
 
     Log::getInstance()->log("Release vs and fs");
 }
-
-// template <>
-// void GPE::load(XmlLoader& context, Shader*& data, const rfk::Field& info)
-//{
-//    GPE::load(context, data, fieldToLoadInfo(info));
-//}
-//
-// template <>
-// void GPE::load(XmlLoader& context, Shader*& data, const XmlLoader::LoadInfo& info)
-//{
-//    std::string shaderName;
-//    GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
-//    if (!(data = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
-//    {
-//        data = loadShaderFile(shaderName.c_str());
-//    }
-//}
-//
-// template <>
-// void GPE::save(XmlSaver& context, Shader* const& data, const rfk::Field& info)
-//{
-//    GPE::save(context, data, fieldToSaveInfo(info));
-//}
-//
-// template <>
-// void GPE::save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info)
-//{
-//    if (const std::string* shaderName = GPE::Engine::getInstance()->resourceManager.getKey(data))
-//    {
-//        GPE::save(context, *shaderName, XmlSaver::SaveInfo{"pShader", "Shader*", 0});
-//    }
-//}

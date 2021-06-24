@@ -806,7 +806,8 @@ Material* GPE::loadMaterialFile(const char* src)
 
     Material::ImporteArg importeArg = readMaterialFile(src);
     Material::CreateArg  arg;
-    arg.comp = importeArg.comp;
+    arg.comp     = importeArg.comp;
+    arg.uniforms = std::move(importeArg.uniforms);
 
     if (!importeArg.shaderPath.path.empty())
         arg.pShader = loadShaderFile(importeArg.shaderPath.path.c_str());
@@ -817,7 +818,7 @@ Material* GPE::loadMaterialFile(const char* src)
     if (!importeArg.normalMapTexturePath.path.empty())
         arg.pNormalMapTexture = loadTextureFile(importeArg.normalMapTexturePath.path.c_str());
 
-    return &Engine::getInstance()->resourceManager.add<Material>(src, arg);
+    return &Engine::getInstance()->resourceManager.add<Material>(src, std::move(arg));
 }
 
 struct MeshHeader

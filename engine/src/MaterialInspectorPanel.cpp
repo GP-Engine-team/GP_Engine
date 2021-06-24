@@ -20,9 +20,6 @@ File_GENERATED
         ImGui::TextUnformatted("Material importer");
         ImGui::Text("Path : %s", Engine::getInstance()->resourceManager.getKey(pMat)->c_str());
 
-        m_canSaveInHardDisk = false;
-        // TODO: dirty flag must change when inspect will returned bool
-
         GPE::DataInspector::inspect(context, pMat->getComponent().ambient, "ambient");
         m_canSaveInHardDisk |= context.wasLastDirty();
 
@@ -70,8 +67,8 @@ File_GENERATED
 
         {
             const std::string* const pStr = Engine::getInstance()->resourceManager.getKey(pMat->getShader());
-            PathTo<Texture>          path{pStr ? *pStr : "None"};
-            GPE::DataInspector::inspect(context, path, "Normal");
+            PathTo<Shader>           path{pStr ? *pStr : "None"};
+            GPE::DataInspector::inspect(context, path, "Shader");
             m_canSaveInHardDisk |= context.wasLastDirty();
 
             if (context.wasLastDirty())

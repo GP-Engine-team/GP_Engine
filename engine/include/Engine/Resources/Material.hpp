@@ -40,6 +40,7 @@ public:
         Texture*          pDiffuseTexture{nullptr};
         Texture*          pNormalMapTexture{nullptr};
         Shader*           pShader{nullptr};
+        std::unordered_map<std::string, std::unique_ptr<IUniform>> uniforms{};
     };
 
 protected:
@@ -69,7 +70,7 @@ protected:
     void updateUniform();
 
 public:
-    inline Material(const CreateArg& arg);
+    inline Material(CreateArg&& arg);
 
     Material()
     {

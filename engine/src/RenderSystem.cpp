@@ -90,34 +90,34 @@ RenderSystem::RenderSystem() noexcept
         "./resources/shaders/fTextureWithLightAndShadowAndNMAndFog.fs", LIGHT_BLIN_PHONG | FOG);
 
     shader->use();
-    shader->setInt("ourTexture", 0);
-    shader->setInt("shadowMap", 1);
-    shader->setInt("normalMap", 2);
+    shader->sendData("ourTexture", 0);
+    shader->sendData("shadowMap", 1);
+    shader->sendData("normalMap", 2);
 
     shader = &Engine::getInstance()->resourceManager.add<Shader>(
         "Default", "./resources/shaders/vTextureWithLightAndShadow.vs",
         "./resources/shaders/fTextureWithLightAndShadowAndFog.fs", LIGHT_BLIN_PHONG | FOG);
 
     shader->use();
-    shader->setInt("ourTexture", 0);
-    shader->setInt("shadowMap", 1);
+    shader->sendData("ourTexture", 0);
+    shader->sendData("shadowMap", 1);
 
     shader = &Engine::getInstance()->resourceManager.add<Shader>(
         "DefaultWithAnims", "./resources/shaders/vTextureWithLightAndShadowAndAnims.vs",
         "./resources/shaders/fTextureWithLightAndShadowAndFog.fs", LIGHT_BLIN_PHONG | FOG | ANIMATION_MASK);
 
     shader->use();
-    shader->setInt("ourTexture", 0);
-    shader->setInt("shadowMap", 1);
+    shader->sendData("ourTexture", 0);
+    shader->sendData("shadowMap", 1);
 
     shader = &Engine::getInstance()->resourceManager.add<Shader>(
         "DefaultWithAnimAndNormalMap", "./resources/shaders/vTextureWithLightAndShadowAndNMAndAnims.vs",
         "./resources/shaders/fTextureWithLightAndShadowAndNMAndFog.fs", LIGHT_BLIN_PHONG | FOG | ANIMATION_MASK);
 
     shader->use();
-    shader->setInt("ourTexture", 0);
-    shader->setInt("shadowMap", 1);
-    shader->setInt("normalMap", 2);
+    shader->sendData("ourTexture", 0);
+    shader->sendData("shadowMap", 1);
+    shader->sendData("normalMap", 2);
 
     Engine::getInstance()->resourceManager.add<Shader>("UniqueColor", "./resources/shaders/vSimpleColor.vs",
                                                        "./resources/shaders/fSimpleColor.fs");
@@ -129,7 +129,7 @@ RenderSystem::RenderSystem() noexcept
                                                                  "./resources/shaders/fDepthOnly.fs",
                                                                  PROJECTION_VIEW_MODEL_MATRIX);
     shader->use();
-    shader->setInt("depthMap", 0);
+    shader->sendData("depthMap", 0);
 
     m_sphereMesh = &Engine::getInstance()->resourceManager.add<Mesh>("Sphere", Mesh::createSphere(25, 25));
     m_cubeMesh   = &Engine::getInstance()->resourceManager.add<Mesh>("CubeDebug", Mesh::createCube());
@@ -230,7 +230,7 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
 
         shader.setLightBlock(lightBuffer, camToUse.getOwner().getTransform().getGlobalPosition());
 
-        shader.setInt("numberShadowUse", int(m_shadowMaps.size()));
+        shader.sendData("numberShadowUse", int(m_shadowMaps.size()));
 
         if (!m_shadowMaps.empty())
         {
@@ -241,55 +241,54 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
 
     if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG && (shader.getFeature() & SKYBOX) != SKYBOX)
     {
-        shader.setMat4("projectViewMatrix", camToUse.getProjectionView().e);
+        shader.sendData("projectViewMatrix", camToUse.getProjectionView());
 
         if (m_shadowMaps.size())
         {
-            shader.setInt("PCF", m_shadowMaps.front().pOwner->getShadowProperties().PCF);
-            shader.setFloat("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
-            shader.setMat4("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix().e);
+            shader.sendData("PCF", (int)m_shadowMaps.front().pOwner->getShadowProperties().PCF);
+            shader.sendData("bias", m_shadowMaps.front().pOwner->getShadowProperties().bias);
+            shader.sendData("lightSpaceMatrix", m_shadowMaps.front().pOwner->getLightSpaceMatrix());
         }
         else
         {
-            shader.setMat4("lightSpaceMatrix", Mat4::identity().e);
-            shader.setInt("PCF", 1);
-            shader.setFloat("bias", 0.0f);
+            shader.sendData("lightSpaceMatrix", Mat4::identity());
+            shader.sendData("PCF", 1);
+            shader.sendData("bias", 0.0f);
         }
     }
 
     if ((shader.getFeature() & PROJECTION_MATRIX) == PROJECTION_MATRIX)
     {
-        shader.setMat4("projectMatrix", camToUse.getProjection().e);
+        shader.sendData("projectMatrix", camToUse.getProjection());
     }
 
     if ((shader.getFeature() & VIEW_MATRIX) == VIEW_MATRIX)
     {
-        shader.setMat4("viewMatrix", camToUse.getView().e);
+        shader.sendData("viewMatrix", camToUse.getView());
     }
 
     if ((shader.getFeature() & FOG) == FOG)
     {
-        shader.setBool("fogParams.isEnabled", m_mainCamera->getFogParameter().isEnabled);
+        shader.sendData("fogParams.isEnabled", m_mainCamera->getFogParameter().isEnabled);
         if (m_mainCamera->getFogParameter().isEnabled)
         {
-            shader.setVec3("fogParams.color", m_mainCamera->getFogParameter().color.r,
-                           m_mainCamera->getFogParameter().color.g, m_mainCamera->getFogParameter().color.b);
-            shader.setInt("fogParams.equation", m_mainCamera->getFogParameter().equation);
+            shader.sendData("fogParams.color", m_mainCamera->getFogParameter().color.v);
+            shader.sendData("fogParams.equation", m_mainCamera->getFogParameter().equation);
             switch (m_mainCamera->getFogParameter().equation)
             {
             case 0:
                 if (m_mainCamera->getFogParameter().isStartFogEnable)
-                    shader.setFloat("fogParams.linearStart", m_mainCamera->getFogParameter().linearStart);
+                    shader.sendData("fogParams.linearStart", m_mainCamera->getFogParameter().linearStart);
                 else
-                    shader.setFloat("fogParams.linearStart", m_mainCamera->getNear());
+                    shader.sendData("fogParams.linearStart", m_mainCamera->getNear());
 
                 if (m_mainCamera->getFogParameter().isEndFogEnable)
-                    shader.setFloat("fogParams.linearEnd", m_mainCamera->getFogParameter().linearEnd);
+                    shader.sendData("fogParams.linearEnd", m_mainCamera->getFogParameter().linearEnd);
                 else
-                    shader.setFloat("fogParams.linearEnd", m_mainCamera->getFar());
+                    shader.sendData("fogParams.linearEnd", m_mainCamera->getFar());
                 break;
             default:
-                shader.setFloat("fogParams.density", m_mainCamera->getFogParameter().density);
+                shader.sendData("fogParams.density", m_mainCamera->getFogParameter().density);
                 break;
             }
         }
@@ -297,12 +296,12 @@ void RenderSystem::sendDataToInitShader(Camera& camToUse, Shader& shader)
 
     if ((shader.getFeature() & SCALE_TIME_ACC) == SCALE_TIME_ACC)
     {
-        shader.setFloat("scaledTimeAcc", static_cast<float>(Engine::getInstance()->timeSystem.getAccumulatedTime()));
+        shader.sendData("scaledTimeAcc", static_cast<float>(Engine::getInstance()->timeSystem.getAccumulatedTime()));
     }
 
     if ((shader.getFeature() & UNSCALED_TIME_ACC) == UNSCALED_TIME_ACC)
     {
-        shader.setFloat("unscaledTimeAcc",
+        shader.sendData("unscaledTimeAcc",
                         static_cast<float>(Engine::getInstance()->timeSystem.getAccumulatedUnscaledTime()));
     }
 }
@@ -315,25 +314,25 @@ void RenderSystem::sendModelDataToShader(Camera& camToUse, Shader& shader, const
 
         // suppress translation
         view.c[3].xyz = {0.f, 0.f, 0.f};
-        shader.setMat4("projectionView", (camToUse.getProjection() * view).e);
+        shader.sendData("projectionView", (camToUse.getProjection() * view));
     }
 
     if ((shader.getFeature() & VIEW_MODEL_MATRIX) == VIEW_MODEL_MATRIX)
     {
-        shader.setMat4("viewModelMatrix", (camToUse.getView() * modelMatrix).e);
+        shader.sendData("viewModelMatrix", (camToUse.getView() * modelMatrix));
     }
 
     if ((shader.getFeature() & PROJECTION_VIEW_MODEL_MATRIX) == PROJECTION_VIEW_MODEL_MATRIX)
     {
-        shader.setMat4("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix).e);
+        shader.sendData("projectViewModelMatrix", (camToUse.getProjectionView() * modelMatrix));
     }
 
     if ((shader.getFeature() & LIGHT_BLIN_PHONG) == LIGHT_BLIN_PHONG && (shader.getFeature() & SKYBOX) != SKYBOX)
     {
         Mat3 inverseModelMatrix3(toMatrix3(modelMatrix.inversed()).transposed());
 
-        shader.setMat4("model", modelMatrix.e);
-        shader.setMat3("inverseModelMatrix", inverseModelMatrix3.e);
+        shader.sendData("model", modelMatrix);
+        shader.sendData("inverseModelMatrix", inverseModelMatrix3);
     }
 }
 
@@ -373,8 +372,7 @@ void RenderSystem::tryToBindMaterial(Shader& shader, Material& material)
 
     if ((shader.getFeature() & AMBIANTE_COLOR_ONLY) == AMBIANTE_COLOR_ONLY)
     {
-        shader.setVec4("Color", material.getComponent().ambient.kr, material.getComponent().ambient.kg,
-                       material.getComponent().ambient.kb, material.getComponent().ambient.ki);
+        shader.sendData("Color", material.getComponent().ambient.rgbi);
     }
 
     m_currentMaterialID = material.getID();
@@ -462,9 +460,9 @@ void RenderSystem::renderDebugShape(Camera& observer) noexcept
             glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
             tryToSetBackFaceCulling(shape.enableBackFaceCullling);
 
-            shaderToUse->setMat4("projectViewModelMatrix", (observer.getProjectionView() * shape.transform.model).e);
+            shaderToUse->sendData("projectViewModelMatrix", (observer.getProjectionView() * shape.transform.model).e);
 
-            shaderToUse->setVec4("Color", shape.color.r, shape.color.g, shape.color.b, shape.color.a);
+            shaderToUse->sendData("Color", shape.color.v);
 
             tryToBindMesh(shape.shape->getID());
 
@@ -486,7 +484,7 @@ void RenderSystem::renderDebugLine(Camera& observer) noexcept
 
         const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("ColorMesh");
         glUseProgram(shaderToUse->getID());
-        shaderToUse->setMat4("projectViewMatrix", observer.getProjectionView().e);
+        shaderToUse->sendData("projectViewMatrix", observer.getProjectionView().e);
 
         tryToSetBackFaceCulling(false);
         glEnable(GL_LINE_SMOOTH);
@@ -610,7 +608,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
                     for (int i = 0; i < m_maxNbBones; ++i)
                     {
 
-                        pSubModel->pMaterial->getShader()->setMat4(
+                        pSubModel->pMaterial->getShader()->sendData(
                             std::string("finalBonesMatrices[" + std::to_string(i) + "]").c_str(),
                             GPM::Matrix4::identity().e);
                     }
@@ -736,7 +734,7 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
-                shaderGameObjectIdentifier.setMat4(
+                shaderGameObjectIdentifier.sendData(
                     "projectViewModelMatrix",
                     (pMainCamera->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
                         .e);
@@ -755,7 +753,7 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
-                shaderGameObjectIdentifier.setMat4(
+                shaderGameObjectIdentifier.sendData(
                     "projectViewModelMatrix",
                     (pMainCamera->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
                         .e);
@@ -801,7 +799,7 @@ void RenderSystem::shadowMapPipeline() noexcept
                 tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
                 const Mat4 pvm = pv * pSubModel->pModel->getOwner().getTransform().getModelMatrix();
-                shader.setMat4("projectViewModelMatrix", pvm.e);
+                shader.sendData("projectViewModelMatrix", pvm);
                 drawModelPart(*pSubModel);
             }
 
@@ -814,7 +812,7 @@ void RenderSystem::shadowMapPipeline() noexcept
                 tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
                 const Mat4 pvm = pv * pSubModel->pModel->getOwner().getTransform().getModelMatrix();
-                shader.setMat4("projectViewModelMatrix", pvm.e);
+                shader.sendData("projectViewModelMatrix", pvm);
 
                 drawModelPart(*pSubModel);
             }

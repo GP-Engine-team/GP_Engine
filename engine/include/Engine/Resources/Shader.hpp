@@ -15,7 +15,10 @@
 #include <Engine/Resources/ShaderType.hpp>
 #include <Engine/Serialization/xml/xmlLoader.hpp>
 #include <Engine/Serialization/xml/xmlSaver.hpp>
+#include <GPM/Matrix3.hpp> //Mat3
+#include <GPM/Matrix4.hpp> //Mat4
 #include <GPM/Vector3.hpp> //Vec3
+#include <GPM/Vector4.hpp> //Vec4
 
 namespace GPE
 {
@@ -110,17 +113,20 @@ public:
      * @param name
      * @param value
      */
-    inline void setBool(const char* name, bool value) const noexcept;
-    inline void setInt(const char* name, int value) const noexcept;
-    inline void setFloat(const char* name, float value) const noexcept;
-    inline void setVec3(const char* name, float v1, float v2, float v3) const noexcept;
-    inline void setVec4(const char* name, float v1, float v2, float v3, float v4) const noexcept;
-    inline void setMat3(const char* name, const float* value) const noexcept;
-    inline void setMat4(const char* name, const float* value) const noexcept;
-    inline void setpVec3(const char* name, unsigned int count, const float* pV) const noexcept;
-    inline void setpVec4(const char* name, unsigned int count, const float* pV) const noexcept;
-    void        setLightBlock(const std::vector<LightData>& lightBuffer, const GPM::Vec3& viewPos) noexcept;
-    void        setMaterialBlock(const MaterialComponent& material) const noexcept;
+    inline void sendData(const char* name, bool data) const noexcept;
+    inline void sendData(const char* name, int data) const noexcept;
+    inline void sendData(const char* name, float data) const noexcept;
+    inline void sendData(const char* name, const GPM::Vec3& data) const noexcept;
+    inline void sendData(const char* name, const GPM::Vec4& data) const noexcept;
+    inline void sendData(const char* name, const GPM::Mat3& data) const noexcept;
+    inline void sendData(const char* name, const GPM::Mat4& data) const noexcept;
+    inline void sendData(const char* name, const GPM::Vec3* data, size_t count) const noexcept;
+    inline void sendData(const char* name, const GPM::Vec4* data, size_t count) const noexcept;
+    inline void sendData(const char* name, const GPM::Mat3* data, size_t count) const noexcept;
+    inline void sendData(const char* name, const GPM::Mat4* data, size_t count) const noexcept;
+
+    void setLightBlock(const std::vector<LightData>& lightBuffer, const GPM::Vec3& viewPos) noexcept;
+    void setMaterialBlock(const MaterialComponent& material) const noexcept;
 
     inline unsigned int getID() const noexcept;
     inline uint16_t     getFeature() const noexcept;
