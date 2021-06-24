@@ -209,11 +209,7 @@ void Shader::reload(const char* vertexPath, const char* fragmentPath, uint16_t f
 
 void Shader::use()
 {
-    int idShaderUse;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &idShaderUse);
-
-    if ((unsigned int)idShaderUse != m_id)
-        glUseProgram(m_id);
+    glUseProgram(m_id);
 }
 
 void Shader::setLightBlock(const std::vector<LightData>& lightBuffer, const Vec3& viewPos) noexcept

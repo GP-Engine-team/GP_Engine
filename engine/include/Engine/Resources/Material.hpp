@@ -61,11 +61,13 @@ protected:
 protected:
     /**
      * @brief Clear previous uniforms and init it with default value thank's to the shader's uniform
+     * Also send data to shader to initialize it
      */
     void resetUniform();
 
     /**
-     * @brief Remove and add uniform thank to it's shader. Keep the common uniforms
+     * @brief Remove and add uniform thank to it's shader. Keep the common uniforms.
+     * Also send data to shader to initialize it
      */
     void updateUniform();
 

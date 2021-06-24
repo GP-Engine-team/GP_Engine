@@ -3,6 +3,7 @@
 #include <Engine/Serialization/DataInspector.hpp>
 #include <Engine/Serialization/InspectContext.hpp>
 
+#include <functional> //std::function
 #include <memory>
 #include <vector>
 
@@ -11,6 +12,9 @@
 
 namespace GPE::DataInspector
 {
+template <typename TValue>
+void inspect(GPE::InspectContext& context, std::unordered_map<std::string, TValue>& inspected, const char* name,
+             std::function<void(const std::string&, TValue&)> OnValueChange);
 
 template <typename TValue>
 void inspect(GPE::InspectContext& context, std::unordered_map<std::string, TValue>& inspected, const char* name);

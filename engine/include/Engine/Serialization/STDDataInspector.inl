@@ -2,7 +2,7 @@
 
 template <typename TValue>
 void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, TValue>& inspected,
-                                 const char* name)
+                                 const char* name, std::function<void(const std::string&, TValue&)> OnValueChange)
 {
     ImGui::PushID(&inspected);
 
@@ -28,6 +28,9 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_ma
             if (ImGui::TreeNode(key.c_str()))
             {
                 inspect(context, value, "");
+                if (context.wasLastDirty() && OnValueChange)
+                    OnValueChange(key, value);
+
                 ImGui::TreePop();
             }
         }
@@ -35,6 +38,13 @@ void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_ma
     if (arrayIsOpen)
         ImGui::TreePop();
     ImGui::PopID();
+}
+
+template <typename TValue>
+void GPE::DataInspector::inspect(GPE::InspectContext& context, std::unordered_map<std::string, TValue>& inspected,
+                                 const char* name)
+{
+    GPE::DataInspector::inspect<TValue>(context, inspected, name, nullptr);
 }
 
 template <typename TKey, typename TValue>

@@ -29,11 +29,15 @@ std::unique_ptr<IUniform> createUniform(GLenum type)
 void Material::resetUniform()
 {
     uniforms.clear();
+
+    // Bind shader to send data
+    m_pShader->use();
     for (auto&& [key, value] : m_pShader->getUniforms())
     {
         if (std::unique_ptr<IUniform> ptr = createUniform(value.type))
         {
-            uniforms.try_emplace(key, std::move(ptr));
+            auto&& lastInsered = uniforms.try_emplace(key, std::move(ptr));
+            lastInsered.first->second->sendToShader(key.c_str(), *m_pShader);
         }
     }
 }
@@ -44,13 +48,16 @@ void Material::updateUniform()
     std::unordered_map<std::string, std::unique_ptr<IUniform>> copyUniform         = std::move(uniforms);
     uniforms.clear();
 
+    // Bind shader to send data
+    m_pShader->use();
     for (auto&& itSU = copyShadersUniforms.begin(); itSU != copyShadersUniforms.end();)
     {
         auto&& itU = copyUniform.find(itSU->first);
         if (itU != copyUniform.end())
         {
             // Add item that already exist
-            uniforms.emplace(itU->first, std::move(itU->second));
+            auto&& lastInsered = uniforms.emplace(itU->first, std::move(itU->second));
+            lastInsered.first->second->sendToShader(itU->first.c_str(), *m_pShader);
             copyUniform.erase(itU);
             itSU = copyShadersUniforms.erase(itSU);
         }
@@ -59,7 +66,8 @@ void Material::updateUniform()
             // Add item that dosn't exist
             if (std::unique_ptr<IUniform> ptr = createUniform(itSU->second.type))
             {
-                uniforms.try_emplace(itSU->first, std::move(ptr));
+                auto&& lastInsered = uniforms.try_emplace(itSU->first, std::move(ptr));
+                lastInsered.first->second->sendToShader(itU->first.c_str(), *m_pShader);
             }
             ++itSU;
         }

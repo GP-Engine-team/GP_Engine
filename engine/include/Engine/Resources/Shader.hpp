@@ -102,13 +102,14 @@ public:
     void reload(const char* vertexPath, const char* fragmentPath, uint16_t featureMask = 0);
 
     /**
-     * @brief activate the shader
+     * @brief activate the shader. Do not check if the shader was previoulsy activated.
      *
      */
     void use();
 
     /**
-     * @brief Few function to set value into shader with uniform functions
+     * @brief Few function to set value into shader with uniform functions.
+     * Importante /!\ : To use this functions, shader must be active
      *
      * @param name
      * @param value
@@ -116,6 +117,7 @@ public:
     inline void sendData(const char* name, bool data) const noexcept;
     inline void sendData(const char* name, int data) const noexcept;
     inline void sendData(const char* name, float data) const noexcept;
+    inline void sendData(const char* name, const GPM::Vec2& data) const noexcept;
     inline void sendData(const char* name, const GPM::Vec3& data) const noexcept;
     inline void sendData(const char* name, const GPM::Vec4& data) const noexcept;
     inline void sendData(const char* name, const GPM::Mat3& data) const noexcept;

@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <Engine/Resources/Shader.hpp>
 #include <Engine/Serialization/Inspect.hpp>
 #include <Engine/Serialization/Serialize.hpp>
 #include <Refureku/Object.h>
@@ -28,6 +29,11 @@
         {                                                                                                              \
         }                                                                                                              \
                                                                                                                        \
+        void sendToShader(const char* nameUniform, Shader& shader) final                                               \
+        {                                                                                                              \
+            shader.sendData(nameUniform, data);                                                                        \
+        }                                                                                                              \
+                                                                                                                       \
         name##Uniform_GENERATED                                                                                        \
     };
 
@@ -37,6 +43,8 @@ namespace GPE RFKNamespace()
     {
     public:
         IUniform() = default;
+
+        virtual void sendToShader(const char* nameUniform, Shader& shader) = 0;
         IUniform_GENERATED
     };
 

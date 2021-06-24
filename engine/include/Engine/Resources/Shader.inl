@@ -25,6 +25,11 @@ inline void Shader::sendData(const char* name, float data) const noexcept
     glUniform1f(glGetUniformLocation(m_id, name), data);
 }
 
+inline void Shader::sendData(const char* name, const GPM::Vec2& data) const noexcept
+{
+    glUniform2f(glGetUniformLocation(m_id, name), data.x, data.y);
+}
+
 inline void Shader::sendData(const char* name, const GPM::Vec3& data) const noexcept
 {
     glUniform3f(glGetUniformLocation(m_id, name), data.x, data.y, data.z);

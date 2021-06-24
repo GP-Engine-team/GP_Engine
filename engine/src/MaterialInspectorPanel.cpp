@@ -79,7 +79,12 @@ File_GENERATED
 
         if (pMat->getUniforms().size())
         {
-            GPE::DataInspector::inspect(context, pMat->getUniforms(), "Uniform");
+            std::function<void(const std::string&, std::unique_ptr<IUniform>&)> funct;
+            funct = [&](const std::string& key, std::unique_ptr<IUniform>& value) {
+                pMat->getShader()->use();
+                value->sendToShader(key.c_str(), *pMat->getShader());
+            };
+            GPE::DataInspector::inspect(context, pMat->getUniforms(), "Uniform", funct);
             m_canSaveInHardDisk |= context.wasLastDirty();
         }
 
