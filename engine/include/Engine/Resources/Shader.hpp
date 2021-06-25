@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include <Engine/Core/Tools/BinaryMask.hpp>
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/ShaderType.hpp>
 #include <Engine/Serialization/xml/xmlLoader.hpp>
@@ -36,19 +37,37 @@ namespace GPE
 #define VIEW_MODEL_MATRIX (1 << 9)
 #define ANIMATION_MASK (1 << 10)
 
-// class Shader;
-//
-// template <>
-// void load(XmlLoader& context, Shader*& data, const rfk::Field& info);
-//
-// template <>
-// void load(XmlLoader& context, Shader*& data, const XmlLoader::LoadInfo& info);
-//
-// template <>
-// void save(XmlSaver& context, Shader* const& data, const rfk::Field& info);
-//
-// template <>
-// void save(XmlSaver& context, Shader* const& data, const XmlSaver::SaveInfo& info);
+#define ATTRIB_POSITION_NAME "aPos"
+#define ATTRIB_POSITION_TYPE GL_FLOAT_VEC3
+#define ATTRIB_POSITION_MASK (1 << 0)
+
+#define ATTRIB_COLOR_NAME "aRGB"
+#define ATTRIB_COLOR_TYPE GL_FLOAT_VEC3
+#define ATTRIB_COLOR_MASK (1 << 1)
+
+#define ATTRIB_UV_NAME "aUV"
+#define ATTRIB_UV_TYPE GL_FLOAT_VEC2
+#define ATTRIB_UV_MASK (1 << 2)
+
+#define ATTRIB_NORMAL_NAME "aNormal"
+#define ATTRIB_NORMAL_TYPE GL_FLOAT_VEC3
+#define ATTRIB_NORMAL_MASK (1 << 3)
+
+#define ATTRIB_TANGEANTE_NAME "aTangeante"
+#define ATTRIB_TANGEANTE_TYPE GL_FLOAT_VEC3
+#define ATTRIB_TANGEANTE_MASK (1 << 4)
+
+#define ATTRIB_BITANGEANTE_NAME "aBitangeante"
+#define ATTRIB_BITANGEANTE_TYPE GL_FLOAT_VEC3
+#define ATTRIB_BITANGEANTE_MASK (1 << 5)
+
+#define ATTRIB_BONE_NAME "aBoneID"
+#define ATTRIB_BONE_TYPE GL_INT_VEC4
+#define ATTRIB_BONE_MASK (1 << 6)
+
+#define ATTRIB_SKIN_WEIGHT_NAME "aSkinWeight"
+#define ATTRIB_SKIN_TYPE GL_FLOAT_VEC4
+#define ATTRIB_SKIN_WEIGHT_MASK (1 << 7)
 
 // Inspiread about code exemple on learn openGl : https://learnopengl.com/Getting-started/Shaders
 class Shader
@@ -61,8 +80,15 @@ public:
         PROGRAM
     };
 
+    struct SupportedAttribute
+    {
+        std::string name;
+        GLenum      type;
+    };
+
     struct Attribute
     {
+        GLint  location;
         GLenum type;
     };
 
@@ -74,6 +100,7 @@ public:
     };
 
 protected:
+    U16BMask     m_attributeMask       = 0; // Attribute of the shader (aPos, aUV...)
     uint16_t     m_featureMask         = 0; // feature is shader interger into shader like light, blur etc....
     unsigned int m_lightsUniformBuffer = 0; // TODO: no sens to have id of uniform light in any shaders
 
@@ -81,6 +108,16 @@ protected:
 
     std::map<std::string, Attribute> m_attributes;
     std::map<std::string, Uniform>   m_uniforms;
+
+public:
+    // List of supported attribut in shader. This list can be upgrad by the user
+    static std::vector<SupportedAttribute> supportedAttribute;
+
+    // return true if the attribute is in supported liste
+    static bool isAttributeSupported(std::string name, GLenum type);
+
+    // return the mask of the supported attribute. Return void mask if attribute is not found
+    static U16BMask getSupportedAttributeMask(std::string name, GLenum type);
 
 public:
     /**

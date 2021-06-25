@@ -6,10 +6,10 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
-#include <map>
 
 #include <Engine/Core/Tools/ClassUtility.hpp>
 #include <Engine/Resources/Type.hpp>

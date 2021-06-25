@@ -171,6 +171,17 @@ static const char* timeUnscaledAccVertexShaderStr = R"(
 uniform float unscaledTimeAcc;
 )";
 
+std::vector<Shader::SupportedAttribute> Shader::supportedAttribute{
+    {ATTRIB_POSITION_NAME, ATTRIB_POSITION_TYPE},
+    {ATTRIB_COLOR_NAME, ATTRIB_COLOR_TYPE},
+    {ATTRIB_UV_NAME, ATTRIB_UV_TYPE},
+    {ATTRIB_NORMAL_NAME, ATTRIB_NORMAL_TYPE},
+    {ATTRIB_TANGEANTE_NAME, ATTRIB_TANGEANTE_TYPE},
+    {ATTRIB_BITANGEANTE_NAME, ATTRIB_BITANGEANTE_TYPE},
+    {ATTRIB_BONE_NAME, ATTRIB_BONE_TYPE},
+    {ATTRIB_SKIN_WEIGHT_NAME, ATTRIB_SKIN_TYPE},
+};
+
 Shader::Shader(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
 {
     m_featureMask = featureMask;
@@ -391,42 +402,72 @@ bool Shader::checkCompileErrors(unsigned int shader, EType type)
     return true;
 }
 
+bool Shader::isAttributeSupported(std::string name, GLenum type)
+{
+    for (auto&& sAttrib : supportedAttribute)
+    {
+        if (sAttrib.type == type && sAttrib.name == name)
+            return true;
+    }
+    return false;
+}
+
+U16BMask Shader::getSupportedAttributeMask(std::string name, GLenum type)
+{
+    for (size_t i = 0; i < supportedAttribute.size(); ++i)
+    {
+        if (supportedAttribute[i].type == type && supportedAttribute[i].name == name)
+            return i;
+    }
+    return 0;
+}
+
 void Shader::updateUniformList()
 {
-    GLint numActiveAttribs  = 0;
-    GLint numActiveUniforms = 0;
-    glGetProgramInterfaceiv(m_id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numActiveAttribs);
-    glGetProgramInterfaceiv(m_id, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numActiveUniforms);
-
-    std::vector<GLchar> nameData(256);
+    std::vector<GLchar> nameData(256, '\0');
     std::vector<GLenum> properties;
-    properties.push_back(GL_NAME_LENGTH);
-    properties.push_back(GL_TYPE);
-    properties.push_back(GL_ARRAY_SIZE);
-    properties.push_back(GL_LOCATION);
+    std::vector<GLint>  values(5);
 
-    std::vector<GLint> values(properties.size());
-    for (int attrib = 0; attrib < numActiveAttribs; ++attrib)
+    // ATTRIBUTE
     {
-        glGetProgramResourceiv(m_id, GL_PROGRAM_INPUT, attrib, properties.size(), &properties[0], values.size(), NULL,
-                               &values[0]);
+        GLint numActiveAttribs = 0;
+        glGetProgramInterfaceiv(m_id, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numActiveAttribs);
+        properties.push_back(GL_NAME_LENGTH);
+        properties.push_back(GL_TYPE);
+        properties.push_back(GL_LOCATION);
+        values.resize(properties.size());
+        for (int attrib = 0; attrib < numActiveAttribs; ++attrib)
+        {
+            glGetProgramResourceiv(m_id, GL_PROGRAM_INPUT, attrib, properties.size(), &properties[0], values.size(),
+                                   NULL, &values[0]);
 
-        nameData.resize(values[0]); // The length of the name.
+            nameData.resize(values[0]); // The length of the name.
 
-        glGetProgramResourceName(m_id, GL_PROGRAM_INPUT, attrib, nameData.size(), NULL, &nameData[0]);
-        std::string name((char*)&nameData[0], nameData.size() - 1);
-        m_attributes.emplace(name, Attribute{static_cast<GLenum>(values[1])});
+            glGetProgramResourceName(m_id, GL_PROGRAM_INPUT, attrib, nameData.size(), NULL, &nameData[0]);
+            std::string name((char*)&nameData[0], nameData.size() - 1);
+            m_attributes.emplace(name, Attribute{values[2], static_cast<GLenum>(values[1])});
+
+            // Try to add it to the attribute mask
+            m_attributeMask.add(getSupportedAttributeMask(name, values[1]).get());
+        }
     }
 
-    for (int unif = 0; unif < numActiveUniforms; ++unif)
+    // UNIFORM
     {
-        glGetProgramResourceiv(m_id, GL_UNIFORM, unif, properties.size(), &properties[0], values.size(), NULL,
-                               &values[0]);
+        GLint numActiveUniforms = 0;
+        glGetProgramInterfaceiv(m_id, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numActiveUniforms);
+        properties.push_back(GL_ARRAY_SIZE);
+        values.resize(properties.size());
+        for (int unif = 0; unif < numActiveUniforms; ++unif)
+        {
+            glGetProgramResourceiv(m_id, GL_UNIFORM, unif, properties.size(), &properties[0], values.size(), NULL,
+                                   &values[0]);
 
-        nameData.resize(values[0]); // The length of the name.
-        glGetProgramResourceName(m_id, GL_UNIFORM, unif, nameData.size(), NULL, &nameData[0]);
-        std::string name((char*)&nameData[0], nameData.size() - 1);
-        m_uniforms.emplace(name, Uniform{static_cast<GLenum>(values[1]), values[2], values[3]});
+            nameData.resize(values[0]); // The length of the name.
+            glGetProgramResourceName(m_id, GL_UNIFORM, unif, nameData.size(), NULL, &nameData[0]);
+            std::string name((char*)&nameData[0], nameData.size() - 1);
+            m_uniforms.emplace(name, Uniform{static_cast<GLenum>(values[1]), values[2], values[3]});
+        }
     }
 }
 
