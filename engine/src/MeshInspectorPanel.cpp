@@ -10,9 +10,9 @@ File_GENERATED
     namespace GPE
 {
 
-    MeshInspectorPanel::MeshInspectorPanel(const std::string& inPath)
-        : IInspectable(), m_config(readMeshFile(inPath.c_str())), m_path(inPath), m_isDirty(false)
+    MeshInspectorPanel::MeshInspectorPanel(const std::string& inPath) : IInspectable(), m_path(inPath), m_isDirty(false)
     {
+        readMeshFile(inPath.c_str(), m_config);
     }
 
     void MeshInspectorPanel::inspect(InspectContext & context)
@@ -22,8 +22,8 @@ File_GENERATED
 
         // TODO: dirty flag must change when inspect will returned bool
 
-        ImGui::Text("Triangle count : %i", m_config.indices.size() / 3);
-        ImGui::Text("Vertices count : %i", m_config.indices.size());
+        ImGui::Text("Triangle count : %i", m_config.elemCount / 3);
+        ImGui::Text("Vertices count : %i", m_config.dataBufferSize / m_config.getVertexSize());
 
         int         elem                                           = (int)m_config.boundingVolumeType;
         const char* elems_names[(int)Mesh::EBoundingVolume::COUNT] = {"NONE", "SPHERE", "AABB"};

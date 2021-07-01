@@ -11,8 +11,9 @@ File_GENERATED
 {
 
     ModelImporterSetting::ModelImporterSetting(const std::string& inPath)
-        : IInspectable(), m_config(readMeshFile(inPath.c_str())), m_path(inPath), m_isDirty(false)
+        : IInspectable(), m_path(inPath), m_isDirty(false)
     {
+        readMeshFile(inPath.c_str(), m_config);
     }
 
     void ModelImporterSetting::inspect(InspectContext & context)
@@ -22,8 +23,8 @@ File_GENERATED
         m_isDirty = true;
         // TODO: dirty flag must change when inspect will returned bool
 
-        ImGui::Text("Triangle count : %i", m_config.indices.size() / 3);
-        ImGui::Text("Vertices count : %i", m_config.indices.size());
+        ImGui::Text("Triangle count : %i", m_config.elemCount / 3);
+        ImGui::Text("Vertices count : %i", m_config.dataBufferSize / m_config.getVertexSize());
 
         ImGui::PushEnabled(m_isDirty);
 

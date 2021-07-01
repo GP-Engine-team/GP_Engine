@@ -17,10 +17,10 @@ namespace GPE RFKNamespace()
     class RFKClass() MeshInspectorPanel : public IInspectable
     {
     protected:
-        Mesh::CreateIndiceBufferArg m_config;
-        std::string                 m_path;
-        bool                        m_isDirty           = false;
-        bool                        m_canSaveInHardDisk = false;
+        Mesh::VertexData m_config;
+        std::string      m_path;
+        bool             m_isDirty           = false;
+        bool             m_canSaveInHardDisk = false;
 
     public:
         MeshInspectorPanel() = delete;

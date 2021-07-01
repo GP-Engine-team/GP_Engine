@@ -242,6 +242,7 @@
     <ClInclude Include="include\Engine\Core\Tools\Hash.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\ImGuiTools.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Interpolation.hpp" />
+    <ClInclude Include="include\Engine\Core\Tools\OGLTools.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\Raycast.hpp" />
     <ClInclude Include="include\Engine\Core\Tools\UnrolledListAllocator.hpp" />
     <ClInclude Include="include\Engine\ECS\Component\AnimationComponent.hpp" />

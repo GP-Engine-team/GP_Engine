@@ -430,55 +430,84 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
     {
         aiMesh* pMesh = scene->mMeshes[i];
 
-        Mesh::CreateIndiceBufferArg arg;
-        arg.vertices.reserve(pMesh->mNumVertices);
-        arg.indices.reserve(pMesh->mNumFaces * 3u);
+        Mesh::VertexData arg;
 
-        if (pMesh->mVertices == nullptr)
+        if (pMesh->HasPositions())
+            arg.descriptor.emplace_back(ATTRIB_POSITION_NAME, ATTRIB_POSITION_TYPE);
+
+        if (pMesh->HasNormals())
+            arg.descriptor.emplace_back(ATTRIB_NORMAL_NAME, ATTRIB_NORMAL_TYPE);
+
+        for (size_t i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i)
         {
-            Log::getInstance()->logError(stringFormat("Mesh \"%s\" without vertices", pMesh->mName));
-            continue;
+            if (pMesh->HasTextureCoords(i))
+                arg.descriptor.emplace_back(ATTRIB_UV_NAME + std::to_string(i), ATTRIB_UV_TYPE);
         }
 
-        if (!pMesh->HasNormals())
+        for (size_t i = 0; i < AI_MAX_NUMBER_OF_COLOR_SETS; ++i)
         {
-            Log::getInstance()->logError(stringFormat("Mesh \"%s\" without Normal", pMesh->mName));
-            continue;
+            if (pMesh->HasVertexColors(i))
+                arg.descriptor.emplace_back(ATTRIB_COLOR_NAME + std::to_string(i), ATTRIB_COLOR_TYPE);
         }
 
-        if (pMesh->mTextureCoords == nullptr)
+        if (pMesh->HasTangentsAndBitangents())
         {
-            Log::getInstance()->logError(stringFormat("Mesh \"%s\" without UV", pMesh->mName));
-            continue;
+            arg.descriptor.emplace_back(ATTRIB_TANGEANTE_NAME, ATTRIB_TANGEANTE_TYPE);
+            // Add it thank's to option
+            // arg.descriptor.emplace_back(ATTRIB_BITANGEANTE_NAME, ATTRIB_BITANGEANTE_TYPE);
         }
 
-        if (pMesh->mTextureCoords[0] == nullptr)
-        {
-            Log::getInstance()->logError(stringFormat("Mesh \"%s\" with invalid UV", pMesh->mName));
-            continue;
-        }
+        arg.initVerticeBuffer(pMesh->mNumVertices);
+        arg.initIndicesBuffer(pMesh->mNumFaces * 3u);
+        void* currentVerticePos = arg.data;
 
-        // Vertices
         for (size_t verticeId = 0; verticeId < pMesh->mNumVertices; ++verticeId)
         {
-            const aiVector3D& vertice   = pMesh->mVertices[verticeId];
-            const aiVector3D& textCoord = pMesh->mTextureCoords[0][verticeId];
-            const aiVector3D& normal    = pMesh->mNormals[verticeId];
-            const aiVector3D& tangeante = pMesh->mTangents[verticeId];
+            if (pMesh->HasPositions())
+            {
+                *reinterpret_cast<decltype(pMesh->mVertices)>(currentVerticePos) = pMesh->mVertices[verticeId];
+                currentVerticePos = static_cast<char*>(currentVerticePos) + sizeof(decltype(*pMesh->mVertices));
+            }
 
-            arg.vertices.emplace_back(Mesh::Vertex{Vec3{vertice.x, vertice.y, vertice.z},
-                                                   Vec3{normal.x, normal.y, normal.z}, Vec2{textCoord.x, textCoord.y},
-                                                   Vec3{tangeante.x, tangeante.y, tangeante.z}});
+            if (pMesh->HasNormals())
+            {
+                *reinterpret_cast<decltype(pMesh->mNormals)>(currentVerticePos) = pMesh->mNormals[verticeId];
+                currentVerticePos = static_cast<char*>(currentVerticePos) + sizeof(decltype(*pMesh->mNormals));
+            }
 
-            // GPE::Mesh::setVertexBoneDataToDefault(arg.vertices.back());
+            for (size_t i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i)
+            {
+                if (pMesh->HasTextureCoords(i))
+                {
+                    *reinterpret_cast<aiVector2D*>(currentVerticePos) = {pMesh->mTextureCoords[i][verticeId].x,
+                                                                         pMesh->mTextureCoords[i][verticeId].y};
+                    currentVerticePos = static_cast<char*>(currentVerticePos) + sizeof(aiVector2D);
+                }
+            }
+
+            for (size_t i = 0; i < AI_MAX_NUMBER_OF_COLOR_SETS; ++i)
+            {
+                if (pMesh->HasVertexColors(i))
+                {
+                    *reinterpret_cast<decltype(pMesh->mColors[i])>(currentVerticePos) = pMesh->mColors[i][verticeId];
+                    currentVerticePos = static_cast<char*>(currentVerticePos) + sizeof(decltype(*pMesh->mColors[i]));
+                }
+            }
+
+            if (pMesh->HasTangentsAndBitangents())
+            {
+                *reinterpret_cast<decltype(pMesh->mTangents)>(currentVerticePos) = pMesh->mTangents[verticeId];
+                currentVerticePos = static_cast<char*>(currentVerticePos) + sizeof(decltype(*pMesh->mTangents));
+            }
         }
 
         // Indices
+        unsigned int* currentIndicePos = arg.indices;
         for (size_t iFace = 0; iFace < pMesh->mNumFaces; ++iFace)
         {
-            arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[0]);
-            arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[1]);
-            arg.indices.emplace_back(pMesh->mFaces[iFace].mIndices[2]);
+            *(currentIndicePos++) = pMesh->mFaces[iFace].mIndices[0];
+            *(currentIndicePos++) = pMesh->mFaces[iFace].mIndices[1];
+            *(currentIndicePos++) = pMesh->mFaces[iFace].mIndices[2];
         }
 
         // Generate bounding volume
@@ -683,9 +712,21 @@ void GPE::writeMaterialFile(const char* dst, const Material& mat)
         uniformStr = docToString(doc);
     }
 
-    std::string shaderPath           = *Engine::getInstance()->resourceManager.getKey(mat.getShader());
-    std::string diffuseTexturePath   = *Engine::getInstance()->resourceManager.getKey(mat.getDiffuseTexture());
-    std::string normalMapTexturePath = *Engine::getInstance()->resourceManager.getKey(mat.getNormalMapTexture());
+    std::string shaderPath;
+    std::string diffuseTexturePath;
+    std::string normalMapTexturePath;
+
+    if (mat.getShader())
+        if (const std::string* pStr = Engine::getInstance()->resourceManager.getKey(mat.getShader()))
+            shaderPath = *pStr;
+
+    if (mat.getDiffuseTexture())
+        if (const std::string* pStr = Engine::getInstance()->resourceManager.getKey(mat.getDiffuseTexture()))
+            diffuseTexturePath = *pStr;
+
+    if (mat.getNormalMapTexture())
+        if (const std::string* pStr = Engine::getInstance()->resourceManager.getKey(mat.getNormalMapTexture()))
+            normalMapTexturePath = *pStr;
 
     MaterialHeader header{(char)EFileType::MATERIAL,
                           mat.getComponent(),
@@ -824,12 +865,13 @@ Material* GPE::loadMaterialFile(const char* src)
 struct MeshHeader
 {
     char          assetID            = (char)EFileType::MESH;
-    int           verticeLenght      = 0;
-    int           indiceLenght       = 0;
+    int           dataBufferSize     = 0;
+    int           indiceCount        = 0;
+    size_t        descriptorStrSize  = 0;
     unsigned char boundingVolumeType = (unsigned char)Mesh::EBoundingVolume::NONE;
 };
 
-void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
+void GPE::writeMeshFile(const char* dst, const Mesh::VertexData& arg)
 {
     FILE* pFile = nullptr;
 
@@ -839,57 +881,80 @@ void GPE::writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg)
         return;
     }
 
-    MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.vertices.size()),
-                      static_cast<int>(arg.indices.size()), static_cast<unsigned char>(arg.boundingVolumeType)};
-    fwrite(&header, sizeof(header), 1, pFile);                                         // header
-    fwrite(arg.vertices.data(), sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
-    fwrite(arg.indices.data(), sizeof(arg.indices[0]), header.indiceLenght, pFile);    // indice buffer
+    rapidxml::xml_document<> doc;
+    XmlSaver                 context(doc);
+    GPE::save(context, arg.descriptor, XmlSaver::SaveInfo{"Descriptor", "Vector<Shader::Attribute>", 0});
+    std::string descriptorStr = docToString(doc);
+
+    MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.dataBufferSize),
+                      arg.indices ? static_cast<int>(arg.elemCount) : 0, descriptorStr.size(),
+                      static_cast<unsigned char>(arg.boundingVolumeType)};
+    fwrite(&header, sizeof(header), 1, pFile); // header
+
+    fwrite(descriptorStr.data(), sizeof(char), descriptorStr.size(), pFile); // header
+
+    fwrite(arg.data, header.dataBufferSize, 1, pFile);                    // vertice buffer
+    fwrite(arg.indices, sizeof(unsigned int), header.indiceCount, pFile); // indice buffer
+
+    for (unsigned int i = 0; i < header.indiceCount; ++i)
+    {
+        unsigned int a = arg.indices[i];
+    }
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("Mesh write to \"%s\"", dst));
 }
 
-Mesh::CreateIndiceBufferArg GPE::readMeshFile(const char* src)
+void GPE::readMeshFile(const char* src, Mesh::VertexData& arg)
 {
-    FILE*                       pFile = nullptr;
-    std::filesystem::path       srcPath(src);
-    Mesh::CreateIndiceBufferArg arg;
+    FILE*                 pFile = nullptr;
+    std::filesystem::path srcPath(src);
 
     if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
-        return arg;
     }
 
     MeshHeader header;
     // copy the file into the buffer:
     fread(&header, sizeof(header), 1, pFile);
 
-    if (header.verticeLenght)
+    std::string descriptorStr;
+    descriptorStr.assign(header.descriptorStrSize, '\0');
+    fread(descriptorStr.data(), sizeof(char), header.descriptorStrSize, pFile); // string buffer
+
+    rapidxml::xml_document<> doc;
+    doc.parse<0>(descriptorStr.data());
+    XmlLoader context(doc);
     {
-        arg.vertices.assign(header.verticeLenght, Mesh::Vertex{});
-        fread(&arg.vertices[0], sizeof(arg.vertices[0]), header.verticeLenght, pFile); // vertice buffer
+        GPE::load(context, arg.descriptor, XmlLoader::LoadInfo{"Descriptor", "Vector<Shader::Attribute>", 0});
     }
 
-    if (header.indiceLenght)
+    if (header.dataBufferSize)
     {
-        arg.indices.assign(header.indiceLenght, 0);
-        fread(&arg.indices[0], sizeof(arg.indices[0]), header.indiceLenght, pFile); // indice buffer
+        arg.initVerticeBuffer(header.dataBufferSize / arg.getVertexSize());
+        fread(arg.data, header.dataBufferSize, 1, pFile); // vertice buffer
+    }
+
+    if (header.indiceCount)
+    {
+        arg.initIndicesBuffer(header.indiceCount);
+        fread(arg.indices, sizeof(unsigned int), header.indiceCount, pFile); // indice buffer
     }
 
     arg.boundingVolumeType = (Mesh::EBoundingVolume)header.boundingVolumeType;
 
     fclose(pFile);
     Log::getInstance()->log(stringFormat("Mesh read from \"%s\"", src));
-
-    return arg;
 }
 
 Mesh* GPE::loadMeshFile(const char* src)
 {
     if (Mesh* const pMesh = Engine::getInstance()->resourceManager.get<Mesh>(src))
         return pMesh;
-    return &Engine::getInstance()->resourceManager.add<Mesh>(src, readMeshFile(src));
+    Mesh::VertexData arg;
+    readMeshFile(src, arg);
+    return &Engine::getInstance()->resourceManager.add<Mesh>(src, arg);
 }
 
 struct ShaderHeader

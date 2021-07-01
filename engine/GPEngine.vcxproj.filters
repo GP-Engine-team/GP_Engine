@@ -864,6 +864,9 @@
     <ClInclude Include="include\Engine\Serialization\PathTo.hpp">
       <Filter>include\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\Core\Tools\OGLTools.hpp">
+      <Filter>include\Core\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />

@@ -12,15 +12,13 @@
 #include <vector>
 
 #include <Engine/Core/Tools/ClassUtility.hpp>
+#include <Engine/Resources/Shader.hpp> //For shader::Attibute. Do not use shader directly (can be extract)
 #include <Engine/Resources/Type.hpp>
 #include <Engine/Serialization/DataInspector.hpp>
 #include <GPM/Shape3D/AABB.hpp>
 #include <GPM/Shape3D/Sphere.hpp>
 #include <GPM/Shape3D/Volume.hpp>
 #include <GPM/Vector3.hpp>
-
-struct aiScene;
-struct aiMesh;
 
 namespace GPE
 {
@@ -56,6 +54,62 @@ public:
         EBoundingVolume           boundingVolumeType{EBoundingVolume::NONE};
     };
 
+    struct VertexData
+    {
+        unsigned int* indices        = nullptr; // If index is nullptr, mesh is contruct as contiguous buffer
+        void*         data           = nullptr;
+        size_t        elemCount      = 0; // If indice, number of indices. Else number of vertex
+        size_t        dataBufferSize = 0;
+
+        std::vector<Attribute> descriptor;
+        EBoundingVolume        boundingVolumeType{EBoundingVolume::NONE};
+
+        void initVerticeBuffer(size_t verticeCount)
+        {
+            dataBufferSize = verticeCount * getVertexSize();
+            free(data);
+            data = malloc(dataBufferSize);
+            if (!indices)
+                elemCount = verticeCount;
+        }
+
+        void initIndicesBuffer(size_t indiceCount)
+        {
+            free(indices);
+            indices   = (unsigned int*)malloc(indiceCount * sizeof(unsigned int));
+            elemCount = indiceCount;
+        }
+
+        void getAttribOffsetAndStride(const char* attribName, void*& offset, unsigned int& stride) const;
+
+        ~VertexData()
+        {
+            free(indices);
+            free(data);
+        }
+
+        size_t getVertexSize() const;
+    };
+
+    struct CreateArg
+    {
+        std::vector<Vertex>       vertices;
+        std::vector<unsigned int> indices;
+        EBoundingVolume           boundingVolumeType{EBoundingVolume::NONE};
+
+        // Experimental
+        size_t verticesCount;
+
+        // Optionnal attribute. Nullptr if not existe
+        std::unique_ptr<unsigned int[]> indexs = nullptr; // If index is nullptr, mesh is contruct as contiguous buffer
+        std::unique_ptr<GPM::Vec3[]>    positions  = nullptr;
+        std::unique_ptr<GPM::Vec3[]>    normals    = nullptr;
+        std::unique_ptr<GPM::Vec3[]>    tangents   = nullptr;
+        std::unique_ptr<GPM::Vec3[]>    bitangents = nullptr;
+        std::unique_ptr<RGBA[]>         colors     = nullptr;
+        std::unique_ptr<GPM::Vec3[]>    textCoords = nullptr; // Also know as texture coords
+    };
+
     // Allow user to construct mesh thank's to multiple VBO
     struct CreateContiguousVerticesArg
     {
@@ -89,13 +143,18 @@ protected:
     EBoundingVolume m_boundingVolumeType = EBoundingVolume::NONE;
     GPM::Volume*    m_boundingVolume     = nullptr;
 
+    std::vector<Attribute> m_descriptor;
+
     // Local AABB Attribut
     GPM::Vec3 m_minAABB, m_maxAABB;
 
 protected:
     void removeBoundingVolume();
 
+    void generateAABB(const VertexData& arg) noexcept;
+
 public:
+    Mesh(const VertexData& arg) noexcept;
     Mesh(CreateIndiceBufferArg& arg) noexcept;
     Mesh(CreateIndiceBufferArg&& arg) noexcept;
 
@@ -124,7 +183,8 @@ public:
      * returned buffer
      * @return
      */
-    void getData(std::vector<Vertex>& buffer);
+    void       getData(std::vector<Vertex>& buffer);
+    VertexData getData();
 
     GETTER_BY_VALUE(ID, m_buffers.vao);
     GETTER_BY_VALUE(VerticesCount, m_verticesCount);

@@ -101,9 +101,9 @@ void                 writeMaterialFile(const char* dst, const Material::ImporteA
 Material::ImporteArg readMaterialFile(const char* src);
 Material*            loadMaterialFile(const char* src);
 
-void                        writeMeshFile(const char* dst, const Mesh::CreateIndiceBufferArg& arg);
-Mesh::CreateIndiceBufferArg readMeshFile(const char* src);
-Mesh*                       loadMeshFile(const char* src);
+void  writeMeshFile(const char* dst, const Mesh::VertexData& arg);
+void  readMeshFile(const char* src, Mesh::VertexData& arg);
+Mesh* loadMeshFile(const char* src);
 
 void               writeShaderFile(const char* dst, const ShaderCreateConfig& arg = ShaderCreateConfig{});
 ShaderCreateConfig readShaderFile(const char* src);

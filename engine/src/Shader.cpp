@@ -9,7 +9,10 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 
-using namespace GPM;
+#include "Generated/Shader.rfk.h"
+File_GENERATED
+
+    using namespace GPM;
 using namespace GPE;
 using namespace std;
 
@@ -171,16 +174,14 @@ static const char* timeUnscaledAccVertexShaderStr = R"(
 uniform float unscaledTimeAcc;
 )";
 
-std::vector<Shader::SupportedAttribute> Shader::supportedAttribute{
-    {ATTRIB_POSITION_NAME, ATTRIB_POSITION_TYPE},
-    {ATTRIB_COLOR_NAME, ATTRIB_COLOR_TYPE},
-    {ATTRIB_UV_NAME, ATTRIB_UV_TYPE},
-    {ATTRIB_NORMAL_NAME, ATTRIB_NORMAL_TYPE},
-    {ATTRIB_TANGEANTE_NAME, ATTRIB_TANGEANTE_TYPE},
-    {ATTRIB_BITANGEANTE_NAME, ATTRIB_BITANGEANTE_TYPE},
-    {ATTRIB_BONE_NAME, ATTRIB_BONE_TYPE},
-    {ATTRIB_SKIN_WEIGHT_NAME, ATTRIB_SKIN_TYPE},
-};
+std::vector<Attribute> Shader::supportedAttribute{{ATTRIB_POSITION_NAME, ATTRIB_POSITION_TYPE},
+                                                  {ATTRIB_COLOR_NAME, ATTRIB_COLOR_TYPE},
+                                                  {ATTRIB_UV_NAME, ATTRIB_UV_TYPE},
+                                                  {ATTRIB_NORMAL_NAME, ATTRIB_NORMAL_TYPE},
+                                                  {ATTRIB_TANGEANTE_NAME, ATTRIB_TANGEANTE_TYPE},
+                                                  {ATTRIB_BITANGEANTE_NAME, ATTRIB_BITANGEANTE_TYPE},
+                                                  {ATTRIB_BONE_NAME, ATTRIB_BONE_TYPE},
+                                                  {ATTRIB_SKIN_WEIGHT_NAME, ATTRIB_SKIN_TYPE}};
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath, uint16_t featureMask)
 {
@@ -445,7 +446,7 @@ void Shader::updateUniformList()
 
             glGetProgramResourceName(m_id, GL_PROGRAM_INPUT, attrib, nameData.size(), NULL, &nameData[0]);
             std::string name((char*)&nameData[0], nameData.size() - 1);
-            m_attributes.emplace(name, Attribute{values[2], static_cast<GLenum>(values[1])});
+            m_attributes.emplace(name, AttributeLocalized{values[2], static_cast<GLenum>(values[1])});
 
             // Try to add it to the attribute mask
             m_attributeMask.add(getSupportedAttributeMask(name, values[1]).get());

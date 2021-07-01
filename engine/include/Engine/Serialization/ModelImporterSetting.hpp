@@ -17,9 +17,9 @@ namespace GPE RFKNamespace()
     class RFKClass() ModelImporterSetting : public IInspectable
     {
     protected:
-        Mesh::CreateIndiceBufferArg m_config;
-        std::string                 m_path;
-        bool                        m_isDirty;
+        Mesh::VertexData m_config;
+        std::string      m_path;
+        bool             m_isDirty;
 
     public:
         ModelImporterSetting() = delete;

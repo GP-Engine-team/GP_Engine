@@ -6,15 +6,16 @@
 #include "GPM/Constants.hpp"
 #include "GPM/Shape3D/AABB.hpp"
 #include "GPM/Shape3D/Sphere.hpp"
+#include <Engine/Core/Tools/OGLTools.hpp>
+#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/Animation/Animation.hpp>
 #include <Engine/Resources/Animation/Skin.hpp>
-#include <Engine/ECS/Component/AnimationComponent.hpp>
 
 #include <glad/glad.h>
 
-#include <limits>
 #include <filesystem>
+#include <limits>
 
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/postprocess.h> // Post processing flags
@@ -22,6 +23,54 @@
 
 using namespace GPE;
 using namespace GPM;
+
+size_t Mesh::VertexData::getVertexSize() const
+{
+    size_t rst = 0;
+    for (auto&& attrib : descriptor)
+    {
+        rst += getTypeSize(attrib.type);
+    }
+    return rst;
+}
+
+void Mesh::VertexData::getAttribOffsetAndStride(const char* attribName, void*& offset, unsigned int& stride) const
+{
+    offset = data;
+    for (auto&& attrib : descriptor)
+    {
+        if (attrib.name == attribName)
+        {
+            stride = getVertexSize();
+            return;
+        }
+        offset = static_cast<char*>(offset) + getTypeSize(attrib.type);
+    }
+    offset = nullptr;
+    stride = 0;
+}
+
+void Mesh::generateAABB(const VertexData& arg) noexcept
+{
+    void*        offset = nullptr;
+    unsigned int stride = 0;
+    arg.getAttribOffsetAndStride("aPos", offset, stride);
+
+    m_minAABB              = Vec3(std::numeric_limits<float>::max());
+    m_maxAABB              = Vec3(std::numeric_limits<float>::min());
+    unsigned int elemCount = arg.dataBufferSize / stride;
+    for (unsigned int i = 0; i < elemCount; ++i)
+    {
+        m_minAABB.x = std::min(m_minAABB.x, static_cast<Vec3*>(offset)->x);
+        m_minAABB.y = std::min(m_minAABB.y, static_cast<Vec3*>(offset)->y);
+        m_minAABB.z = std::min(m_minAABB.z, static_cast<Vec3*>(offset)->z);
+
+        m_maxAABB.x = std::max(m_maxAABB.x, static_cast<Vec3*>(offset)->x);
+        m_maxAABB.y = std::max(m_maxAABB.y, static_cast<Vec3*>(offset)->y);
+        m_maxAABB.z = std::max(m_maxAABB.z, static_cast<Vec3*>(offset)->z);
+        offset      = static_cast<char*>(offset) + stride;
+    }
+}
 
 Mesh::CreateIndiceBufferArg Mesh::convert(Mesh::CreateContiguousVerticesArg& arg)
 {
@@ -58,6 +107,51 @@ Mesh::CreateIndiceBufferArg Mesh::convert(Mesh::CreateContiguousVerticesArg& arg
     }
 
     return newArg;
+}
+
+Mesh::Mesh(const VertexData& arg) noexcept
+{
+    generateAABB(arg);
+
+    if (arg.boundingVolumeType != Mesh::EBoundingVolume::NONE)
+    {
+        generateBoundingVolume(arg.boundingVolumeType, m_minAABB, m_maxAABB);
+    }
+
+    m_verticesCount = static_cast<unsigned int>(arg.elemCount);
+
+    // Generate buffer and bind VAO
+    glGenVertexArrays(1, &m_buffers.vao);
+    glGenBuffers(2, &m_buffers.vbo);
+    glBindVertexArray(m_buffers.vao);
+
+    // define properties of EBO and VBO buffers
+    glBindBuffer(GL_ARRAY_BUFFER, m_buffers.vbo);
+    glBufferData(GL_ARRAY_BUFFER, arg.dataBufferSize, arg.data, GL_STATIC_DRAW);
+
+    if (arg.indices)
+    {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffers.ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(*arg.indices) * arg.elemCount, arg.indices, GL_STATIC_DRAW);
+    }
+
+    size_t offset = 0;
+    size_t stride = arg.getVertexSize();
+
+    // TODO: replace to bind with shader
+    for (size_t attribID = 0; attribID < arg.descriptor.size(); ++attribID)
+    {
+        glEnableVertexAttribArray(attribID);
+        glVertexAttribPointer(attribID, getTypeBaseCount(arg.descriptor[attribID].type),
+                              getTypeBase(arg.descriptor[attribID].type), GL_FALSE, stride, (void*)offset);
+        offset += getTypeSize(arg.descriptor[attribID].type);
+    }
+
+    m_descriptor = arg.descriptor;
+
+    glBindVertexArray(0);
+
+    Log::getInstance()->log("Mesh load in GPU with EBO");
 }
 
 Mesh::Mesh(Mesh::CreateIndiceBufferArg&& arg) noexcept : Mesh(arg)
@@ -143,6 +237,21 @@ void Mesh::getData(std::vector<Vertex>& buffer)
         buffer.emplace_back();
 
     glGetNamedBufferSubData(m_buffers.vbo, 0, bufSize, buffer.data());
+}
+
+Mesh::VertexData Mesh::getData()
+{
+    GLint64 bufSize;
+    glGetNamedBufferParameteri64v(m_buffers.vbo, GL_BUFFER_SIZE, &bufSize);
+
+    VertexData rst;
+    rst.initVerticeBuffer(bufSize);
+    size_t elemCount = bufSize / sizeof(Vertex);
+    rst.descriptor   = m_descriptor;
+    rst.elemCount    = elemCount;
+
+    glGetNamedBufferSubData(m_buffers.vbo, 0, bufSize, rst.data);
+    return rst;
 }
 
 void Mesh::generateAABB(const std::vector<Vertex>& vertices, Vector3& minAABB, Vector3& maxAABB) noexcept

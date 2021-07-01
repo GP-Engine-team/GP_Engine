@@ -67,7 +67,7 @@ void Material::updateUniform()
             if (std::unique_ptr<IUniform> ptr = createUniform(itSU->second.type))
             {
                 auto&& lastInsered = uniforms.try_emplace(itSU->first, std::move(ptr));
-                lastInsered.first->second->sendToShader(itU->first.c_str(), *m_pShader);
+                lastInsered.first->second->sendToShader(itSU->first.c_str(), *m_pShader);
             }
             ++itSU;
         }
