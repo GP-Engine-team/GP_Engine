@@ -124,7 +124,7 @@ void Firearm::triggered()
                     if (m_groundShootEffect.pData)
                     {
                         m_groundShootEffect.pData->emitAt(
-                            GPM::Transform::lookAt(rayPos, rayPos + rayNorm),
+                            GPM::Transform::lookAt(rayPos, rayPos + rayNorm, Vec3::right()),
                             static_cast<unsigned int>(m_groundShootEffect.pData->getCount() /
                                                       m_magazineStored.getCapacity()));
                     }
