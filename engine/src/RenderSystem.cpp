@@ -460,7 +460,7 @@ void RenderSystem::renderDebugShape(Camera& observer) noexcept
             glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(shape.mode));
             tryToSetBackFaceCulling(shape.enableBackFaceCullling);
 
-            shaderToUse->sendData("projectViewModelMatrix", (observer.getProjectionView() * shape.transform.model).e);
+            shaderToUse->sendData("projectViewModelMatrix", observer.getProjectionView() * shape.transform.model);
 
             shaderToUse->sendData("Color", shape.color.v);
 
@@ -484,7 +484,7 @@ void RenderSystem::renderDebugLine(Camera& observer) noexcept
 
         const Shader* shaderToUse = Engine::getInstance()->resourceManager.get<Shader>("ColorMesh");
         glUseProgram(shaderToUse->getID());
-        shaderToUse->sendData("projectViewMatrix", observer.getProjectionView().e);
+        shaderToUse->sendData("projectViewMatrix", observer.getProjectionView());
 
         tryToSetBackFaceCulling(false);
         glEnable(GL_LINE_SMOOTH);
