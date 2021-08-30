@@ -147,6 +147,50 @@ void GPE::savePrefabToPathImp(GPE::GameObject& prefab, const char* path, GPE::Sa
     GPE::writeSceneFile(path, args);
 }
 
+void removeIllegalCharsForPath(std::string& targetString)
+{
+    const std::string illegalChars = "\\/:?\"<>|";
+
+    for (std::string::iterator it = targetString.begin(); it < targetString.end();)
+    {
+        if (illegalChars.find(*it) != std::string::npos)
+        {
+            targetString.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+// Try to open file in binary mode and check try to fixe path if it is invalid
+FILE* openFileToWrite(const char* path)
+{
+    FILE* pFile = nullptr;
+
+    if (fopen_s(&pFile, path, "w+b"))
+    {
+        // file name can contain illegal character. Change it and retry
+        std::filesystem::path path     = path;
+        std::string           fileName = path.stem().string();
+        removeIllegalCharsForPath(fileName);
+        path.replace_filename(fileName + path.extension().string());
+
+        if (fopen_s(&pFile, path.string().c_str(), "w+b"))
+        {
+            Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", path));
+            return nullptr;
+        }
+        else
+        {
+            Log::getInstance()->logError(
+                stringFormat("The file \"%s\" contained illegal character and was rename", fileName));
+        }
+    }
+    return pFile;
+}
+
 GPE::GameObject* GPE::loadPrefabFromStringImp(GPE::GameObject& parent, const std::string& str,
                                               GPE::SavedScene::EType type)
 {
@@ -540,15 +584,15 @@ void GPE::importeModel(const char* srcPath, const char* dstPath, Mesh::EBounding
         GPE_ASSERT(scene->mNumAnimations <= 1, "If the number of animations is higher");
     }
 
-    std::filesystem::path dstAnimPath = dstDirPath / fileName;
     // for (aiAnimation* aiAnim = scene->mAnimations[0]; &aiAnim < scene->mAnimations + scene->mNumAnimations; aiAnim++)
     for (size_t i = 0; i < scene->mNumAnimations; i++)
     {
         aiAnimation*          aiAnim   = scene->mAnimations[i];
         Animation::CreateArgs animArgs = Animation::CreateArgs(aiAnim);
         // m_currentAnimation = new Animation(scene->mAnimations[0]);
-        writeAnimationFile((dstAnimPath.string() + aiAnim->mName.C_Str() + ENGINE_ANIMATION_EXTENSION).c_str(),
-                           animArgs);
+        std::filesystem::path dstAnimPath = dstDirPath / aiAnim->mName.C_Str();
+        dstAnimPath += ENGINE_ANIMATION_EXTENSION;
+        writeAnimationFile(dstAnimPath.string().c_str(), animArgs);
     }
 
     std::filesystem::path dstPrefPath = dstDirPath / fileName;
@@ -594,40 +638,35 @@ void GPE::importeTextureFile(const char* srcPath, const char* dstPath, const Tex
 
 void GPE::writeTextureFile(const char* dst, const Texture::ImportArg& data, const TextureImportConfig& config)
 {
-    FILE* pFile = nullptr;
-
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (FILE* pFile = openFileToWrite(dst))
     {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
-        return;
-    }
+        int                      newLen;
+        std::unique_ptr<stbi_uc> imgData;
 
-    int                      newLen;
-    std::unique_ptr<stbi_uc> imgData;
-
-    switch (config.format)
-    {
-    case TextureImportConfig::EFormatType::PNG:
-    default: {
-        imgData.reset(stbi_write_png_to_mem((const unsigned char*)data.pixels.get(), data.w * data.comp, data.w, data.h,
-                                            data.comp, &newLen));
-
-        if (imgData == NULL)
+        switch (config.format)
         {
-            FUNCT_ERROR((std::string("STBI cannot convert pixels to PNG to this dst : ") + dst).c_str());
+        case TextureImportConfig::EFormatType::PNG:
+        default: {
+            imgData.reset(stbi_write_png_to_mem((const unsigned char*)data.pixels.get(), data.w * data.comp, data.w,
+                                                data.h, data.comp, &newLen));
+
+            if (imgData == NULL)
+            {
+                FUNCT_ERROR((std::string("STBI cannot convert pixels to PNG to this dst : ") + dst).c_str());
+            }
+
+            break;
+        }
         }
 
-        break;
+        TextureHeader header{(char)EFileType::TEXTURE, data.properties, newLen};
+        fwrite(&header, sizeof(header), 1, pFile); // header
+
+        fwrite(imgData.get(), newLen, 1, pFile);
+        fclose(pFile);
+
+        Log::getInstance()->log(stringFormat("Texture write to \"%s\"", dst));
     }
-    }
-
-    TextureHeader header{(char)EFileType::TEXTURE, data.properties, newLen};
-    fwrite(&header, sizeof(header), 1, pFile); // header
-
-    fwrite(imgData.get(), newLen, 1, pFile);
-    fclose(pFile);
-
-    Log::getInstance()->log(stringFormat("Texture write to \"%s\"", dst));
 }
 
 Texture::ImportArg GPE::readTextureFile(const char* src)
@@ -695,92 +734,86 @@ struct MaterialHeader
 
 void GPE::writeMaterialFile(const char* dst, const Material& mat)
 {
-    FILE* pFile = nullptr;
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (FILE* pFile = openFileToWrite(dst))
     {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
-        return;
+        std::string uniformStr = "";
+
+        { // Save the uniforms buffers
+            rapidxml::xml_document<> doc;
+            XmlSaver                 context(doc);
+
+            save(context, mat.getUniforms(), XmlSaver::SaveInfo{"uniforms", "Unordered_map", 0});
+            uniformStr = docToString(doc);
+        }
+
+        std::string shaderPath;
+        std::string diffuseTexturePath;
+        std::string normalMapTexturePath;
+
+        if (mat.getShader())
+            if (const std::string* pStr = Engine::getInstance()->resourceManager.getKey(mat.getShader()))
+                shaderPath = *pStr;
+
+        if (mat.getDiffuseTexture())
+            if (const std::string* pStr = Engine::getInstance()->resourceManager.getKey(mat.getDiffuseTexture()))
+                diffuseTexturePath = *pStr;
+
+        if (mat.getNormalMapTexture())
+            if (const std::string* pStr = Engine::getInstance()->resourceManager.getKey(mat.getNormalMapTexture()))
+                normalMapTexturePath = *pStr;
+
+        MaterialHeader header{(char)EFileType::MATERIAL,
+                              mat.getComponent(),
+                              static_cast<int>(shaderPath.size()),
+                              static_cast<int>(diffuseTexturePath.size()),
+                              static_cast<int>(normalMapTexturePath.size()),
+                              uniformStr.size()};
+
+        fwrite(&header, sizeof(header), 1, pFile); // header
+
+        fwrite(shaderPath.data(), sizeof(char), header.pathShaderLenght, pFile);                  // string buffer
+        fwrite(diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);  // string buffer
+        fwrite(normalMapTexturePath.data(), sizeof(char), header.pathNormapTextureLenght, pFile); // string buffer
+        fwrite(uniformStr.data(), sizeof(char), uniformStr.size(), pFile);                        // string buffer
+
+        fclose(pFile);
+        Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
     }
-
-    std::string uniformStr = "";
-
-    { // Save the uniforms buffers
-        rapidxml::xml_document<> doc;
-        XmlSaver                 context(doc);
-
-        save(context, mat.getUniforms(), XmlSaver::SaveInfo{"uniforms", "Unordered_map", 0});
-        uniformStr = docToString(doc);
-    }
-
-    std::string shaderPath;
-    std::string diffuseTexturePath;
-    std::string normalMapTexturePath;
-
-    if (mat.getShader())
-        if (const std::string* pStr = Engine::getInstance()->resourceManager.getKey(mat.getShader()))
-            shaderPath = *pStr;
-
-    if (mat.getDiffuseTexture())
-        if (const std::string* pStr = Engine::getInstance()->resourceManager.getKey(mat.getDiffuseTexture()))
-            diffuseTexturePath = *pStr;
-
-    if (mat.getNormalMapTexture())
-        if (const std::string* pStr = Engine::getInstance()->resourceManager.getKey(mat.getNormalMapTexture()))
-            normalMapTexturePath = *pStr;
-
-    MaterialHeader header{(char)EFileType::MATERIAL,
-                          mat.getComponent(),
-                          static_cast<int>(shaderPath.size()),
-                          static_cast<int>(diffuseTexturePath.size()),
-                          static_cast<int>(normalMapTexturePath.size()),
-                          uniformStr.size()};
-
-    fwrite(&header, sizeof(header), 1, pFile); // header
-
-    fwrite(shaderPath.data(), sizeof(char), header.pathShaderLenght, pFile);                  // string buffer
-    fwrite(diffuseTexturePath.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);  // string buffer
-    fwrite(normalMapTexturePath.data(), sizeof(char), header.pathNormapTextureLenght, pFile); // string buffer
-    fwrite(uniformStr.data(), sizeof(char), uniformStr.size(), pFile);                        // string buffer
-
-    fclose(pFile);
-    Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
 }
 
 void GPE::writeMaterialFile(const char* dst, const Material::ImporteArg& arg)
 {
-    FILE* pFile = nullptr;
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (FILE* pFile = openFileToWrite(dst))
     {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
-        return;
+        std::string uniformStr = "";
+
+        { // Save the uniforms buffers
+            rapidxml::xml_document<> doc;
+            XmlSaver                 context(doc);
+
+            save(context, arg.uniforms, XmlSaver::SaveInfo{"uniforms", "Unordered_map", 0});
+            uniformStr = docToString(doc);
+        }
+
+        MaterialHeader header{(char)EFileType::MATERIAL,
+                              arg.comp,
+                              static_cast<int>(arg.shaderPath.path.size()),
+                              static_cast<int>(arg.diffuseTexturePath.path.size()),
+                              static_cast<int>(arg.normalMapTexturePath.path.size()),
+                              uniformStr.size()};
+
+        fwrite(&header, sizeof(header), 1, pFile); // header
+
+        fwrite(arg.shaderPath.path.data(), sizeof(char), header.pathShaderLenght, pFile); // string buffer
+        fwrite(arg.diffuseTexturePath.path.data(), sizeof(char), header.pathDiffuseTextureLenght,
+               pFile); // string buffer
+        fwrite(arg.normalMapTexturePath.path.data(), sizeof(char), header.pathNormapTextureLenght,
+               pFile);                                                     // string buffer
+        fwrite(uniformStr.data(), sizeof(char), uniformStr.size(), pFile); // string buffer
+
+        fclose(pFile);
+        Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
     }
-
-    std::string uniformStr = "";
-
-    { // Save the uniforms buffers
-        rapidxml::xml_document<> doc;
-        XmlSaver                 context(doc);
-
-        save(context, arg.uniforms, XmlSaver::SaveInfo{"uniforms", "Unordered_map", 0});
-        uniformStr = docToString(doc);
-    }
-
-    MaterialHeader header{(char)EFileType::MATERIAL,
-                          arg.comp,
-                          static_cast<int>(arg.shaderPath.path.size()),
-                          static_cast<int>(arg.diffuseTexturePath.path.size()),
-                          static_cast<int>(arg.normalMapTexturePath.path.size()),
-                          uniformStr.size()};
-
-    fwrite(&header, sizeof(header), 1, pFile); // header
-
-    fwrite(arg.shaderPath.path.data(), sizeof(char), header.pathShaderLenght, pFile);                  // string buffer
-    fwrite(arg.diffuseTexturePath.path.data(), sizeof(char), header.pathDiffuseTextureLenght, pFile);  // string buffer
-    fwrite(arg.normalMapTexturePath.path.data(), sizeof(char), header.pathNormapTextureLenght, pFile); // string buffer
-    fwrite(uniformStr.data(), sizeof(char), uniformStr.size(), pFile);                                 // string buffer
-
-    fclose(pFile);
-    Log::getInstance()->log(stringFormat("Material write to \"%s\"", dst));
 }
 
 Material::ImporteArg GPE::readMaterialFile(const char* src)
@@ -873,36 +906,31 @@ struct MeshHeader
 
 void GPE::writeMeshFile(const char* dst, const Mesh::VertexData& arg)
 {
-    FILE* pFile = nullptr;
-
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (FILE* pFile = openFileToWrite(dst))
     {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
-        return;
+        rapidxml::xml_document<> doc;
+        XmlSaver                 context(doc);
+        GPE::save(context, arg.descriptor, XmlSaver::SaveInfo{"Descriptor", "Vector<Shader::Attribute>", 0});
+        std::string descriptorStr = docToString(doc);
+
+        MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.dataBufferSize),
+                          arg.indices ? static_cast<int>(arg.elemCount) : 0, descriptorStr.size(),
+                          static_cast<unsigned char>(arg.boundingVolumeType)};
+        fwrite(&header, sizeof(header), 1, pFile); // header
+
+        fwrite(descriptorStr.data(), sizeof(char), descriptorStr.size(), pFile); // header
+
+        fwrite(arg.data, header.dataBufferSize, 1, pFile);                    // vertice buffer
+        fwrite(arg.indices, sizeof(unsigned int), header.indiceCount, pFile); // indice buffer
+
+        for (unsigned int i = 0; i < header.indiceCount; ++i)
+        {
+            unsigned int a = arg.indices[i];
+        }
+
+        fclose(pFile);
+        Log::getInstance()->log(stringFormat("Mesh write to \"%s\"", dst));
     }
-
-    rapidxml::xml_document<> doc;
-    XmlSaver                 context(doc);
-    GPE::save(context, arg.descriptor, XmlSaver::SaveInfo{"Descriptor", "Vector<Shader::Attribute>", 0});
-    std::string descriptorStr = docToString(doc);
-
-    MeshHeader header{(char)EFileType::MESH, static_cast<int>(arg.dataBufferSize),
-                      arg.indices ? static_cast<int>(arg.elemCount) : 0, descriptorStr.size(),
-                      static_cast<unsigned char>(arg.boundingVolumeType)};
-    fwrite(&header, sizeof(header), 1, pFile); // header
-
-    fwrite(descriptorStr.data(), sizeof(char), descriptorStr.size(), pFile); // header
-
-    fwrite(arg.data, header.dataBufferSize, 1, pFile);                    // vertice buffer
-    fwrite(arg.indices, sizeof(unsigned int), header.indiceCount, pFile); // indice buffer
-
-    for (unsigned int i = 0; i < header.indiceCount; ++i)
-    {
-        unsigned int a = arg.indices[i];
-    }
-
-    fclose(pFile);
-    Log::getInstance()->log(stringFormat("Mesh write to \"%s\"", dst));
 }
 
 void GPE::readMeshFile(const char* src, Mesh::VertexData& arg)
@@ -967,24 +995,19 @@ struct ShaderHeader
 
 void GPE::writeShaderFile(const char* dst, const ShaderCreateConfig& arg)
 {
-    FILE* pFile = nullptr;
-
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (FILE* pFile = openFileToWrite(dst))
     {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
-        return;
+        ShaderHeader header{(char)EFileType::SHADER, static_cast<int>(arg.vertexShaderPath.size()),
+                            static_cast<int>(arg.fragmentShaderPath.size()), arg.featureMask};
+        fwrite(&header, sizeof(header), 1, pFile); // header
+
+        fwrite(arg.vertexShaderPath.data(), sizeof(char), arg.vertexShaderPath.size(), pFile);     // string buffer
+        fwrite(arg.fragmentShaderPath.data(), sizeof(char), arg.fragmentShaderPath.size(), pFile); // string buffer
+
+        fclose(pFile);
+
+        Log::getInstance()->log(stringFormat("Shader write to \"%s\"", dst));
     }
-
-    ShaderHeader header{(char)EFileType::SHADER, static_cast<int>(arg.vertexShaderPath.size()),
-                        static_cast<int>(arg.fragmentShaderPath.size()), arg.featureMask};
-    fwrite(&header, sizeof(header), 1, pFile); // header
-
-    fwrite(arg.vertexShaderPath.data(), sizeof(char), arg.vertexShaderPath.size(), pFile);     // string buffer
-    fwrite(arg.fragmentShaderPath.data(), sizeof(char), arg.fragmentShaderPath.size(), pFile); // string buffer
-
-    fclose(pFile);
-
-    Log::getInstance()->log(stringFormat("Shader write to \"%s\"", dst));
 }
 
 ShaderCreateConfig GPE::readShaderFile(const char* src)
@@ -1048,21 +1071,16 @@ struct PrefabHeader
 
 void GPE::writePrefabFile(const char* dst, const SavedScene::CreateArg& arg)
 {
-    FILE* pFile = nullptr;
-
-    if (fopen_s(&pFile, dst, "wb"))
+    if (FILE* pFile = openFileToWrite(dst))
     {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
-        return;
+        SceneHeader header{(char)EFileType::PREFAB, (uint16_t)arg.type};
+        fwrite(&header, sizeof(header), 1, pFile); // header
+
+        fwrite(arg.data.data(), sizeof(char), arg.data.size(), pFile); // string buffer
+        fclose(pFile);
+
+        Log::getInstance()->log(stringFormat("Prefab write to \"%s\"", dst));
     }
-
-    SceneHeader header{(char)EFileType::PREFAB, (uint16_t)arg.type};
-    fwrite(&header, sizeof(header), 1, pFile); // header
-
-    fwrite(arg.data.data(), sizeof(char), arg.data.size(), pFile); // string buffer
-    fclose(pFile);
-
-    Log::getInstance()->log(stringFormat("Prefab write to \"%s\"", dst));
 }
 
 SavedScene::CreateArg GPE::readPrefabFile(const char* src)
@@ -1100,21 +1118,16 @@ SavedScene::CreateArg GPE::loadPrefabFile(const char* src)
 
 void GPE::writeSceneFile(const char* dst, const SavedScene::CreateArg& arg)
 {
-    FILE* pFile = nullptr;
-
-    if (fopen_s(&pFile, dst, "wb"))
+    if (FILE* pFile = openFileToWrite(dst))
     {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
-        return;
+        SceneHeader header{(char)EFileType::SCENE, (uint16_t)arg.type};
+        fwrite(&header, sizeof(header), 1, pFile); // header
+
+        fwrite(arg.data.data(), sizeof(char), arg.data.size(), pFile); // string buffer
+        fclose(pFile);
+
+        Log::getInstance()->log(stringFormat("Scene write to \"%s\"", dst));
     }
-
-    SceneHeader header{(char)EFileType::SCENE, (uint16_t)arg.type};
-    fwrite(&header, sizeof(header), 1, pFile); // header
-
-    fwrite(arg.data.data(), sizeof(char), arg.data.size(), pFile); // string buffer
-    fclose(pFile);
-
-    Log::getInstance()->log(stringFormat("Scene write to \"%s\"", dst));
 }
 
 #include <fstream>
@@ -1161,25 +1174,20 @@ struct SkeletonHeader
 
 void GPE::writeSkeletonFile(const char* dst, const Skeleton::CreateArgs& arg)
 {
-    FILE* pFile = nullptr;
-
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (FILE* pFile = openFileToWrite(dst))
     {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
-        return;
+        SkeletonHeader header{(char)EFileType::MESH, int(arg.m_boneInfoMap.size())};
+
+        fwrite(&header, sizeof(header), 1, pFile); // header
+
+        GPE::BinarySaver saver;
+        saver.file = pFile;
+        GPE::save(saver, arg.m_boneInfoMap, nullptr);
+        GPE::save(saver, arg.m_root, nullptr);
+
+        fclose(pFile);
+        Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
     }
-
-    SkeletonHeader header{(char)EFileType::MESH, int(arg.m_boneInfoMap.size())};
-
-    fwrite(&header, sizeof(header), 1, pFile); // header
-
-    GPE::BinarySaver saver;
-    saver.file = pFile;
-    GPE::save(saver, arg.m_boneInfoMap, nullptr);
-    GPE::save(saver, arg.m_root, nullptr);
-
-    fclose(pFile);
-    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
 }
 
 Skeleton::CreateArgs GPE::readSkeletonFile(const char* src)
@@ -1227,24 +1235,19 @@ struct AnimationHeader
 
 void GPE::writeAnimationFile(const char* dst, const Animation::CreateArgs& arg)
 {
-    FILE* pFile = nullptr;
-
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (FILE* pFile = openFileToWrite(dst))
     {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
-        return;
+        AnimationHeader header{(char)EFileType::ANIMATION};
+        fwrite(&header, sizeof(header), 1, pFile); // header
+        GPE::BinarySaver saver;
+        saver.file = pFile;
+        GPE::save(saver, arg.duration, nullptr);
+        GPE::save(saver, arg.nbTicksPerSecond, nullptr);
+        GPE::save(saver, arg.bones, nullptr);
+
+        fclose(pFile);
+        Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
     }
-
-    AnimationHeader header{(char)EFileType::ANIMATION};
-    fwrite(&header, sizeof(header), 1, pFile); // header
-    GPE::BinarySaver saver;
-    saver.file = pFile;
-    GPE::save(saver, arg.duration, nullptr);
-    GPE::save(saver, arg.nbTicksPerSecond, nullptr);
-    GPE::save(saver, arg.bones, nullptr);
-
-    fclose(pFile);
-    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
 }
 
 Animation::CreateArgs GPE::readAnimationFile(const char* src)
@@ -1291,23 +1294,18 @@ struct SkinHeader
 
 void GPE::writeSkinFile(const char* dst, const Skin::CreateArgs& arg)
 {
-    FILE* pFile = nullptr;
-
-    if (fopen_s(&pFile, dst, "w+b"))
+    if (FILE* pFile = openFileToWrite(dst))
     {
-        Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", dst));
-        return;
+        MeshHeader header{(char)EFileType::MESH};
+        fwrite(&header, sizeof(header), 1, pFile); // header
+
+        GPE::BinarySaver saver;
+        saver.file = pFile;
+        GPE::save(saver, arg.m_verticesBoneData, nullptr);
+
+        fclose(pFile);
+        Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
     }
-
-    MeshHeader header{(char)EFileType::MESH};
-    fwrite(&header, sizeof(header), 1, pFile); // header
-
-    GPE::BinarySaver saver;
-    saver.file = pFile;
-    GPE::save(saver, arg.m_verticesBoneData, nullptr);
-
-    fclose(pFile);
-    Log::getInstance()->log(stringFormat("File write to \"%s\"", dst));
 }
 
 Skin::CreateArgs GPE::readSkinFile(const char* src)
