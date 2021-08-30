@@ -35,8 +35,6 @@ File_GENERATED
         GPE::DataInspector::inspect(context, pMat->getComponent().opacity, "opacity");
         m_canSaveInHardDisk |= context.wasLastDirty();
 
-        GPE::DataInspector::inspect(context, pMat->getComponent().opacity, "opacity");
-
         ImGui::Separator();
 
         {
