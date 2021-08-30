@@ -169,19 +169,19 @@ void RenderSystem::renderFurstum(const Frustum& frustum, float size)
     drawDebugQuad(pos, frustum.bottomFace.getNormal(), Vec3::one() * size, ColorRGBA{0.5f, 1.0f, 0.5f, 0.8f});
 }
 
-bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubModel) noexcept
+bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel& subModel) noexcept
 {
-    switch (pSubModel->pMesh->getBoundingVolumeType())
+    switch (subModel.pMesh->getBoundingVolumeType())
     {
 
     case Mesh::EBoundingVolume::SPHERE: {
-        const Sphere* pBoudingSphere = static_cast<const Sphere*>(pSubModel->pMesh->getBoundingVolume());
+        const Sphere* pBoudingSphere = static_cast<const Sphere*>(subModel.pMesh->getBoundingVolume());
 
-        const Vec3 globalScale = pSubModel->pModel->getOwner().getTransform().getGlobalScale();
+        const Vec3 globalScale = subModel.pModel->getOwner().getTransform().getGlobalScale();
         float maxScale = std::max(std::max(std::abs(globalScale.x), std::abs(globalScale.y)), std::abs(globalScale.z));
 
         const Vec4 posMat =
-            pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pBoudingSphere->getCenter(), 1.f);
+            subModel.pModel->getOwner().getTransform().getModelMatrix() * Vector4(pBoudingSphere->getCenter(), 1.f);
         const Vec3 pos{posMat.x, posMat.y, posMat.z};
 
         Sphere globalSphere(pBoudingSphere->getRadius() * (maxScale * 0.5f), pos);
@@ -198,16 +198,16 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
 
     case Mesh::EBoundingVolume::AABB: {
 
-        const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
+        const AABB* pAABB = static_cast<const AABB*>(subModel.pMesh->getBoundingVolume());
 
         // Position
-        const Vec4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f);
+        const Vec4 posMat = subModel.pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f);
         const Vec3 pos{posMat.x, posMat.y, posMat.z};
 
         // Scaled orientation
-        const Vec3 right   = pSubModel->pModel->getOwner().getTransform().get().right() * pAABB->extents.x;
-        const Vec3 up      = pSubModel->pModel->getOwner().getTransform().get().up() * pAABB->extents.y;
-        const Vec3 forward = pSubModel->pModel->getOwner().getTransform().get().forward() * pAABB->extents.z;
+        const Vec3 right   = subModel.pModel->getOwner().getTransform().get().right() * pAABB->extents.x;
+        const Vec3 up      = subModel.pModel->getOwner().getTransform().get().up() * pAABB->extents.y;
+        const Vec3 forward = subModel.pModel->getOwner().getTransform().get().forward() * pAABB->extents.z;
 
         const float newIi =
             std::abs(Vec3::right().dot(right)) + std::abs(Vec3::right().dot(up)) + std::abs(Vec3::right().dot(forward));
@@ -542,7 +542,7 @@ void RenderSystem::renderFrustumCulling(FrustumRenderStats& stats) noexcept
     {
         stats.totalTriangleRequest += pSubModel->pMesh->getVerticesCount();
         stats.totalMeshRequest++;
-        if (!isOnFrustum(camFrustum, pSubModel))
+        if (!isOnFrustum(camFrustum, *pSubModel))
         {
             displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
             continue;
@@ -559,7 +559,7 @@ void RenderSystem::renderFrustumCulling(FrustumRenderStats& stats) noexcept
     {
         stats.totalTriangleRequest += pSubModel->pMesh->getVerticesCount();
         stats.totalMeshRequest++;
-        if (!isOnFrustum(camFrustum, pSubModel))
+        if (!isOnFrustum(camFrustum, *pSubModel))
         {
             displayBoundingVolume(pSubModel, ColorRGBA{1.f, 0.f, 0.f, 0.2f});
             continue;
@@ -598,7 +598,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
             for (auto&& pSubModel : pOpaqueSubModels)
             {
-                if (!rs.isOnFrustum(camFrustum, pSubModel))
+                if (!rs.isOnFrustum(camFrustum, *pSubModel))
                 {
                     continue;
                 }
@@ -677,7 +677,7 @@ RenderSystem::RenderPipeline RenderSystem::defaultRenderPipeline() const noexcep
 
             for (auto&& pSubModel : pTransparenteSubModels)
             {
-                if (rs.isOnFrustum(camFrustum, pSubModel))
+                if (rs.isOnFrustum(camFrustum, *pSubModel))
                 {
                     float distance = (pMainCamera->getOwner().getTransform().getGlobalPosition() -
                                       (pSubModel->pModel->getOwner().getTransform().getGlobalPosition()))
@@ -741,7 +741,7 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
             for (auto&& pSubModel : pOpaqueSubModels)
             {
                 if ((pSubModel->pMaterial->getShader()->getFeature() & SKYBOX) == SKYBOX ||
-                    !rs.isOnFrustum(camFrustum, pSubModel))
+                    !rs.isOnFrustum(camFrustum, *pSubModel))
                     continue;
 
                 glUniform1ui(idLocation, pSubModel->pModel->getOwner().getID());
@@ -758,7 +758,7 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
             for (auto&& pSubModel : pTransparenteSubModels)
             {
                 if ((pSubModel->pMaterial->getShader()->getFeature() & SKYBOX) == SKYBOX ||
-                    !rs.isOnFrustum(camFrustum, pSubModel))
+                    !rs.isOnFrustum(camFrustum, *pSubModel))
                     continue;
 
                 glUniform1ui(glGetUniformLocation(shaderGameObjectIdentifier.getID(), "id"),

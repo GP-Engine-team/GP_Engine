@@ -5,12 +5,12 @@
  */
 
 #include <Engine/ECS/Component/AnimationComponent.hpp>
+#include <Engine/ECS/Component/Camera.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Animation/Animation.hpp>
 #include <Engine/Resources/Animation/Skeleton.hpp>
 #include <Engine/Resources/Animation/Skin.hpp>
-#include <Engine/ECS/Component/Camera.hpp>
 #include <assimp/Importer.hpp>  // C++ importer interface
 #include <assimp/postprocess.h> // Post processing flags
 #include <assimp/scene.h>       // Output data structure
@@ -130,9 +130,11 @@ void AnimationComponent::update(float deltaTime)
 
         m_currentTime = fmod(m_currentTime, m_currentAnimation->getDuration());
 
-        if (RenderSystem::isOnFrustum(GPE::Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.getMainCamera()->getFrustum(), &m_model->getSubModel(m_subModelIndex)))
+        const SubModel* pSubModel = m_model->getSubModel(m_subModelIndex);
+        if (pSubModel && RenderSystem::isOnFrustum(
+                GPE::Engine::getInstance()->sceneManager.getCurrentScene()->sceneRenderer.getMainCamera()->getFrustum(),
+                *pSubModel))
         {
-
             calculateBoneTransform(m_skeleton->getRoot(), GPM::Mat4::identity());
         }
     }

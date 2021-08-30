@@ -172,12 +172,12 @@ FILE* openFileToWrite(const char* path)
     if (fopen_s(&pFile, path, "w+b"))
     {
         // file name can contain illegal character. Change it and retry
-        std::filesystem::path path     = path;
-        std::string           fileName = path.stem().string();
+        std::filesystem::path fsPath   = path;
+        std::string           fileName = fsPath.stem().string();
         removeIllegalCharsForPath(fileName);
-        path.replace_filename(fileName + path.extension().string());
+        fsPath.replace_filename(fileName + fsPath.extension().string());
 
-        if (fopen_s(&pFile, path.string().c_str(), "w+b"))
+        if (fopen_s(&pFile, fsPath.string().c_str(), "w+b"))
         {
             Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to write", path));
             return nullptr;
@@ -941,6 +941,7 @@ void GPE::readMeshFile(const char* src, Mesh::VertexData& arg)
     if (srcPath.extension() != ENGINE_MESH_EXTENSION || fopen_s(&pFile, src, "rb"))
     {
         Log::getInstance()->logError(stringFormat("The file \"%s\" was not opened to read", src));
+        return;
     }
 
     MeshHeader header;

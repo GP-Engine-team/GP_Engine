@@ -69,7 +69,7 @@ template <>
 void load(XmlLoader& context, Shader*& data, const XmlLoader::LoadInfo& info)
 {
     std::string shaderName;
-    GPE::load(context, shaderName, XmlLoader::LoadInfo{"pShader", "Shader*", 0});
+    GPE::load(context, shaderName, XmlLoader::LoadInfo{info.name, info.typeName, 0});
     if (!(data = Engine::getInstance()->resourceManager.get<GPE::Shader>(shaderName)))
     {
         data = loadShaderFile(shaderName.c_str());
@@ -80,7 +80,7 @@ template <>
 void load(XmlLoader& context, Mesh*& data, const XmlLoader::LoadInfo& info)
 {
     std::string meshName;
-    GPE::load(context, meshName, XmlLoader::LoadInfo{"pMesh", "Mesh*", 0});
+    GPE::load(context, meshName, XmlLoader::LoadInfo{info.name, info.typeName, 0});
     if (!(data = Engine::getInstance()->resourceManager.get<GPE::Mesh>(meshName)))
     {
         data = loadMeshFile(meshName.c_str());
@@ -91,7 +91,7 @@ template <>
 void load(XmlLoader& context, Material*& data, const XmlLoader::LoadInfo& info)
 {
     std::string materialName;
-    GPE::load(context, materialName, XmlLoader::LoadInfo{"pMaterial", "Material*", 0});
+    GPE::load(context, materialName, XmlLoader::LoadInfo{info.name, info.typeName, 0});
     if (!(data = Engine::getInstance()->resourceManager.get<GPE::Material>(materialName)))
     {
         data = loadMaterialFile(materialName.c_str());
@@ -102,7 +102,7 @@ template <>
 void load(XmlLoader& context, Texture*& data, const XmlLoader::LoadInfo& info)
 {
     std::string textureName;
-    GPE::load(context, textureName, XmlLoader::LoadInfo{"pTexture", "Texture*", 0});
+    GPE::load(context, textureName, XmlLoader::LoadInfo{info.name, info.typeName, 0});
     if (!(data = Engine::getInstance()->resourceManager.get<GPE::Texture>(textureName)))
     {
         data = loadTextureFile(textureName.c_str());

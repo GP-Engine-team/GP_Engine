@@ -113,7 +113,7 @@ namespace GPE RFKNamespace()
 
         bool hasAnimationsLinked() const;
 
-        const SubModel& getSubModel(size_t index) const;
+        const SubModel* getSubModel(size_t index) const;
 
         /**
          * @brief Function to return the local AABB (do not considere the position, scale and rotation of transform)
