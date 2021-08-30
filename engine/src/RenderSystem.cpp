@@ -58,16 +58,24 @@ void RenderSystem::displayBoundingVolume(const SubModel* pSubModel, const ColorR
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vec3    globalScale = pSubModel->pModel->getOwner().getTransform().getGlobalScale();
-        const Vector3 scale(std::abs(globalScale.x) * pAABB->extents.x * 2.f,
-                            std::abs(globalScale.y) * pAABB->extents.y * 2.f,
-                            std::abs(globalScale.z) * pAABB->extents.z * 2.f);
+        // Position
+        const Vec4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f);
+        const Vec3 pos{posMat.x, posMat.y, posMat.z};
 
-        const Vector4 posMat =
-            pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
-        const Vector3 pos{posMat.x, posMat.y, posMat.z};
+        // Scaled orientation
+        const Vec3 right   = pSubModel->pModel->getOwner().getTransform().get().right() * pAABB->extents.x;
+        const Vec3 up      = pSubModel->pModel->getOwner().getTransform().get().up() * pAABB->extents.y;
+        const Vec3 forward = pSubModel->pModel->getOwner().getTransform().get().forward() * pAABB->extents.z;
 
-        drawDebugCube(pos, Quat::identity(), scale, color, 0.f, RenderSystem::EDebugShapeMode::FILL);
+        const float newIi =
+            std::abs(Vec3::right().dot(right)) + std::abs(Vec3::right().dot(up)) + std::abs(Vec3::right().dot(forward));
+        const float newIj =
+            std::abs(Vec3::up().dot(right)) + std::abs(Vec3::up().dot(up)) + std::abs(Vec3::up().dot(forward));
+        const float newIk = std::abs(Vec3::forward().dot(right)) + std::abs(Vec3::forward().dot(up)) +
+                            std::abs(Vec3::forward().dot(forward));
+
+        drawDebugCube(pos, Quat::identity(), {newIi * 2.f, newIj * 2.f, newIk * 2.f}, color, 0.f,
+                      RenderSystem::EDebugShapeMode::FILL);
     }
     break;
     default:
@@ -172,9 +180,9 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
         const Vec3 globalScale = pSubModel->pModel->getOwner().getTransform().getGlobalScale();
         float maxScale = std::max(std::max(std::abs(globalScale.x), std::abs(globalScale.y)), std::abs(globalScale.z));
 
-        const Vector4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() *
-                               Vector4(pBoudingSphere->getCenter(), 1.f).homogenized();
-        const Vector3 pos{posMat.x, posMat.y, posMat.z};
+        const Vec4 posMat =
+            pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pBoudingSphere->getCenter(), 1.f);
+        const Vec3 pos{posMat.x, posMat.y, posMat.z};
 
         Sphere globalSphere(pBoudingSphere->getRadius() * (maxScale * 0.5f), pos);
 
@@ -192,16 +200,23 @@ bool RenderSystem::isOnFrustum(const Frustum& camFrustum, const SubModel* pSubMo
 
         const AABB* pAABB = static_cast<const AABB*>(pSubModel->pMesh->getBoundingVolume());
 
-        const Vec3    globalScale = pSubModel->pModel->getOwner().getTransform().getGlobalScale();
-        const Vector3 scale(std::abs(globalScale.x) * pAABB->extents.x * 2.f,
-                            std::abs(globalScale.y) * pAABB->extents.y * 2.f,
-                            std::abs(globalScale.z) * pAABB->extents.z * 2.f);
+        // Position
+        const Vec4 posMat = pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f);
+        const Vec3 pos{posMat.x, posMat.y, posMat.z};
 
-        const Vector4 posMat =
-            pSubModel->pModel->getOwner().getTransform().getModelMatrix() * Vector4(pAABB->center, 1.f).homogenized();
-        const Vector3 pos{posMat.x, posMat.y, posMat.z};
+        // Scaled orientation
+        const Vec3 right   = pSubModel->pModel->getOwner().getTransform().get().right() * pAABB->extents.x;
+        const Vec3 up      = pSubModel->pModel->getOwner().getTransform().get().up() * pAABB->extents.y;
+        const Vec3 forward = pSubModel->pModel->getOwner().getTransform().get().forward() * pAABB->extents.z;
 
-        AABB globalAABB(pos, scale.x / 2.f, scale.y / 2.f, scale.z / 2.f);
+        const float newIi =
+            std::abs(Vec3::right().dot(right)) + std::abs(Vec3::right().dot(up)) + std::abs(Vec3::right().dot(forward));
+        const float newIj =
+            std::abs(Vec3::up().dot(right)) + std::abs(Vec3::up().dot(up)) + std::abs(Vec3::up().dot(forward));
+        const float newIk = std::abs(Vec3::forward().dot(right)) + std::abs(Vec3::forward().dot(up)) +
+                            std::abs(Vec3::forward().dot(forward));
+
+        const AABB globalAABB(pos, newIi, newIj, newIk);
 
         return (AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.leftFace) &&
                 AABBPlane::isAABBOnOrForwardPlane(globalAABB, camFrustum.rightFace) &&
@@ -734,10 +749,9 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
-                shaderGameObjectIdentifier.sendData(
-                    "projectViewModelMatrix",
-                    (pMainCamera->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                        .e);
+                shaderGameObjectIdentifier.sendData("projectViewModelMatrix",
+                                                    pMainCamera->getProjectionView() *
+                                                        pSubModel->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*pSubModel);
             }
 
@@ -753,10 +767,9 @@ RenderSystem::RenderPipeline RenderSystem::mousePickingPipeline() const noexcept
                 rs.tryToBindMesh(pSubModel->pMesh->getID());
                 rs.tryToSetBackFaceCulling(pSubModel->enableBackFaceCulling);
 
-                shaderGameObjectIdentifier.sendData(
-                    "projectViewModelMatrix",
-                    (pMainCamera->getProjectionView() * pSubModel->pModel->getOwner().getTransform().getModelMatrix())
-                        .e);
+                shaderGameObjectIdentifier.sendData("projectViewModelMatrix",
+                                                    pMainCamera->getProjectionView() *
+                                                        pSubModel->pModel->getOwner().getTransform().getModelMatrix());
                 rs.drawModelPart(*pSubModel);
             }
         }
