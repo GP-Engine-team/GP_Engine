@@ -73,7 +73,7 @@ void MainMenu::onGUI()
     PopFont();
     ImGui::SetWindowFontScale(previousFontScale);
 
-    std::string creditsText     = "Credits : \n - Jonathan Six \n - Sami Amara \n - Thomas Dallard \n - William Nardone"; 
+    std::string creditsText = "Credits : \n - Jonathan Six \n - Sami Amara \n - Thomas Dallard \n - William Nardone";
     ImVec2      creditsTextSize = ImGui::CalcTextSize(creditsText.c_str());
     SetCursorPosX(GetWindowSize().x - creditsTextSize.x - 30);
     SetCursorPosY(GetWindowSize().y - creditsTextSize.y - 20);
@@ -87,6 +87,10 @@ MainMenu::~MainMenu() noexcept
 void MainMenu::inspect(GPE::InspectContext& context)
 {
     Component::inspect(context);
+
+    defaultInspect(context);
+
+    GPE::DataInspector::inspect(context, m_buttonTexture, "Button texture");
 
     ImGui::Text("Scene to load : ");
     ImGui::SameLine();

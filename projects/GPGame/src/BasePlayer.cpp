@@ -122,7 +122,10 @@ void BasePlayer::start()
     input->bindAction("exit", EKeyMode::KEY_PRESSED, "Game", this, "leave");
     input->bindAction("sprintStart", EKeyMode::KEY_PRESSED, "Game", this, "sprintStart");
     input->bindAction("sprintEnd", EKeyMode::KEY_RELEASED, "Game", this, "sprintEnd");
+
     input->bindAction("shoot", EKeyMode::KEY_DOWN, "Game", this, "shoot");
+    //  input->fireAction("shoot");
+
     input->bindAction("aimBegin", EKeyMode::KEY_PRESSED, "Game", this, "aimBegin");
     input->bindAction("aimEnd", EKeyMode::KEY_RELEASED, "Game", this, "aimEnd");
     input->bindAction("playAmbiantMusic", EKeyMode::KEY_PRESSED, "Game", this, "playAmbiantMusic");
