@@ -1,3 +1,1 @@
-#include "Engine/Serialization/ReadOnly.hpp"
-
-File_GENERATED
+#include <Generated/ReadOnly.cpp.h>

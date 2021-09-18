@@ -1,12 +1,8 @@
 ﻿#include "Engine/Core/Debug/Log.hpp"
 #include "Engine/Engine.hpp"
-#include <Engine/ECS/Component/AudioComponent.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 
-// Generated
-#include "Generated/AudioComponent.rfk.h"
-
-File_GENERATED
+#include <Generated/AudioComponent.cpp.h>
 
     using namespace GPE;
 using namespace std;

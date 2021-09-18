@@ -2,10 +2,7 @@
 #include "Engine/Serialization/DataInspector.hpp"
 #include "imgui.h"
 
-#include "Engine/ECS/Component/Component.hpp"
-
-#include "Generated/Component.rfk.h"
-File_GENERATED
+#include <Generated/Component.cpp.h>
 
 GPE::Component::~Component() noexcept
 {

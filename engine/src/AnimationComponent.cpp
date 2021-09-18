@@ -4,7 +4,6 @@
  * found in the top-level directory of this distribution.
  */
 
-#include <Engine/ECS/Component/AnimationComponent.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Animation/Animation.hpp>
@@ -14,9 +13,7 @@
 #include <assimp/postprocess.h> // Post processing flags
 #include <assimp/scene.h>       // Output data structure
 
-// Generated
-#include <Generated/AnimationComponent.rfk.h>
-File_GENERATED
+#include <Generated/AnimationComponent.cpp.h>
 
     using namespace GPE;
 

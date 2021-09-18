@@ -1,5 +1,3 @@
-#include <Engine/ECS/Component/ShakeEffect.hpp>
-
 #include <GPM/Calc.hpp>
 #include <GPM/Quaternion.hpp>
 #include <GPM/Random.hpp>
@@ -8,9 +6,7 @@
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/ECS/Component/TransformComponent.hpp>
 
-// Generated
-#include "Generated/ShakeEffect.rfk.h"
-File_GENERATED
+#include <Generated/ShakeEffect.cpp.h>
 
     using namespace GPE;
 using namespace GPM;

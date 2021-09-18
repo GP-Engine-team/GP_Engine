@@ -7,10 +7,7 @@
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Wave.hpp>
 
-#include <BaseEnemy.hpp>
-
-#include <Generated/BaseEnemy.rfk.h>
-File_GENERATED
+#include <Generated/BaseEnemy.cpp.h>
 
     using namespace GPG;
 using namespace GPM;

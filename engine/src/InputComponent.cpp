@@ -1,11 +1,9 @@
-﻿#include "Engine/ECS/Component/InputComponent.hpp"
-#include "Engine/ECS/System/InputManagerGLFW.hpp"
+﻿#include "Engine/ECS/System/InputManagerGLFW.hpp"
 #include "Engine/Engine.hpp"
 
 #include <functional>
 
-#include "Generated/InputComponent.rfk.h"
-File_GENERATED
+#include <Generated/InputComponent.cpp.h>
 
 using namespace std;
 using namespace GPE;

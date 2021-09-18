@@ -1,3 +1,1 @@
-#include "Engine/Serialization/DefaultInspect.hpp"
-
-File_GENERATED
+#include <Generated/DefaultInspect.cpp.h>

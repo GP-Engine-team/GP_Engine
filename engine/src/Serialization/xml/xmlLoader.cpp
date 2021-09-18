@@ -234,7 +234,7 @@ void load(XmlLoader& context, rfk::Method const*& data, const XmlLoader::LoadInf
     {
         size_t methodId;
         GPE::load(context, methodId, XmlLoader::LoadInfo{"id", "int", 0});
-        data = rfk::entityCast<rfk::Method>(rfk::Database::getEntity(methodId));
+        data = rfk::entityCast<rfk::Method>(rfk::getDatabase().getEntity(methodId));
 
         context.pop();
     }

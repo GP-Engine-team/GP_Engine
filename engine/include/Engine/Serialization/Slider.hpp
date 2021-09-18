@@ -17,3 +17,5 @@ struct RFKStruct(PropertySettings(rfk::EEntityKind::Struct | rfk::EEntityKind::C
 
     Slider_GENERATED
 };
+
+File_GENERATED

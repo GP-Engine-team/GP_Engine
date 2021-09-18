@@ -1,15 +1,10 @@
-﻿#include <Engine/Core/Physics/Collisions/MeshCollider.hpp>
-
-#include <Engine/Engine.hpp>
-#include <Generated/MeshCollider.rfk.h>
+﻿#include <Engine/Engine.hpp>
 #include <PhysX/cooking/PxConvexMeshDesc.h>
 #include <PhysX/cooking/PxCooking.h>
 #include <PhysX/extensions/PxRigidActorExt.h>
 #include <PhysX/geometry/PxConvexMesh.h>
 
- // Generated
-#include <Generated/MeshCollider.rfk.h>
-File_GENERATED
+#include <Generated/MeshCollider.cpp.h>
 
 using namespace GPE;
 using namespace physx;

@@ -1,14 +1,11 @@
-﻿#include <SpatializedSoundPlayerScript.hpp>
-
-#include <Generated/SpatializedSoundPlayerScript.rfk.h>
-File_GENERATED
-
-#include <Engine/Core/Debug/assert.hpp>
+﻿#include <Engine/Core/Debug/assert.hpp>
 #include <Engine/ECS/Component/AudioComponent.hpp>
 #include <Engine/ECS/System/SoundSystem.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Wave.hpp>
 #include <algorithm>
+
+#include <Generated/SpatializedSoundPlayerScript.cpp.h>
 
     using namespace GPE;
 using namespace GPG;

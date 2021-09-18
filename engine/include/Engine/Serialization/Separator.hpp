@@ -19,3 +19,5 @@ struct RFKStruct(PropertySettings(rfk::EEntityKind::Field)) Separator : public r
 
     Separator_GENERATED
 };
+
+File_GENERATED

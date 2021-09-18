@@ -38,3 +38,5 @@ namespace GPE RFKNamespace()
         SphereCollider_GENERATED
     };
 } // namespace )
+
+File_GENERATED

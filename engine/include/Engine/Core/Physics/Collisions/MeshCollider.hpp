@@ -35,3 +35,5 @@ namespace GPE RFKNamespace()
 		MeshCollider_GENERATED
 	};
 } // namespace )
+
+File_GENERATED

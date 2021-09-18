@@ -30,7 +30,7 @@ void GPE::Function::load(XmlLoader& context)
 
         size_t entityId;
         GPE::load(context, entityId, XmlLoader::LoadInfo{"entityId", "size_t", 0});
-        memberFunction.method = rfk::entityCast<rfk::Method>(rfk::Database::getEntity(entityId));
+        memberFunction.method = rfk::entityCast<rfk::Method>(rfk::getDatabase().getEntity(entityId));
         break;
     }
 }

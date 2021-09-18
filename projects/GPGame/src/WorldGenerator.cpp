@@ -1,12 +1,9 @@
-﻿#include <WorldGenerator.hpp>
-
-#include <Engine/Core/Tools/ImGuiTools.hpp>
+﻿#include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Resources/ResourcesManagerType.hpp>
 #include <GPM/Random.hpp>
 
-#include "Generated/WorldGenerator.rfk.h"
-File_GENERATED
+#include <Generated/WorldGenerator.cpp.h>
 
     using namespace GPG;
 using namespace GPM;

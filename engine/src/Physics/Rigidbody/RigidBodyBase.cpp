@@ -1,11 +1,7 @@
 ﻿#include <Engine/Core/Physics/Collisions/BoxCollider.hpp>
 #include <Engine/Core/Physics/Collisions/SphereCollider.hpp>
-#include <Engine/Core/Physics/RigidBodyBase.hpp>
 
-// Generated
-#include "Generated/RigidbodyBase.rfk.h"
-
-File_GENERATED
+#include <Generated/RigidBodyBase.cpp.h>
 
     using namespace GPE;
 

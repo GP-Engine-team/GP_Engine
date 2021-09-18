@@ -1,5 +1,4 @@
-﻿#include <Firearm/GunMagazine.hpp>
-File_GENERATED
+﻿#include <Generated/GunMagazine.cpp.h>
 
     namespace GPG
 {

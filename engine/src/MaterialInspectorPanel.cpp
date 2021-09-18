@@ -4,8 +4,7 @@
 #include "Engine/Serialization/GPMDataInspector.hpp"
 #include "Engine/Serialization/STDDataInspector.hpp"
 
-#include "Engine/Serialization/MaterialInspectorPanel.hpp"
-File_GENERATED
+#include <Generated/MaterialInspectorPanel.cpp.h>
 
     namespace GPE
 {

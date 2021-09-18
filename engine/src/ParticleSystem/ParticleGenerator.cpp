@@ -1,5 +1,3 @@
-#include <Engine/Resources/ParticleSystem/ParticleGenerator.hpp>
-
 #include "GPM/Random.hpp"
 #include "GPM/Vector4.hpp"
 #include "GPM/constants.hpp"
@@ -7,9 +5,7 @@
 #include <algorithm>
 #include <assert.h>
 
-// Generated
-#include <Generated/ParticleGenerator.rfk.h>
-File_GENERATED
+#include <Generated/ParticleGenerator.cpp.h>
 
 using namespace GPE;
 using namespace GPM;

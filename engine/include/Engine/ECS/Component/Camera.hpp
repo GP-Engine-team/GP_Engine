@@ -18,7 +18,7 @@
 
 #include <GPM/Matrix4.hpp>
 #include <GPM/Shape3D/Plane.hpp>
-#include <gpm/constants.hpp>
+#include <GPM/constants.hpp>
 
 // Generated
 #include <Generated/Camera.rfk.h>
@@ -227,3 +227,5 @@ namespace GPE RFKNamespace()
 } // namespace )
 
 #include "Camera.inl"
+
+File_GENERATED

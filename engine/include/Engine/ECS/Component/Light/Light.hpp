@@ -116,3 +116,5 @@ namespace GPE RFKNamespace()
 } // namespace )
 
 #include "Light.inl"
+
+File_GENERATED

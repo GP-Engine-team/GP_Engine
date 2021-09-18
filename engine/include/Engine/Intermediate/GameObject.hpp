@@ -272,3 +272,5 @@ namespace GPE RFKNamespace()
 } // namespace )
 
 #include "GameObject.inl"
+
+File_GENERATED

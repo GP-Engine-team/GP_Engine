@@ -1,14 +1,10 @@
-#include <Engine/Resources/Prefab.hpp>
-
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Importer/Importer.hpp>
 #include <Engine/Resources/Scene.hpp>
 
 #include <filesystem>
 
-// Generated
-#include "Generated/Prefab.rfk.h"
-File_GENERATED
+#include <Generated/Prefab.cpp.h>
 
     using namespace GPE;
 

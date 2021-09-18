@@ -1,6 +1,3 @@
-#include <Engine/ECS/Component/ParticleComponent.hpp>
-File_GENERATED
-
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
@@ -12,6 +9,8 @@ File_GENERATED
 
 #include <filesystem>
 #include <imgui.h>
+
+#include <Generated/ParticleComponent.cpp.h>
 
     using namespace GPE;
 using namespace GPM;

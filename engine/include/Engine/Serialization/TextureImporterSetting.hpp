@@ -32,3 +32,5 @@ namespace GPE RFKNamespace()
         TextureImporterSetting_GENERATED
     };
 } // namespace )
+
+File_GENERATED

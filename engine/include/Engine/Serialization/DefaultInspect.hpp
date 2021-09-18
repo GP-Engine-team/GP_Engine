@@ -12,3 +12,5 @@ struct RFKStruct(PropertySettings(rfk::EEntityKind::Struct | rfk::EEntityKind::C
 
     DefaultInspect_GENERATED
 };
+
+File_GENERATED

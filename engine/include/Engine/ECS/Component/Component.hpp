@@ -80,3 +80,5 @@ namespace GPE RFKNamespace()
 } // namespace )
 
 #include "Component.inl"
+
+File_GENERATED

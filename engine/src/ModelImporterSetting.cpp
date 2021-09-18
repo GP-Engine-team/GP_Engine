@@ -1,11 +1,9 @@
-#include "Engine/Serialization/ModelImporterSetting.hpp"
-
 #include "Engine/Core/Tools/ImGuiTools.hpp"
 #include "Engine/Serialization/FileExplorer.hpp"
 #include "Engine/Serialization/GPMDataInspector.hpp"
 #include "Engine/Serialization/STDDataInspector.hpp"
 
-File_GENERATED
+#include <Generated/ModelImporterSetting.cpp.h>
 
     namespace GPE
 {

@@ -1,11 +1,8 @@
-#include <CircularEntitiesSpawner.hpp>
-
 #include <Engine/Intermediate/GameObject.hpp>
 #include <gpm/Random.hpp>
 #include <gpm/Vector3.hpp>
 
-#include <Generated/CircularEntitiesSpawner.rfk.h>
-File_GENERATED
+#include <Generated/CircularEntitiesSpawner.cpp.h>
 
     using namespace GPE;
 using namespace GPG;

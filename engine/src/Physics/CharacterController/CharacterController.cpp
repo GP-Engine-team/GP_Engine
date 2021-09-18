@@ -1,6 +1,4 @@
-﻿#include <Engine/ECS/Component/Physics/CharacterController/CharacterController.hpp>
-
-#include <Engine/Engine.hpp>
+﻿#include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 
 #include <PhysX/PxPhysics.h>
@@ -9,10 +7,7 @@
 #include <PhysX/characterkinematic/PxControllerManager.h>
 #include <PxScene.h>
 
-// Generated
-#include <Generated/CharacterController.rfk.h>
-
-File_GENERATED
+#include <Generated/CharacterController.cpp.h>
 
     using namespace GPE;
 using namespace physx;

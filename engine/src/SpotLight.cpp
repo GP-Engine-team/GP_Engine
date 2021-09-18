@@ -2,9 +2,7 @@
 #include "Engine/Intermediate/GameObject.hpp"
 #include "GPM/Constants.hpp"
 
-#include "Engine/ECS/Component/Light/SpotLight.hpp"
-
-File_GENERATED
+#include <Generated/SpotLight.cpp.h>
 
     using namespace GPE;
 

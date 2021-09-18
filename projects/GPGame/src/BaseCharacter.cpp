@@ -1,14 +1,11 @@
-﻿#include <BaseCharacter.hpp>
-
-#include <Generated/BaseCharacter.rfk.h>
-File_GENERATED
-
-#include <Engine/Core/Debug/assert.hpp>
+﻿#include <Engine/Core/Debug/assert.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <algorithm>
 #include <gpm/Vector3.hpp>
 #include <gpm/Vector4.hpp>
+
+#include <Generated/BaseCharacter.cpp.h>
 
     using namespace GPE;
 using namespace GPG;

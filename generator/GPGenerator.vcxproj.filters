@@ -34,7 +34,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\CustomFileParserFactory.hpp">
+    <ClInclude Include="include\EngineCodeGenModule.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SerializePropertyRule.h">

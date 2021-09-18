@@ -1,11 +1,9 @@
-#include "Engine/Serialization/TextureImporterSetting.hpp"
-
 #include "Engine/Core/Tools/ImGuiTools.hpp"
 #include "Engine/Serialization/FileExplorer.hpp"
 #include "Engine/Serialization/GPMDataInspector.hpp"
 #include "Engine/Serialization/STDDataInspector.hpp"
 
-File_GENERATED
+#include <Generated/TextureImporterSetting.cpp.h>
 
     namespace GPE
 {

@@ -1,6 +1,4 @@
-﻿#include "Engine/ECS/Component/Light/DirectionalLight.hpp"
-
-File_GENERATED
+﻿#include <Generated/DirectionalLight.cpp.h>
 
     using namespace GPE;
 using namespace GPM;

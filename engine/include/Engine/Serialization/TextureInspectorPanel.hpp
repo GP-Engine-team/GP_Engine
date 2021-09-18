@@ -32,3 +32,5 @@ namespace GPE RFKNamespace()
         TextureInspectorPanel_GENERATED
     };
 } // namespace )
+
+File_GENERATED

@@ -3,14 +3,14 @@
 #include <Kodgen/InfoStructures/StructClassInfo.h>
 #include <algorithm>
 
-std::string generateSerializationFunction(const kodgen::StructClassInfo& entity,
-                                          kodgen::ComplexProperty const& property, const std::string& functionName,
+std::string generateSerializationFunction(const kodgen::StructClassInfo& entity, kodgen::Property const& property,
+                                          const std::string& functionName,
                                           const std::string& argClassName, const std::string& fieldCallingFunction,
                                           std::string extraQualifier)
 {
     std::string serializeInside = "";
 
-    if (property.subProperties.empty() || property.subProperties[0] == "true")
+    if (property.arguments.empty() || property.arguments[0] == "true")
     {
         std::string callParents = "";
         for (auto& parent : entity.parents)
@@ -28,12 +28,12 @@ std::string generateSerializationFunction(const kodgen::StructClassInfo& entity,
     for (auto& field : entity.fields)
     {
         // Returns true if the property should be reflected (e.g. if it contains the correct Property), false otherwise
-        auto isPropertyReflected = [&](const kodgen::ComplexProperty& prop) {
-            return prop.mainProperty == property.mainProperty;
+        auto isPropertyReflected = [&](const kodgen::Property& prop) {
+            return prop.name == property.name;
         };
 
         // If the field should be reflected :
-        auto& fieldProperties = field.properties.complexProperties;
+        auto& fieldProperties = field.properties;
         if (std::find_if(fieldProperties.begin(), fieldProperties.end(), isPropertyReflected) != fieldProperties.end())
         {
             std::string constructField = "c.getField(\"" + field.name + "\")";
@@ -51,22 +51,22 @@ std::string generateSerializationFunction(const kodgen::StructClassInfo& entity,
     return serializeFunction;
 }
 
-std::string generateSerializationFunctionDecl(const kodgen::StructClassInfo& entity,
-                                              kodgen::ComplexProperty const& property, const std::string& functionName,
+std::string generateSerializationFunctionDecl(const kodgen::StructClassInfo& entity, kodgen::Property const& property,
+                                              const std::string& functionName,
                                               const std::string& argClassName, const std::string& fieldCallingFunction,
                                               std::string extraQualifier)
 {
     return "virtual void " + functionName + '(' + argClassName + "& serializer)" + extraQualifier + ";";
 }
 
-std::string generateSerializationFunctionImpl(const kodgen::StructClassInfo& entity,
-                                              kodgen::ComplexProperty const& property, const std::string& functionName,
+std::string generateSerializationFunctionImpl(const kodgen::StructClassInfo& entity, kodgen::Property const& property,
+                                              const std::string& functionName,
                                               const std::string& argClassName, const std::string& fieldCallingFunction,
                                               std::string extraQualifier)
 {
     std::string serializeInside = "";
 
-    if (property.subProperties.empty() || property.subProperties[0] == "true")
+    if (property.arguments.empty() || property.arguments[0] == "true")
     {
         std::string callParents = "";
         for (auto& parent : entity.parents)
@@ -84,12 +84,12 @@ std::string generateSerializationFunctionImpl(const kodgen::StructClassInfo& ent
     for (auto& field : entity.fields)
     {
         // Returns true if the property should be reflected (e.g. if it contains the correct Property), false otherwise
-        auto isPropertyReflected = [&](const kodgen::ComplexProperty& prop) {
-            return prop.mainProperty == property.mainProperty;
+        auto isPropertyReflected = [&](const kodgen::Property& prop) {
+            return prop.name == property.name;
         };
 
         // If the field should be reflected :
-        auto& fieldProperties = field.properties.complexProperties;
+        auto& fieldProperties = field.properties;
         if (std::find_if(fieldProperties.begin(), fieldProperties.end(), isPropertyReflected) != fieldProperties.end())
         {
             std::string constructField = "c.getField(\"" + field.name + "\")";

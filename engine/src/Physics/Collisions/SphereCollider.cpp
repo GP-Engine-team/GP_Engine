@@ -1,11 +1,7 @@
-﻿#include <Engine/Core/Physics/Collisions/SphereCollider.hpp>
-
-#include <Engine/Engine.hpp>
+﻿#include <Engine/Engine.hpp>
 #include <PhysX/PxPhysics.h>
 
-#include <Generated/SphereCollider.rfk.h>
-
-File_GENERATED
+#include <Generated/SphereCollider.cpp.h>
 
     using namespace GPE;
 using namespace physx;

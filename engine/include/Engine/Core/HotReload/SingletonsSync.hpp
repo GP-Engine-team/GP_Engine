@@ -105,7 +105,7 @@ extern "C"
         assert(out != nullptr);
 
         const std::unordered_set<rfk::Archetype const*, rfk::Entity::PtrNameHasher, rfk::Entity::PtrEqualName>&
-            engineArchetypes = rfk::Database::getNamespace("GPE")->archetypes;
+            engineArchetypes = rfk::getDatabase().getNamespace("GPE")->archetypes;
 
         // Get names of components of GPEngine
         for (rfk::Archetype const* archetype : engineArchetypes)
@@ -117,7 +117,7 @@ extern "C"
         }
 
         const std::unordered_set<rfk::Archetype const*, rfk::Entity::PtrNameHasher, rfk::Entity::PtrEqualName>&
-            gameArchetypes = rfk::Database::getNamespace("GPG")->archetypes;
+            gameArchetypes = rfk::getDatabase().getNamespace("GPG")->archetypes;
 
         // Get names of components of GPGame
         for (rfk::Archetype const* archetype : gameArchetypes)
@@ -134,7 +134,7 @@ extern "C"
         assert(out != nullptr);
 
         const std::unordered_set<rfk::Archetype const*, rfk::Entity::PtrNameHasher, rfk::Entity::PtrEqualName>&
-            engineArchetypes = rfk::Database::getNamespace("GPE")->archetypes;
+            engineArchetypes = rfk::getDatabase().getNamespace("GPE")->archetypes;
 
         // Get names of components of GPEngine
         for (rfk::Archetype const* archetype : engineArchetypes)
@@ -146,7 +146,7 @@ extern "C"
         }
 
         const std::unordered_set<rfk::Archetype const*, rfk::Entity::PtrNameHasher, rfk::Entity::PtrEqualName>&
-            gameArchetypes = rfk::Database::getNamespace("GPG")->archetypes;
+            gameArchetypes = rfk::getDatabase().getNamespace("GPG")->archetypes;
 
         // Get names of components of GPGame
         for (rfk::Archetype const* archetype : gameArchetypes)
@@ -176,12 +176,12 @@ extern "C"
 
     ENGINE_API inline GPE::Component* createComponentByName(const std::string& name)
     {
-        return rfk::Database::getClass(name)->makeInstance<GPE::Component>();
+        return rfk::getDatabase().getClass(name)->makeInstance<GPE::Component>();
     }
 
     ENGINE_API inline GPE::Component* createComponentByID(GPE::GameObject& gameObject, const rfk::uint64 compID)
     {
-        rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::Database::getEntity(compID));
+        rfk::Class const* archetype = static_cast<rfk::Class const*>(rfk::getDatabase().getEntity(compID));
         GPE::Component*   newComp   = archetype->makeInstance<GPE::Component>();
         newComp->setOwner(gameObject);
         newComp->onPostLoad();

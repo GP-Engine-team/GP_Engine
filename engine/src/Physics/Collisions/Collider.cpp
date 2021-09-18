@@ -1,11 +1,7 @@
-﻿#include <Engine/Core/Physics/Collisions/Collider.hpp>
-#include <Engine/ECS/System/PhysXSystem.hpp>
+﻿#include <Engine/ECS/System/PhysXSystem.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 
-// Generated
-#include "Generated/Collider.rfk.h"
-
-File_GENERATED
+#include <Generated/Collider.cpp.h>
 
 using namespace GPE;
 using namespace physx;

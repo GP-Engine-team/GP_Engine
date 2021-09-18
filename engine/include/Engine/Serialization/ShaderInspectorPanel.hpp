@@ -31,3 +31,5 @@ namespace GPE RFKNamespace()
         ShaderInspectorPanel_GENERATED
     };
 } // namespace )
+
+File_GENERATED

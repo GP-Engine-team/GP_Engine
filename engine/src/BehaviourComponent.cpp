@@ -1,14 +1,12 @@
-﻿#include "Engine/ECS/Component/BehaviourComponent.hpp"
-
-File_GENERATED
-
-#include "imgui.h"
+﻿#include "imgui.h"
 #include <Engine/ECS/Component/TransformComponent.hpp>
 #include <Engine/ECS/System/BehaviourSystem.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
+
+#include <Generated/BehaviourComponent.cpp.h>
 
 using namespace GPE;
 

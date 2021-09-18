@@ -10,8 +10,7 @@
 #include <BaseCharacter.hpp>
 #include <PhysX/PxRigidActor.h>
 
-#include <Firearm/Firearm.hpp>
-File_GENERATED
+#include <Generated/Firearm.cpp.h>
 
     using namespace GPG;
 using namespace GPE;

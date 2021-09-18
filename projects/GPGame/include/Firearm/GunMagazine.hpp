@@ -42,3 +42,5 @@ namespace GPG RFKNamespace()
         GunMagazine_GENERATED
     };
 } // namespace )
+
+File_GENERATED

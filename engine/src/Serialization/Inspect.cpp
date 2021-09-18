@@ -1,3 +1,1 @@
-#include "Engine/Serialization/Inspect.hpp"
-
-File_GENERATED
+#include <Generated/Inspect.cpp.h>

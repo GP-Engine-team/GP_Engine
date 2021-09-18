@@ -10,8 +10,8 @@
 #include <GPM/Transform.hpp>
 #include <GPM/Vector3.hpp>
 
-#include <Engine/ECS/Component/Camera.hpp>
-File_GENERATED
+
+#include <Generated/Camera.cpp.h>
 
     using namespace GPM;
 

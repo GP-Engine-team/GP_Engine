@@ -4,12 +4,7 @@
 #include <GPM/Vector3.hpp>
 #include <PxPhysics.h>
 
-#include <Engine/ECS/Component/Physics/Rigidbody/RigidbodyDynamic.hpp>
-
-// Generated
-#include "Generated/RigidbodyDynamic.rfk.h"
-
-File_GENERATED
+#include <Generated/RigidbodyDynamic.cpp.h>
 
     using namespace GPE;
 using namespace physx;

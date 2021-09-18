@@ -1,3 +1,1 @@
-#include "Engine/Serialization/Serialize.hpp"
-
-File_GENERATED
+#include <Generated/Serialize.cpp.h>

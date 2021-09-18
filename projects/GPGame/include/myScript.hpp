@@ -122,3 +122,5 @@ namespace GPG RFKNamespace()
         MyScript_GENERATED
     };
 } // namespace )
+
+File_GENERATED

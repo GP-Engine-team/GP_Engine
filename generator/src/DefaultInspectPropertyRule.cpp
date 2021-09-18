@@ -4,48 +4,31 @@
 #include <algorithm>
 
 DefaultInspectPropertyRule::DefaultInspectPropertyRule() noexcept
-    : rfk::DefaultComplexPropertyRule(propertyName, kodgen::EEntityType::Class | kodgen::EEntityType::Struct)
+    : kodgen::MacroPropertyCodeGen(propertyName, kodgen::EEntityType::Class | kodgen::EEntityType::Struct)
 {
 }
 
-std::string DefaultInspectPropertyRule::generateClassFooterCode(kodgen::EntityInfo const&            entity,
-                                                         kodgen::ComplexProperty const&       property,
-                                                         rfk::PropertyCodeGenClassFooterData& data) const noexcept
+bool DefaultInspectPropertyRule::generateClassFooterCodeForEntity(kodgen::EntityInfo const& entity,
+                                                          kodgen::Property const& property, kodgen::uint8 propertyIndex,
+                                                          kodgen::MacroCodeGenEnv& env,
+                                                          std::string&             inout_result) noexcept
 {
     // If entity is a class or a struct :
-    if ((entity.entityType & (kodgen::EEntityType::Class | kodgen::EEntityType::Struct)) !=
-        kodgen::EEntityType::Undefined)
-    {
-        // Get Struct / Class info to access its fields
-        kodgen::StructClassInfo const& var = static_cast<kodgen::StructClassInfo const&>(entity);
+    assert((entity.entityType & (kodgen::EEntityType::Class | kodgen::EEntityType::Struct)) !=
+           kodgen::EEntityType::Undefined);
 
-        std::string defaultInspect = generateDefaultInspectFunction(var, property, "defaultInspect", "GPE::InspectContext",
-                                                             "GPE::DataInspector::inspect");
+    // Get Struct / Class info to access its fields
+    kodgen::StructClassInfo const& var = static_cast<kodgen::StructClassInfo const&>(entity);
 
-        return "public :" + defaultInspect;
-    }
-    return "";
-}
+    std::string defaultInspect = generateDefaultInspectFunction(var, property, "defaultInspect", "GPE::InspectContext",
+                                                            "GPE::DataInspector::inspect");
 
-std::string DefaultInspectPropertyRule::generateFileFooterCode(kodgen::EntityInfo const&           entity,
-                                                        kodgen::ComplexProperty const&      property,
-                                                        rfk::PropertyCodeGenFileFooterData& data) const noexcept
-{
-    //// If entity is a class or a struct :
-    // if ((entity.entityType & (kodgen::EEntityType::Class | kodgen::EEntityType::Struct)) !=
-    //    kodgen::EEntityType::Undefined)
-    //{
-    //    // Get Struct / Class info to access its fields
-    //    kodgen::StructClassInfo const& var = static_cast<kodgen::StructClassInfo const&>(entity);
-
-    //    return generateSerializationFunctionImpl(var, property, "inspect", "GPE::InspectContext",
-    //                                             "GPE::DataInspector::inspect");
-    //}
-    return "";
+    inout_result += "public :" + defaultInspect;
+    return true;
 }
 
 std::string DefaultInspectPropertyRule::generateDefaultInspectFunction(
-    const kodgen::StructClassInfo& entity, kodgen::ComplexProperty const& property, const std::string& functionName,
+    const kodgen::StructClassInfo& entity, kodgen::Property const& property, const std::string& functionName,
     const std::string& argClassName, const std::string& fieldCallingFunction, std::string extraQualifier) const
 {
     
@@ -59,16 +42,16 @@ std::string DefaultInspectPropertyRule::generateDefaultInspectFunction(
     for (auto& field : entity.fields)
     {
         // Returns true if the property should be reflected (e.g. if it contains the correct Property), false otherwise
-        auto isPropertyReflected = [&](const kodgen::ComplexProperty& prop) {
-            return prop.mainProperty == "Inspect";
+        auto isPropertyReflected = [&](const kodgen::Property& prop) {
+            return prop.name == "Inspect";
         };
 
         // If the field should be reflected :
-        auto& fieldProperties = field.properties.complexProperties;
+        auto& fieldProperties = field.properties;
         auto  it              = std::find_if(fieldProperties.begin(), fieldProperties.end(), isPropertyReflected);
         if (it != fieldProperties.end())
         {
-            if (it->subProperties.empty())
+            if (it->arguments.empty())
             {
                 std::string constructField = "c.getField(\"" + field.name + "\")";
 
@@ -78,7 +61,7 @@ std::string DefaultInspectPropertyRule::generateDefaultInspectFunction(
             else
             {
                 // If there is a setter
-                std::string setterFunction = it->subProperties.front();
+                std::string setterFunction = it->arguments.front();
                 setterFunction.erase(std::remove(setterFunction.begin(), setterFunction.end(), '"'),
                                      setterFunction.end());
 

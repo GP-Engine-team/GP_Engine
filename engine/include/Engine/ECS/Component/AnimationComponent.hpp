@@ -88,3 +88,5 @@ public:
     AnimationComponent_GENERATED
 };
 } // namespace )
+
+File_GENERATED

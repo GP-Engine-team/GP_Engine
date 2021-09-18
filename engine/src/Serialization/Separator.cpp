@@ -1,3 +1,1 @@
-#include "Engine/Serialization/Separator.hpp"
-
-File_GENERATED
+#include <Generated/Separator.cpp.h>

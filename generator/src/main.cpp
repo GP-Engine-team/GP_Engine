@@ -1,75 +1,104 @@
+#include <Kodgen/Misc/Filesystem.h>
 #include <Kodgen/Misc/DefaultLogger.h>
-#include <RefurekuGenerator/CodeGen/FileGenerationUnit.h>
-#include <RefurekuGenerator/CodeGen/FileGenerator.h>
-#include <RefurekuGenerator/Parsing/FileParser.h>
-#include <RefurekuGenerator/Parsing/FileParserFactory.h>
+#include <Kodgen/Parsing/FileParser.h>
+#include <Kodgen/CodeGen/Macro/MacroCodeGenUnit.h>
 
-#include "CustomFileParserFactory.hpp"
+#include "RefurekuGenerator/Parsing/FileParser.h"
+#include "RefurekuGenerator/CodeGen/CodeGenManager.h"
+#include "RefurekuGenerator/CodeGen/MacroCodeGenUnitSettings.h"
+#include "RefurekuGenerator/CodeGen/ReflectionCodeGenModule.h"
+
+#include "EngineCodeGenModule.hpp"
+
+void loadEngineSettings(kodgen::ILogger& logger, kodgen::CodeGenManagerSettings& codeGenMgrSettings,
+    kodgen::ParsingSettings& parsingSettings, kodgen::MacroCodeGenUnitSettings& codeGenUnitSettings,
+    fs::path&& settingsFilePath, const std::string& engineDir)
+{
+    parsingSettings.setCompilerExeName("msvc");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/Refureku/Refureku/Refureku/Library/Include");
+    //parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/RapidXML");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/include");
+    parsingSettings.addProjectIncludeDirectory(engineDir);
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/PhysX");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/imgui");
+
+    for (auto& a : parsingSettings.getProjectIncludeDirectories())
+    {
+        std::cout << a.string() << std::endl;
+    }
+
+    codeGenUnitSettings.setOutputDirectory(engineDir + "/include/Generated/");
+
+    codeGenMgrSettings.addSupportedFileExtension(".h");
+    codeGenMgrSettings.addSupportedFileExtension(".hpp");
+
+    codeGenMgrSettings.addToProcessDirectory(engineDir + "/include/engine");
+    //codeGenMgrSettings.addToProcessFile("F:/Thomas/ProgProjects/GP_Engine/engine/include/Engine/ECS/Component/Camera.hpp");
+    //parsingSettings.shouldLogDiagnostic = true;
+
+    codeGenMgrSettings.addIgnoredDirectory(engineDir + "/include/Generated");
+
+
+    parsingSettings.propertyParsingSettings.classMacroName     = "RFKClass";
+    parsingSettings.propertyParsingSettings.structMacroName    = "RFKStruct";
+    parsingSettings.propertyParsingSettings.fieldMacroName     = "RFKField";
+    parsingSettings.propertyParsingSettings.enumMacroName      = "RFKEnum";
+    parsingSettings.propertyParsingSettings.enumValueMacroName = "RFKEnumValue";
+    parsingSettings.propertyParsingSettings.variableMacroName  = "RFKVariable";
+    parsingSettings.propertyParsingSettings.methodMacroName    = "RFKMethod";
+    parsingSettings.propertyParsingSettings.functionMacroName  = "RFKFunction";
+    parsingSettings.propertyParsingSettings.namespaceMacroName = "RFKNamespace";
+
+    codeGenUnitSettings.setClassFooterMacroPattern("##CLASSNAME##_GENERATED");
+    codeGenUnitSettings.setHeaderFileFooterMacroPattern("File_GENERATED");
+    codeGenUnitSettings.setGeneratedHeaderFileNamePattern("##FILENAME##.rfk.h");
+    codeGenUnitSettings.setGeneratedSourceFileNamePattern("##FILENAME##.cpp.h");
+}
 
 void generateEngineFiles(const std::string& engineDir, bool forceRegenerateAll = false)
 {
     std::cerr << "GENERATE ENGINE" << std::endl;
 
-    CustomFileParserFactory fileParserFactory;
-    rfk::FileGenerator      fileGenerator;
-    rfk::FileGenerationUnit fileGenerationUnit;
 
-    // Set logger
     kodgen::DefaultLogger logger;
 
-    fileParserFactory.logger = &logger;
-    fileGenerator.logger     = &logger;
+    rfk::FileParser fileParser;
+    fileParser.logger = &logger;
 
-    kodgen::FileGenerationSettings& settings = fileGenerator.settings;
-    fileParserFactory.parsingSettings.setCompilerExeName("msvc");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/Refureku");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/RapidXML");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/include");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir);
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/PhysX");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/imgui");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/Refureku");
+    rfk::CodeGenManager codeGenMgr;
+    codeGenMgr.logger = &logger;
 
-    for (auto& a : fileParserFactory.parsingSettings.getProjectIncludeDirectories())
-    {
-        std::cout << a.string() << std::endl;
-    }
+    rfk::MacroCodeGenUnitSettings codeGenUnitSettings;
+    kodgen::MacroCodeGenUnit      codeGenUnit;
+    codeGenUnit.logger = &logger;
+    codeGenUnit.setSettings(codeGenUnitSettings);
 
-    settings.setOutputDirectory(engineDir + "/include/Generated/");
+    rfk::ReflectionCodeGenModule reflectionCodeGenModule;
+    codeGenUnit.addModule(reflectionCodeGenModule);
 
-    settings.supportedExtensions = {".h", ".hpp"};
+    EngineCodeGenModule engineModule;
+    codeGenUnit.addModule(engineModule);
 
-    settings.addToParseDirectory(engineDir + "/include/engine");
+    // Load settings
+    logger.log("Working Directory: " + fs::current_path().string(), kodgen::ILogger::ELogSeverity::Info);
 
-    settings.addIgnoredDirectory(engineDir + "/include/Generated");
-    // settings.addIgnoredDirectory(engineDir + "/include/engine/Core");
-    // settings.addIgnoredDirectory(engineDir + "/include/engine/Serialization");
+    // loadSettings(logger, codeGenMgr.settings, fileParser.getSettings(), codeGenUnitSettings,
+    // "RefurekuTestsSettings.toml"); //For tests
+    loadEngineSettings(logger, codeGenMgr.settings, fileParser.getSettings(), codeGenUnitSettings,
+                 std::forward<fs::path>(engineDir), engineDir);
 
-    // You will need to setup parsing settings and generation settings here.
-    // Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, forceRegenerateAll);
+    // Parse
+    kodgen::CodeGenResult genResult = codeGenMgr.run(fileParser, codeGenUnit, forceRegenerateAll);
 }
 
-void generateGameFiles(const std::string& gameDir, const std::string& engineDir, bool forceRegenerateAll = false)
+void loadGameSettings(kodgen::ILogger& logger, kodgen::CodeGenManagerSettings& codeGenMgrSettings,
+                        kodgen::ParsingSettings& parsingSettings, kodgen::MacroCodeGenUnitSettings& codeGenUnitSettings,
+                        fs::path&& settingsFilePath, const std::string& engineDir, const std::string& gameDir)
 {
-    std::cout << "GENERATE GAME" << std::endl;
-
-    CustomFileParserFactory fileParserFactory;
-    rfk::FileGenerator      fileGenerator;
-    rfk::FileGenerationUnit fileGenerationUnit;
-
-    // Set logger
-    kodgen::DefaultLogger logger;
-
-    fileParserFactory.logger = &logger;
-    fileGenerator.logger     = &logger;
-
-    kodgen::FileGenerationSettings& settings = fileGenerator.settings;
-    if (fileParserFactory.parsingSettings.setCompilerExeName("msvc"))
+    if (parsingSettings.setCompilerExeName("msvc"))
     {
         std::cout << "Compiler Set" << std::endl;
     }
@@ -77,27 +106,80 @@ void generateGameFiles(const std::string& gameDir, const std::string& engineDir,
     {
         std::cout << "Compiler Not Set" << std::endl;
     }
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/Refureku");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include/Engine/");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/imgui");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/src");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/include");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/PhysX");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/gameDir/include");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/src");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
-    fileParserFactory.parsingSettings.addProjectIncludeDirectory(gameDir + "/include");
-    settings.setOutputDirectory(gameDir + "/include/Generated/");
-    settings.supportedExtensions = {".h", ".hpp"};
-    settings.addToParseDirectory(gameDir + "/include/");
-    settings.addIgnoredDirectory(gameDir + "/include/Generated/");
 
-    // You will need to setup parsing settings and generation settings here.
-    // Either load settings from a settings file, or set them by calling the appropriate methods.
-    fileGenerator.generateFiles(fileParserFactory, fileGenerationUnit, forceRegenerateAll);
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/Refureku/Refureku/Refureku/Library/Include");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/include/Engine");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/imgui");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/gpm/include");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include/PhysX");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/third_party/include");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/gameDir/include");
+    parsingSettings.addProjectIncludeDirectory(engineDir + "/include");
+    parsingSettings.addProjectIncludeDirectory(gameDir + "/include");
+
+    codeGenUnitSettings.setOutputDirectory(gameDir + "/include/Generated/");
+
+    codeGenMgrSettings.addSupportedFileExtension(".h");
+    codeGenMgrSettings.addSupportedFileExtension(".hpp");
+
+    codeGenMgrSettings.addToProcessDirectory(gameDir + "/include/");
+     //codeGenMgrSettings.addToProcessFile("F:/Thomas/ProgProjects/GP_Engine/projects/GPGame/include/myScript.hpp");
+     //parsingSettings.shouldLogDiagnostic = true;
+
+    codeGenMgrSettings.addIgnoredDirectory(gameDir + "/include/Generated/");
+
+    parsingSettings.propertyParsingSettings.classMacroName = "RFKClass";
+    parsingSettings.propertyParsingSettings.structMacroName = "RFKStruct";
+    parsingSettings.propertyParsingSettings.fieldMacroName = "RFKField";
+    parsingSettings.propertyParsingSettings.enumMacroName  = "RFKEnum";
+    parsingSettings.propertyParsingSettings.enumValueMacroName = "RFKEnumValue";
+    parsingSettings.propertyParsingSettings.variableMacroName = "RFKVariable";
+    parsingSettings.propertyParsingSettings.methodMacroName = "RFKMethod";
+    parsingSettings.propertyParsingSettings.functionMacroName = "RFKFunction";
+    parsingSettings.propertyParsingSettings.namespaceMacroName = "RFKNamespace";
+
+    codeGenUnitSettings.setClassFooterMacroPattern("##CLASSNAME##_GENERATED");
+    codeGenUnitSettings.setHeaderFileFooterMacroPattern("File_GENERATED");
+    codeGenUnitSettings.setGeneratedHeaderFileNamePattern("##FILENAME##.rfk.h");
+    codeGenUnitSettings.setGeneratedSourceFileNamePattern("##FILENAME##.cpp.h");
 }
+
+void generateGameFiles(const std::string& gameDir, const std::string& engineDir, bool forceRegenerateAll = false)
+{
+    std::cout << "GENERATE GAME" << std::endl;
+
+    kodgen::DefaultLogger logger;
+
+    rfk::FileParser fileParser;
+    fileParser.logger = &logger;
+
+    rfk::CodeGenManager codeGenMgr;
+    codeGenMgr.logger = &logger;
+
+    rfk::MacroCodeGenUnitSettings codeGenUnitSettings;
+    kodgen::MacroCodeGenUnit      codeGenUnit;
+    codeGenUnit.logger = &logger;
+    codeGenUnit.setSettings(codeGenUnitSettings);
+
+    rfk::ReflectionCodeGenModule reflectionCodeGenModule;
+    codeGenUnit.addModule(reflectionCodeGenModule);
+
+    EngineCodeGenModule engineModule;
+    codeGenUnit.addModule(engineModule);
+
+    // Load settings
+    logger.log("Working Directory: " + fs::current_path().string(), kodgen::ILogger::ELogSeverity::Info);
+
+    // loadSettings(logger, codeGenMgr.settings, fileParser.getSettings(), codeGenUnitSettings,
+    // "RefurekuTestsSettings.toml"); //For tests
+    loadGameSettings(logger, codeGenMgr.settings, fileParser.getSettings(), codeGenUnitSettings,
+                       std::forward<fs::path>(engineDir), engineDir, gameDir);
+
+    // Parse
+    kodgen::CodeGenResult genResult = codeGenMgr.run(fileParser, codeGenUnit, forceRegenerateAll);
+}
+
 
 // First Arg : Engine  (default : "../engine/")
 // Second Arg : Game   (default : "../projects/GPGame/")
@@ -132,7 +214,7 @@ int main(int argc, char** argv)
         const char* p2 = "..\\engine";
         const char* p1 = "..\\projects\\GPGame\\";
 
-        generateEngineFiles(p2, true);
+        generateEngineFiles(p2, false);
         generateGameFiles(p1, p2, true);
     }
     return 0;

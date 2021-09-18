@@ -1,12 +1,9 @@
-#include <Sun.hpp>
-
-#include <Generated/Sun.rfk.h>
-File_GENERATED
-
 #include <Engine/Core/Debug/assert.hpp>
 #include <Engine/Engine.hpp>
 #include <gpm/Vector3.hpp>
 #include <gpm/Vector4.hpp>
+
+#include <Generated/Sun.cpp.h>
 
     using namespace GPE;
 using namespace GPG;

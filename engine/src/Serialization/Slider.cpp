@@ -1,3 +1,1 @@
-#include "Engine/Serialization/Slider.hpp"
-
-File_GENERATED
+#include <Generated/Slider.cpp.h>

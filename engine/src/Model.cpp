@@ -1,8 +1,4 @@
-﻿#include <Engine/ECS/Component/Model.hpp>
-
-File_GENERATED
-
-#include <Engine/Core/Debug/Assert.hpp>
+﻿#include <Engine/Core/Debug/Assert.hpp>
 #include <Engine/Core/Debug/Log.hpp>
 #include <Engine/Core/Tools/Hash.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
@@ -23,6 +19,8 @@ File_GENERATED
 
 #include <filesystem>
 #include <imgui.h>
+
+#include <Generated/Model.cpp.h>
 
     using namespace GPE;
 using namespace GPM;

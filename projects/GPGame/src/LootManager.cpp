@@ -1,13 +1,10 @@
-﻿#include <LootManager.hpp>
-
-#include <Engine/Engine.hpp>
+﻿#include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <gpm/Calc.hpp>
 #include <gpm/Random.hpp>
 #include <gpm/Vector3.hpp>
 
-#include <Generated/LootManager.rfk.h>
-File_GENERATED
+#include <Generated/LootManager.cpp.h>
 
     using namespace GPE;
 using namespace GPG;

@@ -1,12 +1,8 @@
-﻿#include <Engine/Core/Physics/Collisions/BoxCollider.hpp>
-
-#include <Engine/Engine.hpp>
+﻿#include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <PhysX/PxPhysics.h>
 
-#include <Generated/BoxCollider.rfk.h>
-
-File_GENERATED
+#include <Generated/BoxCollider.cpp.h>
 
     using namespace GPE;
 using namespace GPM;

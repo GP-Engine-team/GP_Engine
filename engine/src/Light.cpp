@@ -1,6 +1,7 @@
-#include "Engine/ECS/Component/Light/Light.hpp"
 #include <Engine/Core/Tools/ImGuiTools.hpp>
 #include <Engine/ECS/System/RenderSystem.hpp>
+
+#include <Generated/Light.cpp.h>
 
 using namespace GPE;
 using namespace GPM;
@@ -82,4 +83,3 @@ void Light::updateToSystem() noexcept
     }
 }
 
-File_GENERATED

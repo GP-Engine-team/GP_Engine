@@ -1,9 +1,6 @@
-﻿#include <EvacuationPoint.hpp>
+﻿#include <BasePlayer.hpp>
 
-#include <BasePlayer.hpp>
-
-#include "Generated/EvacuationPoint.rfk.h"
-File_GENERATED
+#include <Generated/EvacuationPoint.cpp.h>
 
     using namespace GPG;
 using namespace GPE;

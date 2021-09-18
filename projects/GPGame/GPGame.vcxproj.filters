@@ -63,9 +63,6 @@
     <ClInclude Include="include\WorldGenerator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowMap.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\LootManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -103,9 +100,6 @@
     </ClCompile>
     <ClCompile Include="src\DebugSphere.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Firearm.cpp">
-      <Filter>Header Files\FireArme</Filter>
     </ClCompile>
     <ClCompile Include="src\game.cpp">
       <Filter>Source Files</Filter>
@@ -147,6 +141,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\EvacuationPoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Firearm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

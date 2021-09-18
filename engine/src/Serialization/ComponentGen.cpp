@@ -1,3 +1,1 @@
-#include "Engine/Serialization/ComponentGen.h"
-
-File_GENERATED
+#include <Generated/ComponentGen.cpp.h>

@@ -1,14 +1,11 @@
-#include <LevitationMovement.hpp>
-
-#include <Generated/LevitationMovement.rfk.h>
-File_GENERATED
-
 #include <Engine/Core/Debug/assert.hpp>
 #include <Engine/Engine.hpp>
 #include <Engine/Intermediate/GameObject.hpp>
 #include <algorithm>
 #include <gpm/Vector3.hpp>
 #include <gpm/Vector4.hpp>
+
+#include <Generated/LevitationMovement.cpp.h>
 
     using namespace GPE;
 using namespace GPG;

@@ -13,3 +13,5 @@ struct RFKStruct(PropertySettings(rfk::EEntityKind::Field)) ReadOnly : public rf
 
     ReadOnly_GENERATED
 };
+
+File_GENERATED

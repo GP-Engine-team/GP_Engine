@@ -1,11 +1,9 @@
-﻿#include "Generated/PPSH41.rfk.h"
-#include <Engine/ECS/Component/TransformComponent.hpp>
-#include <Firearm/PPSH41.hpp>
+﻿#include <Engine/ECS/Component/TransformComponent.hpp>
 #include <gpm/Random.hpp>
 
 #include <Engine/Core/Tools/Interpolation.hpp>
 
-File_GENERATED
+#include <Generated/PPSH41.cpp.h>
 
     using namespace GPG;
 using namespace GPM;

@@ -1,5 +1,4 @@
-﻿#include <Firearm/Bullet.hpp>
-File_GENERATED
+﻿#include <Generated/Bullet.cpp.h>
 
 namespace GPG
 {

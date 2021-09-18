@@ -8,9 +8,7 @@
 
 #include <Engine/Engine.hpp>
 
-#include <Engine/Resources/Script/FreeFly.hpp>
-#include <Generated/FreeFly.rfk.h>
-File_GENERATED
+#include <Generated/FreeFly.cpp.h>
 
 using namespace GPE;
 

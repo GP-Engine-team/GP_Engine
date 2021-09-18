@@ -4,8 +4,7 @@
 #include "Engine/Serialization/GPMDataInspector.hpp"
 #include "Engine/Serialization/STDDataInspector.hpp"
 
-#include "Engine/Serialization/TextureInspectorPanel.hpp"
-File_GENERATED
+#include <Generated/TextureInspectorPanel.cpp.h>
 
     namespace GPE
 {

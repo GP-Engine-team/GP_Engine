@@ -121,3 +121,5 @@ namespace GPE RFKNamespace()
 } // namespace )
 
 #include "TransformComponent.inl"
+
+File_GENERATED

@@ -5,12 +5,9 @@
 #include <istream>
 #include <sstream>
 
-#include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Resources/Scene.hpp>
 
-// Generated
-#include <Generated/GameObject.rfk.h>
-File_GENERATED
+#include <Generated/GameObject.cpp.h>
 
 using namespace GPE;
 using namespace GPM;

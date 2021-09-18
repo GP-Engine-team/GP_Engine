@@ -48,3 +48,5 @@ namespace GPE RFKNamespace()
         RigidbodyStatic_GENERATED
     };
 } // namespace )
+
+File_GENERATED

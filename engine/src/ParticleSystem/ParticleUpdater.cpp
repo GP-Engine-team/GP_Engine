@@ -1,13 +1,9 @@
-#include "Engine/Resources/ParticleSystem/ParticleUpdater.hpp"
-
 #include <Engine/Resources/Color.hpp>
 #include <GPM/Calc.hpp>
 #include <algorithm>
 #include <assert.h>
 
-// Generated
-#include <Generated/ParticleUpdater.rfk.h>
-File_GENERATED
+#include <Generated/ParticleUpdater.cpp.h>
 
     using namespace GPE;
 using namespace GPM;

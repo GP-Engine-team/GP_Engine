@@ -10,9 +10,6 @@
 
 namespace rfk
 {
-template <typename T>
-inline Archetype const* getArchetype() noexcept;
-
 template <>
 inline rfk::Archetype const* rfk::getArchetype<std::string>() noexcept
 {

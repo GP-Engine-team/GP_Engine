@@ -5,9 +5,7 @@
 #include "Engine/Core/Tools/ImGuiTools.hpp"
 #include <imgui/imgui.h>
 
-#include "Engine/Serialization/ShaderInspectorPanel.hpp"
-
-File_GENERATED
+#include <Generated/ShaderInspectorPanel.cpp.h>
 
     namespace GPE
 {

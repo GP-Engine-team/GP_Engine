@@ -1,3 +1,1 @@
-#include "myScript.hpp"
-
-File_GENERATED
+#include <Generated/myScript.cpp.h>

@@ -1,11 +1,7 @@
-#include <Engine/ECS/Component/TransformComponent.hpp>
-
 #include <Engine/Intermediate/GameObject.hpp>
 #include <Engine/Serialization/Inspect.hpp>
 
-#include <Generated/TransformComponent.rfk.h>
-
-File_GENERATED
+#include <Generated/TransformComponent.cpp.h>
 
 using namespace GPE;
 using namespace GPM;

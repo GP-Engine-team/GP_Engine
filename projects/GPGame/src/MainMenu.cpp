@@ -8,10 +8,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
-#include <MainMenu.hpp>
-
-#include <Generated/MainMenu.rfk.h>
-File_GENERATED
+#include <Generated/MainMenu.cpp.h>
 
     using namespace GPG;
 using namespace GPM;

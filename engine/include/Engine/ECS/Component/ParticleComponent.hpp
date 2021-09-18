@@ -220,3 +220,5 @@ namespace GPE RFKNamespace()
 } // namespace )
 
 #include <Engine/Resources/ParticleSystem/ParticleComponent.inl>
+
+File_GENERATED
