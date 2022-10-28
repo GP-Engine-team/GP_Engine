@@ -7,7 +7,7 @@
   <p style="text-decoration: underline;">Game made entirely with the engine</p>
 </div>
 <div align="center">
-  <a href="progz.itch.io/green-portal">itch.io</a> | <a href="https://youtu.be/GrtPbnP4KDw">Video showcase</a> | <a href="https://youtu.be/JSAnqk2sR-0?t=5756">Live presentation</a>
+  <a href="https://progz.itch.io/green-portal">itch.io</a> | <a href="https://youtu.be/GrtPbnP4KDw">Video showcase</a> | <a href="https://youtu.be/JSAnqk2sR-0?t=5756">Live presentation</a>
 </div>
 
 ## Documents
